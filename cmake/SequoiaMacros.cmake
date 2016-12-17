@@ -67,3 +67,54 @@ macro(sequoia_set_default_download_dir)
     message(FATAL_ERROR "could not find or make Downloads directory")
   endif()
 endmacro()
+
+## sequoia_setup_sequioa_engine_builds
+## -----------------------------------
+##
+## Setup build directories for the sequoia-eninge in Release, RelWithDebInfo and Debug mode using
+## the current CMakeCache. 
+##
+##  LIST_PATH:PATH=<>       - CMakeLists.txt path
+##  ARGN                    - Arguments passed to CMake
+##
+macro(sequoia_setup_sequioa_engine_builds)
+  file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/Release)
+  file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/RelWithDebInfo)
+  file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/Debug)
+
+  set(CMAKE_ARGS "${Sequoia_DEFAULT_ARGS}" "${Sequoia_THIRDPARTYLIBS_ARGS}")
+
+  foreach(arg ${CMAKE_ARGS})
+    # Remove -DCMAKE_INSTALL_PREFIX
+    string(REGEX REPLACE "-DCMAKE_INSTALL_PREFIX:PATH=.*" "" arg_in ${arg})
+    
+    if(NOT(arg_in))
+      continue()
+    endif()
+
+    # Replace CMAKE_BUILD_TYPEs
+    string(REGEX REPLACE "-DCMAKE_BUILD_TYPE:STRING=.*" "-DCMAKE_BUILD_TYPE:STRING=Debug" arg_debug ${arg_in})
+    list(APPEND CMAKE_DEBUG_ARGS ${arg_debug})
+
+    string(REGEX REPLACE "-DCMAKE_BUILD_TYPE:STRING=.*" 
+                         "-DCMAKE_BUILD_TYPE:STRING=RelWithDebInfo" arg_relwithdebinfo ${arg_in})
+    list(APPEND CMAKE_RELWITHDEBINFO_ARGS ${arg_relwithdebinfo})
+
+    string(REGEX REPLACE "-DCMAKE_BUILD_TYPE:STRING=.*" 
+                         "-DMAKE_BUILD_TYPE:STRING=Release" arg_release ${arg_in})
+    list(APPEND CMAKE_RELEASE_ARGS ${arg_release})
+  endforeach()
+
+
+#  message("${CMAKE_RELEASE_ARGS}")
+#  message("--------------") 
+#  message("${CMAKE_RELEASE_ARGS}")
+
+#  add_custom_target(setup-build ALL 
+#                    # Release
+#                    COMMAND ${CMAKE_COMMAND} ${LIST_PATH} ${CMAKE_ARGS})
+#                    # RelWithDebInfo                    
+#                    COMMAND ${CMAKE_COMMAND} ${LIST_PATH} ${CMAKE_ARGS})
+#                    # Debug
+#                    COMMAND ${CMAKE_COMMAND} ${LIST_PATH} ${CMAKE_ARGS})
+endmacro()
