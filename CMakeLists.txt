@@ -41,6 +41,7 @@ set(Sequoia_DEFAULT_ARGS
   "-DCMAKE_INSTALL_PREFIX:PATH=${Sequoia_INSTALL_PREFIX}"
   "-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}"
   "-DCMAKE_CXX_COMPILER:PATH=${CMAKE_CXX_COMPILER}"
+  "-DCMAKE_C_COMPILER:PATH=${CMAKE_C_COMPILER}"
 )
 
 ##===---------------------------------- Third party projects --------------------------------===##
