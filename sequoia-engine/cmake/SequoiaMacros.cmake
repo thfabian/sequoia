@@ -104,7 +104,13 @@ endmacro()
 ## Set C++ flags.
 ##
 macro(sequoia_set_cxx_flags)
-  
+
+  # Remove -DNDEBUG flag if ASSERTS are ON
+  if(SEQUOIA_ASSERTS)
+    string(REPLACE "-DNDEBUG" "" CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO}")
+    string(REPLACE "-DNDEBUG" "" CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE}")
+  endif()
+
   #
   # MSVC
   #
@@ -118,7 +124,7 @@ macro(sequoia_set_cxx_flags)
     sequoia_check_and_set_cxx_flag(-march=native HAVE_GCC_MARCH_NATIVE)
     sequoia_check_and_set_cxx_flag(-Werror=return-type HAVE_GCC_ERROR_RETURN_TYPE)
     
-    if(SEQUOIA_BUILD_SHARED_LIBS)
+    if(BUILD_SHARED_LIBS)
       sequoia_check_and_set_cxx_flag(-fPIC HAVE_GCC_POSITION_INDEPENDENT_CODE)
     endif()
     
