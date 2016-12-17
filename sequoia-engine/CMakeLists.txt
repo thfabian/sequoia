@@ -60,6 +60,7 @@ sequoia_report_result(
   "External libraries summary" 
   "${SEQUOIA_THREADS_INFO_STR}"
   "${SEQUOIA_BOOST_INFO_STR}"
+  "${SEQUOIA_SFML_INFO_STR}"
 )
   
 ##===------------------------------------ Sequoia libraries -----------------------------------===##
@@ -70,7 +71,6 @@ add_subdirectory(src)
 
 ##===----------------------------------------- Testing ----------------------------------------===##
 if(SEQUOIA_TESTING)
-  include(CTest)
   enable_testing()
   add_subdirectory(test)
 endif()

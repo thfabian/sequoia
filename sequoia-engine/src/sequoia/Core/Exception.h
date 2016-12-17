@@ -1,3 +1,17 @@
+//===-- sequoia/Core/Exception.h ----------------------------------------------------*- C++ -*-===//
+//
+//                                      S E Q U O I A
+//
+// This file is distributed under the MIT License (MIT).
+// See LICENSE.txt for details.
+//
+//===------------------------------------------------------------------------------------------===//
+//
+/// @file
+/// Exception classes of sequoia.
+//
+//===------------------------------------------------------------------------------------------===//
+
 #ifndef SEQUOIA_CORE_EXCEPTION
 #define SEQUOIA_CORE_EXCEPTION
 
@@ -18,20 +32,23 @@ namespace core {
 //===--------------------------------------------------------------------------------------------===
 
 /// @brief Base class for all library exceptions
-class Exception : public std::exception {
+SEQUOIA_EXPORT class Exception : public std::exception {
 public:
   /// @brief Initialize the exception
   ///
-  /// @param whatArg    Explanatory string describing the general cause of the current error
+  /// @param message    Explanatory string describing the general cause of the current error
   /// @param line       Line the exception was thrown
   /// @param path       Path to the file the exception was thrown
-  Exception(const Utf8String& whatArg, int line = -1, const char* path = nullptr);
-  Exception(const Utf16String& whatArg, int line = -1, const char* path = nullptr);
-  
+  Exception(const std::string& message, int line = -1, const char* path = nullptr);
+  Exception(const std::wstring& message, int line = -1, const char* path = nullptr);
+
   /// @brief Virtual destructor
   virtual ~Exception() noexcept;
 
   /// @brief Return a C-style character string describing the general cause of the current error
+  ///
+  /// If `NDEBUG` is not defined, the path and line will be prepended. This function returns a
+  /// \b copy of the underlying C-string and thus the returned string needs to be deallocated.
   virtual const char* what() const noexcept;
 
   /// @brief Return the line the exception was thrown
@@ -40,14 +57,17 @@ public:
   /// @brief Return the path to the file the exception was thrown
   virtual const char* path() const noexcept;
 
-  /// @brief Convert to stream
+  /// @brief Return explanatory string describing the general cause of the current error
+  virtual const String& message() const noexcept;
+
+  /// @brief Convert to stream by streaming Exception::what() into `stream`.
   /// @{
   friend std::ostream& operator<<(std::ostream& stream, const Exception& exception);
   friend std::wostream& operator<<(std::wostream& stream, const Exception& exception);
   /// @}
-  
+
 protected:
-  std::string whatArg_;
+  String message_;
   int line_;
   const char* path_;
 };

@@ -14,4 +14,6 @@ sequoia_add_library(
   SOURCES Version.cpp
           Exception.cpp
           String.cpp
+  DEPENDS ${SEQUOIA_BOOST_LIBRARIES}
+          ${SEQUOIA_SFML_LIBRARIES}
 )

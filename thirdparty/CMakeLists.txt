@@ -13,10 +13,14 @@ option(USE_SYSTEM_SFML "Should we use the system SFML?" OFF)
 option(USE_SYSTEM_TBB "Should we use the system TBB?" OFF)
 
 if(USE_SYSTEM_BOOST)
-  find_package(Boost ${boost_version} COMPONENTS ${boost_components} REQUIRED)
+  find_package(Boost ${boost_min_version} COMPONENTS ${boost_components} REQUIRED)
+
+  if(DEFINED BOOST_ROOT)
+    list(APPEND Sequoia_THIRDPARTYLIBS_ARGS "-DBOOST_ROOT:PATH=${BOOST_ROOT}")
+  endif()
   list(APPEND Sequoia_THIRDPARTYLIBS_ARGS
-    "-DBoost_INCLUDE_DIR:PATH=${Boost_INCLUDE_DIR}"
-    "-DBoost_LIBRARY_DIR:PATH=${Boost_LIBRARY_DIR}")
+    "-DBOOST_LIBRARYDIR:PATH=${Boost_LIBRARY_DIRS}"
+    "-DBOOST_INCLUDEDIR:PATH=${Boost_INCLUDE_DIRS}")
 else()
   include(External_boost)
 endif()
@@ -34,9 +38,10 @@ else()
 endif()
 
 if(USE_SYSTEM_TBB)
-  find_package(TBB)
+  find_package(TBB REQUIRED)
 else()
   include(External_tbb)
 endif()
 
 set(Sequoia_THIRDPARTYLIBS_ARGS "${Sequoia_THIRDPARTYLIBS_ARGS}" PARENT_SCOPE)
+

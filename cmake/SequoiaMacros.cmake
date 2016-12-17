@@ -71,7 +71,7 @@ endmacro()
 ## sequoia_setup_sequioa_engine_builds
 ## -----------------------------------
 ##
-## Setup build directories for the sequoia-eninge in Release, RelWithDebInfo and Debug mode using
+## Setup build directories for the sequoia-engine in Release, RelWithDebInfo and Debug mode using
 ## the current CMakeCache. 
 ##
 ##  LIST_PATH:PATH=<>       - CMakeLists.txt path
@@ -83,7 +83,12 @@ macro(sequoia_setup_sequioa_engine_builds)
   file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/Debug)
 
   set(CMAKE_ARGS "${Sequoia_DEFAULT_ARGS}" "${Sequoia_THIRDPARTYLIBS_ARGS}")
+  set(LIST_PATH ${CMAKE_SOURCE_DIR}/sequoia-engine)
 
+
+  list(APPEND CMAKE_DEBUG_ARGS -DSEQUOIA_ASSERTS=ON)
+  list(APPEND CMAKE_RELWITHDEBINFO_ARGS -DSEQUOIA_ASSERTS=ON)
+  list(APPEND CMAKE_RELEASE_ARGS -DSEQUOIA_ASSERTS=OFF)
   foreach(arg ${CMAKE_ARGS})
     # Remove -DCMAKE_INSTALL_PREFIX
     string(REGEX REPLACE "-DCMAKE_INSTALL_PREFIX:PATH=.*" "" arg_in ${arg})
@@ -92,8 +97,9 @@ macro(sequoia_setup_sequioa_engine_builds)
       continue()
     endif()
 
-    # Replace CMAKE_BUILD_TYPEs
-    string(REGEX REPLACE "-DCMAKE_BUILD_TYPE:STRING=.*" "-DCMAKE_BUILD_TYPE:STRING=Debug" arg_debug ${arg_in})
+    # Replace CMAKE_BUILD_TYPE
+    string(REGEX REPLACE "-DCMAKE_BUILD_TYPE:STRING=.*" 
+                         "-DCMAKE_BUILD_TYPE:STRING=Debug" arg_debug ${arg_in})
     list(APPEND CMAKE_DEBUG_ARGS ${arg_debug})
 
     string(REGEX REPLACE "-DCMAKE_BUILD_TYPE:STRING=.*" 
@@ -101,20 +107,45 @@ macro(sequoia_setup_sequioa_engine_builds)
     list(APPEND CMAKE_RELWITHDEBINFO_ARGS ${arg_relwithdebinfo})
 
     string(REGEX REPLACE "-DCMAKE_BUILD_TYPE:STRING=.*" 
-                         "-DMAKE_BUILD_TYPE:STRING=Release" arg_release ${arg_in})
+                         "-DCMAKE_BUILD_TYPE:STRING=Release" arg_release ${arg_in})
     list(APPEND CMAKE_RELEASE_ARGS ${arg_release})
   endforeach()
 
+  # Release
+  add_custom_target(setup-release-build ALL 
+                    COMMAND ${CMAKE_COMMAND} ${LIST_PATH} ${CMAKE_RELEASE_ARGS}
+                    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/Release
+                    COMMENT "Setting up Release build of sequoia-engine")
+  set(filename ${CMAKE_CURRENT_BINARY_DIR}/Release/run-cmake.sh)
+  file(WRITE "${filename}" "#!/bin/bash\n${CMAKE_COMMAND} ${LIST_PATH}")
+  foreach(arg ${CMAKE_RELEASE_ARGS})
+    file(APPEND "${filename}" " ${arg}")
+  endforeach()
+  file(APPEND "${filename}" "\n")
 
-#  message("${CMAKE_RELEASE_ARGS}")
-#  message("--------------") 
-#  message("${CMAKE_RELEASE_ARGS}")
+  # RelWithDebInfo
+  add_custom_target(setup-relwithdebinfo-build ALL 
+                    COMMAND ${CMAKE_COMMAND} ${LIST_PATH} ${CMAKE_RELWITHDEBINFO_ARGS}
+                    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/RelWithDebInfo
+                    COMMENT "Setting up RelWithDebInfo build of sequoia-engine")
+  set(filename ${CMAKE_CURRENT_BINARY_DIR}/RelWithDebInfo/run-cmake.sh)
+  file(WRITE "${filename}" "#!/bin/bash\n${CMAKE_COMMAND} ${LIST_PATH}")
+  foreach(arg ${CMAKE_RELWITHDEBINFO_ARGS})
+    file(APPEND "${filename}" " ${arg}")
+  endforeach() 
+  file(APPEND "${filename}" "\n") 
 
-#  add_custom_target(setup-build ALL 
-#                    # Release
-#                    COMMAND ${CMAKE_COMMAND} ${LIST_PATH} ${CMAKE_ARGS})
-#                    # RelWithDebInfo                    
-#                    COMMAND ${CMAKE_COMMAND} ${LIST_PATH} ${CMAKE_ARGS})
-#                    # Debug
-#                    COMMAND ${CMAKE_COMMAND} ${LIST_PATH} ${CMAKE_ARGS})
+  # Debug
+  add_custom_target(setup-debug-build ALL 
+                    COMMAND ${CMAKE_COMMAND} ${LIST_PATH} ${CMAKE_DEBUG_ARGS}
+                    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/Debug
+                    COMMENT "Setting up Debug build of sequoia-engine")
+  set(filename ${CMAKE_CURRENT_BINARY_DIR}/Debug/run-cmake.sh)
+  file(WRITE "${filename}" "#!/bin/bash\n${CMAKE_COMMAND} ${LIST_PATH}")
+  foreach(arg ${CMAKE_DEBUG_ARGS})
+    file(APPEND "${filename}" " ${arg}")
+  endforeach()  
+  file(APPEND "${filename}" "\n")
+  
 endmacro()
+

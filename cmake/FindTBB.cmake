@@ -56,8 +56,8 @@
 #
 # This module will set the following variables:
 #
-# * TBB_FOUND             - Set to false, or undefined, if we haven’t found, or
-#                           don’t want to use TBB.
+# * TBB_FOUND             - Set to false, or undefined, if we haven't found, or
+#                           don't want to use TBB.
 # * TBB_<component>_FOUND - If False, optional <component> part of TBB sytem is
 #                           not available.
 # * TBB_VERSION           - The full version string

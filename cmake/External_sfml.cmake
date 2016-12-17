@@ -20,3 +20,8 @@ ExternalProject_Add(
     -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
 )
 
+ExternalProject_Get_Property(sfml install_dir)
+set(SFML_ROOT "${install_dir}" CACHE INTERNAL "")
+
+list(APPEND Sequoia_THIRDPARTYLIBS_ARGS "-DSFML_ROOT:PATH=${SFML_ROOT}")
+

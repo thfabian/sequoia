@@ -78,21 +78,12 @@ function(sequoia_add_library)
   #
   # Add library
   #
-  add_library(${ARG_NAME} STATIC ${ARG_SOURCES} ${additional_headers})
+  add_library(${ARG_NAME} ${ARG_SOURCES} ${additional_headers})
   target_link_libraries(${ARG_NAME} ${ARG_DEPENDS})
   
   install(TARGETS ${ARG_NAME} DESTINATION lib)
 
 endfunction(sequoia_add_library)
-
-## sequoia_set_runtime_library
-## ---------------------------
-##
-## TODO
-##
-function(sequoia_set_runtime_library RUNTIME)
-
-endfunction()
 
 ## sequoia_configure_file
 ## ----------------------

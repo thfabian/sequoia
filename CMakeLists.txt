@@ -49,9 +49,9 @@ add_subdirectory(thirdparty)
 
 ##===---------------------------------- Sequoia projects --------------------------------------===##
 include(External_sequoia-engine)
-sequoia_setup_sequioa_engine_builds()
 
-# Configure a file to incoroporte CMake Cache of:
-#message(${Sequoia_DEFAULT_ARGS})
-#message(${Sequoia_THIRDPARTYLIBS_ARGS})
+option(SETUP_SEQUOIA_BUILDS "Setup sequoia-engine builds" ON)
+if(SETUP_SEQUOIA_BUILDS)
+  sequoia_setup_sequioa_engine_builds()
+endif()
 

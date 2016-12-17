@@ -31,3 +31,9 @@ ExternalProject_Add(
     -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
     -Dgtest_force_shared_crt:BOOL=ON
 )
+
+ExternalProject_Get_Property(gtest install_dir)
+set(GTEST_ROOT "${install_dir}" CACHE INTERNAL "")
+
+list(APPEND Sequoia_THIRDPARTYLIBS_ARGS "-DGTEST_ROOT:PATH=${GTEST_ROOT}")
+
