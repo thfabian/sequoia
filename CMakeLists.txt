@@ -39,7 +39,9 @@ set(Sequoia_DEFAULT_ARGS
   "-DBUILD_SHARED_LIBS:BOOL=${BUILD_SHARED_LIBS}"
   "-DCMAKE_PREFIX_PATH:PATH=${Sequoia_INSTALL_PREFIX};${CMAKE_PREFIX_PATH}"
   "-DCMAKE_INSTALL_PREFIX:PATH=${Sequoia_INSTALL_PREFIX}"
-  "-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}")
+  "-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}"
+  "-DCMAKE_CXX_COMPILER:PATH=${CMAKE_CXX_COMPILER}"
+)
 
 ##===---------------------------------- Third party projects --------------------------------===##
 include(Projects)
@@ -47,3 +49,8 @@ add_subdirectory(thirdparty)
 
 ##===---------------------------------- Sequoia projects --------------------------------------===##
 include(External_sequoia-engine)
+
+# Configure a file to incoroporte CMake Cache of:
+#message(${Sequoia_DEFAULT_ARGS})
+#message(${Sequoia_THIRDPARTYLIBS_ARGS})
+

@@ -40,8 +40,6 @@ else()
   list(APPEND boost_with_args "link=static")
 endif()
 
-list(APPEND boost_with_args "--build-type=complete")
-
 if(use_bat)
   if(MSVC14)
     set(_toolset "msvc-14.0")
@@ -49,7 +47,7 @@ if(use_bat)
     message(FATAL_ERROR "Only Microsoft Visual C 14.0 is supported (Visual Studio 2015)")
   endif()
   
-  list(APPEND boost_with_args "--layout=tagged" "toolset=${_toolset}")
+  list(APPEND boost_with_args "--build-type=complete" "--layout=tagged" "toolset=${_toolset}")
 
   set(boost_cmds
     CONFIGURE_COMMAND bootstrap.bat
@@ -82,3 +80,4 @@ list(APPEND Sequoia_THIRDPARTYLIBS_ARGS
   "-DBoost_INCLUDE_DIR:PATH=${BOOST_ROOT}/include"
   "-DBOOST_LIBRARYDIR:PATH=${BOOST_ROOT}/lib"
   "-DBoost_NO_SYSTEM_PATHS:BOOL=ON")
+
