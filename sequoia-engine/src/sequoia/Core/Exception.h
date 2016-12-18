@@ -27,6 +27,11 @@ namespace sequoia {
 
 namespace core {
 
+#ifdef SEQUOIA_COMPILER_MSVC
+#pragma warning(push)
+#pragma warning(disable : 4275)
+#endif
+
 //===--------------------------------------------------------------------------------------------===
 //  Exception
 //===--------------------------------------------------------------------------------------------===
@@ -62,8 +67,9 @@ public:
 
   /// @brief Convert to stream by streaming Exception::what() into `stream`.
   /// @{
-  friend std::ostream& operator<<(std::ostream& stream, const Exception& exception);
-  friend std::wostream& operator<<(std::wostream& stream, const Exception& exception);
+  SEQUOIA_EXPORT friend std::ostream& operator<<(std::ostream& stream, const Exception& exception);
+  SEQUOIA_EXPORT friend std::wostream& operator<<(std::wostream& stream,
+                                                  const Exception& exception);
   /// @}
 
 protected:
@@ -75,6 +81,10 @@ protected:
 //===--------------------------------------------------------------------------------------------===
 //  IOException
 //===--------------------------------------------------------------------------------------------===
+
+#ifdef SEQUOIA_COMPILER_MSVC
+#pragma warning(pop)
+#endif
 
 } // namespace core
 

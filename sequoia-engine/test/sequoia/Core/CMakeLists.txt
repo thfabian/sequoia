@@ -9,7 +9,8 @@
 
 sequoia_add_test(
   NAME SequoiaCoreTest
-  SOURCES TestString.cpp
+  SOURCES TestException.cpp
+          TestString.cpp
           TestMain.cpp
           TestVersion.cpp
   DEPENDS SequoiaCore 

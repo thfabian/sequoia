@@ -122,9 +122,6 @@ macro(sequoia_set_cxx_flags)
   # MSVC
   #
   if(SEQUOIA_COMPILER_MSVC)
-
-    # Warning C4275: non dll-interface class "X" used as base for dll-interface class "Y"
-    sequoia_check_and_set_cxx_flag(/wd4275 HAVE_MSVC_WARNNING_C4275)
     
   #
   # GCC/Clang
