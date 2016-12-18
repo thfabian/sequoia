@@ -7,12 +7,6 @@
 ##
 ##===------------------------------------------------------------------------------------------===##
 
-if(BUILD_SHARED_LIBS)
-  list(APPEND tbb_extra_args "-DTBB_BUILD_STATIC=OFF" "-DTBB_BUILD_SHARED=ON")
-else()
-  list(APPEND tbb_extra_args "-DTBB_BUILD_STATIC=ON" "-DTBB_BUILD_SHARED=OFF")
-endif()
-
 ExternalProject_Add(
   tbb
   DOWNLOAD_DIR ${download_dir}
@@ -24,7 +18,6 @@ ExternalProject_Add(
     -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
     -DBUILD_SHARED_LIBS:BOOL=${BUILD_SHARED_LIBS}
     -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
-    ${tbb_extra_args}
 )
 
 ExternalProject_Get_Property(tbb install_dir)

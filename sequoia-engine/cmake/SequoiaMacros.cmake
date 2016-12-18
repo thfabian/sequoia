@@ -110,13 +110,22 @@ macro(sequoia_set_cxx_flags)
     string(REPLACE "-DNDEBUG" "" CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO}")
     string(REPLACE "-DNDEBUG" "" CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE}")
   endif()
+  
+  #
+  # Add shared library flags
+  #
+  if(BUILD_SHARED_LIBS)
+    add_definitions(-DSEQUOIA_SHARED_LIBRARIES)
+  endif()
 
   #
   # MSVC
   #
   if(SEQUOIA_COMPILER_MSVC)
 
-
+    # Warning C4275: non dll-interface class "X" used as base for dll-interface class "Y"
+    sequoia_check_and_set_cxx_flag(/wd4275 HAVE_MSVC_WARNNING_C4275)
+    
   #
   # GCC/Clang
   #    

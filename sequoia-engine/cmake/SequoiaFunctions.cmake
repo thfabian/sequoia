@@ -81,6 +81,10 @@ function(sequoia_add_library)
   add_library(${ARG_NAME} ${ARG_SOURCES} ${additional_headers})
   target_link_libraries(${ARG_NAME} ${ARG_DEPENDS})
   
+  set_property(TARGET ${ARG_NAME} PROPERTY ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+  set_property(TARGET ${ARG_NAME} PROPERTY LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+  set_property(TARGET ${ARG_NAME} PROPERTY RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+  
   install(TARGETS ${ARG_NAME} DESTINATION lib)
 
 endfunction()
@@ -115,7 +119,7 @@ function(sequoia_add_test)
   #
   add_executable(${ARG_NAME} ${ARG_SOURCES})
   target_link_libraries(${ARG_NAME} ${ARG_DEPENDS})
-  set_property(TARGET ${ARG_NAME} PROPERTY RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}")
+  set_property(TARGET ${ARG_NAME} PROPERTY RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
 
   install(TARGETS ${ARG_NAME} DESTINATION bin)
 

@@ -1,3 +1,17 @@
+//===-- sequoia/Core/Format.h -------------------------------------------------------*- C++ -*-===//
+//
+//                                      S E Q U O I A
+//
+// This file is distributed under the MIT License (MIT).
+// See LICENSE.txt for details.
+//
+//===------------------------------------------------------------------------------------------===//
+//
+/// @file
+/// Printf-like formatting of strings via boost::format.
+//
+//===------------------------------------------------------------------------------------------===//
+
 #ifndef SEQUOIA_CORE_FORMAT
 #define SEQUOIA_CORE_FORMAT
 
@@ -5,7 +19,7 @@
 #include <boost/format.hpp>
 
 #ifndef NDEBUG
-#include "Exception.h"
+#include "sequoia/Core/Exception.h"
 #endif
 
 namespace sequoia {
@@ -23,7 +37,7 @@ struct BoostFormat {
 };
 
 template <>
-struct BoostFormat<Utf16String> {
+struct BoostFormat<std::wstring> {
   using type = boost::wformat;
 };
 
@@ -58,13 +72,13 @@ StringType basic_format(const CharT* fmt, Args&&... args) {
 /// @param args   Variadic sequence used as arguments
 /// @{
 template <typename... Args>
-Utf8String format(const char* fmt, Args&&... args) {
-  return internal::basic_format<Utf8String>(fmt, std::forward<Args>(args)...);
+std::string format(const char* fmt, Args&&... args) {
+  return internal::basic_format<std::string>(fmt, std::forward<Args>(args)...);
 }
 
 template <typename... Args>
-Utf16String format(const wchar_t* fmt, Args&&... args) {
-  return internal::basic_format<Utf16String>(fmt, std::forward<Args>(args)...);
+std::wstring format(const wchar_t* fmt, Args&&... args) {
+  return internal::basic_format<std::wstring>(fmt, std::forward<Args>(args)...);
 }
 /// @}
 

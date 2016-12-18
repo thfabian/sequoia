@@ -32,7 +32,7 @@ namespace core {
 //===--------------------------------------------------------------------------------------------===
 
 /// @brief Base class for all library exceptions
-SEQUOIA_EXPORT class Exception : public std::exception {
+class SEQUOIA_EXPORT Exception : public std::exception {
 public:
   /// @brief Initialize the exception
   ///

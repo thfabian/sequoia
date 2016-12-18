@@ -11,6 +11,7 @@ sequoia_add_test(
   NAME SequoiaCoreTest
   SOURCES TestString.cpp
           TestMain.cpp
+          TestVersion.cpp
   DEPENDS SequoiaCore 
           ${SEQUOIA_BOOST_LIBRARIES}
           ${SEQUOIA_SFML_LIBRARIES}

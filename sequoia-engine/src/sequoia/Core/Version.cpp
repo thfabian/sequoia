@@ -19,8 +19,7 @@ namespace sequoia {
 
 namespace core {
 
-Version::Version(int major, int minor, int patch)
-    : major_(major), minor_(minor), patch_(patch) {}
+Version::Version(int major, int minor, int patch) : major_(major), minor_(minor), patch_(patch) {}
 
 Version::Version(int version) { *this = Version::fromSingle(version); }
 
@@ -31,13 +30,11 @@ Version Version::currentVersion() noexcept {
                 "invalid minor version, should be in [0, 100)");
   static_assert(SEQUOIA_VERSION_PATCH < 10 && SEQUOIA_VERSION_PATCH >= 0,
                 "invalid patch version, should be in [0, 10)");
-  return Version(SEQUOIA_VERSION_MAJOR, SEQUOIA_VERSION_MINOR,
-                 SEQUOIA_VERSION_PATCH);
+  return Version(SEQUOIA_VERSION_MAJOR, SEQUOIA_VERSION_MINOR, SEQUOIA_VERSION_PATCH);
 }
 
-int Version::toSingle(const Version &version) noexcept {
-  return 100000 * version.major() + 1000 * version.minor() +
-         100 * version.patch();
+int Version::toSingle(const Version& version) noexcept {
+  return 100000 * version.major() + 100 * version.minor() + version.patch();
 }
 
 Version Version::fromSingle(int version) noexcept {
@@ -48,36 +45,35 @@ std::string Version::currentFullVersionString() noexcept {
   return std::string(SEQUOIA_VERSION_STRING);
 }
 
-bool Version::operator==(const Version &version) const noexcept {
+bool Version::operator==(const Version& version) const noexcept {
   return (toSingle(*this) == version.toSingle(version));
 }
 
-bool Version::operator!=(const Version &version) const noexcept {
+bool Version::operator!=(const Version& version) const noexcept {
   return (toSingle(*this) != version.toSingle(version));
 }
 
-bool Version::operator<(const Version &version) const noexcept {
+bool Version::operator<(const Version& version) const noexcept {
   return (toSingle(*this) < version.toSingle(version));
 }
 
-bool Version::operator<=(const Version &version) const noexcept {
+bool Version::operator<=(const Version& version) const noexcept {
   return (toSingle(*this) <= version.toSingle(version));
 }
 
-bool Version::operator>(const Version &version) const noexcept {
+bool Version::operator>(const Version& version) const noexcept {
   return (toSingle(*this) > version.toSingle(version));
 }
 
-bool Version::operator>=(const Version &version) const noexcept {
+bool Version::operator>=(const Version& version) const noexcept {
   return (toSingle(*this) >= version.toSingle(version));
 }
 
 std::string Version::toString() const {
-  return std::to_string(major_) + "." + std::to_string(minor_) + "." +
-         std::to_string(patch_);
+  return std::to_string(major_) + "." + std::to_string(minor_) + "." + std::to_string(patch_);
 }
 
-std::ostream &operator<<(std::ostream &stream, const Version &version) {
+std::ostream& operator<<(std::ostream& stream, const Version& version) {
   return (stream << version.toString());
 }
 

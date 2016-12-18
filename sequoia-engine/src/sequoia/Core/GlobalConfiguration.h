@@ -27,7 +27,7 @@ namespace core {
 /// @brief Expose configuration options
 /// 
 /// @ingroup core
-SEQUOIA_EXPORT class GlobalConfiguration : public Singleton<GlobalConfiguration> {
+class SEQUOIA_EXPORT GlobalConfiguration : public Singleton<GlobalConfiguration> {
 public:
   /// @brief Available parsers
   enum ParserKind { XML, JSON, INI, INFO };
