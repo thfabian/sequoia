@@ -37,7 +37,7 @@ namespace core {
 /// It automatically handles conversions from/to ANSI and wide strings, so that you can work with
 /// standard string classes and still be compatible with functions taking a sf::String.
 ///
-/// \code
+/// @code
 ///   sequoia::core::String s;
 ///
 ///   std::string s1 = s;  // automatically converted to ANSI string
@@ -46,18 +46,18 @@ namespace core {
 ///   s = L"hello";        // automatically converted from wide string
 ///   s += 'a';            // automatically converted from ANSI string
 ///   s += L'a';           // automatically converted from wide string
-/// \endcode
+/// @endcode
 ///
 /// Conversions involving ANSI strings use the default user locale. However it is possible to use a
 /// custom locale if necessary:
 ///
-/// \code
+/// @code
 ///   std::locale locale;
 ///   sf::String s;
-///   ...
+///   // ...
 ///   std::string s1 = s.toAnsiString(locale);
 ///   s = sequoia::core::String("hello", locale);
-/// \endcode
+/// @endcode
 ///
 /// sequoia::core::String defines the most important functions of the standard std::string class:
 /// removing, random access, iterating, appending, comparing, etc. However it is a simple class
