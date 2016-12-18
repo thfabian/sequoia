@@ -1,7 +1,20 @@
+//===-- sequoia/Core/GlobalConfiguration.h ------------------------------------------*- C++ -*-===//
+//
+//                                      S E Q U O I A
+//
+// This file is distributed under the MIT License (MIT).
+// See LICENSE.txt for details.
+//
+//===------------------------------------------------------------------------------------------===//
+//
+/// @file
+/// Global configuration class.
+//
+//===------------------------------------------------------------------------------------------===//
+
 #ifndef SEQUOIA_CORE_GLOBALCONFIGURATION
 #define SEQUOIA_CORE_GLOBALCONFIGURATION
 
-#include "sequoia/Core/Exception.h"
 #include "sequoia/Core/Singleton.h"
 #include "sequoia/Core/String.h"
 #include <boost/property_tree/ptree_fwd.hpp>
@@ -12,6 +25,8 @@ namespace sequoia {
 namespace core {
 
 /// @brief Expose configuration options
+/// 
+/// @ingroup core
 SEQUOIA_EXPORT class GlobalConfiguration : public Singleton<GlobalConfiguration> {
 public:
   /// @brief Available parsers
@@ -46,6 +61,8 @@ private:
 };
 
 } // namespace core
+
+/// @}
 
 } // namespace sequoia
 

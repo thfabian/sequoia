@@ -7,5 +7,14 @@
 ##
 ##===------------------------------------------------------------------------------------------===##
 
-add_subdirectory(Core)
+sequoia_add_test(
+  NAME SequoiaCoreTest
+  SOURCES TestString.cpp
+          TestMain.cpp
+  DEPENDS SequoiaCore 
+          ${SEQUOIA_BOOST_LIBRARIES}
+          ${SEQUOIA_SFML_LIBRARIES}
+          ${SEQUOIA_GTEST_LIBRARIES}
+          ${SEQUOIA_THREADS_LIBRARIES}
+)
 

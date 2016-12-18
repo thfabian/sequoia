@@ -7,7 +7,12 @@
 ##
 ##===------------------------------------------------------------------------------------------===##
 
-if(NOT(SEQUOIA_GTEST_FOUND))
+find_package(GTest REQUIRED)
 
-endif()
-
+include_directories(SYSTEM ${GTEST_INCLUDE_DIRS})
+sequoia_export_package_variable(
+  GTEST 
+  ${GTEST_FOUND} 
+  "GTest: Found" 
+  ${GTEST_LIBRARIES}
+)

@@ -115,7 +115,8 @@ macro(sequoia_setup_sequioa_engine_builds)
   add_custom_target(setup-release-build ALL 
                     COMMAND ${CMAKE_COMMAND} ${LIST_PATH} ${CMAKE_RELEASE_ARGS} -G "${CMAKE_GENERATOR}"
                     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/Release
-                    COMMENT "Setting up Release build of sequoia-engine")
+                    COMMENT "Setting up Release build of sequoia-engine"
+                    DEPENDS sequoia-engine)
   set(filename ${CMAKE_CURRENT_BINARY_DIR}/Release/run-cmake.sh)
   file(WRITE "${filename}" "#!/bin/bash\n${CMAKE_COMMAND} ${LIST_PATH} -G \"${CMAKE_GENERATOR}\"")
   foreach(arg ${CMAKE_RELEASE_ARGS})
@@ -127,7 +128,8 @@ macro(sequoia_setup_sequioa_engine_builds)
   add_custom_target(setup-relwithdebinfo-build ALL 
                     COMMAND ${CMAKE_COMMAND} ${LIST_PATH} ${CMAKE_RELWITHDEBINFO_ARGS} -G "${CMAKE_GENERATOR}"
                     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/RelWithDebInfo
-                    COMMENT "Setting up RelWithDebInfo build of sequoia-engine")
+                    COMMENT "Setting up RelWithDebInfo build of sequoia-engine"
+                    DEPENDS sequoia-engine)
   set(filename ${CMAKE_CURRENT_BINARY_DIR}/RelWithDebInfo/run-cmake.sh)
   file(WRITE "${filename}" "#!/bin/bash\n${CMAKE_COMMAND} ${LIST_PATH} -G \"${CMAKE_GENERATOR}\"")
   foreach(arg ${CMAKE_RELWITHDEBINFO_ARGS})
@@ -139,7 +141,8 @@ macro(sequoia_setup_sequioa_engine_builds)
   add_custom_target(setup-debug-build ALL 
                     COMMAND ${CMAKE_COMMAND} ${LIST_PATH} ${CMAKE_DEBUG_ARGS} -G "${CMAKE_GENERATOR}"
                     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/Debug
-                    COMMENT "Setting up Debug build of sequoia-engine")
+                    COMMENT "Setting up Debug build of sequoia-engine"
+                    DEPENDS sequoia-engine)
   set(filename ${CMAKE_CURRENT_BINARY_DIR}/Debug/run-cmake.sh)
   file(WRITE "${filename}" "#!/bin/bash\n${CMAKE_COMMAND} ${LIST_PATH} -G \"${CMAKE_GENERATOR}\"")
   foreach(arg ${CMAKE_DEBUG_ARGS})

@@ -51,9 +51,10 @@ sequoia_report_result(
 )
 
 ##===---------------------------------- Add external libraries --------------------------------===##
+include(AddThreads)
 include(AddBoost)
 include(AddSFML)
-include(AddThreads)
+include(AddGTest)
 
 # Output findings
 sequoia_report_result(
@@ -61,6 +62,7 @@ sequoia_report_result(
   "${SEQUOIA_THREADS_INFO_STR}"
   "${SEQUOIA_BOOST_INFO_STR}"
   "${SEQUOIA_SFML_INFO_STR}"
+  "${SEQUOIA_GTEST_INFO_STR}"
 )
   
 ##===------------------------------------ Sequoia libraries -----------------------------------===##

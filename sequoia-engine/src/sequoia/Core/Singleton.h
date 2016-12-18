@@ -1,3 +1,17 @@
+//===-- sequoia/Core/Singleton.h ----------------------------------------------------*- C++ -*-===//
+//
+//                                      S E Q U O I A
+//
+// This file is distributed under the MIT License (MIT).
+// See LICENSE.txt for details.
+//
+//===------------------------------------------------------------------------------------------===//
+//
+/// @file
+/// Singleton base class.
+//
+//===------------------------------------------------------------------------------------------===//
+
 #ifndef SEQUOIA_CORE_SINGLETON
 #define SEQUOIA_CORE_SINGLETON
 
