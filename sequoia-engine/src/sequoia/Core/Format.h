@@ -12,8 +12,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_CORE_FORMAT
-#define SEQUOIA_CORE_FORMAT
+#ifndef SEQUOIA_CORE_FORMAT_H
+#define SEQUOIA_CORE_FORMAT_H
 
 #include "sequoia/Core/String.h"
 #include <boost/format.hpp>
@@ -24,7 +24,7 @@
 
 namespace sequoia {
 
-/// @addtogroup core
+/// @ingroup core
 /// @{
 
 namespace core {
@@ -70,6 +70,8 @@ StringType basic_format(const CharT* fmt, Args&&... args) {
 ///
 /// @param fmt    Format string
 /// @param args   Variadic sequence used as arguments
+///
+/// @ingroup core
 /// @{
 template <typename... Args>
 std::string format(const char* fmt, Args&&... args) {

@@ -12,8 +12,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_CORE_SINGLETON
-#define SEQUOIA_CORE_SINGLETON
+#ifndef SEQUOIA_CORE_SINGLETON_H
+#define SEQUOIA_CORE_SINGLETON_H
 
 namespace sequoia {
 
@@ -44,6 +44,8 @@ namespace core {
 ///   template<>
 ///   MySingleton* Singleton<MySingleton>::instance_ = nullptr;
 /// @endcode
+///
+/// @ingroup core
 template <class Derived>
 class Singleton {
 private:

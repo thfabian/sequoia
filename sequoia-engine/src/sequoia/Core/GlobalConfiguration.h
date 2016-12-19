@@ -12,8 +12,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_CORE_GLOBALCONFIGURATION
-#define SEQUOIA_CORE_GLOBALCONFIGURATION
+#ifndef SEQUOIA_CORE_GLOBALCONFIGURATION_H
+#define SEQUOIA_CORE_GLOBALCONFIGURATION_H
 
 #include "sequoia/Core/Singleton.h"
 #include "sequoia/Core/String.h"
@@ -61,8 +61,6 @@ private:
 };
 
 } // namespace core
-
-/// @}
 
 } // namespace sequoia
 

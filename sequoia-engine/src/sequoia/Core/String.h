@@ -12,8 +12,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_CORE_STRING
-#define SEQUOIA_CORE_STRING
+#ifndef SEQUOIA_CORE_STRING_H
+#define SEQUOIA_CORE_STRING_H
 
 #include "sequoia/Core/Core.h"
 #include <SFML/System/String.hpp>
@@ -22,10 +22,9 @@
 
 namespace sequoia {
 
+namespace core {
 /// @addtogroup core
 /// @{
-
-namespace core {
 
 /// @typedef String
 /// @brief Utility string class that automatically handles conversions between types and encodings
@@ -76,9 +75,9 @@ SEQUOIA_EXPORT extern const wchar_t* copyCString(const std::wstring& s);
 SEQUOIA_EXPORT extern const wchar_t* copyCString(const wchar_t* s);
 /// @}
 
-} // namespace core
-
 /// @}
+
+} // namespace core
 
 using String = core::String;
 

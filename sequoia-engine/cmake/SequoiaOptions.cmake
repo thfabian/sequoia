@@ -24,3 +24,6 @@ option(SEQUOIA_ASSERTS "Enable asserts" ${BUILD_IS_RELEASE})
 option(SEQUOIA_TESTING "Enable testing" ON)
 CMAKE_DEPENDENT_OPTION(SEQUOIA_CORE_TESTING "Enable core unittests" ON "SEQUOIA_TESTING" OFF)
 
+##===---------------------------------- Testing -----------------------------------------------===##
+option(SEQUOIA_DOCUMENTATION "Enable documentation" ON)
+

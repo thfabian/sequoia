@@ -32,7 +32,7 @@ else()
 endif()
 
 if(USE_SYSTEM_SFML)
-  find_package(SFML ${sfml_version} RCOMPONENTS ${sfml_components} REQUIRED)
+  find_package(SFML ${sfml_version} COMPONENTS ${sfml_components} REQUIRED)
 else()
   include(External_sfml)
 endif()

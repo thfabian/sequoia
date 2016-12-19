@@ -9,9 +9,12 @@
 
 sequoia_add_test(
   NAME SequoiaCoreTest
-  SOURCES TestException.cpp
-          TestString.cpp
+  SOURCES TestArrayRef.cpp
+          TestException.cpp
           TestMain.cpp
+          TestSmallVector.cpp
+          TestString.cpp
+          TestStringRef.cpp
           TestVersion.cpp
   DEPENDS SequoiaCore 
           ${SEQUOIA_BOOST_LIBRARIES}

@@ -15,16 +15,15 @@
 
 #include "sequoia/Core/StringRef.h"
 #include "sequoia/Core/EditDistance.h"
+#include "sequoia/Core/SmallVector.h"
 #include <bitset>
+#include <climits>
 
 namespace sequoia {
 
 namespace core {
 
-// MSVC emits references to this into the translation units which reference it.
-#ifdef SEQUOIA_COMPILER_MSVC
 const size_t StringRef::npos;
-#endif
 
 static char ascii_tolower(char x) {
   if(x >= 'A' && x <= 'Z')
@@ -321,58 +320,57 @@ StringRef::size_type StringRef::find_last_not_of(StringRef Chars, size_t From) c
   return npos;
 }
 
-// void StringRef::split(SmallVectorImpl<StringRef> &A,
-//                      StringRef Separator, int MaxSplit,
-//                      bool KeepEmpty) const {
-//  StringRef S = *this;
-//
-//  // Count down from MaxSplit. When MaxSplit is -1, this will just split
-//  // "forever". This doesn't support splitting more than 2^31 times
-//  // intentionally; if we ever want that we can make MaxSplit a 64-bit integer
-//  // but that seems unlikely to be useful.
-//  while (MaxSplit-- != 0) {
-//    size_t Idx = S.find(Separator);
-//    if (Idx == npos)
-//      break;
-//
-//    // Push this split.
-//    if (KeepEmpty || Idx > 0)
-//      A.push_back(S.slice(0, Idx));
-//
-//    // Jump forward.
-//    S = S.slice(Idx + Separator.size(), npos);
-//  }
-//
-//  // Push the tail.
-//  if (KeepEmpty || !S.empty())
-//    A.push_back(S);
-//}
-//
-// void StringRef::split(SmallVectorImpl<StringRef> &A, char Separator,
-//                      int MaxSplit, bool KeepEmpty) const {
-//  StringRef S = *this;
-//
-//  // Count down from MaxSplit. When MaxSplit is -1, this will just split
-//  // "forever". This doesn't support splitting more than 2^31 times
-//  // intentionally; if we ever want that we can make MaxSplit a 64-bit integer
-//  // but that seems unlikely to be useful.
-//  while (MaxSplit-- != 0) {
-//    size_t Idx = S.find(Separator);
-//    if (Idx == npos)
-//      break;
-//
-//    // Push this split.
-//    if (KeepEmpty || Idx > 0)
-//      A.push_back(S.slice(0, Idx));
-//
-//    // Jump forward.
-//    S = S.slice(Idx + 1, npos);
-//  }
-//
-//  // Push the tail.
-//  if (KeepEmpty || !S.empty())
-//    A.push_back(S);
-//}
+void StringRef::split(SmallVectorImpl<StringRef>& A, StringRef Separator, int MaxSplit,
+                      bool KeepEmpty) const {
+  StringRef S = *this;
+
+  // Count down from MaxSplit. When MaxSplit is -1, this will just split
+  // "forever". This doesn't support splitting more than 2^31 times
+  // intentionally; if we ever want that we can make MaxSplit a 64-bit integer
+  // but that seems unlikely to be useful.
+  while(MaxSplit-- != 0) {
+    size_t Idx = S.find(Separator);
+    if(Idx == npos)
+      break;
+
+    // Push this split.
+    if(KeepEmpty || Idx > 0)
+      A.push_back(S.slice(0, Idx));
+
+    // Jump forward.
+    S = S.slice(Idx + Separator.size(), npos);
+  }
+
+  // Push the tail.
+  if(KeepEmpty || !S.empty())
+    A.push_back(S);
+}
+
+void StringRef::split(SmallVectorImpl<StringRef>& A, char Separator, int MaxSplit,
+                      bool KeepEmpty) const {
+  StringRef S = *this;
+
+  // Count down from MaxSplit. When MaxSplit is -1, this will just split
+  // "forever". This doesn't support splitting more than 2^31 times
+  // intentionally; if we ever want that we can make MaxSplit a 64-bit integer
+  // but that seems unlikely to be useful.
+  while(MaxSplit-- != 0) {
+    size_t Idx = S.find(Separator);
+    if(Idx == npos)
+      break;
+
+    // Push this split.
+    if(KeepEmpty || Idx > 0)
+      A.push_back(S.slice(0, Idx));
+
+    // Jump forward.
+    S = S.slice(Idx + 1, npos);
+  }
+
+  // Push the tail.
+  if(KeepEmpty || !S.empty())
+    A.push_back(S);
+}
 
 //===----------------------------------------------------------------------===//
 // Helpful Algorithms
@@ -418,8 +416,7 @@ static unsigned GetAutoSenseRadix(StringRef& Str) {
   return 10;
 }
 
-bool sequoia::core::consumeUnsignedInteger(StringRef& Str, unsigned Radix,
-                                           unsigned long long& Result) {
+bool consumeUnsignedInteger(StringRef& Str, unsigned Radix, unsigned long long& Result) {
   // Autosense radix if not specified.
   if(Radix == 0)
     Radix = GetAutoSenseRadix(Str);
@@ -467,7 +464,7 @@ bool sequoia::core::consumeUnsignedInteger(StringRef& Str, unsigned Radix,
   return false;
 }
 
-bool sequoia::core::consumeSignedInteger(StringRef& Str, unsigned Radix, long long& Result) {
+bool consumeSignedInteger(StringRef& Str, unsigned Radix, long long& Result) {
   unsigned long long ULLVal;
 
   // Handle positive strings first.
@@ -496,8 +493,7 @@ bool sequoia::core::consumeSignedInteger(StringRef& Str, unsigned Radix, long lo
 
 /// GetAsUnsignedInteger - Workhorse method that converts a integer character
 /// sequence of radix up to 36 to an unsigned long long value.
-bool sequoia::core::getAsUnsignedInteger(StringRef Str, unsigned Radix,
-                                         unsigned long long& Result) {
+bool getAsUnsignedInteger(StringRef Str, unsigned Radix, unsigned long long& Result) {
   if(consumeUnsignedInteger(Str, Radix, Result))
     return true;
 
@@ -506,7 +502,7 @@ bool sequoia::core::getAsUnsignedInteger(StringRef Str, unsigned Radix,
   return !Str.empty();
 }
 
-bool sequoia::core::getAsSignedInteger(StringRef Str, unsigned Radix, long long& Result) {
+bool getAsSignedInteger(StringRef Str, unsigned Radix, long long& Result) {
   if(consumeSignedInteger(Str, Radix, Result))
     return true;
 

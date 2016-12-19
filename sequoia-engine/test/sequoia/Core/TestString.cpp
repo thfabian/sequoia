@@ -12,18 +12,36 @@
 
 using namespace sequoia::core;
 
+namespace {
+
 TEST(String, String) {
-   sequoia::core::String s(L"Fabian Thüring");
 
-   // To std::wstring
-   std::wstring wstring = s;
-   EXPECT_EQ(std::wstring(L"Fabian Thüring"), wstring);
+  // Narrow strings
+  {
+    sequoia::core::String s(L"string");
 
-   // To std::string
-   std::string string = s;
-   EXPECT_EQ(std::string("Fabian Thüring"), string);
+    std::wstring wstring = s;
+    EXPECT_EQ(std::wstring(L"string"), wstring);
+
+    std::string string = s;
+    EXPECT_EQ(std::string("string"), string);
+  }
+
+#ifdef SEQUOIA_ON_WIN32
+  // Wide strings
+  {
+    sequoia::core::String s(L"Fabian Thüring");
+
+    // To std::wstring
+    std::wstring wstring = s;
+    EXPECT_EQ(std::wstring(L"Fabian Thüring"), wstring);
+
+    // To std::string
+    std::string string = s;
+    EXPECT_EQ(std::string("Fabian Thüring"), string);
+  }
+#endif
 }
-
 
 TEST(String, CopyCString) {
   std::string string("string");
@@ -38,3 +56,5 @@ TEST(String, CopyCString) {
   delete copyString;
   delete copyWString;
 }
+
+} // anonymous namespace

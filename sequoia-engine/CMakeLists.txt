@@ -77,3 +77,8 @@ if(SEQUOIA_TESTING)
   add_subdirectory(test)
 endif()
 
+##===----------------------------------------- Documentation ----------------------------------===##
+if(SEQUOIA_DOCUMENTATION)
+  add_subdirectory(docs)
+endif()
+

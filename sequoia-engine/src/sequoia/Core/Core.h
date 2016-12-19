@@ -28,4 +28,7 @@ namespace sequoia {
 #include "sequoia/Core/Platform.h"
 #include "sequoia/Core/Compiler.h"
 
+/// @defgroup core Core
+/// @brief Core infrastructure of Sequoia.
+
 #endif

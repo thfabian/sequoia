@@ -75,8 +75,6 @@ function(sequoia_add_library)
     list(APPEND additional_headers ${headers})
   endforeach()
   
-  message(${additional_headers})
-  
   #
   # Add library
   #

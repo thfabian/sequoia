@@ -12,6 +12,8 @@
 
 using namespace sequoia::core;
 
+namespace {
+
 TEST(Version, Construction) {
   Version version(1, 60, 0);
   EXPECT_EQ(version.major(), 1);
@@ -24,7 +26,7 @@ TEST(Version, Construction) {
   EXPECT_EQ(currentVersion.patch(), SEQUOIA_VERSION_PATCH);
 }
 
-TEST(Version, Coversion) { 
+TEST(Version, Coversion) {
   Version versionTripple(1, 60, 2);
   EXPECT_EQ(Version::toSingle(versionTripple), 106002);
 
@@ -50,3 +52,4 @@ TEST(Version, ToString) {
   EXPECT_STREQ(ss.str().c_str(), "1.60.2");
 }
 
+} // anonymous namespace

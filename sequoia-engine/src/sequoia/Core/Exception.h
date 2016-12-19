@@ -12,8 +12,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_CORE_EXCEPTION
-#define SEQUOIA_CORE_EXCEPTION
+#ifndef SEQUOIA_CORE_EXCEPTION_H
+#define SEQUOIA_CORE_EXCEPTION_H
 
 #include "sequoia/Core/String.h"
 #include <exception>
@@ -21,9 +21,6 @@
 #include <memory>
 
 namespace sequoia {
-
-/// @addtogroup core
-/// @{
 
 namespace core {
 
@@ -37,6 +34,8 @@ namespace core {
 //===--------------------------------------------------------------------------------------------===
 
 /// @brief Base class for all library exceptions
+/// 
+/// @ingroup core
 class SEQUOIA_EXPORT Exception : public std::exception {
 public:
   /// @brief Initialize the exception
@@ -95,13 +94,13 @@ protected:
 ///
 /// @param exception    Exception to throw (exception has to derive from sequoia::core::Exception)
 /// @param message      String describing the general cause of the current error
+/// 
+/// @ingroup core
 #ifndef NDEBUG
 #define SEQUOIA_THROW(exception, message) SEQUOIA_THROW_IMPL(exception, message, __LINE__, __FILE__)
 #else
 #define SEQUOIA_THROW(exception, message) SEQUOIA_THROW_IMPL(exception, message, -1, nullptr)
 #endif
-
-/// @}
 
 using Exeption = core::Exception;
 

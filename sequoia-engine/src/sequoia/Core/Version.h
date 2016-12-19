@@ -45,23 +45,17 @@ public:
 
   /// @brief Convert version to a single integer
   ///
-  /// This is the reverse of Version::toSingle()
-  ///
   /// @code
   ///   auto version = Version::currentVersion();
-  ///   version.toSingle() % 100;          // is the current patch level
-  ///   version.toSingle() / 100 % 1000;   // is the current minor version
-  ///   version.toSingle() / 100000;       // is the current major version
+  ///   version.toSingle(version) % 100;          // is the current patch level
+  ///   version.toSingle(version) / 100 % 1000;   // is the current minor version
+  ///   version.toSingle(version) / 100000;       // is the current major version
   /// @endcode
   static int toSingle(const Version& version) noexcept;
 
   /// @brief Convert integer to version tripple
   ///
-  /// This is the reverse of Version::toSingle()
-  ///
-  /// @code
-  ///   TODO
-  /// @endcode
+  /// This is the reverse of Version::toSingle().
   static Version fromSingle(int version) noexcept;
 
   /// @brief Major revision

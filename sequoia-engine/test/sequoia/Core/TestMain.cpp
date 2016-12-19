@@ -9,6 +9,8 @@
 
 #include <gtest/gtest.h>
 
+#include "sequoia/Core/SmallVector.h"
+
 int main(int argc, char* argv[]) {
 
   // Initialize gtest

@@ -13,6 +13,7 @@ sequoia_add_library(
   NAME SequoiaCore
   SOURCES Version.cpp
           Exception.cpp
+          SmallVector.cpp
           String.cpp
           StringRef.cpp
           GlobalConfiguration.cpp

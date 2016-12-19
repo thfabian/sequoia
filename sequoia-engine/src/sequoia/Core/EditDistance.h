@@ -13,8 +13,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_CORE_EDITDISTANCE
-#define SEQUOIA_CORE_EDITDISTANCE
+#ifndef SEQUOIA_CORE_EDITDISTANCE_H
+#define SEQUOIA_CORE_EDITDISTANCE_H
 
 #include "sequoia/Core/ArrayRef.h"
 #include <algorithm>
@@ -26,12 +26,12 @@ namespace core {
 
 /// @brief Determine the edit distance between two sequences.
 ///
-/// @param FromArray          The first sequence to compare.
-/// @param ToArray            The second sequence to compare.
-/// @param AllowReplacements  Whether to allow element replacements (change one element into
+/// @param fromArray          The first sequence to compare.
+/// @param toArray            The second sequence to compare.
+/// @param allowReplacements  Whether to allow element replacements (change one element into
 ///                           another) as a single operation, rather than as two operations
 ///                           (an insertion and a removal).
-/// @param MaxEditDistance    If non-zero, the maximum edit distance that this routine is allowed to
+/// @param maxEditDistance    If non-zero, the maximum edit distance that this routine is allowed to
 ///                           compute. If the edit distance will exceed that maximum, returns @c
 ///                           MaxEditDistance+1.
 ///
@@ -41,8 +41,8 @@ namespace core {
 ///
 /// @ingroup core
 template <typename T>
-unsigned ComputeEditDistance(ArrayRef<T> FromArray, ArrayRef<T> ToArray,
-                             bool AllowReplacements = true, unsigned MaxEditDistance = 0) {
+unsigned ComputeEditDistance(ArrayRef<T> fromArray, ArrayRef<T> toArray,
+                             bool allowReplacements = true, unsigned maxEditDistance = 0) {
   // The algorithm implemented below is the "classic" dynamic-programming algorithm for computing
   // the Levenshtein distance, which is described here:
   //
@@ -53,8 +53,8 @@ unsigned ComputeEditDistance(ArrayRef<T> FromArray, ArrayRef<T> ToArray,
   // one entry, only the entries to the left, top, and top-left are needed. The left entry is in
   // Row[x-1], the top entry is what's in Row[x] from the last iteration, and the top-left entry is
   // stored in Previous.
-  typename ArrayRef<T>::size_type m = FromArray.size();
-  typename ArrayRef<T>::size_type n = ToArray.size();
+  typename ArrayRef<T>::size_type m = fromArray.size();
+  typename ArrayRef<T>::size_type n = toArray.size();
 
   const unsigned SmallBufferSize = 64;
   unsigned SmallBuffer[SmallBufferSize];
@@ -75,11 +75,11 @@ unsigned ComputeEditDistance(ArrayRef<T> FromArray, ArrayRef<T> ToArray,
     unsigned Previous = y - 1;
     for(typename ArrayRef<T>::size_type x = 1; x <= n; ++x) {
       int OldRow = Row[x];
-      if(AllowReplacements) {
-        Row[x] = std::min(Previous + (FromArray[y - 1] == ToArray[x - 1] ? 0u : 1u),
+      if(allowReplacements) {
+        Row[x] = std::min(Previous + (fromArray[y - 1] == toArray[x - 1] ? 0u : 1u),
                           std::min(Row[x - 1], Row[x]) + 1);
       } else {
-        if(FromArray[y - 1] == ToArray[x - 1])
+        if(fromArray[y - 1] == toArray[x - 1])
           Row[x] = Previous;
         else
           Row[x] = std::min(Row[x - 1], Row[x]) + 1;
@@ -88,8 +88,8 @@ unsigned ComputeEditDistance(ArrayRef<T> FromArray, ArrayRef<T> ToArray,
       BestThisRow = std::min(BestThisRow, Row[x]);
     }
 
-    if(MaxEditDistance && BestThisRow > MaxEditDistance)
-      return MaxEditDistance + 1;
+    if(maxEditDistance && BestThisRow > maxEditDistance)
+      return maxEditDistance + 1;
   }
 
   unsigned Result = Row[n];
