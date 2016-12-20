@@ -28,13 +28,13 @@ set(gtest_url "https://github.com/google/googletest/archive/release-${gtest_vers
 set(gtest_md5 "4ff6353b2560df0afecfbda3b2763847")
 
 #
-# SFML
+# OGRE
 #
-list(APPEND projects sfml)
-set(sfml_version "2.4.1")
-set(sfml_url "https://github.com/SFML/SFML/archive/${sfml_version}.tar.gz")
-set(sfml_md5 "abe4eea023275dc82eb4d47914095425")
-set(sfml_components system window graphics main)
+list(APPEND projects ogre)
+set(ogre_version "1.9")
+set(ogre_url "")
+set(ogre_md5 "")
+set(ogre_components)
 
 #
 # TBB
@@ -42,3 +42,4 @@ set(sfml_components system window graphics main)
 list(APPEND projects tbb)
 set(tbb_url "https://github.com/thfabian/tbb/archive/tbb44u4.tar.gz")
 set(tbb_md5 "bfbeb805c91fcd32f858f8d9c26ad0e8")
+

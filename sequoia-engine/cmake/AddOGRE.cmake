@@ -7,13 +7,20 @@
 ##
 ##===------------------------------------------------------------------------------------------===##
 
-find_package(SFML 2 COMPONENTS system window graphics REQUIRED)
+find_package(OGRE)
 
-include_directories(SYSTEM ${SFML_INCLUDE_DIR})
+include_directories(SYSTEM ${OGRE_INCLUDE_DIRS})
+
+if(${CMAKE_BUILD_TYPE} MATCHES "Debug")
+  list(APPEND ogre_libraries ${OGRE_LIBRARY_DBG})
+else()
+  list(APPEND ogre_libraries ${OGRE_LIBRARY_REL})
+endif()
 
 sequoia_export_package_variable(
-  SFML 
-  ${SFML_FOUND} 
-  "SFML: ${SFML_VERSION_MAJOR}.${SFML_VERSION_MINOR}.${SFML_VERSION_PATCH}" 
-  ${SFML_LIBRARIES}
+  OGRE 
+  ${OGRE_FOUND} 
+  "Ogre: ${OGRE_VERSION}" 
+  ${ogre_libraries}
 )
+

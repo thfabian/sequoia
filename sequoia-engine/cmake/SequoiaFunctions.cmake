@@ -92,7 +92,7 @@ endfunction()
 ## sequoia_add_test
 ## ----------------
 ##
-## Create a static/shared library depending on the varialble SEQUOIA_SHARED_LIBRARIES.
+## Create an executable.
 ## All header files (".h") in the directory of the source files are treated as dependencies of the
 ## library.
 ##    
@@ -100,8 +100,7 @@ endfunction()
 ##    SOURCES:STRING=<>          - List of source files.
 ##    DEPENDS:STRING=<>          - List of external libraries and/or CMake targets to link against.
 ##
-function(sequoia_add_test)
-
+function(sequoia_add_executable)
   #
   # Parse arguments
   #
@@ -122,7 +121,33 @@ function(sequoia_add_test)
   set_property(TARGET ${ARG_NAME} PROPERTY RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
 
   install(TARGETS ${ARG_NAME} DESTINATION bin)
+endfunction()
 
+## sequoia_add_test
+## ----------------
+##
+## Create an executable and register it in CTest.
+## All header files (".h") in the directory of the source files are treated as dependencies of the
+## library.
+##    
+##    NAME:STRING=<>             - Name of the test.
+##    SOURCES:STRING=<>          - List of source files.
+##    DEPENDS:STRING=<>          - List of external libraries and/or CMake targets to link against.
+##
+function(sequoia_add_test)
+  #
+  # Parse arguments
+  #
+  set(options)
+  set(one_value_args NAME)
+  set(multi_value_args SOURCES DEPENDS)
+  cmake_parse_arguments(ARG "${options}" "${one_value_args}" "${multi_value_args}" ${ARGN})
+  
+  #
+  # Add executable
+  #
+  sequoia_add_executable(${ARGN})
+  
   #
   # Add test
   #

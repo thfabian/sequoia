@@ -161,4 +161,15 @@
 #define SEQUOIA_ATTRIBUTE_UNUSED
 #endif
 
+/*! @macro SEQUOIA_NORETURN
+ *  @brief Indicate a function will never return
+ */
+#ifdef __GNUC__
+#define SEQUOIA_ATTRIBUTE_NORETURN __attribute__((noreturn))
+#elif defined(_MSC_VER)
+#define SEQUOIA_ATTRIBUTE_NORETURN __declspec(noreturn)
+#else
+#define SEQUOIA_ATTRIBUTE_NORETURN
+#endif
+
 #endif

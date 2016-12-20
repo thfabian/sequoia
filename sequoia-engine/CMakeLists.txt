@@ -53,7 +53,8 @@ sequoia_report_result(
 ##===---------------------------------- Add external libraries --------------------------------===##
 include(AddThreads)
 include(AddBoost)
-include(AddSFML)
+include(AddTBB)
+include(AddOGRE)
 include(AddGTest)
 
 # Output findings
@@ -61,7 +62,8 @@ sequoia_report_result(
   "External libraries summary" 
   "${SEQUOIA_THREADS_INFO_STR}"
   "${SEQUOIA_BOOST_INFO_STR}"
-  "${SEQUOIA_SFML_INFO_STR}"
+  "${SEQUOIA_TBB_INFO_STR}"
+  "${SEQUOIA_OGRE_INFO_STR}"
   "${SEQUOIA_GTEST_INFO_STR}"
 )
   

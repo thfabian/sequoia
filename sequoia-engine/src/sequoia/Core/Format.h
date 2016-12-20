@@ -24,9 +24,6 @@
 
 namespace sequoia {
 
-/// @ingroup core
-/// @{
-
 namespace core {
 
 namespace internal {
@@ -85,8 +82,6 @@ std::wstring format(const wchar_t* fmt, Args&&... args) {
 /// @}
 
 } // namespace core
-
-/// @}
 
 } // namespace sequoia
 

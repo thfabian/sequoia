@@ -15,10 +15,9 @@ using namespace sequoia::core;
 namespace {
 
 TEST(String, String) {
-
   // Narrow strings
   {
-    sequoia::core::String s(L"string");
+    sequoia::String s(L"string");
 
     std::wstring wstring = s;
     EXPECT_EQ(std::wstring(L"string"), wstring);
@@ -30,7 +29,7 @@ TEST(String, String) {
 #ifdef SEQUOIA_ON_WIN32
   // Wide strings
   {
-    sequoia::core::String s(L"Fabian Thüring");
+    sequoia::String s(L"Fabian Thüring");
 
     // To std::wstring
     std::wstring wstring = s;

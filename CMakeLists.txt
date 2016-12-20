@@ -19,7 +19,7 @@ endif()
 project(Sequoia C CXX)
 cmake_minimum_required(VERSION 3.3)
 
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake" "${CMAKE_SOURCE_DIR}/cmake/modules")
 
 ##===---------------------------------- CMake modules -----------------------------------------===##
 include(SequoiaMacros)

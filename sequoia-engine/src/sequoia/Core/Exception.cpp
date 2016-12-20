@@ -31,7 +31,7 @@ struct ToStream {
   static void apply(StreamType& stream, const Exception& exception) {
     if(exception.path())
       stream << exception.path() << ":" << exception.line() << ": ";
-    stream << exception.message().toAnsiString();
+    stream << exception.message().asUTF8();
   }
 };
 
@@ -41,7 +41,7 @@ struct ToStream<true> {
   static void apply(StreamType& stream, const Exception& exception) {
     if(exception.path())
       stream << exception.path() << ":" << exception.line() << ": ";
-    stream << exception.message().toWideString();
+    stream << exception.message().asWStr();
   }
 };
 
@@ -58,10 +58,10 @@ const char* Exception::what() const noexcept {
   std::stringstream ss;
   ToStream<false>::apply(ss, *this);
   std::string whatStr = ss.str();
-#else
-  std::string whatStr = message_.toAnsiString();
-#endif
   return copyCString(whatStr);
+#else
+  return message_.asUTF8_c_str();
+#endif
 }
 
 int Exception::line() const noexcept { return line_; }

@@ -15,6 +15,8 @@
 #ifndef SEQUOIA_CORE_SINGLETON_H
 #define SEQUOIA_CORE_SINGLETON_H
 
+#include "sequoia/Core/Core.h"
+
 namespace sequoia {
 
 namespace core {
@@ -47,7 +49,7 @@ namespace core {
 ///
 /// @ingroup core
 template <class Derived>
-class Singleton {
+class SEQUOIA_EXPORT Singleton {
 private:
   static Derived* instance_;
 

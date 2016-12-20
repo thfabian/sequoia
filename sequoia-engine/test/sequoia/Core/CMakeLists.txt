@@ -16,10 +16,10 @@ sequoia_add_test(
           TestString.cpp
           TestStringRef.cpp
           TestVersion.cpp
-  DEPENDS SequoiaCore 
-          ${SEQUOIA_BOOST_LIBRARIES}
-          ${SEQUOIA_SFML_LIBRARIES}
+  DEPENDS ${SEQUOIA_BOOST_LIBRARIES}
+          ${SEQUOIA_OGRE_LIBRARIES}
           ${SEQUOIA_GTEST_LIBRARIES}
           ${SEQUOIA_THREADS_LIBRARIES}
+          SequoiaCore
 )
 

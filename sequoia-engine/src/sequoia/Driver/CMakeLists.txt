@@ -7,18 +7,21 @@
 ##
 ##===------------------------------------------------------------------------------------------===##
 
-sequoia_configure_file(Config.h.cmake)
-
 sequoia_add_library(
-  NAME SequoiaCore
-  SOURCES Version.cpp
-          Exception.cpp
-          Error.cpp
-          SmallVector.cpp
-          String.cpp
-          StringRef.cpp
-          GlobalConfiguration.cpp
+  NAME SequoiaDriver
+  SOURCES Driver.cpp
   DEPENDS ${SEQUOIA_BOOST_LIBRARIES}
           ${SEQUOIA_OGRE_LIBRARIES}
           ${SEQUOIA_THREADS_LIBRARIES}
+          SequoiaCore
 )
+
+sequoia_add_executable(
+  NAME Sequoia
+  SOURCES Main.cpp
+  DEPENDS ${SEQUOIA_BOOST_LIBRARIES}
+          ${SEQUOIA_OGRE_LIBRARIES}
+          ${SEQUOIA_THREADS_LIBRARIES}
+          SequoiaDriver
+)
+

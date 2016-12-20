@@ -9,7 +9,7 @@
 
 option(USE_SYSTEM_BOOST "Should we use the system Boost?" OFF)
 option(USE_SYSTEM_GTEST "Should we use the system GTest?" OFF)
-option(USE_SYSTEM_SFML "Should we use the system SFML?" OFF)
+option(USE_SYSTEM_OGRE "Should we use the system SFML?" OFF)
 option(USE_SYSTEM_TBB "Should we use the system TBB?" OFF)
 
 if(USE_SYSTEM_BOOST)
@@ -31,10 +31,10 @@ else()
   include(External_gtest)
 endif()
 
-if(USE_SYSTEM_SFML)
-  find_package(SFML ${sfml_version} COMPONENTS ${sfml_components} REQUIRED)
+if(USE_SYSTEM_OGRE)
+  find_package(OGRE REQUIRED)
 else()
-  include(External_sfml)
+  include(External_ogre)
 endif()
 
 if(USE_SYSTEM_TBB)
