@@ -17,7 +17,7 @@ set(_v 62)
 set(boost_download_version 1.${_v}.0)
 set(boost_url "http://sourceforge.net/projects/boost/files/boost/1.${_v}.0/boost_1_${_v}_0.tar.gz/download")
 set(boost_md5 "6f4571e7c5a66ccc3323da6c24be8f05")
-set(boost_components filesystem)
+set(boost_components filesystem program_options system)
 
 #
 # GTest

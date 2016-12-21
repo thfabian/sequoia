@@ -29,12 +29,8 @@ namespace core {
 #pragma warning(disable : 4275)
 #endif
 
-//===--------------------------------------------------------------------------------------------===
-//  Exception
-//===--------------------------------------------------------------------------------------------===
-
 /// @brief Base class for all library exceptions
-/// 
+///
 /// @ingroup core
 class SEQUOIA_EXPORT Exception : public std::exception {
 public:
@@ -77,9 +73,35 @@ protected:
   const char* path_;
 };
 
-//===--------------------------------------------------------------------------------------------===
-//  IOException
-//===--------------------------------------------------------------------------------------------===
+#define SEQUOIA_DECLARE_EXCPETION(Type)                                                            \
+  class SEQUOIA_EXPORT Type : public Exception {                                                   \
+  public:                                                                                          \
+    Type(const std::string& message, int line = -1, const char* path = nullptr)                    \
+        : Exception(message, line, path) {}                                                        \
+    Type(const std::wstring& message, int line = -1, const char* path = nullptr)                   \
+        : Exception(message, line, path) {}                                                        \
+    virtual ~Type() noexcept {}                                                                    \
+  };
+
+/// @class IOException
+/// @brief Exception for Input/Output related errors
+///
+/// @ingroup core
+SEQUOIA_DECLARE_EXCPETION(IOException)
+
+/// @class OSException
+/// @brief Exception for operating system related errors
+///
+/// @ingroup core
+SEQUOIA_DECLARE_EXCPETION(OSException)
+
+/// @class ParserException
+/// @brief Exception for parsing related errors
+///
+/// @ingroup core
+SEQUOIA_DECLARE_EXCPETION(ParserException)
+
+#undef SEQUOIA_DECLARE_EXCPETION
 
 #ifdef SEQUOIA_COMPILER_MSVC
 #pragma warning(pop)
@@ -94,7 +116,7 @@ protected:
 ///
 /// @param exception    Exception to throw (exception has to derive from sequoia::core::Exception)
 /// @param message      String describing the general cause of the current error
-/// 
+///
 /// @ingroup core
 #ifndef NDEBUG
 #define SEQUOIA_THROW(exception, message) SEQUOIA_THROW_IMPL(exception, message, __LINE__, __FILE__)

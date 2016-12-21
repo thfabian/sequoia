@@ -12,23 +12,17 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Core/Core.h"
-#include "sequoia/Core/Error.h"
 #include "sequoia/Driver/Driver.h"
 
 #ifdef SEQUOIA_ON_WIN32
 #define WIN32_LEAN_AND_MEAN
-#include "Windows.h"
+#include <Windows.h>
 #endif
 
 #ifdef SEQUOIA_ON_WIN32
-INT WINAPI WinMain(HINSTANCE hInst, HINSTANCE, LPSTR strCmdLine, INT)
-#else
-int main(int argc, char** argv)
-#endif
-{
-
-  sequoia::core::Error::fatal("oops, that didn't work out so well!");
-
-  return 0;
+int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
+  return Driver::run(hInstance, hPrevInstance, lpCmdLine, nCmdShow); // ???
 }
+#else
+int main(int argc, char* argv[]) { return sequoia::Driver::run(argc, argv); }
+#endif

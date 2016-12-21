@@ -13,6 +13,7 @@ sequoia_add_test(
           TestException.cpp
           TestMain.cpp
           TestSmallVector.cpp
+          TestSingletonManager.cpp
           TestString.cpp
           TestStringRef.cpp
           TestVersion.cpp
@@ -21,5 +22,6 @@ sequoia_add_test(
           ${SEQUOIA_GTEST_LIBRARIES}
           ${SEQUOIA_THREADS_LIBRARIES}
           SequoiaCore
+          SequoiaUnittest
 )
 

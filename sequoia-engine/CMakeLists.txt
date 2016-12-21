@@ -68,6 +68,7 @@ sequoia_report_result(
 )
   
 ##===------------------------------------ Sequoia libraries -----------------------------------===##
+include_directories(${CMAKE_SOURCE_DIR}/unittest)
 include_directories(${CMAKE_SOURCE_DIR}/src)
 include_directories(${CMAKE_BINARY_DIR}/src)
 
@@ -76,7 +77,7 @@ add_subdirectory(src)
 ##===----------------------------------------- Testing ----------------------------------------===##
 if(SEQUOIA_TESTING)
   enable_testing()
-  add_subdirectory(test)
+  add_subdirectory(unittest)
 endif()
 
 ##===----------------------------------------- Documentation ----------------------------------===##

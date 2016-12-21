@@ -8,23 +8,9 @@
 ##===------------------------------------------------------------------------------------------===##
 
 sequoia_add_library(
-  NAME SequoiaDriver
-  SOURCES Driver.cpp
-          CommandLine.cpp
+  NAME SequoiaUnittest
+  SOURCES Environment.cpp
   DEPENDS ${SEQUOIA_BOOST_LIBRARIES}
-          ${SEQUOIA_OGRE_LIBRARIES}
+          ${SEQUOIA_GTEST_LIBRARIES}
           ${SEQUOIA_THREADS_LIBRARIES}
-          SequoiaCore
 )
-
-sequoia_add_executable(
-  NAME Sequoia
-  SOURCES Main.cpp
-  DEPENDS ${SEQUOIA_BOOST_LIBRARIES}
-          ${SEQUOIA_OGRE_LIBRARIES}
-          ${SEQUOIA_THREADS_LIBRARIES}
-          SequoiaDriver
-          SequoiaGame
-          SequoiaCore
-)
-

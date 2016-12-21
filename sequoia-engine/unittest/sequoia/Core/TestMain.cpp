@@ -7,14 +7,16 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
+#include "sequoia/Unittest/Environment.h"
 #include <gtest/gtest.h>
-
-#include "sequoia/Core/SmallVector.h"
 
 int main(int argc, char* argv[]) {
 
   // Initialize gtest
   testing::InitGoogleTest(&argc, argv);
-
+  
+  // Register test environment  
+  testing::AddGlobalTestEnvironment(new sequoia::unittest::Environment());
+  
   return RUN_ALL_TESTS();
 }

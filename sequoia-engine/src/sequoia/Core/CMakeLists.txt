@@ -13,7 +13,8 @@ sequoia_add_library(
   NAME SequoiaCore
   SOURCES Version.cpp
           Exception.cpp
-          Error.cpp
+          ErrorHandler.cpp
+          SingletonManager.cpp
           SmallVector.cpp
           String.cpp
           StringRef.cpp

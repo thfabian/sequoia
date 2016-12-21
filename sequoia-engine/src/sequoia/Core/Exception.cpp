@@ -21,10 +21,6 @@ namespace sequoia {
 
 namespace core {
 
-//===--------------------------------------------------------------------------------------------===
-//  Exception
-//===--------------------------------------------------------------------------------------------===
-
 template <bool CharacterTypeIsWide>
 struct ToStream {
   template <class StreamType>
