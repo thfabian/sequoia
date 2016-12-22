@@ -14,6 +14,6 @@ using namespace sequoia::core;
 
 namespace {
 
-TEST(Exception, Construction) {}
+TEST(ExceptionTest, Construction) {}
 
 } // anonymous namespace

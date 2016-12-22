@@ -11,6 +11,7 @@ sequoia_add_test(
   NAME SequoiaCoreTest
   SOURCES TestArrayRef.cpp
           TestException.cpp
+          TestGlobalConfiguration.cpp
           TestMain.cpp
           TestSmallVector.cpp
           TestSingletonManager.cpp

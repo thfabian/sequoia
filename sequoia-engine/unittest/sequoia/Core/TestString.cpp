@@ -14,7 +14,7 @@ using namespace sequoia::core;
 
 namespace {
 
-TEST(String, String) {
+TEST(StringTest, String) {
   // Narrow strings
   {
     sequoia::String s(L"string");
@@ -42,7 +42,7 @@ TEST(String, String) {
 #endif
 }
 
-TEST(String, CopyCString) {
+TEST(StringTest, CopyCString) {
   std::string string("string");
   std::wstring wstring(L"wstring");
 

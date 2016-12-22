@@ -14,7 +14,7 @@ using namespace sequoia::core;
 
 namespace {
 
-TEST(Version, Construction) {
+TEST(VersionTest, Construction) {
   Version version(1, 60, 0);
   EXPECT_EQ(version.major(), 1);
   EXPECT_EQ(version.minor(), 60);
@@ -26,7 +26,7 @@ TEST(Version, Construction) {
   EXPECT_EQ(currentVersion.patch(), SEQUOIA_VERSION_PATCH);
 }
 
-TEST(Version, Coversion) {
+TEST(VersionTest, Coversion) {
   Version versionTripple(1, 60, 2);
   EXPECT_EQ(Version::toSingle(versionTripple), 106002);
 
@@ -36,7 +36,7 @@ TEST(Version, Coversion) {
   EXPECT_EQ(fromSingle.patch(), 2);
 }
 
-TEST(Version, Comparison) {
+TEST(VersionTest, Comparison) {
   Version versionA(1, 60, 1);
   Version versionB(1, 60, 2);
 
@@ -46,7 +46,7 @@ TEST(Version, Comparison) {
   EXPECT_TRUE(versionB >= versionA);
 }
 
-TEST(Version, ToString) {
+TEST(VersionTest, ToString) {
   std::stringstream ss;
   ss << Version(1, 60, 2);
   EXPECT_STREQ(ss.str().c_str(), "1.60.2");

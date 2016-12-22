@@ -33,6 +33,10 @@ endif()
 
 if(USE_SYSTEM_OGRE)
   find_package(OGRE REQUIRED)
+  if(DEFINED OGRE_HOME)
+    list(APPEND Sequoia_THIRDPARTYLIBS_ARGS
+         "-DOGRE_HOME:PATH=${OGRE_HOME}")
+  endif()
 else()
   include(External_ogre)
 endif()

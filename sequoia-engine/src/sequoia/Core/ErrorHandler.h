@@ -41,6 +41,11 @@ public:
   ///                     console (`stderr`).
   SEQUOIA_ATTRIBUTE_NORETURN void fatal(String message, bool messagebox = true) noexcept;
   
+  /// @brief Report warning to stderr 
+  /// 
+  /// @param message      Message to display
+  void warning(String message) noexcept;
+  
   /// @brief Get program name
   String program() const noexcept; 
 

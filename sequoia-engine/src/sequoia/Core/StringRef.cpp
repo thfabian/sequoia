@@ -13,11 +13,12 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Core/StringRef.h"
 #include "sequoia/Core/EditDistance.h"
 #include "sequoia/Core/SmallVector.h"
+#include "sequoia/Core/StringRef.h"
 #include <bitset>
 #include <climits>
+#include <iostream>
 
 namespace sequoia {
 
@@ -509,6 +510,10 @@ bool getAsSignedInteger(StringRef Str, unsigned Radix, long long& Result) {
   // For getAsSignedInteger, we require the whole string to be consumed or else
   // we consider it a failure.
   return !Str.empty();
+}
+
+std::ostream& operator<<(std::ostream& stream, const StringRef& S) {
+  return (stream <<  S.str());
 }
 
 } // namespace core

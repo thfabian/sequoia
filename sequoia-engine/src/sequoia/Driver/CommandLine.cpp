@@ -37,7 +37,7 @@ static void printVersion() {
   std::exit(EXIT_SUCCESS);
 }
 
-void CommandLine::parse(const std::vector<StringType>& args) {
+void CommandLine::parse(const std::vector<DefaultString>& args) {
 
   //
   // Set options
@@ -47,10 +47,15 @@ void CommandLine::parse(const std::vector<StringType>& args) {
       // --help
       ("help", "Display this information.")
       // --help-module=module
-      ("help-module", po::value<StringType>()->value_name("MODULE"),
-       "produce a help for a given module.")
+      ("help-module", po::value<DefaultString>()->value_name("MODULE"),
+       "Produce a help for a given module.")
       // --version
-      ("version", "Display version information.");
+      ("version", "Display version information.")
+      // --verbose
+      ("verbose", "Enable verbose logging to console [default: OFF]")
+      // --config
+      ("config", po::value<DefaultString>()->value_name("PATH"),
+       "Path to the global configuration file [default: config.ini]");
 
   po::options_description gui("GUI options");
   gui.add_options()
@@ -72,15 +77,36 @@ void CommandLine::parse(const std::vector<StringType>& args) {
     core::ErrorHandler::getSingleton().fatal(e.what());
   }
 
+  //
+  // Add parsed option to global configuration
+  //
+  auto& config = core::GlobalConfiguration::getSingleton();
+  config.addSkipNode("CommandLine");
+
   if(vm.count("help"))
     printHelp(all);
-  
+
   if(vm.count("version"))
     printVersion();
 
-  //auto& config = core::GlobalConfiguration::getSingleton();
+  boost::filesystem::path configPath(CSTR(SEQUOIA_GLOBAL_CONFIG_PATH));
+  if(vm.count("config"))
+    configPath = vm["config"].as<DefaultString>();
+
+  try {
+    config.load(configPath);
+    config.put("CommandLine.ConfigFile", configPath);
+  } catch(core::Exception& e) {
+    core::ErrorHandler::getSingleton().warning(e.what());
+  }
+
+  if(vm.count("verbose"))
+    config.put("CommandLine.Verbose", true);
+
+  if(vm.count("display"))
+    config.put("CommandLine.Display", vm["display"].as<int>());
 }
 
 } // namespace driver
-
+ 
 } // namespace sequoia

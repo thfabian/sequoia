@@ -68,18 +68,15 @@ public:
 
   /// @brief Construct an ArrayRef from a std::vector
   template <typename A>
-  ArrayRef(const std::vector<T, A>& Vec)
-      : data_(Vec.data()), length_(Vec.size()) {}
+  ArrayRef(const std::vector<T, A>& Vec) : data_(Vec.data()), length_(Vec.size()) {}
 
   /// @brief Construct an ArrayRef from a std::array
   template <size_t N>
-  constexpr ArrayRef(const std::array<T, N>& Arr)
-      : data_(Arr.data()), length_(N) {}
+  constexpr ArrayRef(const std::array<T, N>& Arr) : data_(Arr.data()), length_(N) {}
 
   /// @brief Construct an ArrayRef from a C array
   template <size_t N>
-  constexpr ArrayRef(const T(&Arr)[N])
-      : data_(Arr), length_(N) {}
+  constexpr ArrayRef(const T (&Arr)[N]) : data_(Arr), length_(N) {}
 
   /// @brief Construct an ArrayRef from a std::initializer_list
   ArrayRef(const std::initializer_list<T>& Vec)
@@ -90,8 +87,7 @@ public:
   /// This is templated in order to avoid instantiating SmallVectorTemplateCommon<T> whenever we
   /// copy-construct an ArrayRef.
   template <typename U>
-  ArrayRef(const SmallVectorTemplateCommon<T, U>& Vec)
-      : data_(Vec.data()), length_(Vec.size()) {}
+  ArrayRef(const SmallVectorTemplateCommon<T, U>& Vec) : data_(Vec.data()), length_(Vec.size()) {}
 
   /// @brief Construct an ArrayRef<const T*> from ArrayRef<T*>. This uses SFINAE to ensure that
   /// only ArrayRefs of pointers can be converted
@@ -298,13 +294,11 @@ public:
 
   /// @brief Construct an ArrayRef from a std::array
   template <size_t N>
-  constexpr MutableArrayRef(std::array<T, N>& Arr)
-      : ArrayRef<T>(Arr) {}
+  constexpr MutableArrayRef(std::array<T, N>& Arr) : ArrayRef<T>(Arr) {}
 
   /// @brief Construct an MutableArrayRef from a C array
   template <size_t N>
-  constexpr MutableArrayRef(T(&Arr)[N])
-      : ArrayRef<T>(Arr) {}
+  constexpr MutableArrayRef(T (&Arr)[N]) : ArrayRef<T>(Arr) {}
 
   T* data() const { return const_cast<T*>(ArrayRef<T>::data()); }
 
@@ -456,7 +450,7 @@ ArrayRef<T>& makeArrayRef(ArrayRef<T>& Vec) {
 
 /// @brief Construct an ArrayRef from a C array.
 template <typename T, size_t N>
-ArrayRef<T> makeArrayRef(const T(&Arr)[N]) {
+ArrayRef<T> makeArrayRef(const T (&Arr)[N]) {
   return ArrayRef<T>(Arr);
 }
 

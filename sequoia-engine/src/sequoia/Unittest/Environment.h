@@ -23,6 +23,7 @@ namespace sequoia {
 
 namespace unittest {
 
+/// @brief Global test environment
 class SEQUOIA_EXPORT Environment : public ::testing::Environment,
                                    public Ogre::Singleton<Environment> {
 

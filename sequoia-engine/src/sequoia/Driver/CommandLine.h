@@ -16,6 +16,7 @@
 #define SEQUOIA_DRIVER_COMMANDLINE_H
 
 #include "sequoia/Core/Core.h"
+#include "sequoia/Core/String.h"
 #include <string>
 #include <vector>
 
@@ -28,16 +29,8 @@ namespace driver {
 /// @ingroup driver
 class SEQUOIA_EXPORT CommandLine {
 public:
-#ifdef SEQUOIA_ON_WIN32
-  using StringType = std::wstring;
-#else
-  using StringType = std::string;
-#endif
-
-  using VectorType = std::vector<StringType>;
-
   /// @brief Parse arguments and exit on error
-  static void parse(const std::vector<StringType>& arguments);
+  static void parse(const std::vector<DefaultString>& arguments);
 };
 
 } // namespace driver

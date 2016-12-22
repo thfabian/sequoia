@@ -50,6 +50,14 @@ void ErrorHandler::fatal(String message, bool messagebox) noexcept {
   std::exit(EXIT_FAILURE);
 }
 
+void ErrorHandler::warning(String message) noexcept {
+#ifdef SEQUOIA_ON_WIN32
+  std::wcerr << program_.asWStr() << L": warning: " << message.asWStr() << std::endl;
+#else
+  std::cerr << program_.asUTF8() << ": warning: " << message.asUTF8() << std::endl;
+#endif
+}
+
 String ErrorHandler::program() const noexcept { return program_; }
 
 } // namespace core

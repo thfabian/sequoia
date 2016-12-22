@@ -23,16 +23,28 @@
 /* Define if this is Win32ish platform */
 #cmakedefine SEQUOIA_ON_WIN32 ${SEQUOIA_ON_WIN32}
 
-/* Major version of SEQUOIA */
+/* Major version of Sequoia */
 #define SEQUOIA_VERSION_MAJOR ${SEQUOIA_VERSION_MAJOR}
 
-/* Minor version of SEQUOIA */
+/* Minor version of Sequoia */
 #define SEQUOIA_VERSION_MINOR ${SEQUOIA_VERSION_MINOR}
 
-/* Patch version of SEQUOIA */
+/* Patch version of Sequoia */
 #define SEQUOIA_VERSION_PATCH ${SEQUOIA_VERSION_PATCH}
 
-/* SEQUOIA version string */
+/* Sequoia version string */
 #define SEQUOIA_VERSION_STRING "${SEQUOIA_VERSION_STRING}"
+
+/* Default path for global configuration (relative) */
+#define SEQUOIA_GLOBAL_CONFIG_PATH "${SEQUOIA_GLOBAL_CONFIG_PATH}"
+
+/* Default path for Ogre configuration (relative) */
+#define SEQUOIA_OGRE_CONFIG_PATH "${SEQUOIA_OGRE_CONFIG_PATH}"
+
+/* Default path for Ogre plugins (relative) */
+#define SEQUOIA_OGRE_PLUGIN_PATH "${SEQUOIA_OGRE_PLUGIN_PATH}"
+
+/* Available Ogre plugins */
+#define SEQUOIA_OGRE_PLUGINS "${OGRE_PLUGINS}"
 
 #endif

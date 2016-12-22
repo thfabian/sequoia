@@ -59,8 +59,8 @@ endmacro()
 ##    NAME:STRING=<>   - Name of the check (e.g HAVE_GCC_O3)
 ##
 macro(sequoia_check_and_set_cxx_flag FLAG NAME)
-  check_cxx_compiler_flag(${FLAG} ${NAME})
-  if(NAME)
+  check_cxx_compiler_flag("${FLAG}" ${NAME})
+  if(${NAME})
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${FLAG}")
   endif()
 endmacro()
@@ -111,6 +111,10 @@ macro(sequoia_set_cxx_flags)
     string(REPLACE "-DNDEBUG" "" CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE}")
   endif()
   
+  if("${CMAKE_BUILD_TYPE}" MATCHES "Debug")
+    add_definitions(-DDEBUG)
+  endif()
+  
   #
   # Add shared library flags
   #
@@ -127,13 +131,12 @@ macro(sequoia_set_cxx_flags)
   # GCC/Clang
   #    
   else()
-    sequoia_check_and_set_cxx_flag(-march=native HAVE_GCC_MARCH_NATIVE)
-    sequoia_check_and_set_cxx_flag(-Werror=return-type HAVE_GCC_ERROR_RETURN_TYPE)
+    sequoia_check_and_set_cxx_flag("-march=native" HAVE_GCC_MARCH_NATIVE)
+    sequoia_check_and_set_cxx_flag("-Werror=return-type" HAVE_GCC_ERROR_RETURN_TYPE)
     
     if(BUILD_SHARED_LIBS)
-      sequoia_check_and_set_cxx_flag(-fPIC HAVE_GCC_POSITION_INDEPENDENT_CODE)
+      sequoia_check_and_set_cxx_flag("-fPIC" HAVE_GCC_POSITION_INDEPENDENT_CODE)
     endif()
-    
   endif()
 endmacro()
 

@@ -20,23 +20,26 @@
 #include <OGRE/OgreSingleton.h>
 #include <memory>
 
+
 namespace sequoia {
 
 namespace game {
 
+/// @brief Main class holding all Ogre related objects and running the main-loop
 class SEQUOIA_EXPORT Game : public Ogre::Singleton<Game> {
 public:
+
   /// @brief Initialize game
   Game();
 
   /// @brief Clean up
   ~Game();
 
-  /// @brief
+  /// @brief Run main-loop
   void run();
 
 private:
-  Ogre::Root* root_;
+  std::shared_ptr<Ogre::Root> root_;
   Ogre::RenderWindow* renderWindow_;
   Ogre::SceneManager* sceneManager_;
   Ogre::Camera* camera_;

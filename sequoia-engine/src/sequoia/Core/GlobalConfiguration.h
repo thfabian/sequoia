@@ -15,8 +15,10 @@
 #ifndef SEQUOIA_CORE_GLOBALCONFIGURATION_H
 #define SEQUOIA_CORE_GLOBALCONFIGURATION_H
 
+#include "sequoia/Core/ArrayRef.h"
 #include "sequoia/Core/String.h"
 #include <OGRE/OgreSingleton.h>
+#include <boost/filesystem.hpp>
 #include <boost/property_tree/ptree_fwd.hpp>
 #include <iosfwd>
 #include <memory>
@@ -26,19 +28,22 @@ namespace sequoia {
 
 namespace core {
 
-/// @brief Expose configuration options
+/// @brief Provide access to global configuration options
 ///
 /// @ingroup core
 class SEQUOIA_EXPORT GlobalConfiguration : public Ogre::Singleton<GlobalConfiguration> {
 public:
-#ifdef SEQUOIA_ON_WIN32
-  using StringType = std::wstring;
-#else
-  using StringType = std::string;
-#endif
-  using TreeType = boost::property_tree::basic_ptree<std::string, StringType>;
+  using TreeType = boost::property_tree::basic_ptree<std::string, DefaultString>;
 
   /// @brief Available parsers
+  ///
+  /// ParserKind | File extension
+  /// ---------- | --------------
+  /// `XML`      | ".xml"
+  /// `JSON`     | ".json"
+  /// `INI`      | ".ini"
+  /// `INFO`     | ".info"
+  ///
   enum ParserKind { XML, JSON, INI, INFO };
 
   /// @brief Initialize an empty configuration
@@ -56,27 +61,45 @@ public:
   void put(const std::string& path, const bool& value);
   void put(const std::string& path, const int& value);
   void put(const std::string& path, const float& value);
-  void put(const std::string& path, const StringType& value);
+  void put(const std::string& path, const std::string& value);
+  void put(const std::string& path, const char* value);
+  void put(const std::string& path, const boost::filesystem::path& value);
+
+  void put(std::string path, ArrayRef<int> value);
+  void put(std::string path, ArrayRef<float> value);
+  void put(std::string path, ArrayRef<std::string> value);
+  void put(std::string path, ArrayRef<boost::filesystem::path> value);
   /// @}
 
   /// @brief Return the translated value (from `StringType` to the requested type) if possible, and
   /// the default value if the node doesn't exist or conversion fails.
   /// @{
-  bool getBoolean(const std::string& path, bool defaultValue) const;
-  int getInteger(const std::string& path, int defaultValue) const;
-  float getFloat(const std::string& path, float defaultValue) const;
-  StringType getString(const std::string& path, StringType defaultValue) const;
+  bool getBoolean(const std::string& path, bool defaultValue = 0) const;
+  int getInteger(const std::string& path, int defaultValue = 0) const;
+  float getFloat(const std::string& path, float defaultValue = 0) const;
+  std::string getString(const std::string& path, std::string defaultValue = "") const;
+  boost::filesystem::path getPath(const std::string& path,
+                                  boost::filesystem::path defaultValue = CSTR("")) const;
+
+  std::vector<int> getIntegerVector(const std::string& path) const;
+  std::vector<float> getFloatVector(const std::string& path) const;
+  std::vector<std::string> getStringVector(const std::string& path) const;
+  std::vector<boost::filesystem::path> getPathVector(const std::string& path) const;
   /// @}
 
-  /// @brief Save the configration to disk
+  /// @brief Clear the configuration
+  void clear() noexcept;
+
+  /// @brief Save the configration to disk (the `ParserKind` will be deduced from the file
+  /// extension)
   ///
   /// Nodes added via `addSkipNode` will be skipped when saving the configuration to disk.
   ///
-  /// @param filename   Filename to use
-  /// @param parser     Parser to use
+  /// @param filename   Path to the  to use
   ///
-  /// @throw IOException  Failed to write to disk
-  void save(String filename, ParserKind parser = ParserKind::XML) const;
+  /// @throw IOException      Failed to open file
+  /// @throw ParserException  Failed to write configuration
+  void save(boost::filesystem::path path) const;
 
   /// @brief Load configration from disk (the `ParserKind` will be deduced from the file extension)
   ///
@@ -85,14 +108,16 @@ public:
   ///
   /// @throw IOException      Failed to open file
   /// @throw ParserException  Failed to load configuration
-  void load(String filename);
+  void load(boost::filesystem::path path);
 
   /// @brief Convert to string
-  std::string toString(ParserKind parser = ParserKind::XML) const;
+  std::string toString(ParserKind parser = ParserKind::JSON) const;
 
   /// @brief Convert to stream
   SEQUOIA_EXPORT friend std::ostream& operator<<(std::ostream& stream,
                                                  const GlobalConfiguration& config);
+  SEQUOIA_EXPORT friend std::ostream& operator<<(std::ostream& stream,
+                                                 const GlobalConfiguration* config);
 
   /// @brief Before saving the configuration to disk, all direct children of the root with name
   /// `node` will be removed.

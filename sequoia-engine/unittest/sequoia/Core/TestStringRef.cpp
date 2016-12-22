@@ -7,18 +7,13 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Core/StringRef.h"
 #include "sequoia/Core/SmallVector.h"
+#include "sequoia/Core/StringRef.h"
 #include <gtest/gtest.h>
 
 using namespace sequoia::core;
 
 namespace sequoia {
-
-std::ostream& operator<<(std::ostream& OS, const StringRef& S) {
-  OS << S.str();
-  return OS;
-}
 
 std::ostream& operator<<(std::ostream& OS, const std::pair<StringRef, StringRef>& P) {
   OS << "(" << P.first << ", " << P.second << ")";
@@ -47,14 +42,14 @@ static_assert(std::is_assignable<StringRef, const char*&>::value, "Assigning fro
 
 namespace {
 
-TEST(StringRef, Construction) {
+TEST(StringRefTest, Construction) {
   EXPECT_EQ("", StringRef());
   EXPECT_EQ("hello", StringRef("hello"));
   EXPECT_EQ("hello", StringRef("hello world", 5));
   EXPECT_EQ("hello", StringRef(std::string("hello")));
 }
 
-TEST(StringRef, EmptyInitializerList) {
+TEST(StringRefTest, EmptyInitializerList) {
   StringRef S = {};
   EXPECT_TRUE(S.empty());
 
@@ -62,14 +57,14 @@ TEST(StringRef, EmptyInitializerList) {
   EXPECT_TRUE(S.empty());
 }
 
-TEST(StringRef, Iteration) {
+TEST(StringRefTest, Iteration) {
   StringRef S("hello");
   const char* p = "hello";
   for(const char *it = S.begin(), *ie = S.end(); it != ie; ++it, ++p)
     EXPECT_EQ(*it, *p);
 }
 
-TEST(StringRef, StringOps) {
+TEST(StringRefTest, StringOps) {
   const char* p = "hello";
   EXPECT_EQ(p, StringRef(p, 0).data());
   EXPECT_TRUE(StringRef().empty());
@@ -109,7 +104,7 @@ TEST(StringRef, StringOps) {
   EXPECT_EQ(1, StringRef("V8_q0").compare_numeric("V1_q0"));
 }
 
-TEST(StringRef, Operators) {
+TEST(StringRefTest, Operators) {
   EXPECT_EQ("", StringRef());
   EXPECT_TRUE(StringRef("aab") < StringRef("aad"));
   EXPECT_FALSE(StringRef("aab") < StringRef("aab"));
@@ -126,7 +121,7 @@ TEST(StringRef, Operators) {
   EXPECT_EQ('a', StringRef("aab")[1]);
 }
 
-TEST(StringRef, Substr) {
+TEST(StringRefTest, Substr) {
   StringRef Str("hello");
   EXPECT_EQ("lo", Str.substr(3));
   EXPECT_EQ("", Str.substr(100));
@@ -134,7 +129,7 @@ TEST(StringRef, Substr) {
   EXPECT_EQ("o", Str.substr(4, 10));
 }
 
-TEST(StringRef, Slice) {
+TEST(StringRefTest, Slice) {
   StringRef Str("hello");
   EXPECT_EQ("l", Str.slice(2, 3));
   EXPECT_EQ("ell", Str.slice(1, 4));
@@ -143,7 +138,7 @@ TEST(StringRef, Slice) {
   EXPECT_EQ("", Str.slice(10, 20));
 }
 
-TEST(StringRef, Split) {
+TEST(StringRefTest, Split) {
   StringRef Str("hello");
   EXPECT_EQ(std::make_pair(StringRef("hello"), StringRef("")), Str.split('X'));
   EXPECT_EQ(std::make_pair(StringRef("h"), StringRef("llo")), Str.split('e'));
@@ -158,7 +153,7 @@ TEST(StringRef, Split) {
   EXPECT_EQ(std::make_pair(StringRef("hell"), StringRef("")), Str.rsplit('o'));
 }
 
-TEST(StringRef, Split2) {
+TEST(StringRefTest, Split2) {
   SmallVector<StringRef, 5> parts;
   SmallVector<StringRef, 5> expected;
 
@@ -331,7 +326,7 @@ TEST(StringRef, Split2) {
   EXPECT_TRUE(parts == expected);
 }
 
-TEST(StringRef, Trim) {
+TEST(StringRefTest, Trim) {
   StringRef Str0("hello");
   StringRef Str1(" hello ");
   StringRef Str2("  hello  ");
@@ -355,7 +350,7 @@ TEST(StringRef, Trim) {
   EXPECT_EQ(StringRef("x"), StringRef("\0\0x\0\0", 5).trim('\0'));
 }
 
-TEST(StringRef, StartsWith) {
+TEST(StringRefTest, StartsWith) {
   StringRef Str("hello");
   EXPECT_TRUE(Str.startswith(""));
   EXPECT_TRUE(Str.startswith("he"));
@@ -363,7 +358,7 @@ TEST(StringRef, StartsWith) {
   EXPECT_FALSE(Str.startswith("hi"));
 }
 
-TEST(StringRef, StartsWithLower) {
+TEST(StringRefTest, StartsWithLower) {
   StringRef Str("heLLo");
   EXPECT_TRUE(Str.startswith_lower(""));
   EXPECT_TRUE(Str.startswith_lower("he"));
@@ -373,7 +368,7 @@ TEST(StringRef, StartsWithLower) {
   EXPECT_FALSE(Str.startswith_lower("hi"));
 }
 
-TEST(StringRef, ConsumeFront) {
+TEST(StringRefTest, ConsumeFront) {
   StringRef Str("hello");
   EXPECT_TRUE(Str.consume_front(""));
   EXPECT_EQ("hello", Str);
@@ -389,7 +384,7 @@ TEST(StringRef, ConsumeFront) {
   EXPECT_TRUE(Str.consume_front(""));
 }
 
-TEST(StringRef, EndsWith) {
+TEST(StringRefTest, EndsWith) {
   StringRef Str("hello");
   EXPECT_TRUE(Str.endswith(""));
   EXPECT_TRUE(Str.endswith("lo"));
@@ -398,7 +393,7 @@ TEST(StringRef, EndsWith) {
   EXPECT_FALSE(Str.endswith("so"));
 }
 
-TEST(StringRef, EndsWithLower) {
+TEST(StringRefTest, EndsWithLower) {
   StringRef Str("heLLo");
   EXPECT_TRUE(Str.endswith_lower(""));
   EXPECT_TRUE(Str.endswith_lower("lo"));
@@ -408,7 +403,7 @@ TEST(StringRef, EndsWithLower) {
   EXPECT_FALSE(Str.endswith_lower("hi"));
 }
 
-TEST(StringRef, ConsumeBack) {
+TEST(StringRefTest, ConsumeBack) {
   StringRef Str("hello");
   EXPECT_TRUE(Str.consume_back(""));
   EXPECT_EQ("hello", Str);
@@ -424,7 +419,7 @@ TEST(StringRef, ConsumeBack) {
   EXPECT_TRUE(Str.consume_back(""));
 }
 
-TEST(StringRef, Find) {
+TEST(StringRefTest, Find) {
   StringRef Str("helloHELLO");
   StringRef LongStr("hellx xello hell ello world foo bar hello HELLO");
 
@@ -506,7 +501,7 @@ TEST(StringRef, Find) {
   EXPECT_EQ(StringRef::npos, Str.find_last_not_of("helo"));
 }
 
-TEST(StringRef, Count) {
+TEST(StringRefTest, Count) {
   StringRef Str("hello");
   EXPECT_EQ(2U, Str.count('l'));
   EXPECT_EQ(1U, Str.count('o'));
@@ -517,7 +512,7 @@ TEST(StringRef, Count) {
   EXPECT_EQ(0U, Str.count("zz"));
 }
 
-TEST(StringRef, EditDistance) {
+TEST(StringRefTest, EditDistance) {
   StringRef Str("hello");
   EXPECT_EQ(2U, Str.edit_distance("hill"));
 }
@@ -569,7 +564,7 @@ struct SignedPair {
               {"-0x42", -66},
               {"-0b101010", -42}};
 
-TEST(StringRef, getAsInteger) {
+TEST(StringRefTest, getAsInteger) {
   uint8_t U8;
   uint16_t U16;
   uint32_t U32;
@@ -663,7 +658,7 @@ static const char* BadStrings[] = {"" // empty string
                                    ,
                                    "0x", "0b"};
 
-TEST(StringRef, getAsUnsignedIntegerBadStrings) {
+TEST(StringRefTest, getAsUnsignedIntegerBadStrings) {
   unsigned long long U64;
   for(size_t i = 0; i < array_lengthof(BadStrings); ++i) {
     bool IsBadNumber = StringRef(BadStrings[i]).getAsInteger(0, U64);
@@ -740,7 +735,7 @@ struct ConsumeSignedPair {
                      {"-0b101010", -42, ""},
                      {"-0b101010-1", -42, "-1"}};
 
-TEST(StringRef, consumeIntegerUnsigned) {
+TEST(StringRefTest, consumeIntegerUnsigned) {
   uint8_t U8;
   uint16_t U16;
   uint32_t U32;
@@ -789,7 +784,7 @@ TEST(StringRef, consumeIntegerUnsigned) {
   }
 }
 
-TEST(StringRef, consumeIntegerSigned) {
+TEST(StringRefTest, consumeIntegerSigned) {
   int8_t S8;
   int16_t S16;
   int32_t S32;
@@ -838,7 +833,7 @@ TEST(StringRef, consumeIntegerSigned) {
   }
 }
 
-TEST(StringRef, Drop) {
+TEST(StringRefTest, Drop) {
   StringRef Test("StringRefTest::Drop");
 
   StringRef Dropped = Test.drop_front(5);
@@ -860,7 +855,7 @@ TEST(StringRef, Drop) {
   EXPECT_TRUE(Dropped.empty());
 }
 
-TEST(StringRef, Take) {
+TEST(StringRefTest, Take) {
   StringRef Test("StringRef::Take");
 
   StringRef Taken = Test.take_front(5);
@@ -882,7 +877,7 @@ TEST(StringRef, Take) {
   EXPECT_TRUE(Taken.empty());
 }
 
-TEST(StringRef, FindIf) {
+TEST(StringRefTest, FindIf) {
   StringRef Punct("Test.String");
   StringRef NoPunct("ABCDEFG");
   StringRef Empty;
@@ -898,7 +893,7 @@ TEST(StringRef, FindIf) {
   EXPECT_EQ(StringRef::npos, Empty.find_if_not(IsAlpha));
 }
 
-TEST(StringRef, TakeWhileUntil) {
+TEST(StringRefTest, TakeWhileUntil) {
   StringRef Test("String With 1 Number");
 
   StringRef Taken = Test.take_while([](char c) { return ::isdigit(c); });
@@ -918,7 +913,7 @@ TEST(StringRef, TakeWhileUntil) {
   EXPECT_EQ("", Taken);
 }
 
-TEST(StringRef, DropWhileUntil) {
+TEST(StringRefTest, DropWhileUntil) {
   StringRef Test("String With 1 Number");
 
   StringRef Taken = Test.drop_while([](char c) { return ::isdigit(c); });

@@ -24,6 +24,7 @@
 #include <limits>
 #include <string>
 #include <utility>
+#include <iosfwd>
 
 namespace sequoia {
 
@@ -640,6 +641,9 @@ public:
   StringRef trim(StringRef Chars = " \t\n\v\f\r") const { return ltrim(Chars).rtrim(Chars); }
 
   /// @}
+  
+  /// @brief Convert to stream
+  SEQUOIA_EXPORT friend std::ostream& operator<<(std::ostream& stream, const StringRef& str);
 };
 
 /// @name StringRef Comparison Operators
@@ -655,6 +659,10 @@ inline std::string& operator+=(std::string& buffer, StringRef string) {
   return buffer.append(string.data(), string.size());
 }
 /// @}
+
+// StringRefs can be treated like a POD type.
+template <typename T> struct isPodLike;
+template <> struct isPodLike<StringRef> { static const bool value = true; };
 
 } // namespace core
 

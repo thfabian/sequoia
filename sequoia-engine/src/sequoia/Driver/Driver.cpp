@@ -19,6 +19,7 @@
 #include "sequoia/Driver/CommandLine.h"
 #include "sequoia/Driver/Driver.h"
 #include "sequoia/Game/Game.h"
+#include <OGRE/OgreLogManager.h>
 
 #ifdef SEQUOIA_ON_WIN32
 #define WIN32_LEAN_AND_MEAN
@@ -51,7 +52,7 @@ int Driver::run(int argc, char* argv[]) {
   singletonManager->allocateSingleton<GlobalConfiguration>();
 
   // Parse command-line
-  CommandLine::VectorType arguments(argv + 1, argv + argc);
+  std::vector<DefaultString> arguments(argv + 1, argv + argc);
   CommandLine::parse(arguments);
 
   return Driver::runImpl();
@@ -60,15 +61,30 @@ int Driver::run(int argc, char* argv[]) {
 #endif
 
 int Driver::runImpl() {
-  try {
+  auto& config = GlobalConfiguration::getSingleton();
+  config.put("Game.PluginPath", boost::filesystem::path(CSTR(SEQUOIA_OGRE_CONFIG_PATH)));
+  config.put("Game.ConfigPath", boost::filesystem::path(CSTR(SEQUOIA_OGRE_CONFIG_PATH)));
 
+  // Create Logger (not delted)
+  auto* lm = new Ogre::LogManager();
+  lm->createLog("sequoia.log", true, true, false);
+
+  // Setup & run game
+  try {
     SingletonManager::getSingleton().allocateSingleton<game::Game>();
     game::Game::getSingleton().run();
-
   } catch(std::exception& e) {
     core::ErrorHandler::getSingleton().fatal(e.what());
     return 1;
   }
+
+  // Save configuration to disk (create the config path if necessary)
+  try {
+    config.save(config.getPath("CommandLine.ConfigFile", CSTR(SEQUOIA_GLOBAL_CONFIG_PATH)));
+  } catch(std::exception& e) {
+    core::ErrorHandler::getSingleton().warning(e.what());
+  }
+
   return 0;
 }
 
