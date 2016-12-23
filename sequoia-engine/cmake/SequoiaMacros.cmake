@@ -132,6 +132,7 @@ macro(sequoia_set_cxx_flags)
   #    
   else()
     sequoia_check_and_set_cxx_flag("-march=native" HAVE_GCC_MARCH_NATIVE)
+    sequoia_check_and_set_cxx_flag("-Wall" HAVE_GCC_WALL)
     sequoia_check_and_set_cxx_flag("-Werror=return-type" HAVE_GCC_ERROR_RETURN_TYPE)
     
     if(BUILD_SHARED_LIBS)

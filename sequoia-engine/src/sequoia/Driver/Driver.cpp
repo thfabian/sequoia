@@ -33,24 +33,33 @@ namespace driver {
 #ifdef SEQUOIA_ON_WIN32
 
 int Driver::run(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
+  // Define SingletonManager here to keep it alive
   auto singletonManager = std::make_unique<SingletonManager>();
-
+  Driver::setDefaultConfigs();
+  
+  // Allocate OS specific Singletons
+  auto& singletonManager = SingletonManager::getSingleton();
+  
   TCHAR program[MAX_PATH];
   GetModuleFileName(NULL, program, MAX_PATH);
   singletonManager->allocateSingleton<ErrorHandler>(program);
-
+  
+  // Parse command-line
+  // TODO...
+  
   return Driver::runImpl();
 }
 
 #else
 
 int Driver::run(int argc, char* argv[]) {
+  // Define SingletonManager here to keep it alive
+  auto singletonManager = std::make_unique<SingletonManager>();
+  Driver::setDefaultConfigs();
 
   // Allocate OS specific Singletons
-  auto singletonManager = std::make_unique<SingletonManager>();
   singletonManager->allocateSingleton<ErrorHandler>(argc > 0 ? argv[0] : "unknown");
-  singletonManager->allocateSingleton<GlobalConfiguration>();
-
+  
   // Parse command-line
   std::vector<DefaultString> arguments(argv + 1, argv + argc);
   CommandLine::parse(arguments);
@@ -60,12 +69,19 @@ int Driver::run(int argc, char* argv[]) {
 
 #endif
 
-int Driver::runImpl() {
-  auto& config = GlobalConfiguration::getSingleton();
+void Driver::setDefaultConfigs() {
+  auto& singletonManager = SingletonManager::getSingleton();
+  singletonManager.allocateSingleton<GlobalConfiguration>();
+  
+  auto& config = GlobalConfiguration::getSingleton();  
   config.put("Game.PluginPath", boost::filesystem::path(CSTR(SEQUOIA_OGRE_CONFIG_PATH)));
   config.put("Game.ConfigPath", boost::filesystem::path(CSTR(SEQUOIA_OGRE_CONFIG_PATH)));
+}
 
-  // Create Logger (not delted)
+int Driver::runImpl() {
+  auto& config = GlobalConfiguration::getSingleton();  
+  
+  // Create Logger TODO: should be deleted last
   auto* lm = new Ogre::LogManager();
   lm->createLog("sequoia.log", true, true, false);
 

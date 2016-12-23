@@ -39,6 +39,7 @@ public:
 #endif
 
 private:
+  static void setDefaultConfigs();
   static int runImpl();
 };
 

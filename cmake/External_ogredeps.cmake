@@ -8,12 +8,12 @@
 ##===------------------------------------------------------------------------------------------===##
 
 ExternalProject_Add(
-  ogre
+  ogredeps
   DOWNLOAD_DIR ${download_dir}
   UPDATE_COMMAND ${update_command}
-  URL ${ogre_url}
-  URL_MD5 ${ogre_md5}
-  BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}/sfml"
+  URL ${ogredeps_url}
+  URL_MD5 ${ogredeps_md5}
+  BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}/ogredeps"
   INSTALL_DIR "${Sequoia_INSTALL_PREFIX}"
   CMAKE_ARGS
     -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
@@ -21,8 +21,6 @@ ExternalProject_Add(
     -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
 )
 
-ExternalProject_Get_Property(sfml install_dir)
-set(SFML_ROOT "${install_dir}" CACHE INTERNAL "")
-
-list(APPEND Sequoia_THIRDPARTYLIBS_ARGS "-DSFML_ROOT:PATH=${SFML_ROOT}")
+ExternalProject_Get_Property(ogredeps install_dir)
+set(OGRE_DEPENDENCIES_DIR "${install_dir}" CACHE INTERNAL "")
 

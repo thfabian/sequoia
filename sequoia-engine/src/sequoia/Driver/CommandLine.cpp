@@ -55,7 +55,7 @@ void CommandLine::parse(const std::vector<DefaultString>& args) {
       ("verbose", "Enable verbose logging to console [default: OFF]")
       // --config
       ("config", po::value<DefaultString>()->value_name("PATH"),
-       "Path to the global configuration file [default: config.ini]");
+       "Path to the global configuration file [default: " SEQUOIA_GLOBAL_CONFIG_PATH "]");
 
   po::options_description gui("GUI options");
   gui.add_options()
