@@ -31,6 +31,11 @@
 #include <type_traits>
 #include <utility>
 
+#ifdef SEQUOIA_COMPILER_MSVC
+#pragma warning(push)
+#pragma warning(disable : 4251)
+#endif
+
 namespace sequoia {
 
 namespace core {
@@ -908,5 +913,9 @@ inline void swap(sequoia::SmallVector<T, N>& LHS, sequoia::SmallVector<T, N>& RH
 }
 
 } // end namespace std
+
+#ifdef SEQUOIA_COMPILER_MSVC
+#pragma warning(pop)
+#endif
 
 #endif

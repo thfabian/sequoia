@@ -18,6 +18,7 @@ configure_file(
 ExternalProject_Add(
   gtest
   DOWNLOAD_DIR ${download_dir}
+  DOWNLOAD_NAME "gtest-${gtest_version}.tar.gz"
   URL ${gtest_url}
   URL_MD5 ${gtest_md5}
   BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}/gtest"
@@ -36,4 +37,3 @@ ExternalProject_Get_Property(gtest install_dir)
 set(GTEST_ROOT "${install_dir}" CACHE INTERNAL "")
 
 list(APPEND Sequoia_THIRDPARTYLIBS_ARGS "-DGTEST_ROOT:PATH=${GTEST_ROOT}")
-

@@ -10,6 +10,7 @@
 ExternalProject_Add(
   ogredeps
   DOWNLOAD_DIR ${download_dir}
+  DOWNLOAD_NAME "ogredeps-v${ogredeps_version}.tar.gz"
   UPDATE_COMMAND ${update_command}
   URL ${ogredeps_url}
   URL_MD5 ${ogredeps_md5}

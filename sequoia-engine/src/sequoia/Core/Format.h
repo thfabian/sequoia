@@ -26,22 +26,16 @@ namespace sequoia {
 
 namespace core {
 
-namespace internal {
-
-template <class String>
-struct BoostFormat {
-  using type = boost::format;
-};
-
-template <>
-struct BoostFormat<std::wstring> {
-  using type = boost::wformat;
-};
-
-template <class StringType, class FormatType = typename BoostFormat<StringType>::type,
-          typename CharT, typename... Args>
-StringType basic_format(const CharT* fmt, Args&&... args) {
-  FormatType f(fmt);
+/// @brief printf-like formatting of a string
+///
+/// @param fmt    Format string
+/// @param args   Variadic sequence used as arguments
+///
+/// @ingroup core
+/// @{
+template <typename... Args>
+std::string format(const char* fmt, Args&&... args) {
+  boost::format f(fmt);
 
 #ifndef NDEBUG
   try {
@@ -61,23 +55,26 @@ StringType basic_format(const CharT* fmt, Args&&... args) {
   return boost::str(f);
 }
 
-} // internal
-
-/// @brief printf-like formatting of a string
-///
-/// @param fmt    Format string
-/// @param args   Variadic sequence used as arguments
-///
-/// @ingroup core
-/// @{
-template <typename... Args>
-std::string format(const char* fmt, Args&&... args) {
-  return internal::basic_format<std::string>(fmt, std::forward<Args>(args)...);
-}
-
 template <typename... Args>
 std::wstring format(const wchar_t* fmt, Args&&... args) {
-  return internal::basic_format<std::wstring>(fmt, std::forward<Args>(args)...);
+  boost::wformat f(fmt);
+
+#ifndef NDEBUG
+  try {
+#endif
+
+    int unroll[]{0, (f % std::forward<Args>(args), 0)...};
+    static_cast<void>(unroll);
+
+#ifndef NDEBUG
+  } catch(boost::io::format_error& error) {
+    SEQUOIA_THROW(Exception, String(error.what()).asWStr() + L" [format string = \"" + fmt +
+                                 L"\", number of arguments = \"" +
+                                 std::to_wstring(sizeof...(args)) + L"\"]");
+  }
+#endif
+
+  return boost::str(f);
 }
 /// @}
 

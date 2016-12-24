@@ -44,14 +44,19 @@ set(Sequoia_DEFAULT_ARGS
   "-DCMAKE_C_COMPILER:PATH=${CMAKE_C_COMPILER}"
 )
 
-##===---------------------------------- Third party projects --------------------------------===##
+##===---------------------------------- Third party projects ----------------------------------===##
 include(Projects)
 add_subdirectory(thirdparty)
 
 ##===---------------------------------- Sequoia projects --------------------------------------===##
 include(External_sequoia-engine)
 
-option(SETUP_SEQUOIA_BUILDS "Setup sequoia-engine builds" ON)
+if(MSVC)
+  option(SETUP_SEQUOIA_BUILDS "Setup sequoia-engine builds" OFF)
+else()
+  option(SETUP_SEQUOIA_BUILDS "Setup sequoia-engine builds" ON)
+endif()
+
 if(SETUP_SEQUOIA_BUILDS)
   sequoia_setup_sequioa_engine_builds()
 endif()

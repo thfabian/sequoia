@@ -20,6 +20,11 @@
 #include <climits>
 #include <iostream>
 
+#ifdef SEQUOIA_COMPILER_MSVC
+#pragma warning(push)
+#pragma warning(disable : 4146 4267)
+#endif
+
 namespace sequoia {
 
 namespace core {
@@ -519,3 +524,7 @@ std::ostream& operator<<(std::ostream& stream, const StringRef& S) {
 } // namespace core
 
 } // namespace sequoia
+
+#ifdef SEQUOIA_COMPILER_MSVC
+#pragma warning(pop)
+#endif

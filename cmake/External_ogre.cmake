@@ -8,7 +8,7 @@
 ##===------------------------------------------------------------------------------------------===##
 
 unset(_deps)
-sequoia_add_optional_deps(_deps tbb boost ogredeps)
+sequoia_add_optional_deps(_deps ${ogre_dependencies})
 
 find_program(PATCH_BIN patch)
 if(PATCH_BIN)
@@ -21,13 +21,26 @@ if(DEFINED BOOST_ROOT)
   list(APPEND ogre_cmake_args -DBOOST_ROOT:PATH=${BOOST_ROOT} -DBoost_NO_SYSTEM_PATHS:BOOL=ON)
 endif()
 
-if(DEFINED TBB_ROOT)
+if(DEFINED TBB_ROOT_DIR)
   list(APPEND ogre_cmake_args -DTBB_ROOT_DIR:PATH=${TBB_ROOT_DIR})
+endif()
+
+if(DEFINED HLSL2GLSL_HOME)
+  list(APPEND ogre_cmake_args -DHLSL2GLSL_HOME:PATH=${HLSL2GLSL_HOME})
+endif()
+
+if(DEFINED GLSL_Optimizer_HOME)
+  list(APPEND ogre_cmake_args -DGLSL_Optimizer_HOME:PATH=${GLSL_Optimizer_HOME})
+endif()
+
+if(WIN32)
+  list(APPEND ogre_cmake_args -DOGRE_BUILD_RENDERSYSTEM_D3D9:BOOL=OFF)
 endif()
 
 ExternalProject_Add(
   ogre
   DOWNLOAD_DIR ${download_dir}
+  DOWNLOAD_NAME "ogre-v${ogre_version}.tar.gz"
   UPDATE_COMMAND ${update_command}
   PATCH_COMMAND ${patch_command}
   URL ${ogre_url}

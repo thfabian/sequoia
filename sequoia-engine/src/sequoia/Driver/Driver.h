@@ -18,7 +18,8 @@
 #include "sequoia/Core/Core.h"
 
 #ifdef SEQUOIA_ON_WIN32
-#include <WinDef.h>
+#define WIN32_LEAN_AND_MEAN
+#include <Windows.h>
 #endif
 
 namespace sequoia {

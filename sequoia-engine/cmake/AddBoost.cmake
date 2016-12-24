@@ -17,6 +17,9 @@ else()
   set(Boost_USE_STATIC_RUNTIME ON)
 endif()
 
+# Disable auto-linking
+add_definitions(-DBOOST_ALL_NO_LIB)
+
 find_package(Boost 1.54 COMPONENTS filesystem system program_options REQUIRED)
 
 include_directories(SYSTEM ${Boost_INCLUDE_DIRS})

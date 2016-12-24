@@ -71,7 +71,7 @@ void CommandLine::parse(const std::vector<DefaultString>& args) {
   po::variables_map vm;
 
   try {
-    po::store(po::command_line_parser(args).options(all).run(), vm);
+    po::store(po::basic_command_line_parser<DefaultChar>(args).options(all).run(), vm);
     po::notify(vm);
   } catch(std::exception& e) {
     core::ErrorHandler::getSingleton().fatal(e.what());

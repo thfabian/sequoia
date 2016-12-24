@@ -15,7 +15,6 @@
 #include "sequoia/Core/Exception.h"
 #include "sequoia/Core/Format.h"
 #include "sequoia/Core/GlobalConfiguration.h"
-#include "sequoia/Core/String.h"
 #include "sequoia/Core/StringRef.h"
 #include <boost/property_tree/info_parser.hpp>
 #include <boost/property_tree/ini_parser.hpp>
@@ -30,31 +29,6 @@ template <>
 sequoia::core::GlobalConfiguration*
     Ogre::Singleton<sequoia::core::GlobalConfiguration>::msSingleton = nullptr;
 
-namespace {
-
-template <class StringType>
-struct StringUtil {
-  template <class T>
-  inline static std::string toString(T&& value) {
-    return std::to_string(std::forward<T>(value));
-  }
-
-  inline static int toInteger(const std::string& value) { return std::stoi(value); }
-  inline static float toFloat(const std::string& value) { return std::stof(value); }
-};
-
-template <>
-struct StringUtil<std::wstring> {
-  template <class T>
-  inline static std::wstring toString(T&& value) {
-    return std::to_wstring(std::forward<T>(value));
-  }
-
-  inline static int toInteger(const std::wstring& value) { return std::stoi(value); }
-  inline static float toFloat(const std::wstring& value) { return std::stof(value); }
-};
-}
-
 namespace sequoia {
 
 namespace core {
@@ -62,15 +36,15 @@ namespace core {
 GlobalConfiguration::GlobalConfiguration() : ptree_(std::make_shared<TreeType>()) {}
 
 void GlobalConfiguration::put(const std::string& path, const bool& value) {
-  ptree_->put(path, StringUtil<TreeType::data_type>::toString(value));
+  ptree_->put(path, std::to_string(value));
 }
 
 void GlobalConfiguration::put(const std::string& path, const int& value) {
-  ptree_->put(path, StringUtil<TreeType::data_type>::toString(value));
+  ptree_->put(path, std::to_string(value));
 }
 
 void GlobalConfiguration::put(const std::string& path, const float& value) {
-  ptree_->put(path, StringUtil<TreeType::data_type>::toString(value));
+  ptree_->put(path, std::to_string(value));
 }
 
 void GlobalConfiguration::put(const std::string& path, const char* value) {
@@ -78,11 +52,7 @@ void GlobalConfiguration::put(const std::string& path, const char* value) {
 }
 
 void GlobalConfiguration::put(const std::string& path, const std::string& value) {
-#ifdef SEQUOIA_ON_WIN32
-  ptree_->put(path, String(value).asWStr());
-#else
   ptree_->put(path, value);
-#endif
 }
 
 void GlobalConfiguration::put(const std::string& path, const boost::filesystem::path& value) {
@@ -92,23 +62,19 @@ void GlobalConfiguration::put(const std::string& path, const boost::filesystem::
 void GlobalConfiguration::put(std::string path, ArrayRef<int> value) {
   path += ".value";
   for(const auto& v : value)
-    ptree_->add(path, StringUtil<TreeType::data_type>::toString(v));
+    ptree_->add(path, std::to_string(v));
 }
 
 void GlobalConfiguration::put(std::string path, ArrayRef<float> value) {
   path += ".value";
   for(const auto& v : value)
-    ptree_->add(path, StringUtil<TreeType::data_type>::toString(v));
+    ptree_->add(path, std::to_string(v));
 }
 
 void GlobalConfiguration::put(std::string path, ArrayRef<std::string> value) {
   path += ".value";
   for(const auto& v : value) {
-#ifdef SEQUOIA_ON_WIN32
-    ptree_->add(path, String(v).asWStr());
-#else
     ptree_->add(path, v);
-#endif
   }
 }
 
@@ -132,11 +98,12 @@ float GlobalConfiguration::getFloat(const std::string& path, float defaultValue)
 
 std::string GlobalConfiguration::getString(const std::string& path,
                                            std::string defaultValue) const {
-#ifdef SEQUOIA_ON_WIN32
-  return String(ptree_->get<std::wstring>(path, String(defaultValue).asWStr())).asUTF8();
-#else
   return ptree_->get<std::string>(path, defaultValue);
-#endif
+}
+
+boost::filesystem::path GlobalConfiguration::getPath(const std::string& path,
+                                                     boost::filesystem::path defaultValue) const {
+  return boost::filesystem::path(ptree_->get<std::string>(path, defaultValue.string()));
 }
 
 std::vector<int> GlobalConfiguration::getIntegerVector(const std::string& path) const {
@@ -144,8 +111,9 @@ std::vector<int> GlobalConfiguration::getIntegerVector(const std::string& path) 
 
   try {
     for(auto it : ptree_->get_child(path))
-      vec.push_back(StringUtil<TreeType::data_type>::toInteger(it.second.data()));
+      vec.push_back(std::stoi(it.second.data()));
   } catch(boost::property_tree::ptree_bad_path& e) {
+    (void)e;
   } catch(std::logic_error& e) {
     SEQUOIA_THROW(ParserException, e.what());
   }
@@ -158,8 +126,9 @@ std::vector<float> GlobalConfiguration::getFloatVector(const std::string& path) 
 
   try {
     for(auto it : ptree_->get_child(path))
-      vec.push_back(StringUtil<TreeType::data_type>::toFloat(it.second.data()));
+      vec.push_back(std::stof(it.second.data()));
   } catch(boost::property_tree::ptree_bad_path& e) {
+    (void)e;
   } catch(std::logic_error& e) {
     SEQUOIA_THROW(ParserException, e.what());
   }
@@ -172,12 +141,9 @@ std::vector<std::string> GlobalConfiguration::getStringVector(const std::string&
 
   try {
     for(auto it : ptree_->get_child(path))
-#ifdef SEQUOIA_ON_WIN32
-      vec.push_back(String(it.second.data()).asUTF8());
-#else
       vec.push_back(it.second.data());
-#endif
   } catch(boost::property_tree::ptree_bad_path& e) {
+    (void)e;
   }
 
   return vec;
@@ -191,14 +157,10 @@ GlobalConfiguration::getPathVector(const std::string& path) const {
     for(auto it : ptree_->get_child(path))
       vec.push_back(it.second.data());
   } catch(boost::property_tree::ptree_bad_path& e) {
+    (void)e;
   }
 
   return vec;
-}
-
-boost::filesystem::path GlobalConfiguration::getPath(const std::string& path,
-                                                     boost::filesystem::path defaultValue) const {
-  return ptree_->get<boost::filesystem::path::string_type>(path, defaultValue.string());
 }
 
 void GlobalConfiguration::clear() noexcept { ptree_->clear(); }
@@ -228,6 +190,7 @@ static void toStream(std::ostream& stream, GlobalConfiguration::TreeType& tree,
 static void fromStream(std::istream& stream, GlobalConfiguration::TreeType& tree,
                        GlobalConfiguration::ParserKind parser) {
   try {
+
     switch(parser) {
     case GlobalConfiguration::ParserKind::XML:
       boost::property_tree::read_xml(stream, tree);
@@ -248,11 +211,7 @@ static void fromStream(std::istream& stream, GlobalConfiguration::TreeType& tree
 }
 
 static GlobalConfiguration::ParserKind fileExtensionToParser(boost::filesystem::path& path) {
-#ifdef SEQUOIA_ON_WIN32
-  std::string extStr = String(path.extension().string()).asUTF8();
-#else
   std::string extStr = path.extension().string();
-#endif
   StringRef ext(extStr);
 
   if(ext.lower() == ".xml")
@@ -273,10 +232,11 @@ std::string GlobalConfiguration::toString(ParserKind parser) const {
 }
 
 void GlobalConfiguration::save(boost::filesystem::path path) const {
-  std::ofstream ofs(path.string());
+  std::ofstream ofs(path.native());
+
   if(!ofs.is_open())
     SEQUOIA_THROW(IOException, format(CSTR("cannot open file: %s"), path));
-    
+
   if(!skipNodes_.empty()) {
     auto ptree = *ptree_;
 
@@ -289,7 +249,8 @@ void GlobalConfiguration::save(boost::filesystem::path path) const {
 }
 
 void GlobalConfiguration::load(boost::filesystem::path path) {
-  std::ifstream ifs(path.string());
+  std::ifstream ifs(path.native());
+
   if(!ifs.is_open())
     SEQUOIA_THROW(IOException, format(CSTR("cannot open file: %s"), path));
   fromStream(ifs, *ptree_, fileExtensionToParser(path));
@@ -297,10 +258,6 @@ void GlobalConfiguration::load(boost::filesystem::path path) {
 
 std::ostream& operator<<(std::ostream& stream, const GlobalConfiguration& config) {
   return (stream << config.toString());
-}
-
-std::ostream& operator<<(std::ostream& stream, const GlobalConfiguration* config) {
-  return (stream << *config);
 }
 
 void GlobalConfiguration::addSkipNode(const std::string& node) { skipNodes_.push_back(node); }

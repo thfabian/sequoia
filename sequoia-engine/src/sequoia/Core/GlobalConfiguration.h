@@ -20,7 +20,6 @@
 #include <OGRE/OgreSingleton.h>
 #include <boost/filesystem.hpp>
 #include <boost/property_tree/ptree_fwd.hpp>
-#include <iosfwd>
 #include <memory>
 #include <vector>
 
@@ -33,7 +32,7 @@ namespace core {
 /// @ingroup core
 class SEQUOIA_EXPORT GlobalConfiguration : public Ogre::Singleton<GlobalConfiguration> {
 public:
-  using TreeType = boost::property_tree::basic_ptree<std::string, DefaultString>;
+  using TreeType = boost::property_tree::basic_ptree<std::string, std::string>;
 
   /// @brief Available parsers
   ///
@@ -116,8 +115,6 @@ public:
   /// @brief Convert to stream
   SEQUOIA_EXPORT friend std::ostream& operator<<(std::ostream& stream,
                                                  const GlobalConfiguration& config);
-  SEQUOIA_EXPORT friend std::ostream& operator<<(std::ostream& stream,
-                                                 const GlobalConfiguration* config);
 
   /// @brief Before saving the configuration to disk, all direct children of the root with name
   /// `node` will be removed.

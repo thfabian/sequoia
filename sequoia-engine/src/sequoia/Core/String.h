@@ -41,6 +41,9 @@ using DefaultString = std::wstring;
 using DefaultString = std::string;
 #endif
 
+/// @brief The default character type for the Platform (`char` for Unix and `wchar_t` for Win32)
+using DefaultChar = DefaultString::value_type;
+
 /// @brief Return a copy of the string `s`
 ///
 /// @throw std::bad_alloc  Out of memory
@@ -61,7 +64,7 @@ SEQUOIA_EXPORT extern const wchar_t* copyCString(const wchar_t* s);
 #error "CSTR already defined!"
 #endif
 #ifdef SEQUOIA_ON_WIN32
-#define CSTR(x) Lx
+#define CSTR(x) L##x
 #else
 #define CSTR(x) x
 #endif

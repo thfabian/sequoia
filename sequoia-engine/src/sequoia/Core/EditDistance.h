@@ -24,6 +24,11 @@ namespace sequoia {
 
 namespace core {
 
+#ifdef SEQUOIA_COMPILER_MSVC
+#pragma warning(push)
+#pragma warning(disable : 4267)
+#endif
+
 /// @brief Determine the edit distance between two sequences.
 ///
 /// @param fromArray          The first sequence to compare.
@@ -95,6 +100,10 @@ unsigned ComputeEditDistance(ArrayRef<T> fromArray, ArrayRef<T> toArray,
   unsigned Result = Row[n];
   return Result;
 }
+
+#ifdef SEQUOIA_COMPILER_MSVC
+#pragma warning(pop)
+#endif
 
 } // namespace core
 
