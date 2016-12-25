@@ -29,7 +29,7 @@ namespace driver {
 class SEQUOIA_DRIVER_EXPORT CommandLine {
 public:
   /// @brief Parse arguments and exit on error
-  static void CommandLine::parse(const std::vector<std::string>& args);
+  static void parse(const std::vector<std::string>& args);
 };
 
 } // namespace driver

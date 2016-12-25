@@ -29,12 +29,12 @@ namespace game {
 /// @ingroup game
 class SEQUOIA_GAME_EXPORT RenderSubsystem {
 public:
+  RenderSubsystem(const std::shared_ptr<Ogre::Root>& root);
 
-  /// @brief Set the rendering subsystem.
+  /// @brief Create a new rendering system and register it within Ogre
   ///
-  /// @param root         Ogre root pointer
   /// @param showDialog   Show dialog to let user choose from the available renderer
-  RenderSubsystem(const std::shared_ptr<Ogre::Root>& root, bool showDialog);
+  void create(bool showDialog);
 
 private:
   std::shared_ptr<Ogre::Root> root_;

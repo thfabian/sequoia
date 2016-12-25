@@ -16,7 +16,8 @@
 #define SEQUOIA_GAME_GAME_H
 
 #include "sequoia/Game/Export.h"
-#include <OGRE/OgrePrerequisites.h>
+#include "sequoia/Game/RenderSubsystem.h"
+#include "sequoia/Game/RenderWindow.h"
 #include <OGRE/OgreSingleton.h>
 #include <memory>
 
@@ -39,7 +40,9 @@ public:
 
 private:
   std::shared_ptr<Ogre::Root> root_;
-  Ogre::RenderWindow* renderWindow_;
+  std::shared_ptr<RenderSubsystem> renderSystem_;  
+  std::shared_ptr<RenderWindow> renderWindow_;
+  
   Ogre::SceneManager* sceneManager_;
   Ogre::Camera* camera_;
 };

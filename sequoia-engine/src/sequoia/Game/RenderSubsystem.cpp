@@ -23,9 +23,10 @@ namespace sequoia {
 
 namespace game {
 
-RenderSubsystem::RenderSubsystem(const std::shared_ptr<Ogre::Root>& root, bool showDialog)
-    : root_(root), renderList_(root->getAvailableRenderers()) {
+RenderSubsystem::RenderSubsystem(const std::shared_ptr<Ogre::Root>& root)
+    : root_(root), renderList_(root->getAvailableRenderers()) {}
 
+void RenderSubsystem::create(bool showDialog) {
   if(renderList_.size() == 0)
     core::ErrorHandler::getSingleton().fatal("No Rendering Subsystem found");
 
@@ -34,14 +35,12 @@ RenderSubsystem::RenderSubsystem(const std::shared_ptr<Ogre::Root>& root, bool s
   else {
 
 #ifdef SEQUOIA_ON_WIN32
+    // Prefer DirectX on Windows
     StringRef preferredRenderSystem = "Direct3D11";
 #else
     StringRef preferredRenderSystem = "";
 #endif
 
-    //
-    // Prefer D3D11 on Windows
-    //
     bool noRenderSystemSet = true;
     if(!preferredRenderSystem.empty())
       for(Ogre::RenderSystem* renderSystem : renderList_) {

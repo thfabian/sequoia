@@ -17,7 +17,6 @@
 #include "sequoia/Core/SmallVector.h"
 #include "sequoia/Core/StringRef.h"
 #include "sequoia/Game/Game.h"
-#include "sequoia/Game/RenderSubsystem.h"
 #include "sequoia/Game/RenderWindow.h"
 #include <OGRE/OgreRoot.h>
 #include <OGRE/OgreRenderWindow.h>
@@ -52,7 +51,8 @@ Game::Game() {
   //
   // Register render subsystem
   //
-  RenderSubsystem rendersystem(root_, config.getBoolean("Game.ShowRenderDialog", false));
+  renderSystem_ = std::make_shared<RenderSubsystem>(root_);
+  renderSystem_->create(config.getBoolean("Game.ShowRenderDialog", false));
 
   //
   // Initialize root
@@ -63,25 +63,14 @@ Game::Game() {
   //
   // Create RenderWindow
   //
-  Ogre::String windowTitle = "Hello Ogre World";
-  unsigned int sizeX = 800;
-  unsigned int sizeY = 600;
-  // I don't want to use fullscreen during development.
-  bool fullscreen = false;
-  // This is just an example of parameters that we can put. Check the API for more details.
-  Ogre::NameValuePairList params;
-  // fullscreen antialiasing. (check wikipedia if needed).
-  params["FSAA"] = "0";
-  // vertical synchronisation will prevent some image-tearing, but also
-  // will provide smooth framerate in windowed mode.(check wikipedia if needed).
-  params["vsync"] = "true";
-  renderWindow_ = root_->createRenderWindow(windowTitle, sizeX, sizeY, fullscreen, &params);
+  renderWindow_ = std::make_shared<RenderWindow>(root_);
+  renderWindow_->create();
 }
 
 Game::~Game() {}
 
 void Game::run() {
-  while(!renderWindow_->isClosed()) {
+  while(!renderWindow_->window()->isClosed()) {
     Ogre::WindowEventUtilities::messagePump();
   }
 }
