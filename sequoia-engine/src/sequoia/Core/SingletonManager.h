@@ -30,7 +30,7 @@ namespace core {
 /// The destructor deallocates all registered Singletons.
 ///
 /// @ingroup core
-class SEQUOIA_EXPORT SingletonManager : public Ogre::Singleton<SingletonManager> {
+class SEQUOIA_CORE_EXPORT SingletonManager : public Ogre::Singleton<SingletonManager> {
   using list_type = std::list<boost::any>;
 
 public:

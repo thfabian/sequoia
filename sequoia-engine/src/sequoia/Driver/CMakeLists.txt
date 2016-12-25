@@ -11,20 +11,23 @@ sequoia_add_library(
   NAME SequoiaDriver
   SOURCES Driver.cpp
           CommandLine.cpp
-  DEPENDS ${SEQUOIA_BOOST_LIBRARIES}
+          Win32Console.cpp
+  DEPENDS SequoiaGame
+          SequoiaCore
+          ${SEQUOIA_BOOST_LIBRARIES}
           ${SEQUOIA_OGRE_LIBRARIES}
           ${SEQUOIA_THREADS_LIBRARIES}
-          SequoiaCore
 )
 
 sequoia_add_executable(
   NAME Sequoia
+  WIN32_APPLICATION
   SOURCES Main.cpp
-  DEPENDS ${SEQUOIA_BOOST_LIBRARIES}
-          ${SEQUOIA_OGRE_LIBRARIES}
-          ${SEQUOIA_THREADS_LIBRARIES}
-          SequoiaDriver
+  DEPENDS SequoiaDriver
           SequoiaGame
           SequoiaCore
+          ${SEQUOIA_BOOST_LIBRARIES}
+          ${SEQUOIA_OGRE_LIBRARIES}
+          ${SEQUOIA_THREADS_LIBRARIES}
 )
 

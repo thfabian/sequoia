@@ -29,15 +29,8 @@ TEST(StringTest, String) {
 #ifdef SEQUOIA_ON_WIN32
   // Wide strings
   {
-    sequoia::String s(L"Fabian Thüring");
-
-    // To std::wstring
-    std::wstring wstring = s;
-    EXPECT_EQ(std::wstring(L"Fabian Thüring"), wstring);
-
-    // To std::string
-    std::string string = s;
-    EXPECT_EQ(std::string("Fabian Thüring"), string);
+    String s(L"Fabian Thüring");
+    EXPECT_STREQ(s.asWStr_c_str(), L"Fabian Thüring");
   }
 #endif
 }

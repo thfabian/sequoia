@@ -26,7 +26,7 @@ namespace core {
 /// @brief Utility to compare Sequoia versions
 ///
 /// @ingroup core
-class SEQUOIA_EXPORT Version {
+class SEQUOIA_CORE_EXPORT Version {
 public:
   /// @brief Constrcut version
   Version(int major, int minor, int patch);
@@ -81,8 +81,8 @@ public:
   std::string toString() const;
 
   /// @brief Convert to stream
-  SEQUOIA_EXPORT friend std::ostream& operator<<(std::ostream& stream, const Version& version);
-  
+  SEQUOIA_CORE_EXPORT friend std::ostream& operator<<(std::ostream& stream, const Version& version);
+
 private:
   int major_, minor_, patch_;
 };

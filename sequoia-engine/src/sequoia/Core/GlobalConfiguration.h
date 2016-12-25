@@ -16,6 +16,7 @@
 #define SEQUOIA_CORE_GLOBALCONFIGURATION_H
 
 #include "sequoia/Core/ArrayRef.h"
+#include "sequoia/Core/Core.h"
 #include "sequoia/Core/String.h"
 #include <OGRE/OgreSingleton.h>
 #include <boost/filesystem.hpp>
@@ -30,7 +31,7 @@ namespace core {
 /// @brief Provide access to global configuration options
 ///
 /// @ingroup core
-class SEQUOIA_EXPORT GlobalConfiguration : public Ogre::Singleton<GlobalConfiguration> {
+class SEQUOIA_CORE_EXPORT GlobalConfiguration : public Ogre::Singleton<GlobalConfiguration> {
 public:
   using TreeType = boost::property_tree::basic_ptree<std::string, std::string>;
 
@@ -113,8 +114,8 @@ public:
   std::string toString(ParserKind parser = ParserKind::JSON) const;
 
   /// @brief Convert to stream
-  SEQUOIA_EXPORT friend std::ostream& operator<<(std::ostream& stream,
-                                                 const GlobalConfiguration& config);
+  SEQUOIA_CORE_EXPORT friend std::ostream& operator<<(std::ostream& stream,
+                                                      const GlobalConfiguration& config);
 
   /// @brief Before saving the configuration to disk, all direct children of the root with name
   /// `node` will be removed.

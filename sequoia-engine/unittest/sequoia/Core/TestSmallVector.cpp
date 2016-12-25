@@ -124,10 +124,12 @@ private:
   NonCopyable& operator=(const NonCopyable&) = delete;
 };
 
+
 SEQUOIA_ATTRIBUTE_UNUSED void CompileTest() {
   SmallVector<NonCopyable, 0> V;
   V.resize(42);
 }
+
 
 class SmallVectorTestBase : public testing::Test {
 protected:

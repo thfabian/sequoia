@@ -22,6 +22,11 @@
 #include <functional>
 #include <utility>
 
+#ifdef SEQUOIA_COMPILER_MSVC
+#pragma warning(push)
+#pragma warning(disable : 4800)
+#endif
+
 namespace sequoia {
 
 namespace core {
@@ -175,5 +180,9 @@ OutputIt transform(R&& Range, OutputIt d_first, UnaryPredicate P) {
 } // namespace core
 
 } // namespace sequoia
+
+#ifdef SEQUOIA_COMPILER_MSVC
+#pragma warning(pop)
+#endif
 
 #endif

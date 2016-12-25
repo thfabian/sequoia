@@ -13,6 +13,7 @@
 //===------------------------------------------------------------------------------------------===//
 
 #include "sequoia/Driver/Driver.h"
+#include "sequoia/Driver/Win32Console.h"
 
 #ifdef SEQUOIA_ON_WIN32
 #define WIN32_LEAN_AND_MEAN
@@ -21,7 +22,8 @@
 
 #ifdef SEQUOIA_ON_WIN32
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
-  return Driver::run(hInstance, hPrevInstance, lpCmdLine, nCmdShow); // ???
+  sequoia::Win32Console win32Console;
+  return sequoia::Driver::run(hInstance, hPrevInstance, lpCmdLine, nCmdShow);
 }
 #else
 int main(int argc, char* argv[]) { return sequoia::Driver::run(argc, argv); }

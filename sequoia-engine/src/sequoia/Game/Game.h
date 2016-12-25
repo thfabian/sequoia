@@ -15,18 +15,17 @@
 #ifndef SEQUOIA_GAME_GAME_H
 #define SEQUOIA_GAME_GAME_H
 
-#include "sequoia/Core/Core.h"
+#include "sequoia/Game/Export.h"
 #include <OGRE/OgrePrerequisites.h>
 #include <OGRE/OgreSingleton.h>
 #include <memory>
-
 
 namespace sequoia {
 
 namespace game {
 
 /// @brief Main class holding all Ogre related objects and running the main-loop
-class SEQUOIA_EXPORT Game : public Ogre::Singleton<Game> {
+class SEQUOIA_GAME_EXPORT Game : public Ogre::Singleton<Game> {
 public:
 
   /// @brief Initialize game

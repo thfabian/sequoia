@@ -11,7 +11,8 @@ sequoia_configure_file(Config.h.cmake)
 
 sequoia_add_library(
   NAME SequoiaCore
-  SOURCES Version.cpp
+  SOURCES Assert.cpp
+          Version.cpp
           Exception.cpp
           ErrorHandler.cpp
           SingletonManager.cpp

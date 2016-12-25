@@ -25,7 +25,7 @@ namespace sequoia {
 }
 #endif
 
-#include "sequoia/Core/Platform.h"
+#include "sequoia/Core/Export.h"
 #include "sequoia/Core/Compiler.h"
 
 /// @defgroup core Core

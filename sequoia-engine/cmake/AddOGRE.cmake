@@ -11,30 +11,59 @@ find_package(OGRE REQUIRED)
 
 include_directories(SYSTEM ${OGRE_INCLUDE_DIRS})
 
-if(${CMAKE_BUILD_TYPE} MATCHES "Debug")
+if(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
   list(APPEND ogre_libraries ${OGRE_LIBRARY_DBG})
 else()
   list(APPEND ogre_libraries ${OGRE_LIBRARY_REL})
 endif()
 
+if(WIN32)
+  foreach(build_type Release Debug RelWithDebInfo)
+    file(COPY "${OGRE_BINARY_REL}" 
+         DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/bin/${build_type}")
+  endforeach()
+endif()
+
+set(ogre_components Terrain Paging Property)
+set(ogre_plugins RenderSystem_GL RenderSystem_Direct3D11)
+
+#
 # Components
-foreach(component Terrain Paging Property)
+#
+foreach(component ${ogre_components})
   if(OGRE_${component}_FOUND)
-    # Todo.. handle Debug/Release
     if(OGRE_${component}_LIBRARY_REL)
       list(APPEND ogre_libraries ${OGRE_${component}_LIBRARY_REL})
+    endif()
+    
+    # Copy DLL
+    if(WIN32)
+      foreach(build_type Release Debug RelWithDebInfo)
+        file(COPY "${OGRE_${component}_BINARY_REL}" 
+             DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/bin/${build_type}")
+      endforeach()
     endif()
   endif()
 endforeach()
 
+#
 # Plugins
-foreach(plugin RenderSystem_GL)
+#
+foreach(plugin ${ogre_plugins})
   if(OGRE_${plugin}_FOUND)
+  
     if(OGRE_${plugin}_LIBRARY_REL)
-        # Todo.. handle Debug/Release
       list(APPEND ogre_libraries ${OGRE_${plugin}_LIBRARY_REL})
     endif()
     list(APPEND OGRE_PLUGINS ${plugin})
+    
+    # Copy DLL
+    if(WIN32)
+      foreach(build_type Release Debug RelWithDebInfo)
+        file(COPY "${OGRE_${plugin}_REL}" 
+             DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/bin/${build_type}")
+      endforeach()
+    endif()
   endif()
 endforeach()
 

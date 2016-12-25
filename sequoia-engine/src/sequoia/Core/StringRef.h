@@ -21,10 +21,10 @@
 #include <algorithm>
 #include <cassert>
 #include <cstring>
+#include <iosfwd>
 #include <limits>
 #include <string>
 #include <utility>
-#include <iosfwd>
 
 namespace sequoia {
 
@@ -34,11 +34,12 @@ template <typename T>
 class SmallVectorImpl;
 class StringRef;
 
-SEQUOIA_EXPORT bool getAsUnsignedInteger(StringRef Str, unsigned Radix, unsigned long long& Result);
-SEQUOIA_EXPORT bool getAsSignedInteger(StringRef Str, unsigned Radix, long long& Result);
-SEQUOIA_EXPORT bool consumeUnsignedInteger(StringRef& Str, unsigned Radix,
-                                           unsigned long long& Result);
-SEQUOIA_EXPORT bool consumeSignedInteger(StringRef& Str, unsigned Radix, long long& Result);
+SEQUOIA_CORE_EXPORT bool getAsUnsignedInteger(StringRef Str, unsigned Radix,
+                                              unsigned long long& Result);
+SEQUOIA_CORE_EXPORT bool getAsSignedInteger(StringRef Str, unsigned Radix, long long& Result);
+SEQUOIA_CORE_EXPORT bool consumeUnsignedInteger(StringRef& Str, unsigned Radix,
+                                                unsigned long long& Result);
+SEQUOIA_CORE_EXPORT bool consumeSignedInteger(StringRef& Str, unsigned Radix, long long& Result);
 
 /// @brief Represent a constant reference to a string, i.e. a character array and a length, which
 /// need not be null terminated.
@@ -48,7 +49,7 @@ SEQUOIA_EXPORT bool consumeSignedInteger(StringRef& Str, unsigned Radix, long lo
 /// For this reason, it is not in general safe to store a StringRef.
 ///
 /// @ingroup core
-class SEQUOIA_EXPORT StringRef {
+class SEQUOIA_CORE_EXPORT StringRef {
 public:
   typedef const char* iterator;
   typedef const char* const_iterator;
@@ -641,9 +642,9 @@ public:
   StringRef trim(StringRef Chars = " \t\n\v\f\r") const { return ltrim(Chars).rtrim(Chars); }
 
   /// @}
-  
+
   /// @brief Convert to stream
-  SEQUOIA_EXPORT friend std::ostream& operator<<(std::ostream& stream, const StringRef& str);
+  SEQUOIA_CORE_EXPORT friend std::ostream& operator<<(std::ostream& stream, const StringRef& str);
 };
 
 /// @name StringRef Comparison Operators
@@ -661,8 +662,12 @@ inline std::string& operator+=(std::string& buffer, StringRef string) {
 /// @}
 
 // StringRefs can be treated like a POD type.
-template <typename T> struct isPodLike;
-template <> struct isPodLike<StringRef> { static const bool value = true; };
+template <typename T>
+struct isPodLike;
+template <>
+struct isPodLike<StringRef> {
+  static const bool value = true;
+};
 
 } // namespace core
 

@@ -15,8 +15,7 @@
 #ifndef SEQUOIA_DRIVER_COMMANDLINE_H
 #define SEQUOIA_DRIVER_COMMANDLINE_H
 
-#include "sequoia/Core/Core.h"
-#include "sequoia/Core/String.h"
+#include "sequoia/Driver/Export.h"
 #include <string>
 #include <vector>
 
@@ -27,10 +26,10 @@ namespace driver {
 /// @brief Parse command-line arguments and store them in `GlobalConfiguration`
 ///
 /// @ingroup driver
-class SEQUOIA_EXPORT CommandLine {
+class SEQUOIA_DRIVER_EXPORT CommandLine {
 public:
   /// @brief Parse arguments and exit on error
-  static void parse(const std::vector<DefaultString>& arguments);
+  static void CommandLine::parse(const std::vector<std::string>& args);
 };
 
 } // namespace driver

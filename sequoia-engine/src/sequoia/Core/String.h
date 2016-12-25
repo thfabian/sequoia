@@ -48,10 +48,10 @@ using DefaultChar = DefaultString::value_type;
 ///
 /// @throw std::bad_alloc  Out of memory
 /// @{
-SEQUOIA_EXPORT extern const char* copyCString(const std::string& s);
-SEQUOIA_EXPORT extern const char* copyCString(const char* s);
-SEQUOIA_EXPORT extern const wchar_t* copyCString(const std::wstring& s);
-SEQUOIA_EXPORT extern const wchar_t* copyCString(const wchar_t* s);
+SEQUOIA_CORE_EXPORT extern const char* copyCString(const std::string& s);
+SEQUOIA_CORE_EXPORT extern const char* copyCString(const char* s);
+SEQUOIA_CORE_EXPORT extern const wchar_t* copyCString(const std::wstring& s);
+SEQUOIA_CORE_EXPORT extern const wchar_t* copyCString(const wchar_t* s);
 /// @}
 
 /// @macro CSTR
@@ -64,7 +64,8 @@ SEQUOIA_EXPORT extern const wchar_t* copyCString(const wchar_t* s);
 #error "CSTR already defined!"
 #endif
 #ifdef SEQUOIA_ON_WIN32
-#define CSTR(x) L##x
+#define CSTR_IMPL(x) L##x
+#define CSTR(x) CSTR_IMPL(x)
 #else
 #define CSTR(x) x
 #endif
@@ -75,6 +76,7 @@ SEQUOIA_EXPORT extern const wchar_t* copyCString(const wchar_t* s);
 
 using String = core::String;
 using DefaultString = core::DefaultString;
+using DefaultChar = core::DefaultChar;
 
 } // namespace sequoia
 

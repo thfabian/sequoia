@@ -37,7 +37,7 @@ static void printVersion() {
   std::exit(EXIT_SUCCESS);
 }
 
-void CommandLine::parse(const std::vector<DefaultString>& args) {
+void CommandLine::parse(const std::vector<std::string>& args) {
 
   //
   // Set options
@@ -47,14 +47,14 @@ void CommandLine::parse(const std::vector<DefaultString>& args) {
       // --help
       ("help", "Display this information.")
       // --help-module=module
-      ("help-module", po::value<DefaultString>()->value_name("MODULE"),
+      ("help-module", po::value<std::string>()->value_name("MODULE"),
        "Produce a help for a given module.")
       // --version
       ("version", "Display version information.")
       // --verbose
       ("verbose", "Enable verbose logging to console [default: OFF]")
       // --config
-      ("config", po::value<DefaultString>()->value_name("PATH"),
+      ("config", po::value<std::string>()->value_name("PATH"),
        "Path to the global configuration file [default: " SEQUOIA_GLOBAL_CONFIG_PATH "]");
 
   po::options_description gui("GUI options");
@@ -71,10 +71,10 @@ void CommandLine::parse(const std::vector<DefaultString>& args) {
   po::variables_map vm;
 
   try {
-    po::store(po::basic_command_line_parser<DefaultChar>(args).options(all).run(), vm);
+    po::store(po::command_line_parser(args).options(all).run(), vm);
     po::notify(vm);
   } catch(std::exception& e) {
-    core::ErrorHandler::getSingleton().fatal(e.what());
+    core::ErrorHandler::getSingleton().fatal(e.what(), false);
   }
 
   //
@@ -108,5 +108,5 @@ void CommandLine::parse(const std::vector<DefaultString>& args) {
 }
 
 } // namespace driver
- 
+
 } // namespace sequoia

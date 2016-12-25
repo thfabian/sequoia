@@ -89,8 +89,8 @@ function(sequoia_add_library)
 
 endfunction()
 
-## sequoia_add_test
-## ----------------
+## sequoia_add_executable
+## ----------------------
 ##
 ## Create an executable.
 ## All header files (".h") in the directory of the source files are treated as dependencies of the
@@ -98,13 +98,14 @@ endfunction()
 ##    
 ##    NAME:STRING=<>             - Name of the test.
 ##    SOURCES:STRING=<>          - List of source files.
+##    WIN32_APPLICATION          - Build an executable with a WinMain entry point on windows.
 ##    DEPENDS:STRING=<>          - List of external libraries and/or CMake targets to link against.
 ##
 function(sequoia_add_executable)
   #
   # Parse arguments
   #
-  set(options)
+  set(options WIN32_APPLICATION)
   set(one_value_args NAME)
   set(multi_value_args SOURCES DEPENDS)
   cmake_parse_arguments(ARG "${options}" "${one_value_args}" "${multi_value_args}" ${ARGN})
@@ -116,10 +117,15 @@ function(sequoia_add_executable)
   #
   # Add executable
   #
-  add_executable(${ARG_NAME} ${ARG_SOURCES})
+  if(ARG_WIN32_APPLICATION)
+    add_executable(${ARG_NAME} WIN32 ${ARG_SOURCES})
+  else()
+    add_executable(${ARG_NAME} ${ARG_SOURCES})
+  endif()
+  
   target_link_libraries(${ARG_NAME} ${ARG_DEPENDS})
   set_property(TARGET ${ARG_NAME} PROPERTY RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
-
+  
   install(TARGETS ${ARG_NAME} DESTINATION bin)
 endfunction()
 

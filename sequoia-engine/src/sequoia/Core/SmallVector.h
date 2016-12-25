@@ -41,7 +41,7 @@ namespace sequoia {
 namespace core {
 
 /// This is all the non-templated stuff common to all SmallVectors
-class SEQUOIA_EXPORT SmallVectorBase {
+class SEQUOIA_CORE_EXPORT SmallVectorBase {
 protected:
   void *BeginX, *EndX, *CapacityX;
 
@@ -67,7 +67,7 @@ public:
 /// the type T is a POD. The extra dummy template argument is used by ArrayRef
 /// to avoid unnecessarily requiring T to be complete.
 template <typename T, typename = void>
-class SEQUOIA_EXPORT SmallVectorTemplateCommon : public SmallVectorBase {
+class SmallVectorTemplateCommon : public SmallVectorBase {
 private:
   template <typename, unsigned>
   friend struct SmallVectorStorage;

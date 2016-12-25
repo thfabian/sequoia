@@ -107,13 +107,15 @@ macro(sequoia_set_cxx_flags)
 
   # Remove -DNDEBUG flag if ASSERTS are ON
   if(SEQUOIA_ASSERTS)
-    string(REPLACE "-DNDEBUG" "" CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO}")
-    string(REPLACE "-DNDEBUG" "" CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE}")
+    if(WIN32)
+      set(ndebug_flag "/D NDEBUG")
+    else()
+      set(ndebug_flag "-DNDEBUG")
+    endif()
+    string(REPLACE "${ndebug_flag}" "" CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO}")
+    string(REPLACE "${ndebug_flag}" "" CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE}")
   endif()
-  
-  if("${CMAKE_BUILD_TYPE}" MATCHES "Debug")
-    add_definitions(-DDEBUG)
-  endif()
+
   
   #
   # Add shared library flags
@@ -126,6 +128,11 @@ macro(sequoia_set_cxx_flags)
   # MSVC
   #
   if(SEQUOIA_COMPILER_MSVC)
+    add_definitions(-D_SCL_SECURE_NO_WARNINGS)
+    add_definitions(-D_CRT_SECURE_NO_WARNINGS)
+    add_definitions(-DUNICODE)
+    
+    sequoia_check_and_set_cxx_flag("/wd4244" HAVE_MSVC_WD4244)
     
   #
   # GCC/Clang

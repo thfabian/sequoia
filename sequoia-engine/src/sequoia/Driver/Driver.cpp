@@ -12,14 +12,17 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
+#include "sequoia/Core/Assert.h"
 #include "sequoia/Core/ErrorHandler.h"
 #include "sequoia/Core/Exception.h"
 #include "sequoia/Core/GlobalConfiguration.h"
 #include "sequoia/Core/SingletonManager.h"
 #include "sequoia/Driver/CommandLine.h"
 #include "sequoia/Driver/Driver.h"
+#include "sequoia/Driver/Win32Console.h"
 #include "sequoia/Game/Game.h"
 #include <OGRE/OgreLogManager.h>
+#include <boost/program_options.hpp>
 
 namespace sequoia {
 
@@ -32,16 +35,15 @@ int Driver::run(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, i
   auto singletonManager = std::make_unique<SingletonManager>();
   Driver::setDefaultConfigs();
   
-  // Allocate OS specific Singletons
-  auto& singletonManager = SingletonManager::getSingleton();
-  
+  // Allocate OS specific Singletons  
   TCHAR program[MAX_PATH];
   GetModuleFileName(NULL, program, MAX_PATH);
   singletonManager->allocateSingleton<ErrorHandler>(program);
   
   // Parse command-line
-  // TODO...
-  
+  std::vector<std::string> arguments = boost::program_options::split_winmain(lpCmdLine);
+  CommandLine::parse(arguments);
+
   return Driver::runImpl();
 }
 

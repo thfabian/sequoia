@@ -15,7 +15,7 @@
 #ifndef SEQUOIA_DRIVER_DRIVER_H
 #define SEQUOIA_DRIVER_DRIVER_H
 
-#include "sequoia/Core/Core.h"
+#include "sequoia/Driver/Export.h"
 
 #ifdef SEQUOIA_ON_WIN32
 #define WIN32_LEAN_AND_MEAN
@@ -29,7 +29,7 @@ namespace driver {
 /// @brief Initialize framework and invoke main-loop
 ///
 /// @ingroup driver
-class SEQUOIA_EXPORT Driver {
+class SEQUOIA_DRIVER_EXPORT Driver {
 public:
   Driver() = delete;
 

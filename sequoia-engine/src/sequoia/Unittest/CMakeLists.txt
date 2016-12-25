@@ -10,8 +10,8 @@
 sequoia_add_library(
   NAME SequoiaUnittest
   SOURCES Environment.cpp
-  DEPENDS ${SEQUOIA_BOOST_LIBRARIES}
+  DEPENDS SequoiaCore
+          ${SEQUOIA_BOOST_LIBRARIES}
           ${SEQUOIA_GTEST_LIBRARIES}
-          ${SEQUOIA_THREADS_LIBRARIES}
-          SequoiaCore          
+          ${SEQUOIA_THREADS_LIBRARIES}          
 )

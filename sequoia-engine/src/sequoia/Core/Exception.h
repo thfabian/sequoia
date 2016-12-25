@@ -32,7 +32,7 @@ namespace core {
 /// @brief Base class for all library exceptions
 ///
 /// @ingroup core
-class SEQUOIA_EXPORT Exception : public std::exception {
+class SEQUOIA_CORE_EXPORT Exception : public std::exception {
 public:
   /// @brief Initialize the exception
   ///
@@ -62,9 +62,10 @@ public:
 
   /// @brief Convert to stream by streaming Exception::what() into `stream`.
   /// @{
-  SEQUOIA_EXPORT friend std::ostream& operator<<(std::ostream& stream, const Exception& exception);
-  SEQUOIA_EXPORT friend std::wostream& operator<<(std::wostream& stream,
-                                                  const Exception& exception);
+  SEQUOIA_CORE_EXPORT friend std::ostream& operator<<(std::ostream& stream,
+                                                      const Exception& exception);
+  SEQUOIA_CORE_EXPORT friend std::wostream& operator<<(std::wostream& stream,
+                                                       const Exception& exception);
   /// @}
 
 protected:
@@ -74,7 +75,7 @@ protected:
 };
 
 #define SEQUOIA_DECLARE_EXCPETION(Type)                                                            \
-  class SEQUOIA_EXPORT Type : public Exception {                                                   \
+  class SEQUOIA_CORE_EXPORT Type : public Exception {                                              \
   public:                                                                                          \
     Type(const std::string& message, int line = -1, const char* path = nullptr)                    \
         : Exception(message, line, path) {}                                                        \

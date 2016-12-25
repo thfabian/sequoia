@@ -26,7 +26,7 @@ namespace core {
 /// @brief Global error handler.
 ///
 /// @ingroup core
-class SEQUOIA_EXPORT ErrorHandler : public Ogre::Singleton<ErrorHandler> {
+class SEQUOIA_CORE_EXPORT ErrorHandler : public Ogre::Singleton<ErrorHandler> {
 public:
   /// @brief Setup ErrorHandler
   ///

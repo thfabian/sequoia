@@ -35,7 +35,7 @@ ErrorHandler::ErrorHandler(String program) {
 #else
   boost::filesystem::path p(program.asUTF8());
 #endif
-  program_ = p.stem().string();
+  program_ = p.stem().native();
 }
 
 void ErrorHandler::fatal(String message, bool messagebox) noexcept {
