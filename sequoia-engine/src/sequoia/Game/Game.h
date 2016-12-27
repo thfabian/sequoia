@@ -28,7 +28,6 @@ namespace game {
 /// @brief Main class holding all Ogre related objects and running the main-loop
 class SEQUOIA_GAME_EXPORT Game : public Ogre::Singleton<Game> {
 public:
-
   /// @brief Initialize game
   Game();
 
@@ -40,11 +39,11 @@ public:
 
 private:
   std::shared_ptr<Ogre::Root> root_;
-  std::shared_ptr<RenderSubsystem> renderSystem_;  
+  std::shared_ptr<RenderSubsystem> renderSystem_;
   std::shared_ptr<RenderWindow> renderWindow_;
-  
-  Ogre::SceneManager* sceneManager_;
-  Ogre::Camera* camera_;
+
+  Ogre::SceneManager* sceneManager_; ///< Non-owning pointer
+  Ogre::Camera* camera_;             ///< Non-owning pointer
 };
 
 } // namespace game

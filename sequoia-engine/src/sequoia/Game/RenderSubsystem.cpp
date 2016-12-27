@@ -26,7 +26,7 @@ namespace game {
 RenderSubsystem::RenderSubsystem(const std::shared_ptr<Ogre::Root>& root)
     : root_(root), renderList_(root->getAvailableRenderers()) {}
 
-void RenderSubsystem::create(bool showDialog) {
+void RenderSubsystem::create(bool showDialog, std::string preferredRenderSystem) {
   if(renderList_.size() == 0)
     core::ErrorHandler::getSingleton().fatal("No Rendering Subsystem found");
 
@@ -34,17 +34,20 @@ void RenderSubsystem::create(bool showDialog) {
     root_->showConfigDialog();
   else {
 
+    StringRef prs = preferredRenderSystem;
+    if(prs.empty()) {
 #ifdef SEQUOIA_ON_WIN32
-    // Prefer DirectX on Windows
-    StringRef preferredRenderSystem = "Direct3D11";
+      // Prefer DirectX on Windows
+      prs = "Direct3D11";
 #else
-    StringRef preferredRenderSystem = "";
+      prs = "";
 #endif
+    }
 
     bool noRenderSystemSet = true;
-    if(!preferredRenderSystem.empty())
+    if(!prs.empty())
       for(Ogre::RenderSystem* renderSystem : renderList_) {
-        if(StringRef(renderSystem->getName()).startswith(preferredRenderSystem)) {
+        if(StringRef(renderSystem->getName()).startswith(prs)) {
           root_->setRenderSystem(renderSystem);
           noRenderSystemSet = false;
           break;

@@ -19,6 +19,7 @@
 #include <OGRE/OgrePrerequisites.h>
 #include <memory>
 #include <vector>
+#include <string>
 
 namespace sequoia {
 
@@ -33,8 +34,9 @@ public:
 
   /// @brief Create a new rendering system and register it within Ogre
   ///
-  /// @param showDialog   Show dialog to let user choose from the available renderer
-  void create(bool showDialog);
+  /// @param showDialog             Show dialog to let user choose from the available renderer
+  /// @param preferredRenderSystem  Preffered rendering system
+  void create(bool showDialog, std::string preferredRenderSystem = "");
 
 private:
   std::shared_ptr<Ogre::Root> root_;

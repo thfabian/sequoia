@@ -57,10 +57,10 @@ void CommandLine::parse(const std::vector<std::string>& args) {
       ("config", po::value<std::string>()->value_name("PATH"),
        "Path to the global configuration file [default: " SEQUOIA_GLOBAL_CONFIG_PATH "]");
 
-  po::options_description gui("GUI options");
+  po::options_description gui("Graphics options");
   gui.add_options()
       // --display
-      ("display", po::value<int>(), "X display to use.");
+      ("render-system", po::value<std::string>(), "Rendering system to use: Direct3D11 or OpenGL.");
 
   po::options_description all("Allowed options");
   all.add(general).add(gui);
@@ -91,7 +91,7 @@ void CommandLine::parse(const std::vector<std::string>& args) {
 
   boost::filesystem::path configPath(CSTR(SEQUOIA_GLOBAL_CONFIG_PATH));
   if(vm.count("config"))
-    configPath = vm["config"].as<DefaultString>();
+    configPath = vm["config"].as<std::string>();
 
   try {
     config.load(configPath);
@@ -103,8 +103,10 @@ void CommandLine::parse(const std::vector<std::string>& args) {
   if(vm.count("verbose"))
     config.put("CommandLine.Verbose", true);
 
-  if(vm.count("display"))
-    config.put("CommandLine.Display", vm["display"].as<int>());
+  if(vm.count("render-system"))
+    config.put("CommandLine.RenderSystem", vm["render-system"].as<std::string>());
+
+
 }
 
 } // namespace driver

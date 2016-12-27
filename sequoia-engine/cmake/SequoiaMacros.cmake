@@ -130,6 +130,7 @@ macro(sequoia_set_cxx_flags)
   if(SEQUOIA_COMPILER_MSVC)
     add_definitions(-D_SCL_SECURE_NO_WARNINGS)
     add_definitions(-D_CRT_SECURE_NO_WARNINGS)
+    add_definitions(-DNOMINMAX)
     add_definitions(-DUNICODE)
     
     sequoia_check_and_set_cxx_flag("/wd4244" HAVE_MSVC_WD4244)

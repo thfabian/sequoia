@@ -26,6 +26,10 @@ if(WIN32)
     COMMAND ${CMAKE_COMMAND} -E copy_directory 
             ${CMAKE_SOURCE_DIR}/bin/config 
             ${CMAKE_BINARY_DIR}/bin/Debug/config
+    # Run in source
+    COMMAND ${CMAKE_COMMAND} -E copy_directory 
+            ${CMAKE_SOURCE_DIR}/bin/config 
+            ${CMAKE_BINARY_DIR}/src/sequoia/Driver/config
     DEPENDS ${SEQUOIA_OGRE_CONFIG_PATH}
             ${SEQUOIA_OGRE_PLUGIN_PATH}
   )

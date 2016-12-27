@@ -47,7 +47,6 @@ Win32Console::Win32Console() {
     std::freopen("CONOUT$", "w", stderr);
   }
   bool inConsole = separateConsole();
-
   Win32Console::pauseAfterFinish = inConsole;
 
   std::cout << std::endl;
