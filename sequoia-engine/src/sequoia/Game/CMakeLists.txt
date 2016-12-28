@@ -10,8 +10,8 @@
 sequoia_add_library(
   NAME SequoiaGame
   SOURCES Game.cpp
-          RenderSubsystem.cpp
-          RenderWindow.cpp
+          RenderSystemFactory.cpp
+          WindowFactory.cpp
   DEPENDS SequoiaCore
           ${SEQUOIA_BOOST_LIBRARIES}
           ${SEQUOIA_OGRE_LIBRARIES}

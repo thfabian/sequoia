@@ -16,34 +16,81 @@
 #define SEQUOIA_GAME_GAME_H
 
 #include "sequoia/Game/Export.h"
-#include "sequoia/Game/RenderSubsystem.h"
-#include "sequoia/Game/RenderWindow.h"
+#include <OGRE/OgreFrameListener.h>
+#include <OGRE/OgrePrerequisites.h>
 #include <OGRE/OgreSingleton.h>
+#include <OGRE/OgreWindowEventUtilities.h>
 #include <memory>
+
+namespace Ogre {
+class OverlaySystem;
+}
 
 namespace sequoia {
 
 namespace game {
 
 /// @brief Main class holding all Ogre related objects and running the main-loop
-class SEQUOIA_GAME_EXPORT Game : public Ogre::Singleton<Game> {
+class SEQUOIA_GAME_EXPORT Game : public Ogre::Singleton<Game>,
+                                 public Ogre::FrameListener,
+                                 public Ogre::WindowEventListener {
 public:
-  /// @brief Initialize game
   Game();
-
-  /// @brief Clean up
   ~Game();
 
-  /// @brief Run main-loop
+  /// @brief Run the main-loop
   void run();
 
 private:
-  std::shared_ptr<Ogre::Root> root_;
-  std::shared_ptr<RenderSubsystem> renderSystem_;
-  std::shared_ptr<RenderWindow> renderWindow_;
+  void setup();
 
-  Ogre::SceneManager* sceneManager_; ///< Non-owning pointer
-  Ogre::Camera* camera_;             ///< Non-owning pointer
+  void setupResources();
+
+  void chooseSceneManager();
+
+  void createCamera();
+
+  void createFrameListener();
+
+  void createScene();
+
+  void destroyScene();
+
+  void createViewports();
+
+  void createResourceListener();
+
+  void loadResources();
+
+  virtual bool frameRenderingQueued(const Ogre::FrameEvent& evt);
+  
+  
+  // -- TMP --
+  void setupDummyScene();
+  // ---------
+  
+
+  /// @brief Callback for resize event
+  virtual void windowResized(Ogre::RenderWindow* window);
+
+  /// @brief Callback for window close event
+  ///
+  /// Unattaches OIS before window shutdown (very important under Linux).
+  virtual void windowClosed(Ogre::RenderWindow* window);
+
+private:
+  std::shared_ptr<Ogre::Root> root_;
+  
+  // Window
+  Ogre::RenderWindow* renderWindow_;
+  Ogre::RenderSystem* renderSystem_;
+
+  // Scene
+  Ogre::SceneManager* sceneManager_;
+  Ogre::OverlaySystem* overlaySystem_;
+
+  // Camera
+  Ogre::Camera* camera_;
 };
 
 } // namespace game

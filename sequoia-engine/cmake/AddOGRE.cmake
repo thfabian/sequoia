@@ -24,7 +24,7 @@ if(WIN32)
   endforeach()
 endif()
 
-set(ogre_components Terrain Paging Property)
+set(ogre_components Overlay Terrain Paging Property)
 set(ogre_plugins RenderSystem_GL RenderSystem_Direct3D11)
 
 #
@@ -34,6 +34,11 @@ foreach(component ${ogre_components})
   if(OGRE_${component}_FOUND)
     if(OGRE_${component}_LIBRARY_REL)
       list(APPEND ogre_libraries ${OGRE_${component}_LIBRARY_REL})
+    endif()
+
+    # Additional include directories for ${component}
+    if(OGRE_${component}_INCLUDE_DIRS)
+      include_directories(SYSTEM ${OGRE_${component}_INCLUDE_DIRS})
     endif()
     
     # Copy DLL

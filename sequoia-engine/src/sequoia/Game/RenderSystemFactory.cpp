@@ -1,4 +1,4 @@
-//===-- sequoia/Game/Game.h ---------------------------------------------------------*- C++ -*-===//
+//===-- sequoia/Game/RenderSystemFactory.cpp ----------------------------------------*- C++ -*-===//
 //
 //                                      S E Q U O I A
 //
@@ -8,13 +8,13 @@
 //===------------------------------------------------------------------------------------------===//
 //
 /// @file
-/// Main class holding all Ogre related objects.
+/// Factory to create RenderSystems.
 //
 //===------------------------------------------------------------------------------------------===//
 
 #include "sequoia/Core/ErrorHandler.h"
 #include "sequoia/Core/StringRef.h"
-#include "sequoia/Game/RenderSubsystem.h"
+#include "sequoia/Game/RenderSystemFactory.h"
 #include <OGRE/OgreRenderSystem.h>
 #include <OGRE/OgreRoot.h>
 #include <string>
@@ -23,16 +23,17 @@ namespace sequoia {
 
 namespace game {
 
-RenderSubsystem::RenderSubsystem(const std::shared_ptr<Ogre::Root>& root)
-    : root_(root), renderList_(root->getAvailableRenderers()) {}
+Ogre::RenderSystem* RenderSystemFactory::create(const std::shared_ptr<Ogre::Root>& root,
+                                                bool showDialog,
+                                                std::string preferredRenderSystem) {
+  auto& renderList = root->getAvailableRenderers();
 
-void RenderSubsystem::create(bool showDialog, std::string preferredRenderSystem) {
-  if(renderList_.size() == 0)
+  if(renderList.size() == 0)
     core::ErrorHandler::getSingleton().fatal("No Rendering Subsystem found");
 
-  if(showDialog)
-    root_->showConfigDialog();
-  else {
+  if(showDialog && root->showConfigDialog()) {
+    return root->getRenderSystem();
+  } else {
 
     StringRef prs = preferredRenderSystem;
     if(prs.empty()) {
@@ -44,18 +45,20 @@ void RenderSubsystem::create(bool showDialog, std::string preferredRenderSystem)
 #endif
     }
 
-    bool noRenderSystemSet = true;
+    Ogre::RenderSystem* renderSystem = nullptr;
     if(!prs.empty())
-      for(Ogre::RenderSystem* renderSystem : renderList_) {
-        if(StringRef(renderSystem->getName()).startswith(prs)) {
-          root_->setRenderSystem(renderSystem);
-          noRenderSystemSet = false;
+      for(Ogre::RenderSystem* rs : renderList) {
+        if(StringRef(rs->getName()).startswith(prs)) {
+          renderSystem = rs;
           break;
         }
       }
 
-    if(noRenderSystemSet)
-      root_->setRenderSystem(renderList_[0]);
+    if(renderSystem)
+      renderSystem = renderList[0];
+
+    root->setRenderSystem(renderSystem);
+    return renderSystem;
   }
 }
 

@@ -55,6 +55,7 @@ include(AddThreads)
 include(AddBoost)
 include(AddTBB)
 include(AddOGRE)
+include(AddOIS)
 include(AddGTest)
 
 # Output findings
@@ -64,6 +65,7 @@ sequoia_report_result(
   "${SEQUOIA_BOOST_INFO_STR}"
   "${SEQUOIA_TBB_INFO_STR}"
   "${SEQUOIA_OGRE_INFO_STR}"
+  "${SEQUOIA_OIS_INFO_STR}"
   "${SEQUOIA_GTEST_INFO_STR}"
 )
   

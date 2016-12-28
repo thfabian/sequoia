@@ -1,4 +1,4 @@
-//===-- sequoia/Game/RenderSubsystem.h ----------------------------------------------*- C++ -*-===//
+//===-- sequoia/Game/RenderSystemFactory.h ------------------------------------------*- C++ -*-===//
 //
 //                                      S E Q U O I A
 //
@@ -8,39 +8,35 @@
 //===------------------------------------------------------------------------------------------===//
 //
 /// @file
-/// Set the rendering subsystem.
+/// Factory to create RenderSystems.
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_GAME_RENDERSUBSYSTEM_H
-#define SEQUOIA_GAME_RENDERSUBSYSTEM_H
+#ifndef SEQUOIA_GAME_RENDERSYSTEMFACTORY_H
+#define SEQUOIA_GAME_RENDERSYSTEMFACTORY_H
 
 #include "sequoia/Game/Export.h"
 #include <OGRE/OgrePrerequisites.h>
 #include <memory>
-#include <vector>
 #include <string>
+#include <vector>
 
 namespace sequoia {
 
 namespace game {
 
-/// @brief Select the rendering subsystem
+/// @brief Factory to create RenderSystems
 ///
 /// @ingroup game
-class SEQUOIA_GAME_EXPORT RenderSubsystem {
+class RenderSystemFactory {
 public:
-  RenderSubsystem(const std::shared_ptr<Ogre::Root>& root);
-
   /// @brief Create a new rendering system and register it within Ogre
   ///
+  /// @param root                   Root object
   /// @param showDialog             Show dialog to let user choose from the available renderer
   /// @param preferredRenderSystem  Preffered rendering system
-  void create(bool showDialog, std::string preferredRenderSystem = "");
-
-private:
-  std::shared_ptr<Ogre::Root> root_;
-  const Ogre::vector<Ogre::RenderSystem*>::type& renderList_;
+  static Ogre::RenderSystem* create(const std::shared_ptr<Ogre::Root>& root, bool showDialog,
+                                    std::string preferredRenderSystem = "");
 };
 
 } // namespace game

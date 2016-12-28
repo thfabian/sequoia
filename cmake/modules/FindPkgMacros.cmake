@@ -1,11 +1,11 @@
-##===------------------------------------------------------------------------------*- CMake -*-===##
-##
-##                                      S E Q U O I A
-##
-## This file is distributed under the MIT License (MIT). 
-## See LICENSE.txt for details.
-##
-##===------------------------------------------------------------------------------------------===##
+#-------------------------------------------------------------------
+# This file is part of the CMake build system for OGRE
+#     (Object-oriented Graphics Rendering Engine)
+# For the latest info, see http://www.ogre3d.org/
+#
+# The contents of this file are placed in the public domain. Feel
+# free to make use of it in any way you like.
+#-------------------------------------------------------------------
 
 ##################################################################
 # Provides some common functionality for the FindPackage modules
@@ -44,6 +44,9 @@ macro(create_search_paths PREFIX)
     set(${PREFIX}_BIN_SEARCH_PATH ${${PREFIX}_BIN_SEARCH_PATH}
       ${dir}/bin)
   endforeach(dir)
+  if(ANDROID)
+	set(${PREFIX}_LIB_SEARCH_PATH ${${PREFIX}_LIB_SEARCH_PATH} ${OGRE_DEPENDENCIES_DIR}/lib/${ANDROID_ABI})
+  endif()
   set(${PREFIX}_FRAMEWORK_SEARCH_PATH ${${PREFIX}_PREFIX_PATH})
 endmacro(create_search_paths)
 
@@ -133,16 +136,16 @@ macro(findpkg_framework fwk)
       /Library/Frameworks
       /System/Library/Frameworks
       /Network/Library/Frameworks
-      ${CMAKE_CURRENT_SOURCE_DIR}/lib/Release
-      ${CMAKE_CURRENT_SOURCE_DIR}/lib/Debug
+      ${CMAKE_CURRENT_SOURCE_DIR}/lib/macosx/Release
+      ${CMAKE_CURRENT_SOURCE_DIR}/lib/macosx/Debug
     )
     # These could be arrays of paths, add each individually to the search paths
     foreach(i ${OGRE_PREFIX_PATH})
-      set(${fwk}_FRAMEWORK_PATH ${${fwk}_FRAMEWORK_PATH} ${i}/lib/Release ${i}/lib/Debug)
+      set(${fwk}_FRAMEWORK_PATH ${${fwk}_FRAMEWORK_PATH} ${i}/lib/macosx/Release ${i}/lib/macosx/Debug)
     endforeach(i)
 
     foreach(i ${OGRE_PREFIX_BUILD})
-      set(${fwk}_FRAMEWORK_PATH ${${fwk}_FRAMEWORK_PATH} ${i}/lib/Release ${i}/lib/Debug)
+      set(${fwk}_FRAMEWORK_PATH ${${fwk}_FRAMEWORK_PATH} ${i}/lib/macosx/Release ${i}/lib/macosx/Debug)
     endforeach(i)
 
     foreach(dir ${${fwk}_FRAMEWORK_PATH})
