@@ -12,6 +12,17 @@
 
 #include "sequoia/Core/Config.h"
 
+#ifdef SEQUOIA_DOXYGEN_INVOKED
+/// @defgroup game Game
+/// @brief Main gaming infrastructure of Sequoia.
+
+namespace sequoia {
+  /// @namespace game
+  /// @brief Namespace containing the main game library.
+  namespace game {}
+}
+#endif
+
 #if defined(SEQUOIA_ON_WIN32)
 #if defined(SEQUOIA_SHARED_LIBRARIES) && defined(SequoiaGame_EXPORTS)
 #define SEQUOIA_GAME_EXPORT __declspec(dllexport)

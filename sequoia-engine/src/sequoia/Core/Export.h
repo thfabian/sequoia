@@ -10,6 +10,19 @@
 #ifndef SEQUOIA_CORE_EXPORT_H
 #define SEQUOIA_CORE_EXPORT_H
 
+#ifdef SEQUOIA_DOXYGEN_INVOKED
+/// @defgroup core Core
+/// @brief Core infrastructure of Sequoia.
+
+/// @namespace sequoia
+/// @brief Namespace of the sequoia project.
+namespace sequoia {
+  /// @namespace core
+  /// @brief Namespace containing the core library.
+  namespace core {}
+}
+#endif
+
 #include "sequoia/Core/Config.h"
 
 #if defined(SEQUOIA_ON_WIN32)

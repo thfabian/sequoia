@@ -31,6 +31,8 @@ namespace sequoia {
 namespace game {
 
 /// @brief Main class holding all Ogre related objects and running the main-loop
+///
+/// @ingroup game
 class SEQUOIA_GAME_EXPORT Game : public Ogre::Singleton<Game>,
                                  public Ogre::FrameListener,
                                  public Ogre::WindowEventListener {

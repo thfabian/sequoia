@@ -12,6 +12,17 @@
 
 #include "sequoia/Core/Config.h"
 
+#ifdef SEQUOIA_DOXYGEN_INVOKED
+/// @defgroup driver Driver
+/// @brief Driver infrastructure of Sequoia.
+
+namespace sequoia {
+  /// @namespace driver
+  /// @brief Namespace containing the driver library.
+  namespace driver {}
+}
+#endif
+
 #if defined(SEQUOIA_ON_WIN32)
 #if defined(SEQUOIA_SHARED_LIBRARIES) && defined(SequoiaDriver_EXPORTS)
 #define SEQUOIA_DRIVER_EXPORT __declspec(dllexport)

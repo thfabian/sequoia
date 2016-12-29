@@ -58,7 +58,7 @@ int Driver::run(int argc, char* argv[]) {
   singletonManager->allocateSingleton<ErrorHandler>(argc > 0 ? argv[0] : "unknown");
   
   // Parse command-line
-  std::vector<DefaultString> arguments(argv + 1, argv + argc);
+  std::vector<std::string> arguments(argv + 1, argv + argc);
   CommandLine::parse(arguments);
 
   return Driver::runImpl();

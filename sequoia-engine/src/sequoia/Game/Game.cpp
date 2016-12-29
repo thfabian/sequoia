@@ -47,14 +47,13 @@ void Game::run() {
   //
   setup();
 
+  setupDummyScene();
+
   //
   // Start rendering
   //
-  Ogre::LogManager::getSingletonPtr()->logMessage("*** Start rendering ***");
   root_->clearEventTimes();
-
-  setupDummyScene();
-
+  Ogre::LogManager::getSingletonPtr()->logMessage("*** Start rendering ***");
   while(!renderWindow_->isClosed()) {
     renderWindow_->update(false);
 
@@ -227,7 +226,7 @@ void Game::createViewports() {
   // Alter the camera aspect ratio to match the viewport
   camera_->setAspectRatio(Ogre::Real(vp->getActualWidth()) / Ogre::Real(vp->getActualHeight()));
 
-  camera_->setPosition(Ogre::Vector3(0, 0, 0));
+  camera_->setPosition(Ogre::Vector3(0, 0, 10));
   camera_->setNearClipDistance(1.5f);
   camera_->setFarClipDistance(3000.0f);
 }
@@ -236,7 +235,6 @@ void Game::createViewports() {
 bool Game::frameRenderingQueued(const Ogre::FrameEvent& evt) {
   if(renderWindow_->isClosed())
     return false;
-
   return true;
 }
 
