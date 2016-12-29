@@ -40,6 +40,24 @@ macro(sequoia_add_optional_deps DEP_VAR)
   endforeach()
 endmacro()
 
+## sequoia_set_assert_level
+## ------------------------
+##
+## If SEQUOIA_ASSERTS is ON, the macro NDBEUG will be undefined independcent of the current 
+## CMAKE_BUILD_TYPE.
+##
+macro(sequoia_set_assert_level)
+  if(SEQUOIA_ASSERTS)
+    if(WIN32)
+      set(ndebug_flag "/UNDEBUG")
+    else()
+      set(ndebug_flag "-UNDEBUG")
+    endif()
+    list(APPEND Sequoia_DEFAULT_ARGS "-DCMAKE_CXX_FLAGS:STRING=${ndebug_flag}" 
+                                     "-DCMAKE_C_FLAGS:STRING=${ndebug_flag}")
+  endif()
+endmacro()
+
 ## sequoia_check_in_source_build
 ## -----------------------------
 ##

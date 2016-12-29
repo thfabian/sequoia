@@ -13,12 +13,16 @@ set(_build "${CMAKE_CURRENT_BINARY_DIR}/sequoia-engine")
 unset(_deps)
 sequoia_add_optional_deps(_deps "${projects}")
 
-if(${CMAKE_BUILD_TYPE} MATCHES "Release")
-  list(APPEND cmake_args "-DSEQUOIA_ASSERTS:BOOL=OFF")
-else()
+if(SEQUOIA_ASSERTS)
   list(APPEND cmake_args "-DSEQUOIA_ASSERTS:BOOL=ON")
+else()
+  if(${CMAKE_BUILD_TYPE} MATCHES "Release")
+    list(APPEND cmake_args "-DSEQUOIA_ASSERTS:BOOL=OFF")
+  else()
+    list(APPEND cmake_args "-DSEQUOIA_ASSERTS:BOOL=ON")
+  endif()
 endif()
-
+  
 ExternalProject_Add(
   sequoia-engine
   SOURCE_DIR ${_source}

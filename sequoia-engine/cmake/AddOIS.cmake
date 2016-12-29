@@ -13,10 +13,10 @@ include_directories(SYSTEM ${OIS_INCLUDE_DIRS})
 # Copy DLL's to bin directories on windows
 if(WIN32)
   if("${CMAKE_BUILD_TYPE}" MATCHES "Debug")
-    file(COPY "${OIS_BINARY_DBG}.dll" 
+    file(COPY "${OIS_BINARY_DBG}" 
          DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/bin/${CMAKE_BUILD_TYPE}")
   else()
-    file(COPY "${OIS_BINARY_REL}.dll" 
+    file(COPY "${OIS_BINARY_REL}" 
          DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/bin/${CMAKE_BUILD_TYPE}")
   endif()
 endif()

@@ -24,5 +24,6 @@ ExternalProject_Add(
 
 ExternalProject_Get_Property(ogredeps install_dir)
 set(OGRE_DEPENDENCIES_DIR "${install_dir}" CACHE INTERNAL "")
-list(APPEND Sequoia_THIRDPARTYLIBS_ARGS "-DOIS_HOME:PATH=${OIS_HOME}")
 
+set(OIS_HOME ${OGRE_DEPENDENCIES_DIR})
+list(APPEND Sequoia_THIRDPARTYLIBS_ARGS "-DOIS_HOME:PATH=${OIS_HOME}")

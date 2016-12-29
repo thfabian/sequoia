@@ -44,6 +44,10 @@ set(Sequoia_DEFAULT_ARGS
   "-DCMAKE_C_COMPILER:PATH=${CMAKE_C_COMPILER}"
 )
 
+# Set assert level 
+option(SEQUOIA_ASSERTS "Enable asserts in all libraries i.e undefine -DNDEBUG" OFF)
+sequoia_set_assert_level()
+
 ##===---------------------------------- Third party projects ----------------------------------===##
 include(Projects)
 add_subdirectory(thirdparty)

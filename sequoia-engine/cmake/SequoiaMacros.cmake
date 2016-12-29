@@ -108,14 +108,13 @@ macro(sequoia_set_cxx_flags)
   # Remove -DNDEBUG flag if ASSERTS are ON
   if(SEQUOIA_ASSERTS)
     if(WIN32)
-      set(ndebug_flag "/D NDEBUG")
+      set(ndebug_flag "/DNDEBUG")
     else()
       set(ndebug_flag "-DNDEBUG")
     endif()
     string(REPLACE "${ndebug_flag}" "" CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO}")
     string(REPLACE "${ndebug_flag}" "" CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE}")
   endif()
-
   
   #
   # Add shared library flags
@@ -133,6 +132,7 @@ macro(sequoia_set_cxx_flags)
     add_definitions(-DNOMINMAX)
     add_definitions(-DUNICODE)
     
+    sequoia_check_and_set_cxx_flag("/EHsc" HAVE_MSVC_EHSC)
     sequoia_check_and_set_cxx_flag("/wd4244" HAVE_MSVC_WD4244)
     
   #
