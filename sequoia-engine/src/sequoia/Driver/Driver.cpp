@@ -71,8 +71,8 @@ void Driver::setDefaultConfigs() {
   singletonManager.allocateSingleton<GlobalConfiguration>();
   
   auto& config = GlobalConfiguration::getSingleton();  
-  config.put("Game.PluginPath", boost::filesystem::path(CSTR(SEQUOIA_OGRE_CONFIG_PATH)));
-  config.put("Game.ConfigPath", boost::filesystem::path(CSTR(SEQUOIA_OGRE_PLUGIN_PATH)));
+  config.put("Game.PluginPath", boost::filesystem::path(CSTR(SEQUOIA_OGRE_PLUGIN_PATH)));
+  config.put("Game.ConfigPath", boost::filesystem::path(CSTR(SEQUOIA_OGRE_CONFIG_PATH)));
 }
 
 int Driver::runImpl() {
