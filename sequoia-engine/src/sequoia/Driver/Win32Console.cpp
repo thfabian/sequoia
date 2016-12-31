@@ -6,11 +6,6 @@
 // See LICENSE.txt for details.
 //
 //===------------------------------------------------------------------------------------------===//
-//
-/// @file
-/// Attach a Win32 Console for debugging purpose.
-//
-//===------------------------------------------------------------------------------------------===//
 
 #include "sequoia/Driver/Win32Console.h"
 #ifdef SEQUOIA_ON_WIN32
@@ -27,7 +22,7 @@ namespace sequoia {
 
 namespace driver {
 
-/// @brief Return `true`` if program is in its own console (cursor at 0,0) or false if it was
+/// @brief Return `true` if program is in its own console (cursor at 0,0) or false if it was
 /// launched from an existing console
 static bool separateConsole() {
   CONSOLE_SCREEN_BUFFER_INFO csbi;

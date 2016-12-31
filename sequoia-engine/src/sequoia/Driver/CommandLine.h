@@ -6,11 +6,6 @@
 // See LICENSE.txt for details.
 //
 //===------------------------------------------------------------------------------------------===//
-//
-/// @file
-/// Parse command-line arguments.
-//
-//===------------------------------------------------------------------------------------------===//
 
 #ifndef SEQUOIA_DRIVER_COMMANDLINE_H
 #define SEQUOIA_DRIVER_COMMANDLINE_H

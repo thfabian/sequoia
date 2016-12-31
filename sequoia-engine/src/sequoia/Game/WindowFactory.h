@@ -6,11 +6,6 @@
 // See LICENSE.txt for details.
 //
 //===------------------------------------------------------------------------------------------===//
-//
-/// @file
-/// Factory to create RenderWindows.
-//
-//===------------------------------------------------------------------------------------------===//
 
 #ifndef SEQUOIA_GAME_WINDOWFACTORY_H
 #define SEQUOIA_GAME_WINDOWFACTORY_H

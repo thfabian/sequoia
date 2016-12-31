@@ -6,11 +6,6 @@
 // See LICENSE.txt for details.
 //
 //===------------------------------------------------------------------------------------------===//
-//
-/// @file
-/// This file provides various error handling routines.
-//
-//===------------------------------------------------------------------------------------------===//
 
 #ifndef SEQUOIA_CORE_ERRORHANDLER_H
 #define SEQUOIA_CORE_ERRORHANDLER_H

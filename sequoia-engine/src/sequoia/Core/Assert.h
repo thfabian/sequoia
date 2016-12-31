@@ -6,12 +6,6 @@
 // See LICENSE.txt for details.
 //
 //===------------------------------------------------------------------------------------------===//
-//
-/// @file
-/// This file defines the `SEQUOIA_ASSERT` and `SEQUOIA_ASSERT_MSG` macros and provides an
-/// appropriate error handler in case of a failure.
-//
-//===------------------------------------------------------------------------------------------===//
 
 #ifndef SEQUOIA_CORE_ASSERT_H
 #define SEQUOIA_CORE_ASSERT_H

@@ -6,13 +6,6 @@
 // See LICENSE.txt for details.
 //
 //===------------------------------------------------------------------------------------------===//
-//
-/// @file
-/// This file contains some templates that are useful if you are working with the STL at all.
-///
-/// No library is required when using these functions
-//
-//===------------------------------------------------------------------------------------------===//
 
 #ifndef SEQUOIA_CORE_STLEXTRAS_H
 #define SEQUOIA_CORE_STLEXTRAS_H

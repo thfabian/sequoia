@@ -6,19 +6,16 @@
 // See LICENSE.txt for details.
 //
 //===------------------------------------------------------------------------------------------===//
-//
-/// @file
-/// Main class holding all Ogre related objects.
-//
-//===------------------------------------------------------------------------------------------===//
 
 #include "sequoia/Core/ErrorHandler.h"
 #include "sequoia/Core/GlobalConfiguration.h"
 #include "sequoia/Core/SmallVector.h"
 #include "sequoia/Core/StringRef.h"
+#include "sequoia/Core/SingletonManager.h"
 #include "sequoia/Game/Game.h"
 #include "sequoia/Game/RenderSystemFactory.h"
 #include "sequoia/Game/WindowFactory.h"
+#include "sequoia/Game/InputManager.h"
 #include <OGRE/OgreConfigFile.h>
 #include <OGRE/OgreRenderWindow.h>
 #include <OGRE/OgreRoot.h>
@@ -55,12 +52,16 @@ void Game::run() {
   root_->clearEventTimes();
   Ogre::LogManager::getSingletonPtr()->logMessage("*** Start rendering ***");
   while(!renderWindow_->isClosed()) {
-    renderWindow_->update(false);
+    // Advance time
 
+    // Update Screen
+    renderWindow_->update(false);
     renderWindow_->swapBuffers();
     root_->renderOneFrame();
 
+    // Capture Keyboard/Mouse
     Ogre::WindowEventUtilities::messagePump();
+    InputManager::getSingleton().capture();
   }
   Ogre::LogManager::getSingletonPtr()->logMessage("*** Stop rendering ***");
 
@@ -68,6 +69,7 @@ void Game::run() {
   // Clean-up
   //
   destroyScene();
+
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -113,6 +115,12 @@ void Game::setup() {
   renderWindow_ = WindowFactory::create(root_);
   renderWindow_->setActive(true);
   renderWindow_->setAutoUpdated(false);
+
+  //
+  // Initialize Input/Output System (OIS)
+  //
+  auto* inputSystem = SingletonManager::getSingleton().allocateSingleton<InputManager>();
+  inputSystem->init(renderWindow_);
 
   //
   // Choose SceneManger and create Camera

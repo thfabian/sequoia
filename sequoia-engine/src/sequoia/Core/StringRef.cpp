@@ -6,12 +6,6 @@
 // See LICENSE.txt for details.
 //
 //===------------------------------------------------------------------------------------------===//
-//
-/// @file
-/// Represent a constant reference to a string, i.e. a character array and a length, which need not
-/// be null terminated.
-//
-//===------------------------------------------------------------------------------------------===//
 
 #include "sequoia/Core/EditDistance.h"
 #include "sequoia/Core/SmallVector.h"

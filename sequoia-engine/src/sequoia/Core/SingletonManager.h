@@ -6,20 +6,16 @@
 // See LICENSE.txt for details.
 //
 //===------------------------------------------------------------------------------------------===//
-//
-/// @file
-/// Keep track of the lifetime all Singletons of the Sequoia framework.
-//
-//===------------------------------------------------------------------------------------------===//
 
 #ifndef SEQUOIA_CORE_SINGLETONMANAGER_H
 #define SEQUOIA_CORE_SINGLETONMANAGER_H
 
+#include "sequoia/Core/Assert.h"
 #include "sequoia/Core/Core.h"
 #include <OGRE/OgreSingleton.h>
 #include <boost/any.hpp>
-#include <memory>
 #include <list>
+#include <memory>
 
 namespace sequoia {
 
@@ -34,11 +30,12 @@ class SEQUOIA_CORE_EXPORT SingletonManager : public Ogre::Singleton<SingletonMan
   using list_type = std::list<boost::any>;
 
 public:
-  /// @brief Allocate a new singleton of type `T`
+  /// @brief Allocate a new singleton of type `T` and return a pointer to it
   template <class T, typename... Args>
-  void allocateSingleton(Args&&... args) {
-    assert(hasSingleton<T>() == singletons_.end());
+  T* allocateSingleton(Args&&... args) {
+    SEQUOIA_ASSERT(hasSingleton<T>() == singletons_.end());
     singletons_.push_back(boost::any(std::make_shared<T>(std::forward<Args>(args)...)));
+    return boost::any_cast<std::shared_ptr<T>>(singletons_.back()).get();
   }
 
   /// @brief Free the singleton given by type `T`

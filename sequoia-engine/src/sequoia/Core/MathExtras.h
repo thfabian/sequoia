@@ -6,11 +6,6 @@
 // See LICENSE.txt for details.
 //
 //===------------------------------------------------------------------------------------------===//
-//
-/// @file
-// This file contains some functions that are useful for math stuff.
-//
-//===------------------------------------------------------------------------------------------===//
 
 #ifndef SEQUOIA_CORE_MATHEXTRAS_H
 #define SEQUOIA_CORE_MATHEXTRAS_H
@@ -21,7 +16,7 @@ namespace sequoia {
 
 namespace core {
 
-/// @ingroup
+/// @ingroup core
 /// @{
 
 /// @brief Returns the next power of two (in 64-bits) that is strictly greater than A. Returns zero

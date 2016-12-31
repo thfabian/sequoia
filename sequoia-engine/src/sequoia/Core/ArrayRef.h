@@ -6,12 +6,6 @@
 // See LICENSE.txt for details.
 //
 //===------------------------------------------------------------------------------------------===//
-//
-/// @file
-/// Represent a constant reference to an array (0 or more elements consecutively in memory),
-/// i.e. a start pointer and a length.
-//
-//===------------------------------------------------------------------------------------------===//
 
 #ifndef SEQUOIA_CORE_ARRAYREF_H
 #define SEQUOIA_CORE_ARRAYREF_H

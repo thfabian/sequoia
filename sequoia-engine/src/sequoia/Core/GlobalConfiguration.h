@@ -6,11 +6,6 @@
 // See LICENSE.txt for details.
 //
 //===------------------------------------------------------------------------------------------===//
-//
-/// @file
-/// Global configuration class.
-//
-//===------------------------------------------------------------------------------------------===//
 
 #ifndef SEQUOIA_CORE_GLOBALCONFIGURATION_H
 #define SEQUOIA_CORE_GLOBALCONFIGURATION_H

@@ -6,11 +6,6 @@
 // See LICENSE.txt for details.
 //
 //===------------------------------------------------------------------------------------------===//
-//
-/// @file
-/// Main class holding all Ogre related objects.
-//
-//===------------------------------------------------------------------------------------------===//
 
 #ifndef SEQUOIA_GAME_GAME_H
 #define SEQUOIA_GAME_GAME_H

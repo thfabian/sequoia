@@ -6,11 +6,6 @@
 // See LICENSE.txt for details.
 //
 //===------------------------------------------------------------------------------------------===//
-//
-/// @file
-// This file provides useful additions to the standard type_traits library.
-//
-//===------------------------------------------------------------------------------------------===//
 
 #ifndef SEQUOIA_CORE_TYPETRAITS_H
 #define SEQUOIA_CORE_TYPETRAITS_H

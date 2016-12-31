@@ -6,11 +6,6 @@
 // See LICENSE.txt for details.
 //
 //===------------------------------------------------------------------------------------------===//
-//
-/// @file
-/// Main entry point of the sequoia framework.
-//
-//===------------------------------------------------------------------------------------------===//
 
 #include "sequoia/Driver/Driver.h"
 #include "sequoia/Driver/Win32Console.h"
