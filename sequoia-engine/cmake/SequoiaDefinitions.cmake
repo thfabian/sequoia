@@ -40,10 +40,12 @@ if(WIN32)
   set(SEQUOIA_PLATFORM_STRING "Windows" CACHE INTERNAL "Platform-id string" FORCE)
 elseif(APPLE)
   set(SEQUOIA_ON_UNIX 1 CACHE INTERNAL "Platform is Unix-ish" FORCE)
+  set(SEQUOIA_ON_APPLE 1 CACHE INTERNAL "Platform is Darwin" FORCE)
   set(SEQUOIA_PLATFORM_STRING "Darwin" CACHE INTERNAL "Platform-id string" FORCE)
 elseif(UNIX)
   set(SEQUOIA_ON_UNIX 1 CACHE INTERNAL "Platform is Unix-ish" FORCE)
-  set(SEQUOIA_PLATFORM_STRING "Unix" CACHE INTERNAL "Platform-id string" FORCE)
+  set(SEQUOIA_ON_LINUX 1 CACHE INTERNAL "Platform is Linux" FORCE)
+  set(SEQUOIA_PLATFORM_STRING "Linux" CACHE INTERNAL "Platform-id string" FORCE)
 endif()
 
 #

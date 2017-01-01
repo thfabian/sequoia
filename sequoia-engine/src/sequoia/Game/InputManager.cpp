@@ -33,7 +33,7 @@ class InputManager::InputManagerImpl : public OIS::MouseListener,
                                        public Ogre::WindowEventListener {
 public:
   InputManagerImpl()
-      : isInitialized_(false), inputSystem_(nullptr), mouse_(nullptr), keyboard_(nullptr) {}
+      : isInitialized_(false), window_(nullptr), inputSystem_(nullptr), mouse_(nullptr), keyboard_(nullptr) {}
 
   ~InputManagerImpl() {
     if(isInitialized_)
@@ -45,6 +45,9 @@ public:
   //===----------------------------------------------------------------------------------------===//
   void init(Ogre::RenderWindow* window) {
     Ogre::LogManager::getSingletonPtr()->logMessage("OIS: Initializing ...");
+
+    SEQUOIA_ASSERT(window);
+    window_ = window;
 
     OIS::ParamList paramList;
 
@@ -93,7 +96,7 @@ public:
     }
 
     // Register as window listener
-    Ogre::WindowEventUtilities::addWindowEventListener(window, this);
+    Ogre::WindowEventUtilities::addWindowEventListener(window_, this);
 
     Ogre::LogManager::getSingletonPtr()->logMessage("OIS: Successfully initialized");
   }
@@ -115,6 +118,9 @@ public:
       keyListeners_.clear();
 
       isInitialized_ = false;
+      
+      // Unregister as window listener
+      Ogre::WindowEventUtilities::removeWindowEventListener(window_, this);
 
       Ogre::LogManager::getSingletonPtr()->logMessage("OIS: Successfully finalized");
     }
@@ -210,6 +216,7 @@ public:
 
 private:
   bool isInitialized_;
+  Ogre::RenderWindow* window_;
   OIS::InputManager* inputSystem_;
   OIS::Mouse* mouse_;
   OIS::Keyboard* keyboard_;

@@ -21,6 +21,12 @@
 // Define if this is Win32ish platform 
 #cmakedefine SEQUOIA_ON_WIN32 ${SEQUOIA_ON_WIN32}
 
+// Define if this is an Apple platform 
+#cmakedefine SEQUOIA_ON_APPLE ${SEQUOIA_ON_APPLE}
+
+// Define if this is a Linux platform 
+#cmakedefine SEQUOIA_ON_LINUX ${SEQUOIA_ON_LINUX}
+
 // Major version of Sequoia 
 #define SEQUOIA_VERSION_MAJOR ${SEQUOIA_VERSION_MAJOR}
 

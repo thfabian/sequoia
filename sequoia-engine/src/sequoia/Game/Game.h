@@ -13,7 +13,6 @@
 #include "sequoia/Game/CameraController.h"
 #include "sequoia/Game/Export.h"
 #include <OGRE/OgreFrameListener.h>
-#include <OGRE/OgrePrerequisites.h>
 #include <OGRE/OgreSingleton.h>
 #include <OGRE/OgreWindowEventUtilities.h>
 #include <memory>
@@ -29,7 +28,7 @@ namespace game {
 /// @brief Main class holding all Ogre related objects and running the main-loop
 ///
 /// @ingroup game
-class SEQUOIA_GAME_EXPORT Game : public Ogre::Singleton<Game>, public Ogre::FrameListener {
+class SEQUOIA_GAME_EXPORT Game : public Ogre::Singleton<Game>, Ogre::FrameListener {
 public:
   Game();
   ~Game();
@@ -48,8 +47,6 @@ private:
 
   void createCamera();
 
-  void createFrameListener();
-
   void createScene();
 
   void destroyScene();
@@ -60,7 +57,10 @@ private:
 
   void loadResources();
 
-  virtual bool frameRenderingQueued(const Ogre::FrameEvent& evt);
+  /// @brief FrameListener implementation 
+  /// @{
+  virtual bool frameRenderingQueued(const Ogre::FrameEvent& e) override;
+  /// @}
 
   // -- TMP --
   void setupDummyScene();

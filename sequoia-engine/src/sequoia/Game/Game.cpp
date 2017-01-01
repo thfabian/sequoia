@@ -52,9 +52,6 @@ void Game::run() {
   root_->clearEventTimes();
   Ogre::LogManager::getSingletonPtr()->logMessage("*** Start rendering ***");
   while(!renderWindow_->isClosed()) {
-    // Capture Keyboard/Mouse
-    InputManager::getSingleton().capture();
-
     // Update Screen
     renderWindow_->update(false);
     renderWindow_->swapBuffers();
@@ -104,9 +101,10 @@ void Game::setup() {
       config.getString("CommandLine.RenderSystem", "OpenGL"));
 
   //
-  // Initialize root
+  // Initialize root and register myself as FrameListener
   //
   root_->initialise(false);
+  root_->addFrameListener(this);
 
   //
   // Create RenderWindow
@@ -147,11 +145,6 @@ void Game::setup() {
   // Create the scene
   //
   createScene();
-
-  //
-  // Create any frame listeners
-  //
-  createFrameListener();
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -222,10 +215,9 @@ void Game::createCamera() {
   
   // Setup camera controller
   cameraController_ = std::make_unique<CameraController>(camera_);
+  cameraController_->addAsMouseListener();
+  cameraController_->addAsKeyListener();
 }
-
-// -------------------------------------------------------------------------------------------------
-void Game::createFrameListener() {}
 
 // -------------------------------------------------------------------------------------------------
 void Game::createScene() {}
@@ -248,9 +240,16 @@ void Game::createViewports() {
 }
 
 // -------------------------------------------------------------------------------------------------
-bool Game::frameRenderingQueued(const Ogre::FrameEvent& evt) {
+bool Game::frameRenderingQueued(const Ogre::FrameEvent& e) {
   if(renderWindow_->isClosed())
     return false;
+
+  // Capture Keyboard/Mouse
+  InputManager::getSingleton().capture();
+
+  // Forward events
+  cameraController_->frameRenderingQueued(e);
+
   return true;
 }
 
