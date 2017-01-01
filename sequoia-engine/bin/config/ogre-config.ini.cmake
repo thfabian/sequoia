@@ -7,3 +7,8 @@
 ##
 ##===------------------------------------------------------------------------------------------===##
 
+[Popular]
+FileSystem=${SEQUOIA_MEDIA_DIR}/models
+FileSystem=${SEQUOIA_MEDIA_DIR}/materials/scripts
+FileSystem=${SEQUOIA_MEDIA_DIR}/materials/textures
+

@@ -38,7 +38,7 @@ public:
   /// @brief Manually stops the camera when in free-look mode
   void manualStop();
 
-  /// @brief Add/Remove as Listener
+  /// @name Add/Remove as Listener
   /// @{
   void addAsMouseListener();
   void removeAsMouseListener();
@@ -50,7 +50,7 @@ public:
   void removeAsFrameListener(std::shared_ptr<Ogre::Root>& root);
   /// @}
 
-  /// @brief Setter/Getter
+  /// @name Setter/Getter
   /// @{
   void setCamera(Ogre::Camera* camera);
   Ogre::Camera* camera() const noexcept;
@@ -65,22 +65,24 @@ public:
   Ogre::Real topSpeed() const noexcept;
   /// @}
 
-  /// @brief MouseListener implementation
+  /// @name MouseListener implementation
   /// @{
-  virtual bool mouseMoved(const OIS::MouseEvent& e) override;
-  virtual bool mousePressed(const OIS::MouseEvent& e, OIS::MouseButtonID id) override;
-  virtual bool mouseReleased(const OIS::MouseEvent& e, OIS::MouseButtonID id) override;
+  bool mouseMoved(const OIS::MouseEvent& e) override;
+  bool mousePressed(const OIS::MouseEvent& e, OIS::MouseButtonID id) override;
+  bool mouseReleased(const OIS::MouseEvent& e, OIS::MouseButtonID id) override;
+  bool mouseImpl(const OIS::MouseEvent& e, OIS::MouseButtonID id, const bool isPressed);  
   /// @}
 
-  /// @brief KeyListener implementation
+  /// @name KeyListener implementation
   /// @{
-  virtual bool keyPressed(const OIS::KeyEvent& e) override;
-  virtual bool keyReleased(const OIS::KeyEvent& e) override;
+  bool keyPressed(const OIS::KeyEvent& e) override;
+  bool keyReleased(const OIS::KeyEvent& e) override;
+  bool keyImpl(const OIS::KeyEvent& e, const bool isPressed);
   /// @}
 
-  /// @brief FrameListener implementation
+  /// @name FrameListener implementation
   /// @{
-  virtual bool frameRenderingQueued(const Ogre::FrameEvent& e) override;
+  bool frameRenderingQueued(const Ogre::FrameEvent& e) override;
   /// @}
 
 private:

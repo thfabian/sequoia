@@ -162,70 +162,55 @@ bool CameraController::mouseMoved(const OIS::MouseEvent& e) {
 
 // -------------------------------------------------------------------------------------------------
 bool CameraController::mousePressed(const OIS::MouseEvent& e, OIS::MouseButtonID id) {
-  if(style_ == CameraStyle::Orbit) {
-    if(id == OIS::MB_Left)
-      orbiting_ = true;
-    else if(id == OIS::MB_Right)
-      zooming_ = true;
-  }
-  return true;
+  return mouseImpl(e, id, true);
 }
 
 // -------------------------------------------------------------------------------------------------
 bool CameraController::mouseReleased(const OIS::MouseEvent& e, OIS::MouseButtonID id) {
+  return mouseImpl(e, id, false);
+}
+
+// -------------------------------------------------------------------------------------------------
+bool CameraController::mouseImpl(const OIS::MouseEvent& e, OIS::MouseButtonID id,
+                                 const bool isPressed) {
   if(style_ == CameraStyle::Orbit) {
     if(id == OIS::MB_Left)
-      orbiting_ = false;
+      orbiting_ = isPressed;
     else if(id == OIS::MB_Right)
-      zooming_ = false;
+      zooming_ = isPressed;
   }
   return true;
 }
 
 // -------------------------------------------------------------------------------------------------
-bool CameraController::keyPressed(const OIS::KeyEvent& e) {
+bool CameraController::keyPressed(const OIS::KeyEvent& e) { return keyImpl(e, true); }
+
+// -------------------------------------------------------------------------------------------------
+bool CameraController::keyReleased(const OIS::KeyEvent& e) { return keyImpl(e, false); }
+
+// -------------------------------------------------------------------------------------------------
+bool CameraController::keyImpl(const OIS::KeyEvent& e, const bool isPressed) {
   if(style_ == CameraStyle::Freelock) {
     if(e.key == OIS::KC_W || e.key == OIS::KC_UP)
-      goingForward_ = true;
+      goingForward_ = isPressed;
     else if(e.key == OIS::KC_S || e.key == OIS::KC_DOWN)
-      goingBack_ = true;
+      goingBack_ = isPressed;
     else if(e.key == OIS::KC_A || e.key == OIS::KC_LEFT)
-      goingLeft_ = true;
+      goingLeft_ = isPressed;
     else if(e.key == OIS::KC_D || e.key == OIS::KC_RIGHT)
-      goingRight_ = true;
-    else if(e.key == OIS::KC_PGUP)
-      goingUp_ = true;
-    else if(e.key == OIS::KC_PGDOWN)
-      goingDown_ = true;
+      goingRight_ = isPressed;
+    else if(e.key == OIS::KC_PGUP || e.key == OIS::KC_SPACE)
+      goingUp_ = isPressed;
+    else if(e.key == OIS::KC_PGDOWN || e.key == OIS::KC_C)
+      goingDown_ = isPressed;
     else if(e.key == OIS::KC_LSHIFT)
-      fastMove_ = true;
+      fastMove_ = isPressed;
   }
   return true;
 }
 
 // -------------------------------------------------------------------------------------------------
-bool CameraController::keyReleased(const OIS::KeyEvent& e) {
-  if(style_ == CameraStyle::Freelock) {
-    if(e.key == OIS::KC_W || e.key == OIS::KC_UP)
-      goingForward_ = false;
-    else if(e.key == OIS::KC_S || e.key == OIS::KC_DOWN)
-      goingBack_ = false;
-    else if(e.key == OIS::KC_A || e.key == OIS::KC_LEFT)
-      goingLeft_ = false;
-    else if(e.key == OIS::KC_D || e.key == OIS::KC_RIGHT)
-      goingRight_ = false;
-    else if(e.key == OIS::KC_PGUP)
-      goingUp_ = false;
-    else if(e.key == OIS::KC_PGDOWN)
-      goingDown_ = false;
-    else if(e.key == OIS::KC_LSHIFT)
-      fastMove_ = false;
-  }
-  return true;
-}
-
-// -------------------------------------------------------------------------------------------------
-bool CameraController::frameRenderingQueued(const Ogre::FrameEvent& evt) {
+bool CameraController::frameRenderingQueued(const Ogre::FrameEvent& e) {
   if(style_ == CameraStyle::Freelock) {
     // Build our acceleration vector based on keyboard input composite
     Ogre::Vector3 accel = Ogre::Vector3::ZERO;
@@ -246,11 +231,11 @@ bool CameraController::frameRenderingQueued(const Ogre::FrameEvent& evt) {
     Ogre::Real topSpeed = fastMove_ ? topSpeed_ * 20 : topSpeed_;
     if(accel.squaredLength() != 0) {
       accel.normalise();
-      velocity_ += accel * topSpeed * evt.timeSinceLastFrame * 10;
+      velocity_ += accel * topSpeed * e.timeSinceLastFrame * 10;
     }
     // If not accelerating, try to stop in a certain time
     else
-      velocity_ -= velocity_ * evt.timeSinceLastFrame * 10;
+      velocity_ -= velocity_ * e.timeSinceLastFrame * 10;
 
     Ogre::Real tooSmall = std::numeric_limits<Ogre::Real>::epsilon();
 
@@ -262,7 +247,7 @@ bool CameraController::frameRenderingQueued(const Ogre::FrameEvent& evt) {
       velocity_ = Ogre::Vector3::ZERO;
 
     if(velocity_ != Ogre::Vector3::ZERO)
-      camera_->move(velocity_ * evt.timeSinceLastFrame);
+      camera_->move(velocity_ * e.timeSinceLastFrame);
   }
 
   return true;

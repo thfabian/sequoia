@@ -24,6 +24,9 @@ option(SEQUOIA_ASSERTS "Enable asserts" ${BUILD_IS_RELEASE})
 option(SEQUOIA_TESTING "Enable testing" ON)
 CMAKE_DEPENDENT_OPTION(SEQUOIA_CORE_TESTING "Enable core unittests" ON "SEQUOIA_TESTING" OFF)
 
-##===---------------------------------- Testing -----------------------------------------------===##
+##===---------------------------------- Documentation -----------------------------------------===##
 option(SEQUOIA_DOCUMENTATION "Enable documentation" ON)
 
+##===---------------------------------- Media files -------------------------------------------===##
+set(SEQUOIA_MEDIA_DIR "${CMAKE_SOURCE_DIR}/../sequoia-media"
+    CACHE PATH "Directory containing the media files")

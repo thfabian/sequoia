@@ -33,7 +33,8 @@ class InputManager::InputManagerImpl : public OIS::MouseListener,
                                        public Ogre::WindowEventListener {
 public:
   InputManagerImpl()
-      : isInitialized_(false), window_(nullptr), inputSystem_(nullptr), mouse_(nullptr), keyboard_(nullptr) {}
+      : isInitialized_(false), window_(nullptr), inputSystem_(nullptr), mouse_(nullptr),
+        keyboard_(nullptr) {}
 
   ~InputManagerImpl() {
     if(isInitialized_)
@@ -118,7 +119,7 @@ public:
       keyListeners_.clear();
 
       isInitialized_ = false;
-      
+
       // Unregister as window listener
       Ogre::WindowEventUtilities::removeWindowEventListener(window_, this);
 

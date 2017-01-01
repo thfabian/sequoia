@@ -13,46 +13,29 @@ set(SEQUOIA_OGRE_PLUGIN_PATH config/ogre-plugin.ini CACHE INTERNAL "Ogre plugin 
 sequoia_configure_file("${SEQUOIA_OGRE_CONFIG_PATH}.cmake")
 sequoia_configure_file("${SEQUOIA_OGRE_PLUGIN_PATH}.cmake")
 
-# if(WIN32)
-  # add_custom_target(
-    # SequoiaConfiguration ALL
-    # # Run in bin/Release
-    # COMMAND ${CMAKE_COMMAND} -E copy_directory 
-            # ${CMAKE_SOURCE_DIR}/bin/config 
-            # ${CMAKE_BINARY_DIR}/bin/Release/config
-    # # Run in bin/RelWithDebInfo
-    # COMMAND ${CMAKE_COMMAND} -E copy_directory 
-            # ${CMAKE_SOURCE_DIR}/bin/config 
-            # ${CMAKE_BINARY_DIR}/bin/RelWithDebInfo/config
-    # # Run in bin/Debug
-    # COMMAND ${CMAKE_COMMAND} -E copy_directory 
-            # ${CMAKE_SOURCE_DIR}/bin/config 
-            # ${CMAKE_BINARY_DIR}/bin/Debug/config
-    # # Run in source
-    # COMMAND ${CMAKE_COMMAND} -E copy_directory 
-            # ${CMAKE_SOURCE_DIR}/bin/config 
-            # ${CMAKE_BINARY_DIR}/src/sequoia/Driver/config
-    # DEPENDS ${SEQUOIA_OGRE_CONFIG_PATH}
-            # ${SEQUOIA_OGRE_PLUGIN_PATH}
-  # )
-# else()
-  # add_custom_target(
-    # SequoiaConfiguration ALL
-    # # Run in bin/
-    # COMMAND ${CMAKE_COMMAND} -E copy_directory 
-            # ${CMAKE_SOURCE_DIR}/bin/config 
-            # ${CMAKE_BINARY_DIR}/bin/config
-    # # Run in source
-    # COMMAND ${CMAKE_COMMAND} -E copy_directory 
-            # ${CMAKE_SOURCE_DIR}/bin/config 
-            # ${CMAKE_BINARY_DIR}/src/sequoia/Driver/config
-    # DEPENDS ${SEQUOIA_OGRE_CONFIG_PATH}
-            # ${SEQUOIA_OGRE_PLUGIN_PATH}
-  # )
-# endif()
-
 if(WIN32)
+ add_custom_target(
+     SequoiaConfiguration ALL
+     # Run in bin/Release
+     COMMAND ${CMAKE_COMMAND} -E copy_directory 
+             ${CMAKE_SOURCE_DIR}/bin/config 
+             ${CMAKE_BINARY_DIR}/bin/Release/config
+     # Run in bin/Debug 
+     COMMAND ${CMAKE_COMMAND} -E copy_directory 
+             ${CMAKE_BINARY_DIR}/bin/config 
+             ${CMAKE_BINARY_DIR}/bin/Debug/config
+     # Run in bin/RelWithDebInfo
+     COMMAND ${CMAKE_COMMAND} -E copy_directory 
+             ${CMAKE_BINARY_DIR}/bin/config 
+             ${CMAKE_BINARY_DIR}/bin/RelWithDebInfo/config
+     # Run in source
+     COMMAND ${CMAKE_COMMAND} -E copy_directory 
+             ${CMAKE_BINARY_DIR}/bin/config 
+             ${CMAKE_BINARY_DIR}/src/sequoia/Driver/config
 
+     DEPENDS ${CMAKE_BINARY_DIR}/bin/${SEQUOIA_OGRE_CONFIG_PATH}
+             ${CMAKE_BINARY_DIR}/bin/${SEQUOIA_OGRE_CONFIG_PATH}
+  )
 else()
   add_custom_target(
      SequoiaConfiguration ALL
@@ -60,7 +43,9 @@ else()
      COMMAND ${CMAKE_COMMAND} -E copy_directory 
              ${CMAKE_BINARY_DIR}/bin/config 
              ${CMAKE_BINARY_DIR}/src/sequoia/Driver/config
-     DEPENDS ${CMAKE_BINARY_DIR}/${SEQUOIA_OGRE_CONFIG_PATH}
-             ${CMAKE_BINARY_DIR}/${SEQUOIA_OGRE_CONFIG_PATH}
+
+     DEPENDS ${CMAKE_BINARY_DIR}/bin/${SEQUOIA_OGRE_CONFIG_PATH}
+             ${CMAKE_BINARY_DIR}/bin/${SEQUOIA_OGRE_CONFIG_PATH}
  )
 endif()
+
