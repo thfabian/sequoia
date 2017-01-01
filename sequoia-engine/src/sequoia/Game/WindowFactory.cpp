@@ -46,15 +46,16 @@ std::string setParam(const char* path, const char* defaultValue) {
 Ogre::RenderWindow* WindowFactory::create(const std::shared_ptr<Ogre::Root>& root) {
   Ogre::String windowTitle = "Sequoia (" + core::Version::currentFullVersionString() + ")";
 
-  bool fullscreen = setParam("Game.Graphics.Fullscreen", false);
-  unsigned int sizeX = setParam("Game.Graphics.WindowSizeX", 1728);
-  unsigned int sizeY = setParam("Game.Graphics.WindowSizeY", 972);
+  // TODO: make generic
+  bool fullscreen = setParam("GraphicsSettings.Fullscreen", false);
+  unsigned int sizeX = setParam("GraphicsSettings.WindowSizeX", 1728);
+  unsigned int sizeY = setParam("GraphicsSettings.WindowSizeY", 972);
 
   Ogre::NameValuePairList params;
-  params["FSAA"] = setParam("Game.Graphics.FSAA", "0");
-  params["vsync"] = setParam("Game.Graphics.Vsync", "true");
-  params["left"] = setParam("Game.Graphics.WindowPositionX", "96");
-  params["top"] = setParam("Game.Graphics.WindowPositionY", "54");
+  params["FSAA"] = setParam("GraphicsSettings.FSAA", "0");
+  params["vsync"] = setParam("GraphicsSettings.Vsync", "true");
+  params["left"] = setParam("GraphicsSettings.WindowPositionX", "96");
+  params["top"] = setParam("GraphicsSettings.WindowPositionY", "54");
 
   return root->createRenderWindow(windowTitle, sizeX, sizeY, fullscreen, &params);
 }

@@ -45,4 +45,5 @@
 // Available Ogre plugins 
 #define SEQUOIA_OGRE_PLUGINS "${OGRE_PLUGINS}"
 
+
 #endif

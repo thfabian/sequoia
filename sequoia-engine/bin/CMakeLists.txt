@@ -7,9 +7,9 @@
 ##
 ##===------------------------------------------------------------------------------------------===##
 
-set(SEQUOIA_GLOBAL_CONFIG_PATH config/sequoia-config.json CACHE STRING "Sequia config path")
-set(SEQUOIA_OGRE_CONFIG_PATH config/ogre-config.cfg CACHE STRING "Ogre config path" )
-set(SEQUOIA_OGRE_PLUGIN_PATH config/ogre-plugin.cfg CACHE STRING "Ogre plugin path")
+set(SEQUOIA_GLOBAL_CONFIG_PATH config/sequoia-config.ini CACHE INTERNAL "Sequia config path")
+set(SEQUOIA_OGRE_CONFIG_PATH config/ogre-config.cfg CACHE INTERNAL "Ogre config path" )
+set(SEQUOIA_OGRE_PLUGIN_PATH config/ogre-plugin.cfg CACHE INTERNAL "Ogre plugin path")
 
 if(WIN32)
   add_custom_target(

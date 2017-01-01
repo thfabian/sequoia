@@ -77,8 +77,8 @@ void Game::setup() {
   //
   // Create root object
   //
-  root_ = std::make_shared<Ogre::Root>(config.getPath("Game.PluginPath").string(),
-                                       config.getPath("Game.ConfigPath").string(), "");
+  root_ = std::make_shared<Ogre::Root>(config.getPath("InternalSettings.PluginPath").string(),
+                                       config.getPath("InternalSettings.ConfigPath").string(), "");
 
   //
   // Setup resources
@@ -98,9 +98,9 @@ void Game::setup() {
   //
   // Register render subsystem
   //
-  renderSystem_ =
-      RenderSystemFactory::create(root_, config.getBoolean("Game.ShowRenderDialog", false),
-                                  config.getString("CommandLine.RenderSystem", "OpenGL"));
+  renderSystem_ = RenderSystemFactory::create(
+      root_, config.getBoolean("CommandLine.ShowRenderDialog", false),
+      config.getString("CommandLine.RenderSystem", "OpenGL"));
 
   //
   // Initialize root
@@ -153,7 +153,7 @@ void Game::setupResources() {
 
   // Load resource paths from config file
   Ogre::ConfigFile cf;
-  cf.load(config.getPath("Game.ConfigPath").string());
+  cf.load(config.getPath("InternalSettings.ConfigPath").string());
 
   // Go through all sections & settings in the file
   Ogre::ConfigFile::SectionIterator sectionIt = cf.getSectionIterator();
