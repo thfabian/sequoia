@@ -158,6 +158,16 @@ GlobalConfiguration::getPathVector(const std::string& path) const {
   return vec;
 }
 
+bool GlobalConfiguration::has(const std::string& path) const noexcept {
+  try {
+    auto unused = ptree_->get_child(path);
+    (void)unused;
+  } catch(boost::property_tree::ptree_bad_path& e) {
+    return false;
+  }
+  return true;
+}
+
 void GlobalConfiguration::clear() noexcept { ptree_->clear(); }
 
 static void toStream(std::ostream& stream, GlobalConfiguration::TreeType& tree,

@@ -14,7 +14,20 @@ namespace sequoia {
 
 namespace game {
 
-CameraController::CameraController(Ogre::Camera* camera) {}
+CameraController::CameraController(Ogre::Camera* camera) {
+  InputManager::getSingleton().addMouseListener(this, "CameraController");
+}
+
+bool CameraController::mouseMoved(const OIS::MouseEvent& e) { return true; }
+
+bool CameraController::mousePressed(const OIS::MouseEvent& e, OIS::MouseButtonID id) {
+  std::cout << "pressed" << std::endl;
+  return true;
+}
+
+bool CameraController::mouseReleased(const OIS::MouseEvent& e, OIS::MouseButtonID id) {
+  return true;
+}
 
 } // namespace game
 

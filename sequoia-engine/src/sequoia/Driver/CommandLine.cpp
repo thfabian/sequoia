@@ -41,21 +41,20 @@ void CommandLine::parse(const std::vector<std::string>& args) {
   general.add_options()
       // --help
       ("help", "Display this information.")
-      // --help-module=module
-      ("help-module", po::value<std::string>()->value_name("MODULE"),
-       "Produce a help for a given module.")
       // --version
       ("version", "Display version information.")
       // --config
       ("config", po::value<std::string>()->value_name("PATH"),
-       "Path to the global configuration file [default: " SEQUOIA_GLOBAL_CONFIG_PATH "]");
+       "Path to the global configuration file [default: " SEQUOIA_GLOBAL_CONFIG_PATH "]")
+      // --no-config
+      ("no-config", "Don't load the global configuration file, use default options.");
 
   po::options_description gui("Graphics options");
   gui.add_options()
       // --render-system
       ("render-system", po::value<std::string>(), "Rendering system to use: Direct3D11 or OpenGL.")
       // --fullscreen
-      ("fullscreen", po::value<std::string>(), "Launch in full screen mode.");
+      ("fullscreen", "Launch in full screen mode.");
 
   po::options_description all("Allowed options");
   all.add(general).add(gui);
@@ -89,17 +88,18 @@ void CommandLine::parse(const std::vector<std::string>& args) {
     configPath = vm["config"].as<std::string>();
 
   try {
-    config.load(configPath);
+    if(!vm.count("no-config"))
+      config.load(configPath);
     config.put("CommandLine.ConfigFile", configPath);
   } catch(core::Exception& e) {
     core::ErrorHandler::getSingleton().warning(e.what());
   }
-  
+
   if(vm.count("render-system"))
     config.put("CommandLine.RenderSystem", vm["render-system"].as<std::string>());
 
   if(vm.count("fullscreen"))
-    config.put("CommandLine.FullScreen", true);
+    config.put("CommandLine.Fullscreen", true);
 }
 
 } // namespace driver

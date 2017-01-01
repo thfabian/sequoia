@@ -54,7 +54,7 @@ public:
     paramList.insert(std::make_pair(std::string("WINDOW"), std::to_string(windowHnd)));
 
     // Non-exclusive input (no fullscreen)
-    if(!GlobalConfiguration::getSingleton().getBoolean("Graphics.FullScreen")) {
+    if(!GlobalConfiguration::getSingleton().getBoolean("GraphicsSettings.Fullscreen")) {
       Ogre::LogManager::getSingletonPtr()->logMessage("OIS: Setting input to non-exclusive");
 #if defined OIS_WIN32_PLATFORM
       paramList.insert(std::make_pair(std::string("w32_mouse"), std::string("DISCL_FOREGROUND")));
@@ -157,21 +157,21 @@ public:
     (void)ret;
   }
 
-  bool mouseMoved(const OIS::MouseEvent& e) {
+  bool mouseMoved(const OIS::MouseEvent& e) override {
     for(auto it = mouseListeners_.begin(), end = mouseListeners_.end(); it != end; ++it)
       if(!it->second->mouseMoved(e))
         break;
     return true;
   }
 
-  bool mousePressed(const OIS::MouseEvent& e, OIS::MouseButtonID id) {
+  bool mousePressed(const OIS::MouseEvent& e, OIS::MouseButtonID id) override {
     for(auto it = mouseListeners_.begin(), end = mouseListeners_.end(); it != end; ++it)
       if(!it->second->mousePressed(e, id))
         break;
     return true;
   }
 
-  bool mouseReleased(const OIS::MouseEvent& e, OIS::MouseButtonID id) {
+  bool mouseReleased(const OIS::MouseEvent& e, OIS::MouseButtonID id) override {
     for(auto it = mouseListeners_.begin(), end = mouseListeners_.end(); it != end; ++it)
       if(!it->second->mouseReleased(e, id))
         break;
@@ -194,14 +194,14 @@ public:
     (void)ret;
   }
 
-  bool keyPressed(const OIS::KeyEvent& e) {
+  bool keyPressed(const OIS::KeyEvent& e) override {
     for(auto it = keyListeners_.begin(), end = keyListeners_.end(); it != end; ++it)
       if(!it->second->keyPressed(e))
         break;
     return true;
   }
 
-  bool keyReleased(const OIS::KeyEvent& e) {
+  bool keyReleased(const OIS::KeyEvent& e) override {
     for(auto it = keyListeners_.begin(), end = keyListeners_.end(); it != end; ++it)
       if(!it->second->keyReleased(e))
         break;

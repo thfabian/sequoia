@@ -125,4 +125,14 @@ TEST(GlobalConfigurationTest, SaveAndLoad) {
   }
 }
 
+TEST(GlobalConfigurationTest, Has) {
+  {
+    auto config = std::make_unique<GlobalConfiguration>();
+    config->put("Test.Boolean", true);
+    
+    EXPECT_TRUE(config->has("Test.Boolean"));
+    EXPECT_FALSE(config->has("Test.BooleanX"));
+  }
+}
+
 } // anonymous namespace

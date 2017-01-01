@@ -39,10 +39,13 @@ std::string setParam(const char* path, const char* defaultValue) {
 }
 
 Ogre::RenderWindow* WindowFactory::create(const std::shared_ptr<Ogre::Root>& root) {
+  auto& config = GlobalConfiguration::getSingleton();
+
   Ogre::String windowTitle = "Sequoia (" + core::Version::currentFullVersionString() + ")";
 
-  // TODO: make generic
-  bool fullscreen = setParam("GraphicsSettings.Fullscreen", false);
+  // TODO: make generic  
+  bool fullscreen =
+      setParam("GraphicsSettings.Fullscreen", false);
   unsigned int sizeX = setParam("GraphicsSettings.WindowSizeX", 1728);
   unsigned int sizeY = setParam("GraphicsSettings.WindowSizeY", 972);
 
@@ -52,6 +55,10 @@ Ogre::RenderWindow* WindowFactory::create(const std::shared_ptr<Ogre::Root>& roo
   params["left"] = setParam("GraphicsSettings.WindowPositionX", "96");
   params["top"] = setParam("GraphicsSettings.WindowPositionY", "54");
 
+  // Command-line arguments take precedence
+  if(config.has("CommandLine.Fullscreen"))
+    fullscreen = config.getBoolean("CommandLine.Fullscreen");
+  
   return root->createRenderWindow(windowTitle, sizeX, sizeY, fullscreen, &params);
 }
 

@@ -219,6 +219,9 @@ void Game::createCamera() {
   Ogre::SceneNode* cameraNode =
       sceneManager_->getRootSceneNode()->createChildSceneNode("MyCameraSceneNode");
   cameraNode->attachObject(camera_);
+  
+  // Setup camera controller
+  cameraController_ = std::make_unique<CameraController>(camera_);
 }
 
 // -------------------------------------------------------------------------------------------------

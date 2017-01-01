@@ -81,6 +81,9 @@ public:
   std::vector<std::string> getStringVector(const std::string& path) const;
   std::vector<boost::filesystem::path> getPathVector(const std::string& path) const;
   /// @}
+  
+  /// @brief Check if path exists
+  bool has(const std::string& path) const noexcept;
 
   /// @brief Clear the configuration
   void clear() noexcept;
