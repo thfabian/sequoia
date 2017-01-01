@@ -7,11 +7,11 @@
 ##
 ##===------------------------------------------------------------------------------------------===##
 
-set(SEQUOIA_OGRE_CONFIG_PATH config/ogre-config.cfg CACHE INTERNAL "Ogre config path" )
-set(SEQUOIA_OGRE_PLUGIN_PATH config/ogre-plugin.cfg CACHE INTERNAL "Ogre plugin path")
+set(SEQUOIA_OGRE_CONFIG_PATH config/ogre-config.ini CACHE INTERNAL "Ogre config path" )
+set(SEQUOIA_OGRE_PLUGIN_PATH config/ogre-plugin.ini CACHE INTERNAL "Ogre plugin path")
 
-sequoia_configure_file(${SEQUOIA_OGRE_CONFIG_PATH})
-sequoia_configure_file(${SEQUOIA_OGRE_PLUGIN_PATH})
+sequoia_configure_file("${SEQUOIA_OGRE_CONFIG_PATH}.cmake")
+sequoia_configure_file("${SEQUOIA_OGRE_PLUGIN_PATH}.cmake")
 
 # if(WIN32)
   # add_custom_target(
@@ -50,3 +50,17 @@ sequoia_configure_file(${SEQUOIA_OGRE_PLUGIN_PATH})
             # ${SEQUOIA_OGRE_PLUGIN_PATH}
   # )
 # endif()
+
+if(WIN32)
+
+else()
+  add_custom_target(
+     SequoiaConfiguration ALL
+     # Run in source
+     COMMAND ${CMAKE_COMMAND} -E copy_directory 
+             ${CMAKE_BINARY_DIR}/bin/config 
+             ${CMAKE_BINARY_DIR}/src/sequoia/Driver/config
+     DEPENDS ${CMAKE_BINARY_DIR}/${SEQUOIA_OGRE_CONFIG_PATH}
+             ${CMAKE_BINARY_DIR}/${SEQUOIA_OGRE_CONFIG_PATH}
+ )
+endif()
