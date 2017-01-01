@@ -52,24 +52,23 @@ void Game::run() {
   root_->clearEventTimes();
   Ogre::LogManager::getSingletonPtr()->logMessage("*** Start rendering ***");
   while(!renderWindow_->isClosed()) {
-    // Advance time
+    // Capture Keyboard/Mouse
+    InputManager::getSingleton().capture();
 
     // Update Screen
     renderWindow_->update(false);
     renderWindow_->swapBuffers();
     root_->renderOneFrame();
 
-    // Capture Keyboard/Mouse
+    // Update render windows 
     Ogre::WindowEventUtilities::messagePump();
-    InputManager::getSingleton().capture();
   }
   Ogre::LogManager::getSingletonPtr()->logMessage("*** Stop rendering ***");
 
   //
-  // Clean-up
+  // Tear-down
   //
-  destroyScene();
-
+  tearDown();
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -153,6 +152,12 @@ void Game::setup() {
   // Create any frame listeners
   //
   createFrameListener();
+}
+
+// -------------------------------------------------------------------------------------------------
+void Game::tearDown() {
+  InputManager::getSingleton().finalize();
+  destroyScene();
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -244,16 +249,6 @@ bool Game::frameRenderingQueued(const Ogre::FrameEvent& evt) {
   if(renderWindow_->isClosed())
     return false;
   return true;
-}
-
-// -------------------------------------------------------------------------------------------------
-void Game::windowResized(Ogre::RenderWindow* window) {
-  Ogre::LogManager::getSingletonPtr()->logMessage("*** EVENT: Window resized ***");
-}
-
-// -------------------------------------------------------------------------------------------------
-void Game::windowClosed(Ogre::RenderWindow* window) {
-  Ogre::LogManager::getSingletonPtr()->logMessage("*** EVENT: Window closed ***");
 }
 
 // -------------------------------------------------------------------------------------------------

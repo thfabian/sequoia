@@ -19,6 +19,7 @@
 #include <OIS/OISInputManager.h>
 #include <OIS/OISKeyboard.h>
 #include <OIS/OISMouse.h>
+#include <map>
 
 template <>
 sequoia::game::InputManager* Ogre::Singleton<sequoia::game::InputManager>::msSingleton = nullptr;
@@ -27,7 +28,9 @@ namespace sequoia {
 
 namespace game {
 
-class InputManager::InputManagerImpl : public OIS::MouseListener, public OIS::KeyListener {
+class InputManager::InputManagerImpl : public OIS::MouseListener,
+                                       public OIS::KeyListener,
+                                       public Ogre::WindowEventListener {
 public:
   InputManagerImpl()
       : isInitialized_(false), inputSystem_(nullptr), mouse_(nullptr), keyboard_(nullptr) {}
@@ -41,7 +44,7 @@ public:
   //     Initialize & Finalize
   //===----------------------------------------------------------------------------------------===//
   void init(Ogre::RenderWindow* window) {
-    Ogre::LogManager::getSingletonPtr()->logMessage("Initializing OIS");
+    Ogre::LogManager::getSingletonPtr()->logMessage("OIS: Initializing ...");
 
     OIS::ParamList paramList;
 
@@ -52,7 +55,7 @@ public:
 
     // Non-exclusive input (no fullscreen)
     if(!GlobalConfiguration::getSingleton().getBoolean("Graphics.FullScreen")) {
-      Ogre::LogManager::getSingletonPtr()->logMessage("Setting OIS to non-exclusive input");
+      Ogre::LogManager::getSingletonPtr()->logMessage("OIS: Setting input to non-exclusive");
 #if defined OIS_WIN32_PLATFORM
       paramList.insert(std::make_pair(std::string("w32_mouse"), std::string("DISCL_FOREGROUND")));
       paramList.insert(std::make_pair(std::string("w32_mouse"), std::string("DISCL_NONEXCLUSIVE")));
@@ -72,26 +75,15 @@ public:
       // Initialize InputManger
       inputSystem_ = OIS::InputManager::createInputSystem(paramList);
 
-      // If possible create a buffered keyboard
-      if(inputSystem_->getNumberOfDevices(OIS::OISKeyboard) > 0) {
-        keyboard_ =
-            static_cast<OIS::Keyboard*>(inputSystem_->createInputObject(OIS::OISKeyboard, true));
-        keyboard_->setEventCallback(this);
-      }
+      // Create a buffered keyboard
+      keyboard_ =
+          static_cast<OIS::Keyboard*>(inputSystem_->createInputObject(OIS::OISKeyboard, true));
+      keyboard_->setEventCallback(this);
 
-      // If possible create a buffered mouse
-      if(inputSystem_->getNumberOfDevices(OIS::OISMouse) > 0) {
-        mouse_ = static_cast<OIS::Mouse*>(inputSystem_->createInputObject(OIS::OISMouse, true));
-        mouse_->setEventCallback(this);
-
-        // Get window size
-        unsigned int width, height, depth;
-        int left, top;
-        window->getMetrics(width, height, depth, left, top);
-
-        // Set mouse region
-        this->setWindowExtents(width, height);
-      }
+      // Create a buffered mouse
+      mouse_ = static_cast<OIS::Mouse*>(inputSystem_->createInputObject(OIS::OISMouse, true));
+      mouse_->setEventCallback(this);
+      windowResized(window); // Set mouse extent
 
       isInitialized_ = true;
     } catch(OIS::Exception& e) {
@@ -101,25 +93,37 @@ public:
     }
 
     // Register as window listener
-    // window(this);
+    Ogre::WindowEventUtilities::addWindowEventListener(window, this);
+
+    Ogre::LogManager::getSingletonPtr()->logMessage("OIS: Successfully initialized");
   }
 
   void finalize() {
     if(isInitialized_) {
-      Ogre::LogManager::getSingletonPtr()->logMessage("Finalizing OIS");
+      Ogre::LogManager::getSingletonPtr()->logMessage("OIS: Finalizing ...");
+
+      inputSystem_->destroyInputObject(mouse_);
+      mouse_ = nullptr;
+
+      inputSystem_->destroyInputObject(keyboard_);
+      keyboard_ = nullptr;
+
       OIS::InputManager::destroyInputSystem(inputSystem_);
       inputSystem_ = nullptr;
+
+      mouseListeners_.clear();
+      keyListeners_.clear();
+
       isInitialized_ = false;
+
+      Ogre::LogManager::getSingletonPtr()->logMessage("OIS: Successfully finalized");
     }
   }
 
   void capture() {
     SEQUOIA_ASSERT(isInitialized_);
-    if(mouse_)
-      mouse_->capture();
-
-    if(keyboard_)
-      keyboard_->capture();
+    mouse_->capture();
+    keyboard_->capture();
   }
 
   void setWindowExtents(int width, int height) {
@@ -128,56 +132,89 @@ public:
     mouseState.height = height;
   }
 
+  virtual void windowResized(Ogre::RenderWindow* window) override {
+    unsigned int width, height, depth;
+    int left, top;
+    window->getMetrics(width, height, depth, left, top);
+    this->setWindowExtents(width, height);
+  }
+
   bool isInitialized() const noexcept { return isInitialized_; }
 
   //===----------------------------------------------------------------------------------------===//
   //     Mouse
   //===----------------------------------------------------------------------------------------===//
 
-  void addMouseListener(OIS::MouseListener* mouseListener, const std::string& instanceName) {}
-
-  void removeMouseListener(OIS::MouseListener* mouseListener) {}
-
-  OIS::Mouse* mouse() noexcept {
-    SEQUOIA_ASSERT(isInitialized_);
-    return mouse_;
+  void addMouseListener(OIS::MouseListener* mouseListener, const std::string& name) {
+    Ogre::LogManager::getSingletonPtr()->logMessage("OIS: Adding MouseListener: " + name);
+    mouseListeners_.insert(std::make_pair(name, mouseListener));
   }
 
-  const OIS::Mouse* mouse() const noexcept {
-    SEQUOIA_ASSERT(isInitialized_);
-    return mouse_;
+  void removeMouseListener(const std::string& name) {
+    Ogre::LogManager::getSingletonPtr()->logMessage("OIS: Removing MouseListener: " + name);
+    auto ret = mouseListeners_.erase(name);
+    SEQUOIA_ASSERT_MSG(ret > 0, "Removing non-exsting MouseListener");
+    (void)ret;
   }
 
-  bool mouseMoved(const OIS::MouseEvent& e) { return true; }
-  bool mousePressed(const OIS::MouseEvent& e, OIS::MouseButtonID id) { return true; }
-  bool mouseReleased(const OIS::MouseEvent& e, OIS::MouseButtonID id) { return true; }
+  bool mouseMoved(const OIS::MouseEvent& e) {
+    for(auto it = mouseListeners_.begin(), end = mouseListeners_.end(); it != end; ++it)
+      if(!it->second->mouseMoved(e))
+        break;
+    return true;
+  }
+
+  bool mousePressed(const OIS::MouseEvent& e, OIS::MouseButtonID id) {
+    for(auto it = mouseListeners_.begin(), end = mouseListeners_.end(); it != end; ++it)
+      if(!it->second->mousePressed(e, id))
+        break;
+    return true;
+  }
+
+  bool mouseReleased(const OIS::MouseEvent& e, OIS::MouseButtonID id) {
+    for(auto it = mouseListeners_.begin(), end = mouseListeners_.end(); it != end; ++it)
+      if(!it->second->mouseReleased(e, id))
+        break;
+    return true;
+  }
 
   //===----------------------------------------------------------------------------------------===//
   //     Keyboard
   //===----------------------------------------------------------------------------------------===//
 
-  void addKeyListener(OIS::KeyListener* keyListener, const std::string& instanceName) {}
-
-  void removeKeyListener(OIS::KeyListener* keyListener) {}
-
-  OIS::Keyboard* keyboard() noexcept {
-    SEQUOIA_ASSERT(isInitialized_);
-    return keyboard_;
+  void addKeyListener(OIS::KeyListener* keyListener, const std::string& name) {
+    Ogre::LogManager::getSingletonPtr()->logMessage("OIS: Adding KeyListener: " + name);
+    keyListeners_.insert(std::make_pair(name, keyListener));
   }
 
-  const OIS::Keyboard* keyboard() const noexcept {
-    SEQUOIA_ASSERT(isInitialized_);
-    return keyboard_;
+  void removeKeyListener(const std::string& name) {
+    Ogre::LogManager::getSingletonPtr()->logMessage("OIS: Removing KeyListener: " + name);
+    auto ret = keyListeners_.erase(name);
+    SEQUOIA_ASSERT_MSG(ret > 0, "Removing non-exsting KeyListener");
+    (void)ret;
   }
 
-  bool keyPressed(const OIS::KeyEvent& e) { return true; }
-  bool keyReleased(const OIS::KeyEvent& e) { return true; }
+  bool keyPressed(const OIS::KeyEvent& e) {
+    for(auto it = keyListeners_.begin(), end = keyListeners_.end(); it != end; ++it)
+      if(!it->second->keyPressed(e))
+        break;
+    return true;
+  }
+
+  bool keyReleased(const OIS::KeyEvent& e) {
+    for(auto it = keyListeners_.begin(), end = keyListeners_.end(); it != end; ++it)
+      if(!it->second->keyReleased(e))
+        break;
+    return true;
+  }
 
 private:
   bool isInitialized_;
   OIS::InputManager* inputSystem_;
   OIS::Mouse* mouse_;
   OIS::Keyboard* keyboard_;
+  std::map<std::string, OIS::MouseListener*> mouseListeners_;
+  std::map<std::string, OIS::KeyListener*> keyListeners_;
 };
 
 InputManager::InputManager() : impl_(std::make_unique<InputManagerImpl>()) {}
@@ -190,21 +227,18 @@ void InputManager::finalize() { impl_->finalize(); }
 
 void InputManager::capture() { impl_->capture(); }
 
-void InputManager::addKeyListener(OIS::KeyListener* keyListener, const std::string& instanceName) {
-  impl_->addKeyListener(keyListener, instanceName);
+void InputManager::addKeyListener(OIS::KeyListener* keyListener, const std::string& name) {
+  impl_->addKeyListener(keyListener, name);
 }
 
-void InputManager::removeKeyListener(OIS::KeyListener* keyListener) {
-  impl_->removeKeyListener(keyListener);
+void InputManager::removeKeyListener(const std::string& name) { impl_->removeKeyListener(name); }
+
+void InputManager::addMouseListener(OIS::MouseListener* mouseListener, const std::string& name) {
+  impl_->addMouseListener(mouseListener, name);
 }
 
-void InputManager::addMouseListener(OIS::MouseListener* mouseListener,
-                                    const std::string& instanceName) {
-  impl_->addMouseListener(mouseListener, instanceName);
-}
-
-void InputManager::removeMouseListener(OIS::MouseListener* mouseListener) {
-  impl_->removeMouseListener(mouseListener);
+void InputManager::removeMouseListener(const std::string& name) {
+  impl_->removeMouseListener(name);
 }
 
 void InputManager::setWindowExtents(int width, int height) {

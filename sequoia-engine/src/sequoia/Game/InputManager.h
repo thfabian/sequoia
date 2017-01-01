@@ -42,12 +42,12 @@ public:
   void capture();
 
   /// @brief Register to listen to any changes of the Keyboard
-  void addKeyListener(OIS::KeyListener* keyListener, const std::string& instanceName);
-  void removeKeyListener(OIS::KeyListener* keyListener);
+  void addKeyListener(OIS::KeyListener* keyListener, const std::string& name);
+  void removeKeyListener(const std::string& name);
 
   /// @brief Register to listen to any changes of the Mouse
-  void addMouseListener(OIS::MouseListener* mouseListener, const std::string& instanceName);
-  void removeMouseListener(OIS::MouseListener* mouseListener);
+  void addMouseListener(OIS::MouseListener* mouseListener, const std::string& name);
+  void removeMouseListener(const std::string& name);
 
   /// @brief Set mouse region (if the Window resizes, the mouse region must be adjusted accordingly)
   void setWindowExtents(int width, int height);
