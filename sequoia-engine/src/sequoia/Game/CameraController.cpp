@@ -21,7 +21,6 @@ CameraController::CameraController(Ogre::Camera* camera) {
 bool CameraController::mouseMoved(const OIS::MouseEvent& e) { return true; }
 
 bool CameraController::mousePressed(const OIS::MouseEvent& e, OIS::MouseButtonID id) {
-  std::cout << "pressed" << std::endl;
   return true;
 }
 
