@@ -6,11 +6,6 @@
 // See LICENSE.txt for details.
 //
 //===------------------------------------------------------------------------------------------===//
-//
-/// @file
-/// Utility to compare Sequoia versions.
-//
-//===------------------------------------------------------------------------------------------===//
 
 #ifndef SEQUOIA_CORE_VERSION_H
 #define SEQUOIA_CORE_VERSION_H

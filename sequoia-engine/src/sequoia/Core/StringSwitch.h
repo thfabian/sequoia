@@ -6,12 +6,6 @@
 // See LICENSE.txt for details.
 //
 //===------------------------------------------------------------------------------------------===//
-//
-/// @file
-/// This file implements the StringSwitch template, which mimics a switch() statement whose cases
-/// are string literals.
-//
-//===------------------------------------------------------------------------------------------===//
 
 #ifndef SEQUOIA_CORE_STRINGSWITCH_H
 #define SEQUOIA_CORE_STRINGSWITCH_H

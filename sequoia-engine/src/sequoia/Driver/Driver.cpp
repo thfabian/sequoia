@@ -6,11 +6,6 @@
 // See LICENSE.txt for details.
 //
 //===------------------------------------------------------------------------------------------===//
-//
-/// @file
-/// Setup main-loop of the framework.
-//
-//===------------------------------------------------------------------------------------------===//
 
 #include "sequoia/Core/Assert.h"
 #include "sequoia/Core/ErrorHandler.h"

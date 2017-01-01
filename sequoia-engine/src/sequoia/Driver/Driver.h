@@ -6,11 +6,6 @@
 // See LICENSE.txt for details.
 //
 //===------------------------------------------------------------------------------------------===//
-//
-/// @file
-/// Setup main-loop of the framework.
-//
-//===------------------------------------------------------------------------------------------===//
 
 #ifndef SEQUOIA_DRIVER_DRIVER_H
 #define SEQUOIA_DRIVER_DRIVER_H

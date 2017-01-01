@@ -6,11 +6,6 @@
 // See LICENSE.txt for details.
 //
 //===------------------------------------------------------------------------------------------===//
-//
-/// @file
-/// Compiler specific definitions.
-//
-//===------------------------------------------------------------------------------------------===//
 
 #ifndef SEQUOIA_CORE_COMPILER_H
 #define SEQUOIA_CORE_COMPILER_H

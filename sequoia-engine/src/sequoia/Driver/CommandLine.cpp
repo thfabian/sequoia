@@ -6,11 +6,6 @@
 // See LICENSE.txt for details.
 //
 //===------------------------------------------------------------------------------------------===//
-//
-/// @file
-/// Parse command-line arguments.
-//
-//===------------------------------------------------------------------------------------------===//
 
 #include "sequoia/Core/ErrorHandler.h"
 #include "sequoia/Core/Exception.h"
@@ -51,16 +46,16 @@ void CommandLine::parse(const std::vector<std::string>& args) {
        "Produce a help for a given module.")
       // --version
       ("version", "Display version information.")
-      // --verbose
-      ("verbose", "Enable verbose logging to console [default: OFF]")
       // --config
       ("config", po::value<std::string>()->value_name("PATH"),
        "Path to the global configuration file [default: " SEQUOIA_GLOBAL_CONFIG_PATH "]");
 
   po::options_description gui("Graphics options");
   gui.add_options()
-      // --display
-      ("render-system", po::value<std::string>(), "Rendering system to use: Direct3D11 or OpenGL.");
+      // --render-system
+      ("render-system", po::value<std::string>(), "Rendering system to use: Direct3D11 or OpenGL.")
+      // --fullscreen
+      ("fullscreen", po::value<std::string>(), "Launch in full screen mode.");
 
   po::options_description all("Allowed options");
   all.add(general).add(gui);
@@ -99,14 +94,12 @@ void CommandLine::parse(const std::vector<std::string>& args) {
   } catch(core::Exception& e) {
     core::ErrorHandler::getSingleton().warning(e.what());
   }
-
-  if(vm.count("verbose"))
-    config.put("CommandLine.Verbose", true);
-
+  
   if(vm.count("render-system"))
     config.put("CommandLine.RenderSystem", vm["render-system"].as<std::string>());
 
-
+  if(vm.count("fullscreen"))
+    config.put("CommandLine.FullScreen", true);
 }
 
 } // namespace driver

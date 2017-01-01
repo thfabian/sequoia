@@ -6,11 +6,6 @@
 // See LICENSE.txt for details.
 //
 //===------------------------------------------------------------------------------------------===//
-//
-/// @file
-/// Exception classes of sequoia.
-//
-//===------------------------------------------------------------------------------------------===//
 
 #ifndef SEQUOIA_CORE_EXCEPTION_H
 #define SEQUOIA_CORE_EXCEPTION_H
@@ -85,7 +80,7 @@ protected:
   };
 
 /// @class IOException
-/// @brief Exception for Input/Output related errors
+/// @brief Exception for Input/Output related errors, usually translation of OIS exceptions
 ///
 /// @ingroup core
 SEQUOIA_DECLARE_EXCPETION(IOException)
@@ -126,6 +121,8 @@ SEQUOIA_DECLARE_EXCPETION(ParserException)
 #endif
 
 using Exeption = core::Exception;
+using IOException = core::IOException;
+using OSException = core::OSException;
 
 } // namespace sequoia
 

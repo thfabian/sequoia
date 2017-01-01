@@ -6,12 +6,6 @@
 // See LICENSE.txt for details.
 //
 //===------------------------------------------------------------------------------------------===//
-//
-/// @file
-/// Represent a constant reference to a string, i.e. a character array and a length, which need not
-/// be null terminated.
-//
-//===------------------------------------------------------------------------------------------===//
 
 #ifndef SEQUOIA_CORE_STRINGREF_H
 #define SEQUOIA_CORE_STRINGREF_H

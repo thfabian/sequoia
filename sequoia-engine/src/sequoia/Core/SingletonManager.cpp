@@ -6,11 +6,6 @@
 // See LICENSE.txt for details.
 //
 //===------------------------------------------------------------------------------------------===//
-//
-/// @file
-/// Keep track of the lifetime all Singletons of the Sequoia framework.
-//
-//===------------------------------------------------------------------------------------------===//
 
 #include "sequoia/Core/SingletonManager.h"
 

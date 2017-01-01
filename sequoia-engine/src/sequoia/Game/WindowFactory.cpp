@@ -6,11 +6,6 @@
 // See LICENSE.txt for details.
 //
 //===------------------------------------------------------------------------------------------===//
-//
-/// @file
-/// Factory to create RenderWindows.
-//
-//===------------------------------------------------------------------------------------------===//
 
 #include "sequoia/Core/GlobalConfiguration.h"
 #include "sequoia/Core/Version.h"

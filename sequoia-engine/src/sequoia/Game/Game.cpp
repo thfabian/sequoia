@@ -6,19 +6,16 @@
 // See LICENSE.txt for details.
 //
 //===------------------------------------------------------------------------------------------===//
-//
-/// @file
-/// Main class holding all Ogre related objects.
-//
-//===------------------------------------------------------------------------------------------===//
 
 #include "sequoia/Core/ErrorHandler.h"
 #include "sequoia/Core/GlobalConfiguration.h"
 #include "sequoia/Core/SmallVector.h"
 #include "sequoia/Core/StringRef.h"
+#include "sequoia/Core/SingletonManager.h"
 #include "sequoia/Game/Game.h"
 #include "sequoia/Game/RenderSystemFactory.h"
 #include "sequoia/Game/WindowFactory.h"
+#include "sequoia/Game/InputManager.h"
 #include <OGRE/OgreConfigFile.h>
 #include <OGRE/OgreRenderWindow.h>
 #include <OGRE/OgreRoot.h>
@@ -55,19 +52,23 @@ void Game::run() {
   root_->clearEventTimes();
   Ogre::LogManager::getSingletonPtr()->logMessage("*** Start rendering ***");
   while(!renderWindow_->isClosed()) {
-    renderWindow_->update(false);
+    // Capture Keyboard/Mouse
+    InputManager::getSingleton().capture();
 
+    // Update Screen
+    renderWindow_->update(false);
     renderWindow_->swapBuffers();
     root_->renderOneFrame();
 
+    // Update render windows 
     Ogre::WindowEventUtilities::messagePump();
   }
   Ogre::LogManager::getSingletonPtr()->logMessage("*** Stop rendering ***");
 
   //
-  // Clean-up
+  // Tear-down
   //
-  destroyScene();
+  tearDown();
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -115,6 +116,12 @@ void Game::setup() {
   renderWindow_->setAutoUpdated(false);
 
   //
+  // Initialize Input/Output System (OIS)
+  //
+  auto* inputSystem = SingletonManager::getSingleton().allocateSingleton<InputManager>();
+  inputSystem->init(renderWindow_);
+
+  //
   // Choose SceneManger and create Camera
   //
   chooseSceneManager();
@@ -145,6 +152,12 @@ void Game::setup() {
   // Create any frame listeners
   //
   createFrameListener();
+}
+
+// -------------------------------------------------------------------------------------------------
+void Game::tearDown() {
+  InputManager::getSingleton().finalize();
+  destroyScene();
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -236,16 +249,6 @@ bool Game::frameRenderingQueued(const Ogre::FrameEvent& evt) {
   if(renderWindow_->isClosed())
     return false;
   return true;
-}
-
-// -------------------------------------------------------------------------------------------------
-void Game::windowResized(Ogre::RenderWindow* window) {
-  Ogre::LogManager::getSingletonPtr()->logMessage("*** EVENT: Window resized ***");
-}
-
-// -------------------------------------------------------------------------------------------------
-void Game::windowClosed(Ogre::RenderWindow* window) {
-  Ogre::LogManager::getSingletonPtr()->logMessage("*** EVENT: Window closed ***");
 }
 
 // -------------------------------------------------------------------------------------------------

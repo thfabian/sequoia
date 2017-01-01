@@ -6,11 +6,6 @@
 // See LICENSE.txt for details.
 //
 //===------------------------------------------------------------------------------------------===//
-//
-/// @file
-/// Factory to create RenderSystems.
-//
-//===------------------------------------------------------------------------------------------===//
 
 #include "sequoia/Core/ErrorHandler.h"
 #include "sequoia/Core/StringRef.h"

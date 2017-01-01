@@ -6,12 +6,6 @@
 // See LICENSE.txt for details.
 //
 //===------------------------------------------------------------------------------------------===//
-//
-/// @file
-/// This file defines a Levenshtein distance function that works for any two sequences, with each
-/// element of each sequence being analogous to a character in a string.
-//
-//===------------------------------------------------------------------------------------------===//
 
 #ifndef SEQUOIA_CORE_EDITDISTANCE_H
 #define SEQUOIA_CORE_EDITDISTANCE_H

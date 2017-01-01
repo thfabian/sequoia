@@ -6,11 +6,6 @@
 // See LICENSE.txt for details.
 //
 //===------------------------------------------------------------------------------------------===//
-//
-/// @file
-/// Global configuration class.
-//
-//===------------------------------------------------------------------------------------------===//
 
 #include "sequoia/Core/Exception.h"
 #include "sequoia/Core/Format.h"
@@ -222,7 +217,7 @@ static GlobalConfiguration::ParserKind fileExtensionToParser(boost::filesystem::
     return GlobalConfiguration::ParserKind::INI;
   else if(ext.lower() == ".info")
     return GlobalConfiguration::ParserKind::INFO;
-  throw IOException(format("cannot deduce parser from file extension: \"%s\"", extStr));
+  throw OSException(format("cannot deduce parser from file extension: \"%s\"", extStr));
 }
 
 std::string GlobalConfiguration::toString(ParserKind parser) const {
@@ -235,7 +230,7 @@ void GlobalConfiguration::save(boost::filesystem::path path) const {
   std::ofstream ofs(path.native());
 
   if(!ofs.is_open())
-    SEQUOIA_THROW(IOException, format(CSTR("cannot open file: %s"), path));
+    SEQUOIA_THROW(OSException, format(CSTR("cannot open file: %s"), path));
 
   if(!skipNodes_.empty()) {
     auto ptree = *ptree_;
@@ -252,7 +247,7 @@ void GlobalConfiguration::load(boost::filesystem::path path) {
   std::ifstream ifs(path.native());
 
   if(!ifs.is_open())
-    SEQUOIA_THROW(IOException, format(CSTR("cannot open file: %s"), path));
+    SEQUOIA_THROW(OSException, format(CSTR("cannot open file: %s"), path));
   fromStream(ifs, *ptree_, fileExtensionToParser(path));
 }
 

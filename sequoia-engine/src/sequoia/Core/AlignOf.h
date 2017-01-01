@@ -6,11 +6,6 @@
 // See LICENSE.txt for details.
 //
 //===------------------------------------------------------------------------------------------===//
-//
-/// @file
-// This file defines the AlignedCharArray and AlignedCharArrayUnion classes.
-//
-//===------------------------------------------------------------------------------------------===//
 
 #ifndef SEQUOIA_CORE_ALIGNOF_H
 #define SEQUOIA_CORE_ALIGNOF_H

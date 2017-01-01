@@ -6,11 +6,6 @@
 // See LICENSE.txt for details.
 //
 //===------------------------------------------------------------------------------------------===//
-//
-/// @file
-/// This file provides various error handling routines.
-//
-//===------------------------------------------------------------------------------------------===//
 
 #include "sequoia/Core/ErrorHandler.h"
 #include <boost/filesystem.hpp>

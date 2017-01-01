@@ -6,11 +6,6 @@
 // See LICENSE.txt for details.
 //
 //===------------------------------------------------------------------------------------------===//
-//
-/// @file
-/// Factory to create RenderSystems.
-//
-//===------------------------------------------------------------------------------------------===//
 
 #ifndef SEQUOIA_GAME_RENDERSYSTEMFACTORY_H
 #define SEQUOIA_GAME_RENDERSYSTEMFACTORY_H

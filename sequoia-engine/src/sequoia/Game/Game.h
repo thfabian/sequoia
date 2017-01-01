@@ -6,11 +6,6 @@
 // See LICENSE.txt for details.
 //
 //===------------------------------------------------------------------------------------------===//
-//
-/// @file
-/// Main class holding all Ogre related objects.
-//
-//===------------------------------------------------------------------------------------------===//
 
 #ifndef SEQUOIA_GAME_GAME_H
 #define SEQUOIA_GAME_GAME_H
@@ -34,8 +29,7 @@ namespace game {
 ///
 /// @ingroup game
 class SEQUOIA_GAME_EXPORT Game : public Ogre::Singleton<Game>,
-                                 public Ogre::FrameListener,
-                                 public Ogre::WindowEventListener {
+                                 public Ogre::FrameListener {
 public:
   Game();
   ~Game();
@@ -45,6 +39,8 @@ public:
 
 private:
   void setup();
+
+  void tearDown();
 
   void setupResources();
 
@@ -70,15 +66,6 @@ private:
   // -- TMP --
   void setupDummyScene();
   // ---------
-  
-
-  /// @brief Callback for resize event
-  virtual void windowResized(Ogre::RenderWindow* window);
-
-  /// @brief Callback for window close event
-  ///
-  /// Unattaches OIS before window shutdown (very important under Linux).
-  virtual void windowClosed(Ogre::RenderWindow* window);
 
 private:
   std::shared_ptr<Ogre::Root> root_;

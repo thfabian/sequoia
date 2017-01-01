@@ -6,11 +6,6 @@
 // See LICENSE.txt for details.
 //
 //===------------------------------------------------------------------------------------------===//
-//
-/// @file
-// This file defines the SmallVector class.
-//
-//===------------------------------------------------------------------------------------------===//
 
 #ifndef SEQUOIA_CORE_SMALLVECTOR_H
 #define SEQUOIA_CORE_SMALLVECTOR_H
