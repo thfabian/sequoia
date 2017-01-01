@@ -41,10 +41,13 @@ public:
   /// @brief Add/Remove as Listener
   /// @{
   void addAsMouseListener();
-  void removeAsMouseListener() ;
+  void removeAsMouseListener();
 
-  void addAsKeyListener() ;
-  void removeAsKeyListener() ;
+  void addAsKeyListener();
+  void removeAsKeyListener();
+
+  void addAsFrameListener(std::shared_ptr<Ogre::Root>& root);
+  void removeAsFrameListener(std::shared_ptr<Ogre::Root>& root);
   /// @}
 
   /// @brief Setter/Getter

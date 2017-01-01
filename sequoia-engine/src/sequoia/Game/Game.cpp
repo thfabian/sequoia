@@ -8,18 +8,20 @@
 //===------------------------------------------------------------------------------------------===//
 
 #include "sequoia/Core/ErrorHandler.h"
+#include "sequoia/Core/Format.h"
 #include "sequoia/Core/GlobalConfiguration.h"
+#include "sequoia/Core/SingletonManager.h"
 #include "sequoia/Core/SmallVector.h"
 #include "sequoia/Core/StringRef.h"
-#include "sequoia/Core/SingletonManager.h"
 #include "sequoia/Game/Game.h"
+#include "sequoia/Game/InputManager.h"
 #include "sequoia/Game/RenderSystemFactory.h"
 #include "sequoia/Game/WindowFactory.h"
-#include "sequoia/Game/InputManager.h"
 #include <OGRE/OgreConfigFile.h>
 #include <OGRE/OgreRenderWindow.h>
 #include <OGRE/OgreRoot.h>
 #include <OGRE/OgreSceneManager.h>
+#include <OGRE/OgreTimer.h>
 #include <OGRE/Overlay/OgreOverlaySystem.h>
 
 #include <OGRE/OgreEntity.h>
@@ -42,25 +44,27 @@ void Game::run() {
   //
   // Setup
   //
+  auto timer = Ogre::Timer();
+  Ogre::LogManager::getSingletonPtr()->logMessage("*** Start Setup ***");
   setup();
-
-  setupDummyScene();
+  Ogre::LogManager::getSingletonPtr()->logMessage(
+      core::format("*** Setup done (took %lu ms) ***", timer.getMilliseconds()));
 
   //
   // Start rendering
   //
   root_->clearEventTimes();
-  Ogre::LogManager::getSingletonPtr()->logMessage("*** Start rendering ***");
+  Ogre::LogManager::getSingletonPtr()->logMessage("*** Start Rendering ***");
   while(!renderWindow_->isClosed()) {
     // Update Screen
     renderWindow_->update(false);
     renderWindow_->swapBuffers();
     root_->renderOneFrame();
 
-    // Update render windows 
+    // Update render windows
     Ogre::WindowEventUtilities::messagePump();
   }
-  Ogre::LogManager::getSingletonPtr()->logMessage("*** Stop rendering ***");
+  Ogre::LogManager::getSingletonPtr()->logMessage("*** Stop Rendering ***");
 
   //
   // Tear-down
@@ -72,20 +76,14 @@ void Game::run() {
 void Game::setup() {
   auto& config = GlobalConfiguration::getSingleton();
 
-  //
   // Create root object
-  //
   root_ = std::make_shared<Ogre::Root>(config.getPath("InternalSettings.PluginPath").string(),
                                        config.getPath("InternalSettings.ConfigPath").string(), "");
 
-  //
   // Setup resources
-  //
   setupResources();
 
-  //
   // Load plugins
-  //
   SmallVector<StringRef, 5> plugins;
   StringRef(SEQUOIA_OGRE_PLUGINS).split(plugins, ";");
   for(const auto& pluginStr : plugins) {
@@ -93,57 +91,39 @@ void Game::setup() {
     root_->loadPlugin(plugin);
   }
 
-  //
   // Register render subsystem
-  //
-  renderSystem_ = RenderSystemFactory::create(
-      root_, config.getBoolean("CommandLine.ShowRenderDialog", false),
-      config.getString("CommandLine.RenderSystem", "OpenGL"));
+  renderSystem_ =
+      RenderSystemFactory::create(root_, config.getBoolean("CommandLine.ShowRenderDialog", false),
+                                  config.getString("CommandLine.RenderSystem", "OpenGL"));
 
-  //
   // Initialize root and register myself as FrameListener
-  //
   root_->initialise(false);
   root_->addFrameListener(this);
 
-  //
   // Create RenderWindow
-  //
   renderWindow_ = WindowFactory::create(root_);
   renderWindow_->setActive(true);
   renderWindow_->setAutoUpdated(false);
 
-  //
   // Initialize Input/Output System (OIS)
-  //
   auto* inputSystem = SingletonManager::getSingleton().allocateSingleton<InputManager>();
   inputSystem->init(renderWindow_);
 
-  //
   // Choose SceneManger and create Camera
-  //
   chooseSceneManager();
   createCamera();
   createViewports();
 
-  //
   // Set default mipmap level
-  //
   Ogre::TextureManager::getSingleton().setDefaultNumMipmaps(5);
 
-  //
   // Create any resource listeners (for loading screens)
-  //
   createResourceListener();
 
-  //
   // Load resources
-  //
   loadResources();
 
-  //
   // Create the scene
-  //
   createScene();
 }
 
@@ -195,32 +175,40 @@ void Game::loadResources() {
 
 // -------------------------------------------------------------------------------------------------
 void Game::chooseSceneManager() {
+  Ogre::LogManager::getSingletonPtr()->logMessage("Initializing SceneManager ...");
+
   // Get the SceneManager
-  sceneManager_ = root_->createSceneManager(Ogre::ST_GENERIC, "MySceneManager");
+  sceneManager_ = root_->createSceneManager(Ogre::ST_GENERIC, "SceneManager");
 
   // Initialize the OverlaySystem
   overlaySystem_ = new Ogre::OverlaySystem();
   sceneManager_->addRenderQueueListener(overlaySystem_);
+
+  Ogre::LogManager::getSingletonPtr()->logMessage("Successfully initialized SceneManager");
 }
 
 // -------------------------------------------------------------------------------------------------
 void Game::createCamera() {
+  Ogre::LogManager::getSingletonPtr()->logMessage("Creating Camera ...");
+
   // Create the camera
-  camera_ = sceneManager_->createCamera("MyCamera");
+  camera_ = sceneManager_->createCamera("Camera");
 
   // Insert camera as a scene node
-  Ogre::SceneNode* cameraNode =
-      sceneManager_->getRootSceneNode()->createChildSceneNode("MyCameraSceneNode");
+  Ogre::SceneNode* cameraNode = sceneManager_->getRootSceneNode()->createChildSceneNode("Camera");
   cameraNode->attachObject(camera_);
-  
+
   // Setup camera controller
   cameraController_ = std::make_unique<CameraController>(camera_);
   cameraController_->addAsMouseListener();
   cameraController_->addAsKeyListener();
+  cameraController_->addAsFrameListener(root_);
+
+  Ogre::LogManager::getSingletonPtr()->logMessage("Successfully initialized Camera");
 }
 
 // -------------------------------------------------------------------------------------------------
-void Game::createScene() {}
+void Game::createScene() { setupDummyScene(); }
 
 // -------------------------------------------------------------------------------------------------
 void Game::destroyScene() {}
@@ -247,143 +235,173 @@ bool Game::frameRenderingQueued(const Ogre::FrameEvent& e) {
   // Capture Keyboard/Mouse
   InputManager::getSingleton().capture();
 
-  // Forward events
-  cameraController_->frameRenderingQueued(e);
-
   return true;
 }
 
 // -------------------------------------------------------------------------------------------------
 void Game::setupDummyScene() {
-  // A simplistic presentation of some realtime 3D basics.
-  // In 3D you need most of the time :
-  // a vertex table Vt + an index table Idt + a kind of primitive P + an associated material M.
-  // Let's say P is "triangle" (most common), then Idt will contain
-  // a list of index taken from Vt, where each group of 3 index means a triangle.
-  // so (Idt[0], Idt[1],Idt[2]) is the first triangle, (Idt[3],Idt[4],Idt[5]) is the second, etc...
-  //
-  // When times come to render this whole thing,
-  // it will be multiplied by 2 matrix.
-  // 1/ a matrix representing transformation(position/orientation/scale) of the thing relative to
-  // the camera.
-  // 2/ a perspective matrix, corresponding to the parameters of the viewing camera.
-  // Ogre will prepare both matrix for you. But you can also provide them if you want.
-  // This calculation can be modified in vertex shaders.
-  //
-  // Once it has been projected, the graphic card uses the buffers (mainly colour and depth)
-  // , vertex attributes and material informations (from M) to draw things.
-  // vertex attributes are used to 'light', 'colourize', and 'texture' the meshes.
-  // This calculation can be partially modified in pixel shaders.
-  // This was a very simplistic presentation of 3D rendering ^^.
-  {
-    // Here, I create a 3D element, by using the interface of ManualObject.
-    // ManualObject is very close to the opengl old simple way to specify geometry.
-    // There are other interfaces (Hardwarebuffers), you can check the ogremanual fo them and wiki.
-    // For each vertex I will provide positions and attributes (normal, vertex color, texture
-    // coordinates...).
-    // Then for each primitive (given its type : triangle, line, line strip etc...),
-    // I give the corresponding group of vertex index.
-    Ogre::ManualObject* lManualObject = NULL;
-    {
-      // The manualObject creation requires a name.
-      Ogre::String lManualObjectName = "CubeWithAxes";
-      lManualObject = sceneManager_->createManualObject(lManualObjectName);
+  //// A simplistic presentation of some realtime 3D basics.
+  //// In 3D you need most of the time :
+  //// a vertex table Vt + an index table Idt + a kind of primitive P + an associated material M.
+  //// Let's say P is "triangle" (most common), then Idt will contain
+  //// a list of index taken from Vt, where each group of 3 index means a triangle.
+  //// so (Idt[0], Idt[1],Idt[2]) is the first triangle, (Idt[3],Idt[4],Idt[5]) is the second,
+  ///etc...
+  ////
+  //// When times come to render this whole thing,
+  //// it will be multiplied by 2 matrix.
+  //// 1/ a matrix representing transformation(position/orientation/scale) of the thing relative to
+  //// the camera.
+  //// 2/ a perspective matrix, corresponding to the parameters of the viewing camera.
+  //// Ogre will prepare both matrix for you. But you can also provide them if you want.
+  //// This calculation can be modified in vertex shaders.
+  ////
+  //// Once it has been projected, the graphic card uses the buffers (mainly colour and depth)
+  //// , vertex attributes and material informations (from M) to draw things.
+  //// vertex attributes are used to 'light', 'colourize', and 'texture' the meshes.
+  //// This calculation can be partially modified in pixel shaders.
+  //// This was a very simplistic presentation of 3D rendering ^^.
+  //{
+  //  // Here, I create a 3D element, by using the interface of ManualObject.
+  //  // ManualObject is very close to the opengl old simple way to specify geometry.
+  //  // There are other interfaces (Hardwarebuffers), you can check the ogremanual fo them and
+  //  wiki.
+  //  // For each vertex I will provide positions and attributes (normal, vertex color, texture
+  //  // coordinates...).
+  //  // Then for each primitive (given its type : triangle, line, line strip etc...),
+  //  // I give the corresponding group of vertex index.
+  //  Ogre::ManualObject* lManualObject = NULL;
+  //  {
+  //    // The manualObject creation requires a name.
+  //    Ogre::String lManualObjectName = "CubeWithAxes";
+  //    lManualObject = sceneManager_->createManualObject(lManualObjectName);
 
-      // Always tell if you want to update the 3D (vertex/index) later or not.
-      bool lDoIWantToUpdateItLater = false;
-      lManualObject->setDynamic(lDoIWantToUpdateItLater);
+  //    // Always tell if you want to update the 3D (vertex/index) later or not.
+  //    bool lDoIWantToUpdateItLater = false;
+  //    lManualObject->setDynamic(lDoIWantToUpdateItLater);
 
-      // Here I create a cube in a first part with triangles, and then axes (in red/green/blue).
+  //    // Here I create a cube in a first part with triangles, and then axes (in red/green/blue).
 
-      // BaseWhiteNoLighting is the name of a material that already exist inside Ogre.
-      // Ogre::RenderOperation::OT_TRIANGLE_LIST is a kind of primitive.
-      float lSize = 0.7f;
-      lManualObject->begin("BaseWhiteNoLighting", Ogre::RenderOperation::OT_TRIANGLE_LIST);
-      {
-        float cp = 1.0f * lSize;
-        float cm = -1.0f * lSize;
+  //    // BaseWhiteNoLighting is the name of a material that already exist inside Ogre.
+  //    // Ogre::RenderOperation::OT_TRIANGLE_LIST is a kind of primitive.
+  //    float lSize = 0.7f;
+  //    lManualObject->begin("BaseWhiteNoLighting", Ogre::RenderOperation::OT_TRIANGLE_LIST);
+  //    {
+  //      float cp = 1.0f * lSize;
+  //      float cm = -1.0f * lSize;
 
-        lManualObject->position(cm, cp, cm); // a vertex
-        lManualObject->colour(Ogre::ColourValue(0.0f, 1.0f, 0.0f, 1.0f));
-        lManualObject->position(cp, cp, cm); // a vertex
-        lManualObject->colour(Ogre::ColourValue(1.0f, 1.0f, 0.0f, 1.0f));
-        lManualObject->position(cp, cm, cm); // a vertex
-        lManualObject->colour(Ogre::ColourValue(1.0f, 0.0f, 0.0f, 1.0f));
-        lManualObject->position(cm, cm, cm); // a vertex
-        lManualObject->colour(Ogre::ColourValue(0.0f, 0.0f, 0.0f, 1.0f));
+  //      lManualObject->position(cm, cp, cm); // a vertex
+  //      lManualObject->colour(Ogre::ColourValue(0.0f, 1.0f, 0.0f, 1.0f));
+  //      lManualObject->position(cp, cp, cm); // a vertex
+  //      lManualObject->colour(Ogre::ColourValue(1.0f, 1.0f, 0.0f, 1.0f));
+  //      lManualObject->position(cp, cm, cm); // a vertex
+  //      lManualObject->colour(Ogre::ColourValue(1.0f, 0.0f, 0.0f, 1.0f));
+  //      lManualObject->position(cm, cm, cm); // a vertex
+  //      lManualObject->colour(Ogre::ColourValue(0.0f, 0.0f, 0.0f, 1.0f));
 
-        lManualObject->position(cm, cp, cp); // a vertex
-        lManualObject->colour(Ogre::ColourValue(0.0f, 1.0f, 1.0f, 1.0f));
-        lManualObject->position(cp, cp, cp); // a vertex
-        lManualObject->colour(Ogre::ColourValue(1.0f, 1.0f, 1.0f, 1.0f));
-        lManualObject->position(cp, cm, cp); // a vertex
-        lManualObject->colour(Ogre::ColourValue(1.0f, 0.0f, 1.0f, 1.0f));
-        lManualObject->position(cm, cm, cp); // a vertex
-        lManualObject->colour(Ogre::ColourValue(0.0f, 0.0f, 1.0f, 1.0f));
+  //      lManualObject->position(cm, cp, cp); // a vertex
+  //      lManualObject->colour(Ogre::ColourValue(0.0f, 1.0f, 1.0f, 1.0f));
+  //      lManualObject->position(cp, cp, cp); // a vertex
+  //      lManualObject->colour(Ogre::ColourValue(1.0f, 1.0f, 1.0f, 1.0f));
+  //      lManualObject->position(cp, cm, cp); // a vertex
+  //      lManualObject->colour(Ogre::ColourValue(1.0f, 0.0f, 1.0f, 1.0f));
+  //      lManualObject->position(cm, cm, cp); // a vertex
+  //      lManualObject->colour(Ogre::ColourValue(0.0f, 0.0f, 1.0f, 1.0f));
 
-        // face behind / front
-        lManualObject->triangle(0, 1, 2);
-        lManualObject->triangle(2, 3, 0);
-        lManualObject->triangle(4, 6, 5);
-        lManualObject->triangle(6, 4, 7);
+  //      // face behind / front
+  //      lManualObject->triangle(0, 1, 2);
+  //      lManualObject->triangle(2, 3, 0);
+  //      lManualObject->triangle(4, 6, 5);
+  //      lManualObject->triangle(6, 4, 7);
 
-        // face top / down
-        lManualObject->triangle(0, 4, 5);
-        lManualObject->triangle(5, 1, 0);
-        lManualObject->triangle(2, 6, 7);
-        lManualObject->triangle(7, 3, 2);
+  //      // face top / down
+  //      lManualObject->triangle(0, 4, 5);
+  //      lManualObject->triangle(5, 1, 0);
+  //      lManualObject->triangle(2, 6, 7);
+  //      lManualObject->triangle(7, 3, 2);
 
-        // face left / right
-        lManualObject->triangle(0, 7, 4);
-        lManualObject->triangle(7, 0, 3);
-        lManualObject->triangle(1, 5, 6);
-        lManualObject->triangle(6, 2, 1);
-      }
-      lManualObject->end();
-      // Here I have finished my ManualObject construction.
-      // It is possible to add more begin()-end() thing, in order to use
-      // different rendering operation types, or different materials in 1 ManualObject.
-      lManualObject->begin("BaseWhiteNoLighting", Ogre::RenderOperation::OT_LINE_LIST);
-      {
-        float lAxeSize = 2.0f * lSize;
-        lManualObject->position(0.0f, 0.0f, 0.0f);
-        lManualObject->colour(Ogre::ColourValue::Red);
-        lManualObject->position(lAxeSize, 0.0f, 0.0f);
-        lManualObject->colour(Ogre::ColourValue::Red);
-        lManualObject->position(0.0f, 0.0f, 0.0f);
-        lManualObject->colour(Ogre::ColourValue::Green);
-        lManualObject->position(0.0, lAxeSize, 0.0);
-        lManualObject->colour(Ogre::ColourValue::Green);
-        lManualObject->position(0.0f, 0.0f, 0.0f);
-        lManualObject->colour(Ogre::ColourValue::Blue);
-        lManualObject->position(0.0, 0.0, lAxeSize);
-        lManualObject->colour(Ogre::ColourValue::Blue);
+  //      // face left / right
+  //      lManualObject->triangle(0, 7, 4);
+  //      lManualObject->triangle(7, 0, 3);
+  //      lManualObject->triangle(1, 5, 6);
+  //      lManualObject->triangle(6, 2, 1);
+  //    }
+  //    lManualObject->end();
+  //    // Here I have finished my ManualObject construction.
+  //    // It is possible to add more begin()-end() thing, in order to use
+  //    // different rendering operation types, or different materials in 1 ManualObject.
+  //    lManualObject->begin("BaseWhiteNoLighting", Ogre::RenderOperation::OT_LINE_LIST);
+  //    {
+  //      float lAxeSize = 2.0f * lSize;
+  //      lManualObject->position(0.0f, 0.0f, 0.0f);
+  //      lManualObject->colour(Ogre::ColourValue::Red);
+  //      lManualObject->position(lAxeSize, 0.0f, 0.0f);
+  //      lManualObject->colour(Ogre::ColourValue::Red);
+  //      lManualObject->position(0.0f, 0.0f, 0.0f);
+  //      lManualObject->colour(Ogre::ColourValue::Green);
+  //      lManualObject->position(0.0, lAxeSize, 0.0);
+  //      lManualObject->colour(Ogre::ColourValue::Green);
+  //      lManualObject->position(0.0f, 0.0f, 0.0f);
+  //      lManualObject->colour(Ogre::ColourValue::Blue);
+  //      lManualObject->position(0.0, 0.0, lAxeSize);
+  //      lManualObject->colour(Ogre::ColourValue::Blue);
 
-        lManualObject->index(0);
-        lManualObject->index(1);
-        lManualObject->index(2);
-        lManualObject->index(3);
-        lManualObject->index(4);
-        lManualObject->index(5);
-      }
-      lManualObject->end();
-    }
-    Ogre::String lNameOfTheMesh = "MeshCubeAndAxe";
-    Ogre::String lResourceGroup = Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME;
-    lManualObject->convertToMesh(lNameOfTheMesh);
+  //      lManualObject->index(0);
+  //      lManualObject->index(1);
+  //      lManualObject->index(2);
+  //      lManualObject->index(3);
+  //      lManualObject->index(4);
+  //      lManualObject->index(5);
+  //    }
+  //    lManualObject->end();
+  //  }
+  //  Ogre::String lNameOfTheMesh = "MeshCubeAndAxe";
+  //  Ogre::String lResourceGroup = Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME;
+  //  lManualObject->convertToMesh(lNameOfTheMesh);
 
-    // Now I can create several entities using that mesh
-    int lNumberOfEntities = 5;
-    for(int iter = 0; iter < lNumberOfEntities; ++iter) {
-      Ogre::Entity* lEntity = sceneManager_->createEntity(lNameOfTheMesh);
-      // Now I attach it to a scenenode, so that it becomes present in the scene.
-      Ogre::SceneNode* lNode = sceneManager_->getRootSceneNode()->createChildSceneNode();
-      lNode->attachObject(lEntity);
-      // I move the SceneNode so that it is visible to the camera.
-      float lPositionOffset = float(1 + iter * 2) - (float(lNumberOfEntities));
-      lNode->translate(lPositionOffset, lPositionOffset, -10.0f);
-    }
-  }
+  //  // Now I can create several entities using that mesh
+  //  int lNumberOfEntities = 5;
+  //  for(int iter = 0; iter < lNumberOfEntities; ++iter) {
+  //    Ogre::Entity* lEntity = sceneManager_->createEntity(lNameOfTheMesh);
+  //    // Now I attach it to a scenenode, so that it becomes present in the scene.
+  //    Ogre::SceneNode* lNode = sceneManager_->getRootSceneNode()->createChildSceneNode();
+  //    lNode->attachObject(lEntity);
+  //    // I move the SceneNode so that it is visible to the camera.
+  //    float lPositionOffset = float(1 + iter * 2) - (float(lNumberOfEntities));
+  //    lNode->translate(lPositionOffset, lPositionOffset, -10.0f);
+  //  }
+  //}
+
+  sceneManager_->setAmbientLight(Ogre::ColourValue(0.5, 0.5, 0.5));
+  camera_->setPosition(0, 47, 222);
+
+  Ogre::Light* light = sceneManager_->createLight("MainLight");
+  light->setPosition(20.0, 80.0, 50.0);
+
+  Ogre::Entity* ogreEntity = sceneManager_->createEntity("ogrehead.mesh");
+
+  Ogre::SceneNode* ogreNode = sceneManager_->getRootSceneNode()->createChildSceneNode();
+  ogreNode->attachObject(ogreEntity);
+
+  Ogre::Entity* ogreEntity2 = sceneManager_->createEntity("ogrehead.mesh");
+
+  Ogre::SceneNode* ogreNode2 =
+      sceneManager_->getRootSceneNode()->createChildSceneNode(Ogre::Vector3(84, 48, 0));
+  ogreNode2->attachObject(ogreEntity2);
+
+  Ogre::Entity* ogreEntity3 = sceneManager_->createEntity("ogrehead.mesh");
+
+  Ogre::SceneNode* ogreNode3 = sceneManager_->getRootSceneNode()->createChildSceneNode();
+  ogreNode3->setPosition(Ogre::Vector3(0, 104, 0));
+  ogreNode3->setScale(2, 1.2, 1);
+  ogreNode3->attachObject(ogreEntity3);
+
+  Ogre::Entity* ogreEntity4 = sceneManager_->createEntity("ogrehead.mesh");
+
+  Ogre::SceneNode* ogreNode4 = sceneManager_->getRootSceneNode()->createChildSceneNode();
+  ogreNode4->setPosition(-84, 48, 0);
+  ogreNode4->roll(Ogre::Degree(-90));
+  ogreNode4->attachObject(ogreEntity4);
 }
 
 } // namespace game

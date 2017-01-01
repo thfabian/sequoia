@@ -9,9 +9,9 @@
 
 #include "sequoia/Game/CameraController.h"
 #include <OGRE/OgreCamera.h>
+#include <OGRE/OgreRoot.h>
 #include <OGRE/OgreSceneManager.h>
 #include <OGRE/OgreSceneNode.h>
-#include <OGRE/OgreRoot.h>
 #include <limits>
 
 namespace sequoia {
@@ -25,6 +25,7 @@ CameraController::CameraController(Ogre::Camera* camera)
       goingRight_(false), goingUp_(false), goingDown_(false), fastMove_(false) {
 
   setStyle(CameraStyle::Freelock);
+  InputManager::getSingleton().addKeyListener(this, "CameraController");
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -45,6 +46,16 @@ void CameraController::addAsKeyListener() {
 // -------------------------------------------------------------------------------------------------
 void CameraController::removeAsKeyListener() {
   InputManager::getSingleton().removeKeyListener("CameraController");
+}
+
+// -------------------------------------------------------------------------------------------------
+void CameraController::addAsFrameListener(std::shared_ptr<Ogre::Root>& root) {
+  root->addFrameListener(this);
+}
+
+// -------------------------------------------------------------------------------------------------
+void CameraController::removeAsFrameListener(std::shared_ptr<Ogre::Root>& root) {
+  root->removeFrameListener(this);
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -118,15 +129,56 @@ void CameraController::setTopSpeed(Ogre::Real topSpeed) { topSpeed_ = topSpeed; 
 Ogre::Real CameraController::topSpeed() const noexcept { return topSpeed_; }
 
 // -------------------------------------------------------------------------------------------------
-bool CameraController::mouseMoved(const OIS::MouseEvent& e) { return true; }
+bool CameraController::mouseMoved(const OIS::MouseEvent& e) {
+  if(style_ == CameraStyle::Orbit) {
+    Ogre::Real dist = (camera_->getPosition() - target_->_getDerivedPosition()).length();
+
+    // Yaw around the target, and pitch locally
+    if(orbiting_) {
+      camera_->setPosition(target_->_getDerivedPosition());
+
+      camera_->yaw(Ogre::Degree(-e.state.X.rel * 0.25f));
+      camera_->pitch(Ogre::Degree(-e.state.Y.rel * 0.25f));
+
+      camera_->moveRelative(Ogre::Vector3(0, 0, dist));
+    }
+    // Move the camera toward or away from the target
+    else if(zooming_) {
+      // The further the camera is, the faster it moves
+      camera_->moveRelative(Ogre::Vector3(0, 0, e.state.Y.rel * 0.004f * dist));
+    }
+    // Move the camera toward or away from the target
+    else if(e.state.Z.rel != 0) {
+      // The further the camera is, the faster it moves
+      camera_->moveRelative(Ogre::Vector3(0, 0, -e.state.Z.rel * 0.0008f * dist));
+    }
+  } else if(style_ == CameraStyle::Freelock) {
+    camera_->yaw(Ogre::Degree(-e.state.X.rel * 0.15f));
+    camera_->pitch(Ogre::Degree(-e.state.Y.rel * 0.15f));
+  }
+
+  return true;
+}
 
 // -------------------------------------------------------------------------------------------------
 bool CameraController::mousePressed(const OIS::MouseEvent& e, OIS::MouseButtonID id) {
+  if(style_ == CameraStyle::Orbit) {
+    if(id == OIS::MB_Left)
+      orbiting_ = true;
+    else if(id == OIS::MB_Right)
+      zooming_ = true;
+  }
   return true;
 }
 
 // -------------------------------------------------------------------------------------------------
 bool CameraController::mouseReleased(const OIS::MouseEvent& e, OIS::MouseButtonID id) {
+  if(style_ == CameraStyle::Orbit) {
+    if(id == OIS::MB_Left)
+      orbiting_ = false;
+    else if(id == OIS::MB_Right)
+      zooming_ = false;
+  }
   return true;
 }
 
@@ -152,7 +204,7 @@ bool CameraController::keyPressed(const OIS::KeyEvent& e) {
 }
 
 // -------------------------------------------------------------------------------------------------
-bool CameraController::keyReleased(const OIS::KeyEvent& e) {   
+bool CameraController::keyReleased(const OIS::KeyEvent& e) {
   if(style_ == CameraStyle::Freelock) {
     if(e.key == OIS::KC_W || e.key == OIS::KC_UP)
       goingForward_ = false;
@@ -169,7 +221,7 @@ bool CameraController::keyReleased(const OIS::KeyEvent& e) {
     else if(e.key == OIS::KC_LSHIFT)
       fastMove_ = false;
   }
-  return true; 
+  return true;
 }
 
 // -------------------------------------------------------------------------------------------------
