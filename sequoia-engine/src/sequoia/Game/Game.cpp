@@ -23,6 +23,7 @@
 #include <OGRE/OgreSceneManager.h>
 #include <OGRE/OgreEntity.h>
 #include <OGRE/OgreTimer.h>
+#include <OGRE/OgreMeshManager.h>
 #include <OGRE/Overlay/OgreOverlaySystem.h>
 
 template <>
@@ -214,14 +215,13 @@ void Game::destroyScene() {}
 void Game::createViewports() {
   // Create one viewport, entire window
   Ogre::Viewport* vp = renderWindow_->addViewport(camera_);
-  vp->setBackgroundColour(Ogre::ColourValue(1, 1, 1));
+  vp->setBackgroundColour(Ogre::ColourValue(0, 0, 0));
 
   // Alter the camera aspect ratio to match the viewport
   camera_->setAspectRatio(Ogre::Real(vp->getActualWidth()) / Ogre::Real(vp->getActualHeight()));
 
   camera_->setPosition(Ogre::Vector3(0, 0, 10));
   camera_->setNearClipDistance(1.5f);
-  camera_->setFarClipDistance(3000.0f);
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -238,35 +238,61 @@ bool Game::frameRenderingQueued(const Ogre::FrameEvent& e) {
 // -------------------------------------------------------------------------------------------------
 void Game::setupDummyScene() {
   sceneManager_->setAmbientLight(Ogre::ColourValue(0.5, 0.5, 0.5));
-  camera_->setPosition(0, 47, 222);
+  sceneManager_->setShadowTechnique(Ogre::SHADOWTYPE_STENCIL_ADDITIVE);
 
-  Ogre::Light* light = sceneManager_->createLight("MainLight");
-  light->setPosition(20.0, 80.0, 50.0);
+  camera_->setPosition(300, 300, -300);
 
-  Ogre::Entity* ogreEntity = sceneManager_->createEntity("ogrehead.mesh");
+  Ogre::Light* spotLight = sceneManager_->createLight("SpotLight");
+  spotLight->setDiffuseColour(0, 0, 1.0);
+  spotLight->setSpecularColour(0, 0, 1.0);
+  spotLight->setDirection(-1, -1, 0);
+  spotLight->setPosition(Ogre::Vector3(200, 200, 0));
+  spotLight->setType(Ogre::Light::LT_SPOTLIGHT);
 
-  Ogre::SceneNode* ogreNode = sceneManager_->getRootSceneNode()->createChildSceneNode();
-  ogreNode->attachObject(ogreEntity);
+  Ogre::Light* directionalLight = sceneManager_->createLight("DirectionalLight");
+  directionalLight->setType(Ogre::Light::LT_DIRECTIONAL);
+  directionalLight->setDiffuseColour(Ogre::ColourValue(.4, 0, 0));
+  directionalLight->setSpecularColour(Ogre::ColourValue(.4, 0, 0));
+  directionalLight->setDirection(Ogre::Vector3(0, -1, 1));
 
-  Ogre::Entity* ogreEntity2 = sceneManager_->createEntity("ogrehead.mesh");
+  Ogre::Light* pointLight = sceneManager_->createLight("PointLight");
+  pointLight->setType(Ogre::Light::LT_POINT);
+  pointLight->setDiffuseColour(.3, .3, .3);
+  pointLight->setSpecularColour(.3, .3, .3);
+  pointLight->setPosition(Ogre::Vector3(0, 150, 250));
 
-  Ogre::SceneNode* ogreNode2 =
-      sceneManager_->getRootSceneNode()->createChildSceneNode(Ogre::Vector3(84, 48, 0));
-  ogreNode2->attachObject(ogreEntity2);
+  //
+  // Ninja
+  //
+  Ogre::Entity* ninjaEntity = sceneManager_->createEntity("ninja.mesh");
+  ninjaEntity->setCastShadows(true);
+  Ogre::SceneNode* ninjaSceneNode = sceneManager_->getRootSceneNode()->createChildSceneNode(); 
+  ninjaSceneNode->attachObject(ninjaEntity);
 
-  Ogre::Entity* ogreEntity3 = sceneManager_->createEntity("ogrehead.mesh");
+  //
+  // Camera orbits ninja
+  //
+  camera_->lookAt(Ogre::Vector3::ZERO);
+  cameraController_->setTarget(ninjaSceneNode);
+  cameraController_->setStyle(CameraController::Orbit);
 
-  Ogre::SceneNode* ogreNode3 = sceneManager_->getRootSceneNode()->createChildSceneNode();
-  ogreNode3->setPosition(Ogre::Vector3(0, 104, 0));
-  ogreNode3->setScale(2, 1.2, 1);
-  ogreNode3->attachObject(ogreEntity3);
+  //
+  // Ground plane
+  //
+  Ogre::Plane plane(Ogre::Vector3::UNIT_Y, 0);
+  Ogre::MeshManager::getSingleton().createPlane(
+    "ground",
+    Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
+    plane, 
+    1500, 1500, 20, 20, 
+    true, 
+    1, 5, 5, 
+    Ogre::Vector3::UNIT_Z);
 
-  Ogre::Entity* ogreEntity4 = sceneManager_->createEntity("ogrehead.mesh");
-
-  Ogre::SceneNode* ogreNode4 = sceneManager_->getRootSceneNode()->createChildSceneNode();
-  ogreNode4->setPosition(-84, 48, 0);
-  ogreNode4->roll(Ogre::Degree(-90));
-  ogreNode4->attachObject(ogreEntity4);
+  Ogre::Entity* groundEntity = sceneManager_->createEntity("ground");
+  sceneManager_->getRootSceneNode()->createChildSceneNode()->attachObject(groundEntity);
+  groundEntity->setCastShadows(false);
+  groundEntity->setMaterialName("Examples/Rockwall");
 }
 
 } // namespace game
