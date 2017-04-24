@@ -8,8 +8,7 @@
 ##===------------------------------------------------------------------------------------------===##
 
 add_subdirectory(Core)
-add_subdirectory(Game)
-add_subdirectory(Driver)
+#add_subdirectory(Driver)
 
 if(SEQUOIA_TESTING)
   add_subdirectory(Unittest)

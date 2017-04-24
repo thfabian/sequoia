@@ -1,6 +1,12 @@
-//===-- sequoia/Core/Compiler.h -----------------------------------------------------*- C++ -*-===//
-//
-//                                      S E Q U O I A
+//===--------------------------------------------------------------------------------*- C++ -*-===//
+//                         _____                        _       
+//                        / ____|                      (_)      
+//                       | (___   ___  __ _ _   _  ___  _  __ _ 
+//                        \___ \ / _ \/ _` | | | |/ _ \| |/ _` |
+//                        ____) |  __/ (_| | |_| | (_) | | (_| |
+//                       |_____/ \___|\__, |\__,_|\___/|_|\__,_| - Game Engine
+//                                       | |                    
+//                                       |_| 
 //
 // This file is distributed under the MIT License (MIT).
 // See LICENSE.txt for details.
@@ -119,6 +125,7 @@
 
 /// @macro SEQUOIA_ALIGNAS
 /// @brief Used to specify a minimum alignment for a structure or variable
+/// @ingroup core
 #if __GNUC__ && !__has_feature(cxx_alignas) && !SEQUOIA_GNUC_PREREQ(4, 8, 1)
 #define SEQUOIA_ALIGNAS(x) __attribute__((aligned(x)))
 #else
@@ -140,6 +147,7 @@
 /// @endcode
 ///
 /// Prefer cast-to-void wherever it is sufficient.
+/// @ingroup core
 #if __has_attribute(unused) || SEQUOIA_GNUC_PREREQ(3, 1, 0)
 #define SEQUOIA_ATTRIBUTE_UNUSED __attribute__((__unused__))
 #else
@@ -148,6 +156,7 @@
 
 /// @macro SEQUOIA_NORETURN
 /// @brief Indicate a function will never return
+/// @ingroup core
 #ifdef __GNUC__
 #define SEQUOIA_ATTRIBUTE_NORETURN __attribute__((noreturn))
 #elif defined(_MSC_VER)
@@ -158,6 +167,7 @@
 
 /// @macro SEQUOIA_CURRENT_FUNCTION
 /// @brief Name of the current function
+/// @ingroup core
 #if defined(_MSC_VER)
 #define SEQUOIA_CURRENT_FUNCTION __FUNCSIG__
 #elif defined(__GNUC__) || (defined(__MWERKS__) && (__MWERKS__ >= 0x3000)) ||                      \

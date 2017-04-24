@@ -1,6 +1,12 @@
-//===-- sequoia/Core/Version.h ------------------------------------------------------*- C++ -*-===//
-//
-//                                      S E Q U O I A
+//===--------------------------------------------------------------------------------*- C++ -*-===//
+//                         _____                        _       
+//                        / ____|                      (_)      
+//                       | (___   ___  __ _ _   _  ___  _  __ _ 
+//                        \___ \ / _ \/ _` | | | |/ _ \| |/ _` |
+//                        ____) |  __/ (_| | |_| | (_) | | (_| |
+//                       |_____/ \___|\__, |\__,_|\___/|_|\__,_| - Game Engine
+//                                       | |                    
+//                                       |_| 
 //
 // This file is distributed under the MIT License (MIT).
 // See LICENSE.txt for details.
@@ -10,7 +16,8 @@
 #ifndef SEQUOIA_CORE_VERSION_H
 #define SEQUOIA_CORE_VERSION_H
 
-#include "sequoia/Core/Core.h"
+#include "sequoia/Core/Export.h"
+#include "sequoia/Core/Config.h"
 #include <iosfwd>
 #include <string>
 
@@ -22,6 +29,8 @@ namespace core {
 ///
 /// @ingroup core
 class SEQUOIA_CORE_EXPORT Version {
+  int major_, minor_, patch_;
+
 public:
   /// @brief Constrcut version
   Version(int major, int minor, int patch);
@@ -77,9 +86,6 @@ public:
 
   /// @brief Convert to stream
   SEQUOIA_CORE_EXPORT friend std::ostream& operator<<(std::ostream& stream, const Version& version);
-
-private:
-  int major_, minor_, patch_;
 };
 
 } // namespace core

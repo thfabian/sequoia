@@ -6,13 +6,9 @@
 ## See LICENSE.txt for details.
 ##
 ##===------------------------------------------------------------------------------------------===##
-##
-## Master CMake file of Sequoia framework.
-##
-##===------------------------------------------------------------------------------------------===##
 
 if(NOT CMAKE_BUILD_TYPE)
-  set(CMAKE_BUILD_TYPE "Release" CACHE STRING 
+  set(CMAKE_BUILD_TYPE "RelWithDebInfo" CACHE STRING 
       "Choose the type of build, options are: Debug Release RelWithDebInfo MinSizeRel." FORCE)
 endif()
 
@@ -45,7 +41,7 @@ set(Sequoia_DEFAULT_ARGS
 )
 
 # Set assert level 
-option(SEQUOIA_ASSERTS "Enable asserts in all libraries i.e undefine -DNDEBUG" OFF)
+option(SEQUOIA_ASSERTS "Enable asserts in all libraries i.e undefine -DNDEBUG" ON)
 sequoia_set_assert_level()
 
 ##===---------------------------------- Third party projects ----------------------------------===##
@@ -54,14 +50,4 @@ add_subdirectory(thirdparty)
 
 ##===---------------------------------- Sequoia projects --------------------------------------===##
 include(External_sequoia-engine)
-
-if(MSVC)
-  option(SETUP_SEQUOIA_BUILDS "Setup sequoia-engine builds" OFF)
-else()
-  option(SETUP_SEQUOIA_BUILDS "Setup sequoia-engine builds" ON)
-endif()
-
-if(SETUP_SEQUOIA_BUILDS)
-  sequoia_setup_sequioa_engine_builds()
-endif()
 

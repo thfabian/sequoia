@@ -59,23 +59,6 @@ function(sequoia_add_library)
   endif()
   
   #
-  # Glob header files
-  #
-  set(source_dirs)
-  foreach(source ${ARG_SOURCES})
-    get_filename_component(absolute_path ${source} ABSOLUTE)
-    get_filename_component(source_dir ${absolute_path} DIRECTORY)
-    list(APPEND source_dirs ${source_dir})
-  endforeach()
-  list(REMOVE_DUPLICATES source_dirs)
-  
-  set(additional_headers)
-  foreach(source_dir ${source_dirs})
-    file(GLOB headers ${source_dir} "*.h*")
-    list(APPEND additional_headers ${headers})
-  endforeach()
-  
-  #
   # Add library
   #
   add_library(${ARG_NAME} ${ARG_SOURCES} ${additional_headers})
@@ -86,7 +69,6 @@ function(sequoia_add_library)
   set_property(TARGET ${ARG_NAME} PROPERTY RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
   
   install(TARGETS ${ARG_NAME} DESTINATION lib)
-
 endfunction()
 
 ## sequoia_add_executable
@@ -184,7 +166,7 @@ function(sequoia_configure_file FILE)
   
   configure_file(${input_file} ${output_file})
   
-  set(install_dir "${CMAKE_INSTALL_PREFIX}/${install_dir}")
+  set(install_dir "${CMAKE_INSTALL_PREFIX}/${output_dir}")
   install(FILES ${output_file} DESTINATION ${install_dir})
 endfunction(sequoia_configure_file)
 

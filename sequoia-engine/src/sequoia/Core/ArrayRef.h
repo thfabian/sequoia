@@ -1,6 +1,12 @@
-//===-- sequoia/Core/ArrayRef.h -----------------------------------------------------*- C++ -*-===//
-//
-//                                      S E Q U O I A
+//===--------------------------------------------------------------------------------*- C++ -*-===//
+//                         _____                        _       
+//                        / ____|                      (_)      
+//                       | (___   ___  __ _ _   _  ___  _  __ _ 
+//                        \___ \ / _ \/ _` | | | |/ _ \| |/ _` |
+//                        ____) |  __/ (_| | |_| | (_) | | (_| |
+//                       |_____/ \___|\__, |\__,_|\___/|_|\__,_| - Game Engine
+//                                       | |                    
+//                                       |_| 
 //
 // This file is distributed under the MIT License (MIT).
 // See LICENSE.txt for details.
@@ -11,9 +17,8 @@
 #define SEQUOIA_CORE_ARRAYREF_H
 
 #include "sequoia/Core/STLExtras.h"
-#include "sequoia/Core/SmallVector.h"
+#include "sequoia/Core/Assert.h"
 #include <array>
-#include <cassert>
 #include <vector>
 
 namespace sequoia {
@@ -76,13 +81,6 @@ public:
   ArrayRef(const std::initializer_list<T>& Vec)
       : data_(Vec.begin() == Vec.end() ? (T*)nullptr : Vec.begin()), length_(Vec.size()) {}
 
-  /// @brief Construct an ArrayRef from a SmallVector.
-  ///
-  /// This is templated in order to avoid instantiating SmallVectorTemplateCommon<T> whenever we
-  /// copy-construct an ArrayRef.
-  template <typename U>
-  ArrayRef(const SmallVectorTemplateCommon<T, U>& Vec) : data_(Vec.data()), length_(Vec.size()) {}
-
   /// @brief Construct an ArrayRef<const T*> from ArrayRef<T*>. This uses SFINAE to ensure that
   /// only ArrayRefs of pointers can be converted
   template <typename U>
@@ -96,16 +94,6 @@ public:
   template <typename U, typename A>
   ArrayRef(const std::vector<U*, A>& Vec,
            typename std::enable_if<std::is_convertible<U* const*, T const*>::value>::type* = 0)
-      : data_(Vec.data()), length_(Vec.size()) {}
-
-  /// @brief Construct an ArrayRef<const T*> from a SmallVector<T*>.
-  ///
-  /// This is templated in order to avoid instantiating SmallVectorTemplateCommon<T> whenever we
-  /// copy-construct an ArrayRef.
-  template <typename U, typename DummyT>
-  ArrayRef(
-      const SmallVectorTemplateCommon<U*, DummyT>& Vec,
-      typename std::enable_if<std::is_convertible<U* const*, T const*>::value>::type* = nullptr)
       : data_(Vec.data()), length_(Vec.size()) {}
 
   /// @}
@@ -283,9 +271,6 @@ public:
   /// @brief Construct a MutableArrayRef from a std::vector
   MutableArrayRef(std::vector<T>& Vec) : ArrayRef<T>(Vec) {}
 
-  /// @brief Construct an MutableArrayRef from a SmallVector.
-  MutableArrayRef(SmallVectorImpl<T>& Vec) : ArrayRef<T>(Vec) {}
-
   /// @brief Construct an ArrayRef from a std::array
   template <size_t N>
   constexpr MutableArrayRef(std::array<T, N>& Arr) : ArrayRef<T>(Arr) {}
@@ -382,27 +367,6 @@ public:
   }
 };
 
-/// @brief This is a MutableArrayRef that owns its array.
-///
-/// @ingroup core
-template <typename T>
-class OwningArrayRef : public MutableArrayRef<T> {
-public:
-  OwningArrayRef() {}
-  OwningArrayRef(size_t Size) : MutableArrayRef<T>(new T[Size], Size) {}
-  OwningArrayRef(ArrayRef<T> Data) : MutableArrayRef<T>(new T[Data.size()], Data.size()) {
-    std::copy(Data.begin(), Data.end(), this->begin());
-  }
-  OwningArrayRef(OwningArrayRef&& Other) { *this = Other; }
-  OwningArrayRef& operator=(OwningArrayRef&& Other) {
-    delete[] this->data();
-    this->MutableArrayRef<T>::operator=(Other);
-    Other.MutableArrayRef<T>::operator=(MutableArrayRef<T>());
-    return *this;
-  }
-  ~OwningArrayRef() { delete[] this->data(); }
-};
-
 /// @addtogroup core
 /// @{
 
@@ -448,18 +412,6 @@ ArrayRef<T> makeArrayRef(const T (&Arr)[N]) {
   return ArrayRef<T>(Arr);
 }
 
-/// @brief Construct an ArrayRef from a SmallVector.
-template <typename T>
-ArrayRef<T> makeArrayRef(const SmallVectorImpl<T>& Vec) {
-  return Vec;
-}
-
-/// @brief Construct an ArrayRef from a SmallVector.
-template <typename T, unsigned N>
-ArrayRef<T> makeArrayRef(const SmallVector<T, N>& Vec) {
-  return Vec;
-}
-
 /// @brief ArrayRef Comparison Operators
 template <typename T>
 inline bool operator==(ArrayRef<T> LHS, ArrayRef<T> RHS) {
@@ -475,6 +427,12 @@ inline bool operator!=(ArrayRef<T> LHS, ArrayRef<T> RHS) {
 /// @}
 
 } // namespace core
+
+template<typename T>
+using ArrayRef = core::ArrayRef<T>;
+
+template<typename T>
+using MutableArrayRef = core::MutableArrayRef<T>;
 
 } // namespace sequoia
 

@@ -1,6 +1,12 @@
-//===-- sequoia/Core/SingletonManager.h ---------------------------------------------*- C++ -*-===//
-//
-//                                      S E Q U O I A
+//===--------------------------------------------------------------------------------*- C++ -*-===//
+//                         _____                        _       
+//                        / ____|                      (_)      
+//                       | (___   ___  __ _ _   _  ___  _  __ _ 
+//                        \___ \ / _ \/ _` | | | |/ _ \| |/ _` |
+//                        ____) |  __/ (_| | |_| | (_) | | (_| |
+//                       |_____/ \___|\__, |\__,_|\___/|_|\__,_| - Game Engine
+//                                       | |                    
+//                                       |_| 
 //
 // This file is distributed under the MIT License (MIT).
 // See LICENSE.txt for details.
@@ -11,8 +17,7 @@
 #define SEQUOIA_CORE_SINGLETONMANAGER_H
 
 #include "sequoia/Core/Assert.h"
-#include "sequoia/Core/Core.h"
-#include <OGRE/OgreSingleton.h>
+#include "sequoia/Core/Export.h"
 #include <boost/any.hpp>
 #include <list>
 #include <memory>
@@ -26,8 +31,9 @@ namespace core {
 /// The destructor deallocates all registered Singletons.
 ///
 /// @ingroup core
-class SEQUOIA_CORE_EXPORT SingletonManager : public Ogre::Singleton<SingletonManager> {
-  using list_type = std::list<boost::any>;
+class SEQUOIA_CORE_EXPORT SingletonManager : public Singleton<SingletonManager> {
+  using ListType = std::list<boost::any>;
+  ListType singletons_;
 
 public:
   /// @brief Allocate a new singleton of type `T` and return a pointer to it
@@ -58,16 +64,13 @@ private:
   /// @brief Search the list for the Singleton of type `T` and return an iterator to it if found,
   /// otherwise it returns an iterator to std::list<boost::any>::end()
   template <class T>
-  list_type::iterator hasSingleton() {
+  ListType::iterator hasSingleton() {
     auto it = singletons_.begin();
     for(; it != singletons_.end(); ++it)
       if(boost::any_cast<std::shared_ptr<T>>(&(*it)))
         return it;
     return it;
   }
-
-private:
-  list_type singletons_;
 };
 
 } // namespace core

@@ -6,10 +6,11 @@
 ## See LICENSE.txt for details.
 ##
 ##===------------------------------------------------------------------------------------------===##
-##
-## Master CMake file of Sequoia-Engine.
-##
-##===------------------------------------------------------------------------------------------===##
+
+if(NOT CMAKE_BUILD_TYPE)
+  set(CMAKE_BUILD_TYPE "RelWithDebInfo" CACHE STRING 
+      "Choose the type of build, options are: Debug Release RelWithDebInfo MinSizeRel." FORCE)
+endif()
 
 project(SequoiaEngine C CXX)
 cmake_minimum_required(VERSION 3.3)
@@ -54,8 +55,6 @@ sequoia_report_result(
 include(AddThreads)
 include(AddBoost)
 include(AddTBB)
-include(AddOGRE)
-include(AddOIS)
 include(AddGTest)
 
 # Output findings
@@ -64,8 +63,6 @@ sequoia_report_result(
   "${SEQUOIA_THREADS_INFO_STR}"
   "${SEQUOIA_BOOST_INFO_STR}"
   "${SEQUOIA_TBB_INFO_STR}"
-  "${SEQUOIA_OGRE_INFO_STR}"
-  "${SEQUOIA_OIS_INFO_STR}"
   "${SEQUOIA_GTEST_INFO_STR}"
 )
   
@@ -74,7 +71,6 @@ include_directories(${CMAKE_SOURCE_DIR}/unittest)
 include_directories(${CMAKE_SOURCE_DIR}/src)
 include_directories(${CMAKE_BINARY_DIR}/src)
 
-add_subdirectory(bin)
 add_subdirectory(src)
 
 ##===----------------------------------------- Testing ----------------------------------------===##

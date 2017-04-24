@@ -31,6 +31,14 @@ namespace game {
 class InputManager::InputManagerImpl : public OIS::MouseListener,
                                        public OIS::KeyListener,
                                        public Ogre::WindowEventListener {
+  bool isInitialized_;
+  Ogre::RenderWindow* window_;
+  OIS::InputManager* inputSystem_;
+  OIS::Mouse* mouse_;
+  OIS::Keyboard* keyboard_;
+  std::map<std::string, OIS::MouseListener*> mouseListeners_;
+  std::map<std::string, OIS::KeyListener*> keyListeners_;
+
 public:
   InputManagerImpl()
       : isInitialized_(false), window_(nullptr), inputSystem_(nullptr), mouse_(nullptr),
@@ -41,9 +49,6 @@ public:
       finalize();
   }
 
-  //===----------------------------------------------------------------------------------------===//
-  //     Initialize & Finalize
-  //===----------------------------------------------------------------------------------------===//
   void init(Ogre::RenderWindow* window) {
     Ogre::LogManager::getSingletonPtr()->logMessage("OIS: Initializing ...");
 
@@ -148,10 +153,6 @@ public:
 
   bool isInitialized() const noexcept { return isInitialized_; }
 
-  //===----------------------------------------------------------------------------------------===//
-  //     Mouse
-  //===----------------------------------------------------------------------------------------===//
-
   void addMouseListener(OIS::MouseListener* mouseListener, const std::string& name) {
     Ogre::LogManager::getSingletonPtr()->logMessage("OIS: Adding MouseListener: " + name);
     mouseListeners_.insert(std::make_pair(name, mouseListener));
@@ -185,10 +186,6 @@ public:
     return true;
   }
 
-  //===----------------------------------------------------------------------------------------===//
-  //     Keyboard
-  //===----------------------------------------------------------------------------------------===//
-
   void addKeyListener(OIS::KeyListener* keyListener, const std::string& name) {
     Ogre::LogManager::getSingletonPtr()->logMessage("OIS: Adding KeyListener: " + name);
     keyListeners_.insert(std::make_pair(name, keyListener));
@@ -214,15 +211,6 @@ public:
         break;
     return true;
   }
-
-private:
-  bool isInitialized_;
-  Ogre::RenderWindow* window_;
-  OIS::InputManager* inputSystem_;
-  OIS::Mouse* mouse_;
-  OIS::Keyboard* keyboard_;
-  std::map<std::string, OIS::MouseListener*> mouseListeners_;
-  std::map<std::string, OIS::KeyListener*> keyListeners_;
 };
 
 InputManager::InputManager() : impl_(std::make_unique<InputManagerImpl>()) {}
