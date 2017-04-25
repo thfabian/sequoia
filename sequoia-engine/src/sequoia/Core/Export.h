@@ -1,8 +1,14 @@
-//===-- sequoia/Core/Export.h -------------------------------------------------------*- C++ -*-===//
+//===--------------------------------------------------------------------------------*- C++ -*-===//
+//                         _____                        _       
+//                        / ____|                      (_)      
+//                       | (___   ___  __ _ _   _  ___  _  __ _ 
+//                        \___ \ / _ \/ _` | | | |/ _ \| |/ _` |
+//                        ____) |  __/ (_| | |_| | (_) | | (_| |
+//                       |_____/ \___|\__, |\__,_|\___/|_|\__,_| - Game Engine
+//                                       | |                    
+//                                       |_| 
 //
-//                                      S E Q U O I A
-//
-// This file is distributed under the MIT License (MIT). 
+// This file is distributed under the MIT License (MIT).
 // See LICENSE.txt for details.
 //
 //===------------------------------------------------------------------------------------------===//
@@ -18,21 +24,17 @@
 /// @brief Namespace of the sequoia project.
 namespace sequoia {
   /// @namespace core
-  /// @brief Namespace containing the core library.
+  /// @brief Namespace of the core library.
   namespace core {}
 }
 #endif
 
-#include "sequoia/Core/Config.h"
+#include "sequoia/Core/Compiler.h"
 
-#if defined(SEQUOIA_ON_WIN32)
 #if defined(SEQUOIA_SHARED_LIBRARIES) && defined(SequoiaCore_EXPORTS) 
-#define SEQUOIA_CORE_EXPORT __declspec(dllexport)
+#define SEQUOIA_CORE_API SEQUOIA_API_EXPORT
 #else
-#define SEQUOIA_CORE_EXPORT __declspec(dllimport)
-#endif
-#else
-#define SEQUOIA_CORE_EXPORT
+#define SEQUOIA_CORE_API SEQUOIA_API_IMPORT
 #endif
 
 #endif

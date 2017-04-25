@@ -30,7 +30,7 @@ namespace core {
 /// @addtogroup core
 /// @{
 
-/// @brief The native string for the platform (`std::string` for Unix and `std::wstring` for Win32)
+/// @brief The nativ string for the platform (`std::string` for Unix and `std::wstring` for Win32)
 #ifdef SEQUOIA_ON_WIN32
 using NString = std::wstring;
 #else
@@ -43,10 +43,10 @@ using NChar = NString::value_type;
 /// @brief Return a copy of the string `str`
 /// @throw std::bad_alloc  Out of memory
 /// @{
-SEQUOIA_CORE_API extern std::unique_ptr<char[]> copyCString(const std::string& str);
-SEQUOIA_CORE_API extern std::unique_ptr<char[]> copyCString(const char* str);
-SEQUOIA_CORE_API extern std::unique_ptr<wchar_t[]> copyCString(const std::wstring& wstr);
-SEQUOIA_CORE_API extern std::unique_ptr<wchar_t[]> copyCString(const wchar_t* wstr);
+SEQUOIA_CORE_EXPORT extern std::unqiue_ptr<char[]> copyCString(const std::string& str);
+SEQUOIA_CORE_EXPORT extern std::unqiue_ptr<char[]> copyCString(const char* str);
+SEQUOIA_CORE_EXPORT extern std::unqiue_ptr<wchar_t[]> copyCString(const std::wstring& wstr);
+SEQUOIA_CORE_EXPORT extern std::unqiue_ptr<wchar_t[]> copyCString(const wchar_t* wstr);
 /// @}
 
 /// @macro CSTR

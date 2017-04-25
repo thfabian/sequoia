@@ -20,22 +20,22 @@ namespace sequoia {
 
 namespace core {
 
-static std::unqiue_ptr<char[]> copyCStringImpl(const char* str, const std::size_t size) {
-  std::unqiue_ptr<char[]> buffer(new char[size + 1]);
+static std::unique_ptr<char[]> copyCStringImpl(const char* str, const std::size_t size) {
+  std::unique_ptr<char[]> buffer(new char[size + 1]);
   std::memcpy(buffer.get(), str, size + 1);
   return buffer;
 }
 
-static std::unqiue_ptr<wchar_t[]> copyCStringImpl(const wchar_t* str, const std::size_t size) {
-  std::unqiue_ptr<wchar_t[]> buffer(new wchar_t[size + 1]);
+static std::unique_ptr<wchar_t[]> copyCStringImpl(const wchar_t* str, const std::size_t size) {
+  std::unique_ptr<wchar_t[]> buffer(new wchar_t[size + 1]);
   std::wmemcpy(buffer.get(), str, size + 1);
   return buffer;
 }
 
-std::unqiue_ptr<char[]> copyCString(const std::string& str) { return copyCStringImpl(str.c_str(), str.size()); }
-std::unqiue_ptr<char[]> copyCString(const char* str) { return copyCStringImpl(str, std::strlen(str)); }
-std::unqiue_ptr<wchar_t[]> copyCString(const std::wstring& str) { return copyCStringImpl(str.c_str(), str.size()); }
-std::unqiue_ptr<wchar_t[]> copyCString(const wchar_t* str) { return copyCStringImpl(str, std::wcslen(str)); }
+std::unique_ptr<char[]> copyCString(const std::string& str) { return copyCStringImpl(str.c_str(), str.size()); }
+std::unique_ptr<char[]> copyCString(const char* str) { return copyCStringImpl(str, std::strlen(str)); }
+std::unique_ptr<wchar_t[]> copyCString(const std::wstring& str) { return copyCStringImpl(str.c_str(), str.size()); }
+std::unique_ptr<wchar_t[]> copyCString(const wchar_t* str) { return copyCStringImpl(str, std::wcslen(str)); }
 
 } // namespace core
 

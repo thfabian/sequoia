@@ -13,29 +13,28 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_UNITTEST_EXPORT_H
-#define SEQUOIA_UNITTEST_EXPORT_H
+#ifndef SEQUOIA_CORE_NONCOPYABLE_H
+#define SEQUOIA_CORE_NONCOPYABLE_H
 
-#ifdef SEQUOIA_DOXYGEN_INVOKED
-/// @defgroup unittest Unittest
-/// @brief Unittest infrastructure of Sequoia.
-
-/// @namespace sequoia
-/// @brief Namespace of the sequoia project.
 namespace sequoia {
-  /// @namespace core
-  /// @brief Namespace of the core library.
-  namespace unittest {}
-}
+
+namespace core {
+
+/// @brief Classes derived from NonCopyable cannot be copied or assigned
+/// @ingroup core
+class NonCopyable {
+protected:
+  constexpr NonCopyable() = default;
+  ~NonCopyable() = default;
+
+  NonCopyable(const NonCopyable&) = delete;
+  NonCopyable& operator=(const NonCopyable&) = delete;
+};
+
+} // namespace core
+
+using NonCopyable = core::NonCopyable;
+
+} // namespace sequoia
+
 #endif
-
-#include "sequoia/Core/Compiler.h"
-
-#if defined(SEQUOIA_SHARED_LIBRARIES) && defined(SequoiaUnittest_EXPORTS) 
-#define SEQUOIA_UNITTEST_API SEQUOIA_API_EXPORT
-#else
-#define SEQUOIA_UNITTEST_API SEQUOIA_API_IMPORT
-#endif
-
-#endif
-

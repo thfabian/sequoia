@@ -13,29 +13,20 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_UNITTEST_EXPORT_H
-#define SEQUOIA_UNITTEST_EXPORT_H
+#ifndef SEQUOIA_CORE_ANY_H
+#define SEQUOIA_CORE_ANY_H
 
-#ifdef SEQUOIA_DOXYGEN_INVOKED
-/// @defgroup unittest Unittest
-/// @brief Unittest infrastructure of Sequoia.
+#include <boost/any.hpp>
 
-/// @namespace sequoia
-/// @brief Namespace of the sequoia project.
 namespace sequoia {
-  /// @namespace core
-  /// @brief Namespace of the core library.
-  namespace unittest {}
-}
-#endif
 
-#include "sequoia/Core/Compiler.h"
+namespace core {
 
-#if defined(SEQUOIA_SHARED_LIBRARIES) && defined(SequoiaUnittest_EXPORTS) 
-#define SEQUOIA_UNITTEST_API SEQUOIA_API_EXPORT
-#else
-#define SEQUOIA_UNITTEST_API SEQUOIA_API_IMPORT
-#endif
+using boost::any;
+using boost::any_cast;
+
+} // namespace core
+
+} // namespace sequoia
 
 #endif
-

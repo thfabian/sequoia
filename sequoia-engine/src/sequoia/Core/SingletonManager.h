@@ -18,7 +18,8 @@
 
 #include "sequoia/Core/Assert.h"
 #include "sequoia/Core/Export.h"
-#include <boost/any.hpp>
+#include "sequoia/Core/Singleton.h"
+#include "sequoia/Core/Any.h"
 #include <list>
 #include <memory>
 
@@ -31,8 +32,8 @@ namespace core {
 /// The destructor deallocates all registered Singletons.
 ///
 /// @ingroup core
-class SEQUOIA_CORE_EXPORT SingletonManager : public Singleton<SingletonManager> {
-  using ListType = std::list<boost::any>;
+class SEQUOIA_CORE_API SingletonManager : public Singleton<SingletonManager> {
+  using ListType = std::list<any>;
   ListType singletons_;
 
 public:
@@ -40,8 +41,8 @@ public:
   template <class T, typename... Args>
   T* allocateSingleton(Args&&... args) {
     SEQUOIA_ASSERT(hasSingleton<T>() == singletons_.end());
-    singletons_.push_back(boost::any(std::make_shared<T>(std::forward<Args>(args)...)));
-    return boost::any_cast<std::shared_ptr<T>>(singletons_.back()).get();
+    singletons_.push_back(any(std::make_shared<T>(std::forward<Args>(args)...)));
+    return any_cast<std::shared_ptr<T>>(singletons_.back()).get();
   }
 
   /// @brief Free the singleton given by type `T`
@@ -62,12 +63,12 @@ public:
 
 private:
   /// @brief Search the list for the Singleton of type `T` and return an iterator to it if found,
-  /// otherwise it returns an iterator to std::list<boost::any>::end()
+  /// otherwise it returns an iterator to std::list<any>::end()
   template <class T>
   ListType::iterator hasSingleton() {
     auto it = singletons_.begin();
     for(; it != singletons_.end(); ++it)
-      if(boost::any_cast<std::shared_ptr<T>>(&(*it)))
+      if(any_cast<std::shared_ptr<T>>(&(*it)))
         return it;
     return it;
   }

@@ -70,6 +70,24 @@
 #endif
 #endif
 
+/// @macro SEQUOIA_API_EXPORT
+/// @brief Define helpers to create portable import / export macros for each module
+#ifdef SEQUOIA_ON_WIN32
+#define SEQUOIA_API_EXPORT __declspec(dllexport)
+#define SEQUOIA_API_IMPORT __declspec(dllimport)
+#ifdef _MSC_VER
+#pragma warning(disable: 4251)
+#endif
+#else
+#if SEQUOIA_GNUC_PREREQ(4, 0, 0)
+#define SEQUOIA_API_EXPORT __attribute__((__visibility__("default")))
+#define SEQUOIA_API_IMPORT __attribute__((__visibility__("default")))
+#else
+#define SEQUOIA_API_EXPORT
+#define SEQUOIA_API_IMPORT
+#endif
+#endif
+
 /// @macro SEQUOIA_BUILTIN_UNREACHABLE
 /// @brief Indicate unreachable state
 ///

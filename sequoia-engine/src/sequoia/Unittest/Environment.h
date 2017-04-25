@@ -17,7 +17,7 @@
 #define SEQUOIA_UNITTEST_ENVIRONMENT_H
 
 #include "sequoia/Unittest/Export.h"
-#include <OGRE/OgreSingleton.h>
+#include "sequoia/Core/Singleton.h"
 #include <gtest/gtest.h>
 
 namespace sequoia {
@@ -26,8 +26,8 @@ namespace unittest {
 
 /// @brief Global test environment
 /// @ingroup unittest
-class SEQUOIA_UNITTEST_EXPORT Environment : public ::testing::Environment,
-                                            public Ogre::Singleton<Environment> {
+class SEQUOIA_UNITTEST_API Environment : public ::testing::Environment, 
+                                         public Singleton<Environment> {
 
   /// @brief Set up test environment
   virtual void SetUp() override;

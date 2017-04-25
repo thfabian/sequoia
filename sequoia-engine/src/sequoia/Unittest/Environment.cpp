@@ -15,13 +15,12 @@
 
 #include "sequoia/Unittest/Environment.h"
 
-template <>
-sequoia::unittest::Environment* Ogre::Singleton<sequoia::unittest::Environment>::msSingleton =
-    nullptr;
-
 namespace sequoia {
 
 namespace unittest {
+
+template<>
+Environment* Singleton<Environment>::Instance = nullptr;
 
 void Environment::SetUp() {}
 

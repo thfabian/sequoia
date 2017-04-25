@@ -30,12 +30,12 @@ namespace sequoia {
 
 namespace core {
 
-SEQUOIA_CORE_EXPORT extern void assertionFailed(const char* expr, const char* function, 
+SEQUOIA_CORE_API extern void assertionFailed(const char* expr, const char* function, 
                                                 const char* file, long line);
-SEQUOIA_CORE_EXPORT extern void assertionFailedMsg(const char* expr, const char* msg,
+SEQUOIA_CORE_API extern void assertionFailedMsg(const char* expr, const char* msg,
                                                 const char* function, const char* file,
                                                 long line);
-SEQUOIA_CORE_EXPORT extern void assertionFailedMsg(char const* expr, const wchar_t* msg,
+SEQUOIA_CORE_API extern void assertionFailedMsg(char const* expr, const wchar_t* msg,
                                                 char const* function, const char* file,
                                                 long line);
 
