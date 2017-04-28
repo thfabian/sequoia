@@ -1,12 +1,12 @@
 //===--------------------------------------------------------------------------------*- C++ -*-===//
-//                         _____                        _       
-//                        / ____|                      (_)      
-//                       | (___   ___  __ _ _   _  ___  _  __ _ 
+//                         _____                        _
+//                        / ____|                      (_)
+//                       | (___   ___  __ _ _   _  ___  _  __ _
 //                        \___ \ / _ \/ _` | | | |/ _ \| |/ _` |
 //                        ____) |  __/ (_| | |_| | (_) | | (_| |
 //                       |_____/ \___|\__, |\__,_|\___/|_|\__,_| - Game Engine
-//                                       | |                    
-//                                       |_| 
+//                                       | |
+//                                       |_|
 //
 // This file is distributed under the MIT License (MIT).
 // See LICENSE.txt for details.
@@ -17,6 +17,7 @@
 #define SEQUOIA_CORE_FORMAT_H
 
 #include "sequoia/Core/Assert.h"
+#include "sequoia/Core/ErrorHandler.h"
 #include "sequoia/Core/NString.h"
 #include <boost/format.hpp>
 
@@ -44,7 +45,8 @@ std::string format(const char* fmt, Args&&... args) {
 
 #ifndef NDEBUG
   } catch(boost::io::format_error& error) {
-    ErrorHandler::getSingleton().warning(std::string("unhandled 'boost::io::format_error': ") + error.what() + " : \"" + fmt + "\"");
+    ErrorHandler::getSingleton().warning(std::string("unhandled 'boost::io::format_error': ") +
+                                         error.what() + " : \"" + fmt + "\"");
     SEQUOIA_ASSERT_MSG(0, "format excpetion");
   }
 #endif
@@ -65,7 +67,9 @@ std::wstring format(const wchar_t* fmt, Args&&... args) {
 
 #ifndef NDEBUG
   } catch(boost::io::format_error& error) {
-    ErrorHandler::getSingleton().warning(std::wstring(L"unhandled 'boost::io::format_error': ") + toWString(error.what()) + L" : \"" + fmt + L"\"");
+    ErrorHandler::getSingleton().warning(std::wstring(L"unhandled 'boost::io::format_error': ") +
+                                         UtfString(error.what()).toWideString() + L" : \"" + fmt +
+                                         L"\"");
     SEQUOIA_ASSERT_MSG(0, "format excpetion");
   }
 #endif

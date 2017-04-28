@@ -14,7 +14,8 @@
 //===------------------------------------------------------------------------------------------===//
 
 #include "sequoia/Core/Assert.h"
-//#include "sequoia/Core/ErrorHandler.h"
+#include "sequoia/Core/ErrorHandler.h"
+#include "sequoia/Core/UtfString.h"
 #include <iostream>
 #include <sstream>
 
@@ -30,22 +31,20 @@ static void assertionFailedImpl(char const* expr, char const* msg, char const* f
      << function << "'\n"
      << "Location:\n"
      << file << ":" << line << "\n";
-
-  std::cerr << ss.str() << std::endl;
-  //  ErrorHandler::getSingleton().fatal(ss.str());
+  ErrorHandler::getSingleton().fatal(ss.str());
 }
 
 static void assertionFailedImpl(char const* expr, wchar_t* msg, char const* function,
                                 char const* file, long line) {
-//  std::wstringstream ss;
-//  ss << L"Assertion failed: `" << toWString(expr) << "' " << (msg == nullptr ? "" : msg) << "\n"
-//     << L"Function:\n"
-//     << toWString(function) << L"'\n"
-//     << L"Location:\n"
-//     << toWString(file) << L":" << line << L"\n";
+  auto toWString = [](const auto& str) -> std::wstring { return UtfString(str).toWideString(); };
 
-//  std::wcerr << ss.str() << std::endl;
-  //  ErrorHandler::getSingleton().fatal(ss.str());
+  std::wstringstream ss;
+  ss << L"Assertion failed: `" << toWString(expr) << L"' " << (msg == nullptr ? L"" : msg) << L"\n"
+     << L"Function:\n"
+     << toWString(function) << L"'\n"
+     << L"Location:\n"
+     << toWString(file) << L":" << line << L"\n";
+  ErrorHandler::getSingleton().fatal(ss.str());
 }
 
 void assertionFailedMsg(const char* expr, const char* msg, const char* function, const char* file,

@@ -18,6 +18,7 @@
 
 #include "sequoia/Core/Assert.h"
 #include "sequoia/Core/NonCopyable.h"
+#include <cassert>
 
 namespace sequoia {
 
@@ -31,7 +32,7 @@ namespace core {
 /// @bExample:
 /// @code
 ///   // Foo.h
-///   namespace sequioa {
+///   namespace sequoia {
 ///   namespace foo {
 ///
 ///   class Foo : public Singleton<Foo> {
@@ -42,7 +43,7 @@ namespace core {
 ///   }
 ///
 ///   // Foo.cpp
-///   namespace sequioa {
+///   namespace sequoia {
 ///   SEQUIOA_DECLARE_SINGLETON(foo::Foo);
 ///   }
 /// @endcode
@@ -58,17 +59,17 @@ public:
 
 public:
   Singleton() {
-    SEQUOIA_ASSERT(!Instance);
+    assert(!Instance);
     Instance = static_cast<Derived*>(this);
   }
 
   ~Singleton() {
-    SEQUOIA_ASSERT(Instance);
+    assert(Instance);
     Instance = nullptr;
   }
 
   static Derived& getSingleton() {
-    SEQUOIA_ASSERT(Instance);
+    assert(Instance);
     return *Instance;
   }
 

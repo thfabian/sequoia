@@ -17,24 +17,24 @@
 #define SEQUOIA_CORE_ERRORHANDLER_H
 
 #include "sequoia/Core/Export.h"
-#include "sequoia/Core/NString.h"
 #include "sequoia/Core/Singleton.h"
+#include "sequoia/Core/UtfString.h"
 
 namespace sequoia {
 
 namespace core {
 
-/// @brief Global error handler.
+/// @brief Global error handler
 /// @ingroup core
 class SEQUOIA_CORE_API ErrorHandler : public Singleton<ErrorHandler> {
-  NString program_;
+  UtfString program_;
 
 public:
   /// @brief Setup ErrorHandler
   ///
   /// @param program    Name/Path of the program. If a full path is provided, the filename (
   ///                   without the extension) will be used as program name.
-  ErrorHandler(NString program);
+  ErrorHandler(UtfString program);
 
   /// @brief Report a fatal error and exit with `EXIT_FAILURE`
   ///
@@ -51,7 +51,7 @@ public:
   void warning(std::string message) noexcept;
 
   /// @brief Get program name
-  NString program() const noexcept;
+  UtfString program() const noexcept;
 };
 
 } // namespace core

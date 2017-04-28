@@ -13,29 +13,22 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_UNITTEST_EXPORT_H
-#define SEQUOIA_UNITTEST_EXPORT_H
+#include "sequoia/Core/NString.h"
+#include <gtest/gtest.h>
 
-#ifdef SEQUOIA_DOXYGEN_INVOKED
-/// @defgroup unittest Unittest
-/// @brief Unittest infrastructure of Sequoia.
+using namespace sequoia::core;
 
-/// @namespace sequoia
-/// @brief Namespace of the sequoia project.
-namespace sequoia {
-  /// @namespace unittest
-  /// @brief Namespace of the unittest library.
-  namespace unittest {}
+namespace {
+
+TEST(StringTest, CopyCString) {
+  std::string string("string");
+  std::wstring wstring(L"wstring");
+
+  auto copyString = copyCString(string);
+  auto copyWString = copyCString(wstring);
+
+  EXPECT_STREQ(string.c_str(), copyString.get());
+  EXPECT_STREQ(wstring.c_str(), copyWString.get());
 }
-#endif
 
-#include "sequoia/Core/Compiler.h"
-
-#if defined(SEQUOIA_SHARED_LIBRARIES) && defined(SequoiaUnittest_EXPORTS) 
-#define SEQUOIA_UNITTEST_API SEQUOIA_API_EXPORT
-#else
-#define SEQUOIA_UNITTEST_API SEQUOIA_API_IMPORT
-#endif
-
-#endif
-
+} // anonymous namespace

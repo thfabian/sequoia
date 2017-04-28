@@ -1,12 +1,12 @@
 //===--------------------------------------------------------------------------------*- C++ -*-===//
-//                         _____                        _       
-//                        / ____|                      (_)      
-//                       | (___   ___  __ _ _   _  ___  _  __ _ 
+//                         _____                        _
+//                        / ____|                      (_)
+//                       | (___   ___  __ _ _   _  ___  _  __ _
 //                        \___ \ / _ \/ _` | | | |/ _ \| |/ _` |
 //                        ____) |  __/ (_| | |_| | (_) | | (_| |
 //                       |_____/ \___|\__, |\__,_|\___/|_|\__,_| - Game Engine
-//                                       | |                    
-//                                       |_| 
+//                                       | |
+//                                       |_|
 //
 // This file is distributed under the MIT License (MIT).
 // See LICENSE.txt for details.
@@ -14,53 +14,58 @@
 //===------------------------------------------------------------------------------------------===//
 
 #include "sequoia/Core/ErrorHandler.h"
-#include "sequoia/Core/Platform.h"
 #include "sequoia/Core/NPath.h"
-#include <iostream>
+#include "sequoia/Core/Platform.h"
 #include <cstdlib>
+#include <iostream>
 
 namespace sequoia {
 
+SEQUIOA_DECLARE_SINGLETON(core::ErrorHandler);
+
 namespace core {
 
-ErrorHandler::ErrorHandler(NString program) {
+ErrorHandler::ErrorHandler(UtfString program) {
   NPath p(program);
   program_ = p.stem().native();
 }
 
 void ErrorHandler::fatal(std::string message, bool messagebox) noexcept {
+  (void)messagebox;
 #ifdef SEQUOIA_ON_WIN32
   if(messagebox)
-    MessageBoxW(NULL, toWString(message).c_str(), L"Fatal Error", MB_OK | MB_ICONERROR | MB_TASKMODAL);
+    MessageBoxW(NULL, toWString(message).c_str(), L"Fatal Error",
+                MB_OK | MB_ICONERROR | MB_TASKMODAL);
   else
-    std::err << toString(program_) << ": error: " << message << std::endl;
+    std::cerr << program_.toAnsiString() << ": error: " << message << std::endl;
 #else
-  std::err << toString(program_) << ": error: " << message << std::endl;
+  std::cerr << program_.toAnsiString() << ": error: " << message << std::endl;
 #endif
   std::abort();
 }
 
 void ErrorHandler::fatal(std::wstring message, bool messagebox) noexcept {
+  (void)messagebox;
 #ifdef SEQUOIA_ON_WIN32
   if(messagebox)
     MessageBoxW(NULL, message.c_str(), L"Fatal Error", MB_OK | MB_ICONERROR | MB_TASKMODAL);
   else
-    std::werr << toWString(program_) << L": error: " << message << std::endl;
+    std::wcerr << program_.toWideString() << L": error: " << message << std::endl;
 #else
-  std::werr << toWString(program_) << L": error: " << message << std::endl;
+  std::wcerr << program_.toWideString() << L": error: " << message << std::endl;
 #endif
   std::abort();
 }
 
 void ErrorHandler::warning(std::string message) noexcept {
-  std::cerr << toString(program_) << ": warning: " << message << std::endl;
+  std::cerr << program_.toAnsiString() << ": warning: " << message << std::endl;
 }
 
 void ErrorHandler::warning(std::wstring message) noexcept {
-  std::wcerr << toWString(program_) << L": warning: " << message << std::endl;
+  std::wcerr << program_.toWideString() << L": warning: " << message << std::endl;
 }
 
-NString ErrorHandler::program() const noexcept { return program_; }
+UtfString ErrorHandler::program() const noexcept { return program_; }
 
 } // namespace core
 

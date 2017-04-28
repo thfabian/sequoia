@@ -1,12 +1,12 @@
 //===--------------------------------------------------------------------------------*- C++ -*-===//
-//                         _____                        _       
-//                        / ____|                      (_)      
-//                       | (___   ___  __ _ _   _  ___  _  __ _ 
+//                         _____                        _
+//                        / ____|                      (_)
+//                       | (___   ___  __ _ _   _  ___  _  __ _
 //                        \___ \ / _ \/ _` | | | |/ _ \| |/ _` |
 //                        ____) |  __/ (_| | |_| | (_) | | (_| |
 //                       |_____/ \___|\__, |\__,_|\___/|_|\__,_| - Game Engine
-//                                       | |                    
-//                                       |_| 
+//                                       | |
+//                                       |_|
 //
 // This file is distributed under the MIT License (MIT).
 // See LICENSE.txt for details.
@@ -32,10 +32,21 @@ static std::unique_ptr<wchar_t[]> copyCStringImpl(const wchar_t* str, const std:
   return buffer;
 }
 
-std::unique_ptr<char[]> copyCString(const std::string& str) { return copyCStringImpl(str.c_str(), str.size()); }
-std::unique_ptr<char[]> copyCString(const char* str) { return copyCStringImpl(str, std::strlen(str)); }
-std::unique_ptr<wchar_t[]> copyCString(const std::wstring& str) { return copyCStringImpl(str.c_str(), str.size()); }
-std::unique_ptr<wchar_t[]> copyCString(const wchar_t* str) { return copyCStringImpl(str, std::wcslen(str)); }
+std::unique_ptr<char[]> copyCString(const std::string& str) {
+  return copyCStringImpl(str.c_str(), str.size());
+}
+
+std::unique_ptr<char[]> copyCString(const char* str) {
+  return copyCStringImpl(str, std::strlen(str));
+}
+
+std::unique_ptr<wchar_t[]> copyCString(const std::wstring& str) {
+  return copyCStringImpl(str.c_str(), str.size());
+}
+
+std::unique_ptr<wchar_t[]> copyCString(const wchar_t* str) {
+  return copyCStringImpl(str, std::wcslen(str));
+}
 
 } // namespace core
 

@@ -13,28 +13,24 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_MATH_EXPORT_H
-#define SEQUOIA_MATH_EXPORT_H
+#ifndef SEQUOIA_CORE_NPATH_H
+#define SEQUOIA_CORE_NPATH_H
 
-#ifdef SEQUOIA_DOXYGEN_INVOKED
-/// @defgroup math Math
-/// @brief Math and linear algebra utilities.
+#include <boost/filesystem/path.hpp>
 
-/// @namespace sequoia
-/// @brief Namespace of the sequoia project.
 namespace sequoia {
-/// @namespace math
-/// @brief Namespace of the math library.
-namespace math {}
-}
-#endif
 
-#include "sequoia/Core/Compiler.h"
+namespace core {
 
-#if defined(SEQUOIA_SHARED_LIBRARIES) && defined(SequoiaMath_EXPORTS)
-#define SEQUOIA_MATH_API SEQUOIA_API_EXPORT
-#else
-#define SEQUOIA_MATH_API SEQUOIA_API_IMPORT
-#endif
+/// @typedef NPath
+/// @brief The native path of the platform with respect to `NString`
+/// @ingroup core
+using NPath = boost::filesystem::path;
+
+} // namespace core
+
+using NPath = core::NPath;
+
+} // namespace sequoia
 
 #endif

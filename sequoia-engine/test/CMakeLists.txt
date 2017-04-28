@@ -13,17 +13,5 @@
 ##
 ##===------------------------------------------------------------------------------------------===##
 
-sequoia_add_test(
-  NAME SequoiaCoreTest
-  SOURCES #TestArrayRef.cpp
-          #TestException.cpp
-          TestMain.cpp
-          #TestSingletonManager.cpp
-          #TestString.cpp
-          #TestStringRef.cpp
-          TestVersion.cpp
-  DEPENDS SequoiaUnittest
-          SequoiaCore
-          ${SEQUOIA_EXTERNAL_LIBRARIES}
-)
+add_subdirectory(unittest)
 

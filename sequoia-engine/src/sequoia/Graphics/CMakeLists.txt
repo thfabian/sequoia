@@ -13,34 +13,9 @@
 ##
 ##===------------------------------------------------------------------------------------------===##
 
-sequoia_configure_file(Config.h.cmake)
-
 sequoia_add_library(
-  NAME SequoiaCore
-  SOURCES ArrayRef.h
-          Any.h
-          Assert.h
-          Assert.cpp 
-          Export.h
-          ErrorHandler.h
-          ErrorHandler.cpp
-          Format.h          
-          Compiler.h
-          NString.h
-          NString.cpp
-          NPath.h
-          NonCopyable.h
-          Platform.h
-          Singleton.h
-          SingletonManager.h
-          SingletonManager.cpp
-          StringSwitch.h
-          StringRef.h
-          StringRef.cpp          
-          Utf.h
-          UtfString.h
-          UtfString.cpp
-          Version.h
-          Version.cpp
-  DEPENDS ${SEQUOIA_EXTERNAL_LIBRARIES}
+  NAME SequoiaGraphics
+  SOURCES Export.h
+  DEPENDS SequoiaCore
+          ${SEQUOIA_EXTERNAL_LIBRARIES}
 )

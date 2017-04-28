@@ -1,6 +1,12 @@
-//===-- sequoia/Core/StringRef.h ----------------------------------------------------*- C++ -*-===//
-//
-//                                      S E Q U O I A
+//===--------------------------------------------------------------------------------*- C++ -*-===//
+//                         _____                        _
+//                        / ____|                      (_)
+//                       | (___   ___  __ _ _   _  ___  _  __ _
+//                        \___ \ / _ \/ _` | | | |/ _ \| |/ _` |
+//                        ____) |  __/ (_| | |_| | (_) | | (_| |
+//                       |_____/ \___|\__, |\__,_|\___/|_|\__,_| - Game Engine
+//                                       | |
+//                                       |_|
 //
 // This file is distributed under the MIT License (MIT).
 // See LICENSE.txt for details.
@@ -10,7 +16,7 @@
 #ifndef SEQUOIA_CORE_STRINGREF_H
 #define SEQUOIA_CORE_STRINGREF_H
 
-#include "sequoia/Core/Core.h"
+#include "sequoia/Core/Export.h"
 #include "sequoia/Core/STLExtras.h"
 #include <algorithm>
 #include <cassert>
@@ -24,16 +30,7 @@ namespace sequoia {
 
 namespace core {
 
-template <typename T>
-class SmallVectorImpl;
 class StringRef;
-
-SEQUOIA_CORE_EXPORT bool getAsUnsignedInteger(StringRef Str, unsigned Radix,
-                                              unsigned long long& Result);
-SEQUOIA_CORE_EXPORT bool getAsSignedInteger(StringRef Str, unsigned Radix, long long& Result);
-SEQUOIA_CORE_EXPORT bool consumeUnsignedInteger(StringRef& Str, unsigned Radix,
-                                                unsigned long long& Result);
-SEQUOIA_CORE_EXPORT bool consumeSignedInteger(StringRef& Str, unsigned Radix, long long& Result);
 
 /// @brief Represent a constant reference to a string, i.e. a character array and a length, which
 /// need not be null terminated.
@@ -43,7 +40,7 @@ SEQUOIA_CORE_EXPORT bool consumeSignedInteger(StringRef& Str, unsigned Radix, lo
 /// For this reason, it is not in general safe to store a StringRef.
 ///
 /// @ingroup core
-class SEQUOIA_CORE_EXPORT StringRef {
+class SEQUOIA_CORE_API StringRef {
 public:
   typedef const char* iterator;
   typedef const char* const_iterator;
@@ -152,23 +149,6 @@ public:
 
   /// @brief Compare two strings, treating sequences of digits as numbers
   int compare_numeric(StringRef RHS) const;
-
-  /// @brief Determine the edit distance between this string and another string
-  ///
-  /// @param Other              The string to compare this string against.
-  /// @param AllowReplacements  Whether to allow character replacements (change one character into
-  ///                           another) as a single operation, rather than as two operations
-  ///                           (an insertion and a removal).
-  /// @param MaxEditDistance    If non-zero, the maximum edit distance that this routine is allowed
-  ///                           to compute. If the edit distance will exceed that maximum, returns
-  ///                           `MaxEditDistance+1`.
-  ///
-  /// @returns the minimum number of character insertions, removals, or (if @p AllowReplacements
-  /// is `true`) replacements needed to transform one of the given strings into the other. If zero,
-  /// the strings are identical.
-  ///
-  unsigned edit_distance(StringRef Other, bool AllowReplacements = true,
-                         unsigned MaxEditDistance = 0) const;
 
   /// @brief Get the contents as an std::string.
   std::string str() const {
@@ -366,68 +346,6 @@ public:
   /// @brief Return the number of non-overlapped occurrences of \p Str in the string
   size_t count(StringRef Str) const;
 
-  /// @brief Parse the current string as an integer of the specified radix.
-  ///
-  /// If @p Radix is specified as zero, this does radix autosensing using  extended C rules: 0 is
-  /// octal, 0x is hex, 0b is binary.
-  ///
-  /// If the string is invalid or if only a subset of the string is valid, this returns true to
-  /// signify the error. The string is considered erroneous if empty or if it overflows T.
-  template <typename T>
-  typename std::enable_if<std::numeric_limits<T>::is_signed, bool>::type
-  getAsInteger(unsigned Radix, T& Result) const {
-    long long LLVal;
-    if(getAsSignedInteger(*this, Radix, LLVal) || static_cast<T>(LLVal) != LLVal)
-      return true;
-    Result = LLVal;
-    return false;
-  }
-
-  template <typename T>
-  typename std::enable_if<!std::numeric_limits<T>::is_signed, bool>::type
-  getAsInteger(unsigned Radix, T& Result) const {
-    unsigned long long ULLVal;
-    // The additional cast to unsigned long long is required to avoid the
-    // Visual C++ warning C4805: '!=' : unsafe mix of type 'bool' and type
-    // 'unsigned __int64' when instantiating getAsInteger with T = bool.
-    if(getAsUnsignedInteger(*this, Radix, ULLVal) ||
-       static_cast<unsigned long long>(static_cast<T>(ULLVal)) != ULLVal)
-      return true;
-    Result = ULLVal;
-    return false;
-  }
-
-  /// @brief Parse the current string as an integer of the specified radix.
-  ///
-  /// If @p Radix is specified as zero, this does radix autosensing using extended C rules: 0 is
-  /// octal, 0x is hex, 0b is binary.
-  ///
-  /// If the string does not begin with a number of the specified radix, this returns true to
-  /// signify the error. The string is considered erroneous if empty or if it overflows T.
-  /// The portion of the string representing the discovered numeric value is removed from the
-  /// beginning of the string.
-  template <typename T>
-  typename std::enable_if<std::numeric_limits<T>::is_signed, bool>::type
-  consumeInteger(unsigned Radix, T& Result) {
-    long long LLVal;
-    if(consumeSignedInteger(*this, Radix, LLVal) ||
-       static_cast<long long>(static_cast<T>(LLVal)) != LLVal)
-      return true;
-    Result = LLVal;
-    return false;
-  }
-
-  template <typename T>
-  typename std::enable_if<!std::numeric_limits<T>::is_signed, bool>::type
-  consumeInteger(unsigned Radix, T& Result) {
-    unsigned long long ULLVal;
-    if(consumeUnsignedInteger(*this, Radix, ULLVal) ||
-       static_cast<unsigned long long>(static_cast<T>(ULLVal)) != ULLVal)
-      return true;
-    Result = ULLVal;
-    return false;
-  }
-
   /// @}
   /// @name String Operations
   /// @{
@@ -444,12 +362,12 @@ public:
 
   /// @brief Return a reference to the substring from [Start, Start + N).
   ///
-  /// @param Start        The index of the starting character in the substring; if
-  ///                     the index is npos or greater than the length of the string then the
-  ///                     empty substring will be returned.
-  /// @param N            The number of characters to included in the substring. If N
-  ///                     exceeds the number of characters remaining in the string, the string
-  ///                     suffix (starting with \p Start) will be returned.
+  /// @param Start  The index of the starting character in the substring; if
+  ///               the index is npos or greater than the length of the string then the
+  ///               empty substring will be returned.
+  /// @param N      The number of characters to included in the substring. If N
+  ///               exceeds the number of characters remaining in the string, the string
+  ///               suffix (starting with \p Start) will be returned.
   inline StringRef substr(size_t Start, size_t N = npos) const {
     Start = std::min(Start, Length);
     return StringRef(Data + Start, std::min(N, Length - Start));
@@ -577,7 +495,7 @@ public:
   /// @param Separator    The string to split on.
   /// @param MaxSplit     The maximum number of times the string is split.
   /// @param KeepEmpty    True if empty substring should be added.
-  void split(SmallVectorImpl<StringRef>& A, StringRef Separator, int MaxSplit = -1,
+  void split(std::vector<StringRef>& A, StringRef Separator, int MaxSplit = -1,
              bool KeepEmpty = true) const;
 
   /// @brief Split into substrings around the occurrences of a separator character.
@@ -591,7 +509,7 @@ public:
   /// \param Separator    The string to split on.
   /// \param MaxSplit     The maximum number of times the string is split.
   /// \param KeepEmpty    True if empty substring should be added.
-  void split(SmallVectorImpl<StringRef>& A, char Separator, int MaxSplit = -1,
+  void split(std::vector<StringRef>& A, char Separator, int MaxSplit = -1,
              bool KeepEmpty = true) const;
 
   /// @brief Split into two substrings around the last occurrence of a separator character.
@@ -638,7 +556,7 @@ public:
   /// @}
 
   /// @brief Convert to stream
-  SEQUOIA_CORE_EXPORT friend std::ostream& operator<<(std::ostream& stream, const StringRef& str);
+  SEQUOIA_CORE_API friend std::ostream& operator<<(std::ostream& stream, const StringRef& str);
 };
 
 /// @name StringRef Comparison Operators
@@ -654,14 +572,6 @@ inline std::string& operator+=(std::string& buffer, StringRef string) {
   return buffer.append(string.data(), string.size());
 }
 /// @}
-
-// StringRefs can be treated like a POD type.
-template <typename T>
-struct isPodLike;
-template <>
-struct isPodLike<StringRef> {
-  static const bool value = true;
-};
 
 } // namespace core
 

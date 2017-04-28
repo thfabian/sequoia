@@ -45,8 +45,13 @@ public:
     return any_cast<std::shared_ptr<T>>(singletons_.back()).get();
   }
 
+  /// @brief Free all singletons (in reverse order they were registered)
+  ~SingletonManager() {
+    while(!singletons_.empty())
+      singletons_.pop_back();
+  }
+
   /// @brief Free the singleton given by type `T`
-  ///
   /// @return `true` iff a Singleton of type `T` was successfully freed, `false` otherwise
   template <class T>
   bool freeSingleton() {

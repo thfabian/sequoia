@@ -92,7 +92,7 @@ add_subdirectory(src)
 ##===----------------------------------------- Testing ----------------------------------------===##
 if(SEQUOIA_TESTING)
   enable_testing()
-  add_subdirectory(unittest)
+  add_subdirectory(test)
 endif()
 
 ##===----------------------------------------- Documentation ----------------------------------===##
