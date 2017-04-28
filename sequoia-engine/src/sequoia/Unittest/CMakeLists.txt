@@ -17,8 +17,7 @@ sequoia_add_library(
   NAME SequoiaUnittest
   SOURCES Environment.h
           Environment.cpp
+          Export.h
   DEPENDS SequoiaCore
-          ${SEQUOIA_BOOST_LIBRARIES}
-          ${SEQUOIA_GTEST_LIBRARIES}
-          ${SEQUOIA_THREADS_LIBRARIES}          
+          ${SEQUOIA_EXTERNAL_LIBRARIES}
 )

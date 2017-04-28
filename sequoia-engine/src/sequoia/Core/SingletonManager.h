@@ -1,12 +1,12 @@
 //===--------------------------------------------------------------------------------*- C++ -*-===//
-//                         _____                        _       
-//                        / ____|                      (_)      
-//                       | (___   ___  __ _ _   _  ___  _  __ _ 
+//                         _____                        _
+//                        / ____|                      (_)
+//                       | (___   ___  __ _ _   _  ___  _  __ _
 //                        \___ \ / _ \/ _` | | | |/ _ \| |/ _` |
 //                        ____) |  __/ (_| | |_| | (_) | | (_| |
 //                       |_____/ \___|\__, |\__,_|\___/|_|\__,_| - Game Engine
-//                                       | |                    
-//                                       |_| 
+//                                       | |
+//                                       |_|
 //
 // This file is distributed under the MIT License (MIT).
 // See LICENSE.txt for details.
@@ -16,10 +16,10 @@
 #ifndef SEQUOIA_CORE_SINGLETONMANAGER_H
 #define SEQUOIA_CORE_SINGLETONMANAGER_H
 
+#include "sequoia/Core/Any.h"
 #include "sequoia/Core/Assert.h"
 #include "sequoia/Core/Export.h"
 #include "sequoia/Core/Singleton.h"
-#include "sequoia/Core/Any.h"
 #include <list>
 #include <memory>
 

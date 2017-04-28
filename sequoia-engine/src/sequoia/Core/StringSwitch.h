@@ -1,6 +1,12 @@
-//===-- sequoia/Core/StringSwitch.h -------------------------------------------------*- C++ -*-===//
-//
-//                                      S E Q U O I A
+//===--------------------------------------------------------------------------------*- C++ -*-===//
+//                         _____                        _       
+//                        / ____|                      (_)      
+//                       | (___   ___  __ _ _   _  ___  _  __ _ 
+//                        \___ \ / _ \/ _` | | | |/ _ \| |/ _` |
+//                        ____) |  __/ (_| | |_| | (_) | | (_| |
+//                       |_____/ \___|\__, |\__,_|\___/|_|\__,_| - Game Engine
+//                                       | |                    
+//                                       |_| 
 //
 // This file is distributed under the MIT License (MIT).
 // See LICENSE.txt for details.
@@ -12,7 +18,6 @@
 
 #include "sequoia/Core/Core.h"
 #include "sequoia/Core/StringRef.h"
-#include <cassert>
 #include <cstring>
 
 namespace sequoia {
@@ -37,12 +42,13 @@ namespace core {
 ///   .Cases("violet", "purple", Violet)
 ///   .Default(UnknownColor);
 /// @endcode
+/// @ingroup core
 template <typename T, typename R = T>
 class StringSwitch {
-  /// \brief The string we are matching.
+  /// The string we are matching.
   StringRef Str;
 
-  /// \brief The pointer to the result of this switch statement, once known, null before that.
+  /// The pointer to the result of this switch statement, once known, null before that.
   const T* Result;
 
 public:
@@ -208,7 +214,7 @@ public:
   }
 
   inline operator R() const {
-    assert(Result && "Fell off the end of a string-switch");
+    SEQUOIA_ASSERT_MSG(Result, "Fell off the end of a string-switch");
     return *Result;
   }
 };

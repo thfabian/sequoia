@@ -1,12 +1,12 @@
 //===--------------------------------------------------------------------------------*- C++ -*-===//
-//                         _____                        _       
-//                        / ____|                      (_)      
-//                       | (___   ___  __ _ _   _  ___  _  __ _ 
+//                         _____                        _
+//                        / ____|                      (_)
+//                       | (___   ___  __ _ _   _  ___  _  __ _
 //                        \___ \ / _ \/ _` | | | |/ _ \| |/ _` |
 //                        ____) |  __/ (_| | |_| | (_) | | (_| |
 //                       |_____/ \___|\__, |\__,_|\___/|_|\__,_| - Game Engine
-//                                       | |                    
-//                                       |_| 
+//                                       | |
+//                                       |_|
 //
 // This file is distributed under the MIT License (MIT).
 // See LICENSE.txt for details.
@@ -23,15 +23,15 @@
 /// @namespace sequoia
 /// @brief Namespace of the sequoia project.
 namespace sequoia {
-  /// @namespace core
-  /// @brief Namespace of the core library.
-  namespace core {}
+/// @namespace core
+/// @brief Namespace of the core library.
+namespace core {}
 }
 #endif
 
 #include "sequoia/Core/Compiler.h"
 
-#if defined(SEQUOIA_SHARED_LIBRARIES) && defined(SequoiaCore_EXPORTS) 
+#if defined(SEQUOIA_SHARED_LIBRARIES) && defined(SequoiaCore_EXPORTS)
 #define SEQUOIA_CORE_API SEQUOIA_API_EXPORT
 #else
 #define SEQUOIA_CORE_API SEQUOIA_API_IMPORT

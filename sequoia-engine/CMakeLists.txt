@@ -47,6 +47,7 @@ sequoia_set_cxx_flags()
 
 # Custom tragets
 sequoia_add_target_clean_all()
+sequoia_add_target_clang_format(${CMAKE_SOURCE_DIR}/src)
 
 # Output findings
 sequoia_report_result(
@@ -60,14 +61,23 @@ sequoia_report_result(
 ##===---------------------------------- Add external libraries --------------------------------===##
 include(AddThreads)
 include(AddBoost)
+include(AddBlaze)
 include(AddTBB)
 include(AddGTest)
+
+set(SEQUOIA_EXTERNAL_LIBRARIES
+  ${SEQUOIA_BOOST_LIBRARIES}
+  ${SEQUOIA_TBB_LIBRARIES}
+  ${SEQUOIA_GTEST_LIBRARIES}
+  ${SEQUOIA_THREADS_LIBRARIES}
+)
 
 # Output findings
 sequoia_report_result(
   "External libraries summary" 
   "${SEQUOIA_THREADS_INFO_STR}"
   "${SEQUOIA_BOOST_INFO_STR}"
+  "${SEQUOIA_BLAZE_INFO_STR}"
   "${SEQUOIA_TBB_INFO_STR}"
   "${SEQUOIA_GTEST_INFO_STR}"
 )

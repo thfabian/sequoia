@@ -1,12 +1,12 @@
 //===--------------------------------------------------------------------------------*- C++ -*-===//
-//                         _____                        _       
-//                        / ____|                      (_)      
-//                       | (___   ___  __ _ _   _  ___  _  __ _ 
+//                         _____                        _
+//                        / ____|                      (_)
+//                       | (___   ___  __ _ _   _  ___  _  __ _
 //                        \___ \ / _ \/ _` | | | |/ _ \| |/ _` |
 //                        ____) |  __/ (_| | |_| | (_) | | (_| |
 //                       |_____/ \___|\__, |\__,_|\___/|_|\__,_| - Game Engine
-//                                       | |                    
-//                                       |_| 
+//                                       | |
+//                                       |_|
 //
 // This file is distributed under the MIT License (MIT).
 // See LICENSE.txt for details.
@@ -16,8 +16,8 @@
 #ifndef SEQUOIA_CORE_VERSION_H
 #define SEQUOIA_CORE_VERSION_H
 
-#include "sequoia/Core/Export.h"
 #include "sequoia/Core/Config.h"
+#include "sequoia/Core/Export.h"
 #include <iosfwd>
 #include <string>
 
@@ -28,7 +28,7 @@ namespace core {
 /// @brief Utility to compare Sequoia versions
 ///
 /// @ingroup core
-class SEQUOIA_CORE_EXPORT Version {
+class SEQUOIA_CORE_API Version {
   int major_, minor_, patch_;
 
 public:
@@ -85,7 +85,7 @@ public:
   std::string toString() const;
 
   /// @brief Convert to stream
-  SEQUOIA_CORE_EXPORT friend std::ostream& operator<<(std::ostream& stream, const Version& version);
+  SEQUOIA_CORE_API friend std::ostream& operator<<(std::ostream& stream, const Version& version);
 };
 
 } // namespace core

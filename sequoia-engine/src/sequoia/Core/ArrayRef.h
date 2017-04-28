@@ -1,12 +1,12 @@
 //===--------------------------------------------------------------------------------*- C++ -*-===//
-//                         _____                        _       
-//                        / ____|                      (_)      
-//                       | (___   ___  __ _ _   _  ___  _  __ _ 
+//                         _____                        _
+//                        / ____|                      (_)
+//                       | (___   ___  __ _ _   _  ___  _  __ _
 //                        \___ \ / _ \/ _` | | | |/ _ \| |/ _` |
 //                        ____) |  __/ (_| | |_| | (_) | | (_| |
 //                       |_____/ \___|\__, |\__,_|\___/|_|\__,_| - Game Engine
-//                                       | |                    
-//                                       |_| 
+//                                       | |
+//                                       |_|
 //
 // This file is distributed under the MIT License (MIT).
 // See LICENSE.txt for details.
@@ -16,8 +16,8 @@
 #ifndef SEQUOIA_CORE_ARRAYREF_H
 #define SEQUOIA_CORE_ARRAYREF_H
 
-#include "sequoia/Core/STLExtras.h"
 #include "sequoia/Core/Assert.h"
+#include "sequoia/Core/STLExtras.h"
 #include <array>
 #include <vector>
 
@@ -116,13 +116,13 @@ public:
 
   /// @brief Get the first element
   const T& front() const {
-    assert(!empty());
+    SEQUOIA_ASSERT(!empty());
     return data_[0];
   }
 
   /// @brief Get the last element
   const T& back() const {
-    assert(!empty());
+    SEQUOIA_ASSERT(!empty());
     return data_[length_ - 1];
   }
 
@@ -143,7 +143,7 @@ public:
 
   /// @brief Chop off the first @p N elements of the array, and keep @p M elements in the array
   ArrayRef<T> slice(size_t N, size_t M) const {
-    assert(N + M <= size() && "Invalid specifier");
+    SEQUOIA_ASSERT_MSG(N + M <= size(), "Invalid specifier");
     return ArrayRef<T>(data() + N, M);
   }
 
@@ -152,13 +152,13 @@ public:
 
   /// @brief Drop the first @p N elements of the array.
   ArrayRef<T> drop_front(size_t N = 1) const {
-    assert(size() >= N && "Dropping more elements than exist");
+    SEQUOIA_ASSERT_MSG(size() >= N, "Dropping more elements than exist");
     return slice(N, size() - N);
   }
 
   /// @brief Drop the last \p N elements of the array.
   ArrayRef<T> drop_back(size_t N = 1) const {
-    assert(size() >= N && "Dropping more elements than exist");
+    SEQUOIA_ASSERT_MSG(size() >= N, "Dropping more elements than exist");
     return slice(0, size() - N);
   }
 
@@ -205,7 +205,7 @@ public:
   /// @name Operator Overloads
   /// @{
   const T& operator[](size_t Index) const {
-    assert(Index < length_ && "Invalid index!");
+    SEQUOIA_ASSERT_MSG(Index < length_, "Invalid index!");
     return data_[Index];
   }
 
@@ -289,19 +289,19 @@ public:
 
   /// @brief Get the first element
   T& front() const {
-    assert(!this->empty());
+    SEQUOIA_ASSERT(!this->empty());
     return data()[0];
   }
 
   /// @brief Get the last element
   T& back() const {
-    assert(!this->empty());
+    SEQUOIA_ASSERT(!this->empty());
     return data()[this->size() - 1];
   }
 
   /// @brief Chop off the first N elements of the array, and keep M elements in the array
   MutableArrayRef<T> slice(size_t N, size_t M) const {
-    assert(N + M <= this->size() && "Invalid specifier");
+    SEQUOIA_ASSERT_MSG(N + M <= this->size(), "Invalid specifier");
     return MutableArrayRef<T>(this->data() + N, M);
   }
 
@@ -310,12 +310,12 @@ public:
 
   /// @brief Drop the first \p N elements of the array
   MutableArrayRef<T> drop_front(size_t N = 1) const {
-    assert(this->size() >= N && "Dropping more elements than exist");
+    SEQUOIA_ASSERT_MSG(this->size() >= N, "Dropping more elements than exist");
     return slice(N, this->size() - N);
   }
 
   MutableArrayRef<T> drop_back(size_t N = 1) const {
-    assert(this->size() >= N && "Dropping more elements than exist");
+    SEQUOIA_ASSERT_MSG(this->size() >= N, "Dropping more elements than exist");
     return slice(0, this->size() - N);
   }
 
@@ -362,7 +362,7 @@ public:
   /// @name Operator Overloads
   /// @{
   T& operator[](size_t Index) const {
-    assert(Index < this->size() && "Invalid index!");
+    SEQUOIA_ASSERT_MSG(Index < this->size(), "Invalid index!");
     return data()[Index];
   }
 };
@@ -428,10 +428,10 @@ inline bool operator!=(ArrayRef<T> LHS, ArrayRef<T> RHS) {
 
 } // namespace core
 
-template<typename T>
+template <typename T>
 using ArrayRef = core::ArrayRef<T>;
 
-template<typename T>
+template <typename T>
 using MutableArrayRef = core::MutableArrayRef<T>;
 
 } // namespace sequoia

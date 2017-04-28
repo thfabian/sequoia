@@ -1,6 +1,12 @@
 //===--------------------------------------------------------------------------------*- C++ -*-===//
-//
-//                                      S E Q U O I A
+//                         _____                        _       
+//                        / ____|                      (_)      
+//                       | (___   ___  __ _ _   _  ___  _  __ _ 
+//                        \___ \ / _ \/ _` | | | |/ _ \| |/ _` |
+//                        ____) |  __/ (_| | |_| | (_) | | (_| |
+//                       |_____/ \___|\__, |\__,_|\___/|_|\__,_| - Game Engine
+//                                       | |                    
+//                                       |_| 
 //
 // This file is distributed under the MIT License (MIT).
 // See LICENSE.txt for details.
@@ -41,7 +47,6 @@ static_assert(!std::is_assignable<ArrayRef<int*>, std::initializer_list<int*>>::
 #endif
 
 namespace {
-
 
 TEST(ArrayRefTest, DropBack) {
   static const int TheNumbers[] = {4, 8, 15, 16, 23, 42};
@@ -206,4 +211,4 @@ TEST(ArrayRefTest, makeArrayRef) {
   EXPECT_TRUE(AR2.equals(AR2Ref));
 }
 
-} // end anonymous namespace
+} // anonymous namespace

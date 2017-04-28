@@ -1,8 +1,14 @@
-//===-- sequoia/Core/Config.h -------------------------------------------------------*- C++ -*-===//
+//===--------------------------------------------------------------------------------*- C++ -*-===//
+//                         _____                        _       
+//                        / ____|                      (_)      
+//                       | (___   ___  __ _ _   _  ___  _  __ _ 
+//                        \___ \ / _ \/ _` | | | |/ _ \| |/ _` |
+//                        ____) |  __/ (_| | |_| | (_) | | (_| |
+//                       |_____/ \___|\__, |\__,_|\___/|_|\__,_| - Game Engine
+//                                       | |                    
+//                                       |_| 
 //
-//                                      S E Q U O I A
-//
-// This file is distributed under the MIT License (MIT). 
+// This file is distributed under the MIT License (MIT).
 // See LICENSE.txt for details.
 //
 //===------------------------------------------------------------------------------------------===//
@@ -38,18 +44,5 @@
 
 // Sequoia version string 
 #define SEQUOIA_VERSION_STRING "${SEQUOIA_VERSION_STRING}"
-
-// Default path for global configuration (relative) 
-#define SEQUOIA_GLOBAL_CONFIG_PATH "${SEQUOIA_GLOBAL_CONFIG_PATH}"
-
-// Default path for Ogre configuration (relative) 
-#define SEQUOIA_OGRE_CONFIG_PATH "${SEQUOIA_OGRE_CONFIG_PATH}"
-
-// Default path for Ogre plugins (relative) 
-#define SEQUOIA_OGRE_PLUGIN_PATH "${SEQUOIA_OGRE_PLUGIN_PATH}"
-
-// Available Ogre plugins 
-#define SEQUOIA_OGRE_PLUGINS "${OGRE_PLUGINS}"
-
 
 #endif

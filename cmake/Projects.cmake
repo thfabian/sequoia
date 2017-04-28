@@ -1,8 +1,14 @@
 ##===------------------------------------------------------------------------------*- CMake -*-===##
+##                         _____                        _       
+##                        / ____|                      (_)      
+##                       | (___   ___  __ _ _   _  ___  _  __ _ 
+##                        \___ \ / _ \/ _` | | | |/ _ \| |/ _` |
+##                        ____) |  __/ (_| | |_| | (_) | | (_| |
+##                       |_____/ \___|\__, |\__,_|\___/|_|\__,_| - Game Engine
+##                                       | |                    
+##                                       |_| 
 ##
-##                                      S E Q U O I A
-##
-## This file is distributed under the MIT License (MIT). 
+## This file is distributed under the MIT License (MIT).
 ## See LICENSE.txt for details.
 ##
 ##===------------------------------------------------------------------------------------------===##
@@ -19,6 +25,14 @@ set(boost_download_version 1.${_v}.0)
 set(boost_url "http://sourceforge.net/projects/boost/files/boost/1.${_v}.0/boost_1_${_v}_0.tar.gz/download")
 set(boost_md5 "28f58b9a33469388302110562bdf6188")
 set(boost_components thread date_time system atomic chrono filesystem program_options)
+
+#
+# Blaze
+#
+list(APPEND projects blaze)
+set(blaze_version "3.1")
+set(blaze_url "https://bitbucket.org/blaze-lib/blaze/downloads/blaze-${blaze_version}.tar.gz")
+set(blaze_md5 "2938e015f0d274e8d62ee5c4c0c1e9f3")
 
 #
 # GTest

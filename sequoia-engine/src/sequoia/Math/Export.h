@@ -13,28 +13,28 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_CORE_NONCOPYABLE_H
-#define SEQUOIA_CORE_NONCOPYABLE_H
+#ifndef SEQUOIA_MATH_EXPORT_H
+#define SEQUOIA_MATH_EXPORT_H
 
+#ifdef SEQUOIA_DOXYGEN_INVOKED
+/// @defgroup math Math
+/// @brief Math and linear algebra utilities.
+
+/// @namespace sequoia
+/// @brief Namespace of the sequoia project.
 namespace sequoia {
+/// @namespace math
+/// @brief Namespace of the math library.
+namespace core {}
+}
+#endif
 
-namespace core {
+#include "sequoia/Core/Compiler.h"
 
-/// @brief Classes derived from NonCopyable cannot be copied or assigned
-/// @ingroup core
-class NonCopyable {
-protected:
-  constexpr NonCopyable() = default;
-  ~NonCopyable() = default;
-
-  NonCopyable(const NonCopyable&) = delete;
-  NonCopyable& operator=(const NonCopyable&) = delete;
-};
-
-} // namespace core
-
-using NonCopyable = core::NonCopyable;
-
-} // namespace sequoia
+#if defined(SEQUOIA_SHARED_LIBRARIES) && defined(SequoiaMath_EXPORTS)
+#define SEQUOIA_MATH_API SEQUOIA_API_EXPORT
+#else
+#define SEQUOIA_MATH_API SEQUOIA_API_IMPORT
+#endif
 
 #endif

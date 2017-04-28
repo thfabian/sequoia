@@ -1,8 +1,14 @@
 ##===------------------------------------------------------------------------------*- CMake -*-===##
+##                         _____                        _       
+##                        / ____|                      (_)      
+##                       | (___   ___  __ _ _   _  ___  _  __ _ 
+##                        \___ \ / _ \/ _` | | | |/ _ \| |/ _` |
+##                        ____) |  __/ (_| | |_| | (_) | | (_| |
+##                       |_____/ \___|\__, |\__,_|\___/|_|\__,_| - Game Engine
+##                                       | |                    
+##                                       |_| 
 ##
-##                                      S E Q U O I A
-##
-## This file is distributed under the MIT License (MIT). 
+## This file is distributed under the MIT License (MIT).
 ## See LICENSE.txt for details.
 ##
 ##===------------------------------------------------------------------------------------------===##
@@ -34,3 +40,12 @@ ExternalProject_Add(
   DEPENDS
     ${_deps}
 )
+
+# Create bash script for re-invoking cmake
+set(script_args)
+foreach(arg ${Sequoia_DEFAULT_ARGS} ${Sequoia_THIRDPARTYLIBS_ARGS} ${cmake_args})
+  set(script_args "${script_args} ${arg}")
+endforeach()
+file(WRITE ${_build}/rerun-cmake.sh 
+     "#!bin/bash\n${CMAKE_COMMAND} ${CMAKE_SOURCE_DIR}/sequoia-engine ${script_args}\n")
+

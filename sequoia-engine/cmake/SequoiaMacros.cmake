@@ -1,8 +1,14 @@
 ##===------------------------------------------------------------------------------*- CMake -*-===##
+##                         _____                        _       
+##                        / ____|                      (_)      
+##                       | (___   ___  __ _ _   _  ___  _  __ _ 
+##                        \___ \ / _ \/ _` | | | |/ _ \| |/ _` |
+##                        ____) |  __/ (_| | |_| | (_) | | (_| |
+##                       |_____/ \___|\__, |\__,_|\___/|_|\__,_| - Game Engine
+##                                       | |                    
+##                                       |_| 
 ##
-##                                      S E Q U O I A
-##
-## This file is distributed under the MIT License (MIT). 
+## This file is distributed under the MIT License (MIT).
 ## See LICENSE.txt for details.
 ##
 ##===------------------------------------------------------------------------------------------===##
@@ -279,36 +285,30 @@ macro(sequoia_add_target_clang_format SOURCE_DIR)
           NO_DEFAULT_PATH
   )
 
-  if("${CLANG_FORMAT_BIN}" STREQUAL "CLANG_FORMAT_BIN-NOTFOUND") 
-    return()
+  if(NOT(SEQUOIA_ON_WIN32) AND NOT("${CLANG_FORMAT_BIN}" STREQUAL "CLANG_FORMAT_BIN-NOTFOUND"))
+    if("$ENV{CMAKE_EXPORT_COMPILE_COMMANDS}" STREQUAL "1" OR CLANG_TIDY_FOUND)
+      # Generate a Clang compile_commands.json "compilation database" file for use
+      # with various development tools, such as Vim's YouCompleteMe plugin.
+      # See http://clang.llvm.org/docs/JSONCompilationDatabase.html
+      set(CMAKE_EXPORT_COMPILE_COMMANDS 1)
+    endif()
+
+    # Runs clang format and updates files in place.
+    add_custom_target(format 
+                      COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/scripts/run-clang-format.sh 
+                      ${CMAKE_CURRENT_SOURCE_DIR} 
+                      ${CLANG_FORMAT_BIN} 
+                      1
+                      `find ${SOURCE_DIR} -name \*.h -print -o -name \*.cpp -print`)
+
+    # Runs clang format and exits with a non-zero exit code if any files need to be reformatted
+    add_custom_target(check-format 
+                      COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/scripts/run-clang-format.sh 
+                      ${CMAKE_CURRENT_SOURCE_DIR} 
+                      ${CLANG_FORMAT_BIN} 
+                      0
+                      `find ${SOURCE_DIR} -name \*.h -print -o -name \*.cpp -print`)
   endif()
-
-  if(SEQUOIA_ON_WIN32)
-    return()
-  endif()
-
-  if("$ENV{CMAKE_EXPORT_COMPILE_COMMANDS}" STREQUAL "1" OR CLANG_TIDY_FOUND)
-    # Generate a Clang compile_commands.json "compilation database" file for use
-    # with various development tools, such as Vim's YouCompleteMe plugin.
-    # See http://clang.llvm.org/docs/JSONCompilationDatabase.html
-    set(CMAKE_EXPORT_COMPILE_COMMANDS 1)
-  endif()
-
-  # Runs clang format and updates files in place.
-  add_custom_target(format 
-                    COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/scripts/run-clang-format.sh 
-                    ${CMAKE_CURRENT_SOURCE_DIR} 
-                    ${CLANG_FORMAT_BIN} 
-                    1
-                    `find ${SOURCE_DIR} -name \*.h -print -o -name \*.cpp -print`)
-
-  # Runs clang format and exits with a non-zero exit code if any files need to be reformatted
-  add_custom_target(check-format 
-                    COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/scripts/run-clang-format.sh 
-                    ${CMAKE_CURRENT_SOURCE_DIR} 
-                    ${CLANG_FORMAT_BIN} 
-                    0
-                    `find ${SOURCE_DIR} -name \*.h -print -o -name \*.cpp -print`)
 endmacro()
 
 

@@ -13,23 +13,10 @@
 ##
 ##===------------------------------------------------------------------------------------------===##
 
-sequoia_configure_file(Config.h.cmake)
-
 sequoia_add_library(
-  NAME SequoiaCore
-  SOURCES ArrayRef.h
-          Any.h
-          Assert.h
-          Assert.cpp 
-          Export.h
-          Compiler.h
-          NString.h
-          NString.cpp
-          NonCopyable.h
-          Platform.h
-          Singleton.h
-          SingletonManager.h
-          SingletonManager.cpp
-          Version.cpp
+  NAME SequoiaMath
+  SOURCES Export.h
+          Math.h
+          Math.cpp          
   DEPENDS ${SEQUOIA_EXTERNAL_LIBRARIES}
 )

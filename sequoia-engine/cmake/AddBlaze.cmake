@@ -13,23 +13,12 @@
 ##
 ##===------------------------------------------------------------------------------------------===##
 
-sequoia_configure_file(Config.h.cmake)
+find_package(Blaze REQUIRED)
+include_directories(SYSTEM ${BLAZE_INCLUDE_DIRS})
 
-sequoia_add_library(
-  NAME SequoiaCore
-  SOURCES ArrayRef.h
-          Any.h
-          Assert.h
-          Assert.cpp 
-          Export.h
-          Compiler.h
-          NString.h
-          NString.cpp
-          NonCopyable.h
-          Platform.h
-          Singleton.h
-          SingletonManager.h
-          SingletonManager.cpp
-          Version.cpp
-  DEPENDS ${SEQUOIA_EXTERNAL_LIBRARIES}
+sequoia_export_package_variable(
+  BLAZE 
+  ${BLAZE_FOUND} 
+  "Blaze: ${BLAZE_VERSION}" 
 )
+

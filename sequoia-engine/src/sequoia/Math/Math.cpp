@@ -13,28 +13,4 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_CORE_NONCOPYABLE_H
-#define SEQUOIA_CORE_NONCOPYABLE_H
-
-namespace sequoia {
-
-namespace core {
-
-/// @brief Classes derived from NonCopyable cannot be copied or assigned
-/// @ingroup core
-class NonCopyable {
-protected:
-  constexpr NonCopyable() = default;
-  ~NonCopyable() = default;
-
-  NonCopyable(const NonCopyable&) = delete;
-  NonCopyable& operator=(const NonCopyable&) = delete;
-};
-
-} // namespace core
-
-using NonCopyable = core::NonCopyable;
-
-} // namespace sequoia
-
-#endif
+#include "sequoia/Math/Math.h"

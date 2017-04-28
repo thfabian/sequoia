@@ -1,6 +1,22 @@
+##===------------------------------------------------------------------------------*- CMake -*-===##
+##                         _____                        _       
+##                        / ____|                      (_)      
+##                       | (___   ___  __ _ _   _  ___  _  __ _ 
+##                        \___ \ / _ \/ _` | | | |/ _ \| |/ _` |
+##                        ____) |  __/ (_| | |_| | (_) | | (_| |
+##                       |_____/ \___|\__, |\__,_|\___/|_|\__,_| - Game Engine
+##                                       | |                    
+##                                       |_| 
+##
+## This file is distributed under the MIT License (MIT).
+## See LICENSE.txt for details.
+##
+##===------------------------------------------------------------------------------------------===##
+
 # The MIT License (MIT)
 #
 # Copyright (c) 2015 Justus Calvin
+# Copyright (c) 2017 Fabian Thuering
 # 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -50,9 +66,9 @@
 # Users may modify the behavior of this module with the following environment
 # variables:
 #
-# * TBB_INSTALL_DIR 
+# * TBB_INSTALL_DIR        - Set to the location of the TBB installation
 # * TBBROOT
-# * LIBRARY_PATH
+# * LIBRARY_PATH 
 #
 # This module will set the following variables:
 #

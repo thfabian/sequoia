@@ -15,20 +15,15 @@
 
 sequoia_add_test(
   NAME SequoiaCoreTest
-  SOURCES TestArrayRef.cpp
-          TestException.cpp
-          TestGlobalConfiguration.cpp
+  SOURCES #TestArrayRef.cpp
+          #TestException.cpp
           TestMain.cpp
-          TestSmallVector.cpp
-          TestSingletonManager.cpp
-          TestString.cpp
-          TestStringRef.cpp
+          #TestSingletonManager.cpp
+          #TestString.cpp
+          #TestStringRef.cpp
           TestVersion.cpp
   DEPENDS SequoiaUnittest
           SequoiaCore
-          ${SEQUOIA_BOOST_LIBRARIES}
-          ${SEQUOIA_OGRE_LIBRARIES}
-          ${SEQUOIA_GTEST_LIBRARIES}
-          ${SEQUOIA_THREADS_LIBRARIES}
+          ${SEQUOIA_EXTERNAL_LIBRARIES}
 )
 

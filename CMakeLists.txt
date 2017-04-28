@@ -47,7 +47,12 @@ set(Sequoia_DEFAULT_ARGS
 )
 
 # Set assert level 
-option(SEQUOIA_ASSERTS "Enable asserts in all libraries i.e undefine -DNDEBUG" ON)
+set(BUILD_IS_NOT_RELEASE ON)
+if(${CMAKE_BUILD_TYPE} MATCHES "Release")
+  set(BUILD_IS_NOT_RELEASE OFF)
+endif()
+option(SEQUOIA_ASSERTS "Enable asserts in all libraries i.e undefine -DNDEBUG" 
+       ${BUILD_IS_NOT_RELEASE})
 sequoia_set_assert_level()
 
 ##===---------------------------------- Third party projects ----------------------------------===##
