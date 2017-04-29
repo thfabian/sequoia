@@ -34,7 +34,7 @@ void ErrorHandler::fatal(std::string message, bool messagebox) noexcept {
   (void)messagebox;
 #ifdef SEQUOIA_ON_WIN32
   if(messagebox)
-    MessageBoxW(NULL, toWString(message).c_str(), L"Fatal Error",
+    MessageBoxW(NULL, UtfString(message).toWideString().c_str(), L"Fatal Error",
                 MB_OK | MB_ICONERROR | MB_TASKMODAL);
   else
     std::cerr << program_.toAnsiString() << ": error: " << message << std::endl;

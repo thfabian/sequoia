@@ -55,6 +55,12 @@ elseif(UNIX)
 endif()
 
 #
+# Architecture
+#
+set(SEQUOIA_ARCHITECTURE_STRING "${CMAKE_SYSTEM_PROCESSOR}" 
+    CACHE INTERNAL "Architecture string" FORCE)
+
+#
 # Compiler
 #
 if("${CMAKE_CXX_COMPILER_ID}" MATCHES "MSVC")

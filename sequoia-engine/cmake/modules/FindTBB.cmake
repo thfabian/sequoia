@@ -94,8 +94,11 @@
 #
 # * TBB_INCLUDE_DIRS        - The include directory for TBB.
 # * TBB_LIBRARIES           - The libraries to link against to use TBB.
+# * TBB_BINARIES            - The DLLs of TBB (Windows only).
 # * TBB_LIBRARIES_RELEASE   - The release libraries to link against to use TBB.
 # * TBB_LIBRARIES_DEBUG     - The debug libraries to link against to use TBB.
+# * TBB_BINARIES_RELEASE    - The release DLLs of TBB (Windows only).
+# * TBB_BINARIES_DEBUG      - The debug DLLs of TBB (Windows only).
 # * TBB_DEFINITIONS         - Definitions to use when compiling code that uses
 #                             TBB.
 # * TBB_DEFINITIONS_RELEASE - Definitions to use when compiling release code that
@@ -148,14 +151,19 @@ if(NOT TBB_FOUND)
     # Set the TBB search library path search suffix based on the version of VC
     if(WINDOWS_STORE)
       set(TBB_LIB_PATH_SUFFIX "lib/${TBB_ARCHITECTURE}/vc11_ui")
+      set(TBB_BIN_PATH_SUFFIX "bin/${TBB_ARCHITECTURE}/vc11_ui")
     elseif(MSVC14)
       set(TBB_LIB_PATH_SUFFIX "lib/${TBB_ARCHITECTURE}/vc14")
+      set(TBB_BIN_PATH_SUFFIX "bin/${TBB_ARCHITECTURE}/vc14")
     elseif(MSVC12)
       set(TBB_LIB_PATH_SUFFIX "lib/${TBB_ARCHITECTURE}/vc12")
+      set(TBB_BIN_PATH_SUFFIX "bin/${TBB_ARCHITECTURE}/vc12")
     elseif(MSVC11)
       set(TBB_LIB_PATH_SUFFIX "lib/${TBB_ARCHITECTURE}/vc11")
+      set(TBB_BIN_PATH_SUFFIX "bin/${TBB_ARCHITECTURE}/vc11")
     elseif(MSVC10)
       set(TBB_LIB_PATH_SUFFIX "lib/${TBB_ARCHITECTURE}/vc10")
+      set(TBB_BIN_PATH_SUFFIX "bin/${TBB_ARCHITECTURE}/vc10")
     endif()
 
     # Add the library path search suffix for the VC independent version of TBB
@@ -235,14 +243,47 @@ if(NOT TBB_FOUND)
           PATHS ${TBB_DEFAULT_SEARCH_DIR} ENV LIBRARY_PATH
           PATH_SUFFIXES ${TBB_LIB_PATH_SUFFIX})
 
+      if(WIN32)
+        set(old_suffix "${CMAKE_FIND_LIBRARY_SUFFIXES}")
+        set(CMAKE_FIND_LIBRARY_SUFFIXES ".dll")
+        find_library(TBB_${_comp}_BINARY_RELEASE ${_comp}${CMAKE_SHARED_LIBRARY_SUFFIX}
+            HINTS ${TBB_LIBRARY} ${TBB_SEARCH_DIR}
+            PATHS ${TBB_DEFAULT_SEARCH_DIR} ENV LIBRARY_PATH
+            PATH_SUFFIXES bin ${TBB_BIN_PATH_SUFFIX})
+            
+        find_library(TBB_${_comp}_BINARY_DEBUG ${_comp}_debug${CMAKE_SHARED_LIBRARY_SUFFIX}
+            HINTS ${TBB_LIBRARY} ${TBB_SEARCH_DIR}
+            PATHS ${TBB_DEFAULT_SEARCH_DIR} ENV LIBRARY_PATH
+            PATH_SUFFIXES bin ${TBB_BIN_PATH_SUFFIX})
+        set(CMAKE_FIND_LIBRARY_SUFFIXES "${old_suffix}")
+      endif()
+ 
       if(TBB_${_comp}_LIBRARY_DEBUG)
         list(APPEND TBB_LIBRARIES_DEBUG "${TBB_${_comp}_LIBRARY_DEBUG}")
       endif()
+      
       if(TBB_${_comp}_LIBRARY_RELEASE)
         list(APPEND TBB_LIBRARIES_RELEASE "${TBB_${_comp}_LIBRARY_RELEASE}")
       endif()
+      
+      if(WIN32)
+        if(TBB_${_comp}_BINARY_DEBUG)
+          list(APPEND TBB_BINARIES_DEBUG "${TBB_${_comp}_BINARY_DEBUG}")
+        endif()
+        
+        if(TBB_${_comp}_BINARY_RELEASE)
+          list(APPEND TBB_BINARIES_RELEASE "${TBB_${_comp}_BINARY_RELEASE}")
+        endif()
+      endif()
+        
       if(TBB_${_comp}_LIBRARY_${TBB_BUILD_TYPE} AND NOT TBB_${_comp}_LIBRARY)
         set(TBB_${_comp}_LIBRARY "${TBB_${_comp}_LIBRARY_${TBB_BUILD_TYPE}}")
+      endif()
+      
+      if(WIN32)
+        if(TBB_${_comp}_BINARY_${TBB_BUILD_TYPE} AND NOT TBB_${_comp}_BINARY)
+          set(TBB_${_comp}_BINARY "${TBB_${_comp}_BINARY_${TBB_BUILD_TYPE}}")
+        endif()
       endif()
 
       if(TBB_${_comp}_LIBRARY AND EXISTS "${TBB_${_comp}_LIBRARY}")
@@ -255,7 +296,12 @@ if(NOT TBB_FOUND)
       mark_as_advanced(TBB_${_comp}_LIBRARY_RELEASE)
       mark_as_advanced(TBB_${_comp}_LIBRARY_DEBUG)
       mark_as_advanced(TBB_${_comp}_LIBRARY)
-
+      
+      if(WIN32)
+        mark_as_advanced(TBB_${_comp}_BINARY_DEBUG)
+        mark_as_advanced(TBB_${_comp}_BINARY_DEBUG)
+      endif()
+      
     endif()
   endforeach()
 
@@ -275,6 +321,16 @@ if(NOT TBB_FOUND)
   elseif(TBB_LIBRARIES_DEBUG)
     set(TBB_DEFINITIONS "${TBB_DEFINITIONS_DEBUG}")
     set(TBB_LIBRARIES "${TBB_LIBRARIES_DEBUG}")
+  endif()
+  
+  if(WIN32)
+    if(TBB_BINARIES_${TBB_BUILD_TYPE})
+      set(TBB_BINARIES "${TBB_BINARIES_${TBB_BUILD_TYPE}}")
+    elseif(TBB_BINARIES_RELEASE)
+      set(TBB_BINARIES "${TBB_BINARIES_RELEASE}")
+    elseif(TBB_BINARIES_DEBUG)
+      set(TBB_BINARIES "${TBB_BINARIES_DEBUG}")
+    endif()
   endif()
 
   find_package_handle_standard_args(TBB 
@@ -309,7 +365,7 @@ if(NOT TBB_FOUND)
     endif()
   endif()
 
-  mark_as_advanced(TBB_INCLUDE_DIRS TBB_LIBRARIES)
+  mark_as_advanced(TBB_INCLUDE_DIRS TBB_LIBRARIES TBB_BINARIES)
 
   unset(TBB_ARCHITECTURE)
   unset(TBB_BUILD_TYPE)

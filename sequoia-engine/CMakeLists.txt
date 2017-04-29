@@ -54,6 +54,7 @@ sequoia_report_result(
   "Configuration summary" 
   "Sequoia version: ${SEQUOIA_VERSION_STRING}"
   "Platform: ${SEQUOIA_PLATFORM_STRING}"
+  "Architecture: ${SEQUOIA_ARCHITECTURE_STRING}"
   "Compiler: ${SEQUOIA_COMPILER_STRING}"
   "Build type: ${CMAKE_BUILD_TYPE}"
 )
