@@ -40,7 +40,7 @@ endmacro()
 ##  SEQUOIA_${PACKAGE}_INFO_STR   : Information about the package (e.g version string)
 ##  SEQUOIA_${PACKAGE}_LIBRARIES  : Libraries of the package to link against
 ##
-## where
+## with ${PACKAGE} being converted to uppercase with:
 ##
 ##    PACKAGE:STRING=<>    - Name of the package
 ##    FOUND:BOOL=<>        - Package was found
@@ -48,12 +48,13 @@ endmacro()
 ##    ARGN                 - List of libraries to link against
 ##
 macro(sequoia_export_package_variable PACKAGE FOUND INFO_STR)
-  set("SEQUOIA_${PACKAGE}_FOUND" ${FOUND} CACHE BOOL "${PACKAGE} found" FORCE)
-  set("SEQUOIA_${PACKAGE}_INFO_STR" ${INFO_STR} CACHE STRING "Info of package: ${PACKAGE}" FORCE)
-  set("SEQUOIA_${PACKAGE}_LIBRARIES" ${ARGN} CACHE STRING "Libraries of package: ${PACKAGE}" FORCE)
-  mark_as_advanced("SEQUOIA_${PACKAGE}_FOUND" 
-                   "SEQUOIA_${PACKAGE}_INFO_STR" 
-                   "SEQUOIA_${PACKAGE}_LIBRARIES")
+  string(TOUPPER ${PACKAGE} package)
+  set("SEQUOIA_${package}_FOUND" ${FOUND} CACHE BOOL "${PACKAGE} found" FORCE)
+  set("SEQUOIA_${package}_INFO_STR" ${INFO_STR} CACHE STRING "Info of package: ${PACKAGE}" FORCE)
+  set("SEQUOIA_${package}_LIBRARIES" ${ARGN} CACHE STRING "Libraries of package: ${PACKAGE}" FORCE)
+  mark_as_advanced("SEQUOIA_${package}_FOUND" 
+                   "SEQUOIA_${package}_INFO_STR" 
+                   "SEQUOIA_${package}_LIBRARIES")
 endmacro()
 
 ## sequoia_check_and_set_cxx_flag
@@ -266,7 +267,7 @@ endmacro()
 ## sequoia_add_target_clang_format
 ## -------------------------------
 ##
-## Setup a target for clang-format:
+## Setup a target for clang-format (if it was found):
 ##    check-format      Runs clang format and exits with a non-zero exit code if any files need to 
 ##                      be reformatted
 ##    format            Runs clang format and updates files in place
@@ -310,7 +311,6 @@ macro(sequoia_add_target_clang_format SOURCE_DIR)
                       `find ${SOURCE_DIR} -name \*.h -print -o -name \*.cpp -print`)
   endif()
 endmacro()
-
 
 ## sequoia_set_install_dirs
 ## ------------------------

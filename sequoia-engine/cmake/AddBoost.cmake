@@ -55,7 +55,7 @@ if(WIN32)
 endif()
 
 sequoia_export_package_variable(
-  BOOST 
+  Boost 
   ${Boost_FOUND} 
   "Boost: ${Boost_MAJOR_VERSION}.${Boost_MINOR_VERSION}.${Boost_SUBMINOR_VERSION}" 
   ${Boost_LIBRARIES}

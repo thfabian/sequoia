@@ -13,10 +13,12 @@
 ##
 ##===------------------------------------------------------------------------------------------===##
 
-set(SEQUOIA_UNITTEST_EXTERNAL_LIBRARIES
-  ${SEQUOIA_GTEST_LIBRARIES}
-  ${SEQUOIA_EXTERNAL_LIBRARIES}
+find_package(OpenGL REQUIRED)
+include_directories(SYSTEM ${OPENGL_INCLUDE_DIR})
+
+sequoia_export_package_variable(
+  OpenGL 
+  ${OPENGL_FOUND} 
+  "OpenGL: Found" 
+  ${OPENGL_LIBRARIES}
 )
-
-add_subdirectory(sequoia)
-

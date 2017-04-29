@@ -14,31 +14,6 @@
 ##===------------------------------------------------------------------------------------------===##
 
 #
-# Version
-#
-if(NOT DEFINED SEQUOIA_VERSION_MAJOR)
-  set(SEQUOIA_VERSION_MAJOR 0 CACHE INTERNAL "Major version of Sequoia" FORCE)
-endif()
-
-if(NOT DEFINED SEQUOIA_VERSION_MINOR)
-  set(SEQUOIA_VERSION_MINOR 0 CACHE INTERNAL "Minor version of Sequoia" FORCE)
-endif()
-
-if(NOT DEFINED SEQUOIA_VERSION_PATCH)
-  set(SEQUOIA_VERSION_PATCH 1 CACHE INTERNAL "Patch version of Sequoia" FORCE)
-endif()
-
-if(NOT DEFINED SEQUOIA_VERSION_SUFFIX)
-  set(SEQUOIA_VERSION_SUFFIX "dev" CACHE INTERNAL "Suffix of the version" FORCE)
-endif()
-
-if(NOT DEFINED SEQUOIA_VERSION_STRING)
-  set(SEQUOIA_VERSION_STRING 
-      "${SEQUOIA_VERSION_MAJOR}.${SEQUOIA_VERSION_MINOR}.${SEQUOIA_VERSION_PATCH}-${SEQUOIA_VERSION_SUFFIX}"
-      CACHE INTERNAL "Version string of Sequoia" FORCE)
-endif()
-
-#
 # Platform
 #
 if(WIN32)
@@ -76,4 +51,38 @@ elseif("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
   set(SEQUOIA_COMPILER_STRING "LLVM Clang (${CMAKE_CXX_COMPILER_VERSION})" 
       CACHE INTERNAL "Compiler-id string" FORCE)
 endif()
+
+#
+# Git SHA1
+#
+include(scripts/GetGitRevisionDescription)
+get_git_head_revision(GIT_REFSPEC git_sha1)
+if(NOT DEFINED SEQUOIA_GIT_SHA1 OR NOT "${SEQUOIA_GIT_SHA1}" STREQUAL "${git_sha1}")
+  string(SUBSTRING ${git_sha1} 0 7 git_sha1_short)
+  set(SEQUOIA_GIT_SHA1 "${git_sha1_short}" CACHE INTERNAL "git SHA1 string" FORCE)
+endif()
+
+#
+# Version
+#
+if(NOT DEFINED SEQUOIA_VERSION_MAJOR)
+  set(SEQUOIA_VERSION_MAJOR 0 CACHE STRING "Major version of Sequoia" FORCE)
+endif()
+
+if(NOT DEFINED SEQUOIA_VERSION_MINOR)
+  set(SEQUOIA_VERSION_MINOR 0 CACHE STRING "Minor version of Sequoia" FORCE)
+endif()
+
+if(NOT DEFINED SEQUOIA_VERSION_PATCH)
+  set(SEQUOIA_VERSION_PATCH 1 CACHE STRING "Patch version of Sequoia" FORCE)
+endif()
+
+# Assemble full version string
+set(version "${SEQUOIA_VERSION_MAJOR}.${SEQUOIA_VERSION_MINOR}.${SEQUOIA_VERSION_PATCH}")
+string(TOLOWER ${SEQUOIA_PLATFORM_STRING} platform)
+string(TOLOWER ${CMAKE_CXX_COMPILER_ID} compiler)
+set(compiler "${compiler}-${CMAKE_CXX_COMPILER_VERSION}")
+set(SEQUOIA_VERSION_STRING 
+    "${version}-dev-${SEQUOIA_GIT_SHA1}-${SEQUOIA_ARCHITECTURE_STRING}-${platform}-${compiler}"
+    CACHE STRING "Version string of Sequoia" FORCE)
 

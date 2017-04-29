@@ -16,7 +16,7 @@
 #ifndef SEQUOIA_CORE_STRINGSWITCH_H
 #define SEQUOIA_CORE_STRINGSWITCH_H
 
-#include "sequoia/Core/Core.h"
+#include "sequoia/Core/Assert.h"
 #include "sequoia/Core/StringRef.h"
 #include <cstring>
 

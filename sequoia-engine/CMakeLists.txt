@@ -63,15 +63,21 @@ sequoia_report_result(
 include(AddThreads)
 include(AddBlaze)
 include(AddBoost)
-include(AddTBB)
+include(AddCppcheck)
 include(AddGLFW)
 include(AddGTest)
+include(AddOpenGL)
+include(AddTBB)
+
+if(SEQUOIA_TESTING)
+  include(AddGTest)
+endif()
 
 set(SEQUOIA_EXTERNAL_LIBRARIES
   ${SEQUOIA_GLFW_LIBRARIES}
-  ${SEQUOIA_BOOST_LIBRARIES}
   ${SEQUOIA_TBB_LIBRARIES}
-  ${SEQUOIA_GTEST_LIBRARIES}
+  ${SEQUOIA_BOOST_LIBRARIES}
+  ${SEQUOIA_OPENGL_LIBRARIES}
   ${SEQUOIA_THREADS_LIBRARIES}
 )
 
@@ -79,14 +85,16 @@ set(SEQUOIA_EXTERNAL_LIBRARIES
 sequoia_report_result(
   "External libraries summary" 
   "${SEQUOIA_THREADS_INFO_STR}"
-  "${SEQUOIA_BOOST_INFO_STR}"
   "${SEQUOIA_BLAZE_INFO_STR}"
-  "${SEQUOIA_TBB_INFO_STR}"
+  "${SEQUOIA_BOOST_INFO_STR}"
+  "${SEQUOIA_CPPCHECK_INFO_STR}"
+  "${SEQUOIA_GLFW_INFO_STR}"
   "${SEQUOIA_GTEST_INFO_STR}"
+  "${SEQUOIA_OPENGL_INFO_STR}"
+  "${SEQUOIA_TBB_INFO_STR}"
 )
   
 ##===------------------------------------ Sequoia libraries -----------------------------------===##
-include_directories(${CMAKE_SOURCE_DIR}/unittest)
 include_directories(${CMAKE_SOURCE_DIR}/src)
 include_directories(${CMAKE_BINARY_DIR}/src)
 

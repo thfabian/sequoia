@@ -17,7 +17,7 @@ find_package(Blaze REQUIRED)
 include_directories(SYSTEM ${BLAZE_INCLUDE_DIRS})
 
 sequoia_export_package_variable(
-  BLAZE 
+  Blaze 
   ${BLAZE_FOUND} 
   "Blaze: ${BLAZE_VERSION}" 
 )

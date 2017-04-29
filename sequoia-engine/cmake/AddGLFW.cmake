@@ -19,8 +19,8 @@ include_directories(SYSTEM ${GLFW_INCLUDE_DIRS})
 #TODO: Copy DLL's to bin directories on windows
 
 sequoia_export_package_variable(
-  GLFW 
-  ${GFLW_FOUND} 
+  glfw 
+  ${GLFW_FOUND} 
   "GLFW: ${GLFW_VERSION}" 
   ${GLFW_LIBRARIES}
 )

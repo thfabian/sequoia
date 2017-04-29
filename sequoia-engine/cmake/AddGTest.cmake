@@ -38,7 +38,7 @@ if(WIN32)
 endif()
 
 sequoia_export_package_variable(
-  GTEST 
+  gtest 
   ${GTEST_FOUND} 
   "GTest: Found" 
   ${GTEST_LIBRARIES}

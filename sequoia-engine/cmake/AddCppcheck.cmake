@@ -13,10 +13,16 @@
 ##
 ##===------------------------------------------------------------------------------------------===##
 
-set(SEQUOIA_UNITTEST_EXTERNAL_LIBRARIES
-  ${SEQUOIA_GTEST_LIBRARIES}
-  ${SEQUOIA_EXTERNAL_LIBRARIES}
-)
+find_package(Cppcheck)
 
-add_subdirectory(sequoia)
+if(CPPCHECK_FOUND)
+  set(SEQUOIA_HAS_CPPCHECK 1)
+  sequoia_export_package_variable(
+    Cppcheck 
+    ${CPPCHECK_FOUND} 
+    "Cppcheck: Found" 
+  )
+else()
+  set(SEQUOIA_HAS_CPPCHECK 0)
+endif()
 

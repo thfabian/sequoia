@@ -38,6 +38,45 @@ function(sequoia_report_result HEADER)
   message(STATUS "${full_header}")
 endfunction()
 
+## sequoia_run_cppcheck
+## --------------------
+##
+## Run Cppcheck on all source files. A new target will be created `Cppcheck-${TARGET}` and a 
+## dependency will be added to the `cppcheck` target.
+##
+##    TARGET:STRING=<>           - CMake target to retrieve the includes.
+##    SOURCES:STRING=<>          - List of source files.
+##
+function(sequoia_run_cppcheck TARGET)
+  if(NOT TARGET ${TARGET})
+    message(FATAL_ERROR "${TARGET} is not a valid CMake target")
+  endif()
+
+  set(includes "$<TARGET_PROPERTY:${TARGET},INCLUDE_DIRECTORIES>")
+  get_directory_property(definitions COMPILE_DEFINITIONS)
+
+  add_custom_target(
+    Cppcheck-${TARGET}
+    COMMAND
+      ${CPPCHECK_EXECUTABLE}
+          "$<$<BOOL:${includes}>:-I$<JOIN:${includes},\t-I>>"
+          "$<$<BOOL:${definitions}>:-D$<JOIN:${definitions},\t-D>>"
+          --check-config
+          --enable=warning,performance,portability,information,missingInclude
+          --std=c++11
+          --verbose
+          --suppress=missingIncludeSystem
+          ${ARGN}
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+  )
+  add_dependencies(Cppcheck-${TARGET} ${TARGET})
+  
+  if(NOT TARGET cppcheck)
+    add_custom_target(cppcheck COMMENT "Running Cppcheck")
+  endif()
+  add_dependencies(cppcheck Cppcheck-${TARGET})
+endfunction()
+
 ## sequoia_add_library
 ## -------------------
 ##
@@ -51,7 +90,6 @@ endfunction()
 ##                                 dependencies of the library.
 ##
 function(sequoia_add_library)
-
   #
   # Parse arguments
   #
@@ -69,6 +107,10 @@ function(sequoia_add_library)
   #
   add_library(${ARG_NAME} ${ARG_SOURCES})
   target_link_libraries(${ARG_NAME} ${ARG_DEPENDS})
+
+  if(SEQUOIA_HAS_CPPCHECK)
+    sequoia_run_cppcheck(${ARG_NAME} ${ARG_SOURCES})
+  endif()
   
   if(SEQUOIA_COMPILER_MSVC)
     set_property(TARGET ${ARG_NAME} PROPERTY ARCHIVE_OUTPUT_DIRECTORY 

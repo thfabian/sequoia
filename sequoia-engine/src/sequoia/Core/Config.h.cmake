@@ -45,4 +45,7 @@
 // Sequoia version string 
 #define SEQUOIA_VERSION_STRING "${SEQUOIA_VERSION_STRING}"
 
+// Architecture string
+#define SEQUOIA_ARCHITECTURE_STRING "${SEQUOIA_ARCHITECTURE_STRING}"
+
 #endif

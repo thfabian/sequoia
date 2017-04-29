@@ -23,6 +23,6 @@ sequoia_add_test(
           TestVersion.cpp
   DEPENDS SequoiaUnittest
           SequoiaCore
-          ${SEQUOIA_EXTERNAL_LIBRARIES}
+          ${SEQUOIA_UNITTEST_EXTERNAL_LIBRARIES}
 )
 
