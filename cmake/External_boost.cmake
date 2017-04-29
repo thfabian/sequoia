@@ -57,8 +57,8 @@ if(use_bat)
 
   set(boost_cmds
     CONFIGURE_COMMAND bootstrap.bat
-    BUILD_COMMAND b2 address-model=${am} ${boost_with_args}
-    INSTALL_COMMAND b2 address-model=${am} ${boost_with_args} --prefix=<INSTALL_DIR> install
+    BUILD_COMMAND b2 -j4 address-model=${am} ${boost_with_args}
+    INSTALL_COMMAND b2 -j4 address-model=${am} ${boost_with_args} --prefix=<INSTALL_DIR> install
   )
 else()
   set(boost_cmds

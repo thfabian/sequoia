@@ -67,14 +67,21 @@ function(sequoia_add_library)
   #
   # Add library
   #
-  add_library(${ARG_NAME} ${ARG_SOURCES} ${additional_headers})
+  add_library(${ARG_NAME} ${ARG_SOURCES})
   target_link_libraries(${ARG_NAME} ${ARG_DEPENDS})
   
-  set_property(TARGET ${ARG_NAME} PROPERTY ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
-  set_property(TARGET ${ARG_NAME} PROPERTY LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
-  set_property(TARGET ${ARG_NAME} PROPERTY RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
-  
-  install(TARGETS ${ARG_NAME} DESTINATION lib)
+  if(SEQUOIA_COMPILER_MSVC)
+    set_property(TARGET ${ARG_NAME} PROPERTY ARCHIVE_OUTPUT_DIRECTORY 
+                 ${CMAKE_BINARY_DIR}/lib/${CMAKE_BUILD_TYPE})
+    set_property(TARGET ${ARG_NAME} PROPERTY LIBRARY_OUTPUT_DIRECTORY 
+                 ${CMAKE_BINARY_DIR}/lib/${CMAKE_BUILD_TYPE})
+    set_property(TARGET ${ARG_NAME} PROPERTY RUNTIME_OUTPUT_DIRECTORY 
+                 ${CMAKE_BINARY_DIR}/bin/${CMAKE_BUILD_TYPE})
+  else()
+    set_property(TARGET ${ARG_NAME} PROPERTY ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+    set_property(TARGET ${ARG_NAME} PROPERTY LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+    set_property(TARGET ${ARG_NAME} PROPERTY RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+  endif()
 endfunction()
 
 ## sequoia_add_executable
@@ -112,9 +119,12 @@ function(sequoia_add_executable)
   endif()
   
   target_link_libraries(${ARG_NAME} ${ARG_DEPENDS})
-  set_property(TARGET ${ARG_NAME} PROPERTY RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
-  
-  install(TARGETS ${ARG_NAME} DESTINATION bin)
+  if(SEQUOIA_COMPILER_MSVC)
+    set_property(TARGET ${ARG_NAME} PROPERTY RUNTIME_OUTPUT_DIRECTORY 
+                 ${CMAKE_BINARY_DIR}/bin/${CMAKE_BUILD_TYPE})
+  else()
+    set_property(TARGET ${ARG_NAME} PROPERTY RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+  endif()
 endfunction()
 
 ## sequoia_add_test
@@ -172,7 +182,8 @@ function(sequoia_configure_file FILE)
   
   configure_file(${input_file} ${output_file})
   
+  # TODO: Problem here as ${install_dir} still has the "src"
   set(install_dir "${CMAKE_INSTALL_PREFIX}/${output_dir}")
-  install(FILES ${output_file} DESTINATION ${install_dir})
+  #install(FILES ${output_file} DESTINATION ${install_dir})
 endfunction(sequoia_configure_file)
 
