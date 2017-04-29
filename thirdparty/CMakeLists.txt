@@ -13,10 +13,23 @@
 ##
 ##===------------------------------------------------------------------------------------------===##
 
-option(USE_SYSTEM_BOOST "Should we use the system Boost?" OFF)
-option(USE_SYSTEM_GTEST "Should we use the system GTest?" OFF)
 option(USE_SYSTEM_BLAZE "Should we use the system Blaze?" OFF)
+option(USE_SYSTEM_BOOST "Should we use the system Boost?" OFF)
+option(USE_SYSTEM_GLFW "Should we use the system GLFW?" OFF)
+option(USE_SYSTEM_GTEST "Should we use the system GTest?" OFF)
 option(USE_SYSTEM_TBB "Should we use the system TBB?" OFF)
+
+#
+# Blaze
+#
+if(USE_SYSTEM_BLAZE)
+  find_package(Blaze ${blaze_version} REQUIRED)
+  if(DEFINED BLAZE_ROOT)
+    list(APPEND Sequoia_THIRDPARTYLIBS_ARGS "-DBLAZE_ROOT:PATH=${BLAZE_ROOT}")
+  endif()
+else()
+  include(External_blaze)
+endif()
 
 #
 # Boost
@@ -35,15 +48,15 @@ else()
 endif()
 
 #
-# Blaze
+# GLFW
 #
-if(USE_SYSTEM_BLAZE)
-  find_package(Blaze ${blaze_version} REQUIRED)
-  if(DEFINED BLAZE_ROOT)
-    list(APPEND Sequoia_THIRDPARTYLIBS_ARGS "-DBLAZE_ROOT:PATH=${BLAZE_ROOT}")
+if(USE_SYSTEM_GLFW)
+  find_package(GLFW ${glfw_version} REQUIRED)
+  if(DEFINED GLFW_ROOT)
+    list(APPEND Sequoia_THIRDPARTYLIBS_ARGS "-DGLFW_ROOT:PATH=${GLFW_ROOT}")
   endif()
 else()
-  include(External_blaze)
+  include(External_glfw)
 endif()
 
 #

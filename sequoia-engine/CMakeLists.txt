@@ -60,12 +60,14 @@ sequoia_report_result(
 
 ##===---------------------------------- Add external libraries --------------------------------===##
 include(AddThreads)
-include(AddBoost)
 include(AddBlaze)
+include(AddBoost)
 include(AddTBB)
+include(AddGLFW)
 include(AddGTest)
 
 set(SEQUOIA_EXTERNAL_LIBRARIES
+  ${SEQUOIA_GLFW_LIBRARIES}
   ${SEQUOIA_BOOST_LIBRARIES}
   ${SEQUOIA_TBB_LIBRARIES}
   ${SEQUOIA_GTEST_LIBRARIES}

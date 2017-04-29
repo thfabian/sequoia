@@ -16,6 +16,14 @@
 unset(projects)
 
 #
+# Blaze
+#
+list(APPEND projects blaze)
+set(blaze_version "3.1")
+set(blaze_url "https://bitbucket.org/blaze-lib/blaze/downloads/blaze-${blaze_version}.tar.gz")
+set(blaze_md5 "2938e015f0d274e8d62ee5c4c0c1e9f3")
+
+#
 # Boost
 #
 list(APPEND projects boost)
@@ -27,12 +35,12 @@ set(boost_md5 "28f58b9a33469388302110562bdf6188")
 set(boost_components thread date_time system atomic chrono filesystem program_options)
 
 #
-# Blaze
+# GLFW
 #
-list(APPEND projects blaze)
-set(blaze_version "3.1")
-set(blaze_url "https://bitbucket.org/blaze-lib/blaze/downloads/blaze-${blaze_version}.tar.gz")
-set(blaze_md5 "2938e015f0d274e8d62ee5c4c0c1e9f3")
+list(APPEND projects glfw)
+set(glfw_version "3.2.1")
+set(glfw_url "https://github.com/glfw/glfw/archive/${glfw_version}.tar.gz")
+set(glfw_md5 "91b8250b6edcc26c9f5205555070a504")
 
 #
 # GTest
