@@ -7,9 +7,9 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
+#include "sequoia/Game/WindowFactory.h"
 #include "sequoia/Core/GlobalConfiguration.h"
 #include "sequoia/Core/Version.h"
-#include "sequoia/Game/WindowFactory.h"
 #include <OGRE/OgreRenderWindow.h>
 #include <OGRE/OgreRoot.h>
 

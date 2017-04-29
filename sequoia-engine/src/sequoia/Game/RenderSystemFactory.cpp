@@ -7,9 +7,9 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
+#include "sequoia/Game/RenderSystemFactory.h"
 #include "sequoia/Core/ErrorHandler.h"
 #include "sequoia/Core/StringRef.h"
-#include "sequoia/Game/RenderSystemFactory.h"
 #include <OGRE/OgreRenderSystem.h>
 #include <OGRE/OgreRoot.h>
 #include <string>

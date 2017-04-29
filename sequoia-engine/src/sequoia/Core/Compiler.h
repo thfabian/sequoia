@@ -1,12 +1,12 @@
 //===--------------------------------------------------------------------------------*- C++ -*-===//
-//                         _____                        _       
-//                        / ____|                      (_)      
-//                       | (___   ___  __ _ _   _  ___  _  __ _ 
+//                         _____                        _
+//                        / ____|                      (_)
+//                       | (___   ___  __ _ _   _  ___  _  __ _
 //                        \___ \ / _ \/ _` | | | |/ _ \| |/ _` |
 //                        ____) |  __/ (_| | |_| | (_) | | (_| |
 //                       |_____/ \___|\__, |\__,_|\___/|_|\__,_| - Game Engine
-//                                       | |                    
-//                                       |_| 
+//                                       | |
+//                                       |_|
 //
 // This file is distributed under the MIT License (MIT).
 // See LICENSE.txt for details.
@@ -76,7 +76,7 @@
 #define SEQUOIA_API_EXPORT __declspec(dllexport)
 #define SEQUOIA_API_IMPORT __declspec(dllimport)
 #ifdef _MSC_VER
-#pragma warning(disable: 4251)
+#pragma warning(disable : 4251)
 #endif
 #else
 #if SEQUOIA_GNUC_PREREQ(4, 0, 0)

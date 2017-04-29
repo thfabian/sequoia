@@ -2,7 +2,7 @@
 //
 //                                      S E Q U O I A
 //
-// This file is distributed under the MIT License (MIT). 
+// This file is distributed under the MIT License (MIT).
 // See LICENSE.txt for details.
 //
 //===------------------------------------------------------------------------------------------===//
@@ -17,9 +17,9 @@
 /// @brief Driver infrastructure of Sequoia.
 
 namespace sequoia {
-  /// @namespace driver
-  /// @brief Namespace containing the driver library.
-  namespace driver {}
+/// @namespace driver
+/// @brief Namespace containing the driver library.
+namespace driver {}
 }
 #endif
 

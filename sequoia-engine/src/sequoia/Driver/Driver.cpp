@@ -7,13 +7,13 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
+#include "sequoia/Driver/Driver.h"
 #include "sequoia/Core/Assert.h"
 #include "sequoia/Core/ErrorHandler.h"
 #include "sequoia/Core/Exception.h"
 #include "sequoia/Core/GlobalConfiguration.h"
 #include "sequoia/Core/SingletonManager.h"
 #include "sequoia/Driver/CommandLine.h"
-#include "sequoia/Driver/Driver.h"
 #include "sequoia/Driver/Win32Console.h"
 #include "sequoia/Game/Game.h"
 #include <OGRE/OgreLogManager.h>
@@ -29,12 +29,12 @@ int Driver::run(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, i
   // Define SingletonManager here to keep it alive
   auto singletonManager = std::make_unique<SingletonManager>();
   Driver::setDefaultConfigs();
-  
-  // Allocate OS specific Singletons  
+
+  // Allocate OS specific Singletons
   TCHAR program[MAX_PATH];
   GetModuleFileName(NULL, program, MAX_PATH);
   singletonManager->allocateSingleton<ErrorHandler>(program);
-  
+
   // Parse command-line
   std::vector<std::string> arguments = boost::program_options::split_winmain(lpCmdLine);
   CommandLine::parse(arguments);
@@ -51,7 +51,7 @@ int Driver::run(int argc, char* argv[]) {
 
   // Allocate OS specific Singletons
   singletonManager->allocateSingleton<ErrorHandler>(argc > 0 ? argv[0] : "unknown");
-  
+
   // Parse command-line
   std::vector<std::string> arguments(argv + 1, argv + argc);
   CommandLine::parse(arguments);
@@ -64,15 +64,17 @@ int Driver::run(int argc, char* argv[]) {
 void Driver::setDefaultConfigs() {
   auto& singletonManager = SingletonManager::getSingleton();
   singletonManager.allocateSingleton<GlobalConfiguration>();
-  
-  auto& config = GlobalConfiguration::getSingleton();  
-  config.put("InternalSettings.PluginPath", boost::filesystem::path(CSTR(SEQUOIA_OGRE_PLUGIN_PATH)));
-  config.put("InternalSettings.ConfigPath", boost::filesystem::path(CSTR(SEQUOIA_OGRE_CONFIG_PATH)));
+
+  auto& config = GlobalConfiguration::getSingleton();
+  config.put("InternalSettings.PluginPath",
+             boost::filesystem::path(CSTR(SEQUOIA_OGRE_PLUGIN_PATH)));
+  config.put("InternalSettings.ConfigPath",
+             boost::filesystem::path(CSTR(SEQUOIA_OGRE_CONFIG_PATH)));
 }
 
 int Driver::runImpl() {
-  auto& config = GlobalConfiguration::getSingleton();  
-  
+  auto& config = GlobalConfiguration::getSingleton();
+
   // Create Logger TODO: should be deleted last
   auto* lm = new Ogre::LogManager();
   lm->createLog("sequoia.log", true, true, false);

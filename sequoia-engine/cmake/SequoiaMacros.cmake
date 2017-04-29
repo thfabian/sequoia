@@ -296,16 +296,16 @@ macro(sequoia_add_target_clang_format SOURCE_DIR)
 
     # Runs clang format and updates files in place.
     add_custom_target(format 
-                      COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/scripts/run-clang-format.sh 
-                      ${CMAKE_CURRENT_SOURCE_DIR} 
+                      COMMAND ${CMAKE_SOURCE_DIR}/cmake/scripts/run-clang-format.sh 
+                      ${CMAKE_CURRENT_SOURCE_DIR}
                       ${CLANG_FORMAT_BIN} 
                       1
                       `find ${SOURCE_DIR} -name \*.h -print -o -name \*.cpp -print`)
 
     # Runs clang format and exits with a non-zero exit code if any files need to be reformatted
     add_custom_target(check-format 
-                      COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/scripts/run-clang-format.sh 
-                      ${CMAKE_CURRENT_SOURCE_DIR} 
+                      COMMAND ${CMAKE_SOURCE_DIR}/cmake/scripts/run-clang-format.sh 
+                      ${CMAKE_CURRENT_SOURCE_DIR}
                       ${CLANG_FORMAT_BIN} 
                       0
                       `find ${SOURCE_DIR} -name \*.h -print -o -name \*.cpp -print`)

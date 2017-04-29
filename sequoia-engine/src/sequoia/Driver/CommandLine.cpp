@@ -7,11 +7,11 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
+#include "sequoia/Driver/CommandLine.h"
 #include "sequoia/Core/ErrorHandler.h"
 #include "sequoia/Core/Exception.h"
 #include "sequoia/Core/GlobalConfiguration.h"
 #include "sequoia/Core/Version.h"
-#include "sequoia/Driver/CommandLine.h"
 #include <boost/program_options.hpp>
 #include <string>
 

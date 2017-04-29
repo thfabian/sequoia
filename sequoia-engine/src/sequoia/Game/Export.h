@@ -2,7 +2,7 @@
 //
 //                                      S E Q U O I A
 //
-// This file is distributed under the MIT License (MIT). 
+// This file is distributed under the MIT License (MIT).
 // See LICENSE.txt for details.
 //
 //===------------------------------------------------------------------------------------------===//
@@ -17,9 +17,9 @@
 /// @brief Main gaming infrastructure of Sequoia.
 
 namespace sequoia {
-  /// @namespace game
-  /// @brief Namespace containing the main game library.
-  namespace game {}
+/// @namespace game
+/// @brief Namespace containing the main game library.
+namespace game {}
 }
 #endif
 

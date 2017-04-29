@@ -57,7 +57,7 @@ private:
 
   void loadResources();
 
-  /// @brief FrameListener implementation 
+  /// @brief FrameListener implementation
   /// @{
   virtual bool frameRenderingQueued(const Ogre::FrameEvent& e) override;
   /// @}

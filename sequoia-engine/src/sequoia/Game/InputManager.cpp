@@ -7,11 +7,11 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
+#include "sequoia/Game/InputManager.h"
 #include "sequoia/Core/Assert.h"
 #include "sequoia/Core/Exception.h"
 #include "sequoia/Core/Format.h"
 #include "sequoia/Core/GlobalConfiguration.h"
-#include "sequoia/Game/InputManager.h"
 #include <OGRE/OgreLogManager.h>
 #include <OGRE/OgreRenderWindow.h>
 #include <OGRE/OgreWindowEventUtilities.h>

@@ -70,7 +70,7 @@ public:
   bool mouseMoved(const OIS::MouseEvent& e) override;
   bool mousePressed(const OIS::MouseEvent& e, OIS::MouseButtonID id) override;
   bool mouseReleased(const OIS::MouseEvent& e, OIS::MouseButtonID id) override;
-  bool mouseImpl(const OIS::MouseEvent& e, OIS::MouseButtonID id, const bool isPressed);  
+  bool mouseImpl(const OIS::MouseEvent& e, OIS::MouseButtonID id, const bool isPressed);
   /// @}
 
   /// @name KeyListener implementation

@@ -7,23 +7,23 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
+#include "sequoia/Game/Game.h"
 #include "sequoia/Core/ErrorHandler.h"
 #include "sequoia/Core/Format.h"
 #include "sequoia/Core/GlobalConfiguration.h"
 #include "sequoia/Core/SingletonManager.h"
 #include "sequoia/Core/SmallVector.h"
 #include "sequoia/Core/StringRef.h"
-#include "sequoia/Game/Game.h"
 #include "sequoia/Game/InputManager.h"
 #include "sequoia/Game/RenderSystemFactory.h"
 #include "sequoia/Game/WindowFactory.h"
 #include <OGRE/OgreConfigFile.h>
+#include <OGRE/OgreEntity.h>
+#include <OGRE/OgreMeshManager.h>
 #include <OGRE/OgreRenderWindow.h>
 #include <OGRE/OgreRoot.h>
 #include <OGRE/OgreSceneManager.h>
-#include <OGRE/OgreEntity.h>
 #include <OGRE/OgreTimer.h>
-#include <OGRE/OgreMeshManager.h>
 #include <OGRE/Overlay/OgreOverlaySystem.h>
 
 template <>
@@ -266,7 +266,7 @@ void Game::setupDummyScene() {
   //
   Ogre::Entity* ninjaEntity = sceneManager_->createEntity("ninja.mesh");
   ninjaEntity->setCastShadows(true);
-  Ogre::SceneNode* ninjaSceneNode = sceneManager_->getRootSceneNode()->createChildSceneNode(); 
+  Ogre::SceneNode* ninjaSceneNode = sceneManager_->getRootSceneNode()->createChildSceneNode();
   ninjaSceneNode->attachObject(ninjaEntity);
 
   //
@@ -281,13 +281,8 @@ void Game::setupDummyScene() {
   //
   Ogre::Plane plane(Ogre::Vector3::UNIT_Y, 0);
   Ogre::MeshManager::getSingleton().createPlane(
-    "ground",
-    Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
-    plane, 
-    1500, 1500, 20, 20, 
-    true, 
-    1, 5, 5, 
-    Ogre::Vector3::UNIT_Z);
+      "ground", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, plane, 1500, 1500, 20, 20,
+      true, 1, 5, 5, Ogre::Vector3::UNIT_Z);
 
   Ogre::Entity* groundEntity = sceneManager_->createEntity("ground");
   sceneManager_->getRootSceneNode()->createChildSceneNode()->attachObject(groundEntity);

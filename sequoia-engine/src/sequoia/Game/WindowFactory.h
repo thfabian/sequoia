@@ -20,7 +20,7 @@ namespace sequoia {
 namespace game {
 
 /// @brief Factory to create Ogre::RenderWindow
-/// 
+///
 /// @ingroup game
 class WindowFactory {
 public:

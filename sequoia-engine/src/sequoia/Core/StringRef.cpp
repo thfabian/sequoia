@@ -13,8 +13,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Core/Compiler.h"
 #include "sequoia/Core/StringRef.h"
+#include "sequoia/Core/Compiler.h"
 #include <bitset>
 #include <climits>
 #include <iostream>
