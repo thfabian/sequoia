@@ -14,23 +14,24 @@
 ##===------------------------------------------------------------------------------------------===##
 
 ExternalProject_Add(
-  glfw
+  glbinding
   DOWNLOAD_DIR ${download_dir}
-  URL ${glfw_url}
-  URL_MD5 ${glfw_md5}
-  BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}/glfw"
-  INSTALL_DIR "${Sequoia_INSTALL_PREFIX}/glfw"
+  URL ${glbinding_url}
+  URL_MD5 ${glbinding_md5}
+  BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}/glbinding"
+  INSTALL_DIR "${Sequoia_INSTALL_PREFIX}/glbinding"
   CMAKE_ARGS
     -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
     -DBUILD_SHARED_LIBS:BOOL=${BUILD_SHARED_LIBS}
     -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
-    -DGLFW_BUILD_DOCS:BOOL=OFF
-    -DGLFW_BUILD_EXAMPLES:BOOL=OFF
-    -DGLFW_BUILD_TESTS:BOOL=OFF
+    -DOPTION_BUILD_DOCS:BOOL=OFF
+    -DOPTION_BUILD_EXAMPLES:BOOL=OFF
+    -DOPTION_BUILD_TESTS:BOOL=OFF
+    -DOPTION_BUILD_TOOLS:BOOL=OFF
 )
 
-ExternalProject_Get_Property(glfw install_dir)
-set(GLFW_ROOT "${install_dir}" CACHE INTERNAL "")
+ExternalProject_Get_Property(glbinding install_dir)
+set(GLBINDING_ROOT "${install_dir}" CACHE INTERNAL "")
 
-list(APPEND Sequoia_THIRDPARTYLIBS_ARGS "-DGLFW_ROOT:PATH=${GLFW_ROOT}")
+list(APPEND Sequoia_THIRDPARTYLIBS_ARGS "-DGLBINDING_ROOT:PATH=${GLBINDING_ROOT}")
 

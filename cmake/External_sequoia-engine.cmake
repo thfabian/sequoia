@@ -33,6 +33,7 @@ ExternalProject_Add(
   sequoia-engine
   SOURCE_DIR ${_source}
   BINARY_DIR ${_build}
+  INSTALL_COMMAND ""
   CMAKE_CACHE_ARGS
     ${Sequoia_DEFAULT_ARGS}
     ${Sequoia_THIRDPARTYLIBS_ARGS}

@@ -15,6 +15,7 @@
 
 option(USE_SYSTEM_BLAZE "Should we use the system Blaze?" OFF)
 option(USE_SYSTEM_BOOST "Should we use the system Boost?" OFF)
+option(USE_SYSTEM_GLBINDING "Should we use the system glbinding?" OFF)
 option(USE_SYSTEM_GLFW "Should we use the system GLFW?" OFF)
 option(USE_SYSTEM_GTEST "Should we use the system GTest?" OFF)
 option(USE_SYSTEM_TBB "Should we use the system TBB?" OFF)
@@ -45,6 +46,18 @@ if(USE_SYSTEM_BOOST)
     "-DBOOST_INCLUDEDIR:PATH=${Boost_INCLUDE_DIRS}")
 else()
   include(External_boost)
+endif()
+
+#
+# glbinding
+#
+if(USE_SYSTEM_GLBINDING)
+  find_package(glbinding ${glbinding_version} REQUIRED)
+  if(DEFINED GLBINDING_ROOT)
+    list(APPEND Sequoia_THIRDPARTYLIBS_ARGS "-DGLBINDING_ROOT:PATH=${GLBINDING_ROOT}")
+  endif()
+else()
+  include(External_glbinding)
 endif()
 
 #

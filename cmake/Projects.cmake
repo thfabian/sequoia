@@ -35,6 +35,14 @@ set(boost_md5 "28f58b9a33469388302110562bdf6188")
 set(boost_components thread date_time system atomic chrono filesystem program_options)
 
 #
+# glbinding
+#
+list(APPEND projects glbinding)
+set(glbinding_version "2.1.1")
+set(glbinding_url "https://github.com/cginternals/glbinding/archive/v${glbinding_version}.tar.gz")
+set(glbinding_md5 "93dab7f4d64eff5385e3d1915e765695")
+
+#
 # GLFW
 #
 list(APPEND projects glfw)

@@ -19,12 +19,12 @@ ExternalProject_Add(
   URL ${blaze_url}
   URL_MD5 ${blaze_md5}
   BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}/blaze"
-  INSTALL_DIR "${Sequoia_INSTALL_PREFIX}"
+  INSTALL_DIR "${Sequoia_INSTALL_PREFIX}/blaze"
   PATCH_COMMAND ""
   CONFIGURE_COMMAND ""
   BUILD_COMMAND ""
-  INSTALL_COMMAND ${CMAKE_COMMAND} -E make_directory <INSTALL_DIR>/include/blaze && 
-                  ${CMAKE_COMMAND} -E copy_directory <SOURCE_DIR>/blaze/ <INSTALL_DIR>/include/blaze/
+  INSTALL_COMMAND ${CMAKE_COMMAND} -E make_directory <INSTALL_DIR>/blaze && 
+                  ${CMAKE_COMMAND} -E copy_directory <SOURCE_DIR>/blaze/ <INSTALL_DIR>/blaze/
 )
 
 ExternalProject_Get_Property(blaze install_dir)

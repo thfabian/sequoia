@@ -64,6 +64,7 @@ include(AddThreads)
 include(AddBlaze)
 include(AddBoost)
 include(AddCppcheck)
+include(Addglbinding)
 include(AddGLFW)
 include(AddGTest)
 include(AddOpenGL)
@@ -77,6 +78,7 @@ set(SEQUOIA_EXTERNAL_LIBRARIES
   ${SEQUOIA_GLFW_LIBRARIES}
   ${SEQUOIA_TBB_LIBRARIES}
   ${SEQUOIA_BOOST_LIBRARIES}
+  ${SEQUOIA_GLBINDING_LIBRARIES}
   ${SEQUOIA_OPENGL_LIBRARIES}
   ${SEQUOIA_THREADS_LIBRARIES}
 )
@@ -88,6 +90,7 @@ sequoia_report_result(
   "${SEQUOIA_BLAZE_INFO_STR}"
   "${SEQUOIA_BOOST_INFO_STR}"
   "${SEQUOIA_CPPCHECK_INFO_STR}"
+  "${SEQUOIA_GLBINDING_INFO_STR}"
   "${SEQUOIA_GLFW_INFO_STR}"
   "${SEQUOIA_GTEST_INFO_STR}"
   "${SEQUOIA_OPENGL_INFO_STR}"

@@ -28,7 +28,7 @@ ExternalProject_Add(
   URL ${gtest_url}
   URL_MD5 ${gtest_md5}
   BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}/gtest"
-  INSTALL_DIR "${Sequoia_INSTALL_PREFIX}"
+  INSTALL_DIR "${Sequoia_INSTALL_PREFIX}/gtest"
   PATCH_COMMAND ${CMAKE_COMMAND} -E copy_if_different
     "${CMAKE_CURRENT_BINARY_DIR}/gtest.CMakeLists.txt"
     "<SOURCE_DIR>/CMakeLists.txt"
