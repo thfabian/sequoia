@@ -22,8 +22,8 @@ endif()
 set(components tbb)
 find_package(TBB COMPONENTS ${components} REQUIRED)
 
-set(tbb_libs ${TBB_LIBRARIES})
-set(tbb_dlls ${TBB_BINARIES})
+set(tbb_libs)
+set(tbb_dlls)
 
 # Get the idivudual components 
 if(${CMAKE_BUILD_TYPE} MATCHES "Debug")
@@ -33,7 +33,7 @@ if(${CMAKE_BUILD_TYPE} MATCHES "Debug")
       set(tbb_libs "${TBB_${comp}_LIBRARY_DEBUG}")
     endif()
     if(TBB_${comp}_BINARY_DEBUG)  
-      set(tbb_libs "${TBB_${comp}_BINARY_DEBUG}")
+      set(tbb_dlls "${TBB_${comp}_BINARY_DEBUG}")
     endif()
   endforeach()
 else()
@@ -43,9 +43,17 @@ else()
       set(tbb_libs "${TBB_${comp}_LIBRARY_RELEASE}")
     endif()
     if(TBB_${comp}_BINARY_RELEASE)  
-      set(tbb_libs "${TBB_${comp}_BINARY_RELEASE}")
+      set(tbb_dlls "${TBB_${comp}_BINARY_RELEASE}")
     endif()
   endforeach()
+endif()
+
+if(NOT(tbb_libs))
+  set(tbb_libs ${TBB_LIBRARIRES})
+endif()
+
+if(NOT(tbb_dlls))
+  set(tbb_dlls ${TBB_BINARIES})
 endif()
 
 if(SEQUOIA_ON_LINUX)
@@ -69,4 +77,3 @@ sequoia_export_package_variable(
   "TBB: ${TBB_VERSION}"
   ${tbb_libs}
 )
-

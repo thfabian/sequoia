@@ -19,5 +19,6 @@ sequoia_add_library(
           Environment.cpp
           Export.h
   DEPENDS SequoiaCore
+          ${SEQUOIA_GTEST_LIBRARIES}
           ${SEQUOIA_EXTERNAL_LIBRARIES}
 )

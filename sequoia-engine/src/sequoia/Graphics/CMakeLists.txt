@@ -24,6 +24,5 @@ sequoia_add_library(
           GL/GLRenderSystem.h
           GL/GLRenderSystem.cpp
   DEPENDS SequoiaCore
-          SequoiaMath
           ${SEQUOIA_EXTERNAL_LIBRARIES}
 )

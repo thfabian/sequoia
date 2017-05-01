@@ -79,10 +79,11 @@ endif()
 
 # Assemble full version string
 set(version "${SEQUOIA_VERSION_MAJOR}.${SEQUOIA_VERSION_MINOR}.${SEQUOIA_VERSION_PATCH}")
+string(TOLOWER ${SEQUOIA_ARCHITECTURE_STRING} architecture)
 string(TOLOWER ${SEQUOIA_PLATFORM_STRING} platform)
 string(TOLOWER ${CMAKE_CXX_COMPILER_ID} compiler)
 set(compiler "${compiler}-${CMAKE_CXX_COMPILER_VERSION}")
 set(SEQUOIA_VERSION_STRING 
-    "${version}-dev-${SEQUOIA_GIT_SHA1}-${SEQUOIA_ARCHITECTURE_STRING}-${platform}-${compiler}"
+    "${version}-dev-${SEQUOIA_GIT_SHA1}-${architecture}-${platform}-${compiler}"
     CACHE STRING "Version string of Sequoia" FORCE)
 

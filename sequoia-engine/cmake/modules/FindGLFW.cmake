@@ -83,8 +83,8 @@ if(WIN32)
       NAMES 
         glfw32 
         glfw32s 
-        glfw
         glfw3
+        glfw3dll
       HINTS
         "${GLFW_ROOT}/lib"
         "${GLFW_ROOT}/lib/x64"
