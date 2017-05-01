@@ -38,6 +38,10 @@
 #define __has_builtin(x) 0
 #endif
 
+#ifndef __has_include
+#define __has_include(x) 0
+#endif
+
 #if defined(__clang__)
 #define SEQUOIA_COMPILER_CLANG 1
 #endif
@@ -52,6 +56,10 @@
 
 #if defined(_MSC_VER)
 #define SEQUOIA_COMPILER_MSVC 1
+#endif
+
+#if __cplusplus > 201402L
+#define SEQUOIA_HAS_CXX17 1
 #endif
 
 /// @macro SEQUOIA_GNUC_PREREQ
