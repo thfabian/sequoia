@@ -14,7 +14,6 @@
 //===------------------------------------------------------------------------------------------===//
 
 #include "sequoia/Core/ErrorHandler.h"
-#include "sequoia/Core/NPath.h"
 #include "sequoia/Core/Platform.h"
 #include <cstdlib>
 #include <iostream>
@@ -26,7 +25,7 @@ SEQUOIA_DECLARE_SINGLETON(core::ErrorHandler);
 namespace core {
 
 ErrorHandler::ErrorHandler(UtfString program) {
-  NPath p(program);
+  platform::Path p(program);
   program_ = p.stem().native();
 }
 

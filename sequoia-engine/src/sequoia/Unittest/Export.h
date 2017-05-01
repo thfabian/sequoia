@@ -23,6 +23,7 @@
 /// @namespace sequoia
 /// @brief Namespace of the sequoia project.
 namespace sequoia {
+
 /// @namespace unittest
 /// @brief Namespace of the unittest library.
 namespace unittest {}

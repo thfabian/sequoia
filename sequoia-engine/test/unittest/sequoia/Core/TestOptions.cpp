@@ -13,24 +13,24 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_CORE_NPATH_H
-#define SEQUOIA_CORE_NPATH_H
+#include "sequoia/Core/Options.h"
+#include <gtest/gtest.h>
 
-#include <boost/filesystem/path.hpp>
+using namespace sequoia::core;
 
-namespace sequoia {
+namespace {
 
-namespace core {
+TEST(OptionsTest, Reset) {
+  auto opt = std::make_unique<Options>();
 
-/// @typedef NPath
-/// @brief The native path of the platform with respect to `NString`
-/// @ingroup core
-using NPath = boost::filesystem::path;
+  bool defaultVal = Options::getSingleton().Core.Logging;
 
-} // namespace core
+  // Change the option
+  Options::getSingleton().Core.Logging = !defaultVal;
 
-using NPath = core::NPath;
+  // Reset
+  Options::getSingleton().reset();
+  EXPECT_EQ(defaultVal, Options::getSingleton().Core.Logging);
+}
 
-} // namespace sequoia
-
-#endif
+} // anonymous namespace

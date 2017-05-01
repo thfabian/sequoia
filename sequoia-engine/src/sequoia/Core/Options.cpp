@@ -13,33 +13,30 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_CORE_EXPORT_H
-#define SEQUOIA_CORE_EXPORT_H
+#include "sequoia/Core/Format.h"
+#include "sequoia/Core/Options.h"
+#include <iostream>
 
-#ifdef SEQUOIA_DOXYGEN_INVOKED
-/// @defgroup core Core
-/// @brief Core infrastructure of Sequoia.
-
-/// @namespace sequoia
-/// @brief Namespace of the sequoia project.
 namespace sequoia {
 
-/// @namespace core
-/// @brief Namespace of the core library.
-namespace core {}
+SEQUOIA_DECLARE_SINGLETON(core::Options);
 
-/// @namespace platform
-/// @brief Platform specific implementations and typedefs
-namespace platform {}
+namespace core {
+
+void Options::reset() {
+#define OPT(Structure, Name, Type, DefaultValue, CheckFun, Doc, CommandLine, CommandLineMetaVar)   \
+  Structure.Name = DefaultValue;
+#include "sequoia/Core/Options.inc"
+#undef OPT
 }
-#endif
 
-#include "sequoia/Core/Compiler.h"
+void Options::dump() {
+#define OPT(Structure, Name, Type, DefaultValue, CheckFun, Doc, CommandLine, CommandLineMetaVar)   \
+  std::cout << format("%-20s", #Structure "." #Name) << std::boolalpha << DefaultValue << "\n";
+#include "sequoia/Core/Options.inc"
+#undef OPT
+}
 
-#if defined(SEQUOIA_SHARED_LIBRARIES) && defined(SequoiaCore_EXPORTS)
-#define SEQUOIA_CORE_API SEQUOIA_API_EXPORT
-#else
-#define SEQUOIA_CORE_API SEQUOIA_API_IMPORT
-#endif
+} // namespace core
 
-#endif
+} // namespace sequoia

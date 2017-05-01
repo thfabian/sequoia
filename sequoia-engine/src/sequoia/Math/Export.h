@@ -23,6 +23,7 @@
 /// @namespace sequoia
 /// @brief Namespace of the sequoia project.
 namespace sequoia {
+
 /// @namespace math
 /// @brief Namespace of the math library.
 namespace math {}

@@ -100,6 +100,14 @@ function(sequoia_add_library)
     message(FATAL_ERROR "invalid argument ${ARG_UNPARSED_ARGUMENTS}")
   endif()
   
+  # Treat .json files as header files
+  foreach(source ${ARG_SOURCES})
+    get_filename_component(ext ${source} EXT)
+    if("${ext}" STREQUAL ".json")
+      set_source_files_properties(${source} PROPERTIES HEADER_FILE_ONLY 1)
+    endif()
+  endforeach()
+  
   # Add library
   add_library(${ARG_NAME} ${ARG_SOURCES})
   target_link_libraries(${ARG_NAME} ${ARG_DEPENDS})
@@ -210,7 +218,8 @@ function(sequoia_generate_options)
     message(FATAL_ERROR "invalid argument ${ARG_UNPARSED_ARGUMENTS}")
   endif()
 
-  set(script_path "\"${CMAKE_SOURCE_DIR}/tools/sequoia-opt-gen/sequoia-opt-gen.py\"")
+  set(script ${CMAKE_SOURCE_DIR}/tools/sequoia-opt-gen/sequoia-opt-gen.py)
+  set(script_path "\"${script}\"")
   set(script_args --input-header="${ARG_INPUT_HEADER}"
                   --input-include="${ARG_INPUT_INCLUDE}"
                   --output-header="${ARG_OUTPUT_HEADER}" 
@@ -219,12 +228,14 @@ function(sequoia_generate_options)
     list(APPEND script_args "\"${opt}\"")
   endforeach()
 
+  string(REPLACE "${CMAKE_BINARY_DIR}/" "" header "${ARG_OUTPUT_HEADER}")
+  
   # Run sequoia-opt-gen.py
   add_custom_command(
     OUTPUT ${ARG_OUTPUT_HEADER} ${ARG_OUTPUT_INCLUDE}
     COMMAND ${PYTHON_EXECUTABLE} ${script_path} ${script_args}
-    DEPENDS ${ARG_INPUT_HEADER} ${ARG_INPUT_INCLUDE}
-    COMMENT "Generating options"
+    DEPENDS ${ARG_INPUT_HEADER} ${ARG_INPUT_INCLUDE} ${ARG_OPTIONS} ${script}
+    COMMENT "Generating options header ${header}"
   )
 
 endfunction()

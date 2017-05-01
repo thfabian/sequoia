@@ -16,8 +16,6 @@
 #include "sequoia/Unittest/Environment.h"
 #include <gtest/gtest.h>
 
-#include "sequoia/Core/Utf.h"
-
 int main(int argc, char* argv[]) {
 
   // Initialize gtest

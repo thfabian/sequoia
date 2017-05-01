@@ -39,8 +39,8 @@ public:
   /// @brief Report a fatal error and exit with `EXIT_FAILURE`
   ///
   /// @param message      Message to display
-  /// @param messagebox   If true display message in a popup GUI (Win32 only), otherwise write to
-  ///                     console (`stderr`).
+  /// @param messagebox   If `true`, display the message in a popup GUI (Win32 only), otherwise
+  ///                     write to console (`stderr`).
   SEQUOIA_ATTRIBUTE_NORETURN void fatal(std::wstring message, bool messagebox = true) noexcept;
   SEQUOIA_ATTRIBUTE_NORETURN void fatal(std::string message, bool messagebox = true) noexcept;
 

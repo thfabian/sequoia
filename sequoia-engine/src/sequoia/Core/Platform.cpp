@@ -13,35 +13,30 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_CORE_OPTIONS_H
-#define SEQUOIA_CORE_OPTIONS_H
-
-#include "sequoia/Core/Export.h"
-#include "sequoia/Core/Singleton.h"
-#include <string>
-#include <vector>
+#include "sequoia/Core/Platform.h"
+#include <cstring>
 
 namespace sequoia {
 
-namespace core {
+namespace platform {
 
-/// @brief Options of sequoia
-/// @ingroup core
-struct SEQUOIA_CORE_API Options : public Singleton<Options> {
+static char* copyCStringImpl(const char* str, const std::size_t size) {
+  char* buffer = new char[size + 1];
+  std::memcpy(buffer, str, size + 1);
+  return buffer;
+}
 
-  // ${SEQUOIA_DECL_HEADER_OPTIONS}
+static wchar_t* copyCStringImpl(const wchar_t* str, const std::size_t size) {
+  wchar_t* buffer = new wchar_t[size + 1];
+  std::wmemcpy(buffer, str, size + 1);
+  return buffer;
+}
 
-  /// @brief Reset the options to the default
-  void reset();
+char* copyCString(const std::string& str) { return copyCStringImpl(str.c_str(), str.size()); }
+char* copyCString(const char* str) { return copyCStringImpl(str, std::strlen(str)); }
+wchar_t* copyCString(const std::wstring& str) { return copyCStringImpl(str.c_str(), str.size()); }
+wchar_t* copyCString(const wchar_t* str) { return copyCStringImpl(str, std::wcslen(str)); }
 
-  /// @brief Dump the option to `stdout`
-  void dump();
-};
-
-} // namespace core
-
-using Options = core::Options;
+} // namespace platform
 
 } // namespace sequoia
-
-#endif

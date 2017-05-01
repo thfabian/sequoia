@@ -13,33 +13,30 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_CORE_EXPORT_H
-#define SEQUOIA_CORE_EXPORT_H
+#include "sequoia/Core/Platform.h"
+#include <gtest/gtest.h>
 
-#ifdef SEQUOIA_DOXYGEN_INVOKED
-/// @defgroup core Core
-/// @brief Core infrastructure of Sequoia.
+using namespace sequoia::platform;
 
-/// @namespace sequoia
-/// @brief Namespace of the sequoia project.
-namespace sequoia {
+namespace {
 
-/// @namespace core
-/// @brief Namespace of the core library.
-namespace core {}
+TEST(PlatformTest, CopyCString) {
+  std::string string("string");
+  std::wstring wstring(L"wstring");
 
-/// @namespace platform
-/// @brief Platform specific implementations and typedefs
-namespace platform {}
+  auto* copyString = copyCString(string);
+  auto* copyWString = copyCString(wstring);
+
+  EXPECT_STREQ(string.c_str(), copyString);
+  EXPECT_STREQ(wstring.c_str(), copyWString);
+
+  delete[] copyString;
+  delete[] copyWString;
 }
-#endif
 
-#include "sequoia/Core/Compiler.h"
+TEST(PlatformTest, String) {
+  String str(PLATFORM_STR("a string"));
+  (void)str;
+}
 
-#if defined(SEQUOIA_SHARED_LIBRARIES) && defined(SequoiaCore_EXPORTS)
-#define SEQUOIA_CORE_API SEQUOIA_API_EXPORT
-#else
-#define SEQUOIA_CORE_API SEQUOIA_API_IMPORT
-#endif
-
-#endif
+} // anonymous namespace

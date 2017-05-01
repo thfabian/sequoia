@@ -18,7 +18,6 @@
 
 #include "sequoia/Core/Assert.h"
 #include "sequoia/Core/ErrorHandler.h"
-#include "sequoia/Core/NString.h"
 #include <boost/format.hpp>
 
 namespace sequoia {

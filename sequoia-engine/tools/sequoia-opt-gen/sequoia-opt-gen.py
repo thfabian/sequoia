@@ -15,8 +15,42 @@
 ##
 ##===------------------------------------------------------------------------------------------===##
 ##
-## This script parses all the json files and generates a single header and *.inc file for all the
+## This script parses all the json files and generates a single header *.h and *.inc file of all the
 ## options.
+## 
+## The json file needs to have the following format:
+##
+##  {
+##    "Options" : {
+##      "StructName" : {
+##        "OptionName" : {            # Name of the option (i.e accessed via 
+##                                    # Options.StructName.OptionName).
+##          "value_type" : "",        # Default value of the option.
+##          "value_default" : "",     # Type of the option [int, bool, std::string].
+##          "value_allowed" : "",     # [optional] Comma separated list of allowed values. Note that
+##                                                 this will implicitly create the check_fun.
+##          "doc" : "",               # [optional] Documentation string of the option
+##          "check_fun" : "",         # [optional] Lambda function to check if option is valid. 
+##                                    #            Default is [](const auto& value) { return true; }
+##                                    #            Note that only the body { ... } needs to be 
+##                                    #            provided i.e [](const auto& value) will be added 
+##                                    #            automatically.
+##          "cl" : "",                # [optional] Command-line option (without leading "-" or "--")
+##          "cl_metavar" : ""         # [optional] Meta variable used in the help string of the 
+##                                    #            command-line target.
+##        }
+##      }
+##    }
+##  }
+##
+## Note that one can reference other options with ${...}. For example to reference the type of the
+## option in the doc string:
+##          ...
+##          "value_type" : "double",
+##          "doc" : "This option is of type ${value_type}",
+##          ...
+##
+## Which results in a doc-string "This option is of type ${value_type}".
 ##
 ##===------------------------------------------------------------------------------------------===##
 
@@ -43,7 +77,7 @@ def report_info(msg):
 
 class Option(object):
     def __init__(self):
-        self.name = None            # Name of the option (i.e accessed via Option.struct.bame)
+        self.name = None            # Name of the option (i.e accessed via Option.struct.name)
         self.value_type = None      # Type of the option [int, bool, std::string]
         self.value_default = None   # Default value of the option
         self.doc = None             # [optional] Documentation string of the option
@@ -167,7 +201,7 @@ class OptionList(object):
         cxx_header_option_def = ""
         for struct_name, options in self.options.items():  
             cxx_header_option_def += "  /// @brief " + struct_name + " specific options\n"      
-            cxx_header_option_def += "  struct " + struct_name + " {\n"
+            cxx_header_option_def += "  struct " + struct_name + "Type {\n"
             for opt in options:
                 cxx_header_option_def += "\n"
                 if opt.doc:
@@ -175,7 +209,7 @@ class OptionList(object):
                 cxx_header_option_def += "    " + opt.value_type + " " + opt.name + " = " + \
                                          self.get_value_str(opt.value_type, opt.value_default) + \
                                          ";\n"
-            cxx_header_option_def += "  };\n\n"
+            cxx_header_option_def += "  } " + struct_name + ";\n\n"
         return cxx_header_option_def
 
     def generate_cxx_include_option_def(self):
@@ -189,7 +223,7 @@ class OptionList(object):
             cxx_inc_option_def += "#ifndef OPT_" + struct_name.upper() + "\n"
             cxx_inc_option_def += "#define OPT_" + struct_name.upper() + signature + " OPT" + \
                                   signature + "\n"
-            cxx_inc_option_def += "#endif OPT_" + struct_name.upper() + "\n\n"
+            cxx_inc_option_def += "#endif \n\n"
 
         for struct_name, options in self.options.items(): 
             for opt in options:
@@ -208,7 +242,8 @@ class OptionList(object):
 
     def generate_file_impl(self, is_header, input_file, output_file):
         mode = "header" if is_header else "include"
-        replacement = "${DECL_HEADER_OPTIONS}" if is_header else "${DECL_INCLUDE_OPTIONS}"
+        replacement = "${SEQUOIA_DECL_HEADER_OPTIONS}" if is_header else \
+                      "${SEQUOIA_DECL_INCLUDE_OPTIONS}"
         replacement_str = self.generate_cxx_header_option_def() if is_header else \
                           self.generate_cxx_include_option_def()
 
@@ -247,8 +282,8 @@ def main():
                             description="Generate a C++ header (*.h) and include (*.inc) file"
                                         " from the given input options (specified in JSON). "
                                         "The input header and include file need to exist and" 
-                                        " contain a ${DECL_HEADER_OPTIONS} and "
-                                        " ${DECL_INCLUDE_OPTIONS} entry point respectivly.")
+                                        " contain a ${SEQUOIA_DECL_HEADER_OPTIONS} and "
+                                        " ${SEQUOIA_DECL_INCLUDE_OPTIONS} entry point respectivly.")
     parser.add_argument("-v", "--verbose", dest="verbose", action='store_true',
                         help="enable verbose logging")
     parser.add_argument('option_file', nargs='+', help="input option file (*.json)")
