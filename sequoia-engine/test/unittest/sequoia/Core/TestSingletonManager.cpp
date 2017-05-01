@@ -61,4 +61,4 @@ TEST(SingletonManagerTest, AutoFree) {
 
 } // anonymous namespace
 
-SEQUIOA_DECLARE_SINGLETON(DummySingleton);
+SEQUOIA_DECLARE_SINGLETON(DummySingleton);

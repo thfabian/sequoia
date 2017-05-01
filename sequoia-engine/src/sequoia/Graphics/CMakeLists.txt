@@ -16,6 +16,14 @@
 sequoia_add_library(
   NAME SequoiaGraphics
   SOURCES Export.h
+          RenderSystem.h
+          RenderSystemImpl.h
+          RenderSystem.cpp
+          
+          GL/GL.h          
+          GL/GLRenderSystem.h
+          GL/GLRenderSystem.cpp
   DEPENDS SequoiaCore
+          SequoiaMath
           ${SEQUOIA_EXTERNAL_LIBRARIES}
 )

@@ -13,10 +13,16 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Core/SingletonManager.h"
+#include "sequoia/Graphics/RenderSystem.h"
 
 namespace sequoia {
 
-SEQUOIA_DECLARE_SINGLETON(core::SingletonManager);
+SEQUOIA_DECLARE_SINGLETON(graphics::RenderSystem);
+
+namespace graphics {
+
+RenderSystem::RenderSystem() : renderSystem_(nullptr) {}
+
+} // namespace graphics
 
 } // namespace sequoia

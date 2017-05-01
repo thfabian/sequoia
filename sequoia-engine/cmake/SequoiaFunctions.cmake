@@ -90,9 +90,7 @@ endfunction()
 ##                                 dependencies of the library.
 ##
 function(sequoia_add_library)
-  #
   # Parse arguments
-  #
   set(options)
   set(one_value_args NAME)
   set(multi_value_args SOURCES DEPENDS)
@@ -102,9 +100,7 @@ function(sequoia_add_library)
     message(FATAL_ERROR "invalid argument ${ARG_UNPARSED_ARGUMENTS}")
   endif()
   
-  #
   # Add library
-  #
   add_library(${ARG_NAME} ${ARG_SOURCES})
   target_link_libraries(${ARG_NAME} ${ARG_DEPENDS})
 
@@ -139,9 +135,7 @@ endfunction()
 ##    DEPENDS:STRING=<>          - List of external libraries and/or CMake targets to link against.
 ##
 function(sequoia_add_executable)
-  #
   # Parse arguments
-  #
   set(options WIN32_APPLICATION)
   set(one_value_args NAME)
   set(multi_value_args SOURCES DEPENDS)
@@ -151,9 +145,7 @@ function(sequoia_add_executable)
     message(FATAL_ERROR "invalid argument ${ARG_UNPARSED_ARGUMENTS}")
   endif()
   
-  #
   # Add executable
-  #
   if(ARG_WIN32_APPLICATION)
     add_executable(${ARG_NAME} WIN32 ${ARG_SOURCES})
   else()
@@ -181,23 +173,59 @@ endfunction()
 ##    DEPENDS:STRING=<>          - List of external libraries and/or CMake targets to link against.
 ##
 function(sequoia_add_test)
-  #
   # Parse arguments
-  #
   set(options)
   set(one_value_args NAME)
   set(multi_value_args SOURCES DEPENDS)
   cmake_parse_arguments(ARG "${options}" "${one_value_args}" "${multi_value_args}" ${ARGN})
   
-  #
   # Add executable
-  #
   sequoia_add_executable(${ARGN})
   
-  #
   # Add test
-  #
   add_test(NAME CTest-${ARG_NAME} COMMAND $<TARGET_FILE:${ARG_NAME}> --gtest_color=yes)
+
+endfunction()
+
+## sequoia_generate_options
+## ------------------------
+##
+## Generate an the option header and include file. The specification of the options is provided via
+## JSON files and parsed using the sequoia-opt-gen.py script.
+##
+##    INPUT_HEADER:STRING=<>     - Template of the header file to generate.
+##    OUTPUT_HEADER:STRING=<>    - Generated header file.
+##    INPUT_INCLUDE:STRING=<>    - Template of the include file to generate.
+##    OUTPUT_INCLUDE:STRING=<>   - Generated include file.
+##    OPTIONS:STRING=<>          - List input JSON files containing the option specification.
+##
+function(sequoia_generate_options)
+  # Parse arguments
+  set(options)
+  set(one_value_args INPUT_HEADER INPUT_INCLUDE OUTPUT_HEADER OUTPUT_INCLUDE)
+  set(multi_value_args OPTIONS)
+  cmake_parse_arguments(ARG "${options}" "${one_value_args}" "${multi_value_args}" ${ARGN})
+
+  if(NOT("${ARG_UNPARSED_ARGUMENTS}" STREQUAL ""))
+    message(FATAL_ERROR "invalid argument ${ARG_UNPARSED_ARGUMENTS}")
+  endif()
+
+  set(script_path "\"${CMAKE_SOURCE_DIR}/tools/sequoia-opt-gen/sequoia-opt-gen.py\"")
+  set(script_args --input-header="${ARG_INPUT_HEADER}"
+                  --input-include="${ARG_INPUT_INCLUDE}"
+                  --output-header="${ARG_OUTPUT_HEADER}" 
+                  --output-include="${ARG_OUTPUT_INCLUDE}")
+  foreach(opt ${ARG_OPTIONS})
+    list(APPEND script_args "\"${opt}\"")
+  endforeach()
+
+  # Run sequoia-opt-gen.py
+  add_custom_command(
+    OUTPUT ${ARG_OUTPUT_HEADER} ${ARG_OUTPUT_INCLUDE}
+    COMMAND ${PYTHON_EXECUTABLE} ${script_path} ${script_args}
+    DEPENDS ${ARG_INPUT_HEADER} ${ARG_INPUT_INCLUDE}
+    COMMENT "Generating options"
+  )
 
 endfunction()
 
@@ -227,5 +255,5 @@ function(sequoia_configure_file FILE)
   # TODO: Problem here as ${install_dir} still has the "src"
   set(install_dir "${CMAKE_INSTALL_PREFIX}/${output_dir}")
   #install(FILES ${output_file} DESTINATION ${install_dir})
-endfunction(sequoia_configure_file)
+endfunction()
 

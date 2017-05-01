@@ -13,10 +13,21 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Core/SingletonManager.h"
+#ifndef SEQUOIA_GRAPHICS_RENDERSYSTEMIMPL_H
+#define SEQUOIA_GRAPHICS_RENDERSYSTEMIMPL_H
+
+#include "sequoia/Graphics/Export.h"
 
 namespace sequoia {
 
-SEQUOIA_DECLARE_SINGLETON(core::SingletonManager);
+namespace graphics {
+
+/// @brief Interface of the various render-system implementations
+/// @ingroup graphics
+class SEQUOIA_GRAPHICS_API RenderSystemImpl {};
+
+} // namespace graphics
 
 } // namespace sequoia
+
+#endif

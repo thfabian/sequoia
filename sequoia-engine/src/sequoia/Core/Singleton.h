@@ -27,7 +27,7 @@ namespace core {
 /// @brief CRTP for creating single-instance global classes (Singletons)
 ///
 /// To use this class, derive from `Singleton` and define the member
-/// `SEQUIOA_DECLARE_SINGLETON(...)`.
+/// `SEQUOIA_DECLARE_SINGLETON(...)`.
 ///
 /// @bExample:
 /// @code
@@ -44,13 +44,13 @@ namespace core {
 ///
 ///   // Foo.cpp
 ///   namespace sequoia {
-///   SEQUIOA_DECLARE_SINGLETON(foo::Foo);
+///   SEQUOIA_DECLARE_SINGLETON(foo::Foo);
 ///   }
 /// @endcode
 ///
-/// Note that you **must** declare `SEQUIOA_DECLARE_SINGLETON` inside the `sequioa` namespace (and
+/// Note that you **must** declare `SEQUOIA_DECLARE_SINGLETON` inside the `sequoia` namespace (and
 /// not in any descendant namespaces) and fully qualify your class `Class` with respect to the
-/// namespace `sequioa`.
+/// namespace `sequoia`.
 /// @ingroup core
 template <class Derived>
 class Singleton : public NonCopyable {
@@ -83,14 +83,14 @@ using Singleton = core::Singleton<Derived>;
 
 } // namespace sequoia
 
-/// @macro SEQUIOA_DECLARE_SINGLETON
+/// @macro SEQUOIA_DECLARE_SINGLETON
 /// @brief Declares the instance of the singleton `Class`
 ///
-/// Note that you **must** declare `SEQUIOA_DECLARE_SINGLETON` inside the `sequioa` namespace (and
+/// Note that you **must** declare `SEQUOIA_DECLARE_SINGLETON` inside the `sequoia` namespace (and
 /// not in any descendant namespaces) and fully qualify your class `Class` with respect to the
-/// namespace `sequioa`.
+/// namespace `sequoia`.
 /// @ingroup core
-#define SEQUIOA_DECLARE_SINGLETON(Class)                                                           \
+#define SEQUOIA_DECLARE_SINGLETON(Class)                                                           \
   template <>                                                                                      \
   Class* sequoia::core::Singleton<Class>::Instance = nullptr
 

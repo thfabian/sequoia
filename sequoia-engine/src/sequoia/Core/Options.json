@@ -1,0 +1,13 @@
+{
+  "Options" : {
+    "Core" : {
+      "Test" : {
+        "value_type" : "std::string",
+        "value_default" : "a",
+        "value_allowed" : "a,b,c",
+        "doc" : "Test variable",
+        "cl" : "test"
+      }
+    }  
+  }
+}

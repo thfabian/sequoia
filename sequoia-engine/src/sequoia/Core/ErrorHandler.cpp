@@ -21,7 +21,7 @@
 
 namespace sequoia {
 
-SEQUIOA_DECLARE_SINGLETON(core::ErrorHandler);
+SEQUOIA_DECLARE_SINGLETON(core::ErrorHandler);
 
 namespace core {
 

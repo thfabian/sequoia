@@ -17,7 +17,7 @@
 
 namespace sequoia {
 
-SEQUIOA_DECLARE_SINGLETON(unittest::Environment);
+SEQUOIA_DECLARE_SINGLETON(unittest::Environment);
 
 namespace unittest {
 

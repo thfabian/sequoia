@@ -13,10 +13,32 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Core/SingletonManager.h"
+#include "sequoia/Core/ErrorHandler.h"
+#include "sequoia/Graphics/GL/GLRenderSystem.h"
+#include <GLFW/glfw3.h>
 
 namespace sequoia {
 
-SEQUOIA_DECLARE_SINGLETON(core::SingletonManager);
+namespace graphics {
+
+/// @brief Abort if an error occured
+static void GLFWErrorCallback(int error, const char* description) {
+  // TODO: log error
+  ErrorHandler::getSingleton().fatal(description);
+}
+
+GLRenderSystem::GLRenderSystem() {
+  glfwSetErrorCallback(GLFWErrorCallback);
+
+  // Initialize GLFW
+  glfwInit();
+
+  // TOOD: log glfw version
+  // glfwGetVersionString();
+}
+
+GLRenderSystem::~GLRenderSystem() { glfwTerminate(); }
+
+} // namespace graphics
 
 } // namespace sequoia

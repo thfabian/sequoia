@@ -13,12 +13,10 @@
 ##
 ##===------------------------------------------------------------------------------------------===##
 
-add_subdirectory(Core)
-add_subdirectory(Math)
-add_subdirectory(Graphics)
-#add_subdirectory(Driver)
+find_package(PythonInterp 3.4 REQUIRED)
 
-if(SEQUOIA_TESTING)
-  add_subdirectory(Unittest)
-endif()
-
+sequoia_export_package_variable(
+  python3 
+  ${PYTHONINTERP_FOUND} 
+  "Python3: ${PYTHON_VERSION_STRING}"
+)
