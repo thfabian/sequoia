@@ -91,7 +91,8 @@ macro(sequoia_set_cxx_standard MIN_CXX_STANDARD)
     
     # Try the latest possible standards first (-std=c++1z or /std:c++latest)    
     if(WIN32 AND NOT MINGW)
-      set(std_cxx_latest "c++latest")
+      #set(std_cxx_latest "c++latest")
+      # We need to use boost >= 1.63 for this
     else()
       set(std_cxx_latest "c++17" "c++1z")      
     endif()
@@ -173,8 +174,11 @@ macro(sequoia_check_and_set_arch_flag)
   
     # Set Flags
     if(HAVE_MSVC_AVX2_EXTENSION)
+      add_definitions(-DBLAZE_ENFORCE_AVX2)
+      add_definitions(-DBLAZE_ENFORCE_AVX)
       set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /arch:AVX2")
     elseif(HAVE_MSVC_AVX_EXTENSION)
+      add_definitions(-DBLAZE_ENFORCE_AVX)
       set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /arch:AVX")
     endif()
   endif()
@@ -216,7 +220,10 @@ macro(sequoia_set_cxx_flags)
     
     sequoia_check_and_set_cxx_flag("/EHsc" HAVE_MSVC_EHSC)
     sequoia_check_and_set_cxx_flag("/wd4244" HAVE_MSVC_WD4244)
+    sequoia_check_and_set_cxx_flag("/wd4661" HAVE_MSVC_WD4661)
     sequoia_check_and_set_arch_flag()
+    
+    message(${CMAKE_CXX_FLAGS})
     
   #
   # GCC/Clang

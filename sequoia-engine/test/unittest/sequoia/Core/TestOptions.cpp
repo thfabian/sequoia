@@ -15,6 +15,7 @@
 
 #include "sequoia/Core/Options.h"
 #include <gtest/gtest.h>
+#include <memory>
 
 using namespace sequoia::core;
 
@@ -22,7 +23,6 @@ namespace {
 
 TEST(OptionsTest, Reset) {
   auto opt = std::make_unique<Options>();
-
   bool defaultVal = Options::getSingleton().Core.Logging;
 
   // Change the option
