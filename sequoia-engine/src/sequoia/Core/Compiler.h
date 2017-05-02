@@ -58,8 +58,8 @@
 #define SEQUOIA_COMPILER_MSVC 1
 #endif
 
-#if __cplusplus > 201402L
-#define SEQUOIA_HAS_CXX17 1
+#if __cplusplus >= 201500L
+#define SEQUOIA_HAS_CXX1Z 1
 #endif
 
 /// @macro SEQUOIA_GNUC_PREREQ

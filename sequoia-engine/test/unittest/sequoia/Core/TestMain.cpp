@@ -17,7 +17,6 @@
 #include <gtest/gtest.h>
 
 int main(int argc, char* argv[]) {
-
   // Initialize gtest
   testing::InitGoogleTest(&argc, argv);
   

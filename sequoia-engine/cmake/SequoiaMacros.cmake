@@ -16,6 +16,7 @@
 sequoia_include_guard()
 
 include(CheckCXXCompilerFlag)
+include(CheckCXXSourceRuns)
 
 ## sequoia_check_in_source_build
 ## -----------------------------
@@ -75,34 +76,108 @@ endmacro()
 ## sequoia_set_cxx_standard
 ## ------------------------
 ##
-## Set the standard of C++.
+## Set the minimum standard of C++.
 ##
-##    CXX_STANDARD:STRING=<>   - C++ standard to use, one of ["c++03", "c++11", "c++14"]
+##    MIN_CXX_STANDARD:STRING=<>   - Minimum C++ standard which needs to be supported, one of 
+##                                   ["c++14"].
 ##
-macro(sequoia_set_cxx_standard CXX_STANDARD)
-    set(supported_standards "c++03" "c++11" "c++14")
+macro(sequoia_set_cxx_standard MIN_CXX_STANDARD)
+    set(supported_standards "c++14")    
     
-    if(NOT("${CXX_STANDARD}" IN_LIST supported_standards))
+    if(NOT("${MIN_CXX_STANDARD}" IN_LIST supported_standards))
       message(FATAL_ERROR 
-              "Unknown C++ standard (${CXX_STANDARD}), supported values are: ${supported_standards}")
+              "Unknown C++ standard (${MIN_CXX_STANDARD}), supported values: ${supported_standards}")
     endif()
     
+    # Try the latest possible standards first (-std=c++1z or /std:c++latest)    
     if(WIN32 AND NOT MINGW)
-      set(cxx_stanard_flag "/std:${CXX_STANDARD}")
-    elseif(CYGWIN)
-      string(REPLACE "c" "gnu" ${CXX_STANDARD} gnu_standard)
-      set(cxx_stanard_flag "-std=${gnu_standard}")
+      set(std_cxx_latest "c++latest")
     else()
-      set(cxx_stanard_flag "-std=${CXX_STANDARD}")
-    endif()
-
-    check_cxx_compiler_flag("${cxx_stanard_flag}" HAVE_CXX_STANDARD_SUPPORT)
-    
-    if(NOT(HAVE_CXX_STANDARD_SUPPORT))
-      message(FATAL_ERROR "The compiler ${CMAKE_CXX_COMPILER} has no ${CXX_STANDARD} support.")
+      set(std_cxx_latest "c++17" "c++1z")      
     endif()
     
+    set(cxx_stanard_flag)
+    foreach(std_cxx ${std_cxx_latest} ${MIN_CXX_STANDARD})
+      
+      if(WIN32 AND NOT MINGW)
+        set(cxx_flag "/std:${std_cxx}")
+      elseif(CYGWIN)
+        string(REPLACE "c" "gnu" ${std_cxx} gnu_standard)
+        set(cxx_flag "-std=${gnu_standard}")
+      else()
+        set(cxx_flag "-std=${std_cxx}")
+      endif()
+      
+      string(TOUPPER ${std_cxx} STD_CXX)
+      string(REPLACE "+" "X" STD_CXX ${STD_CXX})
+      check_cxx_compiler_flag("${cxx_flag}" HAVE_${STD_CXX}_STANDARD_SUPPORT)
+    
+      if(HAVE_${STD_CXX}_STANDARD_SUPPORT)
+        set(cxx_stanard_flag ${cxx_flag})
+        break()
+      endif()
+    endforeach()
+    
+    if(NOT(cxx_stanard_flag))
+      message(FATAL_ERROR "The compiler ${CMAKE_CXX_COMPILER} has no ${MIN_CXX_STANDARD} support.")
+    endif()
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${cxx_stanard_flag}")
+endmacro()
+
+## sequoia_check_and_set_arch_flag
+## -------------------------------
+##
+## Test for the most recent architecture (this mimics -march=native of gcc for MSVC).
+##
+macro(sequoia_check_and_set_arch_flag)
+  if(SEQUOIA_COMPILER_MSVC) 
+    set(CMAKE_REQUIRED_FLAGS)
+    
+    # Check AVX
+    set(CMAKE_REQUIRED_FLAGS "/arch:AVX")  
+    check_cxx_source_runs("
+        #include <immintrin.h>
+        int main() {
+          __m256 a, b, c;
+          const float src[8] = {1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f};
+          float dst[8];
+          a = _mm256_loadu_ps(src);
+          b = _mm256_loadu_ps(src);
+          c = _mm256_add_ps(a, b);
+          _mm256_storeu_ps(dst, c);
+          for(int i = 0; i < 8; i++)
+            if((src[i] + src[i]) != dst[i])
+              return -1;
+          return 0;
+        }"
+        HAVE_MSVC_AVX_EXTENSION)
+  
+    # Check AVX2
+    set(CMAKE_REQUIRED_FLAGS "/arch:AVX2")
+    check_cxx_source_runs("
+        #include <immintrin.h>
+        int main() {
+          __m256i a, b, c;
+          const int src[8] = {1, 2, 3, 4, 5, 6, 7, 8};
+          int dst[8];
+          a =  _mm256_loadu_si256((__m256i*)src);
+          b =  _mm256_loadu_si256((__m256i*)src);
+          c = _mm256_add_epi32( a, b );
+          _mm256_storeu_si256((__m256i*)dst, c);
+          for(int i = 0; i < 8; i++)
+            if((src[i] + src[i]) != dst[i])
+              return -1;
+          return 0;
+        }"
+        HAVE_MSVC_AVX2_EXTENSION)
+  
+    # Set Flags
+    if(HAVE_MSVC_AVX2_EXTENSION)
+      set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /arch:AVX2")
+    elseif(HAVE_MSVC_AVX_EXTENSION)
+      set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /arch:AVX")
+    endif()
+  endif()
 endmacro()
 
 ## sequoia_set_cxx_flags
@@ -141,12 +216,14 @@ macro(sequoia_set_cxx_flags)
     
     sequoia_check_and_set_cxx_flag("/EHsc" HAVE_MSVC_EHSC)
     sequoia_check_and_set_cxx_flag("/wd4244" HAVE_MSVC_WD4244)
+    sequoia_check_and_set_arch_flag()
     
   #
   # GCC/Clang
   #    
   else()
     sequoia_check_and_set_cxx_flag("-march=native" HAVE_GCC_MARCH_NATIVE)
+    sequoia_check_and_set_cxx_flag("-ftree-vectorize" HAVE_GCC_TREE_VECTORIZE)    
     sequoia_check_and_set_cxx_flag("-Wall" HAVE_GCC_WALL)
     sequoia_check_and_set_cxx_flag("-Werror=return-type" HAVE_GCC_ERROR_RETURN_TYPE)
     

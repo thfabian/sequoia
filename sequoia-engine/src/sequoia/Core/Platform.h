@@ -18,7 +18,6 @@
 
 #include "sequoia/Core/Compiler.h"
 #include "sequoia/Core/Export.h"
-#include <boost/filesystem/path.hpp>
 #include <cwchar>
 #include <string>
 
@@ -29,6 +28,15 @@
 #include <Windows.h>
 #endif
 
+// clang-format off
+#if SEQUOIA_HAS_CXX1Z && __has_include(<experimental/filesystem>)
+#include <experimental/filesystem>
+#define SEQUOIA_USE_STD_FILESYSTEM
+#else
+#include <boost/filesystem.hpp>
+#endif
+// clang-format on
+
 namespace sequoia {
 
 /// @addtogroup core
@@ -38,7 +46,11 @@ namespace platform {
 
 /// @typedef Path
 /// @brief The native path of the platform with respect to `platform::String`
+#ifdef SEQUOIA_USE_STD_FILESYSTEM
+using Path = std::experimental::filesystem::path;
+#else
 using Path = boost::filesystem::path;
+#endif
 
 /// @typedef String
 /// @brief The native string of the platform (`std::string` for Unix and `std::wstring` for Win32)
@@ -49,7 +61,7 @@ using String = std::string;
 #endif
 
 /// @typedef Char
-/// @brief The native character type for the platform (`char` for Unix and `wchar_t` for Win32)
+/// @brief The native character type of the platform (`char` for Unix and `wchar_t` for Win32)
 using Char = String::value_type;
 
 /// @macro PLATFORM_STR
