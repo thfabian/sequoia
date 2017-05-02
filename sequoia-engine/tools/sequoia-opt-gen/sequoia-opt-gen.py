@@ -50,7 +50,7 @@
 ##          "doc" : "This option is of type ${value_type}",
 ##          ...
 ##
-## Which results in a doc-string "This option is of type ${value_type}".
+## Which results in a doc-string "This option is of type double".
 ##
 ##===------------------------------------------------------------------------------------------===##
 
