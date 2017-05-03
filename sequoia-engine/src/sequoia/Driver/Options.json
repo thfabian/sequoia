@@ -1,0 +1,12 @@
+{
+    "Options" : {
+        "Driver" : {
+            "Logging" : {
+                "value_type" : "bool",
+                "value_default" : true,
+                "doc" : "Enable verbose logging to console (stdout)",
+                "cl" : "logging"
+            }
+        }
+    }
+}

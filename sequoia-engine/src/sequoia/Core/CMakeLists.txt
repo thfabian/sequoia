@@ -21,7 +21,11 @@ set(option_header ${CMAKE_CURRENT_BINARY_DIR}/Options.h)
 set(option_include ${CMAKE_CURRENT_BINARY_DIR}/Options.inc)
 set(options
   ${CMAKE_SOURCE_DIR}/src/sequoia/Core/Options.json
+  ${CMAKE_SOURCE_DIR}/src/sequoia/Render/Options.json
+  ${CMAKE_SOURCE_DIR}/src/sequoia/Driver/Options.json
+  ${CMAKE_SOURCE_DIR}/src/sequoia/Math/Options.json
 )
+
 sequoia_generate_options(
   INPUT_HEADER ${CMAKE_CURRENT_SOURCE_DIR}/Options.h.in
   INPUT_INCLUDE ${CMAKE_CURRENT_SOURCE_DIR}/Options.inc.in

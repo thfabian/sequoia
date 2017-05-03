@@ -23,6 +23,5 @@ sequoia_add_library(
           GL/GL.h          
           GL/GLRenderSystem.h
           GL/GLRenderSystem.cpp
-  DEPENDS SequoiaCore
-          ${SEQUOIA_EXTERNAL_LIBRARIES}
+  DEPENDS ${SEQUOIA_EXTERNAL_LIBRARIES}
 )

@@ -1,19 +1,28 @@
-//===-- sequoia/Driver/CommandLine.cpp ----------------------------------------------*- C++ -*-===//
-//
-//                                      S E Q U O I A
+//===--------------------------------------------------------------------------------*- C++ -*-===//
+//                         _____                        _
+//                        / ____|                      (_)
+//                       | (___   ___  __ _ _   _  ___  _  __ _
+//                        \___ \ / _ \/ _` | | | |/ _ \| |/ _` |
+//                        ____) |  __/ (_| | |_| | (_) | | (_| |
+//                       |_____/ \___|\__, |\__,_|\___/|_|\__,_| - Game Engine
+//                                       | |
+//                                       |_|
 //
 // This file is distributed under the MIT License (MIT).
 // See LICENSE.txt for details.
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Driver/CommandLine.h"
 #include "sequoia/Core/ErrorHandler.h"
-#include "sequoia/Core/Exception.h"
-#include "sequoia/Core/GlobalConfiguration.h"
+#include "sequoia/Core/Options.h"
+#include "sequoia/Core/StringRef.h"
 #include "sequoia/Core/Version.h"
+#include "sequoia/Driver/CommandLine.h"
 #include <boost/program_options.hpp>
+#include <functional>
+#include <iostream>
 #include <string>
+#include <unordered_map>
 
 namespace po = boost::program_options;
 
@@ -22,84 +31,96 @@ namespace sequoia {
 namespace driver {
 
 static void printHelp(const po::options_description& desc) {
-  auto program = core::ErrorHandler::getSingleton().program().asUTF8();
-  std::cout << "Usage: " << program << " [options] \n\n" << desc << "\n" << std::endl;
+  auto program = ErrorHandler::getSingleton().program().toAnsiString();
+  std::cout << "OVERVIEW: sequoia - 3D game engine\n\n";
+  std::cout << "USAGE: " << program << " [options] \n\n" << desc << "\n" << std::endl;
   std::exit(EXIT_SUCCESS);
 }
 
 static void printVersion() {
-  std::cout << "Sequoia (" << core::Version::currentFullVersionString() << ")" << std::endl;
+  std::cout << "Sequoia (" << SEQUOIA_VERSION_STRING << ")" << std::endl;
   std::exit(EXIT_SUCCESS);
 }
 
+template <class ValueType>
+void setOption(po::options_description& optionsDesc, StringRef Doc, StringRef cl,
+               StringRef clMetaVar) {
+  if(std::is_same<ValueType, bool>::value)
+    optionsDesc.add_options()(cl.data(), Doc.data());
+  else {
+    auto value = po::value<ValueType>();
+    if(!clMetaVar.empty())
+      value->value_name(clMetaVar.data());
+    optionsDesc.add_options()(cl.data(), value, Doc.data());
+  }
+}
+
+template <class T>
+std::string toString(const T& value) {
+  return std::to_string(value);
+}
+
+template <>
+std::string toString(const std::string& value) {
+  return value;
+}
+
 void CommandLine::parse(const std::vector<std::string>& args) {
+  const int MaxLineLen = 80;
+  Options& options = Options::getSingleton();
 
-  //
-  // Set options
-  //
-  po::options_description general("General options");
-  general.add_options()
-      // --help
-      ("help", "Display this information.")
-      // --version
-      ("version", "Display version information.")
-      // --config
-      ("config", po::value<std::string>()->value_name("PATH"),
-       "Path to the global configuration file [default: " SEQUOIA_GLOBAL_CONFIG_PATH "]")
-      // --no-config
-      ("no-config", "Don't load the global configuration file, use default options.");
+  // Create option description maps & fill options
+  std::unordered_map<std::string, po::options_description> optionDescMap;
+  std::unordered_map<std::string, std::function<void(const po::variable_value&)>> updateOptionMap;
 
-  po::options_description gui("Graphics options");
-  gui.add_options()
-      // --render-system
-      ("render-system", po::value<std::string>(), "Rendering system to use: Direct3D11 or OpenGL.")
-      // --fullscreen
-      ("fullscreen", "Launch in full screen mode.");
+#define OPT(Structure, Name, Type, DefaultValue, CheckFun, Doc, CommandLine, CommandLineMetaVar)   \
+  if(!optionDescMap.count(#Structure))                                                             \
+    optionDescMap.emplace(#Structure, po::options_description(#Structure " options", MaxLineLen)); \
+  if(!StringRef(CommandLine).empty()) {                                                            \
+    setOption<Type>(optionDescMap[#Structure], Doc, CommandLine, CommandLineMetaVar);              \
+    updateOptionMap.emplace(CommandLine, [&options](const po::variable_value& value) {             \
+      options.Structure.Name = value.as<Type>();                                                   \
+    });                                                                                            \
+  }
+#include "sequoia/Core/Options.inc"
+#undef OPT
 
   po::options_description all("Allowed options");
-  all.add(general).add(gui);
+  for(const auto& nameOptionDescPair : optionDescMap)
+    all.add(nameOptionDescPair.second);
 
-  //
   // Parse command-line
-  //
   po::variables_map vm;
 
   try {
     po::store(po::command_line_parser(args).options(all).run(), vm);
     po::notify(vm);
   } catch(std::exception& e) {
-    core::ErrorHandler::getSingleton().fatal(e.what(), false);
+    ErrorHandler::getSingleton().fatal(e.what(), false);
   }
 
-  //
-  // Add parsed option to global configuration
-  //
-  auto& config = core::GlobalConfiguration::getSingleton();
-  config.addSkipNode("CommandLine");
-
+  // Adjust options
   if(vm.count("help"))
     printHelp(all);
 
   if(vm.count("version"))
     printVersion();
 
-  boost::filesystem::path configPath(CSTR(SEQUOIA_GLOBAL_CONFIG_PATH));
-  if(vm.count("config"))
-    configPath = vm["config"].as<std::string>();
-
-  try {
-    if(!vm.count("no-config"))
-      config.load(configPath);
-    config.put("CommandLine.ConfigFile", configPath);
-  } catch(core::Exception& e) {
-    core::ErrorHandler::getSingleton().warning(e.what());
+  for(const auto& nameValuePair : vm) {
+    auto it = updateOptionMap.find(nameValuePair.first);
+    if(it != updateOptionMap.end())
+      it->second(nameValuePair.second);
   }
 
-  if(vm.count("render-system"))
-    config.put("CommandLine.RenderSystem", vm["render-system"].as<std::string>());
-
-  if(vm.count("fullscreen"))
-    config.put("CommandLine.Fullscreen", true);
+// Check options are valid
+#define OPT(Structure, Name, Type, DefaultValue, CheckFun, Doc, CommandLine, CommandLineMetaVar)   \
+  if(!CheckFun(options.Structure.Name))                                                            \
+    ErrorHandler::getSingleton().fatal(std::string("value '") + toString(options.Structure.Name) + \
+                                           "' of option '" + #Structure + "." + #Name +            \
+                                           "' is invalid",                                         \
+                                       false);
+#include "sequoia/Core/Options.inc"
+#undef OPT
 }
 
 } // namespace driver

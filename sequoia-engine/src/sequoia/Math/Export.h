@@ -20,8 +20,6 @@
 /// @defgroup math Math
 /// @brief Math and linear algebra utilities.
 
-/// @namespace sequoia
-/// @brief Namespace of the sequoia project.
 namespace sequoia {
 
 /// @namespace math

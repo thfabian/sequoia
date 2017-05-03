@@ -20,6 +20,8 @@
 
 namespace sequoia {
 
+#define SEQUOIA_CRASH_ON_ERROR 0
+
 SEQUOIA_DECLARE_SINGLETON(core::ErrorHandler);
 
 namespace core {
@@ -40,7 +42,12 @@ void ErrorHandler::fatal(std::string message, bool messagebox) noexcept {
 #else
   std::cerr << program_.toAnsiString() << ": error: " << message << std::endl;
 #endif
+
+#if SEQUOIA_CRASH_ON_ERROR
   std::abort();
+#else
+  std::exit(EXIT_FAILURE);
+#endif
 }
 
 void ErrorHandler::fatal(std::wstring message, bool messagebox) noexcept {
@@ -53,7 +60,12 @@ void ErrorHandler::fatal(std::wstring message, bool messagebox) noexcept {
 #else
   std::wcerr << program_.toWideString() << L": error: " << message << std::endl;
 #endif
+
+#if SEQUOIA_CRASH_ON_ERROR
   std::abort();
+#else
+  std::exit(EXIT_FAILURE);
+#endif
 }
 
 void ErrorHandler::warning(std::string message) noexcept {

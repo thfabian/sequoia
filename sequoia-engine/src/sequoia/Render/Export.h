@@ -20,9 +20,8 @@
 /// @defgroup render Render
 /// @brief Rendering and input devices
 
-/// @namespace sequoia
-/// @brief Namespace of the sequoia project.
 namespace sequoia {
+
 /// @namespace render
 /// @brief Namespace of the rendering library.
 namespace render {}

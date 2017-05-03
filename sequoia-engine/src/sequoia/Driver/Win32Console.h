@@ -1,6 +1,12 @@
-//===-- sequoia/Driver/Win32Console.h -----------------------------------------------*- C++ -*-===//
-//
-//                                      S E Q U O I A
+//===--------------------------------------------------------------------------------*- C++ -*-===//
+//                         _____                        _
+//                        / ____|                      (_)
+//                       | (___   ___  __ _ _   _  ___  _  __ _
+//                        \___ \ / _ \/ _` | | | |/ _ \| |/ _` |
+//                        ____) |  __/ (_| | |_| | (_) | | (_| |
+//                       |_____/ \___|\__, |\__,_|\___/|_|\__,_| - Game Engine
+//                                       | |
+//                                       |_|
 //
 // This file is distributed under the MIT License (MIT).
 // See LICENSE.txt for details.
@@ -15,10 +21,9 @@ namespace sequoia {
 
 namespace driver {
 
-/// @brief  Attach a Win32 Console for debugging purpose
-///
+/// @brief Attach a Win32 Console for debugging purposes
 /// @ingroup driver
-class SEQUOIA_DRIVER_EXPORT Win32Console {
+class SEQUOIA_DRIVER_API Win32Console {
 public:
   /// @brief Attach a Win32 console to the current process
   Win32Console();
