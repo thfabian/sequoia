@@ -32,7 +32,7 @@ namespace driver {
 
 static void printHelp(const po::options_description& desc) {
   auto program = ErrorHandler::getSingleton().program().toAnsiString();
-  std::cout << "OVERVIEW: sequoia - 3D game engine\n\n";
+  std::cout << "OVERVIEW: Sequoia - 3D game engine\n\n";
   std::cout << "USAGE: " << program << " [options] \n\n" << desc << "\n" << std::endl;
   std::exit(EXIT_SUCCESS);
 }
@@ -43,15 +43,16 @@ static void printVersion() {
 }
 
 template <class ValueType>
-void setOption(po::options_description& optionsDesc, StringRef Doc, StringRef cl,
+void setOption(po::options_description& optionsDesc, const std::string& doc, StringRef cl,
                StringRef clMetaVar) {
+  auto docStr = doc + ".";
   if(std::is_same<ValueType, bool>::value)
-    optionsDesc.add_options()(cl.data(), Doc.data());
+    optionsDesc.add_options()(cl.data(), docStr.c_str());
   else {
     auto value = po::value<ValueType>();
     if(!clMetaVar.empty())
       value->value_name(clMetaVar.data());
-    optionsDesc.add_options()(cl.data(), value, Doc.data());
+    optionsDesc.add_options()(cl.data(), value, docStr.c_str());
   }
 }
 
@@ -79,21 +80,27 @@ void CommandLine::parse(const std::vector<std::string>& args) {
   if(!StringRef(CommandLine).empty()) {                                                            \
     setOption<Type>(optionDescMap[#Structure], Doc, CommandLine, CommandLineMetaVar);              \
     updateOptionMap.emplace(CommandLine, [&options](const po::variable_value& value) {             \
-      options.Structure.Name = value.as<Type>();                                                   \
+      options.Structure.Name = std::is_same<Type, bool>::value ? true : value.as<Type>();          \
     });                                                                                            \
   }
 #include "sequoia/Core/Options.inc"
 #undef OPT
 
-  po::options_description all("Allowed options");
+  po::options_description desc("General options");
+  desc.add_options()
+      // --help
+      ("help", "Display this information.")
+      // --version
+      ("version", "Display version information.");
+
   for(const auto& nameOptionDescPair : optionDescMap)
-    all.add(nameOptionDescPair.second);
+    desc.add(nameOptionDescPair.second);
 
   // Parse command-line
   po::variables_map vm;
 
   try {
-    po::store(po::command_line_parser(args).options(all).run(), vm);
+    po::store(po::command_line_parser(args).options(desc).run(), vm);
     po::notify(vm);
   } catch(std::exception& e) {
     ErrorHandler::getSingleton().fatal(e.what(), false);
@@ -101,7 +108,7 @@ void CommandLine::parse(const std::vector<std::string>& args) {
 
   // Adjust options
   if(vm.count("help"))
-    printHelp(all);
+    printHelp(desc);
 
   if(vm.count("version"))
     printVersion();
