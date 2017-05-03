@@ -15,7 +15,7 @@
 
 add_subdirectory(Core)
 add_subdirectory(Math)
-add_subdirectory(Graphics)
+add_subdirectory(Render)
 #add_subdirectory(Driver)
 
 if(SEQUOIA_TESTING)

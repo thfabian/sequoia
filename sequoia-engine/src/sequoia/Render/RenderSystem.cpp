@@ -13,28 +13,16 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_GRAPHICS_EXPORT_H
-#define SEQUOIA_GRAPHICS_EXPORT_H
+#include "sequoia/Render/RenderSystem.h"
 
-#ifdef SEQUOIA_DOXYGEN_INVOKED
-/// @defgroup graphics Graphics
-/// @brief Graphics and rendering
-
-/// @namespace sequoia
-/// @brief Namespace of the sequoia project.
 namespace sequoia {
-/// @namespace graphics
-/// @brief Namespace of the graphics library.
-namespace graphics {}
-}
-#endif
 
-#include "sequoia/Core/Compiler.h"
+SEQUOIA_DECLARE_SINGLETON(render::RenderSystem);
 
-#if defined(SEQUOIA_SHARED_LIBRARIES) && defined(SequoiaGraphics_EXPORTS)
-#define SEQUOIA_GRAPHICS_API SEQUOIA_API_EXPORT
-#else
-#define SEQUOIA_GRAPHICS_API SEQUOIA_API_IMPORT
-#endif
+namespace render {
 
-#endif
+RenderSystem::RenderSystem() : renderSystem_(nullptr) {}
+
+} // namespace render
+
+} // namespace sequoia

@@ -45,6 +45,9 @@ sequoia_add_library(
           Options.h.in
           Options.inc.in
           Options.cpp
+          Listenable.h
+          Logging.h
+          Logging.cpp
           Platform.h
           Platform.cpp          
           Singleton.h

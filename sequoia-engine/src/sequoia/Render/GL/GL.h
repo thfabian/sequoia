@@ -10,8 +10,11 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_GRAPHICS_GL_GL_H
-#define SEQUOIA_GRAPHICS_GL_GL_H
+#ifndef SEQUOIA_RENDER_GL_GL_H
+#define SEQUOIA_RENDER_GL_GL_H
+
+#define GLFW_INCLUDE_NONE
+#include <GLFW/glfw3.h>
 
 #include <glbinding/gl/gl.h>
 

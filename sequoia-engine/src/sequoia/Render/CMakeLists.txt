@@ -14,7 +14,7 @@
 ##===------------------------------------------------------------------------------------------===##
 
 sequoia_add_library(
-  NAME SequoiaGraphics
+  NAME SequoiaRender
   SOURCES Export.h
           RenderSystem.h
           RenderSystemImpl.h

@@ -13,21 +13,32 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_GRAPHICS_RENDERSYSTEMIMPL_H
-#define SEQUOIA_GRAPHICS_RENDERSYSTEMIMPL_H
-
-#include "sequoia/Graphics/Export.h"
+#include "sequoia/Core/ErrorHandler.h"
+#include "sequoia/Render/GL/GL.h"
+#include "sequoia/Render/GL/GLRenderSystem.h"
 
 namespace sequoia {
 
-namespace graphics {
+namespace render {
 
-/// @brief Interface of the various render-system implementations
-/// @ingroup graphics
-class SEQUOIA_GRAPHICS_API RenderSystemImpl {};
+/// @brief Abort if an error occured
+static void GLFWErrorCallback(int error, const char* description) {
+  // TODO: log error
+  ErrorHandler::getSingleton().fatal(description);
+}
 
-} // namespace graphics
+GLRenderSystem::GLRenderSystem() {
+  glfwSetErrorCallback(GLFWErrorCallback);
+
+  // Initialize GLFW
+  glfwInit();
+
+  // TOOD: log glfw version
+  // glfwGetVersionString();
+}
+
+GLRenderSystem::~GLRenderSystem() { glfwTerminate(); }
+
+} // namespace render
 
 } // namespace sequoia
-
-#endif

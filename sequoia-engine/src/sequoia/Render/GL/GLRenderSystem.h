@@ -13,16 +13,31 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Graphics/RenderSystem.h"
+#ifndef SEQUOIA_RENDER_GL_RENDERSYSTEM_H
+#define SEQUOIA_RENDER_GL_RENDERSYSTEM_H
+
+#include "sequoia/Core/Singleton.h"
+#include "sequoia/Render/RenderSystemImpl.h"
+#include <memory>
 
 namespace sequoia {
 
-SEQUOIA_DECLARE_SINGLETON(graphics::RenderSystem);
+namespace render {
 
-namespace graphics {
+/// @brief OpenGL render-system
+/// @ingroup render
+class SEQUOIA_RENDER_API GLRenderSystem : public RenderSystemImpl {
+public:
+  /// @brief Initialize GLFW and glbinding
+  /// @throws RenderSystemException    Initialization of GLFW failed
+  GLRenderSystem();
 
-RenderSystem::RenderSystem() : renderSystem_(nullptr) {}
+  /// @brief Terminates GLFW
+  ~GLRenderSystem();
+};
 
-} // namespace graphics
+} // namespace render
 
 } // namespace sequoia
+
+#endif
