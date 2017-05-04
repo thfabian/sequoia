@@ -6,6 +6,13 @@
                 "value_default" : true,
                 "doc" : "Enable verbose logging to console (stdout)",
                 "cl" : "logging"
+            },
+            "LogFile" : {
+                "value_type" : "std::string",
+                "value_default" : "",
+                "doc" : "Enable logging to <${cl_metavar}>",
+                "cl" : "log-file",
+                "cl_metavar" : "FILE"
             }
         }
     }

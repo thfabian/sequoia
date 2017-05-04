@@ -43,8 +43,8 @@
 ##    }
 ##  }
 ##
-## Note that one can reference other options with ${...}. For example to reference the type of the
-## option in the doc string:
+## Note that one can reference other arguments (within the same option) with ${...}. 
+## For example to reference the type of the option in the doc string:
 ##          ...
 ##          "value_type" : "double",
 ##          "doc" : "This option is of type ${value_type}",
@@ -91,7 +91,7 @@ class OptionList(object):
     """ List of all options grouped by struct """
     def __init__(self):
         self.options = {}
-        self.regex_substitute = compile("(\$[^$]*\$)")
+        self.regex_substitute = compile("(\$\{[^}]*\})")
 
     def add_option(self, struct, option):
         if not struct in self.options:
@@ -105,9 +105,9 @@ class OptionList(object):
         match = search(self.regex_substitute, str(value))
         while match:
             match_str = match.group(1)
-            key_name = match_str[1:-1]
+            key_name = match_str[2:-1] # ${X} -> X
 
-            # Check if option exists
+            # Check if argument exists
             if not key_name in option_dict:            
                 raise KeyError("bad substitution: '" + key_name + "'")
             
@@ -129,7 +129,7 @@ class OptionList(object):
             report_info("Parsing file " + path + " ...")
             json_data = load(json_file)
 
-        skip_nodes = ["value_allowed"]
+        optional = ["value_allowed"]
 
         try:
             for struct_name, options in json_data["Options"].items():
@@ -139,17 +139,14 @@ class OptionList(object):
                     report_info("Parsing option '" + struct_name + "." + option_name + "' ...")
                     opt = Option()
                     opt.name = option_name
-                    for key, value in option.items():
-                        # Skip certain nodes
-                        if key in skip_nodes:
-                            continue
 
+                    for key, value in option.items():
                         report_info("Parsing '" + key + "' = '" + str(value) + "'")
-                        if not hasattr(opt, key):
+                        if not hasattr(opt, key) and not key in optional:
                             raise KeyError("invalid key: '" + key + "' of option '" + \
                                            option_name + "'")                        
                         self.substitute_and_setattr(opt, key, option)
-                    
+
                     # Check the default value if we have a range of given options
                     if hasattr(opt, "value_allowed"):
                         if not opt.value_default in opt.value_allowed:
@@ -157,9 +154,8 @@ class OptionList(object):
                                                + " value '" + opt.value_default + "' not in " + \
                                                "allowed values '" + str(opt.value_allowed) + "'")
 
-                    # Replace "," in cl_metavar with "|"
-                    if opt.cl_metavar:
-                        opt.cl_metavar = opt.cl_metavar.replace(",", "|")
+                        if not opt.cl_metavar:
+                            opt.cl_metavar = opt.value_allowed.replace(",", "|")
 
                     # Add the check_fun
                     prefix = "[](const auto& value) -> bool "

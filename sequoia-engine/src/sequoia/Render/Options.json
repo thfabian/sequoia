@@ -1,6 +1,14 @@
 {
     "Options" : {
         "Render" : {
+            "WindowMode" : {
+                "value_type" : "std::string",
+                "value_default" : "window",
+                "value_allowed" : "window,fullscreen,windowed-fullscreen",
+                "doc" : "Set the window mode to <${cl_metavar}>, where <${cl_metavar}> is one of '${value_allowed}'",
+                "cl" : "window-mode",
+                "cl_metavar" : "MODE"
+            }
         }
     }
 }

@@ -57,6 +57,16 @@ void setOption(po::options_description& optionsDesc, const std::string& doc, Str
 }
 
 template <class T>
+T applyOption(const po::variable_value& value) {
+  return value.as<T>();
+}
+
+template <>
+bool applyOption(const po::variable_value& value) {
+  return true;
+}
+
+template <class T>
 std::string toString(const T& value) {
   return std::to_string(value);
 }
@@ -80,7 +90,7 @@ void CommandLine::parse(const std::vector<std::string>& args) {
   if(!StringRef(CommandLine).empty()) {                                                            \
     setOption<Type>(optionDescMap[#Structure], Doc, CommandLine, CommandLineMetaVar);              \
     updateOptionMap.emplace(CommandLine, [&options](const po::variable_value& value) {             \
-      options.Structure.Name = std::is_same<Type, bool>::value ? true : value.as<Type>();          \
+      options.Structure.Name = applyOption<Type>(value);                                           \
     });                                                                                            \
   }
 #include "sequoia/Core/Options.inc"
@@ -123,8 +133,7 @@ void CommandLine::parse(const std::vector<std::string>& args) {
 #define OPT(Structure, Name, Type, DefaultValue, CheckFun, Doc, CommandLine, CommandLineMetaVar)   \
   if(!CheckFun(options.Structure.Name))                                                            \
     ErrorHandler::getSingleton().fatal(std::string("value '") + toString(options.Structure.Name) + \
-                                           "' of option '" + #Structure + "." + #Name +            \
-                                           "' is invalid",                                         \
+                                           "' of option '--" + CommandLine + "' is invalid",       \
                                        false);
 #include "sequoia/Core/Options.inc"
 #undef OPT
