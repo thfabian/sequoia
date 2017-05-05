@@ -13,9 +13,12 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
+#include "sequoia/Core/ErrorHandler.h"
 #include "sequoia/Core/Logging.h"
 #include "sequoia/Game/Game.h"
+#include "sequoia/Render/Exception.h"
 #include "sequoia/Render/RenderSystem.h"
+#include <iostream>
 
 namespace sequoia {
 
@@ -28,18 +31,36 @@ Game::Game() : renderSystem_(nullptr) { initialize(); }
 Game::~Game() { cleanup(); }
 
 void Game::run() {
-  while(renderSystem_->getWindow(mainWindowID_)->isOpen()) {
+  render::RenderWindow* renderWindow = renderSystem_->getWindow(mainWindowID_);
+
+  LOG(INFO) << "Starting main-loop ...";
+
+  // Start main-loop
+  while(!renderWindow->isClosed()) {
+
+    // Update screen
+    renderWindow->swapBuffers();
+
+    // Query I/O events
+    renderSystem_->pollEvents();
   }
+
+  LOG(INFO) << "Done with main-loop";
 }
 
 void Game::initialize() {
   LOG(INFO) << "Initializing Game ...";
 
-  // Initialize the RenderSystem
-  renderSystem_ = std::make_shared<render::RenderSystem>(render::RenderSystem::RK_OpenGL);
+  try {
+    // Initialize the RenderSystem
+    renderSystem_ = std::make_shared<render::RenderSystem>(render::RenderSystem::RK_OpenGL);
 
-  // Initialize the main-window
-  mainWindowID_ = renderSystem_->createWindow(320, 240, "a title");
+    // Initialize the main-window
+    mainWindowID_ = renderSystem_->createWindow("Sequoia - " SEQUOIA_VERSION_STRING);
+
+  } catch(render::RenderSystemInitException& e) {
+    ErrorHandler::getSingleton().fatal(e.what());
+  }
 
   LOG(INFO) << "Done initializing Game";
 }

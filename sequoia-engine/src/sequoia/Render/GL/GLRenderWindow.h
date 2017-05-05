@@ -29,19 +29,28 @@ namespace render {
 /// @ingroup render
 class SEQUOIA_RENDER_API GLRenderWindow : public RenderWindow {
   GLFWwindow* window_;
-
+  bool isFullscreen_;
+  
 public:
   /// @brief Initialize window
   ///
   /// This involves OpenGL context creation of the window.
-  GLRenderWindow(int width, int height, const std::string& title);
+  ///
+  /// @throw RenderSystemInitException    Window creation failed
+  GLRenderWindow(const std::string& title);
 
   /// @brief Terminate window
   ~GLRenderWindow();
 
-  /// @copydoc sequoia::render::RenderWindow
-  virtual bool isOpen() override;
-
+  /// @copydoc RenderWindow::isClosed
+  virtual bool isClosed() override;
+  
+  /// @copydoc RenderWindow::isFullscreen  
+  virtual bool isFullscreen() const override;
+  
+  /// @copydoc RenderWindow::swapBuffers    
+  virtual void swapBuffers() override;
+  
   /// @brief Get the window
   GLFWwindow* getGLFWwindow();
 };

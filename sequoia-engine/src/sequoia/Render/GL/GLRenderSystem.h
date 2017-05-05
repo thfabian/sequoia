@@ -40,10 +40,13 @@ public:
   virtual ~GLRenderSystem();
 
   /// @copydoc RenderSystemImpl::createWindow
-  virtual int createWindow(int width, int height, const std::string& title) override;
+  virtual int createWindow(const std::string& title) override;
 
   /// @copydoc RenderSystemImpl::getWindow
   virtual RenderWindow* getWindow(int windowID) override;
+  
+  /// @copydoc RenderSystemImpl::pollEvents  
+  virtual void pollEvents() override;  
 };
 
 } // namespace render

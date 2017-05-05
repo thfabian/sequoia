@@ -17,6 +17,7 @@
 #define SEQUOIA_CORE_EXCEPTION_H
 
 #include "sequoia/Core/Export.h"
+#include "sequoia/Core/Format.h"
 #include "sequoia/Core/UtfString.h"
 #include <exception>
 #include <iosfwd>
@@ -32,11 +33,19 @@ class SEQUOIA_CORE_API Exception : public std::exception {
 public:
   /// @brief Initialize the exception
   ///
-  /// @param message    Explanatory string describing the general cause of the current error
   /// @param line       Line the exception was thrown
   /// @param path       Path to the file the exception was thrown
-  Exception(const std::string& message, int line = -1, const char* path = nullptr);
-  Exception(const std::wstring& message, int line = -1, const char* path = nullptr);
+  /// @param fmt        Format string describing the general cause of the current error
+  /// @param args       Arguments to substitute in `fmt`
+  /// @{
+  template <typename... Args>
+  Exception(int line, const char* path, const char* fmt, Args&&... args)
+      : message_(format(fmt, std::forward<Args>(args)...)), line_(line), path_(path) {}
+
+  template <typename... Args>
+  Exception(int line, const char* path, const wchar_t* fmt, Args&&... args)
+      : message_(format(fmt, std::forward<Args>(args)...)), line_(line), path_(path) {}
+  /// @}
 
   /// @brief Virtual destructor
   virtual ~Exception() noexcept;
@@ -63,26 +72,26 @@ public:
   SEQUOIA_API_EXPORT friend std::wostream& operator<<(std::wostream& stream,
                                                       const Exception& exception);
   /// @}
-
 protected:
-  UtfString message_;   ///< Explanatory string describing the general cause of the current error
-  const char* whatStr_; ///< UTF-8 string of `message`
-  int line_;            ///< Line the exception was thrown
-  const char* path_;    ///< Path to the file the exception was thrown
+  UtfString message_; ///< Explanatory string describing the general cause of the current error
+  int line_;          ///< Line the exception was thrown
+  const char* path_;  ///< Path to the file the exception was thrown
 };
 
 } // namespace core
 
 /// @macro SEQUOIA_DECLARE_EXCPETION_BASE
-/// @brief Declare a an exception `Type` deriving from `BaseType`
+/// @brief Declare a an exception `Type` which derives from `BaseType`
 /// @ingroup core
 #define SEQUOIA_DECLARE_EXCPETION_BASE(Type, BaseType)                                             \
   class Type : public BaseType {                                                                   \
   public:                                                                                          \
-    Type(const std::string& message, int line = -1, const char* path = nullptr)                    \
-        : BaseType(message, line, path) {}                                                         \
-    Type(const std::wstring& message, int line = -1, const char* path = nullptr)                   \
-        : BaseType(message, line, path) {}                                                         \
+    template <typename... Args>                                                                    \
+    Type(int line, const char* path, const char* fmt, Args&&... args)                              \
+        : BaseType(line, path, fmt, std::forward<Args>(args)...) {}                                \
+    template <typename... Args>                                                                    \
+    Type(int line, const char* path, const wchar_t* fmt, Args&&... args)                           \
+        : BaseType(line, path, fmt, std::forward<Args>(args)...) {}                                \
     virtual ~Type() noexcept {}                                                                    \
   };
 
@@ -92,18 +101,18 @@ protected:
 #define SEQUOIA_DECLARE_EXCPETION(Type)                                                            \
   SEQUOIA_DECLARE_EXCPETION_BASE(Type, sequoia::core::Exception)
 
-#define SEQUOIA_THROW_IMPL(exception, message, line, file) throw exception(message, line, file)
+#define SEQUOIA_THROW_IMPL(exception, line, file, ...) throw exception(line, file, __VA_ARGS__)
 
 /// @macro SEQUOIA_THROW
 /// @brief Throw an `exception` and add current line and file information in debug mode
 ///
-/// @param exception    Exception to throw (exception has to derive from sequoia::core::Exception)
-/// @param message      String describing the general cause of the current error
+/// @param exception    Exception to throw
+/// @param ...          Format string describing the general cause of the current error
 /// @ingroup core
 #ifndef NDEBUG
-#define SEQUOIA_THROW(exception, message) SEQUOIA_THROW_IMPL(exception, message, __LINE__, __FILE__)
+#define SEQUOIA_THROW(exception, ...) SEQUOIA_THROW_IMPL(exception, __LINE__, __FILE__, __VA_ARGS__)
 #else
-#define SEQUOIA_THROW(exception, message) SEQUOIA_THROW_IMPL(exception, message, -1, nullptr)
+#define SEQUOIA_THROW(exception, ...) SEQUOIA_THROW_IMPL(exception, -1, nullptr, __VA_ARGS__)
 #endif
 
 } // namespace sequoia

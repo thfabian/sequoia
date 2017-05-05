@@ -47,12 +47,6 @@ struct ToStream<true> {
 
 } // anonymous namespace
 
-Exception::Exception(const std::string& message, int line, const char* path)
-    : message_(message), whatStr_(nullptr), line_(line), path_(path) {}
-
-Exception::Exception(const std::wstring& message, int line, const char* path)
-    : message_(message), whatStr_(nullptr), line_(line), path_(path) {}
-
 Exception::~Exception() noexcept {}
 
 const char* Exception::what() const noexcept {

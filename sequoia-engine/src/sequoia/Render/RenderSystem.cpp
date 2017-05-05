@@ -27,21 +27,19 @@ namespace render {
 RenderSystem::RenderSystem(RenderSystem::RenderSystemKind renderSystemKind)
     : renderSystemKind_(renderSystemKind) {
 
-  try {
-    switch(renderSystemKind_) {
-    case RK_OpenGL:
-      renderSystem_ = std::make_unique<GLRenderSystem>();
-    }
-  } catch(RenderSystemInitException& e) {
-    ErrorHandler::getSingleton().fatal(e.what());
+  switch(renderSystemKind_) {
+  case RK_OpenGL:
+    renderSystem_ = std::make_unique<GLRenderSystem>();
   }
 }
 
-int RenderSystem::createWindow(int width, int height, const std::string& title) {
-  return renderSystem_->createWindow(width, height, title);
+int RenderSystem::createWindow(const std::string& title) {
+  return renderSystem_->createWindow(title);
 }
 
 RenderWindow* RenderSystem::getWindow(int windowID) { return renderSystem_->getWindow(windowID); }
+
+void RenderSystem::pollEvents() { renderSystem_->pollEvents(); }
 
 } // namespace render
 

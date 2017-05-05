@@ -9,6 +9,13 @@
                 "cl" : "window-mode",
                 "cl_metavar" : "MODE"
             },
+            "Monitor" : {
+                "value_type" : "int",
+                "value_default" : "-1",
+                "doc" : "Set the ${cl_metavar} to use, -1 indicates the primary monitor should be used",
+                "cl" : "monitor",
+                "cl_metavar" : "MONITOR"
+            },
             "FSAA" : {
                 "value_type" : "int",
                 "value_default" : "0",

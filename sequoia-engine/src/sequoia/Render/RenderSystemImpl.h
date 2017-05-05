@@ -34,14 +34,15 @@ public:
 
   /// @brief Create a new RenderWindow
   ///
-  /// @param width    The desired width, in screen coordinates, of the window
-  /// @param height   The desired height, in screen coordinates, of the window
   /// @param title    The initial, UTF-8 encoded window title.
   /// @returns ID of the created window
-  virtual int createWindow(int width, int height, const std::string& title) = 0;
+  virtual int createWindow(const std::string& title) = 0;
 
   /// @brief Get the window identifid by `windowID`
   virtual RenderWindow* getWindow(int windowID) = 0;
+
+  /// @brief Processes events that ar in the event queue
+  virtual void pollEvents() = 0;
 };
 
 } // namespace render

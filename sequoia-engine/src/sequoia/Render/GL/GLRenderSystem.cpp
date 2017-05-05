@@ -50,9 +50,8 @@ GLRenderSystem::~GLRenderSystem() {
   LOG(INFO) << "Done terminating GLRenderSystem";
 }
 
-int GLRenderSystem::createWindow(int width, int height, const std::string& title) {
-  auto res =
-      windowMap_.emplace(windowMap_.size(), std::make_shared<GLRenderWindow>(width, height, title));
+int GLRenderSystem::createWindow(const std::string& title) {
+  auto res = windowMap_.emplace(windowMap_.size(), std::make_shared<GLRenderWindow>(title));
   SEQUOIA_ASSERT_MSG(res.second, "failed to create window");
   return res.first->first; // WindowID
 }
@@ -60,6 +59,8 @@ int GLRenderSystem::createWindow(int width, int height, const std::string& title
 RenderWindow* GLRenderSystem::getWindow(int windowID) {
   return static_cast<RenderWindow*>(windowMap_[windowID].get());
 }
+
+void GLRenderSystem::pollEvents() { glfwPollEvents(); }
 
 } // namespace render
 

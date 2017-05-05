@@ -13,35 +13,29 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_RENDER_RENDERWINDOW_H
-#define SEQUOIA_RENDER_RENDERWINDOW_H
-
-#include "sequoia/Render/Export.h"
+#include "sequoia/Core/Unreachable.h"
+#include <cstdio>
+#include <iostream>
 
 namespace sequoia {
 
-namespace render {
+namespace core {
 
-/// @brief Abstract base class of all RenderWindows
-///
-/// RenderWindows are created by the RenderSystem.
-/// @ingroup render
-class SEQUOIA_RENDER_API RenderWindow {
-public:
-  virtual ~RenderWindow() {}
+SEQUOIA_ATTRIBUTE_NORETURN void sequoia_unreachable_internal(const char* msg, const char* file,
+                                                             unsigned line) {
+  std::cerr << "FATAL ERROR: UNREACHABLE executed : ";
+  if(msg)
+    std::cerr << "\"" << msg << "\"";
+  if(file)
+    std::cerr << " at " << file << ":" << line;
+  std::cerr << std::endl;
+  std::abort();
 
-  /// @brief Poll if the window is closed
-  virtual bool isClosed() = 0;
+#ifdef SEQUOIA_BUILTIN_UNREACHABLE
+  SEQUOIA_BUILTIN_UNREACHABLE;
+#endif
+}
 
-  /// @brief Check if window is in fullscreen mode
-  virtual bool isFullscreen() const = 0;
-
-  /// @brief Swaps the frame buffers to display the next frame
-  virtual void swapBuffers() = 0;
-};
-
-} // namespace render
+} // namespace core
 
 } // namespace sequoia
-
-#endif

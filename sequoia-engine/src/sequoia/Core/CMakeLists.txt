@@ -61,7 +61,9 @@ sequoia_add_library(
           SingletonManager.cpp
           StringSwitch.h
           StringRef.h
-          StringRef.cpp          
+          StringRef.cpp 
+          Unreachable.h
+          Unreachable.cpp         
           Utf.h
           UtfString.h
           UtfString.cpp

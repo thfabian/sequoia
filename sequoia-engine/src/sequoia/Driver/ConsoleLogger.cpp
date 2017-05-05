@@ -21,6 +21,8 @@
 #include <fstream>
 #include <iostream>
 
+#define SEQUOIA_LOGGING_PRINT_FILE 0
+
 namespace sequoia {
 
 SEQUOIA_DECLARE_SINGLETON(driver::ConsoleLogger);
@@ -82,16 +84,18 @@ void ConsoleLogger::log(core::LoggingLevel level, const std::string& message, co
       break;
     }
 
-    (*stream_) << " [" << LoggerListener::getThreadID() << "]";
+    (*stream_) << " [" << LoggerListener::getThreadID() << "] ";
 
+#if SEQUOIA_LOGGING_PRINT_FILE
     platform::Path path(file);
 #ifdef SEQUOIA_ON_WIN32
-    (*stream_) << " [" << UtfString(path.filename().native()).toAnsiString();
+    (*stream_) << "[" << UtfString(path.filename().native()).toAnsiString() << ":" << line << "] ";
 #else
-    (*stream_) << " [" << path.filename().native();
+    (*stream_) << "[" << path.filename().native() << ":" << line << "]";
+#endif
 #endif
 
-    (*stream_) << ":" << line << "] " << message << "\n";
+    (*stream_) << message << "\n";
   }
 }
 

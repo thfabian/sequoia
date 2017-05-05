@@ -42,14 +42,15 @@ public:
 
   /// @brief Create a new RenderWindow
   ///
-  /// @param width    The desired width, in screen coordinates, of the window
-  /// @param height   The desired height, in screen coordinates, of the window
   /// @param title    The initial, UTF-8 encoded window title.
   /// @returns ID of the created window
-  int createWindow(int width, int height, const std::string& title);
+  int createWindow(const std::string& title);
 
   /// @brief Get the window identifid by `windowID`
   RenderWindow* getWindow(int windowID);
+
+  /// @brief Processes events that ar in the event queue
+  void pollEvents();
 
 private:
   std::unique_ptr<RenderSystemImpl> renderSystem_;
