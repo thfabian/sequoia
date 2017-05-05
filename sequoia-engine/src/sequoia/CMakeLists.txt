@@ -17,6 +17,7 @@ add_subdirectory(Core)
 add_subdirectory(Math)
 add_subdirectory(Render)
 add_subdirectory(Driver)
+add_subdirectory(Game)
 
 if(SEQUOIA_TESTING)
   add_subdirectory(Unittest)

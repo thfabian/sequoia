@@ -8,6 +8,12 @@
                 "doc" : "Set the window mode to <${cl_metavar}>, where <${cl_metavar}> is one of '${value_allowed}'",
                 "cl" : "window-mode",
                 "cl_metavar" : "MODE"
+            },
+            "FSAA" : {
+                "value_type" : "int",
+                "value_default" : "0",
+                "value_allowed" : "0,1,2,4,8",
+                "doc" : "Set the value of full-scene anti-aliasing (FSAA)"
             }
         }
     }

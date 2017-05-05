@@ -505,7 +505,7 @@ SEQUOIA_CORE_API extern UtfString operator+(const UtfString& left, const UtfStri
 
 } // namespace core
 
-using String = core::UtfString;
+using UtfString = core::UtfString;
 
 } // namespace sequoia
 

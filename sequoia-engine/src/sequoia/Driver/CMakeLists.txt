@@ -20,6 +20,8 @@ sequoia_add_library(
           Driver.h
           CommandLine.h
           CommandLine.cpp
+          ConsoleLogger.h
+          ConsoleLogger.cpp
           Win32Console.h
           Win32Console.cpp
   DEPENDS ${SEQUOIA_EXTERNAL_LIBRARIES}
@@ -29,7 +31,8 @@ sequoia_add_executable(
   NAME Sequoia
   WIN32_APPLICATION
   SOURCES Main.cpp
-  DEPENDS SequoiaDriver
+  DEPENDS SequoiaGame
+          SequoiaDriver
           SequoiaRender
           SequoiaMath
           SequoiaCore

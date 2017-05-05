@@ -40,39 +40,45 @@ std::string LoggerListener::getCurrentTime() {
 
 std::string LoggerListener::getThreadID() {
   std::ostringstream ss;
-  ss << std::this_thread::get_id();
+  ss << std::hex << std::this_thread::get_id();
   return ss.str();
 }
 
-internal::LoggerProxy::LoggerProxy(std::mutex& lock, LoggingLevel level, std::stringstream& ss,
+internal::LoggerProxy::LoggerProxy(std::mutex* lock, LoggingLevel level, std::stringstream* ss,
                                    const char* file, int line)
-    : lock_(lock), level_(level), ss_(ss), file_(file), line_(line) {}
+    : lock_(lock), level_(level), ss_(ss), file_(file), line_(line), isNullLogger_(false) {}
+
+internal::LoggerProxy::LoggerProxy()
+    : lock_(nullptr), level_(LoggingLevel::Info), ss_(nullptr), file_(nullptr), line_(0),
+      isNullLogger_(true) {}
 
 internal::LoggerProxy::~LoggerProxy() {
-  Logger::getSingleton().log(level_, ss_.get().str(), file_, line_);
-  ss_.get().str("");
-  ss_.get().clear();
-  lock_.get().unlock();
+  if(!isNullLogger_) {
+    Logger::getSingleton().log(level_, ss_->str(), file_, line_);
+    ss_->str("");
+    ss_->clear();
+    lock_->unlock();
+  }
 }
 
 internal::LoggerProxy Logger::logInfo(const char* file, int line) noexcept {
   lock_.lock();
-  return internal::LoggerProxy(lock_, LoggingLevel::Info, ss_, file, line);
+  return internal::LoggerProxy(&lock_, LoggingLevel::Info, &ss_, file, line);
 }
 
 internal::LoggerProxy Logger::logWarning(const char* file, int line) noexcept {
   lock_.lock();
-  return internal::LoggerProxy(lock_, LoggingLevel::Warning, ss_, file, line);
+  return internal::LoggerProxy(&lock_, LoggingLevel::Warning, &ss_, file, line);
 }
 
 internal::LoggerProxy Logger::logError(const char* file, int line) noexcept {
   lock_.lock();
-  return internal::LoggerProxy(lock_, LoggingLevel::Error, ss_, file, line);
+  return internal::LoggerProxy(&lock_, LoggingLevel::Error, &ss_, file, line);
 }
 
 internal::LoggerProxy Logger::logFatal(const char* file, int line) noexcept {
   lock_.lock();
-  return internal::LoggerProxy(lock_, LoggingLevel::Fatal, ss_, file, line);
+  return internal::LoggerProxy(&lock_, LoggingLevel::Fatal, &ss_, file, line);
 }
 
 void Logger::log(LoggingLevel level, const std::string& message, const char* file, int line) {

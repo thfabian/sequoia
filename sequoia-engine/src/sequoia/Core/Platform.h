@@ -47,9 +47,11 @@ namespace platform {
 /// @typedef Path
 /// @brief The native path of the platform with respect to `platform::String`
 #ifdef SEQUOIA_USE_STD_FILESYSTEM
-using Path = std::experimental::filesystem::path;
+namespace filesystem = std::experimental::filesystem;
+using Path = filesystem::path;
 #else
-using Path = boost::filesystem::path;
+namespace filesystem = boost::filesystem;
+using Path = filesystem::path;
 #endif
 
 /// @typedef String

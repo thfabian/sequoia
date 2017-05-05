@@ -43,7 +43,7 @@ static void printVersion() {
 }
 
 template <class ValueType>
-void setOption(po::options_description& optionsDesc, const std::string& doc, StringRef cl,
+void setOption(po::options_description& optionsDesc, const std::string& doc, const std::string& cl,
                StringRef clMetaVar) {
   auto docStr = doc + ".";
   if(std::is_same<ValueType, bool>::value)
@@ -84,11 +84,16 @@ void CommandLine::parse(const std::vector<std::string>& args) {
   std::unordered_map<std::string, po::options_description> optionDescMap;
   std::unordered_map<std::string, std::function<void(const po::variable_value&)>> updateOptionMap;
 
-#define OPT(Structure, Name, Type, DefaultValue, CheckFun, Doc, CommandLine, CommandLineMetaVar)   \
+#define OPT(Structure, Name, Type, DefaultValue, CheckFun, Doc, CommandLine, CommandLineShort,     \
+            CommandLineMetaVar)                                                                    \
   if(!optionDescMap.count(#Structure))                                                             \
     optionDescMap.emplace(#Structure, po::options_description(#Structure " options", MaxLineLen)); \
   if(!StringRef(CommandLine).empty()) {                                                            \
-    setOption<Type>(optionDescMap[#Structure], Doc, CommandLine, CommandLineMetaVar);              \
+    setOption<Type>(optionDescMap[#Structure], Doc,                                                \
+                    std::string(CommandLine) + (StringRef(CommandLineShort).empty()                \
+                                                    ? ""                                           \
+                                                    : (std::string(",") + CommandLineShort)),      \
+                    CommandLineMetaVar);                                                           \
     updateOptionMap.emplace(CommandLine, [&options](const po::variable_value& value) {             \
       options.Structure.Name = applyOption<Type>(value);                                           \
     });                                                                                            \
@@ -130,7 +135,8 @@ void CommandLine::parse(const std::vector<std::string>& args) {
   }
 
 // Check options are valid
-#define OPT(Structure, Name, Type, DefaultValue, CheckFun, Doc, CommandLine, CommandLineMetaVar)   \
+#define OPT(Structure, Name, Type, DefaultValue, CheckFun, Doc, CommandLine, CommandLineShort,     \
+            CommandLineMetaVar)                                                                    \
   if(!CheckFun(options.Structure.Name))                                                            \
     ErrorHandler::getSingleton().fatal(std::string("value '") + toString(options.Structure.Name) + \
                                            "' of option '--" + CommandLine + "' is invalid",       \

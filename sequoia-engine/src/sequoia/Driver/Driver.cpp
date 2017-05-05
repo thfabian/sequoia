@@ -13,11 +13,13 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Driver/Driver.h"
-#include "sequoia/Core/Options.h"
 #include "sequoia/Core/ErrorHandler.h"
+#include "sequoia/Core/Logging.h"
+#include "sequoia/Core/Options.h"
 #include "sequoia/Core/SingletonManager.h"
 #include "sequoia/Driver/CommandLine.h"
+#include "sequoia/Driver/ConsoleLogger.h"
+#include "sequoia/Driver/Driver.h"
 #include "sequoia/Driver/Win32Console.h"
 
 namespace sequoia {
@@ -27,19 +29,19 @@ namespace driver {
 #ifdef SEQUOIA_ON_WIN32
 
 int Driver::run(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
-//  // Define SingletonManager here to keep it alive
-//  auto singletonManager = std::make_unique<SingletonManager>();
+  //  // Define SingletonManager here to keep it alive
+  //  auto singletonManager = std::make_unique<SingletonManager>();
 
-//  // Allocate OS specific Singletons
-//  TCHAR program[MAX_PATH];
-//  GetModuleFileName(NULL, program, MAX_PATH);
-//  singletonManager->allocateSingleton<ErrorHandler>(program);
+  //  // Allocate OS specific Singletons
+  //  TCHAR program[MAX_PATH];
+  //  GetModuleFileName(NULL, program, MAX_PATH);
+  //  singletonManager->allocateSingleton<ErrorHandler>(program);
 
-//  // Initialize options, parse config file and parse command-line
-//  std::vector<std::string> arguments = boost::program_options::split_winmain(lpCmdLine);
-//  CommandLine::parse(arguments);
+  //  // Initialize options, parse config file and parse command-line
+  //  std::vector<std::string> arguments = boost::program_options::split_winmain(lpCmdLine);
+  //  CommandLine::parse(arguments);
 
-//  return Driver::runImpl();
+  //  return Driver::runImpl();
 }
 
 #else
@@ -53,7 +55,7 @@ int Driver::run(int argc, char* argv[]) {
 
   // Initialize options, parse config file and parse command-line
   singletonManager->allocateSingleton<Options>();
-  
+
   std::vector<std::string> arguments(argv + 1, argv + argc);
   CommandLine::parse(arguments);
 
@@ -63,25 +65,37 @@ int Driver::run(int argc, char* argv[]) {
 #endif
 
 int Driver::runImpl() {
-//  // Create Logger TODO: should be deleted last
-//  auto* lm = new Ogre::LogManager();
-//  lm->createLog("sequoia.log", true, true, false);
+  SingletonManager& singletonManager = SingletonManager::getSingleton();
+  Options& opt = Options::getSingleton();
 
-//  // Setup & run game
-//  try {
-//    SingletonManager::getSingleton().allocateSingleton<game::Game>();
-//    game::Game::getSingleton().run();
-//  } catch(std::exception& e) {
-//    core::ErrorHandler::getSingleton().fatal(e.what());
-//    return 1;
-//  }
+  // Enable all options for debugging
+  if(opt.Core.Debug) {
+    opt.Driver.Logging = true;
+  }
 
-//  // Save configuration to disk (create the config path if necessary)
-//  try {
-//    config.save(config.getPath("CommandLine.ConfigFile", CSTR(SEQUOIA_GLOBAL_CONFIG_PATH)));
-//  } catch(std::exception& e) {
-//    core::ErrorHandler::getSingleton().warning(e.what());
-//  }
+  // Setup Logger
+  singletonManager.allocateSingleton<core::Logger>();
+
+  if(opt.Driver.Logging)
+    singletonManager.allocateSingleton<ConsoleLogger>(opt.Driver.LoggingFile);
+
+  LOG(INFO) << "does it work?";
+
+  //  // Setup & run game
+  //  try {
+  //    SingletonManager::getSingleton().allocateSingleton<game::Game>();
+  //    game::Game::getSingleton().run();
+  //  } catch(std::exception& e) {
+  //    core::ErrorHandler::getSingleton().fatal(e.what());
+  //    return 1;
+  //  }
+
+  //  // Save configuration to disk (create the config path if necessary)
+  //  try {
+  //    config.save(config.getPath("CommandLine.ConfigFile", CSTR(SEQUOIA_GLOBAL_CONFIG_PATH)));
+  //  } catch(std::exception& e) {
+  //    core::ErrorHandler::getSingleton().warning(e.what());
+  //  }
 
   return 0;
 }

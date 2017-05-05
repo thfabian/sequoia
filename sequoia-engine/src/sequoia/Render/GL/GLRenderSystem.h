@@ -28,7 +28,7 @@ namespace render {
 /// @ingroup render
 class SEQUOIA_RENDER_API GLRenderSystem : public RenderSystemImpl {
 public:
-  /// @brief Initialize GLFW and glbinding
+  /// @brief Initialize GLFW
   /// @throws RenderSystemException    Initialization of GLFW failed
   GLRenderSystem();
 

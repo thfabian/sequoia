@@ -24,14 +24,16 @@ SEQUOIA_DECLARE_SINGLETON(core::Options);
 namespace core {
 
 void Options::reset() {
-#define OPT(Structure, Name, Type, DefaultValue, CheckFun, Doc, CommandLine, CommandLineMetaVar)   \
+#define OPT(Structure, Name, Type, DefaultValue, CheckFun, Doc, CommandLine, CommandLineShort,     \
+            CommandLineMetaVar)                                                                    \
   Structure.Name = DefaultValue;
 #include "sequoia/Core/Options.inc"
 #undef OPT
 }
 
 void Options::dump() {
-#define OPT(Structure, Name, Type, DefaultValue, CheckFun, Doc, CommandLine, CommandLineMetaVar)   \
+#define OPT(Structure, Name, Type, DefaultValue, CheckFun, Doc, CommandLine, CommandLineShort,     \
+            CommandLineMetaVar)                                                                    \
   std::cout << format("%-20s", #Structure "." #Name) << std::boolalpha << DefaultValue << "\n";
 #include "sequoia/Core/Options.inc"
 #undef OPT

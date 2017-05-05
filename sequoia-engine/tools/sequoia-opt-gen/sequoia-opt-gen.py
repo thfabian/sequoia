@@ -84,6 +84,7 @@ class Option(object):
         self.check_fun = None       # [optional] lambda function to check if option is valid. 
                                     #            Default is [](const auto& value) { return true; }
         self.cl = None              # [optional] Command-line option (without leading "-" or "--")
+        self.cl_short = None        # [optional] Short command-line option (single character)
         self.cl_metavar = None      # [optional] Meta variable used in the help string of the 
                                     #            command-line target
 
@@ -154,7 +155,7 @@ class OptionList(object):
                                                + " value '" + opt.value_default + "' not in " + \
                                                "allowed values '" + str(opt.value_allowed) + "'")
 
-                        if not opt.cl_metavar:
+                        if opt.cl and not opt.cl_metavar:
                             opt.cl_metavar = opt.value_allowed.replace(",", "|")
 
                     # Add the check_fun
@@ -212,8 +213,8 @@ class OptionList(object):
         cxx_inc_option_def = ""
 
         empty_str = "\"\""
-        signature = "(Structure, Name, Type, DefaultValue, CheckFun, Doc, CommandLine, "\
-                    "CommandLineMetaVar)"
+        signature = "(Structure, Name, Type, DefaultValue, CheckFun, Doc, CommandLine, " \
+                    "CommandLineShort, CommandLineMetaVar)"
 
         for struct_name, options in self.options.items(): 
             cxx_inc_option_def += "#ifndef OPT_" + struct_name.upper() + "\n"
@@ -229,6 +230,8 @@ class OptionList(object):
                                        ", (" + opt.check_fun + ")"
                 cxx_inc_option_def += ", " + (empty_str if not opt.doc else "\"" + opt.doc + "\"")
                 cxx_inc_option_def += ", " + (empty_str if not opt.cl else "\"" + opt.cl + "\"")
+                cxx_inc_option_def += ", " + (empty_str if not opt.cl_short else "\"" + \
+                                      opt.cl_short + "\"")
                 cxx_inc_option_def += ", " + (empty_str if not opt.cl_metavar else "\"" + \
                                       opt.cl_metavar + "\"")
                 cxx_inc_option_def += ")\n"

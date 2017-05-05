@@ -9,15 +9,9 @@
 
 sequoia_add_library(
   NAME SequoiaGame
-  SOURCES CameraController.cpp
+  SOURCES Export.h
+          Game.h
           Game.cpp
-          InputManager.cpp
-          RenderSystemFactory.cpp
-          WindowFactory.cpp
   DEPENDS SequoiaCore
-          ${SEQUOIA_OGRE_LIBRARIES}
-          ${SEQUOIA_OIS_LIBRARIES}
-          ${SEQUOIA_BOOST_LIBRARIES}
-          ${SEQUOIA_THREADS_LIBRARIES}
 )
 

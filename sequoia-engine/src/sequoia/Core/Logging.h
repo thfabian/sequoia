@@ -19,7 +19,6 @@
 #include "sequoia/Core/Export.h"
 #include "sequoia/Core/Listenable.h"
 #include "sequoia/Core/Singleton.h"
-#include <functional>
 #include <mutex>
 #include <sstream>
 #include <string>
@@ -46,7 +45,7 @@ public:
   /// @brief Get current thread-id as a string
   static std::string getThreadID();
 
-  /// @brief Log `message` of severity `level` at position `file:line`
+  /// @brief Log `message` of severity `level` at position file:line
   ///
   /// @param level     Severity level
   /// @param message   Message to log
@@ -58,30 +57,24 @@ public:
 namespace internal {
 
 class SEQUOIA_CORE_API LoggerProxy {
-  std::reference_wrapper<std::mutex> lock_;
-  LoggingLevel level_;
-  std::reference_wrapper<std::stringstream> ss_;
+  std::mutex* lock_;
+  const LoggingLevel level_;
+  std::stringstream* ss_;
   const char* file_;
-  int line_;
+  const int line_;
+  const bool isNullLogger_;
 
 public:
   LoggerProxy(const LoggerProxy&) = default;
-  LoggerProxy(std::mutex& lock, LoggingLevel level, std::stringstream& ss, const char* file,
+  LoggerProxy(std::mutex* lock, LoggingLevel level, std::stringstream* ss, const char* file,
               int line);
-
+  LoggerProxy();
   ~LoggerProxy();
 
   template <class StreamableValueType>
   LoggerProxy& operator<<(StreamableValueType&& value) {
-    ss_.get() << value;
-    return *this;
-  }
-};
-
-class NullLoggerProxy {
-public:
-  template <class StreamableValueType>
-  NullLoggerProxy& operator<<(StreamableValueType&& value) {
+    if(!isNullLogger_)
+      (*ss_) << value;
     return *this;
   }
 };
@@ -126,12 +119,9 @@ class SEQUOIA_CORE_API Logger : public Singleton<Logger>, public Listenable<Logg
   std::mutex lock_;
 
 public:
-  /// @brief Initialize Logger object
-  Logger();
-
   /// @name Logging
   /// @{
-  internal::NullLoggerProxy logNull() noexcept { return internal::NullLoggerProxy(); }
+  internal::LoggerProxy logNull() noexcept { return internal::LoggerProxy(); }
   internal::LoggerProxy logInfo(const char* file, int line) noexcept;
   internal::LoggerProxy logWarning(const char* file, int line) noexcept;
   internal::LoggerProxy logError(const char* file, int line) noexcept;
@@ -158,9 +148,9 @@ public:
 #define LOG(Level) SEQUOIA_LOG_##Level##_IMPL()
 
 #define SEQUOIA_LOG_IMPL(func)                                                                     \
-  sequoia::core::Logger::getSingleton().hasListeners()                                             \
-      ? sequoia::core::Logger::getSingleton().func(__FILE__, __LINE__)                             \
-      : sequoia::core::Logger::getSingleton().logNull()
+  (sequoia::core::Logger::getSingleton().hasListeners()                                            \
+       ? sequoia::core::Logger::getSingleton().func(__FILE__, __LINE__)                            \
+       : sequoia::core::Logger::getSingleton().logNull())
 #define SEQUOIA_LOG_INFO_IMPL() SEQUOIA_LOG_IMPL(logInfo)
 #define SEQUOIA_LOG_WARNING_IMPL() SEQUOIA_LOG_IMPL(logWarning)
 #define SEQUOIA_LOG_ERROR_IMPL() SEQUOIA_LOG_IMPL(logError)
