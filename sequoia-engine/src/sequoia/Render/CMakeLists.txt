@@ -16,12 +16,17 @@
 sequoia_add_library(
   NAME SequoiaRender
   SOURCES Export.h
+          Exception.h
+          RenderFwd.h
           RenderSystem.h
           RenderSystemImpl.h
           RenderSystem.cpp
+          RenderWindow.h
           
           GL/GL.h          
           GL/GLRenderSystem.h
           GL/GLRenderSystem.cpp
+          GL/GLRenderWindow.h
+          GL/GLRenderWindow.cpp
   DEPENDS ${SEQUOIA_EXTERNAL_LIBRARIES}
 )

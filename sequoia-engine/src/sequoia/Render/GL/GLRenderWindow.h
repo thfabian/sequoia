@@ -13,36 +13,41 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Core/ErrorHandler.h"
-#include "sequoia/Render/Exception.h"
-#include "sequoia/Render/GL/GLRenderSystem.h"
-#include "sequoia/Render/RenderSystem.h"
+#ifndef SEQUOIA_RENDER_GL_RENDERWINDOW_H
+#define SEQUOIA_RENDER_GL_RENDERWINDOW_H
+
+#include "sequoia/Render/RenderWindow.h"
+#include <string>
+
+struct GLFWwindow;
 
 namespace sequoia {
 
-SEQUOIA_DECLARE_SINGLETON(render::RenderSystem);
-
 namespace render {
 
-RenderSystem::RenderSystem(RenderSystem::RenderSystemKind renderSystemKind)
-    : renderSystemKind_(renderSystemKind) {
+/// @brief OpenGL render window
+/// @ingroup render
+class SEQUOIA_RENDER_API GLRenderWindow : public RenderWindow {
+  GLFWwindow* window_;
 
-  try {
-    switch(renderSystemKind_) {
-    case RK_OpenGL:
-      renderSystem_ = std::make_unique<GLRenderSystem>();
-    }
-  } catch(RenderSystemInitException& e) {
-    ErrorHandler::getSingleton().fatal(e.what());
-  }
-}
+public:
+  /// @brief Initialize window
+  ///
+  /// This involves OpenGL context creation of the window.
+  GLRenderWindow(int width, int height, const std::string& title);
 
-int RenderSystem::createWindow(int width, int height, const std::string& title) {
-  return renderSystem_->createWindow(width, height, title);
-}
+  /// @brief Terminate window
+  ~GLRenderWindow();
 
-RenderWindow* RenderSystem::getWindow(int windowID) { return renderSystem_->getWindow(windowID); }
+  /// @copydoc sequoia::render::RenderWindow
+  virtual bool isOpen() override;
+
+  /// @brief Get the window
+  GLFWwindow* getGLFWwindow();
+};
 
 } // namespace render
 
 } // namespace sequoia
+
+#endif

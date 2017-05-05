@@ -14,6 +14,8 @@
 //===------------------------------------------------------------------------------------------===//
 
 #include "sequoia/Core/ErrorHandler.h"
+#include "sequoia/Core/Logging.h"
+#include "sequoia/Render/Exception.h"
 #include "sequoia/Render/GL/GL.h"
 #include "sequoia/Render/GL/GLRenderSystem.h"
 
@@ -21,23 +23,43 @@ namespace sequoia {
 
 namespace render {
 
-/// @brief Abort if an error occured
-static void GLFWErrorCallback(int error, const char* description) {
-  // TODO: log error
-  ErrorHandler::getSingleton().fatal(description);
+static void GLFWErrorCallbackSoft(int error, const char* description) {
+  LOG(ERROR) << "GLFW error: " << description;
+}
+
+static void GLFWErrorCallbackHard(int error, const char* description) {
+  GLFWErrorCallbackSoft(error, description);
+  SEQUOIA_THROW(RenderSystemInitException, description);
 }
 
 GLRenderSystem::GLRenderSystem() {
-  glfwSetErrorCallback(GLFWErrorCallback);
+  LOG(INFO) << "Initializing GLRenderSystem ...";
+  glfwSetErrorCallback(GLFWErrorCallbackHard);
 
-  // Initialize GLFW
   glfwInit();
+  LOG(INFO) << "GLFW: " << glfwGetVersionString();
 
-  // TOOD: log glfw version
-  // glfwGetVersionString();
+  glfwSetErrorCallback(GLFWErrorCallbackSoft);
+  LOG(INFO) << "Done initializing GLRenderSystem";
 }
 
-GLRenderSystem::~GLRenderSystem() { glfwTerminate(); }
+GLRenderSystem::~GLRenderSystem() {
+  LOG(INFO) << "Terminating GLRenderSystem ...";
+  windowMap_.clear();
+  glfwTerminate();
+  LOG(INFO) << "Done terminating GLRenderSystem";
+}
+
+int GLRenderSystem::createWindow(int width, int height, const std::string& title) {
+  auto res =
+      windowMap_.emplace(windowMap_.size(), std::make_shared<GLRenderWindow>(width, height, title));
+  SEQUOIA_ASSERT_MSG(res.second, "failed to create window");
+  return res.first->first; // WindowID
+}
+
+RenderWindow* GLRenderSystem::getWindow(int windowID) {
+  return static_cast<RenderWindow*>(windowMap_[windowID].get());
+}
 
 } // namespace render
 

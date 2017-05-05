@@ -43,6 +43,8 @@ sequoia_add_library(
           Export.h
           ErrorHandler.h
           ErrorHandler.cpp
+          Exception.h
+          Exception.cpp
           Format.h          
           Compiler.h
           NonCopyable.h

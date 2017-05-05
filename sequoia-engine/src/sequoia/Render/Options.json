@@ -14,6 +14,16 @@
                 "value_default" : "0",
                 "value_allowed" : "0,1,2,4,8",
                 "doc" : "Set the value of full-scene anti-aliasing (FSAA)"
+            },
+            "GLMajorVersion" : {
+                "value_type" : "int",
+                "value_default" : "3",
+                "doc" : "OpenGL major version"
+            },
+            "GLMinorVersion" : {
+                "value_type" : "int",
+                "value_default" : "2",
+                "doc" : "OpenGL minor version"
             }
         }
     }

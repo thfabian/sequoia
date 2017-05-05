@@ -13,7 +13,9 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
+#include "sequoia/Core/Logging.h"
 #include "sequoia/Game/Game.h"
+#include "sequoia/Render/RenderSystem.h"
 
 namespace sequoia {
 
@@ -21,24 +23,34 @@ SEQUOIA_DECLARE_SINGLETON(game::Game);
 
 namespace game {
 
-Game::Game() {
-  initialize();
-}
+Game::Game() : renderSystem_(nullptr) { initialize(); }
 
-Game::~Game() {
-  cleanup();
-}
+Game::~Game() { cleanup(); }
 
 void Game::run() {
-
+  while(renderSystem_->getWindow(mainWindowID_)->isOpen()) {
+  }
 }
 
 void Game::initialize() {
-  
+  LOG(INFO) << "Initializing Game ...";
+
+  // Initialize the RenderSystem
+  renderSystem_ = std::make_shared<render::RenderSystem>(render::RenderSystem::RK_OpenGL);
+
+  // Initialize the main-window
+  mainWindowID_ = renderSystem_->createWindow(320, 240, "a title");
+
+  LOG(INFO) << "Done initializing Game";
 }
 
 void Game::cleanup() {
-  
+  LOG(INFO) << "Terminating Game ...";
+
+  // Free RenderSystem
+  renderSystem_.reset();
+
+  LOG(INFO) << "Done terminating Game";
 }
 
 } // namespace game

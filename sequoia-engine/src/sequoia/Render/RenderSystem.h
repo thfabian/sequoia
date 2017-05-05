@@ -19,6 +19,7 @@
 #include "sequoia/Core/Singleton.h"
 #include "sequoia/Render/Export.h"
 #include "sequoia/Render/RenderSystemImpl.h"
+#include "sequoia/Render/RenderWindow.h"
 #include <memory>
 
 namespace sequoia {
@@ -32,11 +33,27 @@ namespace render {
 ///
 /// @ingroup render
 class SEQUOIA_RENDER_API RenderSystem : public Singleton<RenderSystem> {
-  std::unique_ptr<RenderSystemImpl> renderSystem_;
-
 public:
-  /// @brief Initialize the render-system
-  RenderSystem();
+  enum RenderSystemKind { RK_OpenGL };
+
+  /// @brief Initialize the given render-system
+  /// @remark Terminates the program on failure
+  RenderSystem(RenderSystemKind renderSystemKind);
+
+  /// @brief Create a new RenderWindow
+  ///
+  /// @param width    The desired width, in screen coordinates, of the window
+  /// @param height   The desired height, in screen coordinates, of the window
+  /// @param title    The initial, UTF-8 encoded window title.
+  /// @returns ID of the created window
+  int createWindow(int width, int height, const std::string& title);
+
+  /// @brief Get the window identifid by `windowID`
+  RenderWindow* getWindow(int windowID);
+
+private:
+  std::unique_ptr<RenderSystemImpl> renderSystem_;
+  RenderSystemKind renderSystemKind_;
 };
 
 } // namespace render

@@ -13,36 +13,29 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Core/ErrorHandler.h"
-#include "sequoia/Render/Exception.h"
-#include "sequoia/Render/GL/GLRenderSystem.h"
-#include "sequoia/Render/RenderSystem.h"
+#ifndef SEQUOIA_RENDER_RENDERWINDOW_H
+#define SEQUOIA_RENDER_RENDERWINDOW_H
+
+#include "sequoia/Render/Export.h"
 
 namespace sequoia {
 
-SEQUOIA_DECLARE_SINGLETON(render::RenderSystem);
-
 namespace render {
 
-RenderSystem::RenderSystem(RenderSystem::RenderSystemKind renderSystemKind)
-    : renderSystemKind_(renderSystemKind) {
+/// @brief Abstract base class of all RenderWindows
+///
+/// RenderWindows are created by the RenderSystem.
+/// @ingroup render
+class SEQUOIA_RENDER_API RenderWindow {
+public:
+  virtual ~RenderWindow() {}
 
-  try {
-    switch(renderSystemKind_) {
-    case RK_OpenGL:
-      renderSystem_ = std::make_unique<GLRenderSystem>();
-    }
-  } catch(RenderSystemInitException& e) {
-    ErrorHandler::getSingleton().fatal(e.what());
-  }
-}
-
-int RenderSystem::createWindow(int width, int height, const std::string& title) {
-  return renderSystem_->createWindow(width, height, title);
-}
-
-RenderWindow* RenderSystem::getWindow(int windowID) { return renderSystem_->getWindow(windowID); }
+  /// @brief Poll if the window is open
+  virtual bool isOpen() = 0;
+};
 
 } // namespace render
 
 } // namespace sequoia
+
+#endif

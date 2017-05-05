@@ -18,6 +18,7 @@
 
 #include "sequoia/Core/Singleton.h"
 #include "sequoia/Game/Export.h"
+#include "sequoia/Render/RenderFwd.h"
 #include <memory>
 
 namespace sequoia {
@@ -27,6 +28,11 @@ namespace game {
 /// @brief Main class holding all game and rendering related objects and running the main-loop
 /// @ingroup game
 class SEQUOIA_GAME_API Game : public Singleton<Game> {
+  std::shared_ptr<render::RenderSystem> renderSystem_;
+
+  /// ID of the main window
+  int mainWindowID_;
+
 public:
   /// @copydoc initialize
   Game();

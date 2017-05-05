@@ -17,6 +17,9 @@
 #define SEQUOIA_RENDER_RENDERSYSTEMIMPL_H
 
 #include "sequoia/Render/Export.h"
+#include "sequoia/Render/RenderWindow.h"
+#include <memory>
+#include <string>
 
 namespace sequoia {
 
@@ -24,7 +27,22 @@ namespace render {
 
 /// @brief Interface of the various render-system implementations
 /// @ingroup render
-class SEQUOIA_RENDER_API RenderSystemImpl {};
+class SEQUOIA_RENDER_API RenderSystemImpl {
+public:
+  /// @brief Terminate the render-system
+  virtual ~RenderSystemImpl() {}
+
+  /// @brief Create a new RenderWindow
+  ///
+  /// @param width    The desired width, in screen coordinates, of the window
+  /// @param height   The desired height, in screen coordinates, of the window
+  /// @param title    The initial, UTF-8 encoded window title.
+  /// @returns ID of the created window
+  virtual int createWindow(int width, int height, const std::string& title) = 0;
+
+  /// @brief Get the window identifid by `windowID`
+  virtual RenderWindow* getWindow(int windowID) = 0;
+};
 
 } // namespace render
 

@@ -14,6 +14,7 @@
 //===------------------------------------------------------------------------------------------===//
 
 #include "sequoia/Core/ErrorHandler.h"
+#include "sequoia/Core/Exception.h"
 #include "sequoia/Core/Logging.h"
 #include "sequoia/Core/Options.h"
 #include "sequoia/Core/SingletonManager.h"
@@ -21,6 +22,7 @@
 #include "sequoia/Driver/ConsoleLogger.h"
 #include "sequoia/Driver/Driver.h"
 #include "sequoia/Driver/Win32Console.h"
+#include "sequoia/Game/Game.h"
 
 namespace sequoia {
 
@@ -79,23 +81,9 @@ int Driver::runImpl() {
   if(opt.Driver.Logging)
     singletonManager.allocateSingleton<ConsoleLogger>(opt.Driver.LoggingFile);
 
-  LOG(INFO) << "does it work?";
-
-  //  // Setup & run game
-  //  try {
-  //    SingletonManager::getSingleton().allocateSingleton<game::Game>();
-  //    game::Game::getSingleton().run();
-  //  } catch(std::exception& e) {
-  //    core::ErrorHandler::getSingleton().fatal(e.what());
-  //    return 1;
-  //  }
-
-  //  // Save configuration to disk (create the config path if necessary)
-  //  try {
-  //    config.save(config.getPath("CommandLine.ConfigFile", CSTR(SEQUOIA_GLOBAL_CONFIG_PATH)));
-  //  } catch(std::exception& e) {
-  //    core::ErrorHandler::getSingleton().warning(e.what());
-  //  }
+  // Setup game
+  auto mainGameObject = std::make_unique<game::Game>();
+  mainGameObject->run();
 
   return 0;
 }
