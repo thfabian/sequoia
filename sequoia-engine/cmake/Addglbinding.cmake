@@ -16,7 +16,12 @@
 find_package(glbinding REQUIRED)
 include_directories(SYSTEM ${GLBINDING_INCLUDE_DIRS})
 
-#TODO: Copy DLL's to bin directories on windows
+# Copy DLL's to bin directories on windows
+if(WIN32)
+  foreach(build_type Release Debug RelWithDebInfo)
+    file(COPY "${GLBINDING_BINARY}" DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/bin/${build_type}")
+  endforeach()
+endif()
 
 sequoia_export_package_variable(
   glbinding 

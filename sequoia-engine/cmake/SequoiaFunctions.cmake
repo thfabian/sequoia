@@ -116,7 +116,7 @@ function(sequoia_add_library)
     sequoia_run_cppcheck(${ARG_NAME} ${ARG_SOURCES})
   endif()
   
-  if(SEQUOIA_COMPILER_MSVC)
+  if(WIN32 AND NOT(MSVC_IDE))
     set_property(TARGET ${ARG_NAME} PROPERTY ARCHIVE_OUTPUT_DIRECTORY 
                  ${CMAKE_BINARY_DIR}/lib/${CMAKE_BUILD_TYPE})
     set_property(TARGET ${ARG_NAME} PROPERTY LIBRARY_OUTPUT_DIRECTORY 
@@ -161,7 +161,7 @@ function(sequoia_add_executable)
   endif()
   
   target_link_libraries(${ARG_NAME} ${ARG_DEPENDS})
-  if(SEQUOIA_COMPILER_MSVC)
+  if(WIN32 AND NOT(MSVC_IDE))
     set_property(TARGET ${ARG_NAME} PROPERTY RUNTIME_OUTPUT_DIRECTORY 
                  ${CMAKE_BINARY_DIR}/bin/${CMAKE_BUILD_TYPE})
   else()

@@ -16,7 +16,12 @@
 find_package(GLFW REQUIRED)
 include_directories(SYSTEM ${GLFW_INCLUDE_DIRS})
 
-#TODO: Copy DLL's to bin directories on windows
+# Copy DLL's to bin directories on windows
+if(WIN32)
+  foreach(build_type Release Debug RelWithDebInfo)
+    file(COPY "${GLFW_BINARY}" DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/bin/${build_type}")
+  endforeach()
+endif()
 
 sequoia_export_package_variable(
   glfw 

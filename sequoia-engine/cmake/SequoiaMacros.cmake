@@ -194,14 +194,16 @@ macro(sequoia_set_cxx_flags)
   # Remove -DNDEBUG flag if ASSERTS are ON
   if(SEQUOIA_ASSERTS)
     if(WIN32)
-      set(ndebug_flag "/DNDEBUG")
+      set(ndebug_flag "/DNDEBUG" "/D NDEBUG")
     else()
       set(ndebug_flag "-DNDEBUG")
     endif()
-    string(REPLACE "${ndebug_flag}" "" CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO}")
-    string(REPLACE "${ndebug_flag}" "" CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE}")
+    foreach(flag ${ndebug_flag})
+      string(REPLACE "${flag}" "" CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO}")
+      string(REPLACE "${flag}" "" CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE}")
+    endforeach()
   endif()
-  
+    
   #
   # Add shared library flags
   #
@@ -219,11 +221,16 @@ macro(sequoia_set_cxx_flags)
     add_definitions(-DUNICODE)
     
     sequoia_check_and_set_cxx_flag("/EHsc" HAVE_MSVC_EHSC)
-    sequoia_check_and_set_cxx_flag("/wd4244" HAVE_MSVC_WD4244)
-    sequoia_check_and_set_cxx_flag("/wd4661" HAVE_MSVC_WD4661)
     sequoia_check_and_set_arch_flag()
     
-    message(${CMAKE_CXX_FLAGS})
+    # C4244 - conversion from 'type1' to 'type2', possible loss of data
+    sequoia_check_and_set_cxx_flag("/wd4244" HAVE_MSVC_WD4244)
+    
+    # C4661 - 'function' : no prototype provided; assumed no parameters
+    sequoia_check_and_set_cxx_flag("/wd4661" HAVE_MSVC_WD4661)
+    
+    # C4267 - 'var' : conversion from 'size_t' to 'type', possible loss of data
+    sequoia_check_and_set_cxx_flag("/wd4267" HAVE_MSVC_WD4267)
     
   #
   # GCC/Clang

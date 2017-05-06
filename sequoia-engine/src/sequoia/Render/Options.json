@@ -24,12 +24,12 @@
             },
             "GLMajorVersion" : {
                 "value_type" : "int",
-                "value_default" : "3",
+                "value_default" : "4",
                 "doc" : "OpenGL major version"
             },
             "GLMinorVersion" : {
                 "value_type" : "int",
-                "value_default" : "2",
+                "value_default" : "5",
                 "doc" : "OpenGL minor version"
             }
         }

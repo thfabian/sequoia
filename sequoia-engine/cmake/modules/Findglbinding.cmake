@@ -103,21 +103,35 @@ if(NOT(GLBINDING_LIBRARIES))
 endif()
 
 #===---------------------------------------------------------------------------------------------===
+#   Find glbinding DLL
+#====--------------------------------------------------------------------------------------------===
+if(WIN32 AND NOT(GLBINDING_BINARY))
+  set(old_suffix "${CMAKE_FIND_LIBRARY_SUFFIXES}")
+  set(CMAKE_FIND_LIBRARY_SUFFIXES ".dll")
+  find_library(GLBINDING_BINARY NAMES glbinding HINTS ${GLBINDING_ROOT})
+  set(CMAKE_FIND_LIBRARY_SUFFIXES "${old_suffix}")
+endif()
+
+#===---------------------------------------------------------------------------------------------===
 #   Report result 
 #====--------------------------------------------------------------------------------------------===
+
+set(required_vars GLBINDING_ROOT GLBINDING_INCLUDE_DIRS GLBINDING_LIBRARIES)
+if(WIN32)
+  list(APPEND GLBINDING_BINARY)
+endif()
+
 find_package_handle_standard_args(
   glbinding
   FAIL_MESSAGE "Could NOT find glbinding. (Try setting GLBINDING_ROOT in the env)"
-  REQUIRED_VARS  
-    GLBINDING_ROOT
-    GLBINDING_INCLUDE_DIRS
-    GLBINDING_LIBRARIES
+  REQUIRED_VARS ${required_vars}
   VERSION_VAR GLBINDING_VERSION
 )
 
 mark_as_advanced(
   GLBINDING_INCLUDE_DIRS
   GLBINDING_LIBRARIES
+  GLBINDING_BINARY
 )
 
 if(NOT(GLBINDING_FOUND) AND glbinding_FIND_REQUIRED EQUAL 1)
