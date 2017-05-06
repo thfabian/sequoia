@@ -12,6 +12,8 @@ sequoia_add_library(
   SOURCES Export.h
           Game.h
           Game.cpp
-  DEPENDS SequoiaCore
+  DEPENDS SequoiaRender
+          SequoiaCore
+          ${SEQUOIA_EXTERNAL_LIBRARIES}   
 )
 

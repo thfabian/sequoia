@@ -24,6 +24,10 @@
 #include "sequoia/Driver/Win32Console.h"
 #include "sequoia/Game/Game.h"
 
+#ifdef SEQUOIA_ON_WIN32
+#include <boost/program_options.hpp>
+#endif
+
 namespace sequoia {
 
 namespace driver {
@@ -31,19 +35,22 @@ namespace driver {
 #ifdef SEQUOIA_ON_WIN32
 
 int Driver::run(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
-  //  // Define SingletonManager here to keep it alive
-  //  auto singletonManager = std::make_unique<SingletonManager>();
+  // Define SingletonManager here to keep it alive
+  auto singletonManager = std::make_unique<SingletonManager>();
+  
+  // Allocate OS specific Singletons
+  TCHAR program[MAX_PATH];
+  GetModuleFileName(NULL, program, MAX_PATH);
+  singletonManager->allocateSingleton<ErrorHandler>(program);
+  
+  // Initialize options, parse config file and parse command-line
+  singletonManager->allocateSingleton<Options>();
 
-  //  // Allocate OS specific Singletons
-  //  TCHAR program[MAX_PATH];
-  //  GetModuleFileName(NULL, program, MAX_PATH);
-  //  singletonManager->allocateSingleton<ErrorHandler>(program);
+  // Initialize options, parse config file and parse command-line
+  std::vector<std::string> arguments = boost::program_options::split_winmain(lpCmdLine);
+  CommandLine::parse(arguments);
 
-  //  // Initialize options, parse config file and parse command-line
-  //  std::vector<std::string> arguments = boost::program_options::split_winmain(lpCmdLine);
-  //  CommandLine::parse(arguments);
-
-  //  return Driver::runImpl();
+  return Driver::runImpl();
 }
 
 #else

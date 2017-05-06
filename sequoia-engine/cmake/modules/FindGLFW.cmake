@@ -32,6 +32,7 @@
 #                           ${GLFW_INCLUDE_DIRS}/GLFW/glfw3.h)
 #   GLFW_LIBRARIES        - The list of libraries to link against (includes external libraries 
 #                           such as X11, Cocoa etc.)
+#   GLFW_BINARY           - The DLL of glfw3 (Win32 only)
 #
 # Hints
 # ^^^^^
@@ -79,6 +80,7 @@ if(WIN32)
           "The GLFW library"
     )
   else()
+    # Library
     find_library(GLFW_glfw_LIBRARY
       NAMES 
         glfw32 
@@ -100,6 +102,32 @@ if(WIN32)
       DOC 
         "The GLFW library"
     )
+    
+    # DLL
+    set(old_suffix "${CMAKE_FIND_LIBRARY_SUFFIXES}")
+    set(CMAKE_FIND_LIBRARY_SUFFIXES ".dll")
+    find_library(GLFW_glfw_BINARY
+      NAMES 
+        glfw32 
+        glfw32s 
+        glfw3
+        glfw3dll
+      HINTS
+        "${GLFW_ROOT}/lib"
+        "${GLFW_ROOT}/lib/x64"
+        "${GLFW_ROOT}/lib-msvc110"
+        "${GLFW_ROOT}/lib-vc2012"
+        "$ENV{GLFW_ROOT}/lib"
+        "$ENV{GLFW_ROOT}/lib/x64"
+        "$ENV{GLFW_ROOT}/lib-msvc110"
+        "$ENV{GLFW_ROOT}/lib-vc2012"
+      PATHS
+        "$ENV{PROGRAMFILES}/GLFW/lib"
+        "${OPENGL_LIBRARY_DIR}"
+      DOC 
+        "The GLFW library"
+    )
+    set(CMAKE_FIND_LIBRARY_SUFFIXES "${old_suffix}")
   endif()
 else()
   if(APPLE)
@@ -192,7 +220,11 @@ if(GLFW_INCLUDE_DIRS)
       set(GLFW_FOUND ON)
       set(GLFW_LIBRARY "${GLFW_LIBRARIES}")
       set(GLFW_INCLUDE_PATH "${GLFW_INCLUDE_DIRS}")
-    endif(GLFW_glfw_LIBRARY)
+    endif()
+    
+    if(GLFW_glfw_BINARY)
+      set(GLFW_BINARY "${GLFW_glfw_BINARY}")
+    endif()
 
     function(parseVersion FILENAME VARNAME)
       set(PATTERN "^#define ${VARNAME}.*$")
@@ -212,14 +244,17 @@ if(GLFW_INCLUDE_DIRS)
       set(GLFW_VERSION_STRING "${GLFW_VERSION}")
       mark_as_advanced(GLFW_VERSION)
     endif()
-endif(GLFW_INCLUDE_DIRS)
+endif()
 
 include(FindPackageHandleStandardArgs)
 
+set(required_vars GLFW_INCLUDE_DIRS GLFW_LIBRARIES)
+if(WIN32 AND NOT(CYGWIN))
+  list(APPEND GLFW_BINARY)
+endif()
+
 find_package_handle_standard_args(GLFW 
-  REQUIRED_VARS
-    GLFW_INCLUDE_DIRS
-    GLFW_LIBRARIES
+  REQUIRED_VARS ${required_vars}
   FAIL_MESSAGE "Could NOT find GLFW. (Try setting GLFW_ROOT in the env)"
   VERSION_VAR
     GLFW_VERSION
@@ -229,6 +264,7 @@ mark_as_advanced(
   GLFW_INCLUDE_DIRS
   GLFW_LIBRARIES
   GLFW_glfw_LIBRARY
+  GLFW_glfw_BINARY
   GLFW_cocoa_LIBRARY
   GLFW_corevideo_LIBRARY
   GLFW_iokit_LIBRARY

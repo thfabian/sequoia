@@ -73,7 +73,6 @@ GLRenderWindow::GLRenderWindow(const std::string& title) : window_(nullptr), isF
     if(opt.Render.WindowMode == "window") {
       window_ = glfwCreateWindow(1024, 768, title.c_str(), nullptr, nullptr);
     } else if(opt.Render.WindowMode == "windowed-fullscreen") {
-      glfwWindowHint(GLFW_MAXIMIZED, GLFW_TRUE);
       window_ = glfwCreateWindow(mode->width, mode->height, title.c_str(), nullptr, nullptr);
     } else
       sequoia_unreachable("invalid window-mode");
@@ -81,13 +80,22 @@ GLRenderWindow::GLRenderWindow(const std::string& title) : window_(nullptr), isF
   LOG(INFO) << "Using window mode: " << opt.Render.WindowMode;
 
   if(!window_)
-    SEQUOIA_THROW(RenderSystemInitException, "failed to initialize window");
+    SEQUOIA_THROW(RenderSystemInitException,
+                  "failed to initialize window, requested OpenGL (%i. %i)",
+                  opt.Render.GLMajorVersion, opt.Render.GLMinorVersion);
 
   // Move the window to the correct monitor (fullscreen windows are already moved correctly)
   if(!isFullscreen_) {
     int xpos, ypos;
     glfwGetMonitorPos(monitor, &xpos, &ypos);
-    glfwSetWindowPos(window_, xpos, ypos);
+    
+    if(opt.Render.WindowMode == "window")
+      glfwSetWindowPos(window_, xpos + 30, ypos + 60);  
+    else {
+      glfwSetWindowPos(window_, xpos, ypos);
+      glfwRestoreWindow(window_);
+      glfwMaximizeWindow(window_);
+    }
   }
 
   // Initialize glbinding
