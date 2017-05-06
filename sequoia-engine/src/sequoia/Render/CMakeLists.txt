@@ -17,10 +17,15 @@ sequoia_add_library(
   NAME SequoiaRender
   SOURCES Export.h
           Exception.h
+          HardwareBuffer.h
+          HardwareBufferVertex.h
+          HardwareBufferIndex.h
           RenderFwd.h
           RenderSystem.h
           RenderSystemImpl.h
           RenderSystem.cpp
+          RenderData.h
+          RenderData.cpp
           RenderWindow.h
           
           GL/GL.h          

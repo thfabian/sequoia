@@ -13,14 +13,16 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_RENDER_GL_RENDERSYSTEM_H
-#define SEQUOIA_RENDER_GL_RENDERSYSTEM_H
+#ifndef SEQUOIA_RENDER_GL_GLRENDERSYSTEM_H
+#define SEQUOIA_RENDER_GL_GLRENDERSYSTEM_H
 
 #include "sequoia/Core/Singleton.h"
 #include "sequoia/Render/GL/GLRenderWindow.h"
+#include "sequoia/Render/RenderData.h"
 #include "sequoia/Render/RenderSystemImpl.h"
 #include <memory>
 #include <unordered_map>
+#include <vector>
 
 namespace sequoia {
 
@@ -29,7 +31,8 @@ namespace render {
 /// @brief OpenGL render-system
 /// @ingroup render
 class SEQUOIA_RENDER_API GLRenderSystem : public RenderSystemImpl {
-  std::unordered_map<int, std::shared_ptr<GLRenderWindow>> windowMap_;
+  std::vector<RenderData*> renderData_;
+  std::unordered_map<int, std::shared_ptr<GLRenderWindow>> renderWindows_;
 
 public:
   /// @brief Initialize GLFW
@@ -44,9 +47,9 @@ public:
 
   /// @copydoc RenderSystemImpl::getWindow
   virtual RenderWindow* getWindow(int windowID) override;
-  
-  /// @copydoc RenderSystemImpl::pollEvents  
-  virtual void pollEvents() override;  
+
+  /// @copydoc RenderSystemImpl::pollEvents
+  virtual void pollEvents() override;
 };
 
 } // namespace render

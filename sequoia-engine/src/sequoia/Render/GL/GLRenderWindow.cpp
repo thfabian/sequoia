@@ -15,6 +15,7 @@
 
 #include "sequoia/Core/Logging.h"
 #include "sequoia/Core/Options.h"
+#include "sequoia/Core/StringUtil.h"
 #include "sequoia/Core/Unreachable.h"
 #include "sequoia/Render/Exception.h"
 #include "sequoia/Render/GL/GL.h"
@@ -27,6 +28,16 @@
 namespace sequoia {
 
 namespace render {
+
+static std::string FunctionCallToString(const glbinding::FunctionCall& call) {
+  std::stringstream ss;
+  ss << call.function->name()
+     << core::RangeToString(", ", "(", ")")(
+            call.parameters, [](glbinding::AbstractValue* value) { return value->asString(); });
+  if(call.returnValue)
+    ss << " -> " << call.returnValue->asString();
+  return ss.str();
+}
 
 GLRenderWindow::GLRenderWindow(const std::string& title) : window_(nullptr), isFullscreen_(false) {
   LOG(INFO) << "Initializing window " << this << " ...";
@@ -98,6 +109,18 @@ GLRenderWindow::GLRenderWindow(const std::string& title) : window_(nullptr), isF
   LOG(INFO) << "OpenGL version: " << glbinding::ContextInfo::version().toString();
   LOG(INFO) << "OpenGL vendor: " << glbinding::ContextInfo::vendor();
   LOG(INFO) << "OpenGL renderer: " << glbinding::ContextInfo::renderer();
+
+  // Set debugging callbacks
+  if(opt.Core.Debug) {
+    using namespace glbinding;
+    setCallbackMaskExcept(CallbackMask::After | CallbackMask::ParametersAndReturnValue,
+                          {"glGetError"});
+    setAfterCallback([](const FunctionCall& call) {
+      const auto error = glGetError();
+      if(error != GL_NO_ERROR)
+        LOG(ERROR) << "GL_ERROR: " << error << ": " << FunctionCallToString(call);
+    });
+  }
 
   LOG(INFO) << "Done initializing window";
 }

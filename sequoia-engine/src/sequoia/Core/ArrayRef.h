@@ -367,63 +367,52 @@ public:
   }
 };
 
-/// @addtogroup core
+/// @brief Construct an ArrayRef
 /// @{
-
-/// @brief Construct an ArrayRef from a single element
 template <typename T>
 ArrayRef<T> makeArrayRef(const T& OneElt) {
   return OneElt;
 }
 
-/// @brief Construct an ArrayRef from a pointer and length
 template <typename T>
 ArrayRef<T> makeArrayRef(const T* data, size_t length) {
   return ArrayRef<T>(data, length);
 }
 
-/// @brief Construct an ArrayRef from a range
 template <typename T>
 ArrayRef<T> makeArrayRef(const T* begin, const T* end) {
   return ArrayRef<T>(begin, end);
 }
 
-/// @brief Construct an ArrayRef from a std::vector.
 template <typename T>
 ArrayRef<T> makeArrayRef(const std::vector<T>& Vec) {
   return Vec;
 }
 
-/// @brief Construct an ArrayRef from an ArrayRef (no-op) (const)
 template <typename T>
 ArrayRef<T> makeArrayRef(const ArrayRef<T>& Vec) {
   return Vec;
 }
 
-/// @brief Construct an ArrayRef from an ArrayRef (no-op)
 template <typename T>
 ArrayRef<T>& makeArrayRef(ArrayRef<T>& Vec) {
   return Vec;
 }
 
-/// @brief Construct an ArrayRef from a C array.
 template <typename T, size_t N>
 ArrayRef<T> makeArrayRef(const T (&Arr)[N]) {
   return ArrayRef<T>(Arr);
 }
 
-/// @brief ArrayRef Comparison Operators
 template <typename T>
 inline bool operator==(ArrayRef<T> LHS, ArrayRef<T> RHS) {
   return LHS.equals(RHS);
 }
 
-/// @brief ArrayRef Comparison Operators
 template <typename T>
 inline bool operator!=(ArrayRef<T> LHS, ArrayRef<T> RHS) {
   return !(LHS == RHS);
 }
-
 /// @}
 
 } // namespace core

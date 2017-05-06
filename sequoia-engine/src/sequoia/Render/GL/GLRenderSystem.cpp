@@ -45,19 +45,19 @@ GLRenderSystem::GLRenderSystem() {
 
 GLRenderSystem::~GLRenderSystem() {
   LOG(INFO) << "Terminating GLRenderSystem ...";
-  windowMap_.clear();
+  renderWindows_.clear();
   glfwTerminate();
   LOG(INFO) << "Done terminating GLRenderSystem";
 }
 
 int GLRenderSystem::createWindow(const std::string& title) {
-  auto res = windowMap_.emplace(windowMap_.size(), std::make_shared<GLRenderWindow>(title));
+  auto res = renderWindows_.emplace(renderWindows_.size(), std::make_shared<GLRenderWindow>(title));
   SEQUOIA_ASSERT_MSG(res.second, "failed to create window");
   return res.first->first; // WindowID
 }
 
 RenderWindow* GLRenderSystem::getWindow(int windowID) {
-  return static_cast<RenderWindow*>(windowMap_[windowID].get());
+  return static_cast<RenderWindow*>(renderWindows_[windowID].get());
 }
 
 void GLRenderSystem::pollEvents() { glfwPollEvents(); }

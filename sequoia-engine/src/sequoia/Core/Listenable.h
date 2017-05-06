@@ -16,8 +16,9 @@
 #ifndef SEQUOIA_CORE_LISTENABLE_H
 #define SEQUOIA_CORE_LISTENABLE_H
 
-#include <set>
+#include <algorithm>
 #include <tuple>
+#include <vector>
 
 namespace sequoia {
 
@@ -29,15 +30,15 @@ namespace internal {
 template <class ListenerType>
 class ListenerList {
 public:
-  using ListenerListType = std::set<ListenerType*>;
+  using ListenerListType = std::vector<ListenerType*>;
 
   /// @brief Add a listener
-  /// @returns `true` if the listener was successfully added, `false` otherwise
-  bool addListener(ListenerType* listener) noexcept { return listeners_.insert(listener).second; }
+  void addListener(ListenerType* listener) noexcept { listeners_.push_back(listener); }
 
   /// @brief Remove a listener
-  /// @returns `true` if the listener was successfully removed, `false` otherwise
-  bool removeListener(ListenerType* listener) noexcept { return listeners_.erase(listener); }
+  void removeListener(ListenerType* listener) noexcept {
+    listeners_.erase(std::remove(listeners_.begin(), listeners_.end(), listener), listeners_.end());
+  }
 
   ListenerListType& getListeners() noexcept { return listeners_; }
   const ListenerListType& getListeners() const noexcept { return listeners_; }
@@ -63,17 +64,15 @@ class Listenable {
 
 public:
   /// @brief Add a listener of type `ListenerType` (this does @b not take ownership of the object)
-  /// @returns `true` if the listener was successfully added, `false` otherwise
   template <class ListenerType>
-  bool addListener(ListenerType* listener) noexcept {
-    return get<ListenerType>().addListener(listener);
+  void addListener(ListenerType* listener) noexcept {
+    get<ListenerType>().addListener(listener);
   }
 
   /// @brief Remove a listener of type `ListenerType`
-  /// @returns `true` if the listener was successfully removed, `false` otherwise
   template <class ListenerType>
-  bool removeListener(ListenerType* listener) noexcept {
-    return get<ListenerType>().removeListener(listener);
+  void removeListener(ListenerType* listener) noexcept {
+    get<ListenerType>().removeListener(listener);
   }
 
   /// @brief Get the number of registered listener of type `ListenerType`

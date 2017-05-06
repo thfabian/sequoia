@@ -13,16 +13,18 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_RENDER_RENDERFWD_H
-#define SEQUOIA_RENDER_RENDERFWD_H
+#ifndef SEQUOIA_RENDER_RENDERDATA_H
+#define SEQUOIA_RENDER_RENDERDATA_H
+
+#include "sequoia/Render/Export.h"
 
 namespace sequoia {
 
 namespace render {
 
-class RenderSystem;
-class RenderWindow;
-class RenderData;
+/// @brief Render data containing hardware buffers and instructions on how to render the data
+/// @ingroup render
+class SEQUOIA_RENDER_API RenderData {};
 
 } // namespace render
 

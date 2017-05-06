@@ -13,19 +13,12 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_RENDER_RENDERFWD_H
-#define SEQUOIA_RENDER_RENDERFWD_H
+#include "sequoia/Render/RenderData.h"
 
 namespace sequoia {
 
 namespace render {
 
-class RenderSystem;
-class RenderWindow;
-class RenderData;
-
 } // namespace render
 
 } // namespace sequoia
-
-#endif
