@@ -62,7 +62,6 @@
 #define SEQUOIA_HAS_CXX1Z 1
 #endif
 
-/// @macro SEQUOIA_GNUC_PREREQ
 /// @brief Extend the default `__GNUC_PREREQ` even if glibc's `features.h` isn't available
 /// @ingroup core
 #ifndef SEQUOIA_GNUC_PREREQ
@@ -78,7 +77,7 @@
 #endif
 #endif
 
-/// @macro SEQUOIA_API_EXPORT
+/// @def SEQUOIA_API_EXPORT
 /// @brief Define helpers to create portable import / export macros for each module
 #ifdef SEQUOIA_ON_WIN32
 #define SEQUOIA_API_EXPORT __declspec(dllexport)
@@ -96,7 +95,6 @@
 #endif
 #endif
 
-/// @macro SEQUOIA_BUILTIN_UNREACHABLE
 /// @brief Indicate unreachable state
 ///
 /// On compilers which support it, expands to an expression which states that it is undefined
@@ -109,7 +107,6 @@
 #define SEQUOIA_BUILTIN_UNREACHABLE __assume(false)
 #endif
 
-/// @macro SEQUOIA_ATTRIBUTE_ALWAYS_INLINE
 /// @brief Mark a method as "always inline" for performance reasons
 /// @ingroup core
 #if __has_attribute(always_inline) || SEQUOIA_GNUC_PREREQ(4, 0, 0)
@@ -120,7 +117,6 @@
 #define SEQUOIA_ATTRIBUTE_ALWAYS_INLINE
 #endif
 
-/// @macro SEQUOIA_ATTRIBUTE_NORETURN
 /// @brief Mark a method as "no return"
 /// @ingroup core
 #ifdef __GNUC__
@@ -131,7 +127,6 @@
 #define SEQUOIA_ATTRIBUTE_NORETURN
 #endif
 
-/// @macro SEQUOIA_BUILTIN_LIKELY
 /// @brief Mark this expression as being likely evaluated to "true"
 /// @ingroup core
 #if __has_builtin(__builtin_expect) || SEQUOIA_GNUC_PREREQ(4, 5, 0)
@@ -140,7 +135,6 @@
 #define SEQUOIA_BUILTIN_LIKELY(x) (x)
 #endif
 
-/// @macro SEQUOIA_BUILTIN_UNLIKELY
 /// @brief Mark this expression as being likely evaluated to "false"
 /// @ingroup core
 #if __has_builtin(__builtin_expect) || SEQUOIA_GNUC_PREREQ(4, 5, 0)
@@ -149,7 +143,6 @@
 #define SEQUOIA_BUILTIN_UNLIKELY(x) (x)
 #endif
 
-/// @macro SEQUOIA_ALIGNAS
 /// @brief Used to specify a minimum alignment for a structure or variable
 /// @ingroup core
 #if __GNUC__ && !__has_feature(cxx_alignas) && !SEQUOIA_GNUC_PREREQ(4, 8, 1)
@@ -158,7 +151,6 @@
 #define SEQUOIA_ALIGNAS(x) alignas(x)
 #endif
 
-/// @macro SEQUOIA_ATTRIBUTE_UNUSED
 /// @brief Indicate a function, variable or class is unused
 ///
 /// Some compilers warn about unused functions. When a function is sometimes used or not depending
@@ -180,7 +172,6 @@
 #define SEQUOIA_ATTRIBUTE_UNUSED
 #endif
 
-/// @macro SEQUOIA_NORETURN
 /// @brief Indicate a function will never return
 /// @ingroup core
 #ifdef __GNUC__
@@ -191,7 +182,6 @@
 #define SEQUOIA_ATTRIBUTE_NORETURN
 #endif
 
-/// @macro SEQUOIA_CURRENT_FUNCTION
 /// @brief Name of the current function
 /// @ingroup core
 #if defined(_MSC_VER)

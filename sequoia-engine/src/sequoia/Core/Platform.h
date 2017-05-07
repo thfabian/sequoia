@@ -69,7 +69,7 @@ using Char = String::value_type;
 /// @macro PLATFORM_STR
 /// @brief Native character string (`L""` on Win32 or `""` on Unix)
 ///
-/// @code
+/// @code{.cpp}
 ///   PLATFORM_STR("hello world") // -> "hello world" on Unix or L"hello world" on Win32
 /// @endcode
 #ifdef PLATFORM_STR

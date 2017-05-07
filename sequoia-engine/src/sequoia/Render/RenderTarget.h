@@ -13,21 +13,21 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_RENDER_RENDERFWD_H
-#define SEQUOIA_RENDER_RENDERFWD_H
+#ifndef SEQUOIA_RENDER_RENDERTARGET_H
+#define SEQUOIA_RENDER_RENDERTARGET_H
+
+#include "sequoia/Render/Export.h"
 
 namespace sequoia {
 
 namespace render {
 
-class RenderSystem;
-class RenderWindow;
-class RenderData;
-class ViewFrustum;
-class Viewport;
-
-} // namespace render
+/// @brief A canvas which can receive the results of a rendering operation.
+/// @ingroup render
+class SEQUOIA_RENDER_API RenderTarget {};
 
 } // namespace sequoia
+
+} // namespace render
 
 #endif

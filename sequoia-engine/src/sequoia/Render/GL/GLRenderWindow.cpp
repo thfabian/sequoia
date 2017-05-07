@@ -24,6 +24,7 @@
 #include <glbinding/ContextInfo.h>
 #include <glbinding/Version.h>
 #include <glbinding/glbinding-version.h>
+#include <unordered_map>
 
 namespace sequoia {
 
@@ -39,7 +40,10 @@ static std::string FunctionCallToString(const glbinding::FunctionCall& call) {
   return ss.str();
 }
 
-GLRenderWindow::GLRenderWindow(const std::string& title) : window_(nullptr), isFullscreen_(false) {
+std::unordered_map<GLFWwindow*, GLRenderWindow*> GLRenderWindow::StaticWindowMap;
+
+GLRenderWindow::GLRenderWindow(const std::string& title)
+    : window_(nullptr), isFullscreen_(false), width_(-1), height_(-1) {
   LOG(INFO) << "Initializing window " << this << " ...";
 
   // Set window hints
@@ -99,15 +103,93 @@ GLRenderWindow::GLRenderWindow(const std::string& title) : window_(nullptr), isF
   if(!isFullscreen_) {
     int xpos, ypos;
     glfwGetMonitorPos(monitor, &xpos, &ypos);
-    
+
     if(opt.Render.WindowMode == "window")
-      glfwSetWindowPos(window_, xpos + 30, ypos + 60);  
+      glfwSetWindowPos(window_, xpos + 30, ypos + 60);
     else {
       glfwSetWindowPos(window_, xpos, ypos);
       glfwRestoreWindow(window_);
       glfwMaximizeWindow(window_);
     }
   }
+
+  // Query width and height
+  glfwGetWindowSize(window_, &width_, &height_);
+  LOG(INFO) << "Using window geometry: " << width_ << " x " << height_;
+  
+  // Register the window "globally"
+  StaticWindowMap.emplace(window_, this);
+  
+  // Register window call-back
+  glfwSetWindowSizeCallback(window_, GLRenderWindow::resizeCallbackDispatch);
+
+  LOG(INFO) << "Done initializing window";
+}
+
+GLRenderWindow::~GLRenderWindow() {
+  LOG(INFO) << "Terminating window " << this << " ...";
+
+  glfwMakeContextCurrent(window_);
+  glbinding::Binding::releaseCurrentContext();
+  StaticWindowMap.erase(window_);
+  glfwDestroyWindow(window_);
+
+  LOG(INFO) << "Done terminating window";
+}
+
+bool GLRenderWindow::isClosed() { return glfwWindowShouldClose(window_); }
+
+bool GLRenderWindow::isFullscreen() const { return isFullscreen_; }
+
+void GLRenderWindow::resizeCallback(int width, int height) {
+  width_ = width;
+  height_ = height;
+  
+  // Reset the current viewport
+  glViewport(0, 0, width_, height_);
+  
+  // Select the projection matrix
+  glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+
+
+  
+  // Calcualte aspect ratio
+  glMatrixMode(GL_MODELVIEW);  
+  glLoadIdentity();  
+}
+
+void GLRenderWindow::resizeCallbackDispatch(GLFWwindow* window, int width, int height) {
+  GLRenderWindow::StaticWindowMap[window]->resizeCallback(width, height);
+}
+
+int GLRenderWindow::getWidth() const { return width_; }
+
+int GLRenderWindow::getHeight() const { return height_; }
+
+void GLRenderWindow::swapBuffers() { glfwSwapBuffers(window_); }
+
+void GLRenderWindow::renderOneFrame() {
+  // Clear screen and depth buffer
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+  // Reset the current modelview matrix
+  glLoadIdentity();
+  
+//  glColor3f(1.0,1.0,1.0);
+//  glBegin(GL_QUADS);                                  
+//  glVertex3f(-0.5,-0.5,-0.5);
+//  glVertex3f(0.5,-0.5,-0.5);
+//  glVertex3f(0.5,0.5,-0.5);
+//  glVertex3f(-0.5,0.5,-0.5);
+//  glEnd();
+}
+
+GLFWwindow* GLRenderWindow::getGLFWwindow() { return window_; }
+
+void GLRenderWindow::init() {
+  Options& opt = Options::getSingleton();
+  LOG(INFO) << "Initializing up OpenGL ...";
 
   // Initialize glbinding
   glfwMakeContextCurrent(window_);
@@ -130,26 +212,17 @@ GLRenderWindow::GLRenderWindow(const std::string& title) : window_(nullptr), isF
     });
   }
 
-  LOG(INFO) << "Done initializing window";
+  // Initalize OpenGL
+  glShadeModel(GL_SMOOTH);							 // Enable Smooth Shading
+	glClearColor(0.0f, 0.0f, 0.0f, 0.5f);	 // Black Background
+	glClearDepth(1.0f);									   // Depth Buffer Setup
+	glEnable(GL_DEPTH_TEST);							 // Enables Depth Testing
+	glDepthFunc(GL_LEQUAL);								 // The Type Of Depth Testing To Do
+  
+  resizeCallback(width_, height_);
+  
+  LOG(INFO) << "Done initializing OpenGL";  
 }
-
-GLRenderWindow::~GLRenderWindow() {
-  LOG(INFO) << "Terminating window " << this << " ...";
-
-  glfwMakeContextCurrent(window_);
-  glbinding::Binding::releaseCurrentContext();
-  glfwDestroyWindow(window_);
-
-  LOG(INFO) << "Done terminating window";
-}
-
-bool GLRenderWindow::isClosed() { return glfwWindowShouldClose(window_); }
-
-bool GLRenderWindow::isFullscreen() const { return isFullscreen_; }
-
-void GLRenderWindow::swapBuffers() { glfwSwapBuffers(window_); }
-
-GLFWwindow* GLRenderWindow::getGLFWwindow() { return window_; }
 
 } // namespace render
 

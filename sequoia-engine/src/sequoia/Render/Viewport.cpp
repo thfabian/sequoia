@@ -13,21 +13,15 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_RENDER_RENDERFWD_H
-#define SEQUOIA_RENDER_RENDERFWD_H
+#include "sequoia/Render/Viewport.h"
 
 namespace sequoia {
 
 namespace render {
 
-class RenderSystem;
-class RenderWindow;
-class RenderData;
-class ViewFrustum;
-class Viewport;
+Viewport::Viewport(Camera* camera, RenderTarget* target, int x, int y, int width, int height)
+    : camera_(camera), target_(target), x_(x), y_(y), width_(width), height_(height) {}
 
-} // namespace render
+} // namespace viewport
 
 } // namespace sequoia
-
-#endif

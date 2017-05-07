@@ -13,20 +13,46 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_RENDER_RENDERFWD_H
-#define SEQUOIA_RENDER_RENDERFWD_H
+#ifndef SEQUOIA_MATH_QUATERNION_H
+#define SEQUOIA_MATH_QUATERNION_H
+
+#include "sequoia/Math/Math.h"
 
 namespace sequoia {
 
-namespace render {
+namespace math {
 
-class RenderSystem;
-class RenderWindow;
-class RenderData;
-class ViewFrustum;
-class Viewport;
+namespace internal {
 
-} // namespace render
+template <class T>
+class Quaternion {
+  Vec4<T> data_;
+
+public:
+  Quaternion() = default;
+  Quaternion(const Quaternion&) = default;
+  Quaternion(Quaternion&&) = default;
+  Quaternion(const Vec4<T>& data) : data_(data) {}
+  Quaternion(Vec4<T>&& data) : data_(std::move(data)) {}
+
+  Quaternion& operator=(const Quaternion&) = default;
+  Quaternion& operator=(Quaternion&&) = default;
+};
+
+} // namespace internal
+
+} // namespace math
+
+/// @addtogroup math
+/// @{
+
+/// @name Quaternions
+/// @{
+using Quaternioni = math::internal::Quaternion<int>;
+using Quaternionf = math::internal::Quaternion<float>;
+/// @}
+
+/// @}
 
 } // namespace sequoia
 

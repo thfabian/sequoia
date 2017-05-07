@@ -13,18 +13,22 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_RENDER_RENDERFWD_H
-#define SEQUOIA_RENDER_RENDERFWD_H
+#ifndef SEQUOIA_RENDER_GL_GLVIEWFRUSTUM_H
+#define SEQUOIA_RENDER_GL_GLVIEWFRUSTUM_H
+
+#include "sequoia/Render/Camera.h"
 
 namespace sequoia {
 
 namespace render {
 
-class RenderSystem;
-class RenderWindow;
-class RenderData;
-class ViewFrustum;
-class Viewport;
+/// @brief OpenGL implementation of the Camera
+/// @ingroup gl
+class SEQUOIA_RENDER_API GLCamera : public Camera {
+  
+protected:
+  void updateFrustum();
+};
 
 } // namespace render
 

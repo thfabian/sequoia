@@ -41,7 +41,7 @@ public:
   /// @brief Get the window identifid by `windowID`
   virtual RenderWindow* getWindow(int windowID) = 0;
 
-  /// @brief Processes events that ar in the event queue
+  /// @brief Processes events that are in the event queue
   virtual void pollEvents() = 0;
 };
 

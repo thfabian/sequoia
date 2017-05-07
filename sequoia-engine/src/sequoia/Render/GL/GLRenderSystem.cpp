@@ -53,6 +53,10 @@ GLRenderSystem::~GLRenderSystem() {
 int GLRenderSystem::createWindow(const std::string& title) {
   auto res = renderWindows_.emplace(renderWindows_.size(), std::make_shared<GLRenderWindow>(title));
   SEQUOIA_ASSERT_MSG(res.second, "failed to create window");
+
+  // Initialize window (create OpenGL context)
+  res.first->second->init();
+
   return res.first->first; // WindowID
 }
 

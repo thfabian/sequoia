@@ -89,7 +89,7 @@ public:
 ///
 /// The following snippet can be seen as a minimal working example:
 ///
-/// @code
+/// @code{.cpp}
 ///   #include <sequoia/Core/Logging.h>
 ///   #include <iostream>
 ///

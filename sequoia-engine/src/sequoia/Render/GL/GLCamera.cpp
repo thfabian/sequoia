@@ -13,21 +13,28 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_RENDER_RENDERFWD_H
-#define SEQUOIA_RENDER_RENDERFWD_H
+#include "sequoia/Math/Constants.h"
+#include "sequoia/Render/GL/GL.h"
+#include "sequoia/Render/GL/GLCamera.h"
+#include <cmath>
 
 namespace sequoia {
 
 namespace render {
 
-class RenderSystem;
-class RenderWindow;
-class RenderData;
-class ViewFrustum;
-class Viewport;
+void GLCamera::updateFrustum() {
+  constexpr double pi = math::constants<double>::pi;
 
-} // namespace render
+  // Calculate the distance from 0 of the y clipping plane i.e calculate position of clipper at
+  // zNear
+  const double fH = std::tan(fovy_ / (360 * pi)) * zNear_;
+
+  // Calculate the distance from 0 of the x clipping plane based on the aspect ratio
+  const double fW = fH * aspect_;
+
+  glFrustum(-fW, fW, -fH, fH, zNear_, zFar_);
+}
 
 } // namespace sequoia
 
-#endif
+} // namespace sequoia

@@ -15,8 +15,10 @@
 
 sequoia_add_library(
   NAME SequoiaMath
-  SOURCES Export.h
+  SOURCES Constants.h 
+          Export.h
           Math.h
-          Math.cpp          
+          Math.cpp
+          Quaternion.h        
   DEPENDS ${SEQUOIA_EXTERNAL_LIBRARIES}
 )

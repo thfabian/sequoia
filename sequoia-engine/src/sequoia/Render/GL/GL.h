@@ -20,4 +20,10 @@
 
 using namespace gl;
 
+#ifdef SEQUOIA_DOXYGEN_INVOKED
+/// @defgroup gl OpenGL
+/// @brief OpenGL implementation of the rendering API
+/// @ingroup render
+#endif
+
 #endif

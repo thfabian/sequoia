@@ -18,20 +18,17 @@
 
 #include "sequoia/Core/Singleton.h"
 #include "sequoia/Render/GL/GLRenderWindow.h"
-#include "sequoia/Render/RenderData.h"
 #include "sequoia/Render/RenderSystemImpl.h"
 #include <memory>
 #include <unordered_map>
-#include <vector>
 
 namespace sequoia {
 
 namespace render {
 
 /// @brief OpenGL render-system
-/// @ingroup render
+/// @ingroup gl
 class SEQUOIA_RENDER_API GLRenderSystem : public RenderSystemImpl {
-  std::vector<RenderData*> renderData_;
   std::unordered_map<int, std::shared_ptr<GLRenderWindow>> renderWindows_;
 
 public:

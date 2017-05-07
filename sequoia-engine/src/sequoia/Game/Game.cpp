@@ -37,6 +37,9 @@ void Game::run() {
 
   // Start main-loop
   while(!renderWindow->isClosed()) {
+    
+    // Start rendering the frame
+    renderWindow->renderOneFrame();
 
     // Update screen
     renderWindow->swapBuffers();
