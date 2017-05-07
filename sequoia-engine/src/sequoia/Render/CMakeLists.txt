@@ -16,6 +16,7 @@
 sequoia_add_library(
   NAME SequoiaRender
   SOURCES Camera.h
+          Camera.cpp
           Export.h
           Exception.h
           HardwareBuffer.h
@@ -26,6 +27,7 @@ sequoia_add_library(
           RenderSystemImpl.h
           RenderSystem.cpp
           RenderTarget.h
+          RenderTarget.cpp
           RenderData.h
           RenderData.cpp
           RenderWindow.h

@@ -16,14 +16,20 @@
 #ifndef SEQUOIA_RENDER_VIEWPORT_H
 #define SEQUOIA_RENDER_VIEWPORT_H
 
+#include "sequoia/Core/Listenable.h"
 #include "sequoia/Render/Export.h"
+#include "sequoia/Render/RenderFwd.h"
 
 namespace sequoia {
 
 namespace render {
 
-class Camera;
-class RenderTarget;
+/// @brief Viewport Listeners
+class SEQUOIA_RENDER_API ViewportListener {
+public:
+  /// @brief The geometry of the Viewport changed
+  virtual void viewportGeometryChanged(Viewport* viewport);
+};
 
 /// @brief A Viewport connects a Camera with a RenderTarget
 ///
@@ -42,7 +48,7 @@ class RenderTarget;
 /// a single target as destination.
 ///
 /// @ingroup render
-class SEQUOIA_RENDER_API Viewport {
+class SEQUOIA_RENDER_API Viewport : public Listenable<ViewportListener> {
   Camera* camera_;
   RenderTarget* target_;
 
@@ -52,38 +58,26 @@ class SEQUOIA_RENDER_API Viewport {
   int height_;
 
 public:
-  /// @brief Listener interface for viewport events
-  class Listener {
-
-    /// @brief Notification of when a new Camera is set to target listening Viewport
-    virtual void viewportCameraChanged(Viewport* viewport);
-
-    /// @brief Notification of when target listening Viewport's dimensions changed
-    virtual void viewportDimensionsChanged(Viewport* viewport);
-  };
-
   /// @brief Initialize the view port
   Viewport(Camera* camera, RenderTarget* target, int x, int y, int width, int height);
+  virtual ~Viewport() {}
 
-  /// @brief Get the associated camera
-  Camera* getCamera() const { return camera_; }
+  /// @brief Get/Set the associated camera
+  Camera* getCamera() const;
+  void setCamera(Camera* camera);
 
   /// @brief Get the associated render target
-  RenderTarget* getRenderTarget() const { return target_; }
+  RenderTarget* getRenderTarget() const;
 
-  /// @name Getter/Setter
+  /// @brief Update the geometry of the Viewport and inform all listeners
+  void updateGeometry(int x, int y, int width, int height);
+
+  /// @name Getter
   /// @{
-  void setX(int x) { x_ = x; }
-  int getX() const { return x_; }
-
-  void setY(int y) { y_ = y; }
-  int getY() const { return y_; }
-
-  void setWidth(int width) { width_ = width; }
-  int getWidth() const { return width_; }
-
-  void setHeight(int height) { height_ = height; }
-  int getHeight() const { return height_; }
+  int getX() const;
+  int getY() const;
+  int getWidth() const;
+  int getHeight() const;
   /// @}
 };
 

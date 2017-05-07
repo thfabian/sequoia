@@ -17,6 +17,7 @@
 #include "sequoia/Core/Options.h"
 #include "sequoia/Core/StringUtil.h"
 #include "sequoia/Core/Unreachable.h"
+#include "sequoia/Render/Camera.h"
 #include "sequoia/Render/Exception.h"
 #include "sequoia/Render/GL/GL.h"
 #include "sequoia/Render/GL/GLRenderWindow.h"
@@ -43,14 +44,12 @@ static std::string FunctionCallToString(const glbinding::FunctionCall& call) {
 std::unordered_map<GLFWwindow*, GLRenderWindow*> GLRenderWindow::StaticWindowMap;
 
 GLRenderWindow::GLRenderWindow(const std::string& title)
-    : window_(nullptr), isFullscreen_(false), width_(-1), height_(-1) {
+    : RenderWindow(RK_GLRenderWindow), window_(nullptr), isFullscreen_(false), windowWidth_(-1),
+      windowHeight_(-1) {
   LOG(INFO) << "Initializing window " << this << " ...";
 
   // Set window hints
   Options& opt = Options::getSingleton();
-  glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, opt.Render.GLMajorVersion);
-  glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, opt.Render.GLMinorVersion);
-  glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
   glfwWindowHint(GLFW_SAMPLES, opt.Render.FSAA);
   LOG(INFO) << "Using FSAA: " << opt.Render.FSAA;
@@ -95,9 +94,7 @@ GLRenderWindow::GLRenderWindow(const std::string& title)
   LOG(INFO) << "Using window mode: " << opt.Render.WindowMode;
 
   if(!window_)
-    SEQUOIA_THROW(RenderSystemInitException,
-                  "failed to initialize window, requested OpenGL (%i. %i)",
-                  opt.Render.GLMajorVersion, opt.Render.GLMinorVersion);
+    SEQUOIA_THROW(RenderSystemInitException, "GLFW failed to initialize window");
 
   // Move the window to the correct monitor (fullscreen windows are already moved correctly)
   if(!isFullscreen_) {
@@ -114,12 +111,12 @@ GLRenderWindow::GLRenderWindow(const std::string& title)
   }
 
   // Query width and height
-  glfwGetWindowSize(window_, &width_, &height_);
-  LOG(INFO) << "Using window geometry: " << width_ << " x " << height_;
-  
+  glfwGetWindowSize(window_, &windowWidth_, &windowHeight_);
+  LOG(INFO) << "Using window geometry: " << windowWidth_ << " x " << windowHeight_;
+
   // Register the window "globally"
   StaticWindowMap.emplace(window_, this);
-  
+
   // Register window call-back
   glfwSetWindowSizeCallback(window_, GLRenderWindow::resizeCallbackDispatch);
 
@@ -130,7 +127,7 @@ GLRenderWindow::~GLRenderWindow() {
   LOG(INFO) << "Terminating window " << this << " ...";
 
   glfwMakeContextCurrent(window_);
-  glbinding::Binding::releaseCurrentContext();
+  // glbinding::Binding::releaseCurrentContext();
   StaticWindowMap.erase(window_);
   glfwDestroyWindow(window_);
 
@@ -142,69 +139,72 @@ bool GLRenderWindow::isClosed() { return glfwWindowShouldClose(window_); }
 bool GLRenderWindow::isFullscreen() const { return isFullscreen_; }
 
 void GLRenderWindow::resizeCallback(int width, int height) {
-  width_ = width;
-  height_ = height;
-  
-  // Reset the current viewport
-  glViewport(0, 0, width_, height_);
-  
-  // Select the projection matrix
-  glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-
-
-  
-  // Calcualte aspect ratio
-  glMatrixMode(GL_MODELVIEW);  
-  glLoadIdentity();  
+  LOG(INFO) << "Resizing window " << this << " to " << width << " x " << height;
+  windowWidth_ = width;
+  windowHeight_ = height;
+  Viewport* viewport = getViewport();
+  viewport->updateGeometry(viewport->getX(), viewport->getY(), windowWidth_, windowHeight_);
 }
 
 void GLRenderWindow::resizeCallbackDispatch(GLFWwindow* window, int width, int height) {
   GLRenderWindow::StaticWindowMap[window]->resizeCallback(width, height);
 }
 
-int GLRenderWindow::getWidth() const { return width_; }
+int GLRenderWindow::getWidth() const { return windowWidth_; }
 
-int GLRenderWindow::getHeight() const { return height_; }
+int GLRenderWindow::getHeight() const { return windowHeight_; }
 
 void GLRenderWindow::swapBuffers() { glfwSwapBuffers(window_); }
 
-void GLRenderWindow::renderOneFrame() {
-  // Clear screen and depth buffer
+// ---------------------------------------------
+GLfloat light_diffuse[] = {1.0, 0.0, 0.0, 1.0};  /* Red diffuse light. */
+GLfloat light_position[] = {1.0, 1.0, 1.0, 0.0};  /* Infinite light location. */
+GLfloat n[6][3] = {  /* Normals for the 6 faces of a cube. */
+  {-1.0, 0.0, 0.0}, {0.0, 1.0, 0.0}, {1.0, 0.0, 0.0},
+  {0.0, -1.0, 0.0}, {0.0, 0.0, 1.0}, {0.0, 0.0, -1.0} };
+GLint faces[6][4] = {  /* Vertex indices for the 6 faces of a cube. */
+  {0, 1, 2, 3}, {3, 2, 6, 7}, {7, 6, 5, 4},
+  {4, 5, 1, 0}, {5, 6, 2, 1}, {7, 4, 0, 3} };
+GLfloat v[8][3];  /* Will be filled in with X,Y,Z vertexes. */
+// ---------------------------------------------
+
+void GLRenderWindow::update() {
+  // Assert matrix mode is modelview (should be as we called the camera projection prev.)
+
+  // ---------------------------------------------  
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-  // Reset the current modelview matrix
-  glLoadIdentity();
+  glTranslatef(0.0, 0.0, -1.0);
+  glRotatef(60, 1.0, 0.0, 0.0);
+  glRotatef(-20, 0.0, 0.0, 1.0);
   
-//  glColor3f(1.0,1.0,1.0);
-//  glBegin(GL_QUADS);                                  
-//  glVertex3f(-0.5,-0.5,-0.5);
-//  glVertex3f(0.5,-0.5,-0.5);
-//  glVertex3f(0.5,0.5,-0.5);
-//  glVertex3f(-0.5,0.5,-0.5);
-//  glEnd();
+  for (int i = 0; i < 6; i++) {
+    glBegin(GL_QUADS);
+    glNormal3fv(&n[i][0]);
+    glVertex3fv(&v[faces[i][0]][0]);
+    glVertex3fv(&v[faces[i][1]][0]);
+    glVertex3fv(&v[faces[i][2]][0]);
+    glVertex3fv(&v[faces[i][3]][0]);
+    glEnd();
+  }
+  // ---------------------------------------------
+  
 }
-
-GLFWwindow* GLRenderWindow::getGLFWwindow() { return window_; }
 
 void GLRenderWindow::init() {
   Options& opt = Options::getSingleton();
-  LOG(INFO) << "Initializing up OpenGL ...";
+  LOG(INFO) << "Initializing OpenGL ...";
 
-  // Initialize glbinding
   glfwMakeContextCurrent(window_);
-  glbinding::Binding::initialize();
-  LOG(INFO) << "glbinding: " << GLBINDING_VERSION;
-
-  LOG(INFO) << "OpenGL version: " << glbinding::ContextInfo::version().toString();
-  LOG(INFO) << "OpenGL vendor: " << glbinding::ContextInfo::vendor();
-  LOG(INFO) << "OpenGL renderer: " << glbinding::ContextInfo::renderer();
+  glbinding::Binding::initialize(false);
 
   // Set debugging callbacks
   if(opt.Core.Debug) {
     using namespace glbinding;
     setCallbackMaskExcept(CallbackMask::After | CallbackMask::ParametersAndReturnValue,
-                          {"glGetError"});
+                          {"glGetError", 
+                           
+                           //TODO: Problem is in begin/end we cannot call glGetError
+                           "glBegin", "glEnd", "glVertex3f", "glNormal3fv", "glVertex3fv"});
     setAfterCallback([](const FunctionCall& call) {
       const auto error = glGetError();
       if(error != GL_NO_ERROR)
@@ -212,17 +212,39 @@ void GLRenderWindow::init() {
     });
   }
 
+  LOG(INFO) << "glbinding: " << GLBINDING_VERSION;
+  LOG(INFO) << "OpenGL version: " << glbinding::ContextInfo::version().toString();
+  LOG(INFO) << "OpenGL vendor: " << glbinding::ContextInfo::vendor();
+  LOG(INFO) << "OpenGL renderer: " << glbinding::ContextInfo::renderer();
+
   // Initalize OpenGL
-  glShadeModel(GL_SMOOTH);							 // Enable Smooth Shading
-	glClearColor(0.0f, 0.0f, 0.0f, 0.5f);	 // Black Background
-	glClearDepth(1.0f);									   // Depth Buffer Setup
-	glEnable(GL_DEPTH_TEST);							 // Enables Depth Testing
-	glDepthFunc(GL_LEQUAL);								 // The Type Of Depth Testing To Do
+  // ---------------------------------------------
+  /* Setup cube vertex data. */
+  v[0][0] = v[1][0] = v[2][0] = v[3][0] = -1;
+  v[4][0] = v[5][0] = v[6][0] = v[7][0] = 1;
+  v[0][1] = v[1][1] = v[4][1] = v[5][1] = -1;
+  v[2][1] = v[3][1] = v[6][1] = v[7][1] = 1;
+  v[0][2] = v[3][2] = v[4][2] = v[7][2] = 1;
+  v[1][2] = v[2][2] = v[5][2] = v[6][2] = -1;
   
-  resizeCallback(width_, height_);
+  /* Enable a single OpenGL light. */
+  glLightfv(GL_LIGHT0, GL_DIFFUSE, light_diffuse);
+  glLightfv(GL_LIGHT0, GL_POSITION, light_position);
+  glEnable(GL_LIGHT0);
+  glEnable(GL_LIGHTING);
   
-  LOG(INFO) << "Done initializing OpenGL";  
+  /* Use depth buffering for hidden surface elimination. */
+  glEnable(GL_DEPTH_TEST);
+  // ---------------------------------------------
+  
+  
+  // Call resize manually to set the viewport
+  resizeCallback(windowWidth_, windowHeight_);
+
+  LOG(INFO) << "Done initializing OpenGL";
 }
+
+GLFWwindow* GLRenderWindow::getGLFWwindow() { return window_; }
 
 } // namespace render
 

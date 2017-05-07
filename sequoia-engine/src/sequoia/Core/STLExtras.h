@@ -19,6 +19,7 @@
 #include "sequoia/Core/Compiler.h"
 #include <algorithm>
 #include <functional>
+#include <type_traits>
 #include <utility>
 
 #ifdef SEQUOIA_COMPILER_MSVC
@@ -174,6 +175,35 @@ OutputIt transform(R&& Range, OutputIt d_first, UnaryPredicate P) {
   return std::transform(std::begin(Range), std::end(Range), d_first, P);
 }
 
+//===------------------------------------------------------------------------------------------===//
+//     Extra additions to <type_tratis>
+//===------------------------------------------------------------------------------------------===//
+
+/// @brief If `T` is a pointer, just return it. If it is not, return `T&`
+/// @{
+template <typename T, typename Enable = void>
+struct add_lvalue_reference_if_not_pointer {
+  typedef T& type;
+};
+
+template <typename T>
+struct add_lvalue_reference_if_not_pointer<
+    T, typename std::enable_if<std::is_pointer<T>::value>::type> {
+  typedef T type;
+};
+/// @}
+
+/// @brief If `T` is a pointer to `X`, return a pointer to const `X`. If it is not, return const `T`
+/// @{
+template <typename T, typename Enable = void>
+struct add_const_past_pointer {
+  typedef const T type;
+};
+
+template <typename T>
+struct add_const_past_pointer<T, typename std::enable_if<std::is_pointer<T>::value>::type> {
+  typedef const typename std::remove_pointer<T>::type* type;
+};
 /// @}
 
 } // namespace core

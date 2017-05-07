@@ -13,40 +13,52 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_MATH_QUATERNION_H
-#define SEQUOIA_MATH_QUATERNION_H
+#ifndef SEQUOIA_MATH_VECTOR_H
+#define SEQUOIA_MATH_VECTOR_H
 
-#include "sequoia/Math/Vector.h"
+#include "sequoia/Core/Assert.h"
+#include "sequoia/Core/Compiler.h"
+#include <blaze/math/DynamicMatrix.h>
+#include <blaze/math/StaticMatrix.h>
 
 namespace sequoia {
 
 namespace math {
 
-template <class T>
-class Quaternion {
-  Vec4<T> data_;
+template <typename T>
+using Vec2 = blaze::StaticVector<T, 2>;
 
-public:
-  Quaternion() = default;
-  Quaternion(const Quaternion&) = default;
-  Quaternion(Quaternion&&) = default;
-  Quaternion(const Vec4<T>& data) : data_(data) {}
-  Quaternion(Vec4<T>&& data) : data_(std::move(data)) {}
+template <typename T>
+using Vec3 = blaze::StaticVector<T, 3>;
 
-  Quaternion& operator=(const Quaternion&) = default;
-  Quaternion& operator=(Quaternion&&) = default;
-};
+template <typename T>
+using Vec4 = blaze::StaticVector<T, 4>;
+
+template <typename T>
+using VecX = blaze::DynamicVector<T>;
 
 } // namespace math
 
 /// @addtogroup math
 /// @{
 
-/// @name Quaternions
+/// @name Matrix types
 /// @{
-using Quaternioni = math::Quaternion<int>;
-using Quaternionf = math::Quaternion<float>;
-using Quaterniond = math::Quaternion<double>;
+using Vec2i = math::Vec2<int>;
+using Vec2f = math::Vec2<float>;
+using Vec2d = math::Vec2<double>;
+
+using Vec3i = math::Vec3<int>;
+using Vec3f = math::Vec3<float>;
+using Vec3d = math::Vec3<double>;
+
+using Vec4i = math::Vec4<int>;
+using Vec4f = math::Vec4<float>;
+using Vec4d = math::Vec4<double>;
+
+using VecXi = math::VecX<int>;
+using VecXf = math::VecX<float>;
+using VecXd = math::VecX<double>;
 /// @}
 
 /// @}

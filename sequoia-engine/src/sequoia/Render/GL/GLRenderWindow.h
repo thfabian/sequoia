@@ -19,8 +19,8 @@
 #include "sequoia/Render/RenderData.h"
 #include "sequoia/Render/RenderWindow.h"
 #include <string>
-#include <vector>
 #include <unordered_map>
+#include <vector>
 
 struct GLFWwindow;
 
@@ -31,12 +31,12 @@ namespace render {
 /// @brief OpenGL render window
 /// @ingroup gl
 class SEQUOIA_RENDER_API GLRenderWindow : public RenderWindow {
-  std::vector<RenderData*> renderData_;
+  // std::vector<RenderData*> renderData_;
 
   GLFWwindow* window_;
   bool isFullscreen_;
-  int width_;
-  int height_;
+  int windowWidth_;
+  int windowHeight_;
 
 public:
   /// @brief Initialize window
@@ -55,40 +55,32 @@ public:
   /// @copydoc RenderWindow::isFullscreen
   virtual bool isFullscreen() const override;
 
-  /// @copydoc RenderWindow::init
-  virtual void init() override;
-
-  /// @name Window Geometry
-  /// @{
-
   /// @copydoc RenderWindow::getWidth
   virtual int getWidth() const override;
 
   /// @copydoc RenderWindow::getHeight
   virtual int getHeight() const override;
 
-  /// @}
+  /// @copydoc RenderTarget::init
+  virtual void init() override;
 
-  /// @name Rendering
-  /// @{
-
-  /// @copydoc RenderWindow::swapBuffers
+  /// @copydoc RenderTarget::swapBuffers
   virtual void swapBuffers() override;
 
-  /// @copydoc RenderWindow::renderOneFrame
-  virtual void renderOneFrame() override;
+  /// @copydoc RenderTarget::updateImpl
+  virtual void update() override;
 
-  /// @}
+  /// @brief Get the window
+  GLFWwindow* getGLFWwindow();
 
   /// @brief Called upon resizing the window
   void resizeCallback(int width, int height);
   static void resizeCallbackDispatch(GLFWwindow* window, int width, int height);
 
-  /// @brief Get the window
-  GLFWwindow* getGLFWwindow();
-
   /// @brief Static map of all GLFWwindows to their respective GLRenderWindows
   static std::unordered_map<GLFWwindow*, GLRenderWindow*> StaticWindowMap;
+
+  static bool classof(const RenderTarget* target) { return target->getKind() == RK_GLRenderWindow; }
 };
 
 } // namespace render

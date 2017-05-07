@@ -22,6 +22,8 @@ namespace sequoia {
 
 namespace render {
 
+class Viewport;
+
 /// @brief View Frustum
 ///
 /// A view frustum is defined by 4 parameters:
@@ -61,32 +63,35 @@ public:
   ViewFrustum(double fovy, double aspect, double zNear, double zFar)
       : fovy_(fovy), aspect_(aspect), zNear_(zNear), zFar_(zFar) {}
 
-  /// @brief Get/Set the field of view
+  virtual ~ViewFrustum() {}
+
+  /// @brief Specifies the field of view angle, in degrees, in the y direction
   /// @{
   void setFieldOfViewY(double fovy) { fovy_ = fovy; }
   double getFieldOfViewY() const { return fovy_; }
   /// @}
 
-  /// @brief Get/Set the aspect ratio
+  /// @brief Specifies the aspect ratio that determines the field of view in the x direction. The
+  /// aspect ratio is the ratio of x (width) to y (height)
   /// @{
   void setAspectRatio(double aspect) { aspect_ = aspect; }
   double getAspectRatio() const { return aspect_; }
   /// @}
 
-  /// @brief Get/Set the near clipping plane
+  /// @brief Specifies the distance from the viewer to the near clipping plane (always positive)
   /// @{
   void getZNearClipping(double zNear) { zNear_ = zNear; }
   double setZNearClipping() const { return zNear_; }
   /// @}
 
-  /// @brief Get/Set the far clipping plane
+  /// @brief Specifies the distance from the viewer to the far clipping plane (always positive)
   /// @{
   void getZFarClipping(double zFar) { zFar_ = zFar; }
   double setZFarClipping() const { return zFar_; }
   /// @}
 
-protected:
-  virtual void updateFrustum() = 0;
+  /// @brief Update projection matrix
+  virtual void updateProjectionMatrix(Viewport* viewport) = 0;
 };
 
 } // namespace render

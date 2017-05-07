@@ -13,8 +13,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_RENDER_GL_GLVIEWFRUSTUM_H
-#define SEQUOIA_RENDER_GL_GLVIEWFRUSTUM_H
+#ifndef SEQUOIA_RENDER_GL_GLCAMERA_H
+#define SEQUOIA_RENDER_GL_GLCAMERA_H
 
 #include "sequoia/Render/Camera.h"
 
@@ -25,9 +25,15 @@ namespace render {
 /// @brief OpenGL implementation of the Camera
 /// @ingroup gl
 class SEQUOIA_RENDER_API GLCamera : public Camera {
-  
-protected:
-  void updateFrustum();
+public:
+  GLCamera(const Vec3f& up);
+  virtual ~GLCamera();
+
+  /// @copydoc Camera::updateModelViewMatrix
+  virtual void updateModelViewMatrix() override;
+
+  /// @copydoc ViewFrustum::updateProjectionMatrix
+  virtual void updateProjectionMatrix(Viewport* viewport) override;
 };
 
 } // namespace render

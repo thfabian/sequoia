@@ -13,6 +13,7 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
+#include "sequoia/Core/Casting.h"
 #include "sequoia/Core/ErrorHandler.h"
 #include "sequoia/Render/Exception.h"
 #include "sequoia/Render/GL/GLRenderSystem.h"
@@ -33,13 +34,17 @@ RenderSystem::RenderSystem(RenderSystem::RenderSystemKind renderSystemKind)
   }
 }
 
-int RenderSystem::createWindow(const std::string& title) {
+RenderWindow* RenderSystem::createWindow(const std::string& title) {
   return renderSystem_->createWindow(title);
 }
 
-RenderWindow* RenderSystem::getWindow(int windowID) { return renderSystem_->getWindow(windowID); }
+Camera* RenderSystem::createCamera(const Vec3f& up) { return renderSystem_->createCamera(up); }
 
 void RenderSystem::pollEvents() { renderSystem_->pollEvents(); }
+
+void RenderSystem::renderOneFrame() { renderSystem_->renderOneFrame(); }
+
+void RenderSystem::swapBuffers() { renderSystem_->swapBuffers(); }
 
 } // namespace render
 

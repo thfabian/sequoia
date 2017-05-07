@@ -16,8 +16,9 @@
 #ifndef SEQUOIA_RENDER_RENDERSYSTEMIMPL_H
 #define SEQUOIA_RENDER_RENDERSYSTEMIMPL_H
 
+#include "sequoia/Math/Vector.h"
 #include "sequoia/Render/Export.h"
-#include "sequoia/Render/RenderWindow.h"
+#include "sequoia/Render/RenderFwd.h"
 #include <memory>
 #include <string>
 
@@ -34,15 +35,23 @@ public:
 
   /// @brief Create a new RenderWindow
   ///
-  /// @param title    The initial, UTF-8 encoded window title.
-  /// @returns ID of the created window
-  virtual int createWindow(const std::string& title) = 0;
+  /// @param title    The initial, UTF-8 encoded window title
+  /// @returns the created window
+  virtual RenderWindow* createWindow(const std::string& title) = 0;
 
-  /// @brief Get the window identifid by `windowID`
-  virtual RenderWindow* getWindow(int windowID) = 0;
-
+  /// @brief Create a new Camera
+  ///
+  /// @returns the created camera
+  virtual Camera* createCamera(const Vec3f& up) = 0;
+  
   /// @brief Processes events that are in the event queue
   virtual void pollEvents() = 0;
+
+  /// @brief Render one frame into the target of each active registered RenderTarget
+  virtual void renderOneFrame() = 0;
+  
+  /// @brief Swap the buffers and display the next frame for each active registered RenderTarget
+  virtual void swapBuffers() = 0;
 };
 
 } // namespace render

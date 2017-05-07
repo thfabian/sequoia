@@ -182,6 +182,15 @@
 #define SEQUOIA_ATTRIBUTE_NORETURN
 #endif
 
+/// @brief Force inlining
+#if defined(_MSC_VER)
+#define SEQUOIA_INLINE __forceinline
+#elif defined(__GNUC__)
+#define SEQUOIA_INLINE __attribute__((always_inline))
+#else
+#define SEQUOIA_INLINE inline
+#endif
+
 /// @brief Name of the current function
 /// @ingroup core
 #if defined(_MSC_VER)

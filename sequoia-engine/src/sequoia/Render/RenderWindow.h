@@ -23,11 +23,11 @@ namespace sequoia {
 namespace render {
 
 /// @brief Abstract base class of all RenderWindows
-///
-/// RenderWindows are created by the RenderSystem.
 /// @ingroup render
 class SEQUOIA_RENDER_API RenderWindow : public RenderTarget {
 public:
+  RenderWindow(RenderTargetKind kind) : RenderTarget(kind) {}
+
   virtual ~RenderWindow() {}
 
   /// @brief Check if window is closed
@@ -36,30 +36,24 @@ public:
   /// @brief Check if window is in fullscreen mode
   virtual bool isFullscreen() const = 0;
 
-  /// @brief Initialize the window (this include context creation and binding for OpenGL windows)
-  virtual void init() = 0;
-
-  /// @name Window Geometry
-  /// @{
-
   /// @brief Get the current width of the window
   virtual int getWidth() const = 0;
 
   /// @brief Get the current height of the window
   virtual int getHeight() const = 0;
 
-  /// @}
+  /// @copydoc RenderTarget::init
+  virtual void init() override = 0;
 
-  /// @name Rendering
-  /// @{
+  /// @copydoc RenderTarget::swapBuffers
+  virtual void swapBuffers() override = 0;
 
-  /// @brief Swaps the frame buffers to display the next frame
-  virtual void swapBuffers() = 0;
+  /// @copydoc RenderTarget::update
+  virtual void update() override = 0;
 
-  /// @brief Render one frame
-  virtual void renderOneFrame() = 0;
-
-  /// @}
+  static bool classof(const RenderTarget* target) {
+    return target->getKind() >= RK_RenderWindow && target->getKind() < RK_RenderWindowLast;
+  }
 };
 
 } // namespace render

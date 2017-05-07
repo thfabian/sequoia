@@ -17,7 +17,11 @@
 #include "sequoia/Core/Logging.h"
 #include "sequoia/Render/Exception.h"
 #include "sequoia/Render/GL/GL.h"
+#include "sequoia/Render/GL/GLCamera.h"
 #include "sequoia/Render/GL/GLRenderSystem.h"
+#include "sequoia/Render/GL/GLRenderWindow.h"
+
+#include <iostream>
 
 namespace sequoia {
 
@@ -45,26 +49,38 @@ GLRenderSystem::GLRenderSystem() {
 
 GLRenderSystem::~GLRenderSystem() {
   LOG(INFO) << "Terminating GLRenderSystem ...";
-  renderWindows_.clear();
+  renderTargets_.clear();
   glfwTerminate();
   LOG(INFO) << "Done terminating GLRenderSystem";
 }
 
-int GLRenderSystem::createWindow(const std::string& title) {
-  auto res = renderWindows_.emplace(renderWindows_.size(), std::make_shared<GLRenderWindow>(title));
-  SEQUOIA_ASSERT_MSG(res.second, "failed to create window");
-
-  // Initialize window (create OpenGL context)
-  res.first->second->init();
-
-  return res.first->first; // WindowID
+RenderWindow* GLRenderSystem::createWindow(const std::string& title) {
+  renderTargets_.emplace_back(std::make_shared<GLRenderWindow>(title));
+  return static_cast<RenderWindow*>(renderTargets_.back().get());
 }
 
-RenderWindow* GLRenderSystem::getWindow(int windowID) {
-  return static_cast<RenderWindow*>(renderWindows_[windowID].get());
+Camera* GLRenderSystem::createCamera(const Vec3f& up) {
+  cameras_.emplace_back(std::make_shared<GLCamera>(up));  
+  return static_cast<Camera*>(cameras_.back().get());
 }
 
 void GLRenderSystem::pollEvents() { glfwPollEvents(); }
+
+void GLRenderSystem::renderOneFrame() {
+  for(auto& renderTarget : renderTargets_) {
+    RenderTarget* target = renderTarget.get();
+    if(target->isActive())
+      target->renderOneFrame();
+  }
+}
+
+void GLRenderSystem::swapBuffers() {
+  for(auto& renderTarget : renderTargets_) {
+    RenderTarget* target = renderTarget.get();
+    if(target->isActive())
+      target->swapBuffers();
+  }
+}
 
 } // namespace render
 

@@ -17,9 +17,10 @@
 #define SEQUOIA_RENDER_RENDERSYSTEM_H
 
 #include "sequoia/Core/Singleton.h"
+#include "sequoia/Math/Vector.h"
 #include "sequoia/Render/Export.h"
 #include "sequoia/Render/RenderSystemImpl.h"
-#include "sequoia/Render/RenderWindow.h"
+#include "sequoia/Render/RenderFwd.h"
 #include <memory>
 
 namespace sequoia {
@@ -32,7 +33,7 @@ namespace render {
 /// devices. Note that there can only be one RenderSystem active at the time.
 ///
 /// @ingroup render
-class SEQUOIA_RENDER_API RenderSystem : public Singleton<RenderSystem> {
+class SEQUOIA_RENDER_API RenderSystem : public Singleton<RenderSystem>, public RenderSystemImpl {
 public:
   enum RenderSystemKind { RK_OpenGL };
 
@@ -44,13 +45,20 @@ public:
   ///
   /// @param title    The initial, UTF-8 encoded window title.
   /// @returns ID of the created window
-  int createWindow(const std::string& title);
+  RenderWindow* createWindow(const std::string& title) override;
 
-  /// @brief Get the window identifid by `windowID`
-  RenderWindow* getWindow(int windowID);
+  /// @brief Create a new Camera
+  /// @returns ID of the created camera
+  Camera* createCamera(const Vec3f& up) override;
 
   /// @brief Processes events that ar in the event queue
-  void pollEvents();
+  void pollEvents() override;
+
+  /// @brief Render one frame into the target of each active registered RenderTarget
+  void renderOneFrame() override;
+
+  /// @brief Swap the buffers and display the next frame for each active registered RenderTarget
+  void swapBuffers() override;
 
 private:
   std::unique_ptr<RenderSystemImpl> renderSystem_;

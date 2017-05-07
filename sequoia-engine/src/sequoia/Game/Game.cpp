@@ -16,6 +16,8 @@
 #include "sequoia/Core/ErrorHandler.h"
 #include "sequoia/Core/Logging.h"
 #include "sequoia/Game/Game.h"
+#include "sequoia/Render/Camera.h"
+#include "sequoia/Render/RenderWindow.h"
 #include "sequoia/Render/Exception.h"
 #include "sequoia/Render/RenderSystem.h"
 #include <iostream>
@@ -26,23 +28,21 @@ SEQUOIA_DECLARE_SINGLETON(game::Game);
 
 namespace game {
 
-Game::Game() : renderSystem_(nullptr) { initialize(); }
+Game::Game() : renderSystem_(nullptr), mainWindow_(nullptr), mainCamera_(nullptr) { init(); }
 
 Game::~Game() { cleanup(); }
 
 void Game::run() {
-  render::RenderWindow* renderWindow = renderSystem_->getWindow(mainWindowID_);
-
   LOG(INFO) << "Starting main-loop ...";
 
   // Start main-loop
-  while(!renderWindow->isClosed()) {
-    
-    // Start rendering the frame
-    renderWindow->renderOneFrame();
+  while(!mainWindow_->isClosed()) {
+
+    // Start rendering all tender targets
+    renderSystem_->renderOneFrame();
 
     // Update screen
-    renderWindow->swapBuffers();
+    renderSystem_->swapBuffers();
 
     // Query I/O events
     renderSystem_->pollEvents();
@@ -51,15 +51,30 @@ void Game::run() {
   LOG(INFO) << "Done with main-loop";
 }
 
-void Game::initialize() {
+void Game::init() {
   LOG(INFO) << "Initializing Game ...";
 
   try {
     // Initialize the RenderSystem
     renderSystem_ = std::make_shared<render::RenderSystem>(render::RenderSystem::RK_OpenGL);
 
+    // Create the main-window
+    mainWindow_ = renderSystem_->createWindow("Sequoia - " SEQUOIA_VERSION_STRING);
+
+    
+    // Create the camera
+    mainCamera_ = renderSystem_->createCamera(Vec3f{0, 1, 0});
+    mainCamera_->setEye(Vec3f{0, 0, 5});
+    mainCamera_->setCenter(Vec3f{0, 0, 0});
+    
+    // Set the viewport of the mainwindow
+    auto viewport = std::make_shared<render::Viewport>(
+        mainCamera_, mainWindow_, 0, 0, mainWindow_->getWidth(), mainWindow_->getHeight());
+    mainWindow_->setViewport(viewport);
+
+    
     // Initialize the main-window
-    mainWindowID_ = renderSystem_->createWindow("Sequoia - " SEQUOIA_VERSION_STRING);
+    mainWindow_->init();
 
   } catch(render::RenderSystemInitException& e) {
     ErrorHandler::getSingleton().fatal(e.what());

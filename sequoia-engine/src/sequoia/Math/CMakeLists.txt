@@ -19,6 +19,8 @@ sequoia_add_library(
           Export.h
           Math.h
           Math.cpp
+          Matrix.h
+          Vector.h
           Quaternion.h        
   DEPENDS ${SEQUOIA_EXTERNAL_LIBRARIES}
 )

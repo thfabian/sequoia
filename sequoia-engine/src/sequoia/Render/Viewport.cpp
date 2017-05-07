@@ -14,13 +14,44 @@
 //===------------------------------------------------------------------------------------------===//
 
 #include "sequoia/Render/Viewport.h"
+#include "sequoia/Render/Camera.h"
 
 namespace sequoia {
 
 namespace render {
 
+void ViewportListener::viewportGeometryChanged(Viewport* viewport) {}
+
 Viewport::Viewport(Camera* camera, RenderTarget* target, int x, int y, int width, int height)
-    : camera_(camera), target_(target), x_(x), y_(y), width_(width), height_(height) {}
+    : camera_(camera), target_(target), x_(x), y_(y), width_(width), height_(height) {
+
+  // Register the camera as a Viewport listener
+  addListener(static_cast<ViewportListener*>(camera_));
+}
+
+Camera* Viewport::getCamera() const { return camera_; }
+
+void Viewport::setCamera(Camera* camera) { camera_ = camera; }
+
+RenderTarget* Viewport::getRenderTarget() const { return target_; }
+
+void Viewport::updateGeometry(int x, int y, int width, int height) {
+  x_ = x;
+  y_ = y;
+  width_ = width;
+  height_ = height;
+
+  for(auto* listener : getListeners<ViewportListener>())
+    listener->viewportGeometryChanged(this);
+}
+
+int Viewport::getX() const { return x_; }
+
+int Viewport::getY() const { return y_; }
+
+int Viewport::getWidth() const { return width_; }
+
+int Viewport::getHeight() const { return height_; }
 
 } // namespace viewport
 

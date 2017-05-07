@@ -16,10 +16,10 @@
 #ifndef SEQUOIA_RENDER_CAMERA
 #define SEQUOIA_RENDER_CAMERA
 
-#include "sequoia/Math/Math.h"
-#include "sequoia/Math/Quaternion.h"
+#include "sequoia/Math/Vector.h"
 #include "sequoia/Render/Export.h"
 #include "sequoia/Render/ViewFrustum.h"
+#include "sequoia/Render/Viewport.h"
 
 namespace sequoia {
 
@@ -32,19 +32,40 @@ namespace render {
 /// full textured, flat shaded, wireframe), field of view, rendering distances etc.
 ///
 /// @ingroup render
-class Camera : public ViewFrustum {
+class SEQUOIA_RENDER_API Camera : public ViewFrustum, public ViewportListener {
 protected:
-  /// Camera orientation
-  Quaternionf orientation_;
+  /// Eye of the camera (where the camera is located)
+  Vec3f eye_;
 
-  /// Camera position
-  Vec3f position_;
+  /// Center of the scene (where the camera points to)
+  Vec3f center_;
+
+  /// Up vector
+  Vec3f up_;
 
 public:
-  Camera() : ViewFrustum() {}
+  Camera(const Vec3f& up);
+  virtual ~Camera() {}
 
-protected:
-  void updateFrustum() override = 0;
+  /// @brief Get/Set the `eye` of the camera (where the camera is located)
+  const Vec3f& getEye() const;
+  void setEye(const Vec3f& eye);
+
+  /// @brief Get/Set the `center` of the scene (where the camera points to)
+  const Vec3f& getCenter() const;
+  void setCenter(const Vec3f& center);
+
+  /// @brief Get `up` vector
+  const Vec3f& getUp() const;
+
+  /// @brief Update the model view matrix
+  virtual void updateModelViewMatrix() = 0;
+
+  /// @copydoc ViewFrustum::updateProjectionMatrix
+  virtual void updateProjectionMatrix(Viewport* viewport) override = 0;
+
+  /// @brief The geometry of the associated viewport changed, we need to update our aspect ratio
+  void viewportGeometryChanged(Viewport* viewport) override;
 };
 
 } // namespace render

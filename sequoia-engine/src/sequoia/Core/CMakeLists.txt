@@ -40,6 +40,7 @@ sequoia_add_library(
           Any.h
           Assert.h
           Assert.cpp 
+          Casting.h
           Export.h
           ErrorHandler.h
           ErrorHandler.cpp

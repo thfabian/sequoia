@@ -30,8 +30,11 @@ namespace game {
 class SEQUOIA_GAME_API Game : public Singleton<Game> {
   std::shared_ptr<render::RenderSystem> renderSystem_;
 
-  /// ID of the main window
-  int mainWindowID_;
+  /// Main window
+  render::RenderWindow* mainWindow_;
+
+  /// Camera of the main window
+  render::Camera* mainCamera_;
 
 public:
   /// @copydoc initialize
@@ -41,7 +44,7 @@ public:
   ~Game();
 
   /// @brief Initializes the game object by initializing the RenderSystem
-  void initialize();
+  void init();
 
   /// @brief Frees all allocated resources
   void cleanup();

@@ -16,11 +16,10 @@
 #ifndef SEQUOIA_RENDER_GL_GLRENDERSYSTEM_H
 #define SEQUOIA_RENDER_GL_GLRENDERSYSTEM_H
 
-#include "sequoia/Core/Singleton.h"
-#include "sequoia/Render/GL/GLRenderWindow.h"
+#include "sequoia/Math/Vector.h"
 #include "sequoia/Render/RenderSystemImpl.h"
 #include <memory>
-#include <unordered_map>
+#include <vector>
 
 namespace sequoia {
 
@@ -29,7 +28,8 @@ namespace render {
 /// @brief OpenGL render-system
 /// @ingroup gl
 class SEQUOIA_RENDER_API GLRenderSystem : public RenderSystemImpl {
-  std::unordered_map<int, std::shared_ptr<GLRenderWindow>> renderWindows_;
+  std::vector<std::shared_ptr<RenderTarget>> renderTargets_;
+  std::vector<std::shared_ptr<Camera>> cameras_;
 
 public:
   /// @brief Initialize GLFW
@@ -40,13 +40,19 @@ public:
   virtual ~GLRenderSystem();
 
   /// @copydoc RenderSystemImpl::createWindow
-  virtual int createWindow(const std::string& title) override;
+  virtual RenderWindow* createWindow(const std::string& title) override;
 
-  /// @copydoc RenderSystemImpl::getWindow
-  virtual RenderWindow* getWindow(int windowID) override;
+  /// @copydoc RenderSystemImpl::createCamera
+  virtual Camera* createCamera(const Vec3f& up) override;
 
   /// @copydoc RenderSystemImpl::pollEvents
   virtual void pollEvents() override;
+
+  /// @copydoc RenderSystemImpl::renderOneFrame
+  virtual void renderOneFrame() override;
+
+  /// @copydoc RenderSystemImpl::swapBuffers
+  virtual void swapBuffers() override;
 };
 
 } // namespace render
