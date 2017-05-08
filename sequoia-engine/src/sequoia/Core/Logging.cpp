@@ -83,7 +83,7 @@ internal::LoggerProxy Logger::logFatal(const char* file, int line) noexcept {
 
 void Logger::log(LoggingLevel level, const std::string& message, const char* file, int line) {
   for(auto* listeners : getListeners<LoggerListener>())
-    listeners->log(level, message, file, line);
+    listeners->loggerLog(level, message, file, line);
 }
 
 } // namespace core

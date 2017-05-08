@@ -29,7 +29,6 @@ namespace render {
 /// @ingroup gl
 class SEQUOIA_RENDER_API GLRenderSystem : public RenderSystemImpl {
   std::vector<std::shared_ptr<RenderTarget>> renderTargets_;
-  std::vector<std::shared_ptr<Camera>> cameras_;
 
 public:
   /// @brief Initialize GLFW
@@ -41,9 +40,6 @@ public:
 
   /// @copydoc RenderSystemImpl::createWindow
   virtual RenderWindow* createWindow(const std::string& title) override;
-
-  /// @copydoc RenderSystemImpl::createCamera
-  virtual Camera* createCamera(const Vec3f& up) override;
 
   /// @copydoc RenderSystemImpl::pollEvents
   virtual void pollEvents() override;

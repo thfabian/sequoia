@@ -15,31 +15,17 @@
 
 #include "sequoia/Core/Logging.h"
 #include "sequoia/Core/Options.h"
-#include "sequoia/Core/StringUtil.h"
 #include "sequoia/Core/Unreachable.h"
 #include "sequoia/Render/Camera.h"
 #include "sequoia/Render/Exception.h"
 #include "sequoia/Render/GL/GL.h"
 #include "sequoia/Render/GL/GLRenderWindow.h"
-#include <glbinding/Binding.h>
-#include <glbinding/ContextInfo.h>
-#include <glbinding/Version.h>
-#include <glbinding/glbinding-version.h>
+#include "sequoia/Render/GL/GLRenderer.h"
 #include <unordered_map>
 
 namespace sequoia {
 
 namespace render {
-
-static std::string FunctionCallToString(const glbinding::FunctionCall& call) {
-  std::stringstream ss;
-  ss << call.function->name()
-     << core::RangeToString(", ", "(", ")")(
-            call.parameters, [](glbinding::AbstractValue* value) { return value->asString(); });
-  if(call.returnValue)
-    ss << " -> " << call.returnValue->asString();
-  return ss.str();
-}
 
 std::unordered_map<GLFWwindow*, GLRenderWindow*> GLRenderWindow::StaticWindowMap;
 
@@ -48,11 +34,20 @@ GLRenderWindow::GLRenderWindow(const std::string& title)
       windowHeight_(-1) {
   LOG(INFO) << "Initializing window " << this << " ...";
 
-  // Set window hints
   Options& opt = Options::getSingleton();
 
+  // Use atleast OpenGL 3.3
+  glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, opt.Render.GLMajorVersion);
+  glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, opt.Render.GLMinorVersion);
+
+  // Set Antialiasing
   glfwWindowHint(GLFW_SAMPLES, opt.Render.FSAA);
   LOG(INFO) << "Using FSAA: " << opt.Render.FSAA;
+
+  // Specifies whether the OpenGL context should be forward-compatible, i.e. one where all
+  // functionality deprecated in the requested version of OpenGL is removed
+  glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, true);
+  glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
   // Select the monitor to use
   GLFWmonitor* monitor = nullptr;
@@ -85,7 +80,7 @@ GLRenderWindow::GLRenderWindow(const std::string& title)
     glfwWindowHint(GLFW_REFRESH_RATE, mode->refreshRate);
 
     if(opt.Render.WindowMode == "window") {
-      window_ = glfwCreateWindow(1024, 768, title.c_str(), nullptr, nullptr);
+      window_ = glfwCreateWindow(1280, 960, title.c_str(), nullptr, nullptr);
     } else if(opt.Render.WindowMode == "windowed-fullscreen") {
       window_ = glfwCreateWindow(mode->width, mode->height, title.c_str(), nullptr, nullptr);
     } else
@@ -94,7 +89,9 @@ GLRenderWindow::GLRenderWindow(const std::string& title)
   LOG(INFO) << "Using window mode: " << opt.Render.WindowMode;
 
   if(!window_)
-    SEQUOIA_THROW(RenderSystemInitException, "GLFW failed to initialize window");
+    SEQUOIA_THROW(RenderSystemInitException,
+                  "failed to initialize GLFW window, requested OpenGL (%i. %i)",
+                  opt.Render.GLMajorVersion, opt.Render.GLMinorVersion);
 
   // Move the window to the correct monitor (fullscreen windows are already moved correctly)
   if(!isFullscreen_) {
@@ -120,18 +117,17 @@ GLRenderWindow::GLRenderWindow(const std::string& title)
   // Register window call-back
   glfwSetWindowSizeCallback(window_, GLRenderWindow::resizeCallbackDispatch);
 
-  LOG(INFO) << "Done initializing window";
+  LOG(INFO) << "Done initializing window " << this;
 }
 
 GLRenderWindow::~GLRenderWindow() {
   LOG(INFO) << "Terminating window " << this << " ...";
 
-  glfwMakeContextCurrent(window_);
-  // glbinding::Binding::releaseCurrentContext();
+  renderer_.reset();
   StaticWindowMap.erase(window_);
   glfwDestroyWindow(window_);
 
-  LOG(INFO) << "Done terminating window";
+  LOG(INFO) << "Done terminating window" << this;
 }
 
 bool GLRenderWindow::isClosed() { return glfwWindowShouldClose(window_); }
@@ -156,95 +152,13 @@ int GLRenderWindow::getHeight() const { return windowHeight_; }
 
 void GLRenderWindow::swapBuffers() { glfwSwapBuffers(window_); }
 
-// ---------------------------------------------
-GLfloat light_diffuse[] = {1.0, 0.0, 0.0, 1.0};  /* Red diffuse light. */
-GLfloat light_position[] = {1.0, 1.0, 1.0, 0.0};  /* Infinite light location. */
-GLfloat n[6][3] = {  /* Normals for the 6 faces of a cube. */
-  {-1.0, 0.0, 0.0}, {0.0, 1.0, 0.0}, {1.0, 0.0, 0.0},
-  {0.0, -1.0, 0.0}, {0.0, 0.0, 1.0}, {0.0, 0.0, -1.0} };
-GLint faces[6][4] = {  /* Vertex indices for the 6 faces of a cube. */
-  {0, 1, 2, 3}, {3, 2, 6, 7}, {7, 6, 5, 4},
-  {4, 5, 1, 0}, {5, 6, 2, 1}, {7, 4, 0, 3} };
-GLfloat v[8][3];  /* Will be filled in with X,Y,Z vertexes. */
-// ---------------------------------------------
+void GLRenderWindow::update() { renderer_->render(); }
 
-void GLRenderWindow::update() {
-  // Assert matrix mode is modelview (should be as we called the camera projection prev.)
-
-  // ---------------------------------------------  
-  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-  glTranslatef(0.0, 0.0, -1.0);
-  glRotatef(60, 1.0, 0.0, 0.0);
-  glRotatef(-20, 0.0, 0.0, 1.0);
-  
-  for (int i = 0; i < 6; i++) {
-    glBegin(GL_QUADS);
-    glNormal3fv(&n[i][0]);
-    glVertex3fv(&v[faces[i][0]][0]);
-    glVertex3fv(&v[faces[i][1]][0]);
-    glVertex3fv(&v[faces[i][2]][0]);
-    glVertex3fv(&v[faces[i][3]][0]);
-    glEnd();
-  }
-  // ---------------------------------------------
-  
-}
-
-void GLRenderWindow::init() {
-  Options& opt = Options::getSingleton();
-  LOG(INFO) << "Initializing OpenGL ...";
-
-  glfwMakeContextCurrent(window_);
-  glbinding::Binding::initialize(false);
-
-  // Set debugging callbacks
-  if(opt.Core.Debug) {
-    using namespace glbinding;
-    setCallbackMaskExcept(CallbackMask::After | CallbackMask::ParametersAndReturnValue,
-                          {"glGetError", 
-                           
-                           //TODO: Problem is in begin/end we cannot call glGetError
-                           "glBegin", "glEnd", "glVertex3f", "glNormal3fv", "glVertex3fv"});
-    setAfterCallback([](const FunctionCall& call) {
-      const auto error = glGetError();
-      if(error != GL_NO_ERROR)
-        LOG(ERROR) << "GL_ERROR: " << error << ": " << FunctionCallToString(call);
-    });
-  }
-
-  LOG(INFO) << "glbinding: " << GLBINDING_VERSION;
-  LOG(INFO) << "OpenGL version: " << glbinding::ContextInfo::version().toString();
-  LOG(INFO) << "OpenGL vendor: " << glbinding::ContextInfo::vendor();
-  LOG(INFO) << "OpenGL renderer: " << glbinding::ContextInfo::renderer();
-
-  // Initalize OpenGL
-  // ---------------------------------------------
-  /* Setup cube vertex data. */
-  v[0][0] = v[1][0] = v[2][0] = v[3][0] = -1;
-  v[4][0] = v[5][0] = v[6][0] = v[7][0] = 1;
-  v[0][1] = v[1][1] = v[4][1] = v[5][1] = -1;
-  v[2][1] = v[3][1] = v[6][1] = v[7][1] = 1;
-  v[0][2] = v[3][2] = v[4][2] = v[7][2] = 1;
-  v[1][2] = v[2][2] = v[5][2] = v[6][2] = -1;
-  
-  /* Enable a single OpenGL light. */
-  glLightfv(GL_LIGHT0, GL_DIFFUSE, light_diffuse);
-  glLightfv(GL_LIGHT0, GL_POSITION, light_position);
-  glEnable(GL_LIGHT0);
-  glEnable(GL_LIGHTING);
-  
-  /* Use depth buffering for hidden surface elimination. */
-  glEnable(GL_DEPTH_TEST);
-  // ---------------------------------------------
-  
-  
-  // Call resize manually to set the viewport
-  resizeCallback(windowWidth_, windowHeight_);
-
-  LOG(INFO) << "Done initializing OpenGL";
-}
+void GLRenderWindow::init() { renderer_ = std::make_shared<GLRenderer>(this); }
 
 GLFWwindow* GLRenderWindow::getGLFWwindow() { return window_; }
+
+const std::shared_ptr<GLRenderer>& GLRenderWindow::getRenderer() const { return renderer_; }
 
 } // namespace render
 

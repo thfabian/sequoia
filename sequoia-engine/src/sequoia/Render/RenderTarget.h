@@ -47,14 +47,7 @@ public:
   virtual void swapBuffers() = 0;
 
   /// @brief Tells the target to update it's contents
-  ///
-  /// Called by `RenderTarget::renderOneFrame`.
   virtual void update() = 0;
-
-  /// @brief Render one frame into target
-  ///
-  /// This handles the notificiation of the RenderTargetListeners.
-  void renderOneFrame();
 
   /// @brief Is the target rendered?
   bool isActive() const;

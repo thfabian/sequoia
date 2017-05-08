@@ -41,6 +41,7 @@ protected:
   Vec3f center_;
 
   /// Up vector
+  /// TODO: replace with Coordiante system object
   Vec3f up_;
 
 public:
@@ -54,15 +55,6 @@ public:
   /// @brief Get/Set the `center` of the scene (where the camera points to)
   const Vec3f& getCenter() const;
   void setCenter(const Vec3f& center);
-
-  /// @brief Get `up` vector
-  const Vec3f& getUp() const;
-
-  /// @brief Update the model view matrix
-  virtual void updateModelViewMatrix() = 0;
-
-  /// @copydoc ViewFrustum::updateProjectionMatrix
-  virtual void updateProjectionMatrix(Viewport* viewport) override = 0;
 
   /// @brief The geometry of the associated viewport changed, we need to update our aspect ratio
   void viewportGeometryChanged(Viewport* viewport) override;

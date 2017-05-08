@@ -61,17 +61,15 @@ void Game::init() {
     // Create the main-window
     mainWindow_ = renderSystem_->createWindow("Sequoia - " SEQUOIA_VERSION_STRING);
 
-    
     // Create the camera
-    mainCamera_ = renderSystem_->createCamera(Vec3f{0, 1, 0});
-    mainCamera_->setEye(Vec3f{0, 0, 5});
-    mainCamera_->setCenter(Vec3f{0, 0, 0});
+    mainCamera_ = std::make_shared<render::Camera>(Vec3f{0, 1, 0});
+//    mainCamera_->setEye(Vec3f{0, 0, 5});
+//    mainCamera_->setCenter(Vec3f{0, 0, 0});
     
     // Set the viewport of the mainwindow
     auto viewport = std::make_shared<render::Viewport>(
-        mainCamera_, mainWindow_, 0, 0, mainWindow_->getWidth(), mainWindow_->getHeight());
+        mainCamera_.get(), mainWindow_, 0, 0, mainWindow_->getWidth(), mainWindow_->getHeight());
     mainWindow_->setViewport(viewport);
-
     
     // Initialize the main-window
     mainWindow_->init();

@@ -14,8 +14,8 @@
 //===------------------------------------------------------------------------------------------===//
 
 #include "sequoia/Core/Assert.h"
-#include "sequoia/Render/RenderTarget.h"
 #include "sequoia/Render/Camera.h"
+#include "sequoia/Render/RenderTarget.h"
 
 namespace sequoia {
 
@@ -23,14 +23,6 @@ namespace render {
 
 RenderTarget::RenderTarget(RenderTargetKind kind)
     : kind_(kind), active_(true), viewport_(nullptr) {}
-
-void RenderTarget::renderOneFrame() {
-  // Compute the model view matrix
-  viewport_->getCamera()->updateModelViewMatrix();
-
-  // Render the scene
-  update();
-}
 
 bool RenderTarget::isActive() const { return active_; }
 

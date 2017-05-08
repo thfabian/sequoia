@@ -56,23 +56,23 @@ public:
   /// @brief Default constructor with
   ///   - @b fovy   : 45.0
   ///   - @b aspect : 1.3333
-  ///   - @b zNear  : 10
-  ///   - @b zFar   : 10000
-  ViewFrustum() : fovy_(45.0), aspect_(4.0 / 3.0), zNear_(10.0), zFar_(10000.0) {}
+  ///   - @b zNear  : 1.0
+  ///   - @b zFar   : 10000.0
+  ViewFrustum() : fovy_(45.0), aspect_(4.0 / 3.0), zNear_(1.0), zFar_(10000.0) {}
 
   ViewFrustum(double fovy, double aspect, double zNear, double zFar)
       : fovy_(fovy), aspect_(aspect), zNear_(zNear), zFar_(zFar) {}
 
   virtual ~ViewFrustum() {}
 
-  /// @brief Specifies the field of view angle, in degrees, in the y direction
+  /// @brief Specifies the field of view angle, in  @b degrees, in the `y `direction
   /// @{
   void setFieldOfViewY(double fovy) { fovy_ = fovy; }
   double getFieldOfViewY() const { return fovy_; }
   /// @}
 
-  /// @brief Specifies the aspect ratio that determines the field of view in the x direction. The
-  /// aspect ratio is the ratio of x (width) to y (height)
+  /// @brief Specifies the aspect ratio that determines the field of view in the `x` direction. The
+  /// aspect ratio is the ratio of `x` (width) to `y` (height)
   /// @{
   void setAspectRatio(double aspect) { aspect_ = aspect; }
   double getAspectRatio() const { return aspect_; }
@@ -89,9 +89,6 @@ public:
   void getZFarClipping(double zFar) { zFar_ = zFar; }
   double setZFarClipping() const { return zFar_; }
   /// @}
-
-  /// @brief Update projection matrix
-  virtual void updateProjectionMatrix(Viewport* viewport) = 0;
 };
 
 } // namespace render

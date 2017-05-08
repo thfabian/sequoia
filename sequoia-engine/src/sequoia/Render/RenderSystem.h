@@ -19,8 +19,8 @@
 #include "sequoia/Core/Singleton.h"
 #include "sequoia/Math/Vector.h"
 #include "sequoia/Render/Export.h"
-#include "sequoia/Render/RenderSystemImpl.h"
 #include "sequoia/Render/RenderFwd.h"
+#include "sequoia/Render/RenderSystemImpl.h"
 #include <memory>
 
 namespace sequoia {
@@ -46,10 +46,6 @@ public:
   /// @param title    The initial, UTF-8 encoded window title.
   /// @returns ID of the created window
   RenderWindow* createWindow(const std::string& title) override;
-
-  /// @brief Create a new Camera
-  /// @returns ID of the created camera
-  Camera* createCamera(const Vec3f& up) override;
 
   /// @brief Processes events that ar in the event queue
   void pollEvents() override;

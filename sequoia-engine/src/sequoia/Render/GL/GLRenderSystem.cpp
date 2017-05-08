@@ -17,11 +17,8 @@
 #include "sequoia/Core/Logging.h"
 #include "sequoia/Render/Exception.h"
 #include "sequoia/Render/GL/GL.h"
-#include "sequoia/Render/GL/GLCamera.h"
 #include "sequoia/Render/GL/GLRenderSystem.h"
 #include "sequoia/Render/GL/GLRenderWindow.h"
-
-#include <iostream>
 
 namespace sequoia {
 
@@ -59,27 +56,20 @@ RenderWindow* GLRenderSystem::createWindow(const std::string& title) {
   return static_cast<RenderWindow*>(renderTargets_.back().get());
 }
 
-Camera* GLRenderSystem::createCamera(const Vec3f& up) {
-  cameras_.emplace_back(std::make_shared<GLCamera>(up));  
-  return static_cast<Camera*>(cameras_.back().get());
-}
-
 void GLRenderSystem::pollEvents() { glfwPollEvents(); }
 
 void GLRenderSystem::renderOneFrame() {
-  for(auto& renderTarget : renderTargets_) {
-    RenderTarget* target = renderTarget.get();
+  std::for_each(renderTargets_.begin(), renderTargets_.end(), [](const auto& target) {
     if(target->isActive())
-      target->renderOneFrame();
-  }
+      target->update();
+  });
 }
 
 void GLRenderSystem::swapBuffers() {
-  for(auto& renderTarget : renderTargets_) {
-    RenderTarget* target = renderTarget.get();
+  std::for_each(renderTargets_.begin(), renderTargets_.end(), [](const auto& target) {
     if(target->isActive())
       target->swapBuffers();
-  }
+  });  
 }
 
 } // namespace render

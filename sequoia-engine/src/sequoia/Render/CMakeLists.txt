@@ -35,13 +35,13 @@ sequoia_add_library(
           Viewport.h
           Viewport.cpp
           
-          GL/GL.h          
+          GL/GL.h
+          GL/GLRenderer.h
+          GL/GLRenderer.cpp
           GL/GLRenderSystem.h
           GL/GLRenderSystem.cpp
           GL/GLRenderWindow.h
           GL/GLRenderWindow.cpp
-          GL/GLCamera.h
-          GL/GLCamera.cpp
 
   DEPENDS SequoiaCore
           ${SEQUOIA_EXTERNAL_LIBRARIES}

@@ -39,11 +39,6 @@ public:
   /// @returns the created window
   virtual RenderWindow* createWindow(const std::string& title) = 0;
 
-  /// @brief Create a new Camera
-  ///
-  /// @returns the created camera
-  virtual Camera* createCamera(const Vec3f& up) = 0;
-  
   /// @brief Processes events that are in the event queue
   virtual void pollEvents() = 0;
 

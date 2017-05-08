@@ -51,7 +51,8 @@ public:
   /// @param message   Message to log
   /// @param file      File from which the logging was issued
   /// @param line      Line in `file` from which the logging was issued
-  virtual void log(LoggingLevel level, const std::string& message, const char* file, int line) = 0;
+  virtual void loggerLog(LoggingLevel level, const std::string& message, const char* file,
+                         int line) = 0;
 };
 
 namespace internal {

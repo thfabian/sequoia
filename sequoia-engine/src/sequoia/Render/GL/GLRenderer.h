@@ -13,27 +13,35 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_RENDER_GL_GLCAMERA_H
-#define SEQUOIA_RENDER_GL_GLCAMERA_H
+#ifndef SEQUOIA_RENDER_GL_GLRENDERER_H
+#define SEQUOIA_RENDER_GL_GLRENDERER_H
 
-#include "sequoia/Render/Camera.h"
+#include "sequoia/Render/Export.h"
 
 namespace sequoia {
 
 namespace render {
 
-/// @brief OpenGL implementation of the Camera
+class GLRenderWindow;
+
+/// @brief OpenGL based renderer
+///
+/// A rendered performs the actual rendering to the associated target. Further, the renderer keeps
+/// tabs on the OpenGL state machine and is it the only one who is allowed to perform OpenGL API
+/// calls
 /// @ingroup gl
-class SEQUOIA_RENDER_API GLCamera : public Camera {
+class GLRenderer {
+  GLRenderWindow* target_;
+
 public:
-  GLCamera(const Vec3f& up);
-  virtual ~GLCamera();
+  /// @brief Initialize the OpenGL context and bind it to the calling thread
+  GLRenderer(GLRenderWindow* target);
+  
+  /// @brief Release the OpenGL context
+  ~GLRenderer();
 
-  /// @copydoc Camera::updateModelViewMatrix
-  virtual void updateModelViewMatrix() override;
-
-  /// @copydoc ViewFrustum::updateProjectionMatrix
-  virtual void updateProjectionMatrix(Viewport* viewport) override;
+  /// @brief Render the given target
+  void render();
 };
 
 } // namespace render

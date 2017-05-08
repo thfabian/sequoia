@@ -16,7 +16,6 @@
 #ifndef SEQUOIA_RENDER_GL_GLRENDERWINDOW_H
 #define SEQUOIA_RENDER_GL_GLRENDERWINDOW_H
 
-#include "sequoia/Render/RenderData.h"
 #include "sequoia/Render/RenderWindow.h"
 #include <string>
 #include <unordered_map>
@@ -28,15 +27,17 @@ namespace sequoia {
 
 namespace render {
 
+class GLRenderer;
+
 /// @brief OpenGL render window
 /// @ingroup gl
 class SEQUOIA_RENDER_API GLRenderWindow : public RenderWindow {
-  // std::vector<RenderData*> renderData_;
-
   GLFWwindow* window_;
   bool isFullscreen_;
   int windowWidth_;
   int windowHeight_;
+
+  std::shared_ptr<GLRenderer> renderer_;
 
 public:
   /// @brief Initialize window
@@ -61,7 +62,7 @@ public:
   /// @copydoc RenderWindow::getHeight
   virtual int getHeight() const override;
 
-  /// @copydoc RenderTarget::init
+  /// @brief Initialize the OpenGL context
   virtual void init() override;
 
   /// @copydoc RenderTarget::swapBuffers
@@ -72,6 +73,9 @@ public:
 
   /// @brief Get the window
   GLFWwindow* getGLFWwindow();
+
+  /// @brief Get the associated OpenGL context of this window
+  const std::shared_ptr<GLRenderer>& getRenderer() const;
 
   /// @brief Called upon resizing the window
   void resizeCallback(int width, int height);

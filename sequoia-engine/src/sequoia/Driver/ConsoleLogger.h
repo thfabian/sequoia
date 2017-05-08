@@ -45,7 +45,7 @@ public:
   ~ConsoleLogger();
   
   /// @copydoc core::LoggerListener::log
-  virtual void log(core::LoggingLevel level, const std::string& message, const char* file,
+  virtual void loggerLog(core::LoggingLevel level, const std::string& message, const char* file,
                    int line) override;
 };
 

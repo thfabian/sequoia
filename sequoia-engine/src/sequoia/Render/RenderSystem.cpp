@@ -38,8 +38,6 @@ RenderWindow* RenderSystem::createWindow(const std::string& title) {
   return renderSystem_->createWindow(title);
 }
 
-Camera* RenderSystem::createCamera(const Vec3f& up) { return renderSystem_->createCamera(up); }
-
 void RenderSystem::pollEvents() { renderSystem_->pollEvents(); }
 
 void RenderSystem::renderOneFrame() { renderSystem_->renderOneFrame(); }

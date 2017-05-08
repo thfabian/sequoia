@@ -64,7 +64,7 @@ ConsoleLogger::~ConsoleLogger() {
   core::Logger::getSingleton().removeListener(static_cast<LoggerListener*>(this));
 }
 
-void ConsoleLogger::log(core::LoggingLevel level, const std::string& message, const char* file,
+void ConsoleLogger::loggerLog(core::LoggingLevel level, const std::string& message, const char* file,
                         int line) {
   if(stream_) {
     (*stream_) << "[" << LoggerListener::getCurrentTime() << "] ";
