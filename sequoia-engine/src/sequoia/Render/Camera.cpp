@@ -19,19 +19,19 @@ namespace sequoia {
 
 namespace render {
 
-Camera::Camera(const Vec3f& up) : ViewFrustum(), up_(up) {}
+Camera::Camera(const math::vec3& up) : ViewFrustum(), up_(up) {}
 
 void Camera::viewportGeometryChanged(Viewport* viewport) {
   setAspectRatio(viewport->getWidth() / viewport->getHeight());
 }
 
-const Vec3f& Camera::getEye() const { return eye_; }
+const math::vec3& Camera::getEye() const { return eye_; }
 
-void Camera::setEye(const Vec3f& eye) { eye_ = eye; }
+void Camera::setEye(const math::vec3& eye) { eye_ = eye; }
 
-const Vec3f& Camera::getCenter() const { return center_; }
+const math::vec3& Camera::getCenter() const { return center_; }
 
-void Camera::setCenter(const Vec3f& center) { center_ = center; }
+void Camera::setCenter(const math::vec3& center) { center_ = center; }
 
 } // namespace render
 

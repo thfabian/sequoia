@@ -16,7 +16,6 @@
 #ifndef SEQUOIA_RENDER_GL_GLRENDERSYSTEM_H
 #define SEQUOIA_RENDER_GL_GLRENDERSYSTEM_H
 
-#include "sequoia/Math/Vector.h"
 #include "sequoia/Render/RenderSystemImpl.h"
 #include <memory>
 #include <vector>

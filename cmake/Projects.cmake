@@ -16,14 +16,6 @@
 unset(projects)
 
 #
-# Blaze
-#
-list(APPEND projects blaze)
-set(blaze_version "3.1")
-set(blaze_url "https://bitbucket.org/blaze-lib/blaze/downloads/blaze-${blaze_version}.tar.gz")
-set(blaze_md5 "2938e015f0d274e8d62ee5c4c0c1e9f3")
-
-#
 # Boost
 #
 list(APPEND projects boost)
@@ -49,6 +41,15 @@ list(APPEND projects glfw)
 set(glfw_version "3.2.1")
 set(glfw_url "https://github.com/glfw/glfw/archive/${glfw_version}.tar.gz")
 set(glfw_md5 "91b8250b6edcc26c9f5205555070a504")
+
+#
+# glm
+#
+list(APPEND projects glm)
+set(glm_version "0.9")
+set(glm_download_version "0.9.8.4")
+set(glm_url "https://github.com/g-truc/glm/archive/${glm_download_version}.tar.gz")
+set(glm_md5 "26ca8792038da90f67301fa0a3d5b693")
 
 #
 # GTest

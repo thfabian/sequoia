@@ -174,11 +174,8 @@ macro(sequoia_check_and_set_arch_flag)
   
     # Set Flags
     if(HAVE_MSVC_AVX2_EXTENSION)
-      add_definitions(-DBLAZE_ENFORCE_AVX2)
-      add_definitions(-DBLAZE_ENFORCE_AVX)
       set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /arch:AVX2")
     elseif(HAVE_MSVC_AVX_EXTENSION)
-      add_definitions(-DBLAZE_ENFORCE_AVX)
       set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /arch:AVX")
     endif()
   endif()

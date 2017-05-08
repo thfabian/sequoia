@@ -41,7 +41,7 @@ static std::string functionCallToString(const glbinding::FunctionCall& call) {
 
 GLRenderer::GLRenderer(GLRenderWindow* target) : target_(target) {
   Options& opt = Options::getSingleton();
-  LOG(INFO) << "Creating OpenGL Renderer ...";
+  LOG(INFO) << "Creating OpenGL Renderer " << this << " ...";
 
   // Bind the context to the current thread
   glfwMakeContextCurrent(target_->getGLFWwindow());
@@ -66,7 +66,7 @@ GLRenderer::GLRenderer(GLRenderWindow* target) : target_(target) {
   LOG(INFO) << "OpenGL vendor: " << glbinding::ContextInfo::vendor();
   LOG(INFO) << "OpenGL renderer: " << glbinding::ContextInfo::renderer();
 
-  LOG(INFO) << "Done creating OpenGL renderer";
+  LOG(INFO) << "Done creating OpenGL renderer " << this;
 }
 
 GLRenderer::~GLRenderer() {

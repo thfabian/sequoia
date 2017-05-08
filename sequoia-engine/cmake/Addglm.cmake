@@ -13,21 +13,14 @@
 ##
 ##===------------------------------------------------------------------------------------------===##
 
-ExternalProject_Add(
-  blaze
-  DOWNLOAD_DIR ${download_dir}
-  URL ${blaze_url}
-  URL_MD5 ${blaze_md5}
-  BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}/blaze"
-  INSTALL_DIR "${Sequoia_INSTALL_PREFIX}/blaze"
-  PATCH_COMMAND ""
-  CONFIGURE_COMMAND ""
-  BUILD_COMMAND ""
-  INSTALL_COMMAND ${CMAKE_COMMAND} -E make_directory <INSTALL_DIR>/blaze && 
-                  ${CMAKE_COMMAND} -E copy_directory <SOURCE_DIR>/blaze/ <INSTALL_DIR>/blaze/
+find_package(glm REQUIRED)
+include_directories(SYSTEM ${GLM_INCLUDE_DIRS})
+
+add_definitions(-DGLM_FORCE_CXX14)
+
+sequoia_export_package_variable(
+  glm
+  ${GLM_FOUND} 
+  "glm: ${GLM_VERSION}" 
 )
 
-ExternalProject_Get_Property(blaze install_dir)
-set(BLAZE_ROOT "${install_dir}" CACHE INTERNAL "")
-
-list(APPEND Sequoia_THIRDPARTYLIBS_ARGS "-DBLAZE_ROOT:PATH=${BLAZE_ROOT}")

@@ -17,7 +17,6 @@
 #define SEQUOIA_RENDER_RENDERSYSTEM_H
 
 #include "sequoia/Core/Singleton.h"
-#include "sequoia/Math/Vector.h"
 #include "sequoia/Render/Export.h"
 #include "sequoia/Render/RenderFwd.h"
 #include "sequoia/Render/RenderSystemImpl.h"

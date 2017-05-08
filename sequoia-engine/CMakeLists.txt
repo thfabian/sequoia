@@ -61,11 +61,12 @@ sequoia_report_result(
 
 ##===---------------------------------- Add external libraries --------------------------------===##
 include(AddThreads)
-include(AddBlaze)
+
 include(AddBoost)
 include(AddCppcheck)
 include(Addglbinding)
 include(AddGLFW)
+include(Addglm)
 include(AddGTest)
 include(AddOpenGL)
 include(AddTBB)
@@ -88,11 +89,11 @@ set(SEQUOIA_EXTERNAL_LIBRARIES
 sequoia_report_result(
   "External libraries summary" 
   "${SEQUOIA_THREADS_INFO_STR}"
-  "${SEQUOIA_BLAZE_INFO_STR}"
   "${SEQUOIA_BOOST_INFO_STR}"
   "${SEQUOIA_CPPCHECK_INFO_STR}"
   "${SEQUOIA_GLBINDING_INFO_STR}"
   "${SEQUOIA_GLFW_INFO_STR}"
+  "${SEQUOIA_GLM_INFO_STR}"
   "${SEQUOIA_GTEST_INFO_STR}"
   "${SEQUOIA_OPENGL_INFO_STR}"
   "${SEQUOIA_PYTHON3_INFO_STR}"

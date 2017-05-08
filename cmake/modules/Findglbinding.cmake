@@ -29,6 +29,7 @@
 #   GLBINDING_FOUND               - System has the glbinding.
 #   GLBINDING_INCLUDE_DIRS        - The location of glbinding headers
 #   GLBINDING_LIBRARIES           - The location of glbinding library
+#   GLBINDING_VERSION             - Version of glbinding
 #
 # Hints
 # ^^^^^

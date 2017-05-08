@@ -13,12 +13,21 @@
 ##
 ##===------------------------------------------------------------------------------------------===##
 
-find_package(Blaze REQUIRED)
-include_directories(SYSTEM ${BLAZE_INCLUDE_DIRS})
-
-sequoia_export_package_variable(
-  Blaze 
-  ${BLAZE_FOUND} 
-  "Blaze: ${BLAZE_VERSION}" 
+ExternalProject_Add(
+  glm
+  DOWNLOAD_DIR ${download_dir}
+  URL ${glm_url}
+  URL_MD5 ${glm_md5}
+  BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}/glm"
+  INSTALL_DIR "${Sequoia_INSTALL_PREFIX}/glm"
+  PATCH_COMMAND ""
+  CONFIGURE_COMMAND ""
+  BUILD_COMMAND ""
+  INSTALL_COMMAND ${CMAKE_COMMAND} -E make_directory <INSTALL_DIR>/glm && 
+                  ${CMAKE_COMMAND} -E copy_directory <SOURCE_DIR>/glm/ <INSTALL_DIR>/glm/
 )
 
+ExternalProject_Get_Property(glm install_dir)
+set(GLM_ROOT "${install_dir}" CACHE INTERNAL "")
+
+list(APPEND Sequoia_THIRDPARTYLIBS_ARGS "-DGLM_ROOT:PATH=${GLM_ROOT}")

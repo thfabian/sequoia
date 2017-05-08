@@ -16,4 +16,18 @@
 #ifndef SEQUOIA_MATH_MATH_H
 #define SEQUOIA_MATH_MATH_H
 
+#include <glm/glm.hpp>
+#include <glm/gtx/io.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+
+namespace sequoia {
+
+namespace math {
+
+using namespace glm;
+
+} // namespace math
+
+} // namspace sequoia
+
 #endif

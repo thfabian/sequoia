@@ -16,7 +16,6 @@
 #ifndef SEQUOIA_RENDER_RENDERSYSTEMIMPL_H
 #define SEQUOIA_RENDER_RENDERSYSTEMIMPL_H
 
-#include "sequoia/Math/Vector.h"
 #include "sequoia/Render/Export.h"
 #include "sequoia/Render/RenderFwd.h"
 #include <memory>
@@ -44,7 +43,7 @@ public:
 
   /// @brief Render one frame into the target of each active registered RenderTarget
   virtual void renderOneFrame() = 0;
-  
+
   /// @brief Swap the buffers and display the next frame for each active registered RenderTarget
   virtual void swapBuffers() = 0;
 };

@@ -16,7 +16,7 @@
 #ifndef SEQUOIA_RENDER_CAMERA
 #define SEQUOIA_RENDER_CAMERA
 
-#include "sequoia/Math/Vector.h"
+#include "sequoia/Math/Math.h"
 #include "sequoia/Render/Export.h"
 #include "sequoia/Render/ViewFrustum.h"
 #include "sequoia/Render/Viewport.h"
@@ -35,26 +35,26 @@ namespace render {
 class SEQUOIA_RENDER_API Camera : public ViewFrustum, public ViewportListener {
 protected:
   /// Eye of the camera (where the camera is located)
-  Vec3f eye_;
+  math::vec3 eye_;
 
   /// Center of the scene (where the camera points to)
-  Vec3f center_;
+  math::vec3 center_;
 
   /// Up vector
   /// TODO: replace with Coordiante system object
-  Vec3f up_;
+  math::vec3 up_;
 
 public:
-  Camera(const Vec3f& up);
+  Camera(const math::vec3& up);
   virtual ~Camera() {}
 
   /// @brief Get/Set the `eye` of the camera (where the camera is located)
-  const Vec3f& getEye() const;
-  void setEye(const Vec3f& eye);
+  const math::vec3& getEye() const;
+  void setEye(const math::vec3& eye);
 
   /// @brief Get/Set the `center` of the scene (where the camera points to)
-  const Vec3f& getCenter() const;
-  void setCenter(const Vec3f& center);
+  const math::vec3& getCenter() const;
+  void setCenter(const math::vec3& center);
 
   /// @brief The geometry of the associated viewport changed, we need to update our aspect ratio
   void viewportGeometryChanged(Viewport* viewport) override;

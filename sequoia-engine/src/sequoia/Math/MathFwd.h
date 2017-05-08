@@ -13,44 +13,19 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_MATH_QUATERNION_H
-#define SEQUOIA_MATH_QUATERNION_H
+#ifndef SEQUOIA_MATH_MATHFWD_H
+#define SEQUOIA_MATH_MATHFWD_H
 
-#include "sequoia/Math/Vector.h"
+#include <glm/fwd.hpp>
 
 namespace sequoia {
 
 namespace math {
 
-template <class T>
-class Quaternion {
-  Vec4<T> data_;
-
-public:
-  Quaternion() = default;
-  Quaternion(const Quaternion&) = default;
-  Quaternion(Quaternion&&) = default;
-  Quaternion(const Vec4<T>& data) : data_(data) {}
-  Quaternion(Vec4<T>&& data) : data_(std::move(data)) {}
-
-  Quaternion& operator=(const Quaternion&) = default;
-  Quaternion& operator=(Quaternion&&) = default;
-};
+using namespace glm;
 
 } // namespace math
 
-/// @addtogroup math
-/// @{
-
-/// @name Quaternions
-/// @{
-using Quaternioni = math::Quaternion<int>;
-using Quaternionf = math::Quaternion<float>;
-using Quaterniond = math::Quaternion<double>;
-/// @}
-
-/// @}
-
-} // namespace sequoia
+} // namspace sequoia
 
 #endif
