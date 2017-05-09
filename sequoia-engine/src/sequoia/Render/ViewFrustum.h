@@ -46,13 +46,9 @@ class Viewport;
 ///
 /// @ingroup render
 class SEQUOIA_RENDER_API ViewFrustum {
-protected:
-  double fovy_;
-  double aspect_;
-  double zNear_;
-  double zFar_;
-
 public:
+  using ValueType = float;
+
   /// @brief Default constructor with
   ///   - @b fovy   : 45.0
   ///   - @b aspect : 1.3333
@@ -67,28 +63,34 @@ public:
 
   /// @brief Specifies the field of view angle, in  @b degrees, in the `y `direction
   /// @{
-  void setFieldOfViewY(double fovy) { fovy_ = fovy; }
-  double getFieldOfViewY() const { return fovy_; }
+  void setFieldOfViewY(ValueType fovy) { fovy_ = fovy; }
+  ValueType getFieldOfViewY() const { return fovy_; }
   /// @}
 
   /// @brief Specifies the aspect ratio that determines the field of view in the `x` direction. The
   /// aspect ratio is the ratio of `x` (width) to `y` (height)
   /// @{
-  void setAspectRatio(double aspect) { aspect_ = aspect; }
-  double getAspectRatio() const { return aspect_; }
+  void setAspectRatio(ValueType aspect) { aspect_ = aspect; }
+  ValueType getAspectRatio() const { return aspect_; }
   /// @}
 
   /// @brief Specifies the distance from the viewer to the near clipping plane (always positive)
   /// @{
-  void getZNearClipping(double zNear) { zNear_ = zNear; }
-  double setZNearClipping() const { return zNear_; }
+  void setZNearClipping(ValueType zNear) { zNear_ = zNear; }
+  ValueType getZNearClipping() const { return zNear_; }
   /// @}
 
   /// @brief Specifies the distance from the viewer to the far clipping plane (always positive)
   /// @{
-  void getZFarClipping(double zFar) { zFar_ = zFar; }
-  double setZFarClipping() const { return zFar_; }
+  void setZFarClipping(ValueType zFar) { zFar_ = zFar; }
+  ValueType getZFarClipping() const { return zFar_; }
   /// @}
+
+protected:
+  ValueType fovy_;
+  ValueType aspect_;
+  ValueType zNear_;
+  ValueType zFar_;
 };
 
 } // namespace render

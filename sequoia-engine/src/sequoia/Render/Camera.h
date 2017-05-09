@@ -55,7 +55,11 @@ public:
   /// @brief Get/Set the `center` of the scene (where the camera points to)
   const math::vec3& getCenter() const;
   void setCenter(const math::vec3& center);
+  
+  
+  const math::vec3& getUp() const { return up_; }
 
+  
   /// @brief The geometry of the associated viewport changed, we need to update our aspect ratio
   void viewportGeometryChanged(Viewport* viewport) override;
 };

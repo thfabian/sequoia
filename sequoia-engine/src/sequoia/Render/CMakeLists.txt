@@ -19,18 +19,19 @@ sequoia_add_library(
           Camera.cpp
           Export.h
           Exception.h
+          GPUProgram.h
           HardwareBuffer.h
           HardwareBufferVertex.h
           HardwareBufferIndex.h
           RenderFwd.h
           RenderSystem.h
-          RenderSystemImpl.h
           RenderSystem.cpp
           RenderTarget.h
           RenderTarget.cpp
           RenderData.h
           RenderData.cpp
           RenderWindow.h
+          Shader.h
           ViewFrustum.h
           Viewport.h
           Viewport.cpp
@@ -42,6 +43,8 @@ sequoia_add_library(
           GL/GLRenderSystem.cpp
           GL/GLRenderWindow.h
           GL/GLRenderWindow.cpp
+          GL/GLShaderLoader.h
+          GL/GLShaderLoader.cpp
 
   DEPENDS SequoiaCore
           ${SEQUOIA_EXTERNAL_LIBRARIES}

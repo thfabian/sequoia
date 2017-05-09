@@ -16,6 +16,7 @@
 #include "sequoia/Core/Logging.h"
 #include "sequoia/Core/Options.h"
 #include "sequoia/Core/StringUtil.h"
+#include "sequoia/Render/Camera.h"
 #include "sequoia/Render/GL/GL.h"
 #include "sequoia/Render/GL/GLRenderWindow.h"
 #include "sequoia/Render/GL/GLRenderer.h"
@@ -24,6 +25,7 @@
 #include <glbinding/Version.h>
 #include <glbinding/glbinding-version.h>
 #include <sstream>
+#include <iostream>
 
 namespace sequoia {
 
@@ -79,7 +81,24 @@ GLRenderer::~GLRenderer() {
 }
 
 void GLRenderer::render() {
-  // ...
+  Viewport* viewport = target_->getViewport();
+  Camera* camera = viewport->getCamera();
+
+  // Compute the projction matrix
+  glm::mat4 matP =
+      glm::perspective(glm::radians(camera->getFieldOfViewY()), camera->getAspectRatio(),
+                       camera->getZNearClipping(), camera->getZFarClipping());
+  
+  // Compute camera view matrix
+  glm::mat4 matV = glm::lookAt(camera->getEye(), camera->getCenter(), camera->getUp());
+  
+  // Precompute view projection matrix
+  glm::mat4 matVP = matP * matV;
+
+  glm::mat4 matM = glm::mat4(1.0f);
+
+  // Compute the full model view projection matrix
+  glm::mat4 matMVP = matVP * matM;
 }
 
 } // namespace render

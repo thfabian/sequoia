@@ -17,14 +17,26 @@
 #define SEQUOIA_MATH_MATH_H
 
 #include <glm/glm.hpp>
-#include <glm/gtx/io.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtx/io.hpp>
 
 namespace sequoia {
 
 namespace math {
 
 using namespace glm;
+
+/// @brief Create a postion given a three dimensional vector
+///
+/// A position is given by a 4 dimensional vector `(x,y,z,w)` where `w = 1`
+/// @ingroup math
+inline vec4 makePosition(const vec3& vec) { return vec4(vec, 1); }
+
+/// @brief Create a direction given a three dimensional vector
+///
+/// A direction is given by a 4 dimensional vector `(x,y,z,w)` where `w = 0`
+/// @ingroup math
+inline vec4 makeDirection(const vec3& vec) { return vec4(vec, 0); }
 
 } // namespace math
 

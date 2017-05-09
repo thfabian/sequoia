@@ -22,6 +22,8 @@
 
 namespace sequoia {
 
+SEQUOIA_DECLARE_SINGLETON(render::GLRenderSystem);
+
 namespace render {
 
 static void GLFWErrorCallbackSoft(int error, const char* description) {
@@ -69,7 +71,15 @@ void GLRenderSystem::swapBuffers() {
   std::for_each(renderTargets_.begin(), renderTargets_.end(), [](const auto& target) {
     if(target->isActive())
       target->swapBuffers();
-  });  
+  });
+}
+
+Shader* GLRenderSystem::loadShader(RenderTarget* target, const platform::Path& path) {
+  return nullptr;
+}
+
+GPUProgram* GLRenderSystem::createProgram(RenderTarget* target, Shader* vertex, Shader* fragment) {
+  return nullptr;
 }
 
 } // namespace render

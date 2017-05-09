@@ -56,14 +56,14 @@ void Game::init() {
 
   try {
     // Initialize the RenderSystem
-    renderSystem_ = std::make_shared<render::RenderSystem>(render::RenderSystem::RK_OpenGL);
+    renderSystem_ = render::RenderSystem::create(render::RenderSystem::RK_OpenGL);
 
     // Create the main-window
     mainWindow_ = renderSystem_->createWindow("Sequoia - " SEQUOIA_VERSION_STRING);
 
     // Create the camera
-    mainCamera_ = std::make_shared<render::Camera>(math::vec3(0, 1, 0));
-    mainCamera_->setEye(math::vec3(0, 0, 5));
+    mainCamera_ = std::make_unique<render::Camera>(math::vec3(0, 1, 0));
+    mainCamera_->setEye(math::vec3(4, 3, 3));
     mainCamera_->setCenter(math::vec3(0, 0, 0));
     
     // Set the viewport of the mainwindow

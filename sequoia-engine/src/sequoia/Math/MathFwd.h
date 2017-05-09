@@ -24,6 +24,9 @@ namespace math {
 
 using namespace glm;
 
+struct direction;
+struct position;
+
 } // namespace math
 
 } // namspace sequoia

@@ -34,7 +34,7 @@ public:
 
   RenderTarget(RenderTargetKind kind);
   virtual ~RenderTarget() {}
-  
+
   /// @brief Get kind of RenderTarget (used by RTTI dyn_cast<> et al.)
   RenderTargetKind getKind() const { return kind_; }
 

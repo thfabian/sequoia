@@ -28,14 +28,16 @@ namespace game {
 /// @brief Main class holding all game and rendering related objects and running the main-loop
 /// @ingroup game
 class SEQUOIA_GAME_API Game : public Singleton<Game> {
-  
+
   /// Active render-system
-  std::shared_ptr<render::RenderSystem> renderSystem_;
+  std::unique_ptr<render::RenderSystem> renderSystem_;
 
   /// Reference to the main window
   render::RenderWindow* mainWindow_;
 
-  std::shared_ptr<render::Camera> mainCamera_;
+  
+  // TODO: should be part of the scene
+  std::unique_ptr<render::Camera> mainCamera_;
 
 public:
   /// @copydoc initialize

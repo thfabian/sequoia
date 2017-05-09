@@ -13,39 +13,31 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_RENDER_GL_GLRENDERER_H
-#define SEQUOIA_RENDER_GL_GLRENDERER_H
+#ifndef SEQUOIA_RENDER_GPUPROGRAM_H
+#define SEQUOIA_RENDER_GPUPROGRAM_H
 
 #include "sequoia/Render/Export.h"
-#include "sequoia/Math/Math.h"
+#include <vector>
 
 namespace sequoia {
 
-namespace render {
+class Shader;
 
-class GLRenderWindow;
-
-/// @brief OpenGL based renderer
+/// @brief High-level GPU program
 ///
-/// A rendered performs the actual rendering to the associated target. Further, the renderer keeps
-/// tabs on the OpenGL state machine and is it the only one who is allowed to perform OpenGL API
-/// calls
-/// @ingroup gl
-class GLRenderer {
-  GLRenderWindow* target_;
-  
+/// A GPU program consist of multiple shaders which are linked together in program which can be used
+/// during the rendering stage to control various aspects of the rendering pipeline.
+///
+/// @see RenderSystem::createGPUPogram
+class SEQUOIA_RENDER_API GPUProgram {
 public:
-  /// @brief Initialize the OpenGL context and bind it to the calling thread
-  GLRenderer(GLRenderWindow* target);
-  
-  /// @brief Release the OpenGL context
-  ~GLRenderer();
+  /// @brief Get the unique identifer of the program
+  virtual unsigned int getID() const = 0;
+  operator unsigned int() { return getID(); }
 
-  /// @brief Render the given target
-  void render();
+  /// @brief Return the shaders which were linked into this program
+  virtual std::vector<Shader*> getShaders() const = 0;
 };
-
-} // namespace render
 
 } // namespace sequoia
 
