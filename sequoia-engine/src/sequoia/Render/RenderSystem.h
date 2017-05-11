@@ -17,8 +17,10 @@
 #define SEQUOIA_RENDER_RENDERSYSTEM_H
 
 #include "sequoia/Core/Platform.h"
+#include "sequoia/Core/Singleton.h"
 #include "sequoia/Render/Export.h"
 #include "sequoia/Render/RenderFwd.h"
+#include "sequoia/Render/RenderWindow.h"
 #include <memory>
 #include <string>
 
@@ -33,7 +35,7 @@ namespace render {
 /// time.
 ///
 /// @ingroup render
-class SEQUOIA_RENDER_API RenderSystem {
+class SEQUOIA_RENDER_API RenderSystem : public Singleton<RenderSystem> {
 public:
   enum RenderSystemKind { RK_OpenGL };
 
@@ -45,10 +47,11 @@ public:
   virtual ~RenderSystem() {}
 
   /// @brief Create a new RenderWindow
-  ///
-  /// @param title    The initial, UTF-8 encoded window title
   /// @returns the created window
-  virtual RenderWindow* createWindow(const std::string& title) = 0;
+  virtual RenderWindow* createWindow(const RenderWindow::WindowHint& hints) = 0;
+  
+  /// @brief Manually destroy the RenderTarget
+  virtual void destroyTarget(RenderTarget* target) = 0;
 
   /// @brief Processes events that are in the event queue
   virtual void pollEvents() = 0;
@@ -64,6 +67,15 @@ public:
 
   /// @brief Create a GPU program from the given shaders for `target`
   virtual GPUProgram* createProgram(RenderTarget* target, Shader* vertex, Shader* fragment) = 0;
+
+  /// @brief Get the kind of render-system
+  RenderSystemKind getKind() const;
+
+protected:
+  RenderSystem(RenderSystemKind kind);
+
+private:
+  RenderSystemKind kind_;
 };
 
 } // namespace render

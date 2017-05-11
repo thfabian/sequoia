@@ -17,7 +17,6 @@ sequoia_add_test(
   NAME SequoiaCoreTest
   SOURCES TestArrayRef.cpp
           TestMain.cpp
-          #TestOptions.cpp
           TestSingletonManager.cpp
           TestPlatform.cpp
           TestStringRef.cpp

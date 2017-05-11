@@ -41,6 +41,7 @@ sequoia_add_library(
           Assert.h
           Assert.cpp 
           Casting.h
+          EnumState.h
           Export.h
           ErrorHandler.h
           ErrorHandler.cpp

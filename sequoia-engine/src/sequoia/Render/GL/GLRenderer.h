@@ -16,8 +16,8 @@
 #ifndef SEQUOIA_RENDER_GL_GLRENDERER_H
 #define SEQUOIA_RENDER_GL_GLRENDERER_H
 
-#include "sequoia/Render/Export.h"
 #include "sequoia/Math/Math.h"
+#include "sequoia/Render/Export.h"
 
 namespace sequoia {
 
@@ -31,13 +31,13 @@ class GLRenderWindow;
 /// tabs on the OpenGL state machine and is it the only one who is allowed to perform OpenGL API
 /// calls
 /// @ingroup gl
-class GLRenderer {
+class SEQUOIA_RENDER_API GLRenderer {
   GLRenderWindow* target_;
-  
+
 public:
   /// @brief Initialize the OpenGL context and bind it to the calling thread
   GLRenderer(GLRenderWindow* target);
-  
+
   /// @brief Release the OpenGL context
   ~GLRenderer();
 

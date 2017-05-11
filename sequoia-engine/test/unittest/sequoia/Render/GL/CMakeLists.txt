@@ -13,6 +13,13 @@
 ##
 ##===------------------------------------------------------------------------------------------===##
 
-add_subdirectory(Core)
-add_subdirectory(Render)
+sequoia_add_test(
+  NAME SequoiaRenderGLTest
+  SOURCES TestMain.cpp
+          TestGLRenderWindow.cpp
+  DEPENDS SequoiaUnittest
+          SequoiaRender
+          SequoiaCore
+          ${SEQUOIA_UNITTEST_EXTERNAL_LIBRARIES}
+)
 

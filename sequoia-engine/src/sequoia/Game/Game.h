@@ -35,15 +35,11 @@ class SEQUOIA_GAME_API Game : public Singleton<Game> {
   /// Reference to the main window
   render::RenderWindow* mainWindow_;
 
-  
   // TODO: should be part of the scene
   std::unique_ptr<render::Camera> mainCamera_;
 
 public:
-  /// @copydoc initialize
   Game();
-
-  /// @copydoc cleanup
   ~Game();
 
   /// @brief Initializes the game object by initializing the RenderSystem

@@ -13,24 +13,29 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Core/Options.h"
+#include "sequoia/Render/GL/GLRenderSystem.h"
+#include "sequoia/Unittest/GL/GLEnvironment.h"
 #include <gtest/gtest.h>
-#include <memory>
 
-using namespace sequoia::core;
+using namespace sequoia::render;
 
 namespace {
 
-TEST(OptionsTest, Reset) {
-  auto opt = std::make_unique<Options>();
-  bool defaultVal = Options::getSingleton().Core.Logging;
+TEST(GLRenderWindowTest, Construction) {
+  RenderWindow::WindowHint hints;
+  hints.HideWindow = true;
+  hints.WindowMode = RenderWindow::WindowHint::WK_Window;
+  hints.Width = 1280;
+  hints.Height = 960;
+  RenderWindow* window = RenderSystem::getSingleton().createWindow(hints);
 
-  // Change the option
-  Options::getSingleton().Core.Logging = !defaultVal;
+  EXPECT_TRUE(window->isActive());
+  EXPECT_FALSE(window->isFullscreen());
+  EXPECT_FALSE(window->isHidden());
+  EXPECT_EQ(window->getWidth(), 1280);
+  EXPECT_EQ(window->getHeight(), 960);
 
-  // Reset
-  Options::getSingleton().reset();
-  EXPECT_EQ(defaultVal, Options::getSingleton().Core.Logging);
+  RenderSystem::getSingleton().destroyTarget(window);
 }
 
 } // anonymous namespace

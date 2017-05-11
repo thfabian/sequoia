@@ -13,13 +13,49 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
+#include "sequoia/Core/ErrorHandler.h"
+#include "sequoia/Core/Logging.h"
+#include "sequoia/Driver/ConsoleLogger.h"
 #include "sequoia/Unittest/Environment.h"
+#include <boost/program_options.hpp>
+
+namespace po = boost::program_options;
 
 namespace sequoia {
 
 SEQUOIA_DECLARE_SINGLETON(unittest::Environment);
 
 namespace unittest {
+
+Environment::Environment(int argc, char* argv[]) {
+
+  singletonManager_ = std::make_unique<core::SingletonManager>();
+  singletonManager_->allocateSingleton<ErrorHandler>(argc > 0 ? argv[0] : "SequoiaTest");
+  singletonManager_->allocateSingleton<core::Logger>();
+
+  // Parse command-line
+  po::options_description desc("Unittest options");
+  desc.add_options()("help", "Display this information.")("logging", "Enable logging");
+
+  po::variables_map vm;
+
+  try {
+    po::store(po::parse_command_line(argc, argv, desc), vm);
+    po::notify(vm);
+  } catch(std::exception& e) {
+    ErrorHandler::getSingleton().fatal(e.what(), false);
+  }
+
+  if(vm.count("help")) {
+    std::cout << "\nSequoiaUnittest - " << SEQUOIA_VERSION_STRING << "\n\n" << desc << std::endl;
+    std::exit(0);
+  }
+
+  if(vm.count("logging"))
+    singletonManager_->allocateSingleton<driver::ConsoleLogger>();
+}
+
+Environment::~Environment() {}
 
 void Environment::SetUp() {}
 

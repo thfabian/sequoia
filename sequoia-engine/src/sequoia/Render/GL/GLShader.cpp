@@ -13,25 +13,17 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Render/GL/GLRenderSystem.h"
-#include "sequoia/Render/RenderSystem.h"
+#include "sequoia/Render/GL/GLShader.h"
 
 namespace sequoia {
 
-SEQUOIA_DECLARE_SINGLETON(render::RenderSystem);
-
 namespace render {
 
-std::unique_ptr<RenderSystem> RenderSystem::create(RenderSystemKind kind) {
-  switch(kind) {
-  case RK_OpenGL:
-    return std::make_unique<GLRenderSystem>();
-  }
-}
+GLShader::GLShader(unsigned int id) : id_(id) {}
 
-RenderSystem::RenderSystemKind RenderSystem::getKind() const { return kind_; }
+unsigned int GLShader::getID() const { return id_; }
 
-RenderSystem::RenderSystem(RenderSystem::RenderSystemKind kind) : kind_(kind) {}
+Shader::ShaderType GLShader::getType() const { return type_; }
 
 } // namespace render
 

@@ -28,6 +28,8 @@ bool RenderTarget::isActive() const { return active_; }
 
 void RenderTarget::setActive(bool active) { active_ = active; }
 
+bool RenderTarget::hasViewport() const { return viewport_ != nullptr; }
+
 Viewport* RenderTarget::getViewport() {
   SEQUOIA_ASSERT(viewport_);
   return viewport_.get();

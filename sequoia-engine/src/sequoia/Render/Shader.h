@@ -16,7 +16,7 @@
 #ifndef SEQUOIA_RENDER_SHADER_H
 #define SEQUOIA_RENDER_SHADER_H
 
-#include "sequoia/Core/UtfString.h"
+#include "sequoia/Core/Platform.h"
 #include "sequoia/Render/Export.h"
 
 namespace sequoia {
@@ -33,18 +33,26 @@ public:
   /// @brief Enumerates the types of shaders which can run on the GPU
   enum ShaderType { ST_Vertex, ST_Fragment };
 
+  /// @brief Get the type of the shader
+  virtual ShaderType getType() const = 0;
+
   /// @brief Get the unique identifer of the shader
   virtual unsigned int getID() const = 0;
   operator unsigned int() { return getID(); }
 
+  /// @brief Comparison
+  /// @{
+  bool operator==(const Shader& other) const { return getID() == other.getID(); }
+  bool operator!=(const Shader& other) const { return getID() != other.getID(); }
+  /// @}
+
   /// @brief Get the source path of the shader
-  UtfString getSourcePath() const = 0;
+  virtual platform::String getSourcePath() const = 0;
 
   /// @brief Get the source code of the shader
-  std::string getSourceCode() const = 0;
-
-  /// @brief Get the type of the shader
-  virtual ShaderType getType() const = 0;
+  virtual std::string getSourceCode() const = 0;
 };
 
 } // namespace sequoia
+
+#endif

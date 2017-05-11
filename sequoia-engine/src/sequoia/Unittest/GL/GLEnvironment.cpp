@@ -13,26 +13,20 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Render/GL/GLRenderSystem.h"
-#include "sequoia/Render/RenderSystem.h"
+#include "sequoia/Unittest/GL/GLEnvironment.h"
 
 namespace sequoia {
 
-SEQUOIA_DECLARE_SINGLETON(render::RenderSystem);
+namespace unittest {
 
-namespace render {
+GLEnvironment::GLEnvironment(int argc, char* argv[]) : Environment(argc, argv) {}
 
-std::unique_ptr<RenderSystem> RenderSystem::create(RenderSystemKind kind) {
-  switch(kind) {
-  case RK_OpenGL:
-    return std::make_unique<GLRenderSystem>();
-  }
+void GLEnvironment::SetUp() {
+  renderSystem_ = render::GLRenderSystem::create(render::RenderSystem::RK_OpenGL);
 }
 
-RenderSystem::RenderSystemKind RenderSystem::getKind() const { return kind_; }
+void GLEnvironment::TearDown() { renderSystem_.reset(); }
 
-RenderSystem::RenderSystem(RenderSystem::RenderSystemKind kind) : kind_(kind) {}
-
-} // namespace render
+} // namespace unittest
 
 } // namespace sequoia

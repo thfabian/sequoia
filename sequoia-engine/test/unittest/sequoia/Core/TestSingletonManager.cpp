@@ -30,33 +30,17 @@ public:
 };
 
 TEST(SingletonManagerTest, ManualFree) {
-  auto singletonManager = std::make_unique<SingletonManager>();
-  (void)singletonManager;
-  EXPECT_EQ(SingletonManager::getSingleton().numSingletons(), 0);
-
   // Allocate Singleton
   constructionCounter = 0;
   SingletonManager::getSingleton().allocateSingleton<DummySingleton>();
+  int numSingletons = SingletonManager::getSingleton().numSingletons();
   EXPECT_EQ(constructionCounter, 1);
-  EXPECT_EQ(SingletonManager::getSingleton().numSingletons(), 1);
 
   // Deallocate Singleton
   destructionCounter = 0;
   SingletonManager::getSingleton().freeSingleton<DummySingleton>();
   EXPECT_EQ(destructionCounter, 1);
-  EXPECT_EQ(SingletonManager::getSingleton().numSingletons(), 0);
-}
-
-TEST(SingletonManagerTest, AutoFree) {
-  destructionCounter = constructionCounter = 0;
-
-  {
-    auto singletonManager = std::make_unique<SingletonManager>();
-    SingletonManager::getSingleton().allocateSingleton<DummySingleton>();
-  }
-
-  EXPECT_EQ(constructionCounter, 1);
-  EXPECT_EQ(destructionCounter, 1);
+  EXPECT_EQ(SingletonManager::getSingleton().numSingletons(), numSingletons - 1);
 }
 
 } // anonymous namespace

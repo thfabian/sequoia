@@ -17,8 +17,11 @@
 #define SEQUOIA_UNITTEST_ENVIRONMENT_H
 
 #include "sequoia/Core/Singleton.h"
+#include "sequoia/Core/SingletonManager.h"
 #include "sequoia/Unittest/Export.h"
 #include <gtest/gtest.h>
+#include <string>
+#include <vector>
 
 namespace sequoia {
 
@@ -26,8 +29,13 @@ namespace unittest {
 
 /// @brief Global test environment
 /// @ingroup unittest
-class SEQUOIA_UNITTEST_API Environment : public ::testing::Environment,
+class SEQUOIA_UNITTEST_API Environment : public testing::Environment,
                                          public Singleton<Environment> {
+public:
+  /// @brief Parse command-line
+  Environment(int argc, char* argv[]);
+
+  virtual ~Environment();
 
   /// @brief Set up test environment
   virtual void SetUp() override;
@@ -44,6 +52,9 @@ class SEQUOIA_UNITTEST_API Environment : public ::testing::Environment,
   ///
   /// @return Name of the current test or an empty string if called outside a test
   std::string testName() const;
+
+private:
+  std::unique_ptr<core::SingletonManager> singletonManager_;
 };
 
 } // namespace unittest

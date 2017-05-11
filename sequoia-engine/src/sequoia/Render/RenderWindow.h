@@ -26,9 +26,44 @@ namespace render {
 /// @ingroup render
 class SEQUOIA_RENDER_API RenderWindow : public RenderTarget {
 public:
+  /// @brief Hints used to construct the window
+  struct WindowHint {
+    enum WindowModeKind { WK_Window, WK_WindowedFullscreen, WK_Fullscreen };
+
+    /// Title of the window
+    std::string Title = "<unknown>";
+
+    /// Width of the window (only relevant in window mode)
+    int Width = 1280;
+
+    /// Height of the window (only relevant in window mode)
+    int Height = 960;
+
+    /// Monitor to use
+    int Monitor = 0;
+
+    /// Window mode
+    WindowModeKind WindowMode = WK_Window;
+
+    /// Use hidden window?
+    bool HideWindow = false;
+
+    /// Full-scene anti-aliasing
+    int FSAA = 0;
+
+    /// OpenGL major version
+    int GLMajorVersion = 3;
+
+    /// OpenGL minor version
+    int GLMinorVersion = 3;
+  };
+
   RenderWindow(RenderTargetKind kind) : RenderTarget(kind) {}
 
   virtual ~RenderWindow() {}
+
+  /// @brief Check if window is hidden
+  virtual bool isHidden() = 0;
 
   /// @brief Check if window is closed
   virtual bool isClosed() = 0;

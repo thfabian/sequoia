@@ -13,26 +13,34 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
+#ifndef SEQUOIA_UNITTEST_GL_GLENVIRONMENT_H
+#define SEQUOIA_UNITTEST_GL_GLENVIRONMENT_H
+
 #include "sequoia/Render/GL/GLRenderSystem.h"
-#include "sequoia/Render/RenderSystem.h"
+#include "sequoia/Unittest/Environment.h"
+#include <gtest/gtest.h>
 
 namespace sequoia {
 
-SEQUOIA_DECLARE_SINGLETON(render::RenderSystem);
+namespace unittest {
 
-namespace render {
+/// @brief OpenGL test environment
+/// @ingroup unittest
+class SEQUOIA_UNITTEST_API GLEnvironment : public Environment {
+  std::unique_ptr<render::RenderSystem> renderSystem_;
 
-std::unique_ptr<RenderSystem> RenderSystem::create(RenderSystemKind kind) {
-  switch(kind) {
-  case RK_OpenGL:
-    return std::make_unique<GLRenderSystem>();
-  }
-}
+public:
+  GLEnvironment(int argc, char* argv[]);
 
-RenderSystem::RenderSystemKind RenderSystem::getKind() const { return kind_; }
+  /// @brief Create the OpenGL RenderSystem
+  virtual void SetUp() override;
 
-RenderSystem::RenderSystem(RenderSystem::RenderSystemKind kind) : kind_(kind) {}
+  /// @brief Tear-down the OpenGL RenderSystem
+  virtual void TearDown() override;
+};
 
-} // namespace render
+} // namespace unittest
 
 } // namespace sequoia
+
+#endif

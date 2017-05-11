@@ -13,26 +13,15 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Render/GL/GLRenderSystem.h"
-#include "sequoia/Render/RenderSystem.h"
+#include "sequoia/Unittest/GL/GLEnvironment.h"
+#include <gtest/gtest.h>
 
-namespace sequoia {
+int main(int argc, char* argv[]) {
+  // Initialize gtest
+  testing::InitGoogleTest(&argc, argv);
 
-SEQUOIA_DECLARE_SINGLETON(render::RenderSystem);
-
-namespace render {
-
-std::unique_ptr<RenderSystem> RenderSystem::create(RenderSystemKind kind) {
-  switch(kind) {
-  case RK_OpenGL:
-    return std::make_unique<GLRenderSystem>();
-  }
+  // Register test environment
+  testing::AddGlobalTestEnvironment(new sequoia::unittest::GLEnvironment(argc, argv));
+  
+  return RUN_ALL_TESTS();
 }
-
-RenderSystem::RenderSystemKind RenderSystem::getKind() const { return kind_; }
-
-RenderSystem::RenderSystem(RenderSystem::RenderSystemKind kind) : kind_(kind) {}
-
-} // namespace render
-
-} // namespace sequoia

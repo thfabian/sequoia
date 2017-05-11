@@ -23,10 +23,10 @@ namespace sequoia {
 
 class Shader;
 
-/// @brief High-level GPU program
+/// @brief A high-level GPU program
 ///
-/// A GPU program consist of multiple shaders which are linked together in program which can be used
-/// during the rendering stage to control various aspects of the rendering pipeline.
+/// A GPU program consist of multiple shaders which are linked together in a program which can be
+/// used during the rendering stage to control various aspects of the rendering pipeline.
 ///
 /// @see RenderSystem::createGPUPogram
 class SEQUOIA_RENDER_API GPUProgram {
@@ -34,6 +34,15 @@ public:
   /// @brief Get the unique identifer of the program
   virtual unsigned int getID() const = 0;
   operator unsigned int() { return getID(); }
+
+  /// @brief Comparison
+  /// @{
+  bool operator==(const GPUProgram& other) const { return getID() == other.getID(); }
+  bool operator!=(const GPUProgram& other) const { return getID() != other.getID(); }
+  /// @}
+
+  /// @brief Convert program to a human-readable string representation
+  virtual std::string toString() const = 0;
 
   /// @brief Return the shaders which were linked into this program
   virtual std::vector<Shader*> getShaders() const = 0;

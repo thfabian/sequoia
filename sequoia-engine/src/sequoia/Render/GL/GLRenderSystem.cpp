@@ -22,8 +22,6 @@
 
 namespace sequoia {
 
-SEQUOIA_DECLARE_SINGLETON(render::GLRenderSystem);
-
 namespace render {
 
 static void GLFWErrorCallbackSoft(int error, const char* description) {
@@ -35,7 +33,7 @@ static void GLFWErrorCallbackHard(int error, const char* description) {
   SEQUOIA_THROW(RenderSystemInitException, description);
 }
 
-GLRenderSystem::GLRenderSystem() {
+GLRenderSystem::GLRenderSystem() : RenderSystem(RK_OpenGL) {
   LOG(INFO) << "Initializing GLRenderSystem ...";
   glfwSetErrorCallback(GLFWErrorCallbackHard);
 
@@ -53,9 +51,17 @@ GLRenderSystem::~GLRenderSystem() {
   LOG(INFO) << "Done terminating GLRenderSystem";
 }
 
-RenderWindow* GLRenderSystem::createWindow(const std::string& title) {
-  renderTargets_.emplace_back(std::make_shared<GLRenderWindow>(title));
+RenderWindow* GLRenderSystem::createWindow(const RenderWindow::WindowHint& hints) {
+  renderTargets_.emplace_back(std::make_shared<GLRenderWindow>(hints));
   return static_cast<RenderWindow*>(renderTargets_.back().get());
+}
+
+void GLRenderSystem::destroyTarget(RenderTarget* target) {
+  for(auto it = renderTargets_.begin(); it != renderTargets_.end();)
+    if(it->get() == target)
+      it = renderTargets_.erase(it);
+    else
+      ++it;
 }
 
 void GLRenderSystem::pollEvents() { glfwPollEvents(); }

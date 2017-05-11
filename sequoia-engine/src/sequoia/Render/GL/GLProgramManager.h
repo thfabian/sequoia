@@ -13,8 +13,16 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Render/GL/GLShaderLoader.h"
+#ifndef SEQUOIA_RENDER_GL_GLPROGRAMMANAGER_H
+#define SEQUOIA_RENDER_GL_GLPROGRAMMANAGER_H
 
 namespace sequoia {
 
+namespace render {
+
+
+} // namespace render
+
 } // namespace sequoia
+
+#endif

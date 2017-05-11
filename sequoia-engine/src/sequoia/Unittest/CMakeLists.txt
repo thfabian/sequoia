@@ -18,7 +18,11 @@ sequoia_add_library(
   SOURCES Environment.h
           Environment.cpp
           Export.h
-  DEPENDS SequoiaCore
+
+          GL/GLEnvironment.h
+          GL/GLEnvironment.cpp
+  DEPENDS SequoiaDriver
+          SequoiaRender
+          SequoiaCore
           ${SEQUOIA_GTEST_LIBRARIES}
-          ${SEQUOIA_EXTERNAL_LIBRARIES}
 )

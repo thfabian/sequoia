@@ -13,26 +13,43 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Render/GL/GLRenderSystem.h"
-#include "sequoia/Render/RenderSystem.h"
+#ifndef SEQUOIA_RENDER_GL_GLSHADER_H
+#define SEQUOIA_RENDER_GL_GLSHADER_H
+
+#include "sequoia/Render/Shader.h"
 
 namespace sequoia {
 
-SEQUOIA_DECLARE_SINGLETON(render::RenderSystem);
-
 namespace render {
 
-std::unique_ptr<RenderSystem> RenderSystem::create(RenderSystemKind kind) {
-  switch(kind) {
-  case RK_OpenGL:
-    return std::make_unique<GLRenderSystem>();
-  }
-}
+/// @brief OpenGL shader representation
+/// @ingroup gl
+class SEQUOIA_RENDER_API GLShader : public Shader {
+  unsigned int id_;
+  ShaderType type_; 
 
-RenderSystem::RenderSystemKind RenderSystem::getKind() const { return kind_; }
+  //
+  // TODO: !!! ShaderRecord should be Shader itself !!!
+  //
 
-RenderSystem::RenderSystem(RenderSystem::RenderSystemKind kind) : kind_(kind) {}
+private:
+  GLShader(unsigned int id);
+
+  /// @copydoc Shader::getID
+  virtual unsigned int getID() const override;
+
+  /// @copydoc Shader::getType
+  virtual ShaderType getType() const override;
+
+  /// @copydoc Shader::getSourcePath
+  platform::String getSourcePath() const override;
+
+  /// @copydoc Shader::getSourceCode
+  std::string getSourceCode() const override;
+};
 
 } // namespace render
 
 } // namespace sequoia
+
+#endif

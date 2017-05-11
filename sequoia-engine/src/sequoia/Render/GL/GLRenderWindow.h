@@ -33,7 +33,6 @@ class GLRenderer;
 /// @ingroup gl
 class SEQUOIA_RENDER_API GLRenderWindow : public RenderWindow {
   GLFWwindow* window_;
-  bool isFullscreen_;
   int windowWidth_;
   int windowHeight_;
 
@@ -45,10 +44,13 @@ public:
   /// This involves OpenGL context creation of the window.
   ///
   /// @throw RenderSystemInitException    Window creation failed
-  GLRenderWindow(const std::string& title);
+  GLRenderWindow(const RenderWindow::WindowHint& windowHints);
 
   /// @brief Release window and OpenGL context
   ~GLRenderWindow();
+  
+  /// @copydoc RenderWindow::isHidden
+  virtual bool isHidden() override;
 
   /// @copydoc RenderWindow::isClosed
   virtual bool isClosed() override;

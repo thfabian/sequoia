@@ -28,24 +28,30 @@ sequoia_add_library(
           RenderSystem.cpp
           RenderTarget.h
           RenderTarget.cpp
+          RenderWindow.h
           RenderData.h
           RenderData.cpp
-          RenderWindow.h
           Shader.h
           ViewFrustum.h
           Viewport.h
           Viewport.cpp
           
           GL/GL.h
+          GL/GLProgram.h
+          GL/GLProgram.cpp
+          GL/GLProgramManager.h
+          GL/GLProgramManager.cpp
           GL/GLRenderer.h
           GL/GLRenderer.cpp
           GL/GLRenderSystem.h
           GL/GLRenderSystem.cpp
           GL/GLRenderWindow.h
           GL/GLRenderWindow.cpp
-          GL/GLShaderLoader.h
-          GL/GLShaderLoader.cpp
-
+          GL/GLShader.h
+          GL/GLShader.cpp
+          GL/GLShaderManager.h
+          GL/GLShaderManager.cpp
+          
   DEPENDS SequoiaCore
           ${SEQUOIA_EXTERNAL_LIBRARIES}
 )

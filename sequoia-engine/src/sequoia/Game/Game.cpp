@@ -15,11 +15,13 @@
 
 #include "sequoia/Core/ErrorHandler.h"
 #include "sequoia/Core/Logging.h"
+#include "sequoia/Core/Options.h"
+#include "sequoia/Core/StringSwitch.h"
 #include "sequoia/Game/Game.h"
 #include "sequoia/Render/Camera.h"
-#include "sequoia/Render/RenderWindow.h"
 #include "sequoia/Render/Exception.h"
 #include "sequoia/Render/RenderSystem.h"
+#include "sequoia/Render/RenderWindow.h"
 #include <iostream>
 
 namespace sequoia {
@@ -53,24 +55,42 @@ void Game::run() {
 
 void Game::init() {
   LOG(INFO) << "Initializing Game ...";
+  using namespace render;
+
+  Options& opt = Options::getSingleton();
 
   try {
+
     // Initialize the RenderSystem
-    renderSystem_ = render::RenderSystem::create(render::RenderSystem::RK_OpenGL);
+    renderSystem_ = RenderSystem::create(RenderSystem::RK_OpenGL);
 
     // Create the main-window
-    mainWindow_ = renderSystem_->createWindow("Sequoia - " SEQUOIA_VERSION_STRING);
+    RenderWindow::WindowHint hint;
+    hint.Title = "Sequoia - " SEQUOIA_VERSION_STRING;
+    hint.Monitor = opt.Render.Monitor;
+    using WindowModeKind = render::RenderWindow::WindowHint::WindowModeKind;
+    hint.WindowMode = core::StringSwitch<WindowModeKind>(opt.Render.WindowMode)
+                          .Case("fullscreen", WindowModeKind::WK_Fullscreen)
+                          .Case("windowed-fullscreen", WindowModeKind::WK_WindowedFullscreen)
+                          .Default(WindowModeKind::WK_Window);
+    hint.FSAA = opt.Render.FSAA;
+    hint.HideWindow = false;
+
+    hint.GLMajorVersion = opt.Render.GLMajorVersion;
+    hint.GLMinorVersion = opt.Render.GLMinorVersion;
+
+    mainWindow_ = renderSystem_->createWindow(hint);
 
     // Create the camera
     mainCamera_ = std::make_unique<render::Camera>(math::vec3(0, 1, 0));
     mainCamera_->setEye(math::vec3(4, 3, 3));
     mainCamera_->setCenter(math::vec3(0, 0, 0));
-    
+
     // Set the viewport of the mainwindow
     auto viewport = std::make_shared<render::Viewport>(
         mainCamera_.get(), mainWindow_, 0, 0, mainWindow_->getWidth(), mainWindow_->getHeight());
     mainWindow_->setViewport(viewport);
-    
+
     // Initialize the main-window
     mainWindow_->init();
 

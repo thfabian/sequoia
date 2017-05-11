@@ -16,7 +16,6 @@
 #ifndef SEQUOIA_RENDER_GL_GLRENDERSYSTEM_H
 #define SEQUOIA_RENDER_GL_GLRENDERSYSTEM_H
 
-#include "sequoia/Core/Singleton.h"
 #include "sequoia/Render/RenderSystem.h"
 #include <memory>
 #include <vector>
@@ -27,9 +26,7 @@ namespace render {
 
 /// @brief OpenGL render-system
 /// @ingroup gl
-class SEQUOIA_RENDER_API GLRenderSystem : public RenderSystem, public Singleton<GLRenderSystem> {
-
-  /// Registered RenderTargets
+class SEQUOIA_RENDER_API GLRenderSystem : public RenderSystem {
   std::vector<std::shared_ptr<RenderTarget>> renderTargets_;
 
 public:
@@ -41,7 +38,11 @@ public:
   virtual ~GLRenderSystem();
 
   /// @copydoc RenderSystem::createWindow
-  virtual RenderWindow* createWindow(const std::string& title) override;
+  virtual RenderWindow*
+  createWindow(const RenderWindow::WindowHint& hints) override;
+  
+  /// @copydoc RenderSystem::destroyTarget
+  virtual void destroyTarget(RenderTarget* target) override;  
 
   /// @copydoc RenderSystem::pollEvents
   virtual void pollEvents() override;
@@ -57,6 +58,10 @@ public:
 
   /// @brief Link the shaders into a program if a program of the given shaders does not yet exist
   GPUProgram* createProgram(RenderTarget* target, Shader* vertex, Shader* fragment) override;
+
+  static bool classof(const RenderSystem* renderSystem) {
+    return renderSystem->getKind() == RK_OpenGL;
+  }
 };
 
 } // namespace render
