@@ -16,7 +16,9 @@
 find_package(glm REQUIRED)
 include_directories(SYSTEM ${GLM_INCLUDE_DIRS})
 
-add_definitions(-DGLM_FORCE_CXX14)
+if(NOT(WIN32))
+  add_definitions(-DGLM_FORCE_CXX14)
+endif()
 
 sequoia_export_package_variable(
   glm
