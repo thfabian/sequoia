@@ -17,9 +17,11 @@
 #define SEQUOIA_RENDER_GL_GLSHADERMANAGER_H
 
 #include "sequoia/Core/Assert.h"
+#include "sequoia/Core/NonCopyable.h"
 #include "sequoia/Render/Export.h"
 #include "sequoia/Render/GL/GLShader.h"
 #include <unordered_map>
+#include <vector>
 
 namespace sequoia {
 
@@ -30,7 +32,7 @@ namespace render {
 /// A ShaderManager is attached to a specific OpenGL context.
 ///
 /// @ingroup gl
-class SEQUOIA_RENDER_API GLShaderManager {
+class SEQUOIA_RENDER_API GLShaderManager : public NonCopyable {
 public:
   /// @brief Create the shader from source and compile it
   ///

@@ -15,6 +15,7 @@
 
 #include "sequoia/Render/GL/GLRenderSystem.h"
 #include "sequoia/Render/RenderSystem.h"
+#include "sequoia/Core/Unreachable.h"
 
 namespace sequoia {
 
@@ -27,6 +28,7 @@ std::unique_ptr<RenderSystem> RenderSystem::create(RenderSystemKind kind) {
   case RK_OpenGL:
     return std::make_unique<GLRenderSystem>();
   }
+  sequoia_unreachable("invalid RenderSystem");
 }
 
 RenderSystem::RenderSystemKind RenderSystem::getKind() const { return kind_; }

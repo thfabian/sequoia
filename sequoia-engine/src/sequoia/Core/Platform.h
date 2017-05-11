@@ -22,9 +22,15 @@
 #include <string>
 
 #ifdef SEQUOIA_ON_WIN32
+
 #ifndef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN
 #endif
+
+#ifdef APIENTRY
+#undef APIENTRY
+#endif
+
 #include <Windows.h>
 #endif
 
