@@ -17,10 +17,8 @@
 #define SEQUOIA_RENDER_GL_GLSHADERMANAGER_H
 
 #include "sequoia/Core/Assert.h"
-#include "sequoia/Core/EnumState.h"
 #include "sequoia/Render/Export.h"
 #include "sequoia/Render/GL/GLShader.h"
-#include <map>
 #include <unordered_map>
 
 namespace sequoia {
@@ -34,63 +32,38 @@ namespace render {
 /// @ingroup gl
 class SEQUOIA_RENDER_API GLShaderManager {
 public:
-  enum class ShaderStatus { OnDisk = 0, InMemory, Created, Compiled };
-  using ShaderStatusState =
-      core::EnumState<ShaderStatus, ShaderStatus::OnDisk, ShaderStatus::InMemory,
-                      ShaderStatus::Created, ShaderStatus::Compiled>;
-
-  friend ShaderStatus operator++(ShaderStatus& s, int) {
-    ShaderStatus sold = s;
-    ShaderStatusState::advance(s);
-    return sold;
-  }
-
-  //
-  // TODO: !!! ShaderRecord should be Shader itself !!!
-  //
-
-  /// @brief Useful state information of a OpenGL shader
-  struct ShaderRecord {
-    ShaderRecord() : Status(ShaderStatus::OnDisk), Shader(nullptr) {}
-
-    /// Status of the shader
-    ShaderStatus Status;
-
-    /// OpenGL shader
-    std::unique_ptr<GLShader> Shader;
-
-    /// Source code of the shader
-    std::string Code;
-
-    /// Source path the shader was loaded from
-    platform::String Path;
-  };
-
-  /// @brief Get the shader by `id`
-  GLShader* get(unsigned int id) const {
-    auto it = shaderRecordMap_.find(id);
-    SEQUOIA_ASSERT_MSG(it != shaderRecordMap_.end(), "invalid shader id");
-    return it->second->Shader.get();
-  }
-
   /// @brief Create the shader from source and compile it
   ///
   /// If the shader already exists, its `Status` will be moved to `SK_Compiled`.
   ///
+  /// @param type             Type of the shader
+  /// @param path             Path to the shader source
+  /// @param requestedStatus  Requested target status
+  ///
   /// @throws RenderSystemException   Failed to compile shader
-  GLShader* create(const platform::String& path);
+  GLShader* create(GLShader::ShaderType type, const platform::String& path,
+                   GLShaderStatus requestedStatus = GLShaderStatus::Compiled);
 
-private:
-  /// @brief Convert the status of the shader to `SK_Compiled` if possible
-  /// @returns the id of the shader
-  GLShader* makeValid(std::unique_ptr<ShaderRecord>& record);
+  /// @brief Convert the shader to `status`
+  /// @throws RenderSystemException   Failed to compile shader
+  void make(GLShader* shader, GLShaderStatus status);
+
+  /// @brief Convert the shader to `SK_Compiled`
+  /// @see GLShaderLoader::make
+  void makeValid(GLShader* shader) { make(shader, GLShaderStatus::Compiled); }
+
+  /// @brief Get the shader by OpenGL shader `id`
+  GLShader* get(unsigned int id) const;
 
 private:
   /// Record of all the registered and compiled shaders
-  std::unordered_map<unsigned int, std::unique_ptr<ShaderRecord>> shaderRecordMap_;
+  std::vector<std::unique_ptr<GLShader>> shaderList_;
 
-  /// Lookup map for path to ID
-  std::unordered_map<platform::String, unsigned int> pathLookupMap_;
+  /// Lookup map for shader ID
+  std::unordered_map<unsigned int, std::size_t> idLookupMap_;
+
+  /// Lookup map for path
+  std::unordered_map<platform::String, std::size_t> pathLookupMap_;
 };
 
 } // namespace render

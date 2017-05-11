@@ -20,12 +20,13 @@
 #include "sequoia/Render/GL/GL.h"
 #include "sequoia/Render/GL/GLRenderWindow.h"
 #include "sequoia/Render/GL/GLRenderer.h"
+#include "sequoia/Render/GL/GLShaderManager.h"
 #include <glbinding/Binding.h>
 #include <glbinding/ContextInfo.h>
 #include <glbinding/Version.h>
 #include <glbinding/glbinding-version.h>
-#include <sstream>
 #include <iostream>
+#include <sstream>
 
 namespace sequoia {
 
@@ -68,6 +69,9 @@ GLRenderer::GLRenderer(GLRenderWindow* target) : target_(target) {
   LOG(INFO) << "OpenGL vendor: " << glbinding::ContextInfo::vendor();
   LOG(INFO) << "OpenGL renderer: " << glbinding::ContextInfo::renderer();
 
+  // Initialize ShaderManager
+  shaderManager_ = std::make_unique<GLShaderManager>();
+
   LOG(INFO) << "Done creating OpenGL renderer " << this;
 }
 
@@ -85,21 +89,23 @@ void GLRenderer::render() {
   Camera* camera = viewport->getCamera();
 
   // Compute the projction matrix
-  glm::mat4 matP =
+  glm::mat4 matProj =
       glm::perspective(glm::radians(camera->getFieldOfViewY()), camera->getAspectRatio(),
                        camera->getZNearClipping(), camera->getZFarClipping());
-  
-  // Compute camera view matrix
-  glm::mat4 matV = glm::lookAt(camera->getEye(), camera->getCenter(), camera->getUp());
-  
-  // Precompute view projection matrix
-  glm::mat4 matVP = matP * matV;
 
-  glm::mat4 matM = glm::mat4(1.0f);
+  // Compute camera view matrix
+  glm::mat4 matView = glm::lookAt(camera->getEye(), camera->getCenter(), camera->getUp());
+
+  // Precompute view projection matrix
+  glm::mat4 matViewProj = matProj * matView;
+
+  glm::mat4 matModel = glm::mat4(1.0f);
 
   // Compute the full model view projection matrix
-  glm::mat4 matMVP = matVP * matM;
+  glm::mat4 matModelViewProjection = matViewProj * matModel;
 }
+
+GLShaderManager* GLRenderer::getShaderManager() { return shaderManager_.get(); }
 
 } // namespace render
 

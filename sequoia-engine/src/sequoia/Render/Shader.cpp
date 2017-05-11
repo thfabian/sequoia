@@ -13,22 +13,15 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Render/GL/GLShader.h"
+#include "sequoia/Render/Shader.h"
 
 namespace sequoia {
 
 namespace render {
 
-GLShader::GLShader(Shader::ShaderType type, const platform::String& path)
-    : Shader(type), status_(GLShaderStatus::OnDisk), id_(0), code_(), path_(path) {}
+Shader::Shader(Shader::ShaderType type) : type_(type) {}
 
-bool GLShader::isValid() const { return status_ == GLShaderStatus::Compiled; }
-
-unsigned int GLShader::getID() const { return id_; }
-
-platform::String GLShader::getSourcePath() const { return path_; }
-
-std::string GLShader::getSourceCode() const { return code_; }
+Shader::ShaderType Shader::getType() const { return type_; }
 
 } // namespace render
 

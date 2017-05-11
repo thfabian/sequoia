@@ -13,6 +13,9 @@
 ##
 ##===------------------------------------------------------------------------------------------===##
 
+# Generate Config.h
+sequoia_configure_file(Config.h.cmake)
+
 sequoia_add_library(
   NAME SequoiaUnittest
   SOURCES Environment.h

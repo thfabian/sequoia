@@ -19,6 +19,8 @@
 #include "sequoia/Render/GL/GL.h"
 #include "sequoia/Render/GL/GLRenderSystem.h"
 #include "sequoia/Render/GL/GLRenderWindow.h"
+#include "sequoia/Render/GL/GLRenderer.h"
+#include "sequoia/Render/GL/GLShaderManager.h"
 
 namespace sequoia {
 
@@ -52,15 +54,16 @@ GLRenderSystem::~GLRenderSystem() {
 }
 
 RenderWindow* GLRenderSystem::createWindow(const RenderWindow::WindowHint& hints) {
-  renderTargets_.emplace_back(std::make_shared<GLRenderWindow>(hints));
+  renderTargets_.emplace_back(std::make_shared<GLRenderWindow>(this, hints));
   return static_cast<RenderWindow*>(renderTargets_.back().get());
 }
 
 void GLRenderSystem::destroyTarget(RenderTarget* target) {
+  rendererMap_.erase(target);
   for(auto it = renderTargets_.begin(); it != renderTargets_.end();)
-    if(it->get() == target)
+    if(it->get() == target) {
       it = renderTargets_.erase(it);
-    else
+    } else
       ++it;
 }
 
@@ -80,12 +83,17 @@ void GLRenderSystem::swapBuffers() {
   });
 }
 
-Shader* GLRenderSystem::loadShader(RenderTarget* target, const platform::Path& path) {
-  return nullptr;
+Shader* GLRenderSystem::loadShader(RenderTarget* target, Shader::ShaderType type,
+                                   const platform::String& path) {
+  return rendererMap_[target]->getShaderManager()->create(type, path);
 }
 
 GPUProgram* GLRenderSystem::createProgram(RenderTarget* target, Shader* vertex, Shader* fragment) {
   return nullptr;
+}
+
+void GLRenderSystem::registerRenderer(RenderTarget* target, GLRenderer* renderer) {
+  rendererMap_[target] = renderer;
 }
 
 } // namespace render

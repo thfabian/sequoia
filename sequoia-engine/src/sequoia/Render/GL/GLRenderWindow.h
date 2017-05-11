@@ -28,15 +28,18 @@ namespace sequoia {
 namespace render {
 
 class GLRenderer;
+class GLRenderSystem;
 
 /// @brief OpenGL render window
 /// @ingroup gl
 class SEQUOIA_RENDER_API GLRenderWindow : public RenderWindow {
+  GLRenderSystem* renderSystem_;
   GLFWwindow* window_;
+
   int windowWidth_;
   int windowHeight_;
 
-  std::shared_ptr<GLRenderer> renderer_;
+  std::unique_ptr<GLRenderer> renderer_;
 
 public:
   /// @brief Initialize window
@@ -44,11 +47,11 @@ public:
   /// This involves OpenGL context creation of the window.
   ///
   /// @throw RenderSystemInitException    Window creation failed
-  GLRenderWindow(const RenderWindow::WindowHint& windowHints);
+  GLRenderWindow(GLRenderSystem* renderSystem, const RenderWindow::WindowHint& windowHints);
 
   /// @brief Release window and OpenGL context
   ~GLRenderWindow();
-  
+
   /// @copydoc RenderWindow::isHidden
   virtual bool isHidden() override;
 
@@ -77,7 +80,7 @@ public:
   GLFWwindow* getGLFWwindow();
 
   /// @brief Get the associated OpenGL context of this window
-  const std::shared_ptr<GLRenderer>& getRenderer() const;
+  GLRenderer* getRenderer();
 
   /// @brief Called upon resizing the window
   void resizeCallback(int width, int height);

@@ -87,3 +87,8 @@ set(SEQUOIA_VERSION_STRING
     "${version}-dev-${SEQUOIA_GIT_SHA1}-${architecture}-${platform}-${compiler}"
     CACHE STRING "Version string of Sequoia" FORCE)
 
+  
+#
+# Ressource paths
+#
+set(SEQUOIA_UNITTEST_RESSOURCEPATH ${CMAKE_SOURCE_DIR}/test/ressource/unittest)

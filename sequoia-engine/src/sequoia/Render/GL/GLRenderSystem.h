@@ -18,16 +18,24 @@
 
 #include "sequoia/Render/RenderSystem.h"
 #include <memory>
+#include <unordered_map>
 #include <vector>
 
 namespace sequoia {
 
 namespace render {
 
+class GLRenderer;
+
 /// @brief OpenGL render-system
 /// @ingroup gl
 class SEQUOIA_RENDER_API GLRenderSystem : public RenderSystem {
+
+  /// Registered RenderTargets
   std::vector<std::shared_ptr<RenderTarget>> renderTargets_;
+
+  /// Renderer of the RenderTarget
+  std::unordered_map<RenderTarget*, GLRenderer*> rendererMap_;
 
 public:
   /// @brief Initialize GLFW
@@ -38,11 +46,10 @@ public:
   virtual ~GLRenderSystem();
 
   /// @copydoc RenderSystem::createWindow
-  virtual RenderWindow*
-  createWindow(const RenderWindow::WindowHint& hints) override;
-  
+  virtual RenderWindow* createWindow(const RenderWindow::WindowHint& hints) override;
+
   /// @copydoc RenderSystem::destroyTarget
-  virtual void destroyTarget(RenderTarget* target) override;  
+  virtual void destroyTarget(RenderTarget* target) override;
 
   /// @copydoc RenderSystem::pollEvents
   virtual void pollEvents() override;
@@ -54,10 +61,15 @@ public:
   virtual void swapBuffers() override;
 
   /// @brief Load the shader from source if it has not already been loaded
-  Shader* loadShader(RenderTarget* target, const platform::Path& path) override;
+  virtual Shader* loadShader(RenderTarget* target, Shader::ShaderType type,
+                             const platform::String& path) override;
 
   /// @brief Link the shaders into a program if a program of the given shaders does not yet exist
-  GPUProgram* createProgram(RenderTarget* target, Shader* vertex, Shader* fragment) override;
+  virtual GPUProgram* createProgram(RenderTarget* target, Shader* vertex,
+                                    Shader* fragment) override;
+
+  /// @brief Register the Renderer of the target
+  void registerRenderer(RenderTarget* target, GLRenderer* renderer);
 
   static bool classof(const RenderSystem* renderSystem) {
     return renderSystem->getKind() == RK_OpenGL;

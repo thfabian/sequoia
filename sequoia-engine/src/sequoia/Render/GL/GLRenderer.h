@@ -24,6 +24,7 @@ namespace sequoia {
 namespace render {
 
 class GLRenderWindow;
+class GLShaderManager;
 
 /// @brief OpenGL based renderer
 ///
@@ -34,6 +35,8 @@ class GLRenderWindow;
 class SEQUOIA_RENDER_API GLRenderer {
   GLRenderWindow* target_;
 
+  std::unique_ptr<GLShaderManager> shaderManager_;
+
 public:
   /// @brief Initialize the OpenGL context and bind it to the calling thread
   GLRenderer(GLRenderWindow* target);
@@ -43,6 +46,9 @@ public:
 
   /// @brief Render the given target
   void render();
+
+  /// @brief Get the ShaderManager
+  GLShaderManager* getShaderManager();
 };
 
 } // namespace render

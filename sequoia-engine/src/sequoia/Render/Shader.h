@@ -21,6 +21,8 @@
 
 namespace sequoia {
 
+namespace render {
+
 /// @brief Shader object
 ///
 /// The shaders are managed by the RenderSystem which takes care of linking them into a program and
@@ -31,10 +33,20 @@ namespace sequoia {
 class SEQUOIA_RENDER_API Shader {
 public:
   /// @brief Enumerates the types of shaders which can run on the GPU
-  enum ShaderType { ST_Vertex, ST_Fragment };
+  enum ShaderType {
+    ST_Compute,
+    ST_Vertex,
+    ST_TessControl,
+    ST_TessEvaluation,
+    ST_Geometry,
+    ST_Fragment
+  };
+
+  /// @brief Create a new shader object
+  Shader(ShaderType type);
 
   /// @brief Get the type of the shader
-  virtual ShaderType getType() const = 0;
+  ShaderType getType() const;
 
   /// @brief Get the unique identifer of the shader
   virtual unsigned int getID() const = 0;
@@ -51,7 +63,12 @@ public:
 
   /// @brief Get the source code of the shader
   virtual std::string getSourceCode() const = 0;
+
+protected:
+  ShaderType type_;
 };
+
+} // namespace render
 
 } // namespace sequoia
 

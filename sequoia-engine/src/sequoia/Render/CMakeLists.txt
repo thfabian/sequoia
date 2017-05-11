@@ -32,6 +32,7 @@ sequoia_add_library(
           RenderData.h
           RenderData.cpp
           Shader.h
+          Shader.cpp
           ViewFrustum.h
           Viewport.h
           Viewport.cpp

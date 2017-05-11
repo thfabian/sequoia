@@ -17,6 +17,7 @@
 #include "sequoia/Core/Unreachable.h"
 #include "sequoia/Render/Exception.h"
 #include "sequoia/Render/GL/GL.h"
+#include "sequoia/Render/GL/GLRenderSystem.h"
 #include "sequoia/Render/GL/GLRenderWindow.h"
 #include "sequoia/Render/GL/GLRenderer.h"
 #include <unordered_map>
@@ -29,8 +30,10 @@ namespace render {
 
 std::unordered_map<GLFWwindow*, GLRenderWindow*> GLRenderWindow::StaticWindowMap;
 
-GLRenderWindow::GLRenderWindow(const RenderWindow::WindowHint& windowHints)
-    : RenderWindow(RK_GLRenderWindow), window_(nullptr), windowWidth_(-1), windowHeight_(-1) {
+GLRenderWindow::GLRenderWindow(GLRenderSystem* renderSystem,
+                               const RenderWindow::WindowHint& windowHints)
+    : RenderWindow(RK_GLRenderWindow), renderSystem_(renderSystem), window_(nullptr),
+      windowWidth_(-1), windowHeight_(-1) {
   LOG(INFO) << "Initializing window " << this << " ...";
 
   // Open the window hidden?
@@ -161,11 +164,14 @@ void GLRenderWindow::swapBuffers() { glfwSwapBuffers(window_); }
 
 void GLRenderWindow::update() { renderer_->render(); }
 
-void GLRenderWindow::init() { renderer_ = std::make_shared<GLRenderer>(this); }
+void GLRenderWindow::init() {
+  renderer_ = std::make_unique<GLRenderer>(this);
+  renderSystem_->registerRenderer(this, renderer_.get());
+}
 
 GLFWwindow* GLRenderWindow::getGLFWwindow() { return window_; }
 
-const std::shared_ptr<GLRenderer>& GLRenderWindow::getRenderer() const { return renderer_; }
+GLRenderer* GLRenderWindow::getRenderer() { return renderer_.get(); }
 
 } // namespace render
 

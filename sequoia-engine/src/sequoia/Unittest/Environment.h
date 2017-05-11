@@ -16,6 +16,7 @@
 #ifndef SEQUOIA_UNITTEST_ENVIRONMENT_H
 #define SEQUOIA_UNITTEST_ENVIRONMENT_H
 
+#include "sequoia/Core/Platform.h"
 #include "sequoia/Core/Singleton.h"
 #include "sequoia/Core/SingletonManager.h"
 #include "sequoia/Unittest/Export.h"
@@ -53,7 +54,11 @@ public:
   /// @return Name of the current test or an empty string if called outside a test
   std::string testName() const;
 
+  /// @brief Get the ressource path of the unittest
+  const platform::String getRessourcePath() const;
+
 private:
+  platform::Path path_;
   std::unique_ptr<core::SingletonManager> singletonManager_;
 };
 

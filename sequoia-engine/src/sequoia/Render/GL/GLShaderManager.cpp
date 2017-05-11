@@ -23,46 +23,84 @@ namespace sequoia {
 
 namespace render {
 
-GLShader* GLShaderManager::makeValid(std::unique_ptr<ShaderRecord>& record) {
+void GLShaderManager::make(GLShader* shader, GLShaderStatus status) {
+  if(status == GLShaderStatus::Compiled || status == GLShaderStatus::OnDisk)
+    return;
 
-  if(record->Status == ShaderStatus::OnDisk) {
-    std::ifstream file(record->Path);
+  if(shader->status_ == GLShaderStatus::OnDisk) {
+    std::ifstream file(shader->path_);
 
     if(!file.is_open())
       SEQUOIA_THROW(RenderSystemException, PLATFORM_STR("cannot load shader source: '%s'"),
-                    record->Path.c_str());
+                    shader->path_.c_str());
 
     std::stringstream ss;
     ss << file.rdbuf();
-    record->Code = ss.str();
-    record->Status++;
+    shader->code_ = ss.str();
+    shader->status_++;
   }
 
-  if(record->Status == ShaderStatus::InMemory) {
-    // Remove from map if exists
+  if(status == GLShaderStatus::InMemory)
+    return;
 
-    record->Status++;
+  if(shader->status_ == GLShaderStatus::InMemory) {
+    // 0 means it has not yet been registered
+    if(shader->id_ != 0)
+      idLookupMap_.erase(shader->id_);
+
+    shader->id_ = glCreateShader(GLShader::getGLShaderType(shader->type_));
+    idLookupMap_.emplace(shader->id_, pathLookupMap_[shader->path_]);
+
+    shader->status_++;
   }
 
-  if(record->Status == ShaderStatus::Created) {
+  if(status == GLShaderStatus::Created)
+    return;
 
-    record->Status++;
+  if(shader->status_ == GLShaderStatus::Created) {
+    const char* code = shader->code_.c_str();
+    glShaderSource(shader->id_, 1, &code, nullptr);
+    glCompileShader(shader->id_);
+
+    // Check compilation
+    int compileStatus;
+    glGetShaderiv(shader->id_, GL_COMPILE_STATUS, &compileStatus);
+    if(!compileStatus) {
+      int infoLogLength;
+      glGetShaderiv(shader->id_, GL_INFO_LOG_LENGTH, &infoLogLength);
+
+      std::vector<char> errorMessage(infoLogLength + 1);
+      glGetShaderInfoLog(shader->id_, infoLogLength, NULL, &errorMessage[0]);
+
+      SEQUOIA_THROW(RenderSystemException, "failed to compile shader: '%s'", errorMessage.data());
+    }
+
+    shader->status_++;
   }
-
-  return record->Shader.get();
 }
 
-GLShader* GLShaderManager::create(const platform::String& path) {
+GLShader* GLShaderManager::get(unsigned int id) const {
+  auto it = idLookupMap_.find(id);
+  SEQUOIA_ASSERT_MSG(it != idLookupMap_.end(),
+                     "invalid shader id or shader has not yet been created");
+  return shaderList_[it->second].get();
+}
+
+GLShader* GLShaderManager::create(GLShader::ShaderType type, const platform::String& path,
+                                  GLShaderStatus requestedStatus) {
+  GLShader* shader = nullptr;
   auto it = pathLookupMap_.find(path);
 
-  // Check if shader already exists
   if(it != pathLookupMap_.end())
-    return makeValid(shaderRecordMap_[it->second]);
+    shader = shaderList_[it->second].get();
+  else {
+    shaderList_.emplace_back(std::make_unique<GLShader>(type, path));
+    pathLookupMap_[path] = shaderList_.size() - 1;
+    shader = shaderList_.back().get();
+  }
 
-  // Load and compile the shader from source
-  auto record = std::make_unique<ShaderRecord>();
-  record->Path = path;
-  return makeValid(record);
+  make(shader, requestedStatus);
+  return shader;
 }
 
 } // namespace render

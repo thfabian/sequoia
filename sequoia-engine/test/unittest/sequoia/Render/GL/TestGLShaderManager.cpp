@@ -13,23 +13,14 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Render/GL/GLShader.h"
+#include "sequoia/Render/GL/GLRenderSystem.h"
+#include "sequoia/Unittest/Environment.h"
+#include <gtest/gtest.h>
 
-namespace sequoia {
+using namespace sequoia::render;
 
-namespace render {
+namespace {
 
-GLShader::GLShader(Shader::ShaderType type, const platform::String& path)
-    : Shader(type), status_(GLShaderStatus::OnDisk), id_(0), code_(), path_(path) {}
+TEST(GLShaderManager, Compile) {}
 
-bool GLShader::isValid() const { return status_ == GLShaderStatus::Compiled; }
-
-unsigned int GLShader::getID() const { return id_; }
-
-platform::String GLShader::getSourcePath() const { return path_; }
-
-std::string GLShader::getSourceCode() const { return code_; }
-
-} // namespace render
-
-} // namespace sequoia
+} // anonymous namespace

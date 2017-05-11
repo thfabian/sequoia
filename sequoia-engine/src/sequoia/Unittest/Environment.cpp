@@ -16,6 +16,7 @@
 #include "sequoia/Core/ErrorHandler.h"
 #include "sequoia/Core/Logging.h"
 #include "sequoia/Driver/ConsoleLogger.h"
+#include "sequoia/Unittest/Config.h"
 #include "sequoia/Unittest/Environment.h"
 #include <boost/program_options.hpp>
 
@@ -53,6 +54,11 @@ Environment::Environment(int argc, char* argv[]) {
 
   if(vm.count("logging"))
     singletonManager_->allocateSingleton<driver::ConsoleLogger>();
+
+  path_ = SEQUOIA_UNITTEST_RESSOURCEPATH;
+  if(!platform::filesystem::exists(path_))
+    ErrorHandler::getSingleton().fatal(PLATFORM_STR("invalid ressource path: '") + path_.native() +
+                                       PLATFORM_STR("'"));
 }
 
 Environment::~Environment() {}
@@ -74,6 +80,8 @@ std::string Environment::testName() const {
     return testInfo->name();
   return "";
 }
+
+const platform::String Environment::getRessourcePath() const { return path_.native(); }
 
 } // namespace unittest
 

@@ -14,7 +14,6 @@
 //===------------------------------------------------------------------------------------------===//
 
 #include "sequoia/Render/GL/GLRenderSystem.h"
-#include "sequoia/Unittest/GL/GLEnvironment.h"
 #include <gtest/gtest.h>
 
 using namespace sequoia::render;

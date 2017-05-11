@@ -21,6 +21,7 @@
 #include "sequoia/Render/Export.h"
 #include "sequoia/Render/RenderFwd.h"
 #include "sequoia/Render/RenderWindow.h"
+#include "sequoia/Render/Shader.h"
 #include <memory>
 #include <string>
 
@@ -49,7 +50,7 @@ public:
   /// @brief Create a new RenderWindow
   /// @returns the created window
   virtual RenderWindow* createWindow(const RenderWindow::WindowHint& hints) = 0;
-  
+
   /// @brief Manually destroy the RenderTarget
   virtual void destroyTarget(RenderTarget* target) = 0;
 
@@ -63,7 +64,8 @@ public:
   virtual void swapBuffers() = 0;
 
   /// @brief Load a shader from source for `target`
-  virtual Shader* loadShader(RenderTarget* target, const platform::Path& path) = 0;
+  virtual Shader* loadShader(RenderTarget* target, Shader::ShaderType type,
+                             const platform::String& path) = 0;
 
   /// @brief Create a GPU program from the given shaders for `target`
   virtual GPUProgram* createProgram(RenderTarget* target, Shader* vertex, Shader* fragment) = 0;

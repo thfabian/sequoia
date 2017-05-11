@@ -54,7 +54,7 @@ public:
 
   /// @brief Set if the target is rendered
   void setActive(bool active);
-  
+
   /// @brief Check if a viewport is attached to the target
   bool hasViewport() const;
 
