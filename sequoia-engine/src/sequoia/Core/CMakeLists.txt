@@ -56,6 +56,8 @@ sequoia_add_library(
           Listenable.h
           Logging.h
           Logging.cpp
+          MicroBenchmark.h
+          MicroBenchmark.cpp
           Platform.h
           Platform.cpp          
           Singleton.h

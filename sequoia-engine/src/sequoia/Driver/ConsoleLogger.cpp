@@ -64,12 +64,18 @@ ConsoleLogger::~ConsoleLogger() {
   core::Logger::getSingleton().removeListener(static_cast<LoggerListener*>(this));
 }
 
-void ConsoleLogger::loggerLog(core::LoggingLevel level, const std::string& message, const char* file,
-                        int line) {
+void ConsoleLogger::loggerLog(core::LoggingLevel level, const std::string& message,
+                              const char* file, int line) {
   if(stream_) {
+    if(core::LoggingLevel::Disabled == level)
+      return;
+
     (*stream_) << "[" << LoggerListener::getCurrentTime() << "] ";
 
     switch(level) {
+    case core::LoggingLevel::Debug:
+      (*stream_) << "[DEBUG]";
+      break;
     case core::LoggingLevel::Info:
       (*stream_) << "[INFO]";
       break;
@@ -79,8 +85,7 @@ void ConsoleLogger::loggerLog(core::LoggingLevel level, const std::string& messa
     case core::LoggingLevel::Error:
       (*stream_) << "[ERROR]";
       break;
-    case core::LoggingLevel::Fatal:
-      (*stream_) << "[FATAL]";
+    default:
       break;
     }
 

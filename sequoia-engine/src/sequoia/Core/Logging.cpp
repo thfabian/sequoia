@@ -15,6 +15,7 @@
 
 #include "sequoia/Core/Format.h"
 #include "sequoia/Core/Logging.h"
+#include "sequoia/Core/StringSwitch.h"
 #include <chrono>
 #include <ctime>
 #include <thread>
@@ -61,24 +62,36 @@ internal::LoggerProxy::~LoggerProxy() {
   }
 }
 
+Logger::Logger(const std::string& levelStr)
+    : level_(StringSwitch<LoggingLevel>(levelStr)
+                 .Case("Debug", LoggingLevel::Debug)
+                 .Case("Info", LoggingLevel::Info)
+                 .Case("Warning", LoggingLevel::Warning)
+                 .Case("Error", LoggingLevel::Error)
+                 .Case("Disabled", LoggingLevel::Disabled)
+                 .Default(LoggingLevel::Info)) {}
+
+Logger::Logger(LoggingLevel level) : level_(level) {}
+
+internal::LoggerProxy Logger::logDebug(const char* file, int line) noexcept {
+  return logImpl(file, line, LoggingLevel::Debug);
+}
+
 internal::LoggerProxy Logger::logInfo(const char* file, int line) noexcept {
-  lock_.lock();
-  return internal::LoggerProxy(&lock_, LoggingLevel::Info, &ss_, file, line);
+  return logImpl(file, line, LoggingLevel::Info);
 }
 
 internal::LoggerProxy Logger::logWarning(const char* file, int line) noexcept {
-  lock_.lock();
-  return internal::LoggerProxy(&lock_, LoggingLevel::Warning, &ss_, file, line);
+  return logImpl(file, line, LoggingLevel::Warning);
 }
 
 internal::LoggerProxy Logger::logError(const char* file, int line) noexcept {
-  lock_.lock();
-  return internal::LoggerProxy(&lock_, LoggingLevel::Error, &ss_, file, line);
+  return logImpl(file, line, LoggingLevel::Error);
 }
 
-internal::LoggerProxy Logger::logFatal(const char* file, int line) noexcept {
+internal::LoggerProxy Logger::logImpl(const char* file, int line, LoggingLevel level) noexcept {
   lock_.lock();
-  return internal::LoggerProxy(&lock_, LoggingLevel::Fatal, &ss_, file, line);
+  return internal::LoggerProxy(&lock_, level, &ss_, file, line);
 }
 
 void Logger::log(LoggingLevel level, const std::string& message, const char* file, int line) {

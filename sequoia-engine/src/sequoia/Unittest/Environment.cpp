@@ -32,11 +32,10 @@ Environment::Environment(int argc, char* argv[]) {
 
   singletonManager_ = std::make_unique<core::SingletonManager>();
   singletonManager_->allocateSingleton<ErrorHandler>(argc > 0 ? argv[0] : "SequoiaTest");
-  singletonManager_->allocateSingleton<core::Logger>();
 
   // Parse command-line
   po::options_description desc("Unittest options");
-  desc.add_options()("help", "Display this information.")("logging", "Enable logging");
+  desc.add_options()("help", "Display this information.")("no-log", "Disable logging");
 
   po::variables_map vm;
 
@@ -52,7 +51,10 @@ Environment::Environment(int argc, char* argv[]) {
     std::exit(0);
   }
 
-  if(vm.count("logging"))
+  singletonManager_->allocateSingleton<core::Logger>(
+      vm.count("no-log") ? core::LoggingLevel::Disabled : core::LoggingLevel::Debug);
+
+  if(!vm.count("no-log"))
     singletonManager_->allocateSingleton<driver::ConsoleLogger>();
 
   path_ = SEQUOIA_UNITTEST_RESSOURCEPATH;

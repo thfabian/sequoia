@@ -37,12 +37,12 @@ namespace driver {
 int Driver::run(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
   // Define SingletonManager here to keep it alive
   auto singletonManager = std::make_unique<SingletonManager>();
-  
+
   // Allocate OS specific Singletons
   TCHAR program[MAX_PATH];
   GetModuleFileName(NULL, program, MAX_PATH);
   singletonManager->allocateSingleton<ErrorHandler>(program);
-  
+
   // Initialize options, parse config file and parse command-line
   singletonManager->allocateSingleton<Options>();
 
@@ -77,13 +77,16 @@ int Driver::runImpl() {
   SingletonManager& singletonManager = SingletonManager::getSingleton();
   Options& opt = Options::getSingleton();
 
+  std::string level = opt.Driver.LoggingLevel;
+
   // Enable all options for debugging
   if(opt.Core.Debug) {
     opt.Driver.Logging = true;
+    level = "Debug";
   }
 
   // Setup Logger
-  singletonManager.allocateSingleton<core::Logger>();
+  singletonManager.allocateSingleton<core::Logger>(level);
 
   if(opt.Driver.Logging)
     singletonManager.allocateSingleton<ConsoleLogger>(opt.Driver.LoggingFile);

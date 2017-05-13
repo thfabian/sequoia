@@ -14,6 +14,9 @@
 //===------------------------------------------------------------------------------------------===//
 
 #include "sequoia/Unittest/GL/GLEnvironment.h"
+
+#include "sequoia/Core/MicroBenchmark.h"
+
 #include <gtest/gtest.h>
 
 int main(int argc, char* argv[]) {
@@ -22,6 +25,18 @@ int main(int argc, char* argv[]) {
 
   // Register test environment
   testing::AddGlobalTestEnvironment(new sequoia::unittest::GLEnvironment(argc, argv));
+
+  double value = 4.0;
+  int n = 1000;
+  while(--n) {  
+    MIB_START("test2");
+    value += std::pow(value, 0.5);
+    MIB_STOP("test2");    
+  }
   
-  return RUN_ALL_TESTS();
+  std::cout << value << std::endl;
+  
+  MIB_PRINT("cycle");
+  
+//  return RUN_ALL_TESTS();
 }

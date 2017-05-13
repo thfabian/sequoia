@@ -31,7 +31,7 @@ namespace core {
 /// @enum LoggingLevel
 /// @brief Severity levels
 /// @ingroup core
-enum class LoggingLevel { Info = 0, Warning, Error, Fatal };
+enum class LoggingLevel { Debug = 0, Info, Warning, Error, Disabled };
 
 /// @brief Logger listener
 /// @ingroup core
@@ -73,7 +73,7 @@ public:
   ~LoggerProxy();
 
   template <class StreamableValueType>
-  LoggerProxy& operator<<(StreamableValueType&& value) {
+  inline LoggerProxy& operator<<(StreamableValueType&& value) {
     if(!isNullLogger_)
       (*ss_) << value;
     return *this;
@@ -116,24 +116,39 @@ public:
 /// @threadsafe
 /// @ingroup core
 class SEQUOIA_CORE_API Logger : public Singleton<Logger>, public Listenable<LoggerListener> {
+  const LoggingLevel level_;
   std::stringstream ss_;
   std::mutex lock_;
 
 public:
+  /// @brief Initialize the Logger with a level at which logging will be performed
+  /// @param levelStr     Should be one of `{"Debug", "Info", "Warning", "Error", "Disabled"}`
+  Logger(const std::string& levelStr);
+  Logger(LoggingLevel level);
+
   /// @name Logging
   /// @{
   internal::LoggerProxy logNull() noexcept { return internal::LoggerProxy(); }
+  internal::LoggerProxy logDebug(const char* file, int line) noexcept;
   internal::LoggerProxy logInfo(const char* file, int line) noexcept;
   internal::LoggerProxy logWarning(const char* file, int line) noexcept;
   internal::LoggerProxy logError(const char* file, int line) noexcept;
-  internal::LoggerProxy logFatal(const char* file, int line) noexcept;
   /// @}
 
-  /// @brief Check if there are any listeners registered
-  bool hasListeners() const noexcept { return getNumListener<LoggerListener>() > 0; }
+  /// @brief Check if logging if we need to perform actual logging or if we can return a NullLogger
+  template <LoggingLevel Level>
+  inline bool requiesLogging() const noexcept {
+    return (Level >= level_ && getNumListener<LoggerListener>() > 0);
+  }
+
+  /// @brief Get the current LoggingLevel
+  inline LoggingLevel getLevel() const noexcept { return level_; }
 
   /// @brief Calls `LoggerListener::log` of all listeners
   void log(LoggingLevel level, const std::string& message, const char* file, int line);
+
+private:
+  internal::LoggerProxy logImpl(const char* file, int line, LoggingLevel level) noexcept;
 };
 
 } // namespace core
@@ -148,14 +163,14 @@ public:
 #endif
 #define LOG(Level) SEQUOIA_LOG_##Level##_IMPL()
 
-#define SEQUOIA_LOG_IMPL(func)                                                                     \
-  (sequoia::core::Logger::getSingleton().hasListeners()                                            \
-       ? sequoia::core::Logger::getSingleton().func(__FILE__, __LINE__)                            \
+#define SEQUOIA_LOG_IMPL(Level)                                                                    \
+  (sequoia::core::Logger::getSingleton().requiesLogging<sequoia::core::LoggingLevel::Level>()      \
+       ? sequoia::core::Logger::getSingleton().log##Level(__FILE__, __LINE__)                      \
        : sequoia::core::Logger::getSingleton().logNull())
-#define SEQUOIA_LOG_INFO_IMPL() SEQUOIA_LOG_IMPL(logInfo)
-#define SEQUOIA_LOG_WARNING_IMPL() SEQUOIA_LOG_IMPL(logWarning)
-#define SEQUOIA_LOG_ERROR_IMPL() SEQUOIA_LOG_IMPL(logError)
-#define SEQUOIA_LOG_FATAL_IMPL() SEQUOIA_LOG_IMPL(logFatal)
+#define SEQUOIA_LOG_DEBUG_IMPL() SEQUOIA_LOG_IMPL(Debug)
+#define SEQUOIA_LOG_INFO_IMPL() SEQUOIA_LOG_IMPL(Info)
+#define SEQUOIA_LOG_WARNING_IMPL() SEQUOIA_LOG_IMPL(Warning)
+#define SEQUOIA_LOG_ERROR_IMPL() SEQUOIA_LOG_IMPL(Error)
 
 } // namespace sequoia
 
