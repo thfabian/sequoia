@@ -18,6 +18,7 @@
 
 #include "sequoia/Math/Math.h"
 #include "sequoia/Render/Export.h"
+#include "sequoia/Core/NonCopyable.h"
 
 namespace sequoia {
 
@@ -32,7 +33,7 @@ class GLShaderManager;
 /// tabs on the OpenGL state machine and is it the only one who is allowed to perform OpenGL API
 /// calls
 /// @ingroup gl
-class SEQUOIA_RENDER_API GLRenderer {
+class SEQUOIA_RENDER_API GLRenderer : public NonCopyable {
   GLRenderWindow* target_;
 
   std::unique_ptr<GLShaderManager> shaderManager_;

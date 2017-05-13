@@ -20,6 +20,7 @@ sequoia_add_test(
           TestGLShaderManager.cpp
   DEPENDS SequoiaUnittest
           SequoiaRender
+          SequoiaDriver
           SequoiaCore
           ${SEQUOIA_UNITTEST_EXTERNAL_LIBRARIES}
 )

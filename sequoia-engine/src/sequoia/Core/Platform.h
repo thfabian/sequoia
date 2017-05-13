@@ -35,6 +35,10 @@
 #define _CRT_SECURE_NO_WARNINGS
 #endif
 
+#ifdef APIENTRY
+#undef APIENTRY
+#endif
+
 #include <Windows.h>
 #endif
 
