@@ -41,12 +41,12 @@ public:
   /// @brief Initialize the logger and register as a listener within the core::Logger
   /// @param file     If non-empty the logger will write to the `file` instead of `stdout`
   ConsoleLogger(std::string file = "");
-  
+
   ~ConsoleLogger();
-  
+
   /// @copydoc core::LoggerListener::log
   virtual void loggerLog(core::LoggingLevel level, const std::string& message, const char* file,
-                   int line) override;
+                         int line) override;
 };
 
 } // namespace driver

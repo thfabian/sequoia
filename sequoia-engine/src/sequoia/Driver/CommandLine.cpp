@@ -13,11 +13,11 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
+#include "sequoia/Driver/CommandLine.h"
 #include "sequoia/Core/ErrorHandler.h"
 #include "sequoia/Core/Options.h"
 #include "sequoia/Core/StringRef.h"
 #include "sequoia/Core/Version.h"
-#include "sequoia/Driver/CommandLine.h"
 #include <boost/program_options.hpp>
 #include <functional>
 #include <iostream>

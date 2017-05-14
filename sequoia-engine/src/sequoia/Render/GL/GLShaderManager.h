@@ -36,7 +36,7 @@ class SEQUOIA_RENDER_API GLShaderManager : public NonCopyable {
 public:
   /// @brief Destroy all remaining shaders
   ~GLShaderManager();
-  
+
   /// @brief Create the shader from source and compile it
   ///
   /// If the shader already exists, its `Status` will be moved to `SK_Compiled`.

@@ -13,11 +13,11 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
+#include "sequoia/Driver/ConsoleLogger.h"
 #include "sequoia/Core/ErrorHandler.h"
 #include "sequoia/Core/Options.h"
 #include "sequoia/Core/Platform.h"
 #include "sequoia/Core/UtfString.h"
-#include "sequoia/Driver/ConsoleLogger.h"
 #include <fstream>
 #include <iostream>
 

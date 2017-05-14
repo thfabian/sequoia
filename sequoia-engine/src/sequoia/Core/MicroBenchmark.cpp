@@ -13,11 +13,11 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Core/Exception.h"
 #include "sequoia/Core/MicroBenchmark.h"
+#include "sequoia/Core/Exception.h"
+#include "sequoia/Core/Format.h"
 #include "sequoia/Core/Platform.h"
 #include "sequoia/Core/StringSwitch.h"
-#include "sequoia/Core/Format.h"
 #include <algorithm>
 #include <chrono>
 #include <cmath>
@@ -182,7 +182,7 @@ public:
 
     std::vector<bool> marker;
     std::string timerModeStr = mode_ == TK_Cycle ? "  cycle_mean" : "   nsec_mean";
-        
+
 #ifdef SEQUOIA_PRINT_NON_ASCII
     outStream_ << "┬ (% of parent) name";
 #else
@@ -200,7 +200,7 @@ public:
                       child->Acc[mode_].mean() * child->Acc[mode_].count(), width);
     }
 
-    outStream_ << std::string(width, '-') << "\n";    
+    outStream_ << std::string(width, '-') << "\n";
     outStream_.precision(prec);
     outStream_.flush();
   }

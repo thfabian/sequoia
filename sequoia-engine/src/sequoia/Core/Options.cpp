@@ -13,8 +13,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Core/Format.h"
 #include "sequoia/Core/Options.h"
+#include "sequoia/Core/Format.h"
 #include <iostream>
 
 namespace sequoia {

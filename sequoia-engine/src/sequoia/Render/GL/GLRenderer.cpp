@@ -13,14 +13,14 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
+#include "sequoia/Render/GL/GL.h"
 #include "sequoia/Core/Logging.h"
 #include "sequoia/Core/StringUtil.h"
 #include "sequoia/Render/Camera.h"
-#include "sequoia/Render/GL/GL.h"
-#include "sequoia/Render/RenderSystem.h"
 #include "sequoia/Render/GL/GLRenderWindow.h"
 #include "sequoia/Render/GL/GLRenderer.h"
 #include "sequoia/Render/GL/GLShaderManager.h"
+#include "sequoia/Render/RenderSystem.h"
 #include <glbinding/Binding.h>
 #include <glbinding/ContextInfo.h>
 #include <glbinding/Version.h>
@@ -79,7 +79,7 @@ GLRenderer::~GLRenderer() {
 
   // Destroy all remaining shaders
   shaderManager_.reset();
-  
+
   glfwMakeContextCurrent(target_->getGLFWwindow());
   glbinding::Binding::releaseCurrentContext();
 

@@ -13,9 +13,9 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
+#include "sequoia/Render/RenderTarget.h"
 #include "sequoia/Core/Assert.h"
 #include "sequoia/Render/Camera.h"
-#include "sequoia/Render/RenderTarget.h"
 
 namespace sequoia {
 

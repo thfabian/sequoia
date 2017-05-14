@@ -17,8 +17,6 @@
 
 namespace sequoia {
 
-namespace render {
-
-} // namespace render
+namespace render {} // namespace render
 
 } // namespace sequoia

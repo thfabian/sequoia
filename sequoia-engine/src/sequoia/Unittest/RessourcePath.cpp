@@ -13,9 +13,9 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
+#include "sequoia/Unittest/RessourcePath.h"
 #include "sequoia/Core/UtfString.h"
 #include "sequoia/Unittest/Environment.h"
-#include "sequoia/Unittest/RessourcePath.h"
 
 namespace sequoia {
 

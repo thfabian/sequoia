@@ -13,9 +13,9 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
+#include "sequoia/Render/GL/GLShaderManager.h"
 #include "sequoia/Core/Logging.h"
 #include "sequoia/Render/Exception.h"
-#include "sequoia/Render/GL/GLShaderManager.h"
 #include <fstream>
 #include <sstream>
 
@@ -95,9 +95,9 @@ void GLShaderManager::destroy(GLShader* shader) {
 
   if(shader->status_ <= GLShaderStatus::InMemory)
     return;
-  
+
   LOG(DEBUG) << "Deleting shader (ID=" << shader->id_ << ")";
-  
+
   SEQUOIA_ASSERT(shader->id_ != 0);
   glDeleteShader(shader->id_);
   shader->id_ = 0;

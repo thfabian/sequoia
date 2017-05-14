@@ -40,7 +40,7 @@ protected:
 /// @brief OpenGL RenderSystemObject
 /// @ingroup gl
 #define SEQUOIA_GL_OBJECT(Type)                                                                    \
-  inline static bool classof(const Type* type) noexcept {                                                \
+  inline static bool classof(const Type* type) noexcept {                                          \
     return type->getRenderSystemKind() == RK_OpenGL;                                               \
   }
 

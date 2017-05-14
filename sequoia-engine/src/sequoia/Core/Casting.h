@@ -124,7 +124,7 @@ struct isa_impl_wrap<To, FromTy, FromTy> {
 /// @code
 ///   if (isa<Type>(myVal)) { ... }
 /// @endcode
-/// 
+///
 /// @ingroup core
 template <class X, class Y>
 inline bool isa(const Y& Val) {

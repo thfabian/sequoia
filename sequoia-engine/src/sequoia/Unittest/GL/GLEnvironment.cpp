@@ -21,9 +21,7 @@ namespace unittest {
 
 GLEnvironment::GLEnvironment(int argc, char* argv[]) : Environment(argc, argv) {}
 
-void GLEnvironment::SetUp() {
-  renderSystem_ = render::RenderSystem::create(render::RK_OpenGL);
-}
+void GLEnvironment::SetUp() { renderSystem_ = render::RenderSystem::create(render::RK_OpenGL); }
 
 void GLEnvironment::TearDown() { renderSystem_.reset(); }
 

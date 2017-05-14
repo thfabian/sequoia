@@ -16,9 +16,9 @@
 #ifndef SEQUOIA_RENDER_GL_GLRENDERER_H
 #define SEQUOIA_RENDER_GL_GLRENDERER_H
 
+#include "sequoia/Core/NonCopyable.h"
 #include "sequoia/Math/Math.h"
 #include "sequoia/Render/Export.h"
-#include "sequoia/Core/NonCopyable.h"
 
 namespace sequoia {
 

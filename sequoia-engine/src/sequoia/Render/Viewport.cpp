@@ -13,8 +13,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Render/Camera.h"
 #include "sequoia/Render/Viewport.h"
+#include "sequoia/Render/Camera.h"
 
 namespace sequoia {
 
