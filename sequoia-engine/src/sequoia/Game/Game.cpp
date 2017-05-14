@@ -62,7 +62,10 @@ void Game::init() {
   try {
 
     // Initialize the RenderSystem
-    renderSystem_ = RenderSystem::create(RenderSystem::RK_OpenGL);
+    renderSystem_ = RenderSystem::create(RK_OpenGL);
+
+    if(Options::getSingleton().Core.Debug)
+      renderSystem_->setDebugMode(true);
 
     // Create the main-window
     RenderWindow::WindowHint hint;
@@ -94,7 +97,7 @@ void Game::init() {
     // Initialize the main-window
     mainWindow_->init();
 
-  } catch(render::RenderSystemInitException& e) {
+  } catch(render::RenderSystemException& e) {
     ErrorHandler::getSingleton().fatal(e.what());
   }
 

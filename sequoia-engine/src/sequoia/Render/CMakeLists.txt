@@ -19,13 +19,15 @@ sequoia_add_library(
           Camera.cpp
           Export.h
           Exception.h
-          GPUProgram.h
+          Program.h
+          Program.cpp
           HardwareBuffer.h
           HardwareBufferVertex.h
           HardwareBufferIndex.h
           RenderFwd.h
           RenderSystem.h
           RenderSystem.cpp
+          RenderSystemObject.h
           RenderTarget.h
           RenderTarget.cpp
           RenderWindow.h

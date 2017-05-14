@@ -21,7 +21,7 @@ namespace sequoia {
 namespace render {
 
 class Camera;
-class GPUProgram;
+class Program;
 class RenderSystem;
 class RenderWindow;
 class RenderData;
@@ -29,6 +29,14 @@ class RenderTarget;
 class Shader;
 class ViewFrustum;
 class Viewport;
+
+class GLProgram;
+class GLProgramManager;
+class GLRenderer;
+class GLRenderSystem;
+class GLRenderWindow;
+class GLShader;
+class GLShaderManager;
 
 } // namespace render
 

@@ -13,19 +13,26 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Render/Shader.h"
+#ifndef SEQUOIA_UNITTEST_RESSOURCEPATH_H
+#define SEQUOIA_UNITTEST_RESSOURCEPATH_H
+
+#include "sequoia/Core/Platform.h"
+#include "sequoia/Unittest/Export.h"
 
 namespace sequoia {
 
-namespace render {
+namespace unittest {
 
-Shader::~Shader() {}
+/// @brief Get the full path of the ressource file specified by the `path` relative to the ressource
+/// root (i.e `Environment::getRessourcePath()`)
+///
+/// @param path   Path relative to the ressource root
+///
+/// @ingroup unittest
+extern SEQUOIA_UNITTEST_API platform::String resolveRessourcePath(const char* path);
 
-Shader::Shader(RenderSystemKind kind, Shader::ShaderType type)
-    : RenderSystemObject(kind), type_(type) {}
-
-Shader::ShaderType Shader::getType() const { return type_; }
-
-} // namespace render
+} // namespace unittest
 
 } // namespace sequoia
+
+#endif

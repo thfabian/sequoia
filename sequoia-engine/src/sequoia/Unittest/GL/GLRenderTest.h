@@ -13,19 +13,36 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Render/Shader.h"
+#ifndef SEQUOIA_UNITTEST_GL_GLRENDERTEST_H
+#define SEQUOIA_UNITTEST_GL_GLRENDERTEST_H
+
+#include "sequoia/Core/NonCopyable.h"
+#include "sequoia/Render/GL/GLRenderWindow.h"
+#include "sequoia/Unittest/Export.h"
+#include <gtest/gtest.h>
 
 namespace sequoia {
 
-namespace render {
+namespace unittest {
 
-Shader::~Shader() {}
+/// @brief Handle creation and initialization of OpenGL RenderWindows for unittesting
+/// @ingroup unittest
+class SEQUOIA_UNITTEST_API GLRenderTest : public testing::Test, public NonCopyable {
+  render::GLRenderWindow* window_;
 
-Shader::Shader(RenderSystemKind kind, Shader::ShaderType type)
-    : RenderSystemObject(kind), type_(type) {}
+protected:
+  /// @brief Get the active window
+  render::GLRenderWindow* getWindow() const;
 
-Shader::ShaderType Shader::getType() const { return type_; }
+  /// @brief Register and initialize the window
+  void SetUp();
 
-} // namespace render
+  /// @brief Destroy the window
+  void TearDown();
+};
+
+} // namespace unittest
 
 } // namespace sequoia
+
+#endif

@@ -13,9 +13,10 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
+#include "sequoia/Core/Unreachable.h"
+#include "sequoia/Render/Exception.h"
 #include "sequoia/Render/GL/GLRenderSystem.h"
 #include "sequoia/Render/RenderSystem.h"
-#include "sequoia/Core/Unreachable.h"
 
 namespace sequoia {
 
@@ -27,13 +28,17 @@ std::unique_ptr<RenderSystem> RenderSystem::create(RenderSystemKind kind) {
   switch(kind) {
   case RK_OpenGL:
     return std::make_unique<GLRenderSystem>();
+  default:
+    SEQUOIA_THROW(RenderSystemException, "invalid RenderSystem");
   }
-  sequoia_unreachable("invalid RenderSystem");
+  return nullptr;
 }
 
-RenderSystem::RenderSystemKind RenderSystem::getKind() const { return kind_; }
+void RenderSystem::setDebugMode(bool debugMode) { debugMode_ = debugMode; }
 
-RenderSystem::RenderSystem(RenderSystem::RenderSystemKind kind) : kind_(kind) {}
+bool RenderSystem::debugMode() const { return debugMode_; }
+
+RenderSystem::RenderSystem(RenderSystemKind kind) : RenderSystemObject(kind), debugMode_(false) {}
 
 } // namespace render
 

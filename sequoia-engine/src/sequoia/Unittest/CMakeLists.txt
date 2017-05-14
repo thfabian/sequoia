@@ -21,9 +21,13 @@ sequoia_add_library(
   SOURCES Environment.h
           Environment.cpp
           Export.h
+          RessourcePath.h
+          RessourcePath.cpp
 
           GL/GLEnvironment.h
           GL/GLEnvironment.cpp
+          GL/GLRenderTest.h
+          GL/GLRenderTest.cpp
   DEPENDS SequoiaDriver
           SequoiaRender
           SequoiaCore

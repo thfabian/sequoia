@@ -16,14 +16,16 @@
 #ifndef SEQUOIA_RENDER_RENDERSYSTEM_H
 #define SEQUOIA_RENDER_RENDERSYSTEM_H
 
+#include "sequoia/Core/NonCopyable.h"
 #include "sequoia/Core/Platform.h"
 #include "sequoia/Core/Singleton.h"
-#include "sequoia/Core/NonCopyable.h"
 #include "sequoia/Render/Export.h"
 #include "sequoia/Render/RenderFwd.h"
+#include "sequoia/Render/RenderSystemObject.h"
 #include "sequoia/Render/RenderWindow.h"
 #include "sequoia/Render/Shader.h"
 #include <memory>
+#include <set>
 #include <string>
 
 namespace sequoia {
@@ -37,10 +39,8 @@ namespace render {
 /// time.
 ///
 /// @ingroup render
-class SEQUOIA_RENDER_API RenderSystem : public Singleton<RenderSystem> {
+class SEQUOIA_RENDER_API RenderSystem : public Singleton<RenderSystem>, public RenderSystemObject {
 public:
-  enum RenderSystemKind { RK_OpenGL };
-
   /// @brief Create the RenderSystem of the given `kind`
   /// @remark Terminates the program on failure
   static std::unique_ptr<RenderSystem> create(RenderSystemKind kind);
@@ -68,17 +68,24 @@ public:
   virtual Shader* loadShader(RenderTarget* target, Shader::ShaderType type,
                              const platform::String& path) = 0;
 
-  /// @brief Create a GPU program from the given shaders for `target`
-  virtual GPUProgram* createProgram(RenderTarget* target, Shader* vertex, Shader* fragment) = 0;
+  /// @brief Destroy the `shader` of `target`
+  virtual void destroyShader(RenderTarget* target, Shader* shader) = 0;
 
-  /// @brief Get the kind of render-system
-  RenderSystemKind getKind() const;
+  /// @brief Create a GPU program from the given `shaders` for `target`
+  virtual Program* createProgram(RenderTarget* target, const std::set<Shader*>& shaders) = 0;
+
+  /// @brief Set if we run in debug-mode (needs to be set before creating windows/targets to take
+  /// full effect)
+  void setDebugMode(bool debugMode);
+
+  /// @brief Check if we run in debug-mode
+  bool debugMode() const;
 
 protected:
   RenderSystem(RenderSystemKind kind);
 
 private:
-  RenderSystemKind kind_;
+  bool debugMode_;
 };
 
 } // namespace render

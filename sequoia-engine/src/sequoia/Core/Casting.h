@@ -21,8 +21,6 @@
 
 namespace sequoia {
 
-namespace core {
-
 //===------------------------------------------------------------------------------------------===//
 //     isa<x> Support Templates
 //===------------------------------------------------------------------------------------------===//
@@ -41,8 +39,8 @@ struct simplify_type {
 template <typename From>
 struct simplify_type<const From> {
   typedef typename simplify_type<From>::SimpleType NonConstSimpleType;
-  typedef typename add_const_past_pointer<NonConstSimpleType>::type SimpleType;
-  typedef typename add_lvalue_reference_if_not_pointer<SimpleType>::type RetType;
+  typedef typename core::add_const_past_pointer<NonConstSimpleType>::type SimpleType;
+  typedef typename core::add_lvalue_reference_if_not_pointer<SimpleType>::type RetType;
   static RetType getSimplifiedValue(const From& Val) {
     return simplify_type<From>::getSimplifiedValue(const_cast<From&>(Val));
   }
@@ -126,6 +124,8 @@ struct isa_impl_wrap<To, FromTy, FromTy> {
 /// @code
 ///   if (isa<Type>(myVal)) { ... }
 /// @endcode
+/// 
+/// @ingroup core
 template <class X, class Y>
 inline bool isa(const Y& Val) {
   return isa_impl_wrap<X, const Y, typename simplify_type<const Y>::SimpleType>::doit(Val);
@@ -218,6 +218,8 @@ struct is_simple_type {
 /// @code
 ///   cast<Instruction>(myVal)->getParent()
 /// @endcode
+///
+/// @ingroup core
 template <class X, class Y>
 inline typename std::enable_if<!is_simple_type<Y>::value,
                                typename cast_retty<X, const Y>::ret_type>::type
@@ -277,6 +279,8 @@ inline typename cast_retty<X, Y*>::ret_type cast_or_null(Y* Val) {
 /// @code
 ///  if (const Instruction *I = dyn_cast<Instruction>(myVal)) { ... }
 /// @endcode
+///
+/// @ingroup core
 template <class X, class Y>
 inline typename std::enable_if<!is_simple_type<Y>::value,
                                typename cast_retty<X, const Y>::ret_type>::type
@@ -312,8 +316,6 @@ template <class X, class Y>
 inline typename cast_retty<X, Y*>::ret_type dyn_cast_or_null(Y* Val) {
   return (Val && isa<X>(Val)) ? cast<X>(Val) : nullptr;
 }
-
-} // namespace casting
 
 } // namespace sequoia
 

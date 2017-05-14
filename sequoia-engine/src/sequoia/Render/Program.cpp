@@ -13,18 +13,15 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Render/Shader.h"
+#include "sequoia/Render/Program.h"
 
 namespace sequoia {
 
 namespace render {
 
-Shader::~Shader() {}
+Program::~Program() {}
 
-Shader::Shader(RenderSystemKind kind, Shader::ShaderType type)
-    : RenderSystemObject(kind), type_(type) {}
-
-Shader::ShaderType Shader::getType() const { return type_; }
+Program::Program(RenderSystemKind kind) : RenderSystemObject(kind) {}
 
 } // namespace render
 

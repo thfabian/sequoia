@@ -64,24 +64,7 @@ class SEQUOIA_RENDER_API GLShader : public Shader {
 
 public:
   /// @brief Get OpenGL shader type
-  static GLenum getGLShaderType(ShaderType s) {
-    switch(s) {
-    case ST_Compute:
-      return GL_COMPUTE_SHADER;
-    case ST_Vertex:
-      return GL_VERTEX_SHADER;
-    case ST_TessControl:
-      return GL_TESS_CONTROL_SHADER;
-    case ST_TessEvaluation:
-      return GL_TESS_EVALUATION_SHADER;
-    case ST_Geometry:
-      return GL_GEOMETRY_SHADER;
-    case ST_Fragment:
-      return GL_FRAGMENT_SHADER;
-    default:
-      sequoia_unreachable("invalid ShaderType");
-    }
-  }
+  static GLenum getGLShaderType(ShaderType s);
 
   /// @brief Create the shader object by setting to path to its supposed location on disk
   ///
@@ -99,6 +82,11 @@ public:
 
   /// @copydoc Shader::getSourceCode
   std::string getSourceCode() const override;
+
+  /// @brief Get the status of the Shader
+  GLShaderStatus getStatus() const;
+
+  SEQUOIA_GL_OBJECT(Shader);
 };
 
 } // namespace render

@@ -27,11 +27,6 @@ namespace render {
 /// @ingroup driver
 SEQUOIA_DECLARE_EXCPETION(RenderSystemException)
 
-/// @class RenderSystemInitException
-/// @brief Exception thrown during initialization of the RenderSystem
-/// @ingroup driver
-SEQUOIA_DECLARE_EXCPETION_BASE(RenderSystemInitException, RenderSystemException)
-
 } // namespace render
 
 } // namespace sequoia

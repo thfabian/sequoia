@@ -13,21 +13,25 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Core/UtfString.h"
+#include "sequoia/Core/Logging.h"
 #include "sequoia/Render/Exception.h"
 #include "sequoia/Render/GL/GLShaderManager.h"
 #include <fstream>
 #include <sstream>
 
+#include <iostream>
+
 namespace sequoia {
 
 namespace render {
 
-void GLShaderManager::make(GLShader* shader, GLShaderStatus status) {
-  if(status == GLShaderStatus::Compiled || status == GLShaderStatus::OnDisk)
+void GLShaderManager::make(GLShader* shader, GLShaderStatus requestedStatus) {
+  if(shader->status_ == GLShaderStatus::Compiled || requestedStatus == GLShaderStatus::OnDisk)
     return;
 
   if(shader->status_ == GLShaderStatus::OnDisk) {
+    LOG(DEBUG) << "Loading shader from disk \"" << shader->path_ << "\"";
+
     std::ifstream file(shader->path_);
 
     if(!file.is_open())
@@ -40,7 +44,7 @@ void GLShaderManager::make(GLShader* shader, GLShaderStatus status) {
     shader->status_++;
   }
 
-  if(status == GLShaderStatus::InMemory)
+  if(requestedStatus == GLShaderStatus::InMemory)
     return;
 
   if(shader->status_ == GLShaderStatus::InMemory) {
@@ -49,15 +53,22 @@ void GLShaderManager::make(GLShader* shader, GLShaderStatus status) {
       idLookupMap_.erase(shader->id_);
 
     shader->id_ = glCreateShader(GLShader::getGLShaderType(shader->type_));
+    if(shader->id_ == 0)
+      SEQUOIA_THROW(RenderSystemException, PLATFORM_STR("cannot create shader: '%s'"),
+                    shader->path_.c_str());
+
     idLookupMap_.emplace(shader->id_, pathLookupMap_[shader->path_]);
 
+    LOG(DEBUG) << "Created shader (ID=" << shader->id_ << ")";
     shader->status_++;
   }
 
-  if(status == GLShaderStatus::Created)
+  if(requestedStatus == GLShaderStatus::Created)
     return;
 
   if(shader->status_ == GLShaderStatus::Created) {
+    LOG(DEBUG) << "Compiling shader (ID=" << shader->id_ << ") ...";
+
     const char* code = shader->code_.c_str();
     glShaderSource(shader->id_, 1, &code, nullptr);
     glCompileShader(shader->id_);
@@ -75,8 +86,24 @@ void GLShaderManager::make(GLShader* shader, GLShaderStatus status) {
       SEQUOIA_THROW(RenderSystemException, "failed to compile shader: '%s'", errorMessage.data());
     }
 
+    LOG(DEBUG) << "Successfully compiled OpenGL shader (ID=" << shader->id_ << ")";
     shader->status_++;
   }
+}
+
+void GLShaderManager::destroy(GLShader* shader) {
+
+  if(shader->status_ <= GLShaderStatus::InMemory)
+    return;
+  
+  LOG(DEBUG) << "Deleting shader (ID=" << shader->id_ << ")";
+  
+  SEQUOIA_ASSERT(shader->id_ != 0);
+  glDeleteShader(shader->id_);
+  shader->id_ = 0;
+
+  LOG(DEBUG) << "Successfully deleted shader";
+  shader->status_ = GLShaderStatus::InMemory;
 }
 
 GLShader* GLShaderManager::get(unsigned int id) const {
@@ -84,6 +111,11 @@ GLShader* GLShaderManager::get(unsigned int id) const {
   SEQUOIA_ASSERT_MSG(it != idLookupMap_.end(),
                      "invalid shader id or shader has not yet been created");
   return shaderList_[it->second].get();
+}
+
+GLShaderManager::~GLShaderManager() {
+  for(auto& shaderPtr : shaderList_)
+    destroy(shaderPtr.get());
 }
 
 GLShader* GLShaderManager::create(GLShader::ShaderType type, const platform::String& path,

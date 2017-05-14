@@ -65,9 +65,8 @@ GLRenderWindow::GLRenderWindow(GLRenderSystem* renderSystem,
     SEQUOIA_ASSERT(monitors);
 
     if(windowHints.Monitor >= numMonitors)
-      SEQUOIA_THROW(RenderSystemInitException,
-                    "invalid monitor '%i' (max number of monitors is %i)", windowHints.Monitor,
-                    numMonitors);
+      SEQUOIA_THROW(RenderSystemException, "invalid monitor '%i' (max number of monitors is %i)",
+                    windowHints.Monitor, numMonitors);
     monitor = monitors[windowHints.Monitor];
   }
 
@@ -97,7 +96,7 @@ GLRenderWindow::GLRenderWindow(GLRenderSystem* renderSystem,
   LOG(INFO) << "Using window mode: " << windowHints.WindowMode;
 
   if(!window_)
-    SEQUOIA_THROW(RenderSystemInitException,
+    SEQUOIA_THROW(RenderSystemException,
                   "failed to initialize GLFW window, requested OpenGL (%i. %i)",
                   windowHints.GLMajorVersion, windowHints.GLMinorVersion);
 

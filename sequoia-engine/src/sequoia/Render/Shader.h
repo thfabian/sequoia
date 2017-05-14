@@ -16,8 +16,10 @@
 #ifndef SEQUOIA_RENDER_SHADER_H
 #define SEQUOIA_RENDER_SHADER_H
 
+#include "sequoia/Core/NonCopyable.h"
 #include "sequoia/Core/Platform.h"
 #include "sequoia/Render/Export.h"
+#include "sequoia/Render/RenderSystemObject.h"
 
 namespace sequoia {
 
@@ -30,7 +32,7 @@ namespace render {
 ///
 /// @see RenderSystem::loadShader
 /// @ingroup render
-class SEQUOIA_RENDER_API Shader {
+class SEQUOIA_RENDER_API Shader : public RenderSystemObject, public NonCopyable {
 public:
   /// @brief Enumerates the types of shaders which can run on the GPU
   enum ShaderType {
@@ -42,13 +44,15 @@ public:
     ST_Fragment
   };
 
-  /// @brief Create a new shader object
-  Shader(ShaderType type);
+  virtual ~Shader();
+  Shader(RenderSystemKind kind, ShaderType type);
 
   /// @brief Get the type of the shader
   ShaderType getType() const;
 
-  /// @brief Get the unique identifer of the shader
+  /// @brief Get the identifer of the shader
+  ///
+  /// Note that IDs might be reused after a shader has been destroyed.
   virtual unsigned int getID() const = 0;
   operator unsigned int() { return getID(); }
 

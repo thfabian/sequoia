@@ -64,16 +64,19 @@ public:
   virtual Shader* loadShader(RenderTarget* target, Shader::ShaderType type,
                              const platform::String& path) override;
 
+  /// @brief Deregister the shader from OpenGL
+  virtual void destroyShader(RenderTarget* target, Shader* shader) override;
+
   /// @brief Link the shaders into a program if a program of the given shaders does not yet exist
-  virtual GPUProgram* createProgram(RenderTarget* target, Shader* vertex,
-                                    Shader* fragment) override;
+  virtual Program* createProgram(RenderTarget* target, const std::set<Shader*>& shaders) override;
 
   /// @brief Register the Renderer of the target
   void registerRenderer(RenderTarget* target, GLRenderer* renderer);
 
-  static bool classof(const RenderSystem* renderSystem) {
-    return renderSystem->getKind() == RK_OpenGL;
-  }
+  /// @brief Get the renderer of `target`
+  GLRenderer* getRenderer(RenderTarget* target) const;
+
+  SEQUOIA_GL_OBJECT(RenderSystem);
 };
 
 } // namespace render

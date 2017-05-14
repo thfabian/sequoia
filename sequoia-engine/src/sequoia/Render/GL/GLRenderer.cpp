@@ -14,10 +14,10 @@
 //===------------------------------------------------------------------------------------------===//
 
 #include "sequoia/Core/Logging.h"
-#include "sequoia/Core/Options.h"
 #include "sequoia/Core/StringUtil.h"
 #include "sequoia/Render/Camera.h"
 #include "sequoia/Render/GL/GL.h"
+#include "sequoia/Render/RenderSystem.h"
 #include "sequoia/Render/GL/GLRenderWindow.h"
 #include "sequoia/Render/GL/GLRenderer.h"
 #include "sequoia/Render/GL/GLShaderManager.h"
@@ -43,7 +43,6 @@ static std::string functionCallToString(const glbinding::FunctionCall& call) {
 }
 
 GLRenderer::GLRenderer(GLRenderWindow* target) : target_(target) {
-  Options& opt = Options::getSingleton();
   LOG(INFO) << "Creating OpenGL Renderer " << this << " ...";
 
   // Bind the context to the current thread
@@ -53,7 +52,7 @@ GLRenderer::GLRenderer(GLRenderWindow* target) : target_(target) {
   glbinding::Binding::initialize(false);
 
   // Set debugging callbacks
-  if(opt.Core.Debug) {
+  if(RenderSystem::getSingleton().debugMode()) {
     using namespace glbinding;
     setCallbackMaskExcept(CallbackMask::After | CallbackMask::ParametersAndReturnValue,
                           {"glGetError"});
@@ -78,6 +77,9 @@ GLRenderer::GLRenderer(GLRenderWindow* target) : target_(target) {
 GLRenderer::~GLRenderer() {
   LOG(INFO) << "Terminating OpenGL Renderer " << this << " ... ";
 
+  // Destroy all remaining shaders
+  shaderManager_.reset();
+  
   glfwMakeContextCurrent(target_->getGLFWwindow());
   glbinding::Binding::releaseCurrentContext();
 

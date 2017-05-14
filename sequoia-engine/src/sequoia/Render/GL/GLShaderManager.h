@@ -34,6 +34,9 @@ namespace render {
 /// @ingroup gl
 class SEQUOIA_RENDER_API GLShaderManager : public NonCopyable {
 public:
+  /// @brief Destroy all remaining shaders
+  ~GLShaderManager();
+  
   /// @brief Create the shader from source and compile it
   ///
   /// If the shader already exists, its `Status` will be moved to `SK_Compiled`.
@@ -48,7 +51,11 @@ public:
 
   /// @brief Convert the shader to `status`
   /// @throws RenderSystemException   Failed to compile shader
-  void make(GLShader* shader, GLShaderStatus status);
+  void make(GLShader* shader, GLShaderStatus requestedStatus);
+
+  /// @brief Destroy the shader be deregistering it from OpenGL (i.e it's status will be
+  /// `GLShaderStatus::InMemory`)
+  void destroy(GLShader* shader);
 
   /// @brief Convert the shader to `SK_Compiled`
   /// @see GLShaderLoader::make

@@ -83,7 +83,7 @@ std::string Environment::testName() const {
   return "";
 }
 
-const platform::String Environment::getRessourcePath() const { return path_.native(); }
+const platform::Path& Environment::getRessourcePath() const { return path_; }
 
 } // namespace unittest
 

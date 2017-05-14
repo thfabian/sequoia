@@ -13,6 +13,7 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
+#include "sequoia/Core/Casting.h"
 #include "sequoia/Core/ErrorHandler.h"
 #include "sequoia/Core/Logging.h"
 #include "sequoia/Render/Exception.h"
@@ -32,7 +33,7 @@ static void GLFWErrorCallbackSoft(int error, const char* description) {
 
 static void GLFWErrorCallbackHard(int error, const char* description) {
   GLFWErrorCallbackSoft(error, description);
-  SEQUOIA_THROW(RenderSystemInitException, description);
+  SEQUOIA_THROW(RenderSystemException, description);
 }
 
 GLRenderSystem::GLRenderSystem() : RenderSystem(RK_OpenGL) {
@@ -88,12 +89,20 @@ Shader* GLRenderSystem::loadShader(RenderTarget* target, Shader::ShaderType type
   return rendererMap_[target]->getShaderManager()->create(type, path);
 }
 
-GPUProgram* GLRenderSystem::createProgram(RenderTarget* target, Shader* vertex, Shader* fragment) {
+void GLRenderSystem::destroyShader(RenderTarget* target, Shader* shader) {
+  rendererMap_[target]->getShaderManager()->destroy(dyn_cast<GLShader>(shader));
+}
+
+Program* GLRenderSystem::createProgram(RenderTarget* target, const std::set<Shader*>& shaders) {
   return nullptr;
 }
 
 void GLRenderSystem::registerRenderer(RenderTarget* target, GLRenderer* renderer) {
   rendererMap_[target] = renderer;
+}
+
+GLRenderer* GLRenderSystem::getRenderer(RenderTarget* target) const {
+  return rendererMap_.find(target)->second;
 }
 
 } // namespace render

@@ -13,19 +13,30 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Render/Shader.h"
+#include "sequoia/Core/Logging.h"
+#include "sequoia/Render/GL/GLRenderWindow.h"
+#include "sequoia/Render/RenderSystem.h"
+#include "sequoia/Unittest/GL/GLRenderTest.h"
 
 namespace sequoia {
 
-namespace render {
+namespace unittest {
 
-Shader::~Shader() {}
+render::GLRenderWindow* GLRenderTest::getWindow() const { return window_; }
 
-Shader::Shader(RenderSystemKind kind, Shader::ShaderType type)
-    : RenderSystemObject(kind), type_(type) {}
+void GLRenderTest::SetUp() {
+  render::RenderWindow::WindowHint hints;
+  hints.HideWindow = true;
+  hints.GLMajorVersion = 4;
+  hints.GLMinorVersion = 5;
+  hints.WindowMode = render::RenderWindow::WindowHint::WK_Window;
+  window_ = (render::GLRenderWindow*)render::RenderSystem::getSingleton().createWindow(hints);
 
-Shader::ShaderType Shader::getType() const { return type_; }
+  window_->init();
+}
 
-} // namespace render
+void GLRenderTest::TearDown() { render::RenderSystem::getSingleton().destroyTarget(window_); }
+
+} // namespace unittest
 
 } // namespace sequoia

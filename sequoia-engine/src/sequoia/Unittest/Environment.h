@@ -20,6 +20,7 @@
 #include "sequoia/Core/Singleton.h"
 #include "sequoia/Core/SingletonManager.h"
 #include "sequoia/Unittest/Export.h"
+#include "sequoia/Unittest/RessourcePath.h"
 #include <gtest/gtest.h>
 #include <string>
 #include <vector>
@@ -55,7 +56,7 @@ public:
   std::string testName() const;
 
   /// @brief Get the ressource path of the unittest
-  const platform::String getRessourcePath() const;
+  const platform::Path& getRessourcePath() const;
 
 private:
   platform::Path path_;
