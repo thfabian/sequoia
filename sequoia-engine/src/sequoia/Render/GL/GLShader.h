@@ -16,8 +16,6 @@
 #ifndef SEQUOIA_RENDER_GL_GLSHADER_H
 #define SEQUOIA_RENDER_GL_GLSHADER_H
 
-#include "sequoia/Core/EnumState.h"
-#include "sequoia/Core/Unreachable.h"
 #include "sequoia/Render/GL/GL.h"
 #include "sequoia/Render/Shader.h"
 
@@ -27,23 +25,14 @@ namespace render {
 
 class GLShaderManager;
 
-/// @brief Status of the OpenGL shader
+/// @brief Status of an OpenGL shader
+/// @ingroup gl
 enum class GLShaderStatus {
   OnDisk = 0, ///< Shader has not been loaded from disk and path to shader may not exist
   InMemory,   ///< Shader was successfully loaded into memory
   Created,    ///< Shader has been registered within OpenGL and thus a unique ID has been assigned
   Compiled    ///< Shader has been successfully compiled and is ready for usage in programs
 };
-
-using GLShaderStatusState =
-    core::EnumState<GLShaderStatus, GLShaderStatus::OnDisk, GLShaderStatus::InMemory,
-                    GLShaderStatus::Created, GLShaderStatus::Compiled>;
-
-inline GLShaderStatus operator++(GLShaderStatus& s, int) {
-  auto sold = s;
-  GLShaderStatusState::advance(s);
-  return sold;
-}
 
 /// @brief OpenGL shader
 /// @ingroup gl
@@ -56,6 +45,9 @@ class SEQUOIA_RENDER_API GLShader : public Shader {
   /// OpenGL shader index
   unsigned int id_;
 
+  /// Reference to the manager
+  GLShaderManager* manager_;
+
   /// Source code of the shader
   std::string code_;
 
@@ -64,18 +56,20 @@ class SEQUOIA_RENDER_API GLShader : public Shader {
 
 public:
   /// @brief Get OpenGL shader type
-  static GLenum getGLShaderType(ShaderType s);
+  static GLenum getGLShaderType(ShaderType type);
 
   /// @brief Create the shader object by setting to path to its supposed location on disk
   ///
   /// Shaders should only be created via the factory method GLShaderManager::create.
-  GLShader(ShaderType type, const platform::String& path);
+  GLShader(ShaderType type, const platform::String& path, GLShaderManager* manager);
 
   /// @brief Check if the shader is valid i.e can be linked into a GPUProgram
   bool isValid() const;
 
-  /// @copydoc Shader::getID
-  unsigned int getID() const override;
+  /// @brief Get the identifer of the shader
+  ///
+  /// Note that IDs might be reused after a shader has been destroyed.
+  unsigned int getID() const;
 
   /// @copydoc Shader::getSourcePath
   platform::String getSourcePath() const override;
@@ -85,6 +79,9 @@ public:
 
   /// @brief Get the status of the Shader
   GLShaderStatus getStatus() const;
+
+  /// @brief Get the manager
+  GLShaderManager* getManager() const;
 
   SEQUOIA_GL_OBJECT(Shader);
 };

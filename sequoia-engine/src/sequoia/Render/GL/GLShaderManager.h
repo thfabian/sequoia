@@ -39,25 +39,22 @@ public:
 
   /// @brief Create the shader from source and compile it
   ///
-  /// If the shader already exists, its `Status` will be moved to `SK_Compiled`.
-  ///
   /// @param type             Type of the shader
   /// @param path             Path to the shader source
   /// @param requestedStatus  Requested target status
-  ///
-  /// @throws RenderSystemException   Failed to compile shader
+  /// @throws RenderSystemException
   GLShader* create(GLShader::ShaderType type, const platform::String& path,
                    GLShaderStatus requestedStatus = GLShaderStatus::Compiled);
 
   /// @brief Convert the shader to `status`
-  /// @throws RenderSystemException   Failed to compile shader
+  /// @throws RenderSystemException
   void make(GLShader* shader, GLShaderStatus requestedStatus);
 
-  /// @brief Destroy the shader be deregistering it from OpenGL (i.e it's status will be
+  /// @brief Destroy the shader by deregistering it from OpenGL (i.e it's status will be
   /// `GLShaderStatus::InMemory`)
   void destroy(GLShader* shader);
 
-  /// @brief Convert the shader to `SK_Compiled`
+  /// @brief Convert the shader to `GLProgramStatus::Linked`
   /// @see GLShaderLoader::make
   void makeValid(GLShader* shader) { make(shader, GLShaderStatus::Compiled); }
 
@@ -65,7 +62,7 @@ public:
   GLShader* get(unsigned int id) const;
 
 private:
-  /// Record of all the registered and compiled shaders
+  /// Record of all the registered shaders
   std::vector<std::unique_ptr<GLShader>> shaderList_;
 
   /// Lookup map for shader ID

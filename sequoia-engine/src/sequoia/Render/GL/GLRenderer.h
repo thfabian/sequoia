@@ -26,6 +26,7 @@ namespace render {
 
 class GLRenderWindow;
 class GLShaderManager;
+class GLProgramManager;
 
 /// @brief OpenGL based renderer
 ///
@@ -37,6 +38,7 @@ class SEQUOIA_RENDER_API GLRenderer : public NonCopyable {
   GLRenderWindow* target_;
 
   std::unique_ptr<GLShaderManager> shaderManager_;
+  std::unique_ptr<GLProgramManager> programManager_;  
 
 public:
   /// @brief Initialize the OpenGL context and bind it to the calling thread
@@ -48,8 +50,11 @@ public:
   /// @brief Render the given target
   void render();
 
-  /// @brief Get the ShaderManager
+  /// @brief Get the shader manager
   GLShaderManager* getShaderManager();
+  
+  /// @brief Get the program manager
+  GLProgramManager* getProgramManager();
 };
 
 } // namespace render

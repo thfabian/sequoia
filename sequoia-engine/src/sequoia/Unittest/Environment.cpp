@@ -13,11 +13,11 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Unittest/Environment.h"
 #include "sequoia/Core/ErrorHandler.h"
 #include "sequoia/Core/Logging.h"
 #include "sequoia/Driver/ConsoleLogger.h"
 #include "sequoia/Unittest/Config.h"
+#include "sequoia/Unittest/Environment.h"
 #include <boost/program_options.hpp>
 
 namespace po = boost::program_options;
@@ -29,13 +29,18 @@ SEQUOIA_DECLARE_SINGLETON(unittest::Environment);
 namespace unittest {
 
 Environment::Environment(int argc, char* argv[]) {
-
   singletonManager_ = std::make_unique<core::SingletonManager>();
   singletonManager_->allocateSingleton<ErrorHandler>(argc > 0 ? argv[0] : "SequoiaTest");
 
   // Parse command-line
   po::options_description desc("Unittest options");
-  desc.add_options()("help", "Display this information.")("no-log", "Disable logging");
+  desc.add_options()
+      // --help
+      ("help", "Display this information.")
+      // --no-debug
+      ("no-debug", "Disable debug mode.")
+      // --no-log
+      ("no-log", "Disable logging.");
 
   po::variables_map vm;
 
@@ -56,6 +61,8 @@ Environment::Environment(int argc, char* argv[]) {
 
   if(!vm.count("no-log"))
     singletonManager_->allocateSingleton<driver::ConsoleLogger>();
+
+  debugMode_ = !vm.count("no-debug");
 
   path_ = SEQUOIA_UNITTEST_RESSOURCEPATH;
   if(!platform::filesystem::exists(path_))
@@ -84,6 +91,8 @@ std::string Environment::testName() const {
 }
 
 const platform::Path& Environment::getRessourcePath() const { return path_; }
+
+bool Environment::debugMode() const { return debugMode_; }
 
 } // namespace unittest
 

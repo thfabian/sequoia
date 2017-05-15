@@ -74,6 +74,9 @@ public:
   /// @brief Create a GPU program from the given `shaders` for `target`
   virtual Program* createProgram(RenderTarget* target, const std::set<Shader*>& shaders) = 0;
 
+  /// @brief Destroy the `program` of `target`
+  virtual void destroyProgram(RenderTarget* target, Program* program) = 0;
+
   /// @brief Set if we run in debug-mode (needs to be set before creating windows/targets to take
   /// full effect)
   void setDebugMode(bool debugMode);

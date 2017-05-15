@@ -58,8 +58,12 @@ public:
   /// @brief Get the ressource path of the unittest
   const platform::Path& getRessourcePath() const;
 
+  /// @brief Check if we use debug-mode
+  bool debugMode() const;
+  
 private:
   platform::Path path_;
+  bool debugMode_;
   std::unique_ptr<core::SingletonManager> singletonManager_;
 };
 

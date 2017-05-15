@@ -13,11 +13,12 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Driver/ConsoleLogger.h"
 #include "sequoia/Core/ErrorHandler.h"
 #include "sequoia/Core/Options.h"
 #include "sequoia/Core/Platform.h"
+#include "sequoia/Core/Terminal.h"
 #include "sequoia/Core/UtfString.h"
+#include "sequoia/Driver/ConsoleLogger.h"
 #include <fstream>
 #include <iostream>
 
@@ -80,11 +81,16 @@ void ConsoleLogger::loggerLog(core::LoggingLevel level, const std::string& messa
       (*stream_) << "[INFO]";
       break;
     case core::LoggingLevel::Warning:
+      core::Terminal::Color::use(*stream_, core::Terminal::Color::BoldMagenta);
       (*stream_) << "[WARN]";
+      core::Terminal::Color::reset(*stream_);
       break;
-    case core::LoggingLevel::Error:
+    case core::LoggingLevel::Error: {
+      core::Terminal::Color::use(*stream_, core::Terminal::Color::BoldRed);
       (*stream_) << "[ERROR]";
+      core::Terminal::Color::reset(*stream_);
       break;
+    }
     default:
       break;
     }

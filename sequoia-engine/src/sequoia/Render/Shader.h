@@ -50,18 +50,6 @@ public:
   /// @brief Get the type of the shader
   ShaderType getType() const;
 
-  /// @brief Get the identifer of the shader
-  ///
-  /// Note that IDs might be reused after a shader has been destroyed.
-  virtual unsigned int getID() const = 0;
-  operator unsigned int() { return getID(); }
-
-  /// @brief Comparison
-  /// @{
-  bool operator==(const Shader& other) const { return getID() == other.getID(); }
-  bool operator!=(const Shader& other) const { return getID() != other.getID(); }
-  /// @}
-
   /// @brief Get the source path of the shader
   virtual platform::String getSourcePath() const = 0;
 

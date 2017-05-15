@@ -38,27 +38,29 @@ TEST_F(GLShaderManagerTest, LoadingSuccess) {
       resolveRessourcePath("sequoia/Render/GL/TestGLShaderManager/VertexCompileSuccess.vert"));
 
   // Create from source
-  GLShader* glShader = dyn_cast<GLShader>(shader);
+  GLShader* glshader = dyn_cast<GLShader>(shader);
 
-  EXPECT_TRUE(glShader->isValid());
-  EXPECT_NE(glShader->getID(), 0);
-  EXPECT_EQ(glShader->getType(), Shader::ST_Vertex);
+  EXPECT_TRUE(glshader->isValid());
+  EXPECT_NE(glshader->getID(), 0);
+  EXPECT_EQ(glshader->getType(), Shader::ST_Vertex);
   EXPECT_EQ(
-      glShader->getSourcePath(),
+      glshader->getSourcePath(),
       resolveRessourcePath("sequoia/Render/GL/TestGLShaderManager/VertexCompileSuccess.vert"));
 
   // Use already existing shader
   Shader* newShader = rsys.loadShader(
       getWindow(), Shader::ST_Vertex,
       resolveRessourcePath("sequoia/Render/GL/TestGLShaderManager/VertexCompileSuccess.vert"));
-  EXPECT_EQ(shader, newShader);
-  EXPECT_EQ(glShader->getID(), shader->getID());
+
+  GLShader* glnewshader = dyn_cast<GLShader>(newShader);
+  EXPECT_EQ(glshader, glnewshader);
+  EXPECT_EQ(glshader->getID(), glnewshader->getID());
 
   // Destroy shader
   rsys.destroyShader(getWindow(), shader);
-  EXPECT_FALSE(glShader->isValid());
-  EXPECT_EQ(glShader->getID(), 0);
-  EXPECT_EQ(shader->getID(), 0);
+  EXPECT_FALSE(glshader->isValid());
+  EXPECT_EQ(glshader->getID(), 0);
+  EXPECT_EQ(glnewshader->getID(), 0);
 }
 
 TEST_F(GLShaderManagerTest, LoadingFail) {

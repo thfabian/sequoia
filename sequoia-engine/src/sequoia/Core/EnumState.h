@@ -38,7 +38,7 @@ void advanceEnum(E& v) {
 
 } // namespace internal
 
-/// @brief Allow implementation of cyclic state machine based on an `enum class`
+/// @brief Allows implementation of cyclic state machine based on an `enum class`
 ///
 /// @b Example
 /// @code{.cpp}

@@ -40,18 +40,6 @@ public:
   virtual ~Program();
   Program(RenderSystemKind kind);
 
-  /// @brief Get the unique identifer of the program
-  ///
-  /// Note that IDs might be reused after a program has been destroyed.
-  virtual unsigned int getID() const = 0;
-  operator unsigned int() { return getID(); }
-
-  /// @brief Comparison
-  /// @{
-  bool operator==(const Program& other) const { return getID() == other.getID(); }
-  bool operator!=(const Program& other) const { return getID() != other.getID(); }
-  /// @}
-
   /// @brief Convert program to a human-readable string representation
   virtual std::string toString() const = 0;
 

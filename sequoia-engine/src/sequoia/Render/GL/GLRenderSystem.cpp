@@ -13,15 +13,16 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Render/GL/GL.h"
 #include "sequoia/Core/Casting.h"
 #include "sequoia/Core/ErrorHandler.h"
 #include "sequoia/Core/Logging.h"
 #include "sequoia/Render/Exception.h"
+#include "sequoia/Render/GL/GL.h"
 #include "sequoia/Render/GL/GLRenderSystem.h"
 #include "sequoia/Render/GL/GLRenderWindow.h"
 #include "sequoia/Render/GL/GLRenderer.h"
 #include "sequoia/Render/GL/GLShaderManager.h"
+#include "sequoia/Render/GL/GLProgramManager.h"
 
 namespace sequoia {
 
@@ -94,7 +95,11 @@ void GLRenderSystem::destroyShader(RenderTarget* target, Shader* shader) {
 }
 
 Program* GLRenderSystem::createProgram(RenderTarget* target, const std::set<Shader*>& shaders) {
-  return nullptr;
+  return rendererMap_[target]->getProgramManager()->create(shaders);
+}
+
+void GLRenderSystem::destroyProgram(RenderTarget* target, Program* program) {
+  rendererMap_[target]->getProgramManager()->destroy(dyn_cast<GLProgram>(program));
 }
 
 void GLRenderSystem::registerRenderer(RenderTarget* target, GLRenderer* renderer) {

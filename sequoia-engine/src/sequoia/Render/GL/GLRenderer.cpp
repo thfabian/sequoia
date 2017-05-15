@@ -13,10 +13,11 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Render/GL/GL.h"
 #include "sequoia/Core/Logging.h"
 #include "sequoia/Core/StringUtil.h"
 #include "sequoia/Render/Camera.h"
+#include "sequoia/Render/GL/GL.h"
+#include "sequoia/Render/GL/GLProgramManager.h"
 #include "sequoia/Render/GL/GLRenderWindow.h"
 #include "sequoia/Render/GL/GLRenderer.h"
 #include "sequoia/Render/GL/GLShaderManager.h"
@@ -25,7 +26,6 @@
 #include <glbinding/ContextInfo.h>
 #include <glbinding/Version.h>
 #include <glbinding/glbinding-version.h>
-#include <iostream>
 #include <sstream>
 
 namespace sequoia {
@@ -68,8 +68,9 @@ GLRenderer::GLRenderer(GLRenderWindow* target) : target_(target) {
   LOG(INFO) << "OpenGL vendor: " << glbinding::ContextInfo::vendor();
   LOG(INFO) << "OpenGL renderer: " << glbinding::ContextInfo::renderer();
 
-  // Initialize ShaderManager
+  // Initialize shader, program, texture and buffer manager
   shaderManager_ = std::make_unique<GLShaderManager>();
+  programManager_ = std::make_unique<GLProgramManager>();
 
   LOG(INFO) << "Done creating OpenGL renderer " << this;
 }
@@ -77,7 +78,8 @@ GLRenderer::GLRenderer(GLRenderWindow* target) : target_(target) {
 GLRenderer::~GLRenderer() {
   LOG(INFO) << "Terminating OpenGL Renderer " << this << " ... ";
 
-  // Destroy all remaining shaders
+  // Destroy all remaining shaders, programs, textures and buffers
+  programManager_.reset();
   shaderManager_.reset();
 
   glfwMakeContextCurrent(target_->getGLFWwindow());
@@ -108,6 +110,8 @@ void GLRenderer::render() {
 }
 
 GLShaderManager* GLRenderer::getShaderManager() { return shaderManager_.get(); }
+
+GLProgramManager* GLRenderer::getProgramManager() { return programManager_.get(); }
 
 } // namespace render
 

@@ -13,21 +13,29 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Render/GL/GLShaderManager.h"
 #include "sequoia/Core/Logging.h"
 #include "sequoia/Render/Exception.h"
+#include "sequoia/Render/GL/GLShaderManager.h"
 #include <fstream>
 #include <sstream>
-
-#include <iostream>
 
 namespace sequoia {
 
 namespace render {
 
+GLShaderManager::~GLShaderManager() {
+  for(auto& shaderPtr : shaderList_)
+    destroy(shaderPtr.get());
+}
+
 void GLShaderManager::make(GLShader* shader, GLShaderStatus requestedStatus) {
-  if(shader->status_ == GLShaderStatus::Compiled || requestedStatus == GLShaderStatus::OnDisk)
+  if(shader->status_ == GLShaderStatus::Compiled)
     return;
+  
+  if(requestedStatus == GLShaderStatus::OnDisk) {
+    destroy(shader);
+    return;
+  }
 
   if(shader->status_ == GLShaderStatus::OnDisk) {
     LOG(DEBUG) << "Loading shader from disk \"" << shader->path_ << "\"";
@@ -41,7 +49,7 @@ void GLShaderManager::make(GLShader* shader, GLShaderStatus requestedStatus) {
     std::stringstream ss;
     ss << file.rdbuf();
     shader->code_ = ss.str();
-    shader->status_++;
+    shader->status_ = GLShaderStatus::InMemory;
   }
 
   if(requestedStatus == GLShaderStatus::InMemory)
@@ -60,7 +68,7 @@ void GLShaderManager::make(GLShader* shader, GLShaderStatus requestedStatus) {
     idLookupMap_.emplace(shader->id_, pathLookupMap_[shader->path_]);
 
     LOG(DEBUG) << "Created shader (ID=" << shader->id_ << ")";
-    shader->status_++;
+    shader->status_ = GLShaderStatus::Created;
   }
 
   if(requestedStatus == GLShaderStatus::Created)
@@ -86,13 +94,12 @@ void GLShaderManager::make(GLShader* shader, GLShaderStatus requestedStatus) {
       SEQUOIA_THROW(RenderSystemException, "failed to compile shader: '%s'", errorMessage.data());
     }
 
-    LOG(DEBUG) << "Successfully compiled OpenGL shader (ID=" << shader->id_ << ")";
-    shader->status_++;
+    LOG(DEBUG) << "Successfully compiled shader (ID=" << shader->id_ << ")";
+    shader->status_ = GLShaderStatus::Compiled;
   }
 }
 
 void GLShaderManager::destroy(GLShader* shader) {
-
   if(shader->status_ <= GLShaderStatus::InMemory)
     return;
 
@@ -102,7 +109,6 @@ void GLShaderManager::destroy(GLShader* shader) {
   glDeleteShader(shader->id_);
   shader->id_ = 0;
 
-  LOG(DEBUG) << "Successfully deleted shader";
   shader->status_ = GLShaderStatus::InMemory;
 }
 
@@ -113,11 +119,6 @@ GLShader* GLShaderManager::get(unsigned int id) const {
   return shaderList_[it->second].get();
 }
 
-GLShaderManager::~GLShaderManager() {
-  for(auto& shaderPtr : shaderList_)
-    destroy(shaderPtr.get());
-}
-
 GLShader* GLShaderManager::create(GLShader::ShaderType type, const platform::String& path,
                                   GLShaderStatus requestedStatus) {
   GLShader* shader = nullptr;
@@ -126,7 +127,7 @@ GLShader* GLShaderManager::create(GLShader::ShaderType type, const platform::Str
   if(it != pathLookupMap_.end())
     shader = shaderList_[it->second].get();
   else {
-    shaderList_.emplace_back(std::make_unique<GLShader>(type, path));
+    shaderList_.emplace_back(std::make_unique<GLShader>(type, path, this));
     pathLookupMap_[path] = shaderList_.size() - 1;
     shader = shaderList_.back().get();
   }

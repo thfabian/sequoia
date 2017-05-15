@@ -70,6 +70,9 @@ public:
   /// @brief Link the shaders into a program if a program of the given shaders does not yet exist
   virtual Program* createProgram(RenderTarget* target, const std::set<Shader*>& shaders) override;
 
+  /// @brief Deregister the program from OpenGL  
+  virtual void destroyProgram(RenderTarget* target, Program* program) override;
+  
   /// @brief Register the Renderer of the target
   void registerRenderer(RenderTarget* target, GLRenderer* renderer);
 

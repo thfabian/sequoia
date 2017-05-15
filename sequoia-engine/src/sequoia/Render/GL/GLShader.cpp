@@ -13,14 +13,15 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
+#include "sequoia/Core/Unreachable.h"
 #include "sequoia/Render/GL/GLShader.h"
 
 namespace sequoia {
 
 namespace render {
 
-GLenum GLShader::getGLShaderType(Shader::ShaderType s) {
-  switch(s) {
+GLenum GLShader::getGLShaderType(Shader::ShaderType type) {
+  switch(type) {
   case ST_Compute:
     return GL_COMPUTE_SHADER;
   case ST_Vertex:
@@ -38,8 +39,9 @@ GLenum GLShader::getGLShaderType(Shader::ShaderType s) {
   }
 }
 
-GLShader::GLShader(Shader::ShaderType type, const platform::String& path)
-    : Shader(RK_OpenGL, type), status_(GLShaderStatus::OnDisk), id_(0), code_(), path_(path) {}
+GLShader::GLShader(Shader::ShaderType type, const platform::String& path, GLShaderManager* manager)
+    : Shader(RK_OpenGL, type), status_(GLShaderStatus::OnDisk), id_(0), manager_(manager), code_(),
+      path_(path) {}
 
 bool GLShader::isValid() const { return status_ == GLShaderStatus::Compiled; }
 
@@ -50,6 +52,8 @@ platform::String GLShader::getSourcePath() const { return path_; }
 std::string GLShader::getSourceCode() const { return code_; }
 
 GLShaderStatus GLShader::getStatus() const { return status_; }
+
+GLShaderManager* GLShader::getManager() const { return manager_; }
 
 } // namespace render
 

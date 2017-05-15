@@ -66,7 +66,9 @@ sequoia_add_library(
           StringSwitch.h
           StringRef.h
           StringRef.cpp 
-          StringUtil.h          
+          StringUtil.h  
+          Terminal.h
+          Terminal.cpp        
           Unreachable.h
           Unreachable.cpp         
           Utf.h
