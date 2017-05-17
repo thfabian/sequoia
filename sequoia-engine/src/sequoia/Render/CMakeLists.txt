@@ -19,6 +19,7 @@ sequoia_add_library(
           Camera.cpp
           Export.h
           Exception.h
+          IO.h
           Program.h
           Program.cpp
           HardwareBuffer.h
@@ -40,6 +41,8 @@ sequoia_add_library(
           Viewport.cpp
           
           GL/GL.h
+          GL/GLInputSystem.h
+          GL/GLInputSystem.cpp
           GL/GLProgram.h
           GL/GLProgram.cpp
           GL/GLProgramManager.h

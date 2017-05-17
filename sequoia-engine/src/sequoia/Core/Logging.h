@@ -137,7 +137,7 @@ public:
 
   /// @brief Check if logging if we need to perform actual logging or if we can return a NullLogger
   template <LoggingLevel Level>
-  inline bool requiesLogging() const noexcept {
+  inline bool requiresLogging() const noexcept {
     return (Level >= level_ && getNumListener<LoggerListener>() > 0);
   }
 
@@ -164,7 +164,7 @@ private:
 #define LOG(Level) SEQUOIA_LOG_##Level##_IMPL()
 
 #define SEQUOIA_LOG_IMPL(Level)                                                                    \
-  (sequoia::core::Logger::getSingleton().requiesLogging<sequoia::core::LoggingLevel::Level>()      \
+  (sequoia::core::Logger::getSingleton().requiresLogging<sequoia::core::LoggingLevel::Level>()     \
        ? sequoia::core::Logger::getSingleton().log##Level(__FILE__, __LINE__)                      \
        : sequoia::core::Logger::getSingleton().logNull())
 #define SEQUOIA_LOG_DEBUG_IMPL() SEQUOIA_LOG_IMPL(Debug)

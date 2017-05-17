@@ -26,16 +26,15 @@ namespace sequoia {
 namespace render {
 
 class GLRenderer;
+class GLInputSystem;
 
 /// @brief OpenGL render-system
 /// @ingroup gl
 class SEQUOIA_RENDER_API GLRenderSystem : public RenderSystem {
-
-  /// Registered RenderTargets
   std::vector<std::shared_ptr<RenderTarget>> renderTargets_;
 
-  /// Renderer of the RenderTarget
   std::unordered_map<RenderTarget*, GLRenderer*> rendererMap_;
+  std::unordered_map<RenderTarget*, GLInputSystem*> inputSystemMap_;
 
 public:
   /// @brief Initialize GLFW
@@ -70,14 +69,32 @@ public:
   /// @brief Link the shaders into a program if a program of the given shaders does not yet exist
   virtual Program* createProgram(RenderTarget* target, const std::set<Shader*>& shaders) override;
 
-  /// @brief Deregister the program from OpenGL  
+  /// @brief Deregister the program from OpenGL
   virtual void destroyProgram(RenderTarget* target, Program* program) override;
-  
-  /// @brief Register the Renderer of the target
+
+  /// @brief Add the keyboard `listener` to `target`
+  virtual void addKeyboardListener(RenderTarget* target, KeyboardListener* listener) override;
+
+  /// @brief Remove the keyboard `listener` of `target`
+  virtual void removeKeyboardListener(RenderTarget* target, KeyboardListener* listener) override;
+
+  /// @brief Add the mouse `listener` to `target`
+  virtual void addMouseListener(RenderTarget* target, MouseListener* listener) override;
+
+  /// @brief Remove the mouse `listener` of `target`
+  virtual void removeMouseListener(RenderTarget* target, MouseListener* listener) override;
+
+  /// @brief Register the InputSystem of the `target`
+  void registerInputSystem(RenderTarget* target, GLInputSystem* inputSystem);
+
+  /// @brief Get the renderer of `target`
+  GLInputSystem* getInputSystem(RenderTarget* target) const noexcept;
+
+  /// @brief Register the Renderer of the `target`
   void registerRenderer(RenderTarget* target, GLRenderer* renderer);
 
   /// @brief Get the renderer of `target`
-  GLRenderer* getRenderer(RenderTarget* target) const;
+  GLRenderer* getRenderer(RenderTarget* target) const noexcept;
 
   SEQUOIA_GL_OBJECT(RenderSystem);
 };

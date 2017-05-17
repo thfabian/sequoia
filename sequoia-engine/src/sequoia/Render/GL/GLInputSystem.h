@@ -13,35 +13,37 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Core/Unreachable.h"
-#include "sequoia/Render/Exception.h"
-#include "sequoia/Render/GL/GLRenderSystem.h"
-#include "sequoia/Render/RenderSystem.h"
+#ifndef SEQUOIA_RENDER_GL_GLINPUTSYSTEM_H
+#define SEQUOIA_RENDER_GL_GLINPUTSYSTEM_H
+
+#include "sequoia/Core/Listenable.h"
+#include "sequoia/Render/Export.h"
+#include "sequoia/Render/IO.h"
+
+struct GLFWwindow;
 
 namespace sequoia {
 
-SEQUOIA_DECLARE_SINGLETON(render::RenderSystem);
-
 namespace render {
 
-std::unique_ptr<RenderSystem> RenderSystem::create(RenderSystemKind kind) {
-  switch(kind) {
-  case RK_OpenGL:
-    return std::make_unique<GLRenderSystem>();
-  default:
-    SEQUOIA_THROW(RenderSystemException, "invalid RenderSystem");
-  }
-  return nullptr;
-}
+class RenderTarget;
 
-RenderSystem::~RenderSystem() {}
+/// @brief Handle keyboard and mouse events
+class SEQUOIA_RENDER_API GLInputSystem : public Listenable<KeyboardListener, MouseListener> {
+  RenderTarget* target_;
 
-void RenderSystem::setDebugMode(bool debugMode) { debugMode_ = debugMode; }
+public:
+  GLInputSystem(RenderTarget* target);
 
-bool RenderSystem::debugMode() const { return debugMode_; }
+  /// @brief GLFW callback for the keyboard
+  void keyCallback(int key, int action, int mods) noexcept;
 
-RenderSystem::RenderSystem(RenderSystemKind kind) : RenderSystemObject(kind), debugMode_(false) {}
+  /// @brief GLFW callback for the mouse
+  void mouseCallback(int button, int action, int mods) noexcept;
+};
 
 } // namespace render
 
 } // namespace sequoia
+
+#endif

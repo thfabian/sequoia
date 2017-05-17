@@ -13,16 +13,15 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Game/Game.h"
 #include "sequoia/Core/ErrorHandler.h"
 #include "sequoia/Core/Logging.h"
 #include "sequoia/Core/Options.h"
 #include "sequoia/Core/StringSwitch.h"
+#include "sequoia/Game/Game.h"
 #include "sequoia/Render/Camera.h"
 #include "sequoia/Render/Exception.h"
 #include "sequoia/Render/RenderSystem.h"
 #include "sequoia/Render/RenderWindow.h"
-#include <iostream>
 
 namespace sequoia {
 
@@ -60,7 +59,6 @@ void Game::init() {
   Options& opt = Options::getSingleton();
 
   try {
-
     // Initialize the RenderSystem
     renderSystem_ = RenderSystem::create(RK_OpenGL);
 
@@ -97,12 +95,20 @@ void Game::init() {
     // Initialize the main-window
     mainWindow_->init();
 
+    // Register as a keyboard and mouse listener
+    renderSystem_->addKeyboardListener(mainWindow_, this);
+    renderSystem_->addMouseListener(mainWindow_, this);
+
   } catch(render::RenderSystemException& e) {
     ErrorHandler::getSingleton().fatal(e.what());
   }
 
   LOG(INFO) << "Done initializing Game";
 }
+
+void Game::keyboardEvent(const render::KeyboardEvent& event) {}
+
+void Game::mouseEvent(const render::MouseEvent& event) {}
 
 void Game::cleanup() {
   LOG(INFO) << "Terminating Game ...";

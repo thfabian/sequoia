@@ -25,7 +25,7 @@ namespace sequoia {
 
 namespace render {
 
-/// @brief A canvas which can receive the results of a rendering operation.
+/// @brief A canvas which can receive the results of a rendering operation
 /// @ingroup render
 class SEQUOIA_RENDER_API RenderTarget {
 public:

@@ -13,16 +13,15 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Render/GL/GL.h"
 #include "sequoia/Core/Logging.h"
 #include "sequoia/Core/Unreachable.h"
 #include "sequoia/Render/Exception.h"
+#include "sequoia/Render/GL/GL.h"
+#include "sequoia/Render/GL/GLInputSystem.h"
 #include "sequoia/Render/GL/GLRenderSystem.h"
 #include "sequoia/Render/GL/GLRenderWindow.h"
 #include "sequoia/Render/GL/GLRenderer.h"
 #include <unordered_map>
-
-#include <iostream>
 
 namespace sequoia {
 
@@ -33,7 +32,7 @@ std::unordered_map<GLFWwindow*, GLRenderWindow*> GLRenderWindow::StaticWindowMap
 GLRenderWindow::GLRenderWindow(GLRenderSystem* renderSystem,
                                const RenderWindow::WindowHint& windowHints)
     : RenderWindow(RK_GLRenderWindow), renderSystem_(renderSystem), window_(nullptr),
-      windowWidth_(-1), windowHeight_(-1) {
+      windowWidth_(-1), windowHeight_(-1), renderer_(nullptr), inputSystem_(nullptr) {
   LOG(INFO) << "Initializing window " << this << " ...";
 
   // Open the window hidden?
@@ -131,6 +130,9 @@ GLRenderWindow::~GLRenderWindow() {
   LOG(INFO) << "Terminating window " << this << " ...";
 
   renderer_.reset();
+  if(IOEnabled_)
+    inputSystem_.reset();
+
   StaticWindowMap.erase(window_);
   glfwDestroyWindow(window_);
 
@@ -155,6 +157,16 @@ void GLRenderWindow::resizeCallbackDispatch(GLFWwindow* window, int width, int h
   GLRenderWindow::StaticWindowMap[window]->resizeCallback(width, height);
 }
 
+void GLRenderWindow::keyCallbackDispatch(GLFWwindow* window, int key, int scancode, int action,
+                                         int mods) {
+  (void)scancode;
+  GLRenderWindow::StaticWindowMap[window]->getInputSystem()->keyCallback(key, action, mods);
+}
+
+void GLRenderWindow::mouseCallbackDispatch(GLFWwindow* window, int button, int action, int mods) {
+  GLRenderWindow::StaticWindowMap[window]->getInputSystem()->mouseCallback(button, action, mods);
+}
+
 int GLRenderWindow::getWidth() const { return windowWidth_; }
 
 int GLRenderWindow::getHeight() const { return windowHeight_; }
@@ -166,11 +178,27 @@ void GLRenderWindow::update() { renderer_->render(); }
 void GLRenderWindow::init() {
   renderer_ = std::make_unique<GLRenderer>(this);
   renderSystem_->registerRenderer(this, renderer_.get());
+
+  if(IOEnabled_) {
+    LOG(INFO) << "Registering IO callbacks ...";
+
+    inputSystem_ = std::make_unique<GLInputSystem>(this);
+    renderSystem_->registerInputSystem(this, inputSystem_.get());
+
+    glfwSetKeyCallback(window_, GLRenderWindow::keyCallbackDispatch);
+    glfwSetMouseButtonCallback(window_, GLRenderWindow::mouseCallbackDispatch);
+
+    LOG(INFO) << "Done registering IO callbacks";
+  }
 }
 
 GLFWwindow* GLRenderWindow::getGLFWwindow() { return window_; }
 
 GLRenderer* GLRenderWindow::getRenderer() { return renderer_.get(); }
+
+GLInputSystem* GLRenderWindow::getInputSystem() { return inputSystem_.get(); }
+
+bool GLRenderWindow::isIOEnabled() const { return IOEnabled_; }
 
 } // namespace render
 

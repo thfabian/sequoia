@@ -16,8 +16,10 @@
 #ifndef SEQUOIA_GAME_GAME_H
 #define SEQUOIA_GAME_GAME_H
 
+#include "sequoia/Core/Listenable.h"
 #include "sequoia/Core/Singleton.h"
 #include "sequoia/Game/Export.h"
+#include "sequoia/Render/IO.h"
 #include "sequoia/Render/RenderFwd.h"
 #include <memory>
 
@@ -27,7 +29,10 @@ namespace game {
 
 /// @brief Main class holding all game and rendering related objects and running the main-loop
 /// @ingroup game
-class SEQUOIA_GAME_API Game : public Singleton<Game> {
+class SEQUOIA_GAME_API Game : public Singleton<Game>,
+                              public KeyListener,
+                              public MouseListener,
+                              public Listenable<KeyListener, MouseListener> {
 
   /// Active render-system
   std::unique_ptr<render::RenderSystem> renderSystem_;
@@ -50,7 +55,14 @@ public:
 
   /// @brief Run the main-loop
   void run();
+
+  /// @brief Listener implementations
+  /// @{
+  void mouseEvent(const render::MouseEvent& event) override;
+  void keyboardEvent(const render::KeyboardEvent& event) override;
+  /// @}
 };
+
 } // namespace game
 
 } // namespace sequoia

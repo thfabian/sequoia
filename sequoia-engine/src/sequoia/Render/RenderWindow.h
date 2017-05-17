@@ -56,6 +56,9 @@ public:
 
     /// OpenGL minor version
     int GLMinorVersion = 3;
+
+    /// Is IO enabled (i.e captures Keyboard and Mouse events)?
+    bool IOEnabled = true;
   };
 
   RenderWindow(RenderTargetKind kind) : RenderTarget(kind) {}

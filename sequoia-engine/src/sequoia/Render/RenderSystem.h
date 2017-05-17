@@ -20,6 +20,7 @@
 #include "sequoia/Core/Platform.h"
 #include "sequoia/Core/Singleton.h"
 #include "sequoia/Render/Export.h"
+#include "sequoia/Render/IO.h"
 #include "sequoia/Render/RenderFwd.h"
 #include "sequoia/Render/RenderSystemObject.h"
 #include "sequoia/Render/RenderWindow.h"
@@ -46,7 +47,7 @@ public:
   static std::unique_ptr<RenderSystem> create(RenderSystemKind kind);
 
   /// @brief Terminate the render-system
-  virtual ~RenderSystem() {}
+  virtual ~RenderSystem();
 
   /// @brief Create a new RenderWindow
   /// @returns the created window
@@ -76,6 +77,18 @@ public:
 
   /// @brief Destroy the `program` of `target`
   virtual void destroyProgram(RenderTarget* target, Program* program) = 0;
+
+  /// @brief Add the keyboard `listener` to `target`
+  virtual void addKeyboardListener(RenderTarget* target, KeyboardListener* listener) = 0;
+
+  /// @brief Remove the keyboard `listener` of `target`
+  virtual void removeKeyboardListener(RenderTarget* target, KeyboardListener* listener) = 0;
+
+  /// @brief Add the mouse `listener` to `target`
+  virtual void addMouseListener(RenderTarget* target, MouseListener* listener) = 0;
+
+  /// @brief Remove the mouse `listener` of `target`
+  virtual void removeMouseListener(RenderTarget* target, MouseListener* listener) = 0;
 
   /// @brief Set if we run in debug-mode (needs to be set before creating windows/targets to take
   /// full effect)

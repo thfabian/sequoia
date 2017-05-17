@@ -29,6 +29,7 @@ namespace render {
 
 class GLRenderer;
 class GLRenderSystem;
+class GLInputSystem;
 
 /// @brief OpenGL render window
 /// @ingroup gl
@@ -38,8 +39,10 @@ class SEQUOIA_RENDER_API GLRenderWindow : public RenderWindow {
 
   int windowWidth_;
   int windowHeight_;
+  bool IOEnabled_;
 
   std::unique_ptr<GLRenderer> renderer_;
+  std::unique_ptr<GLInputSystem> inputSystem_;
 
 public:
   /// @brief Initialize window
@@ -67,7 +70,8 @@ public:
   /// @copydoc RenderWindow::getHeight
   virtual int getHeight() const override;
 
-  /// @brief Initialize the OpenGL context
+  /// @brief Initialize the OpenGL context by setting up the GLRenderer and initialize the
+  /// GLInputSystem
   virtual void init() override;
 
   /// @copydoc RenderTarget::swapBuffers
@@ -82,9 +86,21 @@ public:
   /// @brief Get the associated OpenGL context of this window
   GLRenderer* getRenderer();
 
+  /// @brief Get the associated OpenGL context of this window
+  GLInputSystem* getInputSystem();
+
+  /// @brief Check if the window is IO enabled
+  bool isIOEnabled() const;
+
   /// @brief Called upon resizing the window
   void resizeCallback(int width, int height);
+
+  /// @brief GLFW callbacks
+  /// @{
   static void resizeCallbackDispatch(GLFWwindow* window, int width, int height);
+  static void keyCallbackDispatch(GLFWwindow* window, int key, int scancode, int action, int mods);
+  static void mouseCallbackDispatch(GLFWwindow* window, int button, int action, int mods);
+  /// @}
 
   /// @brief Static map of all GLFWwindows to their respective GLRenderWindows
   static std::unordered_map<GLFWwindow*, GLRenderWindow*> StaticWindowMap;
