@@ -16,12 +16,30 @@
 #include "sequoia/Core/Logging.h"
 #include "sequoia/Render/Exception.h"
 #include "sequoia/Render/GL/GLShaderManager.h"
+#include <boost/lexical_cast.hpp>
 #include <fstream>
 #include <sstream>
+
+#include <iostream>
 
 namespace sequoia {
 
 namespace render {
+
+static std::string getRow(const std::string& source, int rowIdx) {
+  int row = 1;
+  std::size_t start = 0, end = std::string::npos;
+  for(std::size_t i = 0; i < source.size(); ++i) {
+    if(source[i] == '\n') {
+      end = i;
+      if(row == rowIdx)
+        return source.substr(start, end - start);
+      start = end + 1;
+      ++row;
+    }
+  }
+  return std::string();
+}
 
 GLShaderManager::~GLShaderManager() {
   for(auto& shaderPtr : shaderList_)
@@ -31,7 +49,7 @@ GLShaderManager::~GLShaderManager() {
 void GLShaderManager::make(GLShader* shader, GLShaderStatus requestedStatus) {
   if(shader->status_ == GLShaderStatus::Compiled)
     return;
-  
+
   if(requestedStatus == GLShaderStatus::OnDisk) {
     destroy(shader);
     return;
@@ -91,7 +109,21 @@ void GLShaderManager::make(GLShader* shader, GLShaderStatus requestedStatus) {
       std::vector<char> errorMessage(infoLogLength + 1);
       glGetShaderInfoLog(shader->id_, infoLogLength, NULL, &errorMessage[0]);
 
-      SEQUOIA_THROW(RenderSystemException, "failed to compile shader: '%s'", errorMessage.data());
+      std::string msg(errorMessage.data(), errorMessage.size());
+
+      // Extract 'Y(X)' where 'X' is the line number and 'Y' is the column number
+      int lbrace = msg.find_first_of('('), rbrace = msg.find_first_of(')');
+      try {
+        int row = boost::lexical_cast<int>(msg.substr(lbrace + 1, rbrace - lbrace - 1));
+        std::string line = getRow(shader->code_, row);
+
+        if(!line.empty())
+          msg += "\n" + line + "\n";
+
+      } catch(const boost::bad_lexical_cast&) {
+      }
+
+      SEQUOIA_THROW(RenderSystemException, "failed to compile shader: %s", msg);
     }
 
     LOG(DEBUG) << "Successfully compiled shader (ID=" << shader->id_ << ")";
@@ -135,6 +167,8 @@ GLShader* GLShaderManager::create(GLShader::ShaderType type, const platform::Str
   make(shader, requestedStatus);
   return shader;
 }
+
+std::string GLShaderManager::getInfoLog(const GLShader* shader) const { return "invalid"; }
 
 } // namespace render
 

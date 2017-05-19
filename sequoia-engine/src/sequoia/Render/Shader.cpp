@@ -13,6 +13,7 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
+#include "sequoia/Core/Unreachable.h"
 #include "sequoia/Render/Shader.h"
 
 namespace sequoia {
@@ -25,6 +26,25 @@ Shader::Shader(RenderSystemKind kind, Shader::ShaderType type)
     : RenderSystemObject(kind), type_(type) {}
 
 Shader::ShaderType Shader::getType() const { return type_; }
+
+const char* Shader::shaderTypeToString(Shader::ShaderType type) {
+  switch(type) {
+  case ST_Compute:
+    return "Compute";
+  case ST_Vertex:
+    return "Vertex";
+  case ST_TessControl:
+    return "TessControl";
+  case ST_TessEvaluation:
+    return "TessEvaluation";
+  case ST_Geometry:
+    return "Geometry";
+  case ST_Fragment:
+    return "Fragment";
+  default:
+    sequoia_unreachable("invalid type");
+  }
+}
 
 } // namespace render
 

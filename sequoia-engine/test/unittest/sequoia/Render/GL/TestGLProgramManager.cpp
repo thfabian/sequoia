@@ -67,4 +67,17 @@ TEST_F(GLProgramManagerTest, LinkingSuccess) {
   EXPECT_EQ(glprogram->getStatus(), GLProgramStatus::Invalid);
 }
 
+TEST_F(GLProgramManagerTest, UniformScalars) {
+  RenderSystem& rsys = RenderSystem::getSingleton();
+  
+  Shader* vertexShader = rsys.loadShader(
+      getWindow(), Shader::ST_Vertex,
+      resolveRessourcePath("sequoia/Render/GL/TestGLProgramManager/VertexUniformScalars.vert"));
+
+  Program* program = rsys.createProgram(getWindow(), {vertexShader});
+  GLProgram* glprogram = dyn_cast<GLProgram>(program);
+  
+  std::cout << glprogram->toString() << std::endl;  
+}
+
 } // anonymous namespace

@@ -47,18 +47,32 @@ public:
   GLProgram* create(const std::set<Shader*>& shaders,
                     GLProgramStatus requestedStatus = GLProgramStatus::Linked);
 
-  /// @brief Convert the program to `status`
+  /// @brief Convert the `program` to `status`
   /// @throws RenderSystemException
   void make(GLProgram* program, GLProgramStatus requestedStatus);
 
-  /// @brief Destroy the program by deregistering it from OpenGL
+  /// @brief Destroy the `program` by deregistering it from OpenGL
   void destroy(GLProgram* program);
 
   /// @brief Convert the shader to `GLProgramStatus::Linked`
   /// @see GLShaderLoader::make
   void makeValid(GLProgram* program) { make(program, GLProgramStatus::Linked); }
 
-  /// @brief Compute hash of set of shaders
+  /// @brief Set the uniform variables of the `program`
+  void setUniforms(GLProgram* program) const;
+
+  /// @brief Defines semantics for the input vertex attributes of the `program`
+  ///
+  /// This is required to know how to send data to the shader.
+  ///
+  /// @param attrib  The semantic of the attribute
+  /// @param name    The name of the vertex attribute
+  void setVertexAttribName(GLProgram* program, GLVertexAttrib attrib, const std::string& name);
+
+  /// @brief Get the information log for the specified `program`
+  std::string getInfoLog(const GLProgram* program) const;
+
+  /// @brief Compute hash of the set of shaders
   static std::size_t hash(const std::set<Shader*>& shaders) noexcept;
 
 private:

@@ -39,6 +39,15 @@ bool GLProgram::removeShader(Shader* shader) {
   return shaders_.erase(shader);
 }
 
+void GLProgram::setVertexAttribName(GLVertexAttrib attrib, const std::string& name) {
+  manager_->setVertexAttribName(this, attrib, name);
+}
+
+const std::unordered_map<std::string, GLProgram::GLUniform>&
+GLProgram::getUniformVariables() const {
+  return uniformMap_;
+}
+
 GLProgramManager* GLProgram::getManager() const { return manager_; }
 
 unsigned int GLProgram::getID() const { return id_; }
@@ -51,7 +60,7 @@ void GLProgram::use() {
   glUseProgram(id_);
 }
 
-std::string GLProgram::toString() const { return std::string(); }
+std::string GLProgram::toString() const { return manager_->getInfoLog(this); }
 
 } // namespace render
 

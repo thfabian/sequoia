@@ -95,7 +95,7 @@ void Game::init() {
     // Initialize the main-window
     mainWindow_->init();
 
-    // Register as a keyboard and mouse listener
+    // Register the game as a keyboard and mouse listener
     renderSystem_->addKeyboardListener(mainWindow_, this);
     renderSystem_->addMouseListener(mainWindow_, this);
 
