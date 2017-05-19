@@ -13,11 +13,11 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
+#include "sequoia/Game/Game.h"
 #include "sequoia/Core/ErrorHandler.h"
 #include "sequoia/Core/Logging.h"
 #include "sequoia/Core/Options.h"
 #include "sequoia/Core/StringSwitch.h"
-#include "sequoia/Game/Game.h"
 #include "sequoia/Render/Camera.h"
 #include "sequoia/Render/Exception.h"
 #include "sequoia/Render/RenderSystem.h"

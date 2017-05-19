@@ -76,7 +76,7 @@ public:
 
   /// @copydoc Shader::getSourceCode
   std::string getSourceCode() const override;
-  
+
   /// @copydoc Shader::toString
   std::string toString() const override;
 

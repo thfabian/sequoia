@@ -13,9 +13,9 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
+#include "sequoia/Render/GL/GLShaderManager.h"
 #include "sequoia/Core/Logging.h"
 #include "sequoia/Render/Exception.h"
-#include "sequoia/Render/GL/GLShaderManager.h"
 #include <boost/lexical_cast.hpp>
 #include <fstream>
 #include <sstream>

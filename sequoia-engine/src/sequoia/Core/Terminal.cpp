@@ -13,8 +13,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Core/Compiler.h"
 #include "sequoia/Core/Terminal.h"
+#include "sequoia/Core/Compiler.h"
 #include "sequoia/Core/Unreachable.h"
 #include <iostream>
 

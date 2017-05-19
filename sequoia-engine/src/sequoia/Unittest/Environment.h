@@ -60,7 +60,7 @@ public:
 
   /// @brief Check if we use debug-mode
   bool debugMode() const;
-  
+
 private:
   platform::Path path_;
   bool debugMode_;

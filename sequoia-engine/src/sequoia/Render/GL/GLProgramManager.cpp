@@ -13,12 +13,12 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
+#include "sequoia/Render/GL/GL.h"
 #include "sequoia/Core/Casting.h"
+#include "sequoia/Core/Format.h"
 #include "sequoia/Core/Logging.h"
 #include "sequoia/Core/Unreachable.h"
-#include "sequoia/Core/Format.h"
 #include "sequoia/Render/Exception.h"
-#include "sequoia/Render/GL/GL.h"
 #include "sequoia/Render/GL/GLProgramManager.h"
 #include "sequoia/Render/GL/GLShader.h"
 #include "sequoia/Render/GL/GLShaderManager.h"
@@ -29,7 +29,7 @@ namespace sequoia {
 
 namespace render {
 
-/// @brief Convert `type` to string 
+/// @brief Convert `type` to string
 static const char* typeToString(GLenum type);
 
 std::size_t GLProgramManager::hash(const std::set<Shader*>& shaders) noexcept {
@@ -114,7 +114,6 @@ void GLProgramManager::destroy(GLProgram* program) {
   program->id_ = 0;
   program->status_ = GLProgramStatus::Invalid;
 }
-
 
 void GLProgramManager::setUniforms(GLProgram* program) const {
   LOG(DEBUG) << "Setting uniform variables of program (ID=" << program->id_ << ")";

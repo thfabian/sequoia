@@ -38,7 +38,7 @@ class SEQUOIA_RENDER_API GLRenderer : public NonCopyable {
   GLRenderWindow* target_;
 
   std::unique_ptr<GLShaderManager> shaderManager_;
-  std::unique_ptr<GLProgramManager> programManager_;  
+  std::unique_ptr<GLProgramManager> programManager_;
 
 public:
   /// @brief Initialize the OpenGL context and bind it to the calling thread
@@ -52,7 +52,7 @@ public:
 
   /// @brief Get the shader manager
   GLShaderManager* getShaderManager();
-  
+
   /// @brief Get the program manager
   GLProgramManager* getProgramManager();
 };
