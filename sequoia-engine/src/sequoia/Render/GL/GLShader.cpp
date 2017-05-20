@@ -52,7 +52,7 @@ platform::String GLShader::getSourcePath() const { return path_; }
 
 std::string GLShader::getSourceCode() const { return code_; }
 
-std::string GLShader::toString() const { return manager_->getInfoLog(this); }
+std::string GLShader::getLog() const { return manager_->getInfoLog(this); }
 
 GLShaderStatus GLShader::getStatus() const { return status_; }
 

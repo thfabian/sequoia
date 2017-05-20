@@ -16,6 +16,7 @@
 #ifndef SEQUOIA_RENDER_GL_GLPROGRAM_H
 #define SEQUOIA_RENDER_GL_GLPROGRAM_H
 
+#include "sequoia/Math/Math.h"
 #include "sequoia/Render/GL/GL.h"
 #include "sequoia/Render/Program.h"
 #include <unordered_map>
@@ -54,10 +55,11 @@ enum class GLVertexAttrib {
 class SEQUOIA_RENDER_API GLProgram : public Program {
 public:
   /// @brief Represent uniform variables in shaders
-  struct GLUniform {
+  struct GLUniformInfo {
     GLenum Type;    ///< Type of the unifrom variable
     GLint Size;     ///< Size of the uniform variable
     GLint Location; ///< Location of the uniform variable
+    bool ValueSet;  ///< Check if the value of the uniform variable has been set
   };
 
   /// @brief Create the program (this tries to make every shader valid)
@@ -77,8 +79,6 @@ public:
   GLProgramStatus getStatus() const;
 
   /// @brief Use the program in the current render pipline
-  ///
-  /// This will try to transform the program to a valid state.
   void use();
 
   /// @brief Add the `shader` to the program
@@ -94,22 +94,42 @@ public:
 
   /// @brief Defines semantics for the input vertex attributes
   ///
-  /// @note This forces a relink on next usage
   /// @param attrib  The semantic of the attribute
   /// @param name    The name of the vertex attribute
   void setVertexAttribName(GLVertexAttrib attrib, const std::string& name);
 
   /// @brief Get map of uniform variables
-  const std::unordered_map<std::string, GLUniform>& getUniformVariables() const;
+  const std::unordered_map<std::string, GLUniformInfo>& getUniformVariables() const;
+
+  /// @brief Set the uniform variable `name` to `value`
+  ///
+  /// @throws RenderSystemException   Variable `name` has incompatible type
+  /// @returns `true` if variable has been successfully set, `false` if variable does not exist
+  /// @{
+  bool setUniformVariable(const std::string& name, const float& value);
+  bool setUniformVariable(const std::string& name, const int& value);
+  bool setUniformVariable(const std::string& name, const math::fvec2& value);
+  bool setUniformVariable(const std::string& name, const math::fvec3& value);
+  bool setUniformVariable(const std::string& name, const math::fvec4& value);
+  bool setUniformVariable(const std::string& name, const math::ivec2& value);
+  bool setUniformVariable(const std::string& name, const math::ivec3& value);
+  bool setUniformVariable(const std::string& name, const math::ivec4& value);
+  bool setUniformVariable(const std::string& name, const math::fmat2& value);
+  bool setUniformVariable(const std::string& name, const math::fmat3& value);
+  bool setUniformVariable(const std::string& name, const math::fmat4& value);
+  /// @}
+
+  /// @brief Check if all uniform variables have been set
+  bool checkUniformVariables();
 
   /// @brief Get the manager
   GLProgramManager* getManager() const;
 
-  /// @copydoc Program::getShaders()
+  /// @copydoc Program::getShaders
   virtual const std::set<Shader*>& getShaders() const override;
 
-  /// @copydoc Program::toString()
-  virtual std::string toString() const override;
+  /// @copydoc Program::getLog
+  virtual std::string getLog() const override;
 
   SEQUOIA_GL_OBJECT(Program);
 
@@ -123,7 +143,10 @@ private:
   unsigned int id_;
 
   /// Map of uniform variables referenced in this program
-  std::unordered_map<std::string, GLUniform> uniformMap_;
+  std::unordered_map<std::string, GLUniformInfo> uniformInfoMap_;
+
+  /// Cache if all uniform variables have been set
+  bool allUniformVariablesSet_;
 
   /// Shaders compiled into the program
   std::set<Shader*> shaders_;

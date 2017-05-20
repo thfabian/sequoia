@@ -103,6 +103,7 @@ void GLRenderer::render() {
   // Precompute view projection matrix
   glm::mat4 matViewProj = matProj * matView;
 
+  
   glm::mat4 matModel = glm::mat4(1.0f);
 
   // Compute the full model view projection matrix

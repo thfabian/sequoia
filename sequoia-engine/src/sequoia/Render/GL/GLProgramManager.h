@@ -58,19 +58,8 @@ public:
   /// @see GLShaderLoader::make
   void makeValid(GLProgram* program) { make(program, GLProgramStatus::Linked); }
 
-  /// @brief Set the uniform variables of the `program`
-  void setUniforms(GLProgram* program) const;
-
-  /// @brief Defines semantics for the input vertex attributes of the `program`
-  ///
-  /// This is required to know how to send data to the shader.
-  ///
-  /// @param attrib  The semantic of the attribute
-  /// @param name    The name of the vertex attribute
-  void setVertexAttribName(GLProgram* program, GLVertexAttrib attrib, const std::string& name);
-
-  /// @brief Get the information log for the specified `program`
-  std::string getInfoLog(const GLProgram* program) const;
+  /// @brief Get the uniform variables of the `program`
+  void queryUniforms(GLProgram* program) const;
 
   /// @brief Compute hash of the set of shaders
   static std::size_t hash(const std::set<Shader*>& shaders) noexcept;

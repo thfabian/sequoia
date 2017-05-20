@@ -40,8 +40,8 @@ public:
   virtual ~Program();
   Program(RenderSystemKind kind);
 
-  /// @brief Convert program to a human-readable string representation
-  virtual std::string toString() const = 0;
+  /// @brief Get a log of the program
+  virtual std::string getLog() const = 0;
 
   /// @brief Return the shaders which were linked into this program
   virtual const std::set<Shader*>& getShaders() const = 0;

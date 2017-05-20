@@ -13,13 +13,22 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_RENDER_HARDWAREBUFFERVERTEX_H
-#define SEQUOIA_RENDER_HARDWAREBUFFERVERTEX_H
+#include "sequoia/Render/VertexArray.h"
 
 namespace sequoia {
 
-namespace render {} // namespace render
+namespace render {
+
+VertexArray::~VertexArray() {}
+
+VertexArray::VertexArray(RenderSystemKind kind)
+    : RenderSystemObject(kind), vertices_(nullptr), numVertices_(0) {}
+
+void VertexArray::allocate(std::size_t numVertices) { 
+  
+  allocateGPU(numVertices); 
+}
+
+} // namespace render
 
 } // namespace sequoia
-
-#endif

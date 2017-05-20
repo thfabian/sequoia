@@ -13,12 +13,22 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_RENDER_HARDWAREBUFFERINDEX_H
-#define SEQUOIA_RENDER_HARDWAREBUFFERINDEX_H
+#ifndef SEQUOIA_RENDER_VERTEX_H
+#define SEQUOIA_RENDER_VERTEX_H
 
 namespace sequoia {
 
-namespace render {} // namespace render
+namespace render {
+
+/// @brief Representation of a vertex
+/// @ingroup render
+struct Vertex {
+  float Position[3];
+  float Normal[3];
+  unsigned char Color[4];
+};
+
+} // namespace render
 
 } // namespace sequoia
 

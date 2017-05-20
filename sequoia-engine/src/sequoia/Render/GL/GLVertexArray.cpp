@@ -13,34 +13,17 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_MATH_MATH_H
-#define SEQUOIA_MATH_MATH_H
-
-#include <glm/glm.hpp>
-#include <glm/gtc/type_ptr.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtx/io.hpp>
+#include "sequoia/Render/GL/GL.h"
+#include "sequoia/Render/GL/GLVertexArray.h"
 
 namespace sequoia {
 
-namespace math {
+namespace render {
 
-using namespace glm;
+GLVertexArray::~GLVertexArray() {}
 
-/// @brief Create a postion given a three dimensional vector
-///
-/// A position is given by a 4 dimensional vector `(x,y,z,w)` where `w = 1`
-/// @ingroup math
-inline vec4 makePosition(const vec3& vec) { return vec4(vec, 1); }
+GLVertexArray::GLVertexArray() : VertexArray(RenderSystemKind::RK_OpenGL), id_(0) {}
 
-/// @brief Create a direction given a three dimensional vector
-///
-/// A direction is given by a 4 dimensional vector `(x,y,z,w)` where `w = 0`
-/// @ingroup math
-inline vec4 makeDirection(const vec3& vec) { return vec4(vec, 0); }
+} // namespace render
 
-} // namespace math
-
-} // namspace sequoia
-
-#endif
+} // namespace sequoia

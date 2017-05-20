@@ -13,12 +13,30 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_RENDER_HARDWAREBUFFER_H
-#define SEQUOIA_RENDER_HARDWAREBUFFER_H
+#ifndef SEQUOIA_RENDER_GL_GLVERTEXARRAY_H
+#define SEQUOIA_RENDER_GL_GLVERTEXARRAY_H
+
+#include "sequoia/Render/VertexArray.h"
 
 namespace sequoia {
 
-namespace render {} // namespace render
+namespace render {
+
+/// @brief OpenGL hardware buffer
+/// @ingroup gl
+class SEQUOIA_RENDER_API GLVertexArray : public VertexArray {
+
+  /// ID of the Vertex Array Object (VAO)
+  unsigned int id_;
+
+public:
+  virtual ~GLVertexArray();
+  GLVertexArray();
+
+  SEQUOIA_GL_OBJECT(VertexArray);
+};
+
+} // namespace render
 
 } // namespace sequoia
 

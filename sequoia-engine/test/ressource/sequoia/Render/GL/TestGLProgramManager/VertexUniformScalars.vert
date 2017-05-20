@@ -1,14 +1,12 @@
 #version 330 core
 
-uniform bool u_bool_test;
-uniform int u_int_test;
-uniform uint u_uint_test;
-uniform float u_float_test;
+uniform int u_IntTest;
+uniform float u_FloatTest;
 
-in vec3 vertexCoord;
+in vec3 in_VertexCoord;
 
 void main() {
-  gl_Position.xyz = vertexCoord;
-  gl_Position.w = float(u_bool_test) + float(u_int_test) + float(u_uint_test) + u_float_test;
+  gl_Position.xyz = in_VertexCoord;
+  gl_Position.w = float(u_IntTest) + u_FloatTest;
 }
 

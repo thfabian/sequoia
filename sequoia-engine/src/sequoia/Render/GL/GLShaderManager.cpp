@@ -13,9 +13,9 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Render/GL/GLShaderManager.h"
 #include "sequoia/Core/Logging.h"
 #include "sequoia/Render/Exception.h"
+#include "sequoia/Render/GL/GLShaderManager.h"
 #include <boost/lexical_cast.hpp>
 #include <fstream>
 #include <sstream>
@@ -168,7 +168,20 @@ GLShader* GLShaderManager::create(GLShader::ShaderType type, const platform::Str
   return shader;
 }
 
-std::string GLShaderManager::getInfoLog(const GLShader* shader) const { return "invalid"; }
+std::string GLShaderManager::getInfoLog(const GLShader* shader) const {
+  if(shader->status_ < GLShaderStatus::Created)
+    return "invalid";
+
+  std::stringstream ss;
+  ss << "Shader Info Log (ID = " << shader->id_ << ")\n";
+
+  int info = 0;
+  for(auto param : {GL_COMPILE_STATUS, GL_DELETE_STATUS}) {
+    glGetShaderiv(shader->id_, param, &info);
+    ss << core::format("  %-40s : %d\n", param, info);
+  }
+  return ss.str();
+}
 
 } // namespace render
 

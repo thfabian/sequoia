@@ -22,9 +22,6 @@ sequoia_add_library(
           IO.h
           Program.h
           Program.cpp
-          HardwareBuffer.h
-          HardwareBufferVertex.h
-          HardwareBufferIndex.h
           RenderFwd.h
           RenderSystem.h
           RenderSystem.cpp
@@ -36,6 +33,9 @@ sequoia_add_library(
           RenderData.cpp
           Shader.h
           Shader.cpp
+          Vertex.h
+          VertexArray.h
+          VertexArray.cpp
           ViewFrustum.h
           Viewport.h
           Viewport.cpp
@@ -57,6 +57,8 @@ sequoia_add_library(
           GL/GLShader.cpp
           GL/GLShaderManager.h
           GL/GLShaderManager.cpp
+          GL/GLVertexArray.h
+          GL/GLVertexArray.cpp
           
   DEPENDS SequoiaCore
           ${SEQUOIA_EXTERNAL_LIBRARIES}

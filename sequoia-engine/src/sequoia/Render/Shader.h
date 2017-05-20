@@ -56,8 +56,8 @@ public:
   /// @brief Get the source code of the shader
   virtual std::string getSourceCode() const = 0;
 
-  /// @brief Convert program to a human-readable string representation
-  virtual std::string toString() const = 0;
+  /// @brief Get a log of the shader
+  virtual std::string getLog() const = 0;
 
   /// @brief Shader type to string
   static const char* shaderTypeToString(ShaderType type);

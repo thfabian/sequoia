@@ -77,8 +77,8 @@ public:
   /// @copydoc Shader::getSourceCode
   std::string getSourceCode() const override;
 
-  /// @copydoc Shader::toString
-  std::string toString() const override;
+  /// @copydoc Shader::getLog
+  std::string getLog() const override;
 
   /// @brief Get the status of the Shader
   GLShaderStatus getStatus() const;

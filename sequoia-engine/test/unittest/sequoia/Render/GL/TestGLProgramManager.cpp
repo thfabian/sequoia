@@ -55,7 +55,7 @@ TEST_F(GLProgramManagerTest, LinkingSuccess) {
   GLint id;
   glGetIntegerv(GL_CURRENT_PROGRAM, &id);
   EXPECT_EQ(id, glprogram->getID());
-  
+
   // Remove shader
   EXPECT_TRUE(glprogram->removeShader(fragmentShader));
   EXPECT_FALSE(glprogram->isValid());
@@ -69,15 +69,72 @@ TEST_F(GLProgramManagerTest, LinkingSuccess) {
 
 TEST_F(GLProgramManagerTest, UniformScalars) {
   RenderSystem& rsys = RenderSystem::getSingleton();
-  
+
   Shader* vertexShader = rsys.loadShader(
       getWindow(), Shader::ST_Vertex,
       resolveRessourcePath("sequoia/Render/GL/TestGLProgramManager/VertexUniformScalars.vert"));
 
   Program* program = rsys.createProgram(getWindow(), {vertexShader});
   GLProgram* glprogram = dyn_cast<GLProgram>(program);
-  
-  std::cout << glprogram->toString() << std::endl;  
+
+  EXPECT_EQ(glprogram->getUniformVariables().size(), 2);
+
+  float u_FloatTest = 5.0f;
+  EXPECT_TRUE(glprogram->setUniformVariable("u_FloatTest", u_FloatTest));
+
+  int u_IntTest = 5;
+  EXPECT_TRUE(glprogram->setUniformVariable("u_IntTest", u_IntTest));
+
+  EXPECT_TRUE(glprogram->checkUniformVariables());
+}
+
+TEST_F(GLProgramManagerTest, UniformVectors) {
+  RenderSystem& rsys = RenderSystem::getSingleton();
+
+  Shader* vertexShader = rsys.loadShader(
+      getWindow(), Shader::ST_Vertex,
+      resolveRessourcePath("sequoia/Render/GL/TestGLProgramManager/VertexUniformVectors.vert"));
+
+  Program* program = rsys.createProgram(getWindow(), {vertexShader});
+  GLProgram* glprogram = dyn_cast<GLProgram>(program);
+
+  EXPECT_EQ(glprogram->getUniformVariables().size(), 3);
+
+  math::vec2 u_fvec2;
+  EXPECT_TRUE(glprogram->setUniformVariable("u_fvec2", u_fvec2));
+
+  math::vec3 u_fvec3;
+  EXPECT_TRUE(glprogram->setUniformVariable("u_fvec3", u_fvec3));
+  EXPECT_THROW(glprogram->setUniformVariable("u_fvec2", u_fvec3), render::RenderSystemException);
+
+  math::vec4 u_fvec4;
+  EXPECT_TRUE(glprogram->setUniformVariable("u_fvec4", u_fvec4));
+
+  EXPECT_TRUE(glprogram->checkUniformVariables());
+}
+
+TEST_F(GLProgramManagerTest, UniformMatrices) {
+  RenderSystem& rsys = RenderSystem::getSingleton();
+
+  Shader* vertexShader = rsys.loadShader(
+      getWindow(), Shader::ST_Vertex,
+      resolveRessourcePath("sequoia/Render/GL/TestGLProgramManager/VertexUniformMatrices.vert"));
+
+  Program* program = rsys.createProgram(getWindow(), {vertexShader});
+  GLProgram* glprogram = dyn_cast<GLProgram>(program);
+
+  EXPECT_EQ(glprogram->getUniformVariables().size(), 3);
+
+  math::mat2 u_fmat2;
+  EXPECT_TRUE(glprogram->setUniformVariable("u_fmat2", u_fmat2));
+
+  math::mat3 u_fmat3;
+  EXPECT_TRUE(glprogram->setUniformVariable("u_fmat3", u_fmat3));
+
+  math::mat4 u_fmat4;
+  EXPECT_TRUE(glprogram->setUniformVariable("u_fmat4", u_fmat4));
+
+  EXPECT_TRUE(glprogram->checkUniformVariables());
 }
 
 } // anonymous namespace
