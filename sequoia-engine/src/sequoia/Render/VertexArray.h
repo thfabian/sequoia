@@ -20,7 +20,7 @@
 #include "sequoia/Render/Export.h"
 #include "sequoia/Render/RenderSystemObject.h"
 #include "sequoia/Render/Vertex.h"
-#include <cstdint>
+#include <cstddef>
 
 namespace sequoia {
 

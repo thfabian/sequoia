@@ -56,7 +56,7 @@ void GLShaderManager::make(GLShader* shader, GLShaderStatus requestedStatus) {
   }
 
   if(shader->status_ == GLShaderStatus::OnDisk) {
-    LOG(DEBUG) << "Loading shader from disk \"" << shader->path_ << "\"";
+    LOG(DEBUG) << "Loading shader from disk \"" << UtfString(shader->path_).toAnsiString() << "\"";
 
     std::ifstream file(shader->path_);
 

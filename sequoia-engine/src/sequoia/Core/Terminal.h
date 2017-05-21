@@ -16,6 +16,7 @@
 #ifndef SEQUOIA_CORE_TERMINAL_H
 #define SEQUOIA_CORE_TERMINAL_H
 
+#include "sequoia/Core/Export.h"
 #include <iosfwd>
 
 namespace sequoia {
@@ -44,7 +45,7 @@ namespace Terminal {
 /// false.
 ///
 /// @ingroup core
-class Color {
+class SEQUOIA_CORE_API Color {
 public:
   enum Code {
     None = 0,
@@ -83,7 +84,7 @@ public:
 };
 
 /// @brief Get the current width of the terminal
-extern int getWidth();
+extern SEQUOIA_CORE_API int getWidth();
 
 } // end namespace Terminal
 

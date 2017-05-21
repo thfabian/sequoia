@@ -159,7 +159,7 @@ private:
   MicroBenchmarker();
 };
 
-SEQUOIA_CORE_API extern MicroBenchmarker* MicroBenchmarkerGlobal;
+extern SEQUOIA_CORE_API MicroBenchmarker* MicroBenchmarkerGlobal;
 
 } // namespace core
 

@@ -140,8 +140,9 @@ public:
   enum TimerModeKind { TK_Cycle = 0, TK_Nsec = 1 };
 
   struct Measurement {
-    double Cycle = 0.0;
-    double Nsec = 0.0;
+    Measurement(double cycle = 0.0, double nsec = 0.0) : Cycle(cycle), Nsec(nsec) {}
+    double Cycle;
+    double Nsec;
   };
 
   struct Node {
@@ -212,7 +213,7 @@ private:
     timer_.start();
     timer_.stop();
     cycle -= timer_.cycles();
-    return Measurement{cycle, nsec};
+    return Measurement(cycle, nsec);
   }
 
   void processStart(const std::string& name, const Measurement& measurement) {
