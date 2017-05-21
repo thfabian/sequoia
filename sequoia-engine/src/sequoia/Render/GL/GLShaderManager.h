@@ -61,9 +61,6 @@ public:
   /// @brief Get the shader by OpenGL shader `id`
   GLShader* get(unsigned int id) const;
 
-  /// @brief Get the information log for the specified `shader`
-  std::string getInfoLog(const GLShader* shader) const;
-
 private:
   /// Record of all the registered shaders
   std::vector<std::unique_ptr<GLShader>> shaderList_;

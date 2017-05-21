@@ -34,8 +34,8 @@ sequoia_add_library(
           Shader.h
           Shader.cpp
           Vertex.h
-          VertexArray.h
-          VertexArray.cpp
+          VertexArrayObject.h
+          VertexArrayObject.cpp
           ViewFrustum.h
           Viewport.h
           Viewport.cpp
@@ -57,8 +57,8 @@ sequoia_add_library(
           GL/GLShader.cpp
           GL/GLShaderManager.h
           GL/GLShaderManager.cpp
-          GL/GLVertexArray.h
-          GL/GLVertexArray.cpp
+          GL/GLVertexArrayObject.h
+          GL/GLVertexArrayObject.cpp
           
   DEPENDS SequoiaCore
           ${SEQUOIA_EXTERNAL_LIBRARIES}

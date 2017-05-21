@@ -52,7 +52,20 @@ platform::String GLShader::getSourcePath() const { return path_; }
 
 std::string GLShader::getSourceCode() const { return code_; }
 
-std::string GLShader::getLog() const { return manager_->getInfoLog(this); }
+std::string GLShader::getLog() const { 
+  if(status_ < GLShaderStatus::Created)
+    return "invalid";
+
+  std::stringstream ss;
+  ss << "Shader Info Log (ID = " << id_ << ")\n";
+
+  int info = 0;
+  for(auto param : {GL_COMPILE_STATUS, GL_DELETE_STATUS}) {
+    glGetShaderiv(id_, param, &info);
+    ss << core::format("  %-40s : %d\n", param, info);
+  }
+  return ss.str();
+}
 
 GLShaderStatus GLShader::getStatus() const { return status_; }
 

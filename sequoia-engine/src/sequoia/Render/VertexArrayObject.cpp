@@ -13,16 +13,16 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Render/GL/GL.h"
-#include "sequoia/Render/GL/GLVertexArray.h"
+#include "sequoia/Render/VertexArrayObject.h"
 
 namespace sequoia {
 
 namespace render {
 
-GLVertexArray::~GLVertexArray() {}
+VertexArrayObject::~VertexArrayObject() {}
 
-GLVertexArray::GLVertexArray() : VertexArray(RenderSystemKind::RK_OpenGL), id_(0) {}
+VertexArrayObject::VertexArrayObject(RenderSystemKind kind)
+    : RenderSystemObject(kind), dataPtr_(nullptr), numVertices_(0) {}
 
 } // namespace render
 
