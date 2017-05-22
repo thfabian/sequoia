@@ -22,7 +22,47 @@ namespace render {
 
 GLVertexArrayObject::~GLVertexArrayObject() {}
 
-GLVertexArrayObject::GLVertexArrayObject() : VertexArrayObject(RenderSystemKind::RK_OpenGL), id_(0) {}
+GLVertexArrayObject::GLVertexArrayObject()
+    : VertexArrayObject(RenderSystemKind::RK_OpenGL), vaoID_(0), eboID_(0), vboID_(0),
+      hasIndices_(false) {}
+
+void GLVertexArrayObject::bind() {
+  glBindVertexArray(vaoID_);
+  glBindBuffer(GL_ARRAY_BUFFER, vboID_);
+
+  if(hasIndices_)
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, eboID_);
+  else
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+}
+
+void GLVertexArrayObject::unbind() {
+  glBindBuffer(GL_ARRAY_BUFFER, 0);
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+  glBindVertexArray(0);
+}
+
+void GLVertexArrayObject::updateDevice() {}
+
+bool GLVertexArrayObject::hasIndices() const { return hasIndices_; }
+
+void GLVertexArrayObject::attachVertexDataDevice() {
+
+  // Generate the buffers
+  glGenVertexArrays(1, &vaoID_);
+  glGenBuffers(1, &vboID_);
+
+  if(hasIndices_)
+    glGenBuffers(1, &eboID_);
+
+  bind();
+
+  // Set the vertex attributes
+  
+  // -> use the attributes in GLAttributes ..
+  
+  unbind();
+}
 
 } // namespace render
 

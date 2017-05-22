@@ -35,20 +35,6 @@ enum class GLProgramStatus {
   Linked,  ///< Program was successfully linked and is usable
 };
 
-/// @brief Types of vertex Attributes
-/// @ingroup gl
-enum class GLVertexAttrib {
-  VertexCoord = 0,
-  Normal,
-  TextureCoord,
-  Tangent,
-  Bitangent,
-  VertexAttrib1,
-  VertexAttrib2,
-  VertexAttrib3,
-  VertexAttrib4
-};
-
 /// @brief OpenGL implementation of a GPUProgram
 /// @see RenderSystem::createPogram
 /// @ingroup gl
@@ -78,8 +64,11 @@ public:
   /// @brief Get the status of the program
   GLProgramStatus getStatus() const;
 
-  /// @brief Use the program in the current render pipline
-  void use();
+  /// @brief Bind the program to the current render pipline
+  void bind();
+
+  /// @brief Unbind the program
+  void unbind();
 
   /// @brief Add the `shader` to the program
   ///
@@ -91,12 +80,6 @@ public:
   /// @note This forces a relink on next usage
   /// @returns `true` if `shader` was successfully removed
   bool removeShader(Shader* shader);
-
-  /// @brief Defines semantics for the input vertex attributes
-  ///
-  /// @param attrib  The semantic of the attribute
-  /// @param name    The name of the vertex attribute
-  void setVertexAttribName(GLVertexAttrib attrib, const std::string& name);
 
   /// @brief Get map of uniform variables
   const std::unordered_map<std::string, GLUniformInfo>& getUniformVariables() const;

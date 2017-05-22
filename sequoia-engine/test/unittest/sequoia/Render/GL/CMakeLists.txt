@@ -16,9 +16,9 @@
 sequoia_add_test(
   NAME SequoiaRenderGLTest
   SOURCES TestMain.cpp
-          TestGLProgramManager.cpp
+          TestGLProgram.cpp
           TestGLRenderWindow.cpp
-          TestGLShaderManager.cpp
+          TestGLShader.cpp
   DEPENDS SequoiaUnittest
           SequoiaRender
           SequoiaDriver

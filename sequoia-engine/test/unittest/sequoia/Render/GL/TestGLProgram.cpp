@@ -19,6 +19,7 @@
 #include "sequoia/Render/GL/GLRenderSystem.h"
 #include "sequoia/Render/GL/GLRenderer.h"
 #include "sequoia/Render/GL/GLShaderManager.h"
+#include "sequoia/Render/GL/GLVertexAttribute.h"
 #include "sequoia/Unittest/Environment.h"
 #include "sequoia/Unittest/GL/GLRenderTest.h"
 #include <gtest/gtest.h>
@@ -29,9 +30,9 @@ using namespace sequoia::render;
 
 namespace {
 
-class GLProgramManagerTest : public GLRenderTest {};
+class GLProgramTest : public GLRenderTest {};
 
-TEST_F(GLProgramManagerTest, LinkingSuccess) {
+TEST_F(GLProgramTest, LinkingSuccess) {
   RenderSystem& rsys = RenderSystem::getSingleton();
 
   Shader* vertexShader = rsys.loadShader(
@@ -50,7 +51,7 @@ TEST_F(GLProgramManagerTest, LinkingSuccess) {
   EXPECT_EQ(glprogram->getShaders(), (std::set<Shader*>{vertexShader, fragmentShader}));
 
   // Use program
-  glprogram->use();
+  glprogram->bind();
 
   GLint id;
   glGetIntegerv(GL_CURRENT_PROGRAM, &id);
@@ -67,7 +68,7 @@ TEST_F(GLProgramManagerTest, LinkingSuccess) {
   EXPECT_EQ(glprogram->getStatus(), GLProgramStatus::Invalid);
 }
 
-TEST_F(GLProgramManagerTest, UniformScalars) {
+TEST_F(GLProgramTest, UniformScalars) {
   RenderSystem& rsys = RenderSystem::getSingleton();
 
   Shader* vertexShader = rsys.loadShader(
@@ -88,7 +89,7 @@ TEST_F(GLProgramManagerTest, UniformScalars) {
   EXPECT_TRUE(glprogram->checkUniformVariables());
 }
 
-TEST_F(GLProgramManagerTest, UniformVectors) {
+TEST_F(GLProgramTest, UniformVectors) {
   RenderSystem& rsys = RenderSystem::getSingleton();
 
   Shader* vertexShader = rsys.loadShader(
@@ -113,7 +114,7 @@ TEST_F(GLProgramManagerTest, UniformVectors) {
   EXPECT_TRUE(glprogram->checkUniformVariables());
 }
 
-TEST_F(GLProgramManagerTest, UniformMatrices) {
+TEST_F(GLProgramTest, UniformMatrices) {
   RenderSystem& rsys = RenderSystem::getSingleton();
 
   Shader* vertexShader = rsys.loadShader(
@@ -135,6 +136,33 @@ TEST_F(GLProgramManagerTest, UniformMatrices) {
   EXPECT_TRUE(glprogram->setUniformVariable("u_fmat4", u_fmat4));
 
   EXPECT_TRUE(glprogram->checkUniformVariables());
+}
+
+TEST_F(GLProgramTest, VertexAttributesAll) {
+  RenderSystem& rsys = RenderSystem::getSingleton();
+
+  Shader* vertexShader = rsys.loadShader(
+      getWindow(), Shader::ST_Vertex,
+      resolveRessourcePath("sequoia/Render/GL/TestGLProgramManager/VertexAttributesAll.vert"));
+
+  Program* program = rsys.createProgram(getWindow(), {vertexShader});
+  GLProgram* glprogram = dyn_cast<GLProgram>(program);
+
+  // Check the locations
+  GLVertexAttribute::forEach([&glprogram](unsigned int index, const char* name) {
+    GLint location = glGetAttribLocation(glprogram->getID(), name);
+    EXPECT_EQ(location, index) << "invalid location for attribute: \"" << name << "\"";
+  });
+}
+
+TEST_F(GLProgramTest, VertexAttributesFail) {
+  RenderSystem& rsys = RenderSystem::getSingleton();
+
+  Shader* vertexShader = rsys.loadShader(
+      getWindow(), Shader::ST_Vertex,
+      resolveRessourcePath("sequoia/Render/GL/TestGLProgramManager/VertexAttributesFail.vert"));
+
+  EXPECT_THROW((rsys.createProgram(getWindow(), {vertexShader})), RenderSystemException);
 }
 
 } // anonymous namespace

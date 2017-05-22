@@ -59,6 +59,8 @@ sequoia_add_library(
           GL/GLShaderManager.cpp
           GL/GLVertexArrayObject.h
           GL/GLVertexArrayObject.cpp
+          GL/GLVertexAttribute.h
+          GL/GLVertexAttribute.cpp
           
   DEPENDS SequoiaCore
           ${SEQUOIA_EXTERNAL_LIBRARIES}

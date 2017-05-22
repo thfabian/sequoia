@@ -13,43 +13,43 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_RENDER_GL_GLVERTEXARRAYOBJECT_H
-#define SEQUOIA_RENDER_GL_GLVERTEXARRAYOBJECT_H
+#ifndef SEQUOIA_RENDER_GL_GLVERTEXATTRIBUTE_H
+#define SEQUOIA_RENDER_GL_GLVERTEXATTRIBUTE_H
 
-#include "sequoia/Render/VertexArrayObject.h"
+#include <functional>
 
 namespace sequoia {
 
 namespace render {
 
-/// @brief OpenGL vertex array object (VAO) with VBO and EBOs
+/// @brief OpenGL vertex attributes
 /// @ingroup gl
-class SEQUOIA_RENDER_API GLVertexArrayObject : public VertexArrayObject {
-  unsigned int vaoID_, eboID_, vboID_;
+struct GLVertexAttribute {
 
-  /// Do we draw with indices?
-  bool hasIndices_;
+  /// @brief OpenGL ids of known vertex attributes
+  enum Attribute : unsigned int {
+    Position = 0,
+    Normal,
+    TexCoord,
+    Color,
+    Tangent,
+    Bitangent,
 
-public:
-  virtual ~GLVertexArrayObject();
-  GLVertexArrayObject();
+    NumAttributes
+  };
 
-  /// @brief Bind the VAO
-  void bind();
+  /// @brief Get the name of `attribute`
+  static const char* name(Attribute attribute);
 
-  /// @brief Unbind the VAO
-  void unbind();
+  /// @brief Get the enum of the vertex attribute `name`
+  /// @throws RenderSystemException   `name` is not a valid attribute
+  static Attribute attribute(const char* name);
 
-  /// @copydoc VertexArrayObject::updateDevice
-  void updateDevice();
+  /// @brief Check if `name` is a valid attribute
+  static bool isValid(const char* name);
 
-  /// @copydoc VertexArrayObject::attachVertexDataDevice
-  void attachVertexDataDevice();
-
-  /// @brief Do we draw with indices?
-  bool hasIndices() const;
-
-  SEQUOIA_GL_OBJECT(VertexArrayObject);
+  /// @brief Run `functor` for each attribute
+  static void forEach(std::function<void(unsigned int, const char*)> functor);
 };
 
 } // namespace render

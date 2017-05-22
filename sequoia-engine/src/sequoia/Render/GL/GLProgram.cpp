@@ -45,12 +45,6 @@ bool GLProgram::removeShader(Shader* shader) {
   return shaders_.erase(shader);
 }
 
-void GLProgram::setVertexAttribName(GLVertexAttrib attrib, const std::string& name) {
-  manager_->make(this, GLProgramStatus::Created);
-  glBindAttribLocation(id_, (GLuint)attrib, name.c_str());
-  status_ = GLProgramStatus::Created;
-}
-
 const std::unordered_map<std::string, GLProgram::GLUniformInfo>&
 GLProgram::getUniformVariables() const {
   return uniformInfoMap_;
@@ -62,7 +56,7 @@ unsigned int GLProgram::getID() const { return id_; }
 
 GLProgramStatus GLProgram::getStatus() const { return status_; }
 
-void GLProgram::use() {
+void GLProgram::bind() {
   if(!isValid())
     manager_->makeValid(this);
 
@@ -71,6 +65,8 @@ void GLProgram::use() {
 
   glUseProgram(id_);
 }
+
+void GLProgram::unbind() { glUseProgram(0); }
 
 bool GLProgram::checkUniformVariables() {
   allUniformVariablesSet_ = true;

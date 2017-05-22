@@ -21,27 +21,27 @@
 namespace sequoia {
 
 namespace render {
-  
+
 /// @brief Layout description of vertices
-/// @ingroup
+/// @ingroup render
 struct VertexLayout {
-  std::size_t SizeOf;
+  std::size_t SizeOf = 0;
 
-  std::size_t PositionSize;
-  std::size_t PositionLength;
-  std::size_t PositionOffset;
+  std::size_t PositionOffset = 0;
+  std::size_t PositionElementSizeOf = 0;
+  std::size_t PositionNumElement = 0;
 
-  std::size_t NormalSize;
-  std::size_t NormalLength;
-  std::size_t NormalOffset;
-  
-  std::size_t TextureSize;
-  std::size_t TextureLength;
-  std::size_t TextureOffset;
-  
-  std::size_t ColorSize;
-  std::size_t ColorLength;
-  std::size_t ColorOffset;
+  std::size_t NormalOffset = 0;
+  std::size_t NormalElementSizeOf = 0;
+  std::size_t NormalNumElement = 0;
+
+  std::size_t TexCoordOffset = 0;
+  std::size_t TexCoordElementSizeOf = 0;
+  std::size_t TexCoordNumElement = 0;
+
+  std::size_t ColorOffset = 0;
+  std::size_t ColorElementSizeOf = 0;
+  std::size_t ColorNumElement = 0;
 };
 
 /// @brief Representation of a 3D vertex
@@ -49,9 +49,9 @@ struct VertexLayout {
 struct Vertex3D {
   float Position[3];
   float Normal[3];
-  float Texture[2];
+  float TexCoord[2];
   unsigned char Color[4];
-  
+
   static VertexLayout getLayout() noexcept;
 };
 
@@ -59,9 +59,9 @@ struct Vertex3D {
 /// @ingroup render
 struct Vertex2D {
   float Position[2];
-  float Texture[2];
+  float TexCoord[2];
   unsigned char Color[4];
-  
+
   static VertexLayout getLayout() noexcept;
 };
 

@@ -32,7 +32,7 @@ namespace render {
 class SEQUOIA_RENDER_API VertexArrayObject : public RenderSystemObject, public NonCopyable { 
 protected: 
   /// Pointer to the vertex data
-  void* dataPtr_
+  void* dataPtr_;
   
   /// Number of vertices
   std::size_t numVertices_;

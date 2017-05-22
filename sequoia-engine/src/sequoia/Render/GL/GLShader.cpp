@@ -13,9 +13,11 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Render/GL/GLShader.h"
+#include "sequoia/Core/Format.h"
 #include "sequoia/Core/Unreachable.h"
+#include "sequoia/Render/GL/GLShader.h"
 #include "sequoia/Render/GL/GLShaderManager.h"
+#include <sstream>
 
 namespace sequoia {
 
@@ -52,7 +54,7 @@ platform::String GLShader::getSourcePath() const { return path_; }
 
 std::string GLShader::getSourceCode() const { return code_; }
 
-std::string GLShader::getLog() const { 
+std::string GLShader::getLog() const {
   if(status_ < GLShaderStatus::Created)
     return "invalid";
 

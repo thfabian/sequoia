@@ -19,6 +19,7 @@
 #include "sequoia/Render/GL/GL.h"
 #include "sequoia/Render/GL/GLProgramManager.h"
 #include "sequoia/Render/GL/GLShaderManager.h"
+#include "sequoia/Render/GL/GLVertexAttribute.h"
 #include <algorithm>
 #include <boost/functional/hash.hpp>
 
@@ -73,6 +74,10 @@ void GLProgramManager::make(GLProgram* program, GLProgramStatus requestedStatus)
       glAttachShader(program->id_, glshader->getID());
     }
 
+    // Set location of the vertex attributes
+    setAttributes(program);
+
+    // Link the program
     glLinkProgram(program->id_);
     if(glGetError() != GL_NO_ERROR)
       SEQUOIA_THROW(RenderSystemException, "failed to link program");
@@ -83,8 +88,11 @@ void GLProgramManager::make(GLProgram* program, GLProgramStatus requestedStatus)
       glDetachShader(program->id_, glshader->getID());
     }
 
-    // Query the uniform variables
-    queryUniforms(program);
+    // Get the uniform variables
+    getUniforms(program);
+
+    // Check all vertex attributes have been set
+    checkAttributes(program);
 
     LOG(DEBUG) << "Successfully linked program (ID=" << program->id_ << ")";
   }
@@ -100,29 +108,29 @@ void GLProgramManager::destroy(GLProgram* program) {
   program->status_ = GLProgramStatus::Invalid;
 }
 
-void GLProgramManager::queryUniforms(GLProgram* program) const {
-  LOG(DEBUG) << "Querying uniform variables of program (ID=" << program->id_ << ")";
-  SEQUOIA_ASSERT_MSG(program->status_ == GLProgramStatus::Linked, "");
+void GLProgramManager::getUniforms(GLProgram* program) const {
+  LOG(DEBUG) << "Getting uniform variables of program (ID=" << program->id_ << ")";
+  SEQUOIA_ASSERT(program->status_ == GLProgramStatus::Linked);
 
   program->uniformInfoMap_.clear();
   program->allUniformVariablesSet_ = false;
 
-  int activeUniforms = 0;
-  glGetProgramiv(program->id_, GL_ACTIVE_UNIFORMS, &activeUniforms);
-  LOG(DEBUG) << "Program has " << activeUniforms << " active uniform variables";
+  int numActiveUniforms = 0;
+  glGetProgramiv(program->id_, GL_ACTIVE_UNIFORMS, &numActiveUniforms);
+  LOG(DEBUG) << "Program has " << numActiveUniforms << " active uniform variables";
 
   int activeUniformMaxLength = 0;
   glGetProgramiv(program->id_, GL_ACTIVE_UNIFORM_MAX_LENGTH, &activeUniformMaxLength);
   auto name = std::make_unique<char[]>(activeUniformMaxLength);
 
-  for(int index = 0; index < activeUniforms; ++index) {
+  for(int index = 0; index < numActiveUniforms; ++index) {
     GLenum type;
     GLint size, length;
     glGetActiveUniform(program->id_, index, activeUniformMaxLength, &length, &size, &type,
                        name.get());
     GLint location = glGetUniformLocation(program->id_, name.get());
 
-    LOG(DEBUG) << "Uniform variable: name=" << name.get() << ", type=" << type
+    LOG(DEBUG) << "Active uniform variable: name=" << name.get() << ", type=" << type
                << ", location=" << location;
 
     if(location != -1)
@@ -130,7 +138,45 @@ void GLProgramManager::queryUniforms(GLProgram* program) const {
                                        GLProgram::GLUniformInfo{type, size, location, false});
   }
 
-  LOG(DEBUG) << "Successfully queried uniform variables of program (ID=" << program->id_ << ")";
+  LOG(DEBUG) << "Successfully got uniform variables of program (ID=" << program->id_ << ")";
+}
+
+void GLProgramManager::setAttributes(GLProgram* program) const {
+  LOG(DEBUG) << "Setting vertex attributes of program (ID=" << program->id_ << ")";
+
+  GLVertexAttribute::forEach([&program](unsigned int index, const char* name) {
+    glBindAttribLocation(program->id_, index, name);
+  });
+
+  LOG(DEBUG) << "Successfully set vertex attributes of program (ID=" << program->id_ << ")";
+}
+
+void GLProgramManager::checkAttributes(GLProgram* program) const {
+  LOG(DEBUG) << "Checking vertex attributes of program (ID=" << program->id_ << ")";
+  SEQUOIA_ASSERT(program->status_ == GLProgramStatus::Linked);
+
+  int numActiveAttrs = 0;
+  glGetProgramiv(program->id_, GL_ACTIVE_ATTRIBUTES, &numActiveAttrs);
+  LOG(DEBUG) << "Program has " << numActiveAttrs << " active vertex attributes";
+
+  int activeAttrMaxLength = 0;
+  glGetProgramiv(program->id_, GL_ACTIVE_ATTRIBUTE_MAX_LENGTH, &activeAttrMaxLength);
+  auto name = std::make_unique<char[]>(activeAttrMaxLength);
+
+  for(unsigned int index = 0; index < numActiveAttrs; ++index) {
+    GLenum type;
+    GLint size, length;
+    glGetActiveAttrib(program->id_, index, activeAttrMaxLength, &length, &size, &type, name.get());
+    GLint location = glGetAttribLocation(program->id_, name.get());
+
+    LOG(DEBUG) << "Active vertex attribute: name=" << name.get() << ", type=" << type
+               << ", location=" << location;
+
+    if(!GLVertexAttribute::isValid(name.get()))
+      SEQUOIA_THROW(RenderSystemException, "invalid vertex attribute '%s' ", name.get());
+  }
+
+  LOG(DEBUG) << "Successfully checked vertex attributes of program (ID=" << program->id_ << ")";
 }
 
 GLProgram* GLProgramManager::create(const std::set<Shader*>& shaders,

@@ -58,11 +58,13 @@ public:
   /// @see GLShaderLoader::make
   void makeValid(GLProgram* program) { make(program, GLProgramStatus::Linked); }
 
-  /// @brief Get the uniform variables of the `program`
-  void queryUniforms(GLProgram* program) const;
-
   /// @brief Compute hash of the set of shaders
   static std::size_t hash(const std::set<Shader*>& shaders) noexcept;
+
+private:
+  void getUniforms(GLProgram* program) const;
+  void setAttributes(GLProgram* program) const;  
+  void checkAttributes(GLProgram* program) const;
 
 private:
   /// Record of all the registered programs

@@ -28,9 +28,9 @@ using namespace sequoia::render;
 
 namespace {
 
-class GLShaderManagerTest : public GLRenderTest {};
+class GLShaderTest : public GLRenderTest {};
 
-TEST_F(GLShaderManagerTest, LoadingSuccess) {
+TEST_F(GLShaderTest, LoadingSuccess) {
   RenderSystem& rsys = RenderSystem::getSingleton();
 
   Shader* shader = rsys.loadShader(
@@ -63,7 +63,7 @@ TEST_F(GLShaderManagerTest, LoadingSuccess) {
   EXPECT_EQ(glnewshader->getID(), 0);
 }
 
-TEST_F(GLShaderManagerTest, LoadingFail) {
+TEST_F(GLShaderTest, LoadingFail) {
   RenderSystem& rsys = RenderSystem::getSingleton();
 
   // Shader does not exists
@@ -80,7 +80,7 @@ TEST_F(GLShaderManagerTest, LoadingFail) {
                RenderSystemException);
 }
 
-TEST_F(GLShaderManagerTest, LoadingPartial) {
+TEST_F(GLShaderTest, LoadingPartial) {
   GLShaderManager* manager = dyn_cast<GLRenderSystem>(RenderSystem::getSingletonPtr())
                                  ->getRenderer(getWindow())
                                  ->getShaderManager();
