@@ -13,14 +13,35 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
+#include "sequoia/Core/Unreachable.h"
 #include "sequoia/Render/GL/GL.h"
 #include "sequoia/Render/GL/GLVertexArrayObject.h"
+#include "sequoia/Render/GL/GLVertexAttribute.h"
 
 namespace sequoia {
 
 namespace render {
 
-GLVertexArrayObject::~GLVertexArrayObject() {}
+namespace {
+
+static GLenum getGLType(VertexLayout::Type type) {
+  switch(type) {
+  case VertexLayout::Float:
+    return GLenum::GL_FLOAT;
+  case VertexLayout::UnsignedByte:
+    return GLenum::GL_UNSIGNED_BYTE;
+  default:
+    sequoia_unreachable("invlid Type");
+    return GL_INVALID_ENUM;
+  }
+}
+
+} // anonymous namespace
+
+GLVertexArrayObject::~GLVertexArrayObject() {
+  if(allocated_)
+    freeVertexDataDevice();
+}
 
 GLVertexArrayObject::GLVertexArrayObject()
     : VertexArrayObject(RenderSystemKind::RK_OpenGL), vaoID_(0), eboID_(0), vboID_(0),
@@ -55,13 +76,51 @@ void GLVertexArrayObject::attachVertexDataDevice() {
   if(hasIndices_)
     glGenBuffers(1, &eboID_);
 
+  // Set the vertex attributes
   bind();
 
-  // Set the vertex attributes
-  
-  // -> use the attributes in GLAttributes ..
-  
+  if(layout_->hasPosition()) {
+    glEnableVertexAttribArray(GLVertexAttribute::Position);
+    glVertexAttribPointer(GLVertexAttribute::Position, layout_->PositionNumElement,
+                          getGLType(layout_->PositionType), false, layout_->SizeOf,
+                          (void*)&layout_->PositionOffset);
+  }
+
+  if(layout_->hasNormal()) {
+    glEnableVertexAttribArray(GLVertexAttribute::Normal);
+    glVertexAttribPointer(GLVertexAttribute::Normal, layout_->NormalNumElement,
+                          getGLType(layout_->NormalType), false, layout_->SizeOf,
+                          (void*)&layout_->NormalOffset);
+  }
+
+  if(layout_->hasTexCoord()) {
+    glEnableVertexAttribArray(GLVertexAttribute::TexCoord);
+    glVertexAttribPointer(GLVertexAttribute::TexCoord, layout_->TexCoordNumElement,
+                          getGLType(layout_->TexCoordType), false, layout_->SizeOf,
+                          (void*)&layout_->TexCoordOffset);
+  }
+
+  if(layout_->hasColor()) {
+    glEnableVertexAttribArray(GLVertexAttribute::Color);
+    glVertexAttribPointer(GLVertexAttribute::Color, layout_->ColorNumElement,
+                          getGLType(layout_->ColorType), true, layout_->SizeOf,
+                          (void*)&layout_->ColorOffset);
+  }
+
   unbind();
+
+  allocated_ = true;
+}
+
+void GLVertexArrayObject::freeVertexDataDevice() {
+  glDeleteBuffers(1, &vboID_);
+  if(hasIndices_)
+    glDeleteBuffers(1, &eboID_);
+
+  glDeleteVertexArrays(1, &vaoID_);
+
+  vaoID_ = vboID_ = eboID_ = 0;
+  allocated_ = false;
 }
 
 } // namespace render

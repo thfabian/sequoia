@@ -92,7 +92,7 @@ void GLProgramManager::make(GLProgram* program, GLProgramStatus requestedStatus)
     getUniforms(program);
 
     // Check all vertex attributes have been set
-    checkAttributes(program);
+    SEQUOIA_ASSERT(checkAttributes(program));
 
     LOG(DEBUG) << "Successfully linked program (ID=" << program->id_ << ")";
   }
@@ -151,7 +151,7 @@ void GLProgramManager::setAttributes(GLProgram* program) const {
   LOG(DEBUG) << "Successfully set vertex attributes of program (ID=" << program->id_ << ")";
 }
 
-void GLProgramManager::checkAttributes(GLProgram* program) const {
+bool GLProgramManager::checkAttributes(GLProgram* program) const {
   LOG(DEBUG) << "Checking vertex attributes of program (ID=" << program->id_ << ")";
   SEQUOIA_ASSERT(program->status_ == GLProgramStatus::Linked);
 
@@ -177,6 +177,7 @@ void GLProgramManager::checkAttributes(GLProgram* program) const {
   }
 
   LOG(DEBUG) << "Successfully checked vertex attributes of program (ID=" << program->id_ << ")";
+  return true;
 }
 
 GLProgram* GLProgramManager::create(const std::set<Shader*>& shaders,

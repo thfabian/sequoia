@@ -13,21 +13,23 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_RENDER_RENDERDATA_H
-#define SEQUOIA_RENDER_RENDERDATA_H
+#include "sequoia/Core/Casting.h"
+#include "sequoia/Render/Exception.h"
+#include "sequoia/Render/GL/GLRenderSystem.h"
+#include "sequoia/Unittest/Environment.h"
+#include "sequoia/Unittest/GL/GLRenderTest.h"
+#include <gtest/gtest.h>
 
-#include "sequoia/Render/Export.h"
+using namespace sequoia;
+using namespace sequoia::unittest;
+using namespace sequoia::render;
 
-namespace sequoia {
+namespace {
 
-namespace render {
+class GLVertexArrayObjectTest : public GLRenderTest {};
 
-/// @brief Render data containing hardware buffers and instructions on how to render the data
-/// @ingroup render
-class SEQUOIA_RENDER_API RenderData {};
+TEST_F(GLVertexArrayObjectTest, AllocateBuffer) {
+  RenderSystem& rsys = RenderSystem::getSingleton();
+}
 
-} // namespace render
-
-} // namespace sequoia
-
-#endif
+} // anonymous namespace

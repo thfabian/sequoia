@@ -19,6 +19,7 @@ sequoia_add_test(
           TestGLProgram.cpp
           TestGLRenderWindow.cpp
           TestGLShader.cpp
+          TestGLVertexArrayObject.cpp
   DEPENDS SequoiaUnittest
           SequoiaRender
           SequoiaDriver

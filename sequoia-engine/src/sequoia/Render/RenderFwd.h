@@ -24,7 +24,7 @@ class Camera;
 class Program;
 class RenderSystem;
 class RenderWindow;
-class RenderData;
+class DrawCommand;
 class RenderTarget;
 class Shader;
 class ViewFrustum;

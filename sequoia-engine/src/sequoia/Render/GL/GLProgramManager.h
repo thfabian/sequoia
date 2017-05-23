@@ -63,8 +63,8 @@ public:
 
 private:
   void getUniforms(GLProgram* program) const;
-  void setAttributes(GLProgram* program) const;  
-  void checkAttributes(GLProgram* program) const;
+  void setAttributes(GLProgram* program) const;
+  bool checkAttributes(GLProgram* program) const;
 
 private:
   /// Record of all the registered programs

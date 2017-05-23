@@ -13,10 +13,21 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Render/RenderData.h"
+#ifndef SEQUOIA_RENDER_DRAWCOMMAND_H
+#define SEQUOIA_RENDER_DRAWCOMMAND_H
+
+#include "sequoia/Render/Export.h"
 
 namespace sequoia {
 
-namespace render {} // namespace render
+namespace render {
+
+/// @brief Instructions on how to render the VertexArrayObject
+/// @ingroup render
+class SEQUOIA_RENDER_API DrawCommand {};
+
+} // namespace render
 
 } // namespace sequoia
+
+#endif

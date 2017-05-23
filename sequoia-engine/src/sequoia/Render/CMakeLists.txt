@@ -17,6 +17,8 @@ sequoia_add_library(
   NAME SequoiaRender
   SOURCES Camera.h
           Camera.cpp
+          DrawCommand.h
+          DrawCommand.cpp
           Export.h
           Exception.h
           IO.h
@@ -29,11 +31,10 @@ sequoia_add_library(
           RenderTarget.h
           RenderTarget.cpp
           RenderWindow.h
-          RenderData.h
-          RenderData.cpp
           Shader.h
           Shader.cpp
           Vertex.h
+          Vertex.cpp
           VertexArrayObject.h
           VertexArrayObject.cpp
           ViewFrustum.h

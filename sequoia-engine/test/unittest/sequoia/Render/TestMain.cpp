@@ -13,19 +13,15 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_MATH_MATHFWD_H
-#define SEQUOIA_MATH_MATHFWD_H
+#include "sequoia/Unittest/Environment.h"
+#include <gtest/gtest.h>
 
-#include <glm/fwd.hpp>
+int main(int argc, char* argv[]) {
+  // Initialize gtest
+  testing::InitGoogleTest(&argc, argv);
 
-namespace sequoia {
+  // Register test environment
+  testing::AddGlobalTestEnvironment(new sequoia::unittest::Environment(argc, argv));
 
-namespace math {
-
-using namespace glm;
-
-} // namespace math
-
-} // namspace sequoia
-
-#endif
+  return RUN_ALL_TESTS();
+}

@@ -74,7 +74,7 @@ void Game::init() {
                           .Case("fullscreen", WindowModeKind::WK_Fullscreen)
                           .Case("windowed-fullscreen", WindowModeKind::WK_WindowedFullscreen)
                           .Default(WindowModeKind::WK_Window);
-    hint.FSAA = opt.Render.FSAA;
+    hint.MSAA = opt.Render.MSAA;
     hint.HideWindow = false;
 
     hint.GLMajorVersion = opt.Render.GLMajorVersion;

@@ -22,7 +22,22 @@ namespace render {
 VertexArrayObject::~VertexArrayObject() {}
 
 VertexArrayObject::VertexArrayObject(RenderSystemKind kind)
-    : RenderSystemObject(kind), dataPtr_(nullptr), numVertices_(0) {}
+    : RenderSystemObject(kind), dataPtr_(nullptr), numVertices_(0), layout_(nullptr) {}
+
+void VertexArrayObject::attachVertexData(void* dataPtr, std::size_t numVertices,
+                                         const VertexLayout* layout) {
+  dataPtr_ = dataPtr;
+  numVertices_ = numVertices;
+  layout_ = layout;
+  attachVertexDataDevice();
+}
+
+void VertexArrayObject::freeVertexData() {
+  freeVertexDataDevice();
+  dataPtr_ = nullptr;
+  numVertices_ = 0;
+  layout_ = nullptr;
+}
 
 } // namespace render
 

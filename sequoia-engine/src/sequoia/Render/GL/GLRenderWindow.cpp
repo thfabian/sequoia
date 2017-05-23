@@ -46,8 +46,8 @@ GLRenderWindow::GLRenderWindow(GLRenderSystem* renderSystem,
   glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, windowHints.GLMinorVersion);
 
   // Set Antialiasing
-  glfwWindowHint(GLFW_SAMPLES, windowHints.FSAA);
-  LOG(INFO) << "Using FSAA: " << windowHints.FSAA;
+  glfwWindowHint(GLFW_SAMPLES, windowHints.MSAA);
+  LOG(INFO) << "Using MSAA: " << windowHints.MSAA;
 
   // Specifies whether the OpenGL context should be forward-compatible, i.e. one where all
   // functionality deprecated in the requested version of OpenGL is removed

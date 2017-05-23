@@ -13,19 +13,10 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_MATH_MATHFWD_H
-#define SEQUOIA_MATH_MATHFWD_H
-
-#include <glm/fwd.hpp>
+#include "sequoia/Render/DrawCommand.h"
 
 namespace sequoia {
 
-namespace math {
+namespace render {} // namespace render
 
-using namespace glm;
-
-} // namespace math
-
-} // namspace sequoia
-
-#endif
+} // namespace sequoia

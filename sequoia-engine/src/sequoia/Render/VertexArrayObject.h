@@ -20,6 +20,7 @@
 #include "sequoia/Render/Export.h"
 #include "sequoia/Render/RenderSystemObject.h"
 #include "sequoia/Render/Vertex.h"
+#include <memory>
 
 namespace sequoia {
 
@@ -29,44 +30,50 @@ namespace render {
 ///
 /// @see RenderSystem::createVertexArrayObject
 /// @ingroup render
-class SEQUOIA_RENDER_API VertexArrayObject : public RenderSystemObject, public NonCopyable { 
-protected: 
+class SEQUOIA_RENDER_API VertexArrayObject : public RenderSystemObject, public NonCopyable {
+protected:
   /// Pointer to the vertex data
   void* dataPtr_;
-  
+
   /// Number of vertices
   std::size_t numVertices_;
-  
+
   /// Layout of each vertex
-  VertexLayout layout_;
+  const VertexLayout* layout_;
 
 public:
   virtual ~VertexArrayObject();
   VertexArrayObject(RenderSystemKind kind);
 
-  /// @brief Attach `numVertices` at `dataPtr` with given `layout` 
+  /// @brief Attach `numVertices` at `dataPtr` with given `layout`
   ///
   /// @param dataPtr      Starting adress of the vertex data
-  /// @param numVertices  Number of vertices (i.e the total amount of bytes is 
+  /// @param numVertices  Number of vertices (i.e the total amount of bytes is
   ///                     `numVertices * layout.SizeOf`)
-  /// @param layout       Layout of each vertex  
+  /// @param layout       Layout of each vertex
   ///
   /// This will create the underlying device hardware buffers. However, the data is only copied to
   /// the GPU once `updateGPU` is called.
-  void attachVertexData(void* dataPtr, std::size_t numVertices, const VertexLayout& layout);
+  void attachVertexData(void* dataPtr, std::size_t numVertices, const VertexLayout* layout);
+
+  /// @brief Free all allocated buffers
+  void freeVertexData();
 
   /// @brief Update the data on the device to match the CPU data
   virtual void updateDevice() = 0;
 
   /// @brief Get the number of allocated vertices
   std::size_t getNumVertices() const { return numVertices_; }
-  
+
   /// @brief Check if vertex data has been attached
   bool isValid() const;
 
 protected:
-  /// @brief Allocate `numVertices` vertices on the GPU
+  /// @brief Allocate vertex buffers on the GPU
   virtual void attachVertexDataDevice() = 0;
+
+  /// @brief Free vertices on the GPU
+  virtual void freeVertexDataDevice() = 0;
 };
 
 } // namespace render

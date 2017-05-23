@@ -49,7 +49,7 @@ public:
     bool HideWindow = false;
 
     /// Full-scene anti-aliasing
-    int FSAA = 0;
+    int MSAA = 0;
 
     /// OpenGL major version
     int GLMajorVersion = 3;

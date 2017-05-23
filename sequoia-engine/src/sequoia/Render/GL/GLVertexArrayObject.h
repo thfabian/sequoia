@@ -30,6 +30,9 @@ class SEQUOIA_RENDER_API GLVertexArrayObject : public VertexArrayObject {
   /// Do we draw with indices?
   bool hasIndices_;
 
+  /// Are the buffers allocated?
+  bool allocated_;
+
 public:
   virtual ~GLVertexArrayObject();
   GLVertexArrayObject();
@@ -41,10 +44,13 @@ public:
   void unbind();
 
   /// @copydoc VertexArrayObject::updateDevice
-  void updateDevice();
+  void updateDevice() override;
 
   /// @copydoc VertexArrayObject::attachVertexDataDevice
-  void attachVertexDataDevice();
+  void attachVertexDataDevice() override;
+
+  /// @copydoc VertexArrayObject::freeVertexDataDevice
+  void freeVertexDataDevice() override;
 
   /// @brief Do we draw with indices?
   bool hasIndices() const;

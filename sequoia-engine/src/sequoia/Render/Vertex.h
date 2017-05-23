@@ -25,23 +25,37 @@ namespace render {
 /// @brief Layout description of vertices
 /// @ingroup render
 struct VertexLayout {
+  enum Type { Invalid, UnsignedByte, Float };
+
   std::size_t SizeOf = 0;
 
+  Type PositionType = Invalid;
   std::size_t PositionOffset = 0;
-  std::size_t PositionElementSizeOf = 0;
   std::size_t PositionNumElement = 0;
 
+  Type NormalType = Invalid;
   std::size_t NormalOffset = 0;
-  std::size_t NormalElementSizeOf = 0;
   std::size_t NormalNumElement = 0;
 
+  Type TexCoordType = Invalid;
   std::size_t TexCoordOffset = 0;
-  std::size_t TexCoordElementSizeOf = 0;
   std::size_t TexCoordNumElement = 0;
 
+  Type ColorType = Invalid;
   std::size_t ColorOffset = 0;
-  std::size_t ColorElementSizeOf = 0;
   std::size_t ColorNumElement = 0;
+
+  /// @brief Check if `Position` attribute is available
+  bool hasPosition() const { return PositionNumElement > 0; }
+
+  /// @brief Check if `Normal` attribute is available
+  bool hasNormal() const { return NormalNumElement > 0; }
+
+  /// @brief Check if `TexCoord` attribute is available
+  bool hasTexCoord() const { return TexCoordNumElement > 0; }
+
+  /// @brief Check if `Color` attribute is available
+  bool hasColor() const { return ColorNumElement > 0; }
 };
 
 /// @brief Representation of a 3D vertex
@@ -52,7 +66,7 @@ struct Vertex3D {
   float TexCoord[2];
   unsigned char Color[4];
 
-  static VertexLayout getLayout() noexcept;
+  static const VertexLayout* getLayout() noexcept;
 };
 
 /// @brief Representation of a 2D vertex
@@ -62,7 +76,7 @@ struct Vertex2D {
   float TexCoord[2];
   unsigned char Color[4];
 
-  static VertexLayout getLayout() noexcept;
+  static const VertexLayout* getLayout() noexcept;
 };
 
 } // namespace render
