@@ -18,7 +18,7 @@
 
 #include "sequoia/Core/Listenable.h"
 #include "sequoia/Render/Export.h"
-#include "sequoia/Render/IO.h"
+#include "sequoia/Render/Input.h"
 
 struct GLFWwindow;
 

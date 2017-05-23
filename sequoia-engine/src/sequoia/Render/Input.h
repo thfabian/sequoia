@@ -13,8 +13,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_RENDER_IO_H
-#define SEQUOIA_RENDER_IO_H
+#ifndef SEQUOIA_RENDER_INPUT_H
+#define SEQUOIA_RENDER_INPUT_H
 
 #include "sequoia/Render/Export.h"
 

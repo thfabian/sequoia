@@ -21,7 +21,7 @@ sequoia_add_library(
           DrawCommand.cpp
           Export.h
           Exception.h
-          IO.h
+          Input.h
           Program.h
           Program.cpp
           RenderFwd.h
