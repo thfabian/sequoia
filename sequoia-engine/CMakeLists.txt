@@ -62,6 +62,7 @@ sequoia_report_result(
 ##===---------------------------------- Add external libraries --------------------------------===##
 include(AddThreads)
 
+include(AddBackward)
 include(AddBoost)
 include(AddCppcheck)
 include(Addglbinding)
@@ -77,9 +78,10 @@ if(SEQUOIA_TESTING)
 endif()
 
 set(SEQUOIA_EXTERNAL_LIBRARIES
+  ${SEQUOIA_BACKWARD_LIBRARIES}
+  ${SEQUOIA_BOOST_LIBRARIES}
   ${SEQUOIA_GLFW_LIBRARIES}
   ${SEQUOIA_TBB_LIBRARIES}
-  ${SEQUOIA_BOOST_LIBRARIES}
   ${SEQUOIA_GLBINDING_LIBRARIES}
   ${SEQUOIA_OPENGL_LIBRARIES}
   ${SEQUOIA_THREADS_LIBRARIES}
@@ -90,6 +92,7 @@ sequoia_report_result(
   "External libraries summary" 
   "${SEQUOIA_THREADS_INFO_STR}"
   "${SEQUOIA_BOOST_INFO_STR}"
+  "${SEQUOIA_BACKWARD_INFO_STR}"
   "${SEQUOIA_CPPCHECK_INFO_STR}"
   "${SEQUOIA_GLBINDING_INFO_STR}"
   "${SEQUOIA_GLFW_INFO_STR}"

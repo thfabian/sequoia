@@ -16,6 +16,14 @@
 unset(projects)
 
 #
+# backward
+#
+list(APPEND projects backward)
+set(backward_version "1.3")
+set(backward_url "https://github.com/bombela/backward-cpp/archive/v${backward_version}.tar.gz")
+set(backward_md5 "b89051fb35fd2eacf5ab9c7bced5faf6")
+
+#
 # Boost
 #
 list(APPEND projects boost)

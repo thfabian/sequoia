@@ -13,12 +13,25 @@
 ##
 ##===------------------------------------------------------------------------------------------===##
 
+option(USE_SYSTEM_BACKWARD "Should we use the system backward?" OFF)
 option(USE_SYSTEM_BOOST "Should we use the system Boost?" OFF)
 option(USE_SYSTEM_GLBINDING "Should we use the system glbinding?" OFF)
 option(USE_SYSTEM_GLFW "Should we use the system GLFW?" OFF)
 option(USE_SYSTEM_GLM "Should we use the system glm?" OFF)
 option(USE_SYSTEM_GTEST "Should we use the system GTest?" OFF)
 option(USE_SYSTEM_TBB "Should we use the system TBB?" OFF)
+
+#
+# backward
+#
+if(USE_SYSTEM_BACKWARD)
+  find_package(backward REQUIRED)
+  if(DEFINED BACKWARD_ROOT)
+    list(APPEND Sequoia_THIRDPARTYLIBS_ARGS "-DBACKWARD_ROOT:PATH=${BACKWARD_ROOT}")
+  endif()
+else()
+  include(External_backward)
+endif()
 
 #
 # Boost
