@@ -19,6 +19,7 @@
 #include "sequoia/Core/NonCopyable.h"
 #include "sequoia/Render/Export.h"
 #include "sequoia/Render/RenderSystemObject.h"
+#include <memory>
 #include <set>
 #include <string>
 
@@ -44,7 +45,10 @@ public:
   virtual std::string getLog() const = 0;
 
   /// @brief Return the shaders which were linked into this program
-  virtual const std::set<Shader*>& getShaders() const = 0;
+  virtual const std::set<std::shared_ptr<Shader>>& getShaders() const = 0;
+
+  /// @brief Convert to string
+  virtual std::string toString() const = 0;
 };
 
 } // namespace render

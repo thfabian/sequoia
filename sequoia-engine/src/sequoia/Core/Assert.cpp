@@ -31,7 +31,7 @@ static void assertionFailedImpl(char const* expr, char const* msg, char const* f
      << function << "'\n"
      << "Location:\n"
      << file << ":" << line << "\n";
-  ErrorHandler::getSingleton().fatal(ss.str());
+  ErrorHandler::getSingleton().fatal(ss.str(), false, true);
 }
 
 static void assertionFailedImpl(char const* expr, wchar_t* msg, char const* function,
@@ -44,7 +44,7 @@ static void assertionFailedImpl(char const* expr, wchar_t* msg, char const* func
      << toWString(function) << L"'\n"
      << L"Location:\n"
      << toWString(file) << L":" << line << L"\n";
-  ErrorHandler::getSingleton().fatal(ss.str());
+  ErrorHandler::getSingleton().fatal(ss.str(), false, true);
 }
 
 void assertionFailedMsg(const char* expr, const char* msg, const char* function, const char* file,

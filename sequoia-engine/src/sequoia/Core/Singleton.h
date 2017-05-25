@@ -16,7 +16,6 @@
 #ifndef SEQUOIA_CORE_SINGLETON_H
 #define SEQUOIA_CORE_SINGLETON_H
 
-#include "sequoia/Core/Assert.h"
 #include "sequoia/Core/NonCopyable.h"
 #include <cassert>
 
@@ -59,17 +58,17 @@ public:
 
 public:
   Singleton() {
-    assert(!Instance);
+    assert(!Instance && "multiple allocation of Singleton");
     Instance = static_cast<Derived*>(this);
   }
 
   ~Singleton() {
-    assert(Instance);
+    assert(Instance && "deleting non-existing Singleton");
     Instance = nullptr;
   }
 
   static Derived& getSingleton() {
-    assert(Instance);
+    assert(Instance && "accessing non-existing Singleton");
     return *Instance;
   }
 
@@ -83,7 +82,6 @@ using Singleton = core::Singleton<Derived>;
 
 } // namespace sequoia
 
-/// @macro SEQUOIA_DECLARE_SINGLETON
 /// @brief Declares the instance of the singleton `Class`
 ///
 /// Note that you **must** declare `SEQUOIA_DECLARE_SINGLETON` inside the `sequoia` namespace (and

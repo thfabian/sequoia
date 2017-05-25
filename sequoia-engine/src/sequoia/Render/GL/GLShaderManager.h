@@ -43,27 +43,25 @@ public:
   /// @param path             Path to the shader source
   /// @param requestedStatus  Requested target status
   /// @throws RenderSystemException
-  GLShader* create(GLShader::ShaderType type, const platform::String& path,
-                   GLShaderStatus requestedStatus = GLShaderStatus::Compiled);
+  std::shared_ptr<GLShader> create(GLShader::ShaderType type, const platform::String& path,
+                                   GLShaderStatus requestedStatus = GLShaderStatus::Compiled);
 
   /// @brief Convert the shader to `status`
   /// @throws RenderSystemException
-  void make(GLShader* shader, GLShaderStatus requestedStatus);
-
-  /// @brief Destroy the shader by deregistering it from OpenGL (i.e it's status will be
-  /// `GLShaderStatus::InMemory`)
-  void destroy(GLShader* shader);
+  void make(const std::shared_ptr<GLShader>& shader, GLShaderStatus requestedStatus);
 
   /// @brief Convert the shader to `GLProgramStatus::Linked`
   /// @see GLShaderLoader::make
-  void makeValid(GLShader* shader) { make(shader, GLShaderStatus::Compiled); }
+  void makeValid(const std::shared_ptr<GLShader>& shader) {
+    make(shader, GLShaderStatus::Compiled);
+  }
 
   /// @brief Get the shader by OpenGL shader `id`
-  GLShader* get(unsigned int id) const;
+  const std::shared_ptr<GLShader>& get(unsigned int id) const;
 
 private:
   /// Record of all the registered shaders
-  std::vector<std::unique_ptr<GLShader>> shaderList_;
+  std::vector<std::shared_ptr<GLShader>> shaderList_;
 
   /// Lookup map for shader ID
   std::unordered_map<unsigned int, std::size_t> idLookupMap_;

@@ -19,6 +19,8 @@ sequoia_add_library(
           Camera.cpp
           DrawCommand.h
           DrawCommand.cpp
+          DrawCommandList.h
+          DrawCommandList.cpp
           Export.h
           Exception.h
           Input.h

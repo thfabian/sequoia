@@ -167,7 +167,7 @@ public:
   ///
   /// @return A UtfString containing the source string
   ///
-  /// \see fromUtf16, fromUtf32
+  /// @see fromUtf16, fromUtf32
   template <typename T>
   static UtfString fromUtf8(T begin, T end) {
     UtfString string;
@@ -182,7 +182,7 @@ public:
   ///
   /// @return A UtfString containing the source string
   ///
-  /// \see fromUtf8, fromUtf32
+  /// @see fromUtf8, fromUtf32
   template <typename T>
   static UtfString fromUtf16(T begin, T end) {
     UtfString string;
@@ -200,7 +200,7 @@ public:
   ///
   /// @return A UtfString containing the source string
   ///
-  /// \see fromUtf8, fromUtf16
+  /// @see fromUtf8, fromUtf16
   template <typename T>
   static UtfString fromUtf32(T begin, T end) {
     UtfString string;
@@ -217,7 +217,7 @@ public:
   ///
   /// @return Converted ANSI string
   ///
-  /// \see toAnsiString, operator std::wstring
+  /// @see toAnsiString, operator std::wstring
   operator std::string() const;
 
   /// @brief Implicit conversion operator to std::wstring (wide string)
@@ -227,7 +227,7 @@ public:
   ///
   /// @return Converted wide string
   ///
-  /// \see toWideString, operator std::string
+  /// @see toWideString, operator std::string
   operator std::wstring() const;
 
   /// @brief Convert the Unicode string to an ANSI string
@@ -239,7 +239,7 @@ public:
   ///
   /// @return Converted ANSI string
   ///
-  /// \see toWideString, operator std::string
+  /// @see toWideString, operator std::string
   std::string toAnsiString(const std::locale& locale = std::locale()) const;
 
   /// @brief Convert the Unicode string to a wide string
@@ -248,21 +248,21 @@ public:
   ///
   /// @return Converted wide string
   ///
-  /// \see toAnsiString, operator std::wstring
+  /// @see toAnsiString, operator std::wstring
   std::wstring toWideString() const;
 
   /// @brief Convert the Unicode string to a UTF-8 string
   ///
   /// @return Converted UTF-8 string
   ///
-  /// \see toUtf16, toUtf32
+  /// @see toUtf16, toUtf32
   std::basic_string<std::uint8_t> toUtf8() const;
 
   /// @brief Convert the Unicode string to a UTF-16 string
   ///
   /// @return Converted UTF-16 string
   ///
-  /// \see toUtf8, toUtf32
+  /// @see toUtf8, toUtf32
   std::basic_string<std::uint16_t> toUtf16() const;
 
   /// @brief Convert the Unicode string to a UTF-32 string
@@ -272,7 +272,7 @@ public:
   ///
   /// @return Converted UTF-32 string
   ///
-  /// \see toUtf8, toUtf16
+  /// @see toUtf8, toUtf16
   std::basic_string<std::uint32_t> toUtf32() const;
 
   /// @brief Overload of assignment operator
@@ -313,21 +313,21 @@ public:
   ///
   /// This function removes all the characters from the string.
   ///
-  /// \see empty, erase
+  /// @see empty, erase
   void clear();
 
   /// @brief Get the size of the string
   ///
   /// @return Number of characters in the string
   ///
-  /// \see empty
+  /// @see empty
   std::size_t getSize() const;
 
   /// @brief Check whether the string is empty or not
   ///
   /// @return True if the string is empty (i.e. contains no character)
   ///
-  /// \see clear, getSize
+  /// @see clear, getSize
   bool empty() const;
 
   /// @brief Erase one or more characters from the string
@@ -403,14 +403,14 @@ public:
   ///
   /// @return Read-write iterator to the beginning of the string characters
   ///
-  /// \see end
+  /// @see end
   Iterator begin();
 
   /// @brief Return an iterator to the beginning of the string
   ///
   /// @return Read-only iterator to the beginning of the string characters
   ///
-  /// \see end
+  /// @see end
   ConstIterator begin() const;
 
   /// @brief Return an iterator to the end of the string
@@ -420,7 +420,7 @@ public:
   ///
   /// @return Read-write iterator to the end of the string characters
   ///
-  /// \see begin
+  /// @see begin
   Iterator end();
 
   /// @brief Return an iterator to the end of the string
@@ -430,7 +430,7 @@ public:
   ///
   /// @return Read-only iterator to the end of the string characters
   ///
-  /// \see begin
+  /// @see begin
   ConstIterator end() const;
 
 private:

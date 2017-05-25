@@ -14,6 +14,7 @@
 //===------------------------------------------------------------------------------------------===//
 
 #include "sequoia/Core/Format.h"
+#include "sequoia/Core/Logging.h"
 #include "sequoia/Core/Unreachable.h"
 #include "sequoia/Render/GL/GLShader.h"
 #include "sequoia/Render/GL/GLShaderManager.h"
@@ -39,6 +40,21 @@ GLenum GLShader::getGLShaderType(Shader::ShaderType type) {
     return GL_FRAGMENT_SHADER;
   default:
     sequoia_unreachable("invalid ShaderType");
+  }
+}
+
+static const char* statusToString(GLShaderStatus status) {
+  switch(status) {
+  case GLShaderStatus::OnDisk:
+    return "OnDisk";
+  case GLShaderStatus::InMemory:
+    return "InMemory";
+  case GLShaderStatus::Created:
+    return "Created";
+  case GLShaderStatus::Compiled:
+    return "Compiled";
+  default:
+    sequoia_unreachable("invalid GLShaderStatus");
   }
 }
 
@@ -69,9 +85,35 @@ std::string GLShader::getLog() const {
   return ss.str();
 }
 
+std::string GLShader::toString() const {
+  return core::format("GLShader[\n"
+                      "  type = %s,\n"
+                      "  status = %s,\n"
+                      "  id = %s,\n"
+                      "  path = \"%s\"\n"
+                      "]",
+                      shaderTypeToString(type_), statusToString(status_), id_,
+                      UtfString(path_).toAnsiString());
+}
+
 GLShaderStatus GLShader::getStatus() const { return status_; }
 
 GLShaderManager* GLShader::getManager() const { return manager_; }
+
+void destroyGLShader(GLShader* shader) noexcept {
+  if(shader->status_ <= GLShaderStatus::InMemory)
+    return;
+
+  LOG(DEBUG) << "Deleting shader (ID=" << shader->id_ << ")";
+
+  SEQUOIA_ASSERT(shader->id_ != 0);
+  glDeleteShader(shader->id_);
+  shader->id_ = 0;
+
+  shader->status_ = GLShaderStatus::InMemory;
+
+  delete shader;
+}
 
 } // namespace render
 

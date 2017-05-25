@@ -31,7 +31,7 @@ ErrorHandler::ErrorHandler(UtfString program) {
   program_ = p.stem().native();
 }
 
-void ErrorHandler::fatal(std::string message, bool messagebox) noexcept {
+void ErrorHandler::fatal(std::string message, bool messagebox, bool crash) noexcept {
   (void)messagebox;
 #ifdef SEQUOIA_ON_WIN32
   if(messagebox) {
@@ -43,14 +43,13 @@ void ErrorHandler::fatal(std::string message, bool messagebox) noexcept {
   std::cerr << program_.toAnsiString() << ": error: " << message << std::endl;
 #endif
 
-#if SEQUOIA_CRASH_ON_ERROR
-  std::abort();
-#else
-  std::exit(EXIT_FAILURE);
-#endif
+  if(crash)
+    std::abort();
+  else
+    std::exit(EXIT_FAILURE);
 }
 
-void ErrorHandler::fatal(std::wstring message, bool messagebox) noexcept {
+void ErrorHandler::fatal(std::wstring message, bool messagebox, bool crash) noexcept {
   (void)messagebox;
 #ifdef SEQUOIA_ON_WIN32
   if(messagebox)
@@ -61,11 +60,10 @@ void ErrorHandler::fatal(std::wstring message, bool messagebox) noexcept {
   std::wcerr << program_.toWideString() << L": error: " << message << std::endl;
 #endif
 
-#if SEQUOIA_CRASH_ON_ERROR
-  std::abort();
-#else
-  std::exit(EXIT_FAILURE);
-#endif
+  if(crash)
+    std::abort();
+  else
+    std::exit(EXIT_FAILURE);
 }
 
 void ErrorHandler::warning(std::string message) noexcept {

@@ -24,6 +24,7 @@ namespace sequoia {
 
 namespace render {
 
+/// @brief Extract a single row from `source`
 static std::string getRow(const std::string& source, int rowIdx) {
   int row = 1;
   std::size_t start = 0, end = std::string::npos;
@@ -39,17 +40,15 @@ static std::string getRow(const std::string& source, int rowIdx) {
   return std::string();
 }
 
-GLShaderManager::~GLShaderManager() {
-  for(auto& shaderPtr : shaderList_)
-    destroy(shaderPtr.get());
-}
+GLShaderManager::~GLShaderManager() {}
 
-void GLShaderManager::make(GLShader* shader, GLShaderStatus requestedStatus) {
+void GLShaderManager::make(const std::shared_ptr<GLShader>& shader,
+                           GLShaderStatus requestedStatus) {
   if(shader->status_ == GLShaderStatus::Compiled)
     return;
 
   if(requestedStatus == GLShaderStatus::OnDisk) {
-    destroy(shader);
+    destroyGLShader(shader.get());
     return;
   }
 
@@ -129,37 +128,27 @@ void GLShaderManager::make(GLShader* shader, GLShaderStatus requestedStatus) {
   }
 }
 
-void GLShaderManager::destroy(GLShader* shader) {
-  if(shader->status_ <= GLShaderStatus::InMemory)
-    return;
-
-  LOG(DEBUG) << "Deleting shader (ID=" << shader->id_ << ")";
-
-  SEQUOIA_ASSERT(shader->id_ != 0);
-  glDeleteShader(shader->id_);
-  shader->id_ = 0;
-
-  shader->status_ = GLShaderStatus::InMemory;
-}
-
-GLShader* GLShaderManager::get(unsigned int id) const {
+const std::shared_ptr<GLShader>& GLShaderManager::get(unsigned int id) const {
   auto it = idLookupMap_.find(id);
   SEQUOIA_ASSERT_MSG(it != idLookupMap_.end(),
                      "invalid shader id or shader has not yet been created");
-  return shaderList_[it->second].get();
+  return shaderList_[it->second];
 }
 
-GLShader* GLShaderManager::create(GLShader::ShaderType type, const platform::String& path,
-                                  GLShaderStatus requestedStatus) {
-  GLShader* shader = nullptr;
+std::shared_ptr<GLShader> GLShaderManager::create(GLShader::ShaderType type,
+                                                  const platform::String& path,
+                                                  GLShaderStatus requestedStatus) {
+
+  std::shared_ptr<GLShader> shader = nullptr;
   auto it = pathLookupMap_.find(path);
 
   if(it != pathLookupMap_.end())
-    shader = shaderList_[it->second].get();
+    shader = shaderList_[it->second];
   else {
-    shaderList_.emplace_back(std::make_unique<GLShader>(type, path, this));
+    shaderList_.emplace_back(std::shared_ptr<GLShader>(
+        new GLShader(type, path, this), [](GLShader* shader) { destroyGLShader(shader); }));
     pathLookupMap_[path] = shaderList_.size() - 1;
-    shader = shaderList_.back().get();
+    shader = shaderList_.back();
   }
 
   make(shader, requestedStatus);

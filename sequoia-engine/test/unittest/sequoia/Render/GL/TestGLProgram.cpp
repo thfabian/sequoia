@@ -35,20 +35,22 @@ class GLProgramTest : public GLRenderTest {};
 TEST_F(GLProgramTest, LinkingSuccess) {
   RenderSystem& rsys = RenderSystem::getSingleton();
 
-  Shader* vertexShader = rsys.loadShader(
+  std::shared_ptr<Shader> vertexShader = rsys.loadShader(
       getWindow(), Shader::ST_Vertex,
       resolveRessourcePath("sequoia/Render/GL/TestGLProgramManager/VertexLinkSuccess.vert"));
 
-  Shader* fragmentShader = rsys.loadShader(
+  std::shared_ptr<Shader> fragmentShader = rsys.loadShader(
       getWindow(), Shader::ST_Fragment,
       resolveRessourcePath("sequoia/Render/GL/TestGLProgramManager/FragmentLinkSuccess.frag"));
 
-  Program* program = rsys.createProgram(getWindow(), {vertexShader, fragmentShader});
-  GLProgram* glprogram = dyn_cast<GLProgram>(program);
+  std::shared_ptr<Program> program =
+      rsys.createProgram(getWindow(), {vertexShader, fragmentShader});
+  GLProgram* glprogram = dyn_cast<GLProgram>(program.get());
 
   EXPECT_TRUE(glprogram->isValid());
   EXPECT_NE(glprogram->getID(), 0);
-  EXPECT_EQ(glprogram->getShaders(), (std::set<Shader*>{vertexShader, fragmentShader}));
+  EXPECT_EQ(glprogram->getShaders(),
+            (std::set<std::shared_ptr<Shader>>{vertexShader, fragmentShader}));
 
   // Use program
   glprogram->bind();
@@ -61,22 +63,17 @@ TEST_F(GLProgramTest, LinkingSuccess) {
   EXPECT_TRUE(glprogram->removeShader(fragmentShader));
   EXPECT_FALSE(glprogram->isValid());
   EXPECT_EQ(glprogram->getStatus(), GLProgramStatus::Created);
-
-  // Destroy program
-  rsys.destroyProgram(getWindow(), glprogram);
-  EXPECT_FALSE(glprogram->isValid());
-  EXPECT_EQ(glprogram->getStatus(), GLProgramStatus::Invalid);
 }
 
 TEST_F(GLProgramTest, UniformScalars) {
   RenderSystem& rsys = RenderSystem::getSingleton();
 
-  Shader* vertexShader = rsys.loadShader(
+  std::shared_ptr<Shader> vertexShader = rsys.loadShader(
       getWindow(), Shader::ST_Vertex,
       resolveRessourcePath("sequoia/Render/GL/TestGLProgramManager/VertexUniformScalars.vert"));
 
-  Program* program = rsys.createProgram(getWindow(), {vertexShader});
-  GLProgram* glprogram = dyn_cast<GLProgram>(program);
+  std::shared_ptr<Program> program = rsys.createProgram(getWindow(), {vertexShader});
+  GLProgram* glprogram = dyn_cast<GLProgram>(program.get());
 
   EXPECT_EQ(glprogram->getUniformVariables().size(), 2);
 
@@ -92,12 +89,12 @@ TEST_F(GLProgramTest, UniformScalars) {
 TEST_F(GLProgramTest, UniformVectors) {
   RenderSystem& rsys = RenderSystem::getSingleton();
 
-  Shader* vertexShader = rsys.loadShader(
+  std::shared_ptr<Shader> vertexShader = rsys.loadShader(
       getWindow(), Shader::ST_Vertex,
       resolveRessourcePath("sequoia/Render/GL/TestGLProgramManager/VertexUniformVectors.vert"));
 
-  Program* program = rsys.createProgram(getWindow(), {vertexShader});
-  GLProgram* glprogram = dyn_cast<GLProgram>(program);
+  std::shared_ptr<Program> program = rsys.createProgram(getWindow(), {vertexShader});
+  GLProgram* glprogram = dyn_cast<GLProgram>(program.get());
 
   EXPECT_EQ(glprogram->getUniformVariables().size(), 3);
 
@@ -117,12 +114,12 @@ TEST_F(GLProgramTest, UniformVectors) {
 TEST_F(GLProgramTest, UniformMatrices) {
   RenderSystem& rsys = RenderSystem::getSingleton();
 
-  Shader* vertexShader = rsys.loadShader(
+  std::shared_ptr<Shader> vertexShader = rsys.loadShader(
       getWindow(), Shader::ST_Vertex,
       resolveRessourcePath("sequoia/Render/GL/TestGLProgramManager/VertexUniformMatrices.vert"));
 
-  Program* program = rsys.createProgram(getWindow(), {vertexShader});
-  GLProgram* glprogram = dyn_cast<GLProgram>(program);
+  std::shared_ptr<Program> program = rsys.createProgram(getWindow(), {vertexShader});
+  GLProgram* glprogram = dyn_cast<GLProgram>(program.get());
 
   EXPECT_EQ(glprogram->getUniformVariables().size(), 3);
 
@@ -141,12 +138,12 @@ TEST_F(GLProgramTest, UniformMatrices) {
 TEST_F(GLProgramTest, VertexAttributesAll) {
   RenderSystem& rsys = RenderSystem::getSingleton();
 
-  Shader* vertexShader = rsys.loadShader(
+  std::shared_ptr<Shader> vertexShader = rsys.loadShader(
       getWindow(), Shader::ST_Vertex,
       resolveRessourcePath("sequoia/Render/GL/TestGLProgramManager/VertexAttributesAll.vert"));
 
-  Program* program = rsys.createProgram(getWindow(), {vertexShader});
-  GLProgram* glprogram = dyn_cast<GLProgram>(program);
+  std::shared_ptr<Program> program = rsys.createProgram(getWindow(), {vertexShader});
+  GLProgram* glprogram = dyn_cast<GLProgram>(program.get());
 
   // Check the locations
   GLVertexAttribute::forEach([&glprogram](unsigned int index, const char* name) {
@@ -158,7 +155,7 @@ TEST_F(GLProgramTest, VertexAttributesAll) {
 TEST_F(GLProgramTest, VertexAttributesFail) {
   RenderSystem& rsys = RenderSystem::getSingleton();
 
-  Shader* vertexShader = rsys.loadShader(
+  std::shared_ptr<Shader> vertexShader = rsys.loadShader(
       getWindow(), Shader::ST_Vertex,
       resolveRessourcePath("sequoia/Render/GL/TestGLProgramManager/VertexAttributesFail.vert"));
 

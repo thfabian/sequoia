@@ -41,11 +41,25 @@ SEQUOIA_CORE_API extern void assertionFailedMsg(char const* expr, const wchar_t*
 
 } // namespace sequoia
 
+/// @brief Evaluate assertion
+///
+/// If the argument expression `expr` of this macro with functional form compares equal to zero
+/// (i.e., the expression is false), a message is written to the standard error device and abort is
+/// called, terminating the program execution.
+///
+/// If either `NDEBUG` or `SEQUOIA_DISABLE_ASSERTS` is defined this macro is disabled.
+///
+/// @ingroup core
 #define SEQUOIA_ASSERT(expr)                                                                       \
   (SEQUOIA_BUILTIN_LIKELY(!!(expr))                                                                \
        ? ((void)0)                                                                                 \
        : sequoia::core::assertionFailed(#expr, SEQUOIA_CURRENT_FUNCTION, __FILE__, __LINE__))
 
+/// @brief Evaluate assertion and print extra error message
+///
+/// Like @ref SEQUOIA_ASSERT but print an extra error message `msg` on failure.
+///
+/// @ingroup core
 #define SEQUOIA_ASSERT_MSG(expr, msg)                                                              \
   (SEQUOIA_BUILTIN_LIKELY(!!(expr)) ? ((void)0) : sequoia::core::assertionFailedMsg(               \
                                                       #expr, msg, SEQUOIA_CURRENT_FUNCTION,        \

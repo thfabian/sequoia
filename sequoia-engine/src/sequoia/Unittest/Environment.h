@@ -19,6 +19,7 @@
 #include "sequoia/Core/Platform.h"
 #include "sequoia/Core/Singleton.h"
 #include "sequoia/Core/SingletonManager.h"
+#include "sequoia/Core/PrettyStackTrace.h"
 #include "sequoia/Unittest/Export.h"
 #include "sequoia/Unittest/RessourcePath.h"
 #include <gtest/gtest.h>
@@ -62,6 +63,7 @@ public:
   bool debugMode() const;
 
 private:
+  core::PrettyStackTrace trace_;  
   platform::Path path_;
   bool debugMode_;
   std::unique_ptr<core::SingletonManager> singletonManager_;

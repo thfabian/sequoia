@@ -13,11 +13,11 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Unittest/Environment.h"
 #include "sequoia/Core/ErrorHandler.h"
 #include "sequoia/Core/Logging.h"
 #include "sequoia/Driver/ConsoleLogger.h"
 #include "sequoia/Unittest/Config.h"
+#include "sequoia/Unittest/Environment.h"
 #include <boost/program_options.hpp>
 
 namespace po = boost::program_options;
@@ -28,7 +28,7 @@ SEQUOIA_DECLARE_SINGLETON(unittest::Environment);
 
 namespace unittest {
 
-Environment::Environment(int argc, char* argv[]) {
+Environment::Environment(int argc, char* argv[]) : trace_() {
   singletonManager_ = std::make_unique<core::SingletonManager>();
   singletonManager_->allocateSingleton<ErrorHandler>(argc > 0 ? argv[0] : "SequoiaTest");
 
@@ -48,7 +48,7 @@ Environment::Environment(int argc, char* argv[]) {
     po::store(po::parse_command_line(argc, argv, desc), vm);
     po::notify(vm);
   } catch(std::exception& e) {
-    ErrorHandler::getSingleton().fatal(e.what(), false);
+    ErrorHandler::getSingleton().fatal(e.what(), false, false);
   }
 
   if(vm.count("help")) {

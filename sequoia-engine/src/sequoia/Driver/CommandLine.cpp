@@ -118,7 +118,7 @@ void CommandLine::parse(const std::vector<std::string>& args) {
     po::store(po::command_line_parser(args).options(desc).run(), vm);
     po::notify(vm);
   } catch(std::exception& e) {
-    ErrorHandler::getSingleton().fatal(e.what(), false);
+    ErrorHandler::getSingleton().fatal(e.what(), false, false);
   }
 
   // Adjust options

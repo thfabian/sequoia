@@ -25,6 +25,7 @@
 #include "sequoia/Render/RenderSystemObject.h"
 #include "sequoia/Render/RenderWindow.h"
 #include "sequoia/Render/Shader.h"
+#include "sequoia/Render/VertexArrayObject.h"
 #include <memory>
 #include <set>
 #include <string>
@@ -65,18 +66,16 @@ public:
   /// @brief Swap the buffers and display the next frame for each active registered RenderTarget
   virtual void swapBuffers() = 0;
 
-  /// @brief Load a shader from source for `target`
-  virtual Shader* loadShader(RenderTarget* target, Shader::ShaderType type,
-                             const platform::String& path) = 0;
+  /// @brief Create a new VertexArrayObject for `target`
+  virtual std::unique_ptr<VertexArrayObject> createVertexArrayObject() = 0;
 
-  /// @brief Destroy the `shader` of `target`
-  virtual void destroyShader(RenderTarget* target, Shader* shader) = 0;
+  /// @brief Load a shader from source for `target`
+  virtual std::shared_ptr<Shader> loadShader(RenderTarget* target, Shader::ShaderType type,
+                                             const platform::String& path) = 0;
 
   /// @brief Create a GPU program from the given `shaders` for `target`
-  virtual Program* createProgram(RenderTarget* target, const std::set<Shader*>& shaders) = 0;
-
-  /// @brief Destroy the `program` of `target`
-  virtual void destroyProgram(RenderTarget* target, Program* program) = 0;
+  virtual std::shared_ptr<Program>
+  createProgram(RenderTarget* target, const std::set<std::shared_ptr<Shader>>& shaders) = 0;
 
   /// @brief Add the keyboard `listener` to `target`
   virtual void addKeyboardListener(RenderTarget* target, KeyboardListener* listener) = 0;

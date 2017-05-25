@@ -36,13 +36,16 @@ public:
   ///                   without the extension) will be used as program name.
   ErrorHandler(UtfString program);
 
-  /// @brief Report a fatal error and exit with `EXIT_FAILURE`
+  /// @brief Report a fatal error and exit with `EXIT_FAILURE` (or crash)
   ///
   /// @param message      Message to display
   /// @param messagebox   If `true`, display the message in a popup GUI (Win32 only), otherwise
   ///                     write to console (`stderr`).
-  SEQUOIA_ATTRIBUTE_NORETURN void fatal(std::wstring message, bool messagebox = true) noexcept;
-  SEQUOIA_ATTRIBUTE_NORETURN void fatal(std::string message, bool messagebox = true) noexcept;
+  /// @param crash        Call `std::abort` instead of `std::exit`.
+  SEQUOIA_ATTRIBUTE_NORETURN void fatal(std::wstring message, bool messagebox = true,
+                                        bool crash = false) noexcept;
+  SEQUOIA_ATTRIBUTE_NORETURN void fatal(std::string message, bool messagebox = true,
+                                        bool crash = false) noexcept;
 
   /// @brief Report warning to stderr
   ///

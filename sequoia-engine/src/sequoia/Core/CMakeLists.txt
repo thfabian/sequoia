@@ -36,10 +36,12 @@ sequoia_generate_options(
 
 sequoia_add_library(
   NAME SequoiaCore
-  SOURCES ArrayRef.h
+  SOURCES AlignedADT.h
+          ArrayRef.h
           Any.h
           Assert.h
           Assert.cpp 
+          Byte.h
           Casting.h
           EnumState.h
           Export.h
@@ -50,6 +52,7 @@ sequoia_add_library(
           Format.h          
           Compiler.h
           NonCopyable.h
+          Memory.h
           Options.h.in
           Options.inc.in
           Options.cpp
@@ -59,14 +62,18 @@ sequoia_add_library(
           MicroBenchmark.h
           MicroBenchmark.cpp
           Platform.h
-          Platform.cpp          
+          Platform.cpp   
+          PrettyStackTrace.h
+          PrettyStackTrace.cpp       
           Singleton.h
           SingletonManager.h
           SingletonManager.cpp
           StringSwitch.h
           StringRef.h
           StringRef.cpp 
-          StringUtil.h  
+          StringUtil.h
+          StringUtil.cpp
+          STLExtras.h
           Terminal.h
           Terminal.cpp        
           Unreachable.h

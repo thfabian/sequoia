@@ -22,13 +22,15 @@ namespace render {
 VertexArrayObject::~VertexArrayObject() {}
 
 VertexArrayObject::VertexArrayObject(RenderSystemKind kind)
-    : RenderSystemObject(kind), dataPtr_(nullptr), numVertices_(0), layout_(nullptr) {}
+    : RenderSystemObject(kind), dataPtr_(nullptr), numVertices_(0), layout_(nullptr),
+      usage_(BK_Invalid) {}
 
 void VertexArrayObject::attachVertexData(void* dataPtr, std::size_t numVertices,
-                                         const VertexLayout* layout) {
+                                         const VertexLayout* layout, BufferUsageKind usage) {
   dataPtr_ = dataPtr;
   numVertices_ = numVertices;
   layout_ = layout;
+  usage_ = usage;
   attachVertexDataDevice();
 }
 
@@ -38,6 +40,8 @@ void VertexArrayObject::freeVertexData() {
   numVertices_ = 0;
   layout_ = nullptr;
 }
+
+std::size_t VertexArrayObject::getNumVertices() const { return numVertices_; }
 
 } // namespace render
 

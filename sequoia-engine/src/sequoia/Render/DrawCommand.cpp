@@ -13,10 +13,26 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
+#include "sequoia/Core/Format.h"
 #include "sequoia/Render/DrawCommand.h"
+#include "sequoia/Render/Program.h"
+#include "sequoia/Render/VertexArrayObject.h"
 
 namespace sequoia {
 
-namespace render {} // namespace render
+namespace render {
+
+std::string DrawCommand::RenderState::toString() const noexcept { return ""; }
+
+std::string DrawCommand::toString() const noexcept {
+  return core::format("DrawCommand ["
+                      "  program=%s,\n"
+                      "  vao=%s,\n"
+                      "  renderState=%s,\n"
+                      "]",
+                      program_->toString(), vao_->toString(), state_->toString());
+}
+
+} // namespace render
 
 } // namespace sequoia

@@ -16,6 +16,8 @@
 #include "sequoia/Core/Casting.h"
 #include "sequoia/Core/Format.h"
 #include "sequoia/Core/Logging.h"
+#include "sequoia/Core/StringUtil.h"
+#include "sequoia/Core/Unreachable.h"
 #include "sequoia/Render/Exception.h"
 #include "sequoia/Render/GL/GL.h"
 #include "sequoia/Render/GL/GLProgram.h"
@@ -27,20 +29,33 @@ namespace sequoia {
 
 namespace render {
 
-GLProgram::GLProgram(const std::set<Shader*>& shaders, GLProgramManager* manager)
+static const char* statusToString(GLProgramStatus status) {
+  switch(status) {
+  case GLProgramStatus::Invalid:
+    return "Invalid";
+  case GLProgramStatus::Created:
+    return "Created";
+  case GLProgramStatus::Linked:
+    return "Linked";
+  default:
+    sequoia_unreachable("invalid GLProgramStatus");
+  }
+}
+
+GLProgram::GLProgram(const std::set<std::shared_ptr<Shader>>& shaders, GLProgramManager* manager)
     : Program(RK_OpenGL), status_(GLProgramStatus::Invalid), id_(0), allUniformVariablesSet_(false),
       shaders_(shaders), manager_(manager) {}
 
 bool GLProgram::isValid() const { return (status_ == GLProgramStatus::Linked); }
 
-const std::set<Shader*>& GLProgram::getShaders() const { return shaders_; }
+const std::set<std::shared_ptr<Shader>>& GLProgram::getShaders() const { return shaders_; }
 
-void GLProgram::addShader(Shader* shader) {
+void GLProgram::addShader(const std::shared_ptr<Shader>& shader) {
   status_ = GLProgramStatus::Created;
   shaders_.insert(shader);
 }
 
-bool GLProgram::removeShader(Shader* shader) {
+bool GLProgram::removeShader(const std::shared_ptr<Shader>& shader) {
   status_ = GLProgramStatus::Created;
   return shaders_.erase(shader);
 }
@@ -58,7 +73,7 @@ GLProgramStatus GLProgram::getStatus() const { return status_; }
 
 void GLProgram::bind() {
   if(!isValid())
-    manager_->makeValid(this);
+    manager_->makeValid(this->shared_from_this());
 
   if(!allUniformVariablesSet_)
     checkUniformVariables();
@@ -88,10 +103,10 @@ std::string GLProgram::getLog() const {
   ss << "Program Info Log (ID = " << id_ << ")\n";
 
   int index = 0;
-  for(Shader* shader : shaders_) {
+  for(const std::shared_ptr<Shader>& shader : shaders_) {
     ss << core::format("  %-40s : %s\n", "GL_ATTACHED_SHADER_" + std::to_string(index),
-                       "ID = " + std::to_string(dyn_cast<GLShader>(shader)->getID()) + ", type = " +
-                           Shader::shaderTypeToString(shader->getType()));
+                       "ID = " + std::to_string(dyn_cast<GLShader>(shader.get())->getID()) +
+                           ", type = " + Shader::shaderTypeToString(shader->getType()));
     ++index;
   }
 
@@ -104,6 +119,30 @@ std::string GLProgram::getLog() const {
     ss << core::format("  %-40s : %d\n", param, info);
   }
   return ss.str();
+}
+
+std::string GLProgram::toString() const {
+  return core::format(
+      "GLProgram[\n"
+      "  status = %s,\n"
+      "  id = %s,\n"
+      "  uniformInfoMap = %s,\n"
+      "  shaders = %s\n"
+      "]",
+      statusToString(status_), id_,
+      !uniformInfoMap_.empty()
+          ? core::indent(core::toStringRange(uniformInfoMap_,
+                                             [](const auto& pair) {
+                                               std::stringstream ss;
+                                               ss << "name = " << pair.first
+                                                  << ", type = " << pair.second.Type;
+                                               return ss.str();
+                                             }))
+          : "null",
+      !shaders_.empty()
+          ? core::indent(core::toStringRange(
+                shaders_, [](const auto& shader) { return core::indent(shader->toString()); }))
+          : "null");
 }
 
 namespace {
@@ -195,6 +234,18 @@ SEQUOIA_SET_UNIFORM_VARIABLE_IMPL(math::fmat4, GL_FLOAT_MAT4,
                                   }))
 
 #undef SEQUOIA_SET_UNIFORM_VARIABLE_IMPL
+
+void destroyGLProgram(GLProgram* program) noexcept {
+  if(program->status_ == GLProgramStatus::Invalid)
+    return;
+
+  LOG(DEBUG) << "Deleting program (ID=" << program->id_ << ")";
+  glDeleteProgram(program->id_);
+  program->id_ = 0;
+  program->status_ = GLProgramStatus::Invalid;
+
+  delete program;
+}
 
 } // namespace render
 

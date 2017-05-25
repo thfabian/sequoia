@@ -199,6 +199,9 @@ macro(sequoia_set_cxx_flags)
       string(REPLACE "${flag}" "" CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO}")
       string(REPLACE "${flag}" "" CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE}")
     endforeach()
+  else()
+    add_definitions(-DNDEBUG)
+    add_definitions(-DSEQUOIA_DISABLE_ASSERTS)
   endif()
     
   #

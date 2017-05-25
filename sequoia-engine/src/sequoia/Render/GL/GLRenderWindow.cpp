@@ -53,6 +53,10 @@ GLRenderWindow::GLRenderWindow(GLRenderSystem* renderSystem,
   // functionality deprecated in the requested version of OpenGL is removed
   glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, true);
   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+  
+  if(RenderSystem::getSingleton().debugMode()) {
+    glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, true);
+  }
 
   // Select the monitor to use
   GLFWmonitor* monitor = nullptr;

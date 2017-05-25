@@ -80,11 +80,18 @@ public:
   /// @copydoc Shader::getLog
   std::string getLog() const override;
 
+  /// @copydoc Shader::toString
+  std::string toString() const override;
+
   /// @brief Get the status of the Shader
   GLShaderStatus getStatus() const;
 
   /// @brief Get the manager
   GLShaderManager* getManager() const;
+
+  /// @brief Destroy the shader by deregistering it from OpenGL (i.e it's status will be changed to
+  /// `InMemory`)
+  friend SEQUOIA_RENDER_API void destroyGLShader(GLShader* shader) noexcept;
 
   SEQUOIA_GL_OBJECT(Shader);
 };

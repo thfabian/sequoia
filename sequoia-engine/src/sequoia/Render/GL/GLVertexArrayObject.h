@@ -43,8 +43,11 @@ public:
   /// @brief Unbind the VAO
   void unbind();
 
+  /// @brief Get the VAO ID
+  unsigned int getVAOID() const;
+
   /// @copydoc VertexArrayObject::updateDevice
-  void updateDevice() override;
+  virtual void updateDevice(std::size_t offset, std::size_t length) override;
 
   /// @copydoc VertexArrayObject::attachVertexDataDevice
   void attachVertexDataDevice() override;
@@ -52,10 +55,16 @@ public:
   /// @copydoc VertexArrayObject::freeVertexDataDevice
   void freeVertexDataDevice() override;
 
+  /// @copydoc VertexArrayObject::toString
+  std::string toString() const override;
+  
   /// @brief Do we draw with indices?
   bool hasIndices() const;
-
+  
   SEQUOIA_GL_OBJECT(VertexArrayObject);
+
+private:
+  std::size_t getNumBytes(std::size_t length) const;
 };
 
 } // namespace render

@@ -13,10 +13,10 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Render/GL/GL.h"
 #include "sequoia/Core/Logging.h"
 #include "sequoia/Core/StringUtil.h"
 #include "sequoia/Render/Camera.h"
+#include "sequoia/Render/GL/GL.h"
 #include "sequoia/Render/GL/GLProgramManager.h"
 #include "sequoia/Render/GL/GLRenderWindow.h"
 #include "sequoia/Render/GL/GLRenderer.h"
@@ -31,6 +31,44 @@
 namespace sequoia {
 
 namespace render {
+
+static const char* getGLType(GLenum type) {
+  switch(type) {
+  case GL_DEBUG_TYPE_ERROR:
+    return "ERROR";
+  case GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR:
+    return "DEPRECATED_BEHAVIOR";
+  case GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR:
+    return "UNDEFINED_BEHAVIOR";
+  case GL_DEBUG_TYPE_PORTABILITY:
+    return "PORTABILITY";
+  case GL_DEBUG_TYPE_PERFORMANCE:
+    return "PERFORMANCE";
+  case GL_DEBUG_TYPE_OTHER:
+    return "OTHER";
+  default:
+    return "UNKNOWN";
+  }
+}
+
+static GL_APIENTRY void GLDebugLogging(GLenum source, GLenum type, GLuint id, GLenum severity,
+                                       GLsizei length, const GLchar* message,
+                                       const void* userParam) {
+  switch(severity) {
+  case GL_DEBUG_SEVERITY_LOW:
+    LOG(INFO) << "GL_" << getGLType(type) << ": " << message;
+    return;
+  case GL_DEBUG_SEVERITY_MEDIUM:
+    LOG(WARNING) << "GL_" << getGLType(type) << ": " << message;
+    return;
+  case GL_DEBUG_SEVERITY_HIGH:
+    LOG(ERROR) << "GL_" << getGLType(type) << ": " << message;
+    return;
+  default:
+    LOG(DEBUG) << "GL_" << getGLType(type) << ": " << message;
+    return;
+  }
+}
 
 static std::string functionCallToString(const glbinding::FunctionCall& call) {
   std::stringstream ss;
@@ -53,6 +91,8 @@ GLRenderer::GLRenderer(GLRenderWindow* target) : target_(target) {
 
   // Set debugging callbacks
   if(RenderSystem::getSingleton().debugMode()) {
+
+    // Enable error checking
     using namespace glbinding;
     setCallbackMaskExcept(CallbackMask::After | CallbackMask::ParametersAndReturnValue,
                           {"glGetError"});
@@ -61,6 +101,10 @@ GLRenderer::GLRenderer(GLRenderWindow* target) : target_(target) {
       if(error != GL_NO_ERROR)
         LOG(ERROR) << "GL_ERROR: " << error << ": " << functionCallToString(call);
     });
+
+    // Enable logging
+    glEnable(GL_DEBUG_OUTPUT);
+    glDebugMessageCallback(GLDebugLogging, nullptr);
   }
 
   LOG(INFO) << "glbinding: " << GLBINDING_VERSION;
@@ -78,11 +122,11 @@ GLRenderer::GLRenderer(GLRenderWindow* target) : target_(target) {
 GLRenderer::~GLRenderer() {
   LOG(INFO) << "Terminating OpenGL Renderer " << this << " ... ";
 
+  glfwMakeContextCurrent(target_->getGLFWwindow());
+
   // Destroy all remaining shaders, programs, textures and buffers
   programManager_.reset();
   shaderManager_.reset();
-
-  glfwMakeContextCurrent(target_->getGLFWwindow());
   glbinding::Binding::releaseCurrentContext();
 
   LOG(INFO) << "Done terminating OpenGL renderer " << this << " ... ";
@@ -103,7 +147,10 @@ void GLRenderer::render() {
   // Precompute view projection matrix
   glm::mat4 matViewProj = matProj * matView;
 
-  
+  // Clear the screen
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+  // Start rendering
   glm::mat4 matModel = glm::mat4(1.0f);
 
   // Compute the full model view projection matrix

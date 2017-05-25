@@ -15,10 +15,11 @@
 
 sequoia_add_library(
   NAME SequoiaMath
-  SOURCES Constants.h 
+  SOURCES AxisAlignedBox.h
+          AxisAlignedBox.cpp
+          Constants.h 
           Export.h
           Math.h
-          Math.cpp
           MathFwd.h
   DEPENDS ${SEQUOIA_EXTERNAL_LIBRARIES}
 )

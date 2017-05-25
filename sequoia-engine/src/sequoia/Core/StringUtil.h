@@ -25,6 +25,10 @@ namespace sequoia {
 
 namespace core {
 
+/// @brief Indent a string by the specified number of spaces
+/// @ingroup core
+extern std::string indent(const std::string& string, int amount = 2);
+
 namespace internal {
 
 template <class T>
@@ -104,6 +108,18 @@ public:
     return ss.str();
   }
 };
+
+/// @brief Helper for `toString` methods converting `range`s
+/// @{
+template <class Range>
+inline std::string toStringRange(Range&& range) {
+  return RangeToString(",\n", "{\n  ", "\n}")(std::move(range));
+}
+template <class Range, class StrinfigyFunctor>
+inline std::string toStringRange(Range&& range, StrinfigyFunctor&& stringify) {
+  return RangeToString(",\n  ", "{\n  ", "\n}")(std::move(range), std::move(stringify));
+}
+/// @}
 
 } // namespace core
 

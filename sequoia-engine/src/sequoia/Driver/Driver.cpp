@@ -23,6 +23,7 @@
 #include "sequoia/Driver/ConsoleLogger.h"
 #include "sequoia/Driver/Win32Console.h"
 #include "sequoia/Game/Game.h"
+#include "sequoia/Core/PrettyStackTrace.h"
 
 #ifdef SEQUOIA_ON_WIN32
 #include <boost/program_options.hpp>
@@ -56,6 +57,8 @@ int Driver::run(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, i
 #else
 
 int Driver::run(int argc, char* argv[]) {
+  core::PrettyStackTrace sh;
+
   // Define SingletonManager here to keep it alive
   auto singletonManager = std::make_unique<SingletonManager>();
 
@@ -67,7 +70,7 @@ int Driver::run(int argc, char* argv[]) {
 
   std::vector<std::string> arguments(argv + 1, argv + argc);
   CommandLine::parse(arguments);
-
+  
   return Driver::runImpl();
 }
 

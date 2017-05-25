@@ -92,3 +92,4 @@ set(SEQUOIA_VERSION_STRING
 # Ressource paths
 #
 set(SEQUOIA_UNITTEST_RESSOURCEPATH ${CMAKE_SOURCE_DIR}/test/ressource)
+

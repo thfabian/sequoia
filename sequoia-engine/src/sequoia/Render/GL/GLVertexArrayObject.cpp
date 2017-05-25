@@ -13,6 +13,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
+#include "sequoia/Core/Format.h"
+#include "sequoia/Core/StringUtil.h"
 #include "sequoia/Core/Unreachable.h"
 #include "sequoia/Render/GL/GL.h"
 #include "sequoia/Render/GL/GLVertexArrayObject.h"
@@ -33,6 +35,21 @@ static GLenum getGLType(VertexLayout::Type type) {
   default:
     sequoia_unreachable("invlid Type");
     return GL_INVALID_ENUM;
+  }
+}
+
+static GLenum getGLUsage(VertexArrayObject::BufferUsageKind usage) {
+  switch(usage) {
+  case VertexArrayObject::BK_Static:
+  case VertexArrayObject::BK_StaticWriteOnly:
+    return GL_STATIC_DRAW;
+  case VertexArrayObject::BK_Dynamic:
+  case VertexArrayObject::BK_DynamicWriteOnly:
+    return GL_DYNAMIC_DRAW;
+  case VertexArrayObject::BK_DynamicWriteOnlyDiscardable:
+    return GL_STREAM_DRAW;
+  default:
+    return GL_DYNAMIC_DRAW;
   }
 }
 
@@ -63,7 +80,23 @@ void GLVertexArrayObject::unbind() {
   glBindVertexArray(0);
 }
 
-void GLVertexArrayObject::updateDevice() {}
+unsigned int GLVertexArrayObject::getVAOID() const { return vaoID_; }
+
+void GLVertexArrayObject::updateDevice(std::size_t offset, std::size_t length) {
+  bind();
+
+  // TODO: Discardable data should use glBufferData(GL_ARRAY_BUFFER, ..., NULL, ...); first
+
+  if(offset == 0) {
+    glBufferData(GL_ARRAY_BUFFER, getNumBytes(length), dataPtr_, getGLUsage(usage_));
+  } else {
+    glBufferSubData(GL_ARRAY_BUFFER, offset, getNumBytes(length), dataPtr_);
+  }
+
+  // TODO: Frequently updated data should use glMapBuffer
+
+  unbind();
+}
 
 bool GLVertexArrayObject::hasIndices() const { return hasIndices_; }
 
@@ -83,28 +116,34 @@ void GLVertexArrayObject::attachVertexDataDevice() {
     glEnableVertexAttribArray(GLVertexAttribute::Position);
     glVertexAttribPointer(GLVertexAttribute::Position, layout_->PositionNumElement,
                           getGLType(layout_->PositionType), false, layout_->SizeOf,
-                          (void*)&layout_->PositionOffset);
+                          (void*)layout_->PositionOffset);
   }
 
   if(layout_->hasNormal()) {
     glEnableVertexAttribArray(GLVertexAttribute::Normal);
     glVertexAttribPointer(GLVertexAttribute::Normal, layout_->NormalNumElement,
                           getGLType(layout_->NormalType), false, layout_->SizeOf,
-                          (void*)&layout_->NormalOffset);
+                          (void*)layout_->NormalOffset);
   }
 
   if(layout_->hasTexCoord()) {
     glEnableVertexAttribArray(GLVertexAttribute::TexCoord);
     glVertexAttribPointer(GLVertexAttribute::TexCoord, layout_->TexCoordNumElement,
                           getGLType(layout_->TexCoordType), false, layout_->SizeOf,
-                          (void*)&layout_->TexCoordOffset);
+                          (void*)layout_->TexCoordOffset);
   }
 
   if(layout_->hasColor()) {
     glEnableVertexAttribArray(GLVertexAttribute::Color);
     glVertexAttribPointer(GLVertexAttribute::Color, layout_->ColorNumElement,
                           getGLType(layout_->ColorType), true, layout_->SizeOf,
-                          (void*)&layout_->ColorOffset);
+                          (void*)layout_->ColorOffset);
+  }
+
+  glBufferData(GL_ARRAY_BUFFER, getNumBytes(numVertices_), nullptr, getGLUsage(usage_));
+
+  if(hasIndices_) {
+    // TODO
   }
 
   unbind();
@@ -121,6 +160,19 @@ void GLVertexArrayObject::freeVertexDataDevice() {
 
   vaoID_ = vboID_ = eboID_ = 0;
   allocated_ = false;
+}
+
+std::string GLVertexArrayObject::toString() const {
+  return core::format("GLVertexArrayObject[\n"
+                      "  vaoID=%s,\n"
+                      "  eboID=%s,\n"
+                      "  vboID=%s\n"
+                      "]",
+                      vaoID_, eboID_, vboID_);
+}
+
+std::size_t GLVertexArrayObject::getNumBytes(std::size_t length) const {
+  return length * layout_->SizeOf;
 }
 
 } // namespace render

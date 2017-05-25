@@ -61,6 +61,9 @@ public:
 
   /// @brief Shader type to string
   static const char* shaderTypeToString(ShaderType type);
+  
+  /// @brief Convert to string
+  virtual std::string toString() const = 0;
 
 protected:
   ShaderType type_;

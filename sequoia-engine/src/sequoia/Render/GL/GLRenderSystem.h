@@ -59,18 +59,16 @@ public:
   /// @copydoc RenderSystem::swapBuffers
   virtual void swapBuffers() override;
 
-  /// @brief Load the shader from source if it has not already been loaded
-  virtual Shader* loadShader(RenderTarget* target, Shader::ShaderType type,
-                             const platform::String& path) override;
+  /// @brief Create a new VBO
+  virtual std::unique_ptr<VertexArrayObject> createVertexArrayObject() override;
 
-  /// @brief Deregister the shader from OpenGL
-  virtual void destroyShader(RenderTarget* target, Shader* shader) override;
+  /// @brief Load the shader from source if it has not already been loaded
+  virtual std::shared_ptr<Shader> loadShader(RenderTarget* target, Shader::ShaderType type,
+                                             const platform::String& path) override;
 
   /// @brief Link the shaders into a program if a program of the given shaders does not yet exist
-  virtual Program* createProgram(RenderTarget* target, const std::set<Shader*>& shaders) override;
-
-  /// @brief Deregister the program from OpenGL
-  virtual void destroyProgram(RenderTarget* target, Program* program) override;
+  virtual std::shared_ptr<Program>
+  createProgram(RenderTarget* target, const std::set<std::shared_ptr<Shader>>& shaders) override;
 
   /// @brief Add the keyboard `listener` to `target`
   virtual void addKeyboardListener(RenderTarget* target, KeyboardListener* listener) override;

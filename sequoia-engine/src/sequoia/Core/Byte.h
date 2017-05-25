@@ -13,4 +13,17 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Math/Math.h"
+#ifndef SEQUOIA_CORE_BYTE_H
+#define SEQUOIA_CORE_BYTE_H
+
+namespace sequoia {
+
+namespace core {
+
+using Byte = unsigned char;
+
+} // namespace core
+
+} // namespace sequoia
+
+#endif

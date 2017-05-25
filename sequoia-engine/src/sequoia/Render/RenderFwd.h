@@ -27,6 +27,8 @@ class RenderWindow;
 class DrawCommand;
 class RenderTarget;
 class Shader;
+class VertexArrayObject;
+struct VertexLayout;
 class ViewFrustum;
 class Viewport;
 

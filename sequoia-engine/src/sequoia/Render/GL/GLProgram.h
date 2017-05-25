@@ -38,7 +38,7 @@ enum class GLProgramStatus {
 /// @brief OpenGL implementation of a GPUProgram
 /// @see RenderSystem::createPogram
 /// @ingroup gl
-class SEQUOIA_RENDER_API GLProgram : public Program {
+class SEQUOIA_RENDER_API GLProgram : public Program, public std::enable_shared_from_this<GLProgram> {
 public:
   /// @brief Represent uniform variables in shaders
   struct GLUniformInfo {
@@ -51,7 +51,7 @@ public:
   /// @brief Create the program (this tries to make every shader valid)
   ///
   /// Programs should only be created via the factory method GLProgramManager::create.
-  GLProgram(const std::set<Shader*>& shaders, GLProgramManager* manager);
+  GLProgram(const std::set<std::shared_ptr<Shader>>& shaders, GLProgramManager* manager);
 
   /// @brief Check if the program is valid i.e can be installed into the render pipeline
   bool isValid() const;
@@ -73,13 +73,13 @@ public:
   /// @brief Add the `shader` to the program
   ///
   /// @note This forces a relink on next usage
-  void addShader(Shader* shader);
+  void addShader(const std::shared_ptr<Shader>& shader);
 
   /// @brief Remove `shader` to the program
   ///
   /// @note This forces a relink on next usage
   /// @returns `true` if `shader` was successfully removed
-  bool removeShader(Shader* shader);
+  bool removeShader(const std::shared_ptr<Shader>& shader);
 
   /// @brief Get map of uniform variables
   const std::unordered_map<std::string, GLUniformInfo>& getUniformVariables() const;
@@ -109,10 +109,16 @@ public:
   GLProgramManager* getManager() const;
 
   /// @copydoc Program::getShaders
-  virtual const std::set<Shader*>& getShaders() const override;
+  virtual const std::set<std::shared_ptr<Shader>>& getShaders() const override;
 
   /// @copydoc Program::getLog
   virtual std::string getLog() const override;
+
+  /// @copydoc Program::toString
+  virtual std::string toString() const override;
+
+  /// @brief Destroy the program
+  friend SEQUOIA_RENDER_API void destroyGLProgram(GLProgram* program) noexcept;
 
   SEQUOIA_GL_OBJECT(Program);
 
@@ -132,7 +138,7 @@ private:
   bool allUniformVariablesSet_;
 
   /// Shaders compiled into the program
-  std::set<Shader*> shaders_;
+  std::set<std::shared_ptr<Shader>> shaders_;
 
   /// Reference to the manager
   GLProgramManager* manager_;

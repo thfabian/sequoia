@@ -44,31 +44,30 @@ public:
   /// @param path             Path to the shader source
   /// @param requestedStatus  Requested target status
   /// @throws RenderSystemException
-  GLProgram* create(const std::set<Shader*>& shaders,
-                    GLProgramStatus requestedStatus = GLProgramStatus::Linked);
+  std::shared_ptr<GLProgram> create(const std::set<std::shared_ptr<Shader>>& shaders,
+                                    GLProgramStatus requestedStatus = GLProgramStatus::Linked);
 
   /// @brief Convert the `program` to `status`
   /// @throws RenderSystemException
-  void make(GLProgram* program, GLProgramStatus requestedStatus);
-
-  /// @brief Destroy the `program` by deregistering it from OpenGL
-  void destroy(GLProgram* program);
+  void make(const std::shared_ptr<GLProgram>& program, GLProgramStatus requestedStatus);
 
   /// @brief Convert the shader to `GLProgramStatus::Linked`
   /// @see GLShaderLoader::make
-  void makeValid(GLProgram* program) { make(program, GLProgramStatus::Linked); }
+  void makeValid(const std::shared_ptr<GLProgram>& program) {
+    make(program, GLProgramStatus::Linked);
+  }
 
   /// @brief Compute hash of the set of shaders
-  static std::size_t hash(const std::set<Shader*>& shaders) noexcept;
+  static std::size_t hash(const std::set<std::shared_ptr<Shader>>& shaders) noexcept;
 
 private:
-  void getUniforms(GLProgram* program) const;
-  void setAttributes(GLProgram* program) const;
-  bool checkAttributes(GLProgram* program) const;
+  void getUniforms(const std::shared_ptr<GLProgram>& program) const;
+  void setAttributes(const std::shared_ptr<GLProgram>& program) const;
+  bool checkAttributes(const std::shared_ptr<GLProgram>& program) const;
 
 private:
   /// Record of all the registered programs
-  std::vector<std::unique_ptr<GLProgram>> programList_;
+  std::vector<std::shared_ptr<GLProgram>> programList_;
 
   /// Lookup map for Programs
   std::unordered_map<std::size_t, std::size_t> shaderSetLookupMap_;

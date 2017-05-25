@@ -27,25 +27,23 @@ namespace sequoia {
 
 namespace render {
 
-std::size_t GLProgramManager::hash(const std::set<Shader*>& shaders) noexcept {
+std::size_t GLProgramManager::hash(const std::set<std::shared_ptr<Shader>>& shaders) noexcept {
   std::size_t seed = 0;
-  std::for_each(shaders.begin(), shaders.end(), [&seed](Shader* shader) {
-    boost::hash_combine(seed, std::hash<Shader*>()(shader));
+  std::for_each(shaders.begin(), shaders.end(), [&seed](const std::shared_ptr<Shader>& shader) {
+    boost::hash_combine(seed, std::hash<Shader*>()(shader.get()));
   });
   return seed;
 }
 
-GLProgramManager::~GLProgramManager() {
-  for(auto& programPtr : programList_)
-    destroy(programPtr.get());
-}
+GLProgramManager::~GLProgramManager() {}
 
-void GLProgramManager::make(GLProgram* program, GLProgramStatus requestedStatus) {
+void GLProgramManager::make(const std::shared_ptr<GLProgram>& program,
+                            GLProgramStatus requestedStatus) {
   if(program->status_ == GLProgramStatus::Linked && requestedStatus != GLProgramStatus::Invalid)
     return;
 
   if(requestedStatus == GLProgramStatus::Invalid)
-    destroy(program);
+    destroyGLProgram(program.get());
 
   if(program->status_ == GLProgramStatus::Invalid) {
     program->id_ = glCreateProgram();
@@ -63,8 +61,8 @@ void GLProgramManager::make(GLProgram* program, GLProgramStatus requestedStatus)
   if(program->status_ == GLProgramStatus::Created) {
     LOG(DEBUG) << "Linking program (ID=" << program->id_ << ") ...";
 
-    for(Shader* shader : program->getShaders()) {
-      GLShader* glshader = dyn_cast<GLShader>(shader);
+    for(const std::shared_ptr<Shader>& shader : program->getShaders()) {
+      auto glshader = dyn_pointer_cast<GLShader>(shader);
 
       // Make sure shader is valid
       glshader->getManager()->makeValid(glshader);
@@ -83,8 +81,8 @@ void GLProgramManager::make(GLProgram* program, GLProgramStatus requestedStatus)
       SEQUOIA_THROW(RenderSystemException, "failed to link program");
     program->status_ = GLProgramStatus::Linked;
 
-    for(Shader* shader : program->getShaders()) {
-      GLShader* glshader = dyn_cast<GLShader>(shader);
+    for(const auto& shader : program->getShaders()) {
+      GLShader* glshader = dyn_cast<GLShader>(shader.get());
       glDetachShader(program->id_, glshader->getID());
     }
 
@@ -98,17 +96,7 @@ void GLProgramManager::make(GLProgram* program, GLProgramStatus requestedStatus)
   }
 }
 
-void GLProgramManager::destroy(GLProgram* program) {
-  if(program->status_ == GLProgramStatus::Invalid)
-    return;
-
-  LOG(DEBUG) << "Deleting program (ID=" << program->id_ << ")";
-  glDeleteProgram(program->id_);
-  program->id_ = 0;
-  program->status_ = GLProgramStatus::Invalid;
-}
-
-void GLProgramManager::getUniforms(GLProgram* program) const {
+void GLProgramManager::getUniforms(const std::shared_ptr<GLProgram>& program) const {
   LOG(DEBUG) << "Getting uniform variables of program (ID=" << program->id_ << ")";
   SEQUOIA_ASSERT(program->status_ == GLProgramStatus::Linked);
 
@@ -141,7 +129,7 @@ void GLProgramManager::getUniforms(GLProgram* program) const {
   LOG(DEBUG) << "Successfully got uniform variables of program (ID=" << program->id_ << ")";
 }
 
-void GLProgramManager::setAttributes(GLProgram* program) const {
+void GLProgramManager::setAttributes(const std::shared_ptr<GLProgram>& program) const {
   LOG(DEBUG) << "Setting vertex attributes of program (ID=" << program->id_ << ")";
 
   GLVertexAttribute::forEach([&program](unsigned int index, const char* name) {
@@ -151,7 +139,7 @@ void GLProgramManager::setAttributes(GLProgram* program) const {
   LOG(DEBUG) << "Successfully set vertex attributes of program (ID=" << program->id_ << ")";
 }
 
-bool GLProgramManager::checkAttributes(GLProgram* program) const {
+bool GLProgramManager::checkAttributes(const std::shared_ptr<GLProgram>& program) const {
   LOG(DEBUG) << "Checking vertex attributes of program (ID=" << program->id_ << ")";
   SEQUOIA_ASSERT(program->status_ == GLProgramStatus::Linked);
 
@@ -180,19 +168,21 @@ bool GLProgramManager::checkAttributes(GLProgram* program) const {
   return true;
 }
 
-GLProgram* GLProgramManager::create(const std::set<Shader*>& shaders,
-                                    GLProgramStatus requestedStatus) {
-  GLProgram* program = nullptr;
+std::shared_ptr<GLProgram>
+GLProgramManager::create(const std::set<std::shared_ptr<Shader>>& shaders,
+                         GLProgramStatus requestedStatus) {
+  std::shared_ptr<GLProgram> program = nullptr;
 
   std::size_t hash = GLProgramManager::hash(shaders);
   auto it = shaderSetLookupMap_.find(hash);
 
   if(it != shaderSetLookupMap_.end())
-    program = programList_[it->second].get();
+    program = programList_[it->second];
   else {
-    programList_.emplace_back(std::make_unique<GLProgram>(shaders, this));
+    programList_.emplace_back(std::shared_ptr<GLProgram>(
+        new GLProgram(shaders, this), [](GLProgram* program) { destroyGLProgram(program); }));
     shaderSetLookupMap_[hash] = programList_.size() - 1;
-    program = programList_.back().get();
+    program = programList_.back();
   }
 
   make(program, requestedStatus);
