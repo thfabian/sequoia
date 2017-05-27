@@ -13,27 +13,23 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_RENDER_RENDERFWD_H
-#define SEQUOIA_RENDER_RENDERFWD_H
+#ifndef SEQUOIA_RENDER_GL_GLSTATECACHE_H
+#define SEQUOIA_RENDER_GL_GLSTATECACHE_H
+
+#include "sequoia/Core/NonCopyable.h"
+#include "sequoia/Render/Export.h"
+#include <unordered_map>
 
 namespace sequoia {
 
 namespace render {
 
-class Camera;
-class Program;
-class RenderSystem;
-class RenderWindow;
-class DrawCommand;
-class RenderTarget;
-class Shader;
-class VertexArrayObject;
-struct VertexLayout;
-struct Vertex2DLayout;
-struct Vertex3DLayout;
-class VertexVistor;
-class ViewFrustum;
-class Viewport;
+/// @brief Keep track of the OpenGL state-machine
+/// @ingroup gl
+class SEQUOIA_RENDER_API GLStateCache : public NonCopyable {
+public:
+
+};
 
 } // namespace render
 

@@ -33,6 +33,15 @@ namespace render {
 ///
 /// @ingroup gl
 class SEQUOIA_RENDER_API GLShaderManager : public NonCopyable {
+  /// Record of all the registered shaders (use count of 1 implies the shader is *not* in use)
+  std::vector<std::shared_ptr<GLShader>> shaderList_;
+
+  /// Lookup map for shader ID
+  std::unordered_map<unsigned int, std::size_t> idLookupMap_;
+
+  /// Lookup map for path
+  std::unordered_map<platform::String, std::size_t> pathLookupMap_;
+
 public:
   /// @brief Destroy all remaining shaders
   ~GLShaderManager();
@@ -58,16 +67,6 @@ public:
 
   /// @brief Get the shader by OpenGL shader `id`
   const std::shared_ptr<GLShader>& get(unsigned int id) const;
-
-private:
-  /// Record of all the registered shaders
-  std::vector<std::shared_ptr<GLShader>> shaderList_;
-
-  /// Lookup map for shader ID
-  std::unordered_map<unsigned int, std::size_t> idLookupMap_;
-
-  /// Lookup map for path
-  std::unordered_map<platform::String, std::size_t> pathLookupMap_;
 };
 
 } // namespace render

@@ -13,6 +13,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
+#include "sequoia/Core/StringUtil.h"
+#include "sequoia/Core/Unreachable.h"
 #include "sequoia/Core/Format.h"
 #include "sequoia/Render/DrawCommand.h"
 #include "sequoia/Render/Program.h"
@@ -22,15 +24,54 @@ namespace sequoia {
 
 namespace render {
 
-std::string DrawCommand::RenderState::toString() const noexcept { return ""; }
+static const char* depthFuncToString(RenderState::DepthFuncKind func) {
+  switch(func) {
+  case RenderState::DepthFuncKind::DF_Never:
+    return "Never";
+  case RenderState::DepthFuncKind::DF_Less:
+    return "Less";
+  case RenderState::DepthFuncKind::DF_Equal:
+    return "Equal";
+  case RenderState::DepthFuncKind::DF_LessEqual:
+    return "LessEqual";
+  case RenderState::DepthFuncKind::DF_Greater:
+    return "Greater";
+  case RenderState::DepthFuncKind::DF_NotEqual:
+    return "NotEqual";
+  case RenderState::DepthFuncKind::DF_GreaterEqual:
+    return "GreaterEqual";
+  case RenderState::DepthFuncKind::DF_Always:
+    return "Always";
+  default:
+    sequoia_unreachable("invalid DepthFuncKind");
+  }
+}
+
+static const char* drawModeToString(RenderState::DrawModeKind mode) {
+  switch(mode) {
+  case RenderState::DrawModeKind::DM_Triangles:
+    return "Triangles";
+  default:
+    sequoia_unreachable("invalid DrawModeKind");
+  }
+}
+
+std::string RenderState::toString() const noexcept {
+  return core::format("RenderState["
+                      "  DepthTest=%s,\n"
+                      "  DepthFunc=%s,\n"
+                      "  DrawMode=%s\n"
+                      "]",
+                      DepthTest, depthFuncToString(DepthFunc), drawModeToString(DrawMode));
+}
 
 std::string DrawCommand::toString() const noexcept {
-  return core::format("DrawCommand ["
+  return core::format("DrawCommand["
                       "  program=%s,\n"
                       "  vao=%s,\n"
                       "  renderState=%s,\n"
                       "]",
-                      program_->toString(), vao_->toString(), state_->toString());
+                      program_->toString(), vao_->toString(), core::indent(state_->toString()));
 }
 
 } // namespace render

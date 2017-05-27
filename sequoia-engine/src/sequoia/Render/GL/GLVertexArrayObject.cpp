@@ -14,6 +14,7 @@
 //===------------------------------------------------------------------------------------------===//
 
 #include "sequoia/Core/Format.h"
+#include "sequoia/Core/Logging.h"
 #include "sequoia/Core/StringUtil.h"
 #include "sequoia/Core/Unreachable.h"
 #include "sequoia/Render/GL/GL.h"
@@ -29,9 +30,9 @@ namespace {
 static GLenum getGLType(VertexLayout::Type type) {
   switch(type) {
   case VertexLayout::Float:
-    return GLenum::GL_FLOAT;
+    return GL_FLOAT;
   case VertexLayout::UnsignedByte:
-    return GLenum::GL_UNSIGNED_BYTE;
+    return GL_UNSIGNED_BYTE;
   default:
     sequoia_unreachable("invlid Type");
     return GL_INVALID_ENUM;
@@ -61,20 +62,24 @@ GLVertexArrayObject::~GLVertexArrayObject() {
 }
 
 GLVertexArrayObject::GLVertexArrayObject()
-    : VertexArrayObject(RenderSystemKind::RK_OpenGL), vaoID_(0), eboID_(0), vboID_(0),
-      hasIndices_(false) {}
+    : VertexArrayObject(RenderSystemKind::RK_OpenGL), vaoID_(0), eboID_(0), vboID_(0) {}
 
 void GLVertexArrayObject::bind() {
+
+  // TODO: Check the state-cache and only bind if needed
+
   glBindVertexArray(vaoID_);
   glBindBuffer(GL_ARRAY_BUFFER, vboID_);
 
-  if(hasIndices_)
+  if(hasIndices())
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, eboID_);
   else
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
 void GLVertexArrayObject::unbind() {
+  // TODO: Check the state-cache and only bind if needed
+
   glBindBuffer(GL_ARRAY_BUFFER, 0);
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
   glBindVertexArray(0);
@@ -82,23 +87,37 @@ void GLVertexArrayObject::unbind() {
 
 unsigned int GLVertexArrayObject::getVAOID() const { return vaoID_; }
 
-void GLVertexArrayObject::updateDevice(std::size_t offset, std::size_t length) {
+void GLVertexArrayObject::updateVertexData(std::size_t offset, std::size_t length) {
   bind();
 
-  // TODO: Discardable data should use glBufferData(GL_ARRAY_BUFFER, ..., NULL, ...); first
+  // TODO: Discardable data should use glBufferData(GL_ARRAY_BUFFER, ..., NULL, ...) first
 
   if(offset == 0) {
-    glBufferData(GL_ARRAY_BUFFER, getNumBytes(length), dataPtr_, getGLUsage(usage_));
+    glBufferData(GL_ARRAY_BUFFER, getNumVertexBytes(length), dataPtr_, getGLUsage(usage_));
   } else {
-    glBufferSubData(GL_ARRAY_BUFFER, offset, getNumBytes(length), dataPtr_);
+    glBufferSubData(GL_ARRAY_BUFFER, offset, getNumVertexBytes(length), dataPtr_);
   }
 
   // TODO: Frequently updated data should use glMapBuffer
-
-  unbind();
 }
 
-bool GLVertexArrayObject::hasIndices() const { return hasIndices_; }
+void GLVertexArrayObject::updateIndexData(std::size_t offset, std::size_t length) {
+  if(!hasIndices())
+    return;
+
+  bind();
+
+  // TODO: Discardable data should use glBufferData(GL_ARRAY_BUFFER, ..., NULL, ...) first
+
+  if(offset == 0) {
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, getNumIndexBytes(length), indicesPtr_,
+                 getGLUsage(usage_));
+  } else {
+    glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, offset, getNumIndexBytes(length), indicesPtr_);
+  }
+
+  // TODO: Frequently updated data should use glMapBuffer
+}
 
 void GLVertexArrayObject::attachVertexDataDevice() {
 
@@ -106,7 +125,7 @@ void GLVertexArrayObject::attachVertexDataDevice() {
   glGenVertexArrays(1, &vaoID_);
   glGenBuffers(1, &vboID_);
 
-  if(hasIndices_)
+  if(hasIndices())
     glGenBuffers(1, &eboID_);
 
   // Set the vertex attributes
@@ -136,24 +155,22 @@ void GLVertexArrayObject::attachVertexDataDevice() {
   if(layout_->hasColor()) {
     glEnableVertexAttribArray(GLVertexAttribute::Color);
     glVertexAttribPointer(GLVertexAttribute::Color, layout_->ColorNumElement,
-                          getGLType(layout_->ColorType), true, layout_->SizeOf,
+                          getGLType(layout_->ColorType), false, layout_->SizeOf,
                           (void*)layout_->ColorOffset);
   }
 
-  glBufferData(GL_ARRAY_BUFFER, getNumBytes(numVertices_), nullptr, getGLUsage(usage_));
+  glBufferData(GL_ARRAY_BUFFER, getNumVertexBytes(numVertices_), nullptr, getGLUsage(usage_));
 
-  if(hasIndices_) {
-    // TODO
-  }
-
-  unbind();
+  if(hasIndices())
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, getNumIndexBytes(numIndices_), nullptr,
+                 getGLUsage(usage_));
 
   allocated_ = true;
 }
 
 void GLVertexArrayObject::freeVertexDataDevice() {
   glDeleteBuffers(1, &vboID_);
-  if(hasIndices_)
+  if(hasIndices())
     glDeleteBuffers(1, &eboID_);
 
   glDeleteVertexArrays(1, &vaoID_);
@@ -171,8 +188,12 @@ std::string GLVertexArrayObject::toString() const {
                       vaoID_, eboID_, vboID_);
 }
 
-std::size_t GLVertexArrayObject::getNumBytes(std::size_t length) const {
+std::size_t GLVertexArrayObject::getNumVertexBytes(std::size_t length) const {
   return length * layout_->SizeOf;
+}
+
+std::size_t GLVertexArrayObject::getNumIndexBytes(std::size_t length) const {
+  return length * sizeof(std::remove_pointer<decltype(indicesPtr_)>::type);
 }
 
 } // namespace render

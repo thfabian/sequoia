@@ -47,43 +47,46 @@ constexpr VertexLayout::Type getType() {
   return GetTypeImpl<typename GetPrimitveType<T>::type>::value;
 }
 
-static VertexLayout* Vertex2DLayout = new VertexLayout;
-static std::once_flag Vertex2DInitFlag;
+static Vertex2DLayout* vertex2DLayout = new Vertex2DLayout;
+static std::once_flag vertex2DInitFlag;
 
-static VertexLayout* Vertex3DLayout = new VertexLayout;
-static std::once_flag Vertex3DInitFlag;
+static Vertex3DLayout* vertex3DLayout = new Vertex3DLayout;
+static std::once_flag vertex3DInitFlag;
 
 } // anonymous namespace
 
-#define SEQUOIA_SET_LAYOUT(VertexType, Name)                                                       \
+#define SEQUOIA_SET_LAYOUT(Layout, VertexType, Name)                                               \
   using Name##Type_t = decltype(VertexType::Name);                                                 \
-  VertexType##Layout->Name##NumElement =                                                           \
-      sizeof(Name##Type_t) / sizeof(GetPrimitveType<Name##Type_t>::type);                          \
-  VertexType##Layout->Name##Offset = offsetof(VertexType, Name);                                   \
-  VertexType##Layout->Name##Type = getType<Name##Type_t>();
+  Layout->Name##NumElement = sizeof(Name##Type_t) / sizeof(GetPrimitveType<Name##Type_t>::type);   \
+  Layout->Name##Offset = offsetof(VertexType, Name);                                               \
+  Layout->Name##Type = getType<Name##Type_t>();
 
 const VertexLayout* Vertex2D::getLayout() noexcept {
-  std::call_once(Vertex2DInitFlag, [] {
-    Vertex2DLayout->SizeOf = sizeof(Vertex2D);
-    SEQUOIA_SET_LAYOUT(Vertex2D, Position);
-    SEQUOIA_SET_LAYOUT(Vertex2D, TexCoord);
-    SEQUOIA_SET_LAYOUT(Vertex2D, Color);
+  std::call_once(vertex2DInitFlag, [] {
+    vertex2DLayout->SizeOf = sizeof(Vertex2D);
+    SEQUOIA_SET_LAYOUT(vertex2DLayout, Vertex2D, Position);
+    SEQUOIA_SET_LAYOUT(vertex2DLayout, Vertex2D, TexCoord);
+    SEQUOIA_SET_LAYOUT(vertex2DLayout, Vertex2D, Color);
   });
-  return Vertex2DLayout;
+  return vertex2DLayout;
 }
 
 const VertexLayout* Vertex3D::getLayout() noexcept {
-  std::call_once(Vertex3DInitFlag, [] {
-    Vertex3DLayout->SizeOf = sizeof(Vertex3D);
-    SEQUOIA_SET_LAYOUT(Vertex3D, Position);
-    SEQUOIA_SET_LAYOUT(Vertex3D, Normal);
-    SEQUOIA_SET_LAYOUT(Vertex3D, TexCoord);
-    SEQUOIA_SET_LAYOUT(Vertex3D, Color);
+  std::call_once(vertex3DInitFlag, [] {
+    vertex3DLayout->SizeOf = sizeof(Vertex3D);
+    SEQUOIA_SET_LAYOUT(vertex3DLayout, Vertex3D, Position);
+    SEQUOIA_SET_LAYOUT(vertex3DLayout, Vertex3D, Normal);
+    SEQUOIA_SET_LAYOUT(vertex3DLayout, Vertex3D, TexCoord);
+    SEQUOIA_SET_LAYOUT(vertex3DLayout, Vertex3D, Color);
   });
-  return Vertex3DLayout;
+  return vertex3DLayout;
 }
 
 #undef SEQUOIA_SET_LAYOUT
+
+void Vertex3DLayout::accept(VertexVisitor& visitor) const { visitor.visit(this); }
+
+void Vertex2DLayout::accept(VertexVisitor& visitor) const { visitor.visit(this); }
 
 } // namespace render
 

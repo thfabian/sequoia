@@ -34,6 +34,12 @@ class GLShader;
 /// @brief Create and compile OpenGL GPU programs
 /// @ingroup gl
 class SEQUOIA_RENDER_API GLProgramManager : public NonCopyable {
+  /// Record of all the registered programs (use count of 1 implies the program is *not* in use)
+  std::vector<std::shared_ptr<GLProgram>> programList_;
+
+  /// Lookup map for Programs
+  std::unordered_map<std::size_t, std::size_t> shaderSetLookupMap_;
+
 public:
   /// @brief Destroy all remaining programs
   ~GLProgramManager();
@@ -64,13 +70,6 @@ private:
   void getUniforms(const std::shared_ptr<GLProgram>& program) const;
   void setAttributes(const std::shared_ptr<GLProgram>& program) const;
   bool checkAttributes(const std::shared_ptr<GLProgram>& program) const;
-
-private:
-  /// Record of all the registered programs
-  std::vector<std::shared_ptr<GLProgram>> programList_;
-
-  /// Lookup map for Programs
-  std::unordered_map<std::size_t, std::size_t> shaderSetLookupMap_;
 };
 
 } // namespace render

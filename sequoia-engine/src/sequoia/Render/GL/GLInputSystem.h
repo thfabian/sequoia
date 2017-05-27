@@ -29,6 +29,7 @@ namespace render {
 class RenderTarget;
 
 /// @brief Handle keyboard and mouse events
+/// @ingroup gl
 class SEQUOIA_RENDER_API GLInputSystem : public Listenable<KeyboardListener, MouseListener> {
   RenderTarget* target_;
 

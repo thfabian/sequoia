@@ -32,7 +32,9 @@ namespace render {
 ///
 /// @see RenderSystem::loadShader
 /// @ingroup render
-class SEQUOIA_RENDER_API Shader : public RenderSystemObject, public NonCopyable {
+class SEQUOIA_RENDER_API Shader : public RenderSystemObject,
+                                  public NonCopyable,
+                                  public std::enable_shared_from_this<Shader> {
 public:
   /// @brief Enumerates the types of shaders which can run on the GPU
   enum ShaderType {
@@ -61,7 +63,7 @@ public:
 
   /// @brief Shader type to string
   static const char* shaderTypeToString(ShaderType type);
-  
+
   /// @brief Convert to string
   virtual std::string toString() const = 0;
 

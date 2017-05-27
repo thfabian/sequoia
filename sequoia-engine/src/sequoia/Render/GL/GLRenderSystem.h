@@ -60,7 +60,7 @@ public:
   virtual void swapBuffers() override;
 
   /// @brief Create a new VBO
-  virtual std::unique_ptr<VertexArrayObject> createVertexArrayObject() override;
+  virtual std::unique_ptr<VertexArrayObject> createVertexArrayObject(RenderTarget* target) override;
 
   /// @brief Load the shader from source if it has not already been loaded
   virtual std::shared_ptr<Shader> loadShader(RenderTarget* target, Shader::ShaderType type,

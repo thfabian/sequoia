@@ -67,7 +67,7 @@ public:
   virtual void swapBuffers() = 0;
 
   /// @brief Create a new VertexArrayObject for `target`
-  virtual std::unique_ptr<VertexArrayObject> createVertexArrayObject() = 0;
+  virtual std::unique_ptr<VertexArrayObject> createVertexArrayObject(RenderTarget* target) = 0;
 
   /// @brief Load a shader from source for `target`
   virtual std::shared_ptr<Shader> loadShader(RenderTarget* target, Shader::ShaderType type,

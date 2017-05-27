@@ -25,10 +25,8 @@ namespace render {
 /// @brief OpenGL vertex array object (VAO) with VBO and EBOs
 /// @ingroup gl
 class SEQUOIA_RENDER_API GLVertexArrayObject : public VertexArrayObject {
+  /// OpenGL ids
   unsigned int vaoID_, eboID_, vboID_;
-
-  /// Do we draw with indices?
-  bool hasIndices_;
 
   /// Are the buffers allocated?
   bool allocated_;
@@ -46,8 +44,11 @@ public:
   /// @brief Get the VAO ID
   unsigned int getVAOID() const;
 
-  /// @copydoc VertexArrayObject::updateDevice
-  virtual void updateDevice(std::size_t offset, std::size_t length) override;
+  /// @copydoc VertexArrayObject::updateVertexData
+  virtual void updateVertexData(std::size_t offset, std::size_t length) override;
+
+  /// @copydoc VertexArrayObject::updateIndexData
+  virtual void updateIndexData(std::size_t offset, std::size_t length) override;
 
   /// @copydoc VertexArrayObject::attachVertexDataDevice
   void attachVertexDataDevice() override;
@@ -57,14 +58,12 @@ public:
 
   /// @copydoc VertexArrayObject::toString
   std::string toString() const override;
-  
-  /// @brief Do we draw with indices?
-  bool hasIndices() const;
-  
+
   SEQUOIA_GL_OBJECT(VertexArrayObject);
 
 private:
-  std::size_t getNumBytes(std::size_t length) const;
+  std::size_t getNumVertexBytes(std::size_t length) const;
+  std::size_t getNumIndexBytes(std::size_t length) const;
 };
 
 } // namespace render

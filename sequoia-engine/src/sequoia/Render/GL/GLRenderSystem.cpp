@@ -87,7 +87,8 @@ void GLRenderSystem::swapBuffers() {
   });
 }
 
-std::unique_ptr<VertexArrayObject> GLRenderSystem::createVertexArrayObject() {
+std::unique_ptr<VertexArrayObject> GLRenderSystem::createVertexArrayObject(RenderTarget* target) {
+  (void)target;
   return std::make_unique<GLVertexArrayObject>();
 }
 

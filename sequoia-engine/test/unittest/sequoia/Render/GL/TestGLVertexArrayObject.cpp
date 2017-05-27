@@ -50,17 +50,16 @@ struct TestVertexData {
 TEST_F(GLVertexArrayObjectTest, Vertex3D) {
   RenderSystem& rsys = RenderSystem::getSingleton();
 
-  std::unique_ptr<VertexArrayObject> vao = rsys.createVertexArrayObject();
+  std::unique_ptr<VertexArrayObject> vao = rsys.createVertexArrayObject(getWindow());
   GLVertexArrayObject* glvao = dyn_cast<GLVertexArrayObject>(vao.get());
 
   auto vertexData = std::make_unique<TestVertexData<Vertex3D>>(64);
   glvao->attachVertexData(vertexData->Data, vertexData->NumVertices, vertexData->Layout,
                           VertexArrayObject::BK_StaticWriteOnly);
   
-  const VertexLayout* layout = vertexData->Layout;
-
+  const VertexLayout* layout = vertexData->Layout;  
   glvao->bind();
-
+  
   // Check Position attribute
   {
     GLint enabled;
@@ -176,12 +175,12 @@ TEST_F(GLVertexArrayObjectTest, Vertex3D) {
 
     GLenum type;
     glGetVertexAttribiv(GLVertexAttribute::Color, GL_VERTEX_ATTRIB_ARRAY_TYPE, &type);
-    EXPECT_EQ(type, GL_UNSIGNED_BYTE);
+    EXPECT_EQ(type, GL_FLOAT);
 
     GLint normalized;
     glGetVertexAttribiv(GLVertexAttribute::Color, GL_VERTEX_ATTRIB_ARRAY_NORMALIZED,
                         &normalized);
-    EXPECT_TRUE(normalized);
+    EXPECT_FALSE(normalized);
 
     GLint size;
     glGetVertexAttribiv(GLVertexAttribute::Color, GL_VERTEX_ATTRIB_ARRAY_SIZE, &size);

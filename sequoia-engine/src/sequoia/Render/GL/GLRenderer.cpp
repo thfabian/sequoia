@@ -16,11 +16,13 @@
 #include "sequoia/Core/Logging.h"
 #include "sequoia/Core/StringUtil.h"
 #include "sequoia/Render/Camera.h"
+#include "sequoia/Render/DrawCommandList.h"
 #include "sequoia/Render/GL/GL.h"
 #include "sequoia/Render/GL/GLProgramManager.h"
 #include "sequoia/Render/GL/GLRenderWindow.h"
 #include "sequoia/Render/GL/GLRenderer.h"
 #include "sequoia/Render/GL/GLShaderManager.h"
+#include "sequoia/Render/GL/GLStateCache.h"
 #include "sequoia/Render/RenderSystem.h"
 #include <glbinding/Binding.h>
 #include <glbinding/ContextInfo.h>
@@ -113,6 +115,7 @@ GLRenderer::GLRenderer(GLRenderWindow* target) : target_(target) {
   LOG(INFO) << "OpenGL renderer: " << glbinding::ContextInfo::renderer();
 
   // Initialize shader, program, texture and buffer manager
+  stateCache_ = std::make_unique<GLStateCache>();
   shaderManager_ = std::make_unique<GLShaderManager>();
   programManager_ = std::make_unique<GLProgramManager>();
 
@@ -135,6 +138,7 @@ GLRenderer::~GLRenderer() {
 void GLRenderer::render() {
   Viewport* viewport = target_->getViewport();
   Camera* camera = viewport->getCamera();
+  DrawCommandList* drawCommandList = target_->getDrawCommandList().get();
 
   // Compute the projction matrix
   glm::mat4 matProj =
@@ -151,15 +155,22 @@ void GLRenderer::render() {
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
   // Start rendering
-  glm::mat4 matModel = glm::mat4(1.0f);
+  DrawCommand* drawCommand = nullptr;
+  for(drawCommand = drawCommandList->start(); drawCommand != nullptr;
+      drawCommand = drawCommandList->next()) {
 
-  // Compute the full model view projection matrix
-  glm::mat4 matModelViewProjection = matViewProj * matModel;
+    // Compute the full model view projection matrix
+    glm::mat4 matModelViewProjection = matViewProj * drawCommand->getModelMatrix();
+
+    // Update the OpenGL state-machine
+  }
 }
 
 GLShaderManager* GLRenderer::getShaderManager() { return shaderManager_.get(); }
 
 GLProgramManager* GLRenderer::getProgramManager() { return programManager_.get(); }
+
+GLStateCache* GLRenderer::getStateCache() { return stateCache_.get(); }
 
 } // namespace render
 

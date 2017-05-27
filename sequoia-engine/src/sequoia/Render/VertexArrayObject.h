@@ -67,6 +67,7 @@ public:
     ///  lose them, you will be replacing them next frame anyway.
     BK_DynamicWriteOnlyDiscardable = 14
   };
+
   virtual ~VertexArrayObject();
   VertexArrayObject(RenderSystemKind kind);
 
@@ -77,28 +78,39 @@ public:
   ///                     `numVertices * layout.SizeOf`)
   /// @param layout       Layout of each vertex
   /// @param usage        Usage of the hardware buffers
+  /// @param indicesPtr   Index pointer to draw the vertices (may be `NULL`)
+  /// @param numIndices   Number of indices
   ///
   /// This will create the underlying device hardware buffers. However, the data is only copied to
   /// the GPU once `updateGPU` is called.
   void attachVertexData(void* dataPtr, std::size_t numVertices, const VertexLayout* layout,
-                        BufferUsageKind usage);
+                        BufferUsageKind usage, unsigned int* indicesPtr = nullptr,
+                        std::size_t numIndices = 0);
 
   /// @brief Free all allocated buffers
   void freeVertexData();
 
-  /// @brief Update the data on the device to match the host (CPU) data
+  /// @brief Update the vertex data on the device to match the host (CPU) data
   ///
   /// @param offset   Offset to start writing
-  /// @param length   Number of bytes to write (` VertexArrayObject::AllVertices` indicates the full
-  ///                 buffer should be written)
-  virtual void updateDevice(std::size_t offset, std::size_t length) = 0;
+  /// @param length   Number of vertices to write in `[0, getNumVertices())`
+  virtual void updateVertexData(std::size_t offset, std::size_t length) = 0;
 
-  /// @brief Get the number of allocated vertices
+  /// @brief Update the index data on the device to match the host (CPU) data
+  ///
+  /// @param offset   Offset to start writing
+  /// @param length   Number of vertices to write  in `[0, getNumIndices())`
+  virtual void updateIndexData(std::size_t offset, std::size_t length) = 0;
+
+  /// @brief Get the number of vertices
   std::size_t getNumVertices() const;
 
-  /// @brief Check if vertex data has been attached
-  bool isValid() const;
-  
+  /// @brief Get the number of indices
+  std::size_t getNumIndices() const;
+
+  /// @brief Do we draw with indices?
+  bool hasIndices() const;
+
   /// @brief Convert to string
   virtual std::string toString() const = 0;
 
@@ -110,7 +122,7 @@ protected:
   virtual void freeVertexDataDevice() = 0;
 
 protected:
-  /// Pointer to the vertex data
+  /// Pointer to the vertex data (non-owning)
   void* dataPtr_;
 
   /// Number of vertices
@@ -118,6 +130,12 @@ protected:
 
   /// Layout of each vertex
   const VertexLayout* layout_;
+
+  /// Pointer to the index data (non-owning)
+  unsigned int* indicesPtr_;
+
+  /// Number of indices
+  std::size_t numIndices_;
 
   /// Usage of the buffer
   BufferUsageKind usage_;

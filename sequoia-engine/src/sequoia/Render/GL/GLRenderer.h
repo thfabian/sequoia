@@ -19,6 +19,7 @@
 #include "sequoia/Core/NonCopyable.h"
 #include "sequoia/Math/Math.h"
 #include "sequoia/Render/Export.h"
+#include <memory>
 
 namespace sequoia {
 
@@ -27,6 +28,7 @@ namespace render {
 class GLRenderWindow;
 class GLShaderManager;
 class GLProgramManager;
+class GLStateCache;
 
 /// @brief OpenGL based renderer
 ///
@@ -37,6 +39,7 @@ class GLProgramManager;
 class SEQUOIA_RENDER_API GLRenderer : public NonCopyable {
   GLRenderWindow* target_;
 
+  std::unique_ptr<GLStateCache> stateCache_;
   std::unique_ptr<GLShaderManager> shaderManager_;
   std::unique_ptr<GLProgramManager> programManager_;
 
@@ -55,6 +58,9 @@ public:
 
   /// @brief Get the program manager
   GLProgramManager* getProgramManager();
+
+  /// @brief Get the OpenGL state manager
+  GLStateCache* getStateCache();
 };
 
 } // namespace render

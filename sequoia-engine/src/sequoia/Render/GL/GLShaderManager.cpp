@@ -145,8 +145,7 @@ std::shared_ptr<GLShader> GLShaderManager::create(GLShader::ShaderType type,
   if(it != pathLookupMap_.end())
     shader = shaderList_[it->second];
   else {
-    shaderList_.emplace_back(std::shared_ptr<GLShader>(
-        new GLShader(type, path, this), [](GLShader* shader) { destroyGLShader(shader); }));
+    shaderList_.emplace_back(std::make_shared<GLShader>(type, path, this));
     pathLookupMap_[path] = shaderList_.size() - 1;
     shader = shaderList_.back();
   }

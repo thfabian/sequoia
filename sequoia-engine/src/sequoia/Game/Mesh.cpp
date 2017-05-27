@@ -20,13 +20,19 @@ namespace sequoia {
 
 namespace game {
 
-Mesh::Mesh(const std::string& name) : vao_(nullptr), data_(nullptr), name_(name) {}
+Mesh::Mesh(const std::string& name) : data_(nullptr), name_(name) {}
 
 const math::AxisAlignedBox& Mesh::getAAB() const { return data_->AAB; }
 
 std::size_t Mesh::getNumVertices() const { return data_->NumVertices; }
 
-render::VertexArrayObject* Mesh::getVAO() const { return vao_.get(); }
+render::VertexArrayObject* Mesh::getVAO() const { return data_->VAO.get(); }
+
+void Mesh::accept(render::VertexVisitor& visitor) const {
+  visitor.setNumVertices(data_->NumVertices);
+  visitor.setDataPtr(data_->DataPtr);
+  data_->Layout->accept(visitor);
+}
 
 } // namespace game
 

@@ -60,6 +60,8 @@ sequoia_add_library(
           GL/GLShader.cpp
           GL/GLShaderManager.h
           GL/GLShaderManager.cpp
+          GL/GLStateCache.h
+          GL/GLStateCache.cpp
           GL/GLVertexArrayObject.h
           GL/GLVertexArrayObject.cpp
           GL/GLVertexAttribute.h

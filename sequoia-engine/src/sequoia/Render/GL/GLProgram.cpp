@@ -46,6 +46,8 @@ GLProgram::GLProgram(const std::set<std::shared_ptr<Shader>>& shaders, GLProgram
     : Program(RK_OpenGL), status_(GLProgramStatus::Invalid), id_(0), allUniformVariablesSet_(false),
       shaders_(shaders), manager_(manager) {}
 
+GLProgram::~GLProgram() { destroyGLProgram(this); }
+
 bool GLProgram::isValid() const { return (status_ == GLProgramStatus::Linked); }
 
 const std::set<std::shared_ptr<Shader>>& GLProgram::getShaders() const { return shaders_; }
@@ -73,8 +75,8 @@ GLProgramStatus GLProgram::getStatus() const { return status_; }
 
 void GLProgram::bind() {
   if(!isValid())
-    manager_->makeValid(this->shared_from_this());
-
+    manager_->makeValid(dyn_pointer_cast<GLProgram>(shared_from_this()));
+  
   if(!allUniformVariablesSet_)
     checkUniformVariables();
 
@@ -243,8 +245,6 @@ void destroyGLProgram(GLProgram* program) noexcept {
   glDeleteProgram(program->id_);
   program->id_ = 0;
   program->status_ = GLProgramStatus::Invalid;
-
-  delete program;
 }
 
 } // namespace render

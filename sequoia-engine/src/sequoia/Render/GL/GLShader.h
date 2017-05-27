@@ -63,6 +63,9 @@ public:
   /// Shaders should only be created via the factory method GLShaderManager::create.
   GLShader(ShaderType type, const platform::String& path, GLShaderManager* manager);
 
+  /// @brief Destroy the shader
+  ~GLShader();
+  
   /// @brief Check if the shader is valid i.e can be linked into a GPUProgram
   bool isValid() const;
 

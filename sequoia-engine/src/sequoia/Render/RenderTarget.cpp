@@ -13,9 +13,9 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Render/RenderTarget.h"
 #include "sequoia/Core/Assert.h"
 #include "sequoia/Render/Camera.h"
+#include "sequoia/Render/RenderTarget.h"
 
 namespace sequoia {
 
@@ -41,6 +41,12 @@ const Viewport* RenderTarget::getViewport() const {
 }
 
 void RenderTarget::setViewport(const std::shared_ptr<Viewport>& viewport) { viewport_ = viewport; }
+
+void RenderTarget::setDrawCommandList(const std::shared_ptr<DrawCommandList>& list) {
+  list_ = list;
+}
+
+const std::shared_ptr<DrawCommandList>& RenderTarget::getDrawCommandList() { return list_; }
 
 } // namespace render
 

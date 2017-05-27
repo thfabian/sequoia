@@ -65,11 +65,14 @@ public:
   virtual void insert(DrawCommand* command) noexcept override { commands_.push_back(command); }
 
   /// @copydoc DrawCommandList::start
-  virtual DrawCommand* start() noexcept override { return commands_[(index_ = 0)]; }
+  virtual DrawCommand* start() noexcept override {
+    index_ = 0;
+    return commands_.empty() ? nullptr : commands_[index_];
+  }
 
   /// @copydoc DrawCommandList::next
   virtual DrawCommand* next() noexcept override {
-    return (++index_ == commands_.size() ? nullptr : commands_[index_]);
+    return (SEQUOIA_BUILTIN_UNLIKELY(++index_ == commands_.size()) ? nullptr : commands_[index_]);
   }
 
   /// @copydoc DrawCommandList::clear

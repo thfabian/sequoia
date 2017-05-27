@@ -38,7 +38,7 @@ enum class GLProgramStatus {
 /// @brief OpenGL implementation of a GPUProgram
 /// @see RenderSystem::createPogram
 /// @ingroup gl
-class SEQUOIA_RENDER_API GLProgram : public Program, public std::enable_shared_from_this<GLProgram> {
+class SEQUOIA_RENDER_API GLProgram : public Program {
 public:
   /// @brief Represent uniform variables in shaders
   struct GLUniformInfo {
@@ -52,6 +52,9 @@ public:
   ///
   /// Programs should only be created via the factory method GLProgramManager::create.
   GLProgram(const std::set<std::shared_ptr<Shader>>& shaders, GLProgramManager* manager);
+  
+  /// @brief Destroy the program
+  ~GLProgram();
 
   /// @brief Check if the program is valid i.e can be installed into the render pipeline
   bool isValid() const;

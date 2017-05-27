@@ -26,11 +26,16 @@ VertexArrayObject::VertexArrayObject(RenderSystemKind kind)
       usage_(BK_Invalid) {}
 
 void VertexArrayObject::attachVertexData(void* dataPtr, std::size_t numVertices,
-                                         const VertexLayout* layout, BufferUsageKind usage) {
+                                         const VertexLayout* layout, BufferUsageKind usage,
+                                         unsigned int* indicesPtr, std::size_t numIndices) {
   dataPtr_ = dataPtr;
   numVertices_ = numVertices;
   layout_ = layout;
   usage_ = usage;
+
+  indicesPtr_ = indicesPtr;
+  numIndices_ = numIndices;
+
   attachVertexDataDevice();
 }
 
@@ -39,9 +44,16 @@ void VertexArrayObject::freeVertexData() {
   dataPtr_ = nullptr;
   numVertices_ = 0;
   layout_ = nullptr;
+
+  indicesPtr_ = nullptr;
+  numIndices_ = 0;
 }
 
 std::size_t VertexArrayObject::getNumVertices() const { return numVertices_; }
+
+std::size_t VertexArrayObject::getNumIndices() const { return numIndices_; }
+
+bool VertexArrayObject::hasIndices() const { return indicesPtr_ != nullptr; }
 
 } // namespace render
 

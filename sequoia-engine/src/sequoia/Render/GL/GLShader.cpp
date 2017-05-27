@@ -59,8 +59,10 @@ static const char* statusToString(GLShaderStatus status) {
 }
 
 GLShader::GLShader(Shader::ShaderType type, const platform::String& path, GLShaderManager* manager)
-    : Shader(RK_OpenGL, type), status_(GLShaderStatus::OnDisk), id_(0), manager_(manager), code_(),
-      path_(path) {}
+  : Shader(RK_OpenGL, type), status_(GLShaderStatus::OnDisk), id_(0), manager_(manager), code_(),
+    path_(path) {}
+
+GLShader::~GLShader() { destroyGLShader(this); }
 
 bool GLShader::isValid() const { return status_ == GLShaderStatus::Compiled; }
 
@@ -111,8 +113,6 @@ void destroyGLShader(GLShader* shader) noexcept {
   shader->id_ = 0;
 
   shader->status_ = GLShaderStatus::InMemory;
-
-  delete shader;
 }
 
 } // namespace render

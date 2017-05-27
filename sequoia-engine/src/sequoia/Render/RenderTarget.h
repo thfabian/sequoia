@@ -25,6 +25,8 @@ namespace sequoia {
 
 namespace render {
 
+class DrawCommandList;
+
 /// @brief A canvas which can receive the results of a rendering operation
 /// @ingroup render
 class SEQUOIA_RENDER_API RenderTarget {
@@ -65,6 +67,12 @@ public:
   /// @brief Set the viewport and register it as a `RenderTargetListener`
   void setViewport(const std::shared_ptr<Viewport>& viewport);
 
+  /// @brief Set the `DrawCommandList` which will be rendered
+  void setDrawCommandList(const std::shared_ptr<DrawCommandList>& list);
+
+  /// @brief Get the `DrawCommandList`
+  const std::shared_ptr<DrawCommandList>& getDrawCommandList();
+
 protected:
   RenderTargetKind kind_;
 
@@ -73,6 +81,9 @@ protected:
 
   /// Viewport connecting the target to a camera
   std::shared_ptr<Viewport> viewport_;
+
+  /// List of draw commands
+  std::shared_ptr<DrawCommandList> list_;
 };
 
 } // namespace render

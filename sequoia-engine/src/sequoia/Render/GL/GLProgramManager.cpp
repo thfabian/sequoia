@@ -179,8 +179,7 @@ GLProgramManager::create(const std::set<std::shared_ptr<Shader>>& shaders,
   if(it != shaderSetLookupMap_.end())
     program = programList_[it->second];
   else {
-    programList_.emplace_back(std::shared_ptr<GLProgram>(
-        new GLProgram(shaders, this), [](GLProgram* program) { destroyGLProgram(program); }));
+    programList_.emplace_back(std::make_shared<GLProgram>(shaders, this));
     shaderSetLookupMap_[hash] = programList_.size() - 1;
     program = programList_.back();
   }
