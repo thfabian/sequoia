@@ -69,10 +69,21 @@ void VertexData::accept(VertexVisitor& visitor) const {
   layout_->accept(visitor);
 }
 
-void VertexData::dumpVertexData() const {
+void VertexData::dump() const {
+  std::cout << "Vertices = [\n";
+
+  // Print vertices
   VertexVisitorStringifier visitor;
   accept(visitor);
-  std::cout << visitor.toString() << std::endl;
+  std::cout << "  " << core::indent(visitor.toString()) << "]";
+
+  // Print indices
+  if(numIndices_ > 0) {
+    std::cout << ",\nIndices = [\n";
+    for(std::size_t i = 0; i < numIndices_; ++i)
+      std::cout << "  " << i << ((i == numIndices_ - 1) ? "" : ",") << "\n";
+    std::cout << "]\n";
+  }
 }
 
 std::string VertexData::toString() const {

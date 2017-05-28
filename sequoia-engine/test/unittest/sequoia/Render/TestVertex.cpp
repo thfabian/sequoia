@@ -58,8 +58,8 @@ TEST(VertexTest, Vertex3DLayout) {
   EXPECT_EQ(Vertex3D::getLayout()->TexCoordOffset, 24);
 
   // unsigned char Color[4];
-  EXPECT_EQ(Vertex3D::getLayout()->ColorType, VertexLayout::UnsignedByte);
-  EXPECT_EQ(Vertex3D::getLayout()->ColorNumElement, 4);
+  EXPECT_EQ(Vertex3D::getLayout()->ColorType, VertexLayout::Float);
+  EXPECT_EQ(Vertex3D::getLayout()->ColorNumElement, 3);
   EXPECT_EQ(Vertex3D::getLayout()->ColorOffset, 32);
 }
 

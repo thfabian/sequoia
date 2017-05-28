@@ -17,15 +17,17 @@
 #define SEQUOIA_RENDER_VERTEXDATA_H
 
 #include "sequoia/Core/NonCopyable.h"
+#include "sequoia/Core/STLExtras.h"
 #include "sequoia/Math/AxisAlignedBox.h"
 #include "sequoia/Render/Vertex.h"
 #include "sequoia/Render/VertexArrayObject.h"
+#include "sequoia/Render/VertexVisitor.h"
+
+#include <iostream>
 
 namespace sequoia {
 
 namespace render {
-
-class VertexVisitor;
 
 /// @brief Storage of vertex data on the host and device
 /// @ingroup render
@@ -35,7 +37,7 @@ public:
 
   /// @brief Allocate memory for `numVertices` and `numIndices`
   /// @throw RenderException  Out of memory
-  VertexData(const VertexLayout* layout, std::size_t numVertices, std::size_t numIndices);
+  VertexData(const VertexLayout* layout, std::size_t numVertices, std::size_t numIndices = 0);
 
   /// @brief Deallocate all memory
   ~VertexData();
@@ -83,9 +85,47 @@ public:
   /// @brief Accept a VertexVisitor to access/modify the underlying host vertex data
   void accept(VertexVisitor& visitor) const;
 
-  /// @brief Dump the vertex data to `stdout`
-  void dumpVertexData() const;
+  /// @brief Modify the vertex data by running the provided `functor` on it
+  ///
+  /// @tparam FunctorType   (lambda) function of type `void(VertexType*)` where `VertexType` is one
+  ///                       of `{Vertex2D, Vertex3D}`
+  /// @param functor        Functor to run on the vertex data
+  ///
+  /// Use VertexData::accept to provide your own VertexVisitor.
+  ///
+  /// @b Example
+  /// @code{.cpp}
+  ///   VertexData data(Vertex3D::getLayout(), 64);
+  ///   data.modify([&data](Vertex3D* vertices) {
+  ///     for(int i = 0; i < data.getNumVertices(); ++i) {
+  ///       Vertex3D vertex = vertices[i];
+  ///       // Do something ...
+  ///     }
+  ///
+  ///   });
+  /// @endcode
+  template <class FunctorType>
+  void modify(FunctorType&& functor) const {
+    using FirstArgType = core::function_first_argument_t<FunctorType>;
 
+    // First argument has to be VertexType*
+    static_assert(std::is_pointer<FirstArgType>::value,
+                  "invalid functor: type of first argument has to be a pointer");
+    using VertexType = typename std::remove_pointer<FirstArgType>::type;
+
+    // Check if vertex type is supported
+    static_assert(core::tuple_has_type<VertexType, VertexTypeList>::value,
+                  "invalid functor: invalid 'VertexType' for first argument ");
+    std::function<void(VertexType*)> func = functor;
+
+    // Run functor
+    VertexVisitorRunFunctor<VertexType> visitor(functor);
+    accept(visitor);
+  }
+
+  /// @brief Dump the vertex data and indices to `stdout`
+  void dump() const;
+  
   /// @brief Convert to string
   std::string toString() const;
 

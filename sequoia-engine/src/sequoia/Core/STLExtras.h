@@ -90,6 +90,32 @@ struct function_traits<std::function<ReturnType(Args...)>> {
 };
 /// @}
 
+namespace internal {
+
+template <typename Ret, typename Arg, typename... Rest>
+Arg first_argument_impl(Ret (*)(Arg, Rest...));
+
+template <typename Ret, typename F, typename Arg, typename... Rest>
+Arg first_argument_impl(Ret (F::*)(Arg, Rest...));
+
+template <typename Ret, typename F, typename Arg, typename... Rest>
+Arg first_argument_impl(Ret (F::*)(Arg, Rest...) const);
+
+template <typename F>
+decltype(first_argument_impl(&F::operator())) first_argument_impl(F);
+
+} // namespace internal
+
+/// @brief Get the type of the first arugment of the `FunctionType`
+///
+/// @code{.cpp}
+/// auto foo = [](float f) {};
+/// static_assert(std::is_same<function_first_argument_t<decltype(foo)>, float>::value, "");
+/// @endcode
+template <typename FunctionType>
+using function_first_argument_t =
+    decltype(internal::first_argument_impl(std::declval<FunctionType>()));
+
 //===------------------------------------------------------------------------------------------===//
 //     Extra additions for arrays
 //===------------------------------------------------------------------------------------------===//

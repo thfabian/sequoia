@@ -19,6 +19,7 @@ sequoia_add_test(
   NAME SequoiaRenderTest
   SOURCES TestMain.cpp
           TestVertex.cpp
+          TestVertexData.cpp
   DEPENDS SequoiaUnittest
           SequoiaRender
           SequoiaDriver

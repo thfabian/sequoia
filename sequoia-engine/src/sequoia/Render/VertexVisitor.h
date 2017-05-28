@@ -20,6 +20,7 @@
 #include "sequoia/Render/Export.h"
 #include "sequoia/Render/Vertex.h"
 #include <cstddef>
+#include <functional>
 #include <string>
 
 namespace sequoia {
@@ -51,7 +52,7 @@ namespace render {
 /// @endcode
 ///
 /// @see
-///   game::Mesh::accept
+///   VertexData::modify
 ///
 /// @ingroup render
 class SEQUOIA_RENDER_API VertexVisitor {
@@ -82,8 +83,6 @@ public:
   virtual void visit(const Vertex2DLayout* layout) = 0;
 };
 
-/// @brief Run the `functor` on the VertexData
-
 /// @brief Convert vertex-data to string
 /// @ingroup render
 class SEQUOIA_RENDER_API VertexVisitorStringifier : public VertexVisitor {
@@ -95,6 +94,43 @@ public:
 
   /// @brief Get the string
   const std::string& toString() const { return string_; }
+};
+
+namespace internal {
+
+template <bool RunFunctor>
+struct RunFunctorImpl {
+  template <class Functor, class VertexType>
+  static void run(Functor&& functor, VertexType* vertex) {
+    functor(vertex);
+  }
+};
+
+template <>
+struct RunFunctorImpl<false> {
+  template <class Functor, class VertexType>
+  static void run(Functor&&, VertexType*) {}
+};
+
+} // namespace internal
+
+/// @brief Run the given `functor` on the vertex data
+template <class VertexType>
+class SEQUOIA_RENDER_API VertexVisitorRunFunctor : public VertexVisitor {
+  const std::function<void(VertexType*)>& functor_;
+
+public:
+  VertexVisitorRunFunctor(const std::function<void(VertexType*)>& functor) : functor_(functor) {}
+
+  template <class LayoutType>
+  void runImpl(const LayoutType* layout) {
+    using VertexT = std::remove_pointer_t<decltype(getVerticesPtr(layout))>;
+    internal::RunFunctorImpl<std::is_same<VertexT, VertexType>::value>::run(functor_,
+                                                                            getVerticesPtr(layout));
+  }
+
+  virtual void visit(const Vertex3DLayout* layout) override { runImpl(layout); }
+  virtual void visit(const Vertex2DLayout* layout) override { runImpl(layout); }
 };
 
 } // namespace render

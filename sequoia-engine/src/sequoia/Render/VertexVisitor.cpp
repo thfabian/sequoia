@@ -27,15 +27,18 @@ void VertexVisitorStringifier::visit(const Vertex3DLayout* layout) {
 
   std::stringstream ss;
   for(std::size_t i = 0; i < getNumVertices(); ++i) {
-    ss << core::format("Vertex3D["
-                       "  Position = %s,\n"
-                       "  Normal = %s,\n"
-                       "  TexCoord = %s,\n"
-                       "  Color = %s\n"
+    ss << core::format("Vertex3D[\n"
+                       "  index = %i,\n"
+                       "  %-10s = %s,\n"
+                       "  %-10s = %s,\n"
+                       "  %-10s = %s,\n"
+                       "  %-10s = %s\n"
                        "]",
-                       math::make_vec3(vertices[i].Position), math::make_vec3(vertices[i].Normal),
-                       math::make_vec2(vertices[i].TexCoord), math::make_vec4(vertices[i].Color))
-       << ((i == getNumVertices() - 1) ? "," : "") << "\n";
+                       i, "Position", math::make_vec3(vertices[i].Position), "Normal",
+                       math::make_vec3(vertices[i].Normal), "TexCoord",
+                       math::make_vec2(vertices[i].TexCoord), "Color",
+                       math::make_vec4(vertices[i].Color))
+       << ((i == getNumVertices() - 1) ? "" : ",") << "\n";
   }
 
   string_ = ss.str();
@@ -46,14 +49,16 @@ void VertexVisitorStringifier::visit(const Vertex2DLayout* layout) {
 
   std::stringstream ss;
   for(std::size_t i = 0; i < getNumVertices(); ++i) {
-    ss << core::format("Vertex2D["
-                       "  Position = %s,\n"
-                       "  TexCoord = %s,\n"
-                       "  Color = %s\n"
+    ss << core::format("Vertex2D[\n"
+                       "  index = %i,\n"
+                       "  %-10s = %s,\n"
+                       "  %-10s = %s,\n"
+                       "  %-10s = %s\n"
                        "]",
-                       math::make_vec2(vertices[i].Position), math::make_vec2(vertices[i].TexCoord),
+                       i, "Position", math::make_vec2(vertices[i].Position), "TexCoord",
+                       math::make_vec2(vertices[i].TexCoord), "Color",
                        math::make_vec4(vertices[i].Color))
-       << ((i == getNumVertices() - 1) ? "," : "") << "\n";
+       << ((i == getNumVertices() - 1) ? "" : ",") << "\n";
   }
 
   string_ = ss.str();

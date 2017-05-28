@@ -135,6 +135,7 @@ struct SEQUOIA_RENDER_API Vertex3DLayout : public VertexLayout {
   virtual void accept(VertexVisitor& visitor) const override;
 };
 
+/// @typedef VertexTypeList
 /// @brief List of all vertex types
 /// @ingroup render
 using VertexTypeList = std::tuple<Vertex2D, Vertex3D>;
