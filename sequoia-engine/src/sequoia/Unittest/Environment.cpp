@@ -15,6 +15,8 @@
 
 #include "sequoia/Core/ErrorHandler.h"
 #include "sequoia/Core/Logging.h"
+#include "sequoia/Core/Options.h"
+#include "sequoia/Driver/CommandLine.h"
 #include "sequoia/Driver/ConsoleLogger.h"
 #include "sequoia/Unittest/Config.h"
 #include "sequoia/Unittest/Environment.h"
@@ -31,6 +33,9 @@ namespace unittest {
 Environment::Environment(int argc, char* argv[]) : trace_() {
   singletonManager_ = std::make_unique<core::SingletonManager>();
   singletonManager_->allocateSingleton<ErrorHandler>(argc > 0 ? argv[0] : "SequoiaTest");
+
+  // Initialize options
+  singletonManager_->allocateSingleton<Options>();
 
   // Parse command-line
   po::options_description desc("Unittest options");
@@ -51,18 +56,14 @@ Environment::Environment(int argc, char* argv[]) : trace_() {
     ErrorHandler::getSingleton().fatal(e.what(), false, false);
   }
 
-  if(vm.count("help")) {
-    std::cout << "\nSequoiaUnittest - " << SEQUOIA_VERSION_STRING << "\n\n" << desc << std::endl;
-    std::exit(0);
-  }
-
+  // Unittesting always runs in debug mode and with logging on
   singletonManager_->allocateSingleton<core::Logger>(
       vm.count("no-log") ? core::LoggingLevel::Disabled : core::LoggingLevel::Debug);
 
   if(!vm.count("no-log"))
     singletonManager_->allocateSingleton<driver::ConsoleLogger>();
 
-  debugMode_ = !vm.count("no-debug");
+  Options::getSingleton().Core.Debug = !vm.count("no-debug");
 
   path_ = SEQUOIA_UNITTEST_RESSOURCEPATH;
   if(!platform::filesystem::exists(path_))
@@ -91,8 +92,6 @@ std::string Environment::testName() const {
 }
 
 const platform::Path& Environment::getRessourcePath() const { return path_; }
-
-bool Environment::debugMode() const { return debugMode_; }
 
 } // namespace unittest
 

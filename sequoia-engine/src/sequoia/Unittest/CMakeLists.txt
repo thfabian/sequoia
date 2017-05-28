@@ -21,6 +21,8 @@ sequoia_add_library(
   SOURCES Environment.h
           Environment.cpp
           Export.h
+          GameTest.h
+          GameTest.cpp
           RessourcePath.h
           RessourcePath.cpp
 

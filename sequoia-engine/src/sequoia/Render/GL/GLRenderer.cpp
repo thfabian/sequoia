@@ -83,7 +83,7 @@ static std::string functionCallToString(const glbinding::FunctionCall& call) {
 }
 
 GLRenderer::GLRenderer(GLRenderWindow* target) : target_(target) {
-  LOG(INFO) << "Creating OpenGL Renderer " << this << " ...";
+  LOG(INFO) << "Creating OpenGL renderer " << this << " ...";
 
   // Bind the context to the current thread
   glfwMakeContextCurrent(target_->getGLFWwindow());
@@ -110,12 +110,12 @@ GLRenderer::GLRenderer(GLRenderWindow* target) : target_(target) {
   }
 
   LOG(INFO) << "glbinding: " << GLBINDING_VERSION;
-  LOG(INFO) << "OpenGL version: " << glbinding::ContextInfo::version().toString();
-  LOG(INFO) << "OpenGL vendor: " << glbinding::ContextInfo::vendor();
-  LOG(INFO) << "OpenGL renderer: " << glbinding::ContextInfo::renderer();
+  LOG(INFO) << "GL version: " << glbinding::ContextInfo::version().toString();
+  LOG(INFO) << "GL vendor: " << glbinding::ContextInfo::vendor();
+  LOG(INFO) << "GL renderer: " << glbinding::ContextInfo::renderer();
 
-  // Initialize shader, program, texture and buffer manager
-  stateCache_ = std::make_unique<GLStateCache>();
+  // Initialize OpenGL related managers
+  stateCache_ = std::make_unique<GLStateCacheManager>();
   shaderManager_ = std::make_unique<GLShaderManager>();
   programManager_ = std::make_unique<GLProgramManager>();
 
@@ -123,7 +123,7 @@ GLRenderer::GLRenderer(GLRenderWindow* target) : target_(target) {
 }
 
 GLRenderer::~GLRenderer() {
-  LOG(INFO) << "Terminating OpenGL Renderer " << this << " ... ";
+  LOG(INFO) << "Terminating OpenGLrenderer " << this << " ... ";
 
   glfwMakeContextCurrent(target_->getGLFWwindow());
 
@@ -170,7 +170,7 @@ GLShaderManager* GLRenderer::getShaderManager() { return shaderManager_.get(); }
 
 GLProgramManager* GLRenderer::getProgramManager() { return programManager_.get(); }
 
-GLStateCache* GLRenderer::getStateCache() { return stateCache_.get(); }
+GLStateCacheManager* GLRenderer::getStateCache() { return stateCache_.get(); }
 
 } // namespace render
 

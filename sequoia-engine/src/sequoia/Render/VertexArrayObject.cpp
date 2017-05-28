@@ -14,6 +14,7 @@
 //===------------------------------------------------------------------------------------------===//
 
 #include "sequoia/Render/VertexArrayObject.h"
+#include "sequoia/Render/VertexData.h"
 
 namespace sequoia {
 
@@ -22,38 +23,21 @@ namespace render {
 VertexArrayObject::~VertexArrayObject() {}
 
 VertexArrayObject::VertexArrayObject(RenderSystemKind kind)
-    : RenderSystemObject(kind), dataPtr_(nullptr), numVertices_(0), layout_(nullptr),
-      usage_(BK_Invalid) {}
+    : RenderSystemObject(kind), data_(nullptr), usage_(BK_Invalid) {}
 
-void VertexArrayObject::attachVertexData(void* dataPtr, std::size_t numVertices,
-                                         const VertexLayout* layout, BufferUsageKind usage,
-                                         unsigned int* indicesPtr, std::size_t numIndices) {
-  dataPtr_ = dataPtr;
-  numVertices_ = numVertices;
-  layout_ = layout;
+void VertexArrayObject::attachVertexData(VertexData* data, BufferUsageKind usage) {
+  data_ = data;
   usage_ = usage;
-
-  indicesPtr_ = indicesPtr;
-  numIndices_ = numIndices;
-
   attachVertexDataDevice();
 }
 
-void VertexArrayObject::freeVertexData() {
-  freeVertexDataDevice();
-  dataPtr_ = nullptr;
-  numVertices_ = 0;
-  layout_ = nullptr;
+void VertexArrayObject::freeVertexData() { freeVertexDataDevice(); }
 
-  indicesPtr_ = nullptr;
-  numIndices_ = 0;
-}
+std::size_t VertexArrayObject::getNumVertices() const { return data_->getNumVertices(); }
 
-std::size_t VertexArrayObject::getNumVertices() const { return numVertices_; }
+std::size_t VertexArrayObject::getNumIndices() const { return data_->getNumIndices(); }
 
-std::size_t VertexArrayObject::getNumIndices() const { return numIndices_; }
-
-bool VertexArrayObject::hasIndices() const { return indicesPtr_ != nullptr; }
+bool VertexArrayObject::hasIndices() const { return data_->hasIndices(); }
 
 } // namespace render
 

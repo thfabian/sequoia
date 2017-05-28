@@ -55,6 +55,7 @@ void GLShaderManager::make(const std::shared_ptr<GLShader>& shader,
   if(shader->status_ == GLShaderStatus::OnDisk) {
     LOG(DEBUG) << "Loading shader from disk \"" << UtfString(shader->path_).toAnsiString() << "\"";
 
+    // TODO: use a global asset manager to get the contents of the file
     std::ifstream file(shader->path_);
 
     if(!file.is_open())

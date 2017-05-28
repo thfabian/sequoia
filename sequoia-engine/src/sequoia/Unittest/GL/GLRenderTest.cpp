@@ -31,7 +31,6 @@ void GLRenderTest::SetUp() {
   hints.GLMinorVersion = 5;
   hints.WindowMode = render::RenderWindow::WindowHint::WK_Window;
   window_ = (render::GLRenderWindow*)render::RenderSystem::getSingleton().createWindow(hints);
-
   window_->init();
 }
 

@@ -17,9 +17,9 @@
 #define SEQUOIA_UNITTEST_ENVIRONMENT_H
 
 #include "sequoia/Core/Platform.h"
+#include "sequoia/Core/PrettyStackTrace.h"
 #include "sequoia/Core/Singleton.h"
 #include "sequoia/Core/SingletonManager.h"
-#include "sequoia/Core/PrettyStackTrace.h"
 #include "sequoia/Unittest/Export.h"
 #include "sequoia/Unittest/RessourcePath.h"
 #include <gtest/gtest.h>
@@ -59,13 +59,9 @@ public:
   /// @brief Get the ressource path of the unittest
   const platform::Path& getRessourcePath() const;
 
-  /// @brief Check if we use debug-mode
-  bool debugMode() const;
-
 private:
-  core::PrettyStackTrace trace_;  
+  core::PrettyStackTrace trace_;
   platform::Path path_;
-  bool debugMode_;
   std::unique_ptr<core::SingletonManager> singletonManager_;
 };
 

@@ -16,12 +16,10 @@
 #ifndef SEQUOIA_GAME_MESH_H
 #define SEQUOIA_GAME_MESH_H
 
-#include "sequoia/Core/Byte.h"
 #include "sequoia/Core/NonCopyable.h"
 #include "sequoia/Game/Export.h"
-#include "sequoia/Math/AxisAlignedBox.h"
-#include "sequoia/Render/RenderFwd.h"
-#include "sequoia/Render/VertexArrayObject.h"
+#include "sequoia/Render/VertexData.h"
+#include <memory>
 
 namespace sequoia {
 
@@ -35,43 +33,31 @@ class SEQUOIA_GAME_API Mesh : public NonCopyable {
 public:
   friend class MeshManager;
 
-  /// @brief Host and device data of the mesh, this is shared among all meshes loaded from the same
-  /// file
-  struct Data {
-    /// Host vertex data
-    void* DataPtr;
-
-    /// Device vertex data
-    std::unique_ptr<render::VertexArrayObject> VAO;
-
-    /// Number of vertices
-    std::size_t NumVertices;
-
-    /// Layout of the vertex
-    const render::VertexLayout* Layout;
-
-    /// Local bounding box volume
-    math::AxisAlignedBox AAB;
-  };
-
   /// @brief Create empty mesh
-  Mesh(const std::string& name);
+  Mesh(const std::string& name, const std::shared_ptr<render::VertexData>& data);
 
   /// @brief Get the local bounding box
-  const math::AxisAlignedBox& getAAB() const;
+  const math::AxisAlignedBox& getAxisAlignedBox() const { return data_->getAxisAlignedBox(); }
 
-  /// @brief Get number of vertices
-  std::size_t getNumVertices() const;
+  /// @brief Get the associated VertexArrayObject
+  render::VertexArrayObject* getVertexArrayObject() const { return data_->getVertexArrayObject(); }
 
-  /// @brief Get the VertexArrayObject
-  render::VertexArrayObject* getVAO() const;
+  /// @brief Get the VertexData
+  const render::VertexData* getVertexData() { return data_.get(); }
+  render::VertexData* getVertexData() const { return data_.get(); }
 
   /// @brief Accept a VertexVisitor to access/modify the underlying vertex data
   void accept(render::VertexVisitor& visitor) const;
 
+  /// @brief Get the name of the mesh
+  const std::string& getName() const;
+
+  /// @brief Convert to string
+  std::string toString() const;
+
 private:
-  /// Host vertex data
-  std::shared_ptr<Data> data_;
+  /// Vertex data
+  std::shared_ptr<render::VertexData> data_;
 
   /// Name of the mesh
   std::string name_;

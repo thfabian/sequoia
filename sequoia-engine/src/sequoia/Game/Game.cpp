@@ -18,6 +18,7 @@
 #include "sequoia/Core/Options.h"
 #include "sequoia/Core/StringSwitch.h"
 #include "sequoia/Game/Game.h"
+#include "sequoia/Game/MeshManager.h"
 #include "sequoia/Render/Camera.h"
 #include "sequoia/Render/Exception.h"
 #include "sequoia/Render/RenderSystem.h"
@@ -29,7 +30,7 @@ SEQUOIA_DECLARE_SINGLETON(game::Game);
 
 namespace game {
 
-Game::Game() : renderSystem_(nullptr), mainWindow_(nullptr), mainCamera_(nullptr) { init(); }
+Game::Game() : renderSystem_(nullptr), mainWindow_(nullptr), mainCamera_(nullptr) {}
 
 Game::~Game() { cleanup(); }
 
@@ -52,7 +53,7 @@ void Game::run() {
   LOG(INFO) << "Done with main-loop";
 }
 
-void Game::init() {
+void Game::init(bool hideWindow) {
   LOG(INFO) << "Initializing Game ...";
   using namespace render;
 
@@ -75,7 +76,7 @@ void Game::init() {
                           .Case("windowed-fullscreen", WindowModeKind::WK_WindowedFullscreen)
                           .Default(WindowModeKind::WK_Window);
     hint.MSAA = opt.Render.MSAA;
-    hint.HideWindow = false;
+    hint.HideWindow = hideWindow;
 
     hint.GLMajorVersion = opt.Render.GLMajorVersion;
     hint.GLMinorVersion = opt.Render.GLMinorVersion;
@@ -98,6 +99,9 @@ void Game::init() {
     // Register the game as a keyboard and mouse listener
     renderSystem_->addKeyboardListener(mainWindow_, this);
     renderSystem_->addMouseListener(mainWindow_, this);
+    
+    // Initialize the mesh manager
+    meshManager_ = std::make_unique<MeshManager>();
 
   } catch(render::RenderSystemException& e) {
     ErrorHandler::getSingleton().fatal(e.what());
@@ -107,6 +111,8 @@ void Game::init() {
 }
 
 void Game::keyboardEvent(const render::KeyboardEvent& event) {}
+
+MeshManager* Game::getMeshManager() { return meshManager_.get(); }
 
 void Game::mouseEvent(const render::MouseEvent& event) {}
 

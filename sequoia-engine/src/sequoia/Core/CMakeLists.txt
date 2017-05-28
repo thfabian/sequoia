@@ -41,7 +41,6 @@ sequoia_add_library(
           Any.h
           Assert.h
           Assert.cpp 
-          Byte.h
           Casting.h
           EnumState.h
           Export.h

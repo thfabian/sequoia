@@ -13,22 +13,33 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Core/Options.h"
-#include "sequoia/Unittest/GL/GLEnvironment.h"
+#ifndef SEQUOIA_UNITTEST_GAMETEST_H
+#define SEQUOIA_UNITTEST_GAMETEST_H
+
+#include "sequoia/Core/NonCopyable.h"
+#include "sequoia/Game/Game.h"
+#include "sequoia/Unittest/Export.h"
+#include <gtest/gtest.h>
 
 namespace sequoia {
 
 namespace unittest {
 
-GLEnvironment::GLEnvironment(int argc, char* argv[]) : Environment(argc, argv) {}
+/// @brief Handle creation and initialization of the game object
+/// @ingroup unittest
+class SEQUOIA_UNITTEST_API GameTest : public testing::Test, public NonCopyable {
+  std::unique_ptr<game::Game> game_;
 
-void GLEnvironment::SetUp() {
-  renderSystem_ = render::RenderSystem::create(render::RK_OpenGL);
-  renderSystem_->setDebugMode(Options::getSingleton().Core.Debug);
-}
+protected:
+  /// @brief Register and initialize the Game
+  void SetUp();
 
-void GLEnvironment::TearDown() { renderSystem_.reset(); }
+  /// @brief Destroy the Game
+  void TearDown();
+};
 
 } // namespace unittest
 
 } // namespace sequoia
+
+#endif

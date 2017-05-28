@@ -19,6 +19,7 @@
 #include "sequoia/Core/Assert.h"
 #include "sequoia/Render/Export.h"
 #include <cstddef>
+#include <string>
 
 namespace sequoia {
 
@@ -82,66 +83,32 @@ struct SEQUOIA_RENDER_API VertexLayout {
 
   /// @brief Accept a VertexVisitor
   virtual void accept(VertexVisitor& visitor) const = 0;
+
+  /// @brief Convert to string
+  std::string toString() const;
 };
 
 //===------------------------------------------------------------------------------------------===//
-//    VertexVisitor
+//    Vertex2D
 //===------------------------------------------------------------------------------------------===//
 
-/// @brief Visitor for vertices
-///
-/// This visitor allows to recover the type information of the vertex data, which is usually given
-/// as a raw pointer to memory (`data`), the number of vertices (`numVertices`) and the VertexLayout
-/// of the vertex data (`layout`). Note that this implies that `data` points to `numVertices *
-/// layout->SizeOf` bytes.
-///
-/// The `data` and `numVertices` need to be set before usage. This is done automatically when
-/// passing the visitor to a `Mesh`.
-///
-/// @b Example
-/// Consider the following example which set the first component of the position of all the vertices
-/// in the vertex data to `0`.
-/// @code{.cpp}
-///   class VertexPrinter : public VertexVisitor {
-///     virtual void visit(Vertex3DLayout* layout) override {
-///       Vertex3D* vertices = getDataPtr(layout);
-///
-///       for(std::size_t i = 0; i < getNumVertices(); ++i)
-///         vertices[i][0] = 0.0;
-///     }
-///   };
-/// @endcode
-///
-/// @see
-///   game::Mesh::accept
-///
+/// @brief Representation of a 2D vertex
 /// @ingroup render
-class SEQUOIA_RENDER_API VertexVisitor {
-  void* dataPtr_ = nullptr;     ///< Pointer to the vertex data
-  std::size_t numVertices_ = 0; ///< Number of vertices
+struct SEQUOIA_RENDER_API Vertex2D {
+  float Position[2];
+  float TexCoord[2];
+  unsigned char Color[4];
 
-public:
-  /// @brief Get the vertex data corresponding to the given layout
-  template <class VertexLayoutType, class VertexType = typename VertexLayoutType::VertexType>
-  VertexType* getDataPtr(const VertexLayoutType*) {
-    SEQUOIA_ASSERT_MSG(dataPtr_, "vertex-data not set!");
-    return reinterpret_cast<VertexType*>(dataPtr_);
-  }
+  /// @brief Get the layout of the 2D vertices
+  /// @note This function is thread-safe.
+  static const VertexLayout* getLayout() noexcept;
+};
 
-  /// @brief Set the vertex data
-  void setDataPtr(void* dataPtr) { dataPtr_ = dataPtr; }
-
-  /// @brief Get the number of vertices
-  std::size_t getNumVertices() const { return numVertices_; }
-
-  /// @brief Set the number of vertices
-  void setNumVertices(std::size_t numVertices) { numVertices_ = numVertices; }
-
-  /// @brief Visit Vertex3D
-  virtual void visit(const Vertex3DLayout* layout) = 0;
-
-  /// @brief Visit Vertex2D
-  virtual void visit(const Vertex2DLayout* layout) = 0;
+/// @brief Layout description of `Vertex2D`
+/// @ingroup render
+struct SEQUOIA_RENDER_API Vertex2DLayout : public VertexLayout {
+  using VertexType = Vertex2D;
+  virtual void accept(VertexVisitor& visitor) const override;
 };
 
 //===------------------------------------------------------------------------------------------===//
@@ -168,28 +135,9 @@ struct SEQUOIA_RENDER_API Vertex3DLayout : public VertexLayout {
   virtual void accept(VertexVisitor& visitor) const override;
 };
 
-//===------------------------------------------------------------------------------------------===//
-//    Vertex2D
-//===------------------------------------------------------------------------------------------===//
-
-/// @brief Representation of a 2D vertex
+/// @brief List of all vertex types
 /// @ingroup render
-struct SEQUOIA_RENDER_API Vertex2D {
-  float Position[2];
-  float TexCoord[2];
-  unsigned char Color[4];
-
-  /// @brief Get the layout of the 2D vertices
-  /// @note This function is thread-safe.
-  static const VertexLayout* getLayout() noexcept;
-};
-
-/// @brief Layout description of `Vertex2D`
-/// @ingroup render
-struct SEQUOIA_RENDER_API Vertex2DLayout : public VertexLayout {
-  using VertexType = Vertex2D;
-  virtual void accept(VertexVisitor& visitor) const override;
-};
+using VertexTypeList = std::tuple<Vertex2D, Vertex3D>;
 
 } // namespace render
 

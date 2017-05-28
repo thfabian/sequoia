@@ -13,26 +13,12 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Core/Memory.h"
 #include "sequoia/Game/MeshManager.h"
 #include "sequoia/Render/RenderSystem.h"
 
 namespace sequoia {
 
 namespace game {
-
-static void allocate(Mesh::Data* data, std::size_t numVertices,
-                     const render::VertexLayout* layout) {
-  data->DataPtr = memory::aligned_alloc(numVertices * layout->SizeOf);
-  data->NumVertices = numVertices;
-}
-
-static void free(Mesh::Data* data) noexcept {
-  memory::aligned_free(data->DataPtr);
-  data->NumVertices = 0;
-  data->Layout = nullptr;
-  data->AAB.clear();
-}
 
 MeshManager::MeshManager() : staticCubeMeshDataIdx_(-1) {}
 
@@ -104,12 +90,15 @@ std::shared_ptr<Mesh> MeshManager::createCube(render::RenderTarget* target, cons
                                               bool copy) {
 
   if(staticCubeMeshDataIdx_ == -1) {
-    std::shared_ptr<Mesh::Data> data = std::make_shared<Mesh::Data>();
-    data->Layout = render::Vertex3D::getLayout();
-    allocate(data.get(), 24, data->Layout);
+    std::size_t numVertices = 24;
+    std::size_t numIndices = 36;
 
-    render::Vertex3D* vertex = (render::Vertex3D*)data->DataPtr;
-    for(int i = 0; i < 24; ++i) {
+    std::shared_ptr<render::VertexData> data(
+        new render::VertexData(render::Vertex3D::getLayout(), numVertices, numIndices));
+
+    // Set vertex data
+    render::Vertex3D* vertex = (render::Vertex3D*)data->getVerticesPtr();
+    for(int i = 0; i < numVertices; ++i) {
       // Position
       std::memcpy(vertex[i].Position, &CubeVertexData[i * 9], 3 * sizeof(float));
 
@@ -124,24 +113,22 @@ std::shared_ptr<Mesh> MeshManager::createCube(render::RenderTarget* target, cons
     }
 
     // Set bounding box
-    data->AAB.setExtents(math::vec3(-1, -1, -1), math::vec3(1, 1, 1));
+    data->setAxisAlignedBox(math::AxisAlignedBox(math::vec3(-1, -1, -1), math::vec3(1, 1, 1)));
+
+    // Set indices
+    std::memcpy(data->getIndicesPtr(), CubeIndices,
+                numIndices * sizeof(render::VertexData::IndicesType));
 
     // Set the VAO
-    data->VAO = render::RenderSystem::getSingleton().createVertexArrayObject(target);
-    data->VAO->attachVertexData(data->DataPtr, data->NumVertices, data->Layout,
-                                BufferUsageKind::BK_StaticWriteOnly);
+    data->setVertexArrayObject(render::RenderSystem::getSingleton().createVertexArrayObject(target),
+                               BufferUsageKind::BK_StaticWriteOnly);
 
-    // TODO: add the index data
-    
-    meshDataList_.emplace_back(<data);
-    staticCubeMeshDataIdx_ = meshDataList_.size() - 1;
+    vertexDataList_.emplace_back(data);
+    staticCubeMeshDataIdx_ = vertexDataList_.size() - 1;
   }
 
-  const std::shared_ptr<Mesh::Data>& data = meshDataList_[staticCubeMeshDataIdx_];
-
-  std::shared_ptr<Mesh> mesh = std::make_shared<Mesh>(name);
-  mesh->data_ = data;
-  return mesh;
+  const std::shared_ptr<render::VertexData>& data = vertexDataList_[staticCubeMeshDataIdx_];
+  return std::make_shared<Mesh>(name, data);
 }
 
 } // namespace game

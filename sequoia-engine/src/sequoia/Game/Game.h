@@ -27,6 +27,8 @@ namespace sequoia {
 
 namespace game {
 
+class MeshManager;
+
 /// @brief Main class holding all game and rendering related objects and running the main-loop
 /// @ingroup game
 class SEQUOIA_GAME_API Game : public Singleton<Game>,
@@ -37,6 +39,9 @@ class SEQUOIA_GAME_API Game : public Singleton<Game>,
   /// Active render-system
   std::unique_ptr<render::RenderSystem> renderSystem_;
 
+  /// Active mesh manager
+  std::unique_ptr<MeshManager> meshManager_;
+
   /// Reference to the main window
   render::RenderWindow* mainWindow_;
 
@@ -45,10 +50,13 @@ class SEQUOIA_GAME_API Game : public Singleton<Game>,
 
 public:
   Game();
-  ~Game();
 
+  /// @brief Cleanup all allocted objects
+  ~Game();
+  
   /// @brief Initializes the game object by initializing the RenderSystem
-  void init();
+  /// @param hideWindow   Hide the main-window
+  void init(bool hideWindow = false);
 
   /// @brief Frees all allocated resources
   void cleanup();
@@ -61,6 +69,9 @@ public:
   void mouseEvent(const render::MouseEvent& event) override;
   void keyboardEvent(const render::KeyboardEvent& event) override;
   /// @}
+
+  /// @brief Get the mesh manager
+  MeshManager* getMeshManager();
 };
 
 } // namespace game

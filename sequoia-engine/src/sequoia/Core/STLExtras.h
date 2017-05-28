@@ -19,6 +19,7 @@
 #include "sequoia/Core/Compiler.h"
 #include <algorithm>
 #include <functional>
+#include <tuple>
 #include <type_traits>
 #include <utility>
 
@@ -43,6 +44,7 @@ namespace core {
 /// This is intended for use as the type of a function parameter that is not used after the function
 /// in question returns. This class does not own the callable, so it is not in general safe to store
 /// a function_ref.
+/// @{
 template <typename Fn>
 class function_ref;
 
@@ -67,6 +69,26 @@ public:
     return callback(callable, std::forward<Params>(params)...);
   }
 };
+/// @}
+
+/// @brief Various compile time information of a the function `Func`
+/// @{
+template <typename Func>
+struct function_traits;
+
+template <typename ReturnType, typename... Args>
+struct function_traits<std::function<ReturnType(Args...)>> {
+  /// @brief Number of arguments passed to the function
+  static constexpr std::size_t num_args = sizeof...(Args);
+
+  /// @brief Return type of the function
+  using result_t = ReturnType;
+
+  /// @brief Type of the `i-th` argument
+  template <std::size_t i>
+  using arg_t = typename std::tuple_element<i, std::tuple<Args...>>::type;
+};
+/// @}
 
 //===------------------------------------------------------------------------------------------===//
 //     Extra additions for arrays
@@ -153,7 +175,7 @@ bool is_contained(R&& Range, const E& Element) {
 }
 
 /// @brief  Wrapper function around std::count to count the number of times an element @p Element
-/// occurs in the given range \p Range
+/// occurs in the given range @p Range
 template <typename R, typename E>
 auto count(R&& Range, const E& Element) ->
     typename std::iterator_traits<decltype(std::begin(Range))>::difference_type {
@@ -204,6 +226,25 @@ template <typename T>
 struct add_const_past_pointer<T, typename std::enable_if<std::is_pointer<T>::value>::type> {
   typedef const typename std::remove_pointer<T>::type* type;
 };
+/// @}
+
+//===------------------------------------------------------------------------------------------===//
+//     Extra additions to <tuple>
+//===------------------------------------------------------------------------------------------===//
+
+/// @brief Check if type `T` is in the tuple
+/// @{
+template <typename T, typename Tuple>
+struct tuple_has_type;
+
+template <typename T>
+struct tuple_has_type<T, std::tuple<>> : std::false_type {};
+
+template <typename T, typename U, typename... Ts>
+struct tuple_has_type<T, std::tuple<U, Ts...>> : tuple_has_type<T, std::tuple<Ts...>> {};
+
+template <typename T, typename... Ts>
+struct tuple_has_type<T, std::tuple<T, Ts...>> : std::true_type {};
 /// @}
 
 } // namespace core

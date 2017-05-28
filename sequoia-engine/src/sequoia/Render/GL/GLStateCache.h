@@ -24,9 +24,9 @@ namespace sequoia {
 
 namespace render {
 
-/// @brief Keep track of the OpenGL state-machine
+/// @brief Manager of the OpenGL state-machine
 /// @ingroup gl
-class SEQUOIA_RENDER_API GLStateCache : public NonCopyable {
+class SEQUOIA_RENDER_API GLStateCacheManager : public NonCopyable {
 public:
 
 };

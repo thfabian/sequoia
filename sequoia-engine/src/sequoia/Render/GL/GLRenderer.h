@@ -28,7 +28,7 @@ namespace render {
 class GLRenderWindow;
 class GLShaderManager;
 class GLProgramManager;
-class GLStateCache;
+class GLStateCacheManager;
 
 /// @brief OpenGL based renderer
 ///
@@ -39,7 +39,7 @@ class GLStateCache;
 class SEQUOIA_RENDER_API GLRenderer : public NonCopyable {
   GLRenderWindow* target_;
 
-  std::unique_ptr<GLStateCache> stateCache_;
+  std::unique_ptr<GLStateCacheManager> stateCache_;
   std::unique_ptr<GLShaderManager> shaderManager_;
   std::unique_ptr<GLProgramManager> programManager_;
 
@@ -60,7 +60,7 @@ public:
   GLProgramManager* getProgramManager();
 
   /// @brief Get the OpenGL state manager
-  GLStateCache* getStateCache();
+  GLStateCacheManager* getStateCache();
 };
 
 } // namespace render

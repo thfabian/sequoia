@@ -13,17 +13,20 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_CORE_BYTE_H
-#define SEQUOIA_CORE_BYTE_H
+#include "sequoia/Game/MeshManager.h"
+#include "sequoia/Unittest/GameTest.h"
+#include <gtest/gtest.h>
 
-namespace sequoia {
+using namespace sequoia;
+using namespace sequoia::unittest;
+using namespace sequoia::game;
 
-namespace core {
+namespace {
 
-using Byte = unsigned char;
+class MeshManagerTest : public GameTest {};
 
-} // namespace core
+TEST_F(MeshManagerTest, Cube) {
 
-} // namespace sequoia
+}
 
-#endif
+} // anonymous namespace

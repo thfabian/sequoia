@@ -40,21 +40,21 @@ static void GLFWErrorCallbackHard(int error, const char* description) {
 }
 
 GLRenderSystem::GLRenderSystem() : RenderSystem(RK_OpenGL) {
-  LOG(INFO) << "Initializing GLRenderSystem ...";
+  LOG(INFO) << "Initializing OpenGL RenderSystem ...";
   glfwSetErrorCallback(GLFWErrorCallbackHard);
 
   glfwInit();
   LOG(INFO) << "GLFW: " << glfwGetVersionString();
 
   glfwSetErrorCallback(GLFWErrorCallbackSoft);
-  LOG(INFO) << "Done initializing GLRenderSystem";
+  LOG(INFO) << "Done initializing OpenGL RenderSystem";
 }
 
 GLRenderSystem::~GLRenderSystem() {
-  LOG(INFO) << "Terminating GLRenderSystem ...";
+  LOG(INFO) << "Terminating OpenGL RenderSystem ...";
   renderTargets_.clear();
   glfwTerminate();
-  LOG(INFO) << "Done terminating GLRenderSystem";
+  LOG(INFO) << "Done terminating OpenGL RenderSystem";
 }
 
 RenderWindow* GLRenderSystem::createWindow(const RenderWindow::WindowHint& hints) {

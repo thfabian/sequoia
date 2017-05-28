@@ -13,21 +13,18 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Core/Options.h"
-#include "sequoia/Unittest/GL/GLEnvironment.h"
+#include "sequoia/Unittest/GameTest.h"
 
 namespace sequoia {
 
 namespace unittest {
 
-GLEnvironment::GLEnvironment(int argc, char* argv[]) : Environment(argc, argv) {}
-
-void GLEnvironment::SetUp() {
-  renderSystem_ = render::RenderSystem::create(render::RK_OpenGL);
-  renderSystem_->setDebugMode(Options::getSingleton().Core.Debug);
+void GameTest::SetUp() {
+  game_ = std::make_unique<game::Game>();
+  game_->init(true);
 }
 
-void GLEnvironment::TearDown() { renderSystem_.reset(); }
+void GameTest::TearDown() { game_.reset(); }
 
 } // namespace unittest
 

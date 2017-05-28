@@ -19,6 +19,8 @@
 #include "sequoia/Core/Platform.h"
 #include "sequoia/Game/Export.h"
 #include "sequoia/Game/Mesh.h"
+#include "sequoia/Render/RenderFwd.h"
+#include "sequoia/Render/VertexArrayObject.h"
 #include <unordered_map>
 
 namespace sequoia {
@@ -27,7 +29,7 @@ namespace game {
 
 class SEQUOIA_GAME_API MeshManager : public NonCopyable {
   /// Record of all the loaded meshes (use count of 1 implies the mesh is *not* in use)
-  std::vector<std::shared_ptr<Mesh::Data>> meshDataList_;
+  std::vector<std::shared_ptr<render::VertexData>> vertexDataList_;
 
   /// Lookup map for path
   std::unordered_map<platform::String, std::size_t> pathLookupMap_;

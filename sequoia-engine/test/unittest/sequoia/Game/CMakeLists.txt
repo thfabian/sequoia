@@ -13,8 +13,15 @@
 ##
 ##===------------------------------------------------------------------------------------------===##
 
-add_subdirectory(Core)
-add_subdirectory(Math)
-add_subdirectory(Game)
-add_subdirectory(Render)
+sequoia_add_test(
+  NAME SequoiaGameTest
+  SOURCES TestMeshManager.cpp
+          TestMain.cpp
+  DEPENDS SequoiaUnittest
+          SequoiaGame
+          SequoiaRender
+          SequoiaDriver
+          SequoiaCore
+          ${SEQUOIA_UNITTEST_EXTERNAL_LIBRARIES}
+)
 

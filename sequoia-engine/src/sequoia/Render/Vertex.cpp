@@ -13,8 +13,13 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
+#include "sequoia/Core/Format.h"
+#include "sequoia/Core/StringUtil.h"
+#include "sequoia/Core/Unreachable.h"
 #include "sequoia/Render/Vertex.h"
+#include "sequoia/Render/VertexVisitor.h"
 #include <mutex>
+#include <sstream>
 #include <type_traits>
 #include <utility>
 
@@ -53,7 +58,42 @@ static std::once_flag vertex2DInitFlag;
 static Vertex3DLayout* vertex3DLayout = new Vertex3DLayout;
 static std::once_flag vertex3DInitFlag;
 
+static const char* typeToString(VertexLayout::Type type) {
+  switch(type) {
+  case VertexLayout::Invalid:
+    return "Invalid";
+  case VertexLayout::UnsignedByte:
+    return "UnsignedByte";
+  case VertexLayout::Float:
+    return "Float";
+  default:
+    sequoia_unreachable("invalid type");
+  }
+}
+
 } // anonymous namespace
+
+#define SEQUOIA_PRINT_ATTRIBUTE(Name)                                                              \
+  if(has##Name()) {                                                                                \
+    ss << "  " #Name "Type = " << typeToString(Name##Type)                                         \
+       << ",\n  " #Name "Offset = " << Name##Offset                                                \
+       << ",\n  " #Name "NumElement = " << Name##NumElement << ",\n";                              \
+  }
+
+std::string VertexLayout::toString() const {
+  std::stringstream ss;
+  ss << "VertexLayout[\n";
+
+  SEQUOIA_PRINT_ATTRIBUTE(Position);
+  SEQUOIA_PRINT_ATTRIBUTE(Normal);
+  SEQUOIA_PRINT_ATTRIBUTE(TexCoord);
+  SEQUOIA_PRINT_ATTRIBUTE(Color);
+
+  ss << "]";
+  return ss.str();
+}
+
+#undef SEQUOIA_PRINT_ATTRIBUTE
 
 #define SEQUOIA_SET_LAYOUT(Layout, VertexType, Name)                                               \
   using Name##Type_t = decltype(VertexType::Name);                                                 \

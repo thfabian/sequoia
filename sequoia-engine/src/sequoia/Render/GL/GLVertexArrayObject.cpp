@@ -14,12 +14,12 @@
 //===------------------------------------------------------------------------------------------===//
 
 #include "sequoia/Core/Format.h"
-#include "sequoia/Core/Logging.h"
 #include "sequoia/Core/StringUtil.h"
 #include "sequoia/Core/Unreachable.h"
 #include "sequoia/Render/GL/GL.h"
 #include "sequoia/Render/GL/GLVertexArrayObject.h"
 #include "sequoia/Render/GL/GLVertexAttribute.h"
+#include "sequoia/Render/VertexData.h"
 
 namespace sequoia {
 
@@ -93,16 +93,17 @@ void GLVertexArrayObject::updateVertexData(std::size_t offset, std::size_t lengt
   // TODO: Discardable data should use glBufferData(GL_ARRAY_BUFFER, ..., NULL, ...) first
 
   if(offset == 0) {
-    glBufferData(GL_ARRAY_BUFFER, getNumVertexBytes(length), dataPtr_, getGLUsage(usage_));
+    glBufferData(GL_ARRAY_BUFFER, getNumVertexBytes(length), data_->getVerticesPtr(),
+                 getGLUsage(usage_));
   } else {
-    glBufferSubData(GL_ARRAY_BUFFER, offset, getNumVertexBytes(length), dataPtr_);
+    glBufferSubData(GL_ARRAY_BUFFER, offset, getNumVertexBytes(length), data_->getVerticesPtr());
   }
 
   // TODO: Frequently updated data should use glMapBuffer
 }
 
 void GLVertexArrayObject::updateIndexData(std::size_t offset, std::size_t length) {
-  if(!hasIndices())
+  if(!data_->hasIndices())
     return;
 
   bind();
@@ -110,10 +111,11 @@ void GLVertexArrayObject::updateIndexData(std::size_t offset, std::size_t length
   // TODO: Discardable data should use glBufferData(GL_ARRAY_BUFFER, ..., NULL, ...) first
 
   if(offset == 0) {
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, getNumIndexBytes(length), indicesPtr_,
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, getNumIndexBytes(length), data_->getIndicesPtr(),
                  getGLUsage(usage_));
   } else {
-    glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, offset, getNumIndexBytes(length), indicesPtr_);
+    glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, offset, getNumIndexBytes(length),
+                    data_->getIndicesPtr());
   }
 
   // TODO: Frequently updated data should use glMapBuffer
@@ -131,38 +133,40 @@ void GLVertexArrayObject::attachVertexDataDevice() {
   // Set the vertex attributes
   bind();
 
-  if(layout_->hasPosition()) {
+  const VertexLayout* layout = data_->getLayout();
+
+  if(layout->hasPosition()) {
     glEnableVertexAttribArray(GLVertexAttribute::Position);
-    glVertexAttribPointer(GLVertexAttribute::Position, layout_->PositionNumElement,
-                          getGLType(layout_->PositionType), false, layout_->SizeOf,
-                          (void*)layout_->PositionOffset);
+    glVertexAttribPointer(GLVertexAttribute::Position, layout->PositionNumElement,
+                          getGLType(layout->PositionType), false, layout->SizeOf,
+                          (void*)layout->PositionOffset);
   }
 
-  if(layout_->hasNormal()) {
+  if(layout->hasNormal()) {
     glEnableVertexAttribArray(GLVertexAttribute::Normal);
-    glVertexAttribPointer(GLVertexAttribute::Normal, layout_->NormalNumElement,
-                          getGLType(layout_->NormalType), false, layout_->SizeOf,
-                          (void*)layout_->NormalOffset);
+    glVertexAttribPointer(GLVertexAttribute::Normal, layout->NormalNumElement,
+                          getGLType(layout->NormalType), false, layout->SizeOf,
+                          (void*)layout->NormalOffset);
   }
 
-  if(layout_->hasTexCoord()) {
+  if(layout->hasTexCoord()) {
     glEnableVertexAttribArray(GLVertexAttribute::TexCoord);
-    glVertexAttribPointer(GLVertexAttribute::TexCoord, layout_->TexCoordNumElement,
-                          getGLType(layout_->TexCoordType), false, layout_->SizeOf,
-                          (void*)layout_->TexCoordOffset);
+    glVertexAttribPointer(GLVertexAttribute::TexCoord, layout->TexCoordNumElement,
+                          getGLType(layout->TexCoordType), false, layout->SizeOf,
+                          (void*)layout->TexCoordOffset);
   }
 
-  if(layout_->hasColor()) {
+  if(layout->hasColor()) {
     glEnableVertexAttribArray(GLVertexAttribute::Color);
-    glVertexAttribPointer(GLVertexAttribute::Color, layout_->ColorNumElement,
-                          getGLType(layout_->ColorType), false, layout_->SizeOf,
-                          (void*)layout_->ColorOffset);
+    glVertexAttribPointer(GLVertexAttribute::Color, layout->ColorNumElement,
+                          getGLType(layout->ColorType), false, layout->SizeOf,
+                          (void*)layout->ColorOffset);
   }
 
-  glBufferData(GL_ARRAY_BUFFER, getNumVertexBytes(numVertices_), nullptr, getGLUsage(usage_));
+  glBufferData(GL_ARRAY_BUFFER, getNumVertexBytes(getNumVertices()), nullptr, getGLUsage(usage_));
 
   if(hasIndices())
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, getNumIndexBytes(numIndices_), nullptr,
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, getNumIndexBytes(getNumIndices()), nullptr,
                  getGLUsage(usage_));
 
   allocated_ = true;
@@ -189,11 +193,11 @@ std::string GLVertexArrayObject::toString() const {
 }
 
 std::size_t GLVertexArrayObject::getNumVertexBytes(std::size_t length) const {
-  return length * layout_->SizeOf;
+  return length * data_->getLayout()->SizeOf;
 }
 
 std::size_t GLVertexArrayObject::getNumIndexBytes(std::size_t length) const {
-  return length * sizeof(std::remove_pointer<decltype(indicesPtr_)>::type);
+  return length * sizeof(VertexData::IndicesType);
 }
 
 } // namespace render

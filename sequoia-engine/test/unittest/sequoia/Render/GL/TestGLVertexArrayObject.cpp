@@ -19,6 +19,7 @@
 #include "sequoia/Render/GL/GLRenderSystem.h"
 #include "sequoia/Render/GL/GLVertexArrayObject.h"
 #include "sequoia/Render/GL/GLVertexAttribute.h"
+#include "sequoia/Render/VertexData.h"
 #include "sequoia/Unittest/Environment.h"
 #include "sequoia/Unittest/GL/GLRenderTest.h"
 #include <gtest/gtest.h>
@@ -31,35 +32,26 @@ namespace {
 
 class GLVertexArrayObjectTest : public GLRenderTest {};
 
-/// @brief Dummy VertexData
+/// @brief Create dummy VertexData
 template <class VertexDataType>
-struct TestVertexData {
-  TestVertexData(std::size_t numVertices)
-      : Data((VertexDataType*)memory::aligned_alloc(numVertices * sizeof(VertexDataType))),
-        NumVertices(numVertices), Layout(VertexDataType::getLayout()) {
-    std::memset(Data, 0, numVertices * sizeof(VertexDataType));
-  }
-
-  ~TestVertexData() { memory::aligned_free(Data); }
-
-  VertexDataType* Data;
-  std::size_t NumVertices;
-  const VertexLayout* Layout;
-};
+std::unique_ptr<VertexData> makeVertexData(std::size_t numVertices, std::size_t numIndices) {
+  return std::make_unique<VertexData>(VertexDataType::getLayout(), numVertices, numIndices);
+}
 
 TEST_F(GLVertexArrayObjectTest, Vertex3D) {
   RenderSystem& rsys = RenderSystem::getSingleton();
 
-  std::unique_ptr<VertexArrayObject> vao = rsys.createVertexArrayObject(getWindow());
-  GLVertexArrayObject* glvao = dyn_cast<GLVertexArrayObject>(vao.get());
+  auto vertexData = makeVertexData<Vertex3D>(64, 32);
+  vertexData->setVertexArrayObject(rsys.createVertexArrayObject(getWindow()),
+                                   VertexArrayObject::BK_StaticWriteOnly);
 
-  auto vertexData = std::make_unique<TestVertexData<Vertex3D>>(64);
-  glvao->attachVertexData(vertexData->Data, vertexData->NumVertices, vertexData->Layout,
-                          VertexArrayObject::BK_StaticWriteOnly);
-  
-  const VertexLayout* layout = vertexData->Layout;  
+  const VertexLayout* layout = vertexData->getLayout();
+  GLVertexArrayObject* glvao = dyn_cast<GLVertexArrayObject>(vertexData->getVertexArrayObject());
+
+  EXPECT_TRUE(vertexData->hasVertexArrayObject());
+
   glvao->bind();
-  
+
   // Check Position attribute
   {
     GLint enabled;
@@ -93,7 +85,7 @@ TEST_F(GLVertexArrayObjectTest, Vertex3D) {
                               &pointer);
     EXPECT_EQ((std::size_t)pointer, layout->PositionOffset);
   }
-  
+
   // Check Normal attribute
   {
     GLint enabled;
@@ -110,8 +102,7 @@ TEST_F(GLVertexArrayObjectTest, Vertex3D) {
     EXPECT_EQ(type, GL_FLOAT);
 
     GLint normalized;
-    glGetVertexAttribiv(GLVertexAttribute::Normal, GL_VERTEX_ATTRIB_ARRAY_NORMALIZED,
-                        &normalized);
+    glGetVertexAttribiv(GLVertexAttribute::Normal, GL_VERTEX_ATTRIB_ARRAY_NORMALIZED, &normalized);
     EXPECT_FALSE(normalized);
 
     GLint size;
@@ -123,11 +114,10 @@ TEST_F(GLVertexArrayObjectTest, Vertex3D) {
     EXPECT_EQ(stride, layout->SizeOf);
 
     void* pointer;
-    glGetVertexAttribPointerv(GLVertexAttribute::Normal, GL_VERTEX_ATTRIB_ARRAY_POINTER,
-                              &pointer);
+    glGetVertexAttribPointerv(GLVertexAttribute::Normal, GL_VERTEX_ATTRIB_ARRAY_POINTER, &pointer);
     EXPECT_EQ((std::size_t)pointer, layout->NormalOffset);
   }
-  
+
   // Check TexCoord attribute
   {
     GLint enabled;
@@ -161,7 +151,7 @@ TEST_F(GLVertexArrayObjectTest, Vertex3D) {
                               &pointer);
     EXPECT_EQ((std::size_t)pointer, layout->TexCoordOffset);
   }
-  
+
   // Check Color attribute
   {
     GLint enabled;
@@ -169,8 +159,7 @@ TEST_F(GLVertexArrayObjectTest, Vertex3D) {
     EXPECT_TRUE(enabled);
 
     GLint bufferID;
-    glGetVertexAttribiv(GLVertexAttribute::Color, GL_VERTEX_ATTRIB_ARRAY_BUFFER_BINDING,
-                        &bufferID);
+    glGetVertexAttribiv(GLVertexAttribute::Color, GL_VERTEX_ATTRIB_ARRAY_BUFFER_BINDING, &bufferID);
     EXPECT_EQ(bufferID, glvao->getVAOID());
 
     GLenum type;
@@ -178,8 +167,7 @@ TEST_F(GLVertexArrayObjectTest, Vertex3D) {
     EXPECT_EQ(type, GL_FLOAT);
 
     GLint normalized;
-    glGetVertexAttribiv(GLVertexAttribute::Color, GL_VERTEX_ATTRIB_ARRAY_NORMALIZED,
-                        &normalized);
+    glGetVertexAttribiv(GLVertexAttribute::Color, GL_VERTEX_ATTRIB_ARRAY_NORMALIZED, &normalized);
     EXPECT_FALSE(normalized);
 
     GLint size;
@@ -191,14 +179,13 @@ TEST_F(GLVertexArrayObjectTest, Vertex3D) {
     EXPECT_EQ(stride, layout->SizeOf);
 
     void* pointer;
-    glGetVertexAttribPointerv(GLVertexAttribute::Color, GL_VERTEX_ATTRIB_ARRAY_POINTER,
-                              &pointer);
+    glGetVertexAttribPointerv(GLVertexAttribute::Color, GL_VERTEX_ATTRIB_ARRAY_POINTER, &pointer);
     EXPECT_EQ((std::size_t)pointer, layout->ColorOffset);
   }
+
   glvao->unbind();
-  
-  
-  //glvao->updateDevice(0, glvao->getNumVertices());
+
+  // glvao->updateDevice(0, glvao->getNumVertices());
 }
 
 } // anonymous namespace

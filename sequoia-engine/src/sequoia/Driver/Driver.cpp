@@ -68,6 +68,8 @@ int Driver::run(int argc, char* argv[]) {
   // Initialize options, parse config file and parse command-line
   singletonManager->allocateSingleton<Options>();
 
+  // TODO: load options from config file
+  
   std::vector<std::string> arguments(argv + 1, argv + argc);
   CommandLine::parse(arguments);
   
@@ -96,6 +98,7 @@ int Driver::runImpl() {
 
   // Setup game
   auto mainGameObject = std::make_unique<game::Game>();
+  mainGameObject->init(false);
   mainGameObject->run();
 
   return 0;

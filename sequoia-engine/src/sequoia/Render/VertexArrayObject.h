@@ -26,6 +26,8 @@ namespace sequoia {
 
 namespace render {
 
+class VertexData;
+
 /// @brief Handling of layout and buffering of an array of vertices
 ///
 /// @see RenderSystem::createVertexArrayObject
@@ -71,21 +73,11 @@ public:
   virtual ~VertexArrayObject();
   VertexArrayObject(RenderSystemKind kind);
 
-  /// @brief Attach `numVertices` at `dataPtr` with given `layout`
-  ///
-  /// @param dataPtr      Starting adress of the vertex data
-  /// @param numVertices  Number of vertices (i.e the total amount of bytes is
-  ///                     `numVertices * layout.SizeOf`)
-  /// @param layout       Layout of each vertex
-  /// @param usage        Usage of the hardware buffers
-  /// @param indicesPtr   Index pointer to draw the vertices (may be `NULL`)
-  /// @param numIndices   Number of indices
-  ///
+  /// @brief Attach `vertexData` and store it in a hardware buffer
+  /// 
   /// This will create the underlying device hardware buffers. However, the data is only copied to
   /// the GPU once `updateGPU` is called.
-  void attachVertexData(void* dataPtr, std::size_t numVertices, const VertexLayout* layout,
-                        BufferUsageKind usage, unsigned int* indicesPtr = nullptr,
-                        std::size_t numIndices = 0);
+  void attachVertexData(VertexData* data, BufferUsageKind usage);
 
   /// @brief Free all allocated buffers
   void freeVertexData();
@@ -102,6 +94,9 @@ public:
   /// @param length   Number of vertices to write  in `[0, getNumIndices())`
   virtual void updateIndexData(std::size_t offset, std::size_t length) = 0;
 
+  /// @brief Convert to string
+  virtual std::string toString() const = 0;
+
   /// @brief Get the number of vertices
   std::size_t getNumVertices() const;
 
@@ -111,9 +106,6 @@ public:
   /// @brief Do we draw with indices?
   bool hasIndices() const;
 
-  /// @brief Convert to string
-  virtual std::string toString() const = 0;
-
 protected:
   /// @brief Allocate vertex buffers on the GPU
   virtual void attachVertexDataDevice() = 0;
@@ -122,20 +114,8 @@ protected:
   virtual void freeVertexDataDevice() = 0;
 
 protected:
-  /// Pointer to the vertex data (non-owning)
-  void* dataPtr_;
-
-  /// Number of vertices
-  std::size_t numVertices_;
-
-  /// Layout of each vertex
-  const VertexLayout* layout_;
-
-  /// Pointer to the index data (non-owning)
-  unsigned int* indicesPtr_;
-
-  /// Number of indices
-  std::size_t numIndices_;
+  /// VertexData
+  VertexData* data_;
 
   /// Usage of the buffer
   BufferUsageKind usage_;

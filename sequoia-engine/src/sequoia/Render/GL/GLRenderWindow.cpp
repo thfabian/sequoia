@@ -33,7 +33,7 @@ GLRenderWindow::GLRenderWindow(GLRenderSystem* renderSystem,
                                const RenderWindow::WindowHint& windowHints)
     : RenderWindow(RK_GLRenderWindow), renderSystem_(renderSystem), window_(nullptr),
       windowWidth_(-1), windowHeight_(-1), renderer_(nullptr), inputSystem_(nullptr) {
-  LOG(INFO) << "Initializing window " << this << " ...";
+  LOG(INFO) << "Initializing OpenGL window " << this << " ...";
 
   // Open the window hidden?
   if(windowHints.HideWindow) {
@@ -127,11 +127,11 @@ GLRenderWindow::GLRenderWindow(GLRenderSystem* renderSystem,
   // Register window call-back
   glfwSetWindowSizeCallback(window_, GLRenderWindow::resizeCallbackDispatch);
 
-  LOG(INFO) << "Done initializing window " << this;
+  LOG(INFO) << "Done initializing OpenGL window " << this;
 }
 
 GLRenderWindow::~GLRenderWindow() {
-  LOG(INFO) << "Terminating window " << this << " ...";
+  LOG(INFO) << "Terminating OpenGL window " << this << " ...";
 
   renderer_.reset();
   if(IOEnabled_)
@@ -140,7 +140,7 @@ GLRenderWindow::~GLRenderWindow() {
   StaticWindowMap.erase(window_);
   glfwDestroyWindow(window_);
 
-  LOG(INFO) << "Done terminating window " << this;
+  LOG(INFO) << "Done terminating OpenGL window " << this;
 }
 
 bool GLRenderWindow::isHidden() { return glfwGetWindowAttrib(window_, GLFW_VISIBLE); }

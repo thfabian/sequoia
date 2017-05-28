@@ -13,25 +13,30 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
+#include "sequoia/Core/Format.h"
 #include "sequoia/Core/Memory.h"
+#include "sequoia/Core/StringUtil.h"
 #include "sequoia/Game/Mesh.h"
+#include "sequoia/Render/VertexVisitor.h"
+#include <iostream>
 
 namespace sequoia {
 
 namespace game {
 
-Mesh::Mesh(const std::string& name) : data_(nullptr), name_(name) {}
+Mesh::Mesh(const std::string& name, const std::shared_ptr<render::VertexData>& data)
+    : data_(data), name_(name) {}
 
-const math::AxisAlignedBox& Mesh::getAAB() const { return data_->AAB; }
+void Mesh::accept(render::VertexVisitor& visitor) const { data_->getLayout()->accept(visitor); }
 
-std::size_t Mesh::getNumVertices() const { return data_->NumVertices; }
+const std::string& Mesh::getName() const { return name_; }
 
-render::VertexArrayObject* Mesh::getVAO() const { return data_->VAO.get(); }
-
-void Mesh::accept(render::VertexVisitor& visitor) const {
-  visitor.setNumVertices(data_->NumVertices);
-  visitor.setDataPtr(data_->DataPtr);
-  data_->Layout->accept(visitor);
+std::string Mesh::toString() const {
+  return core::format("Mesh["
+                      "  name = %s,\n"
+                      "  data = %s\n"
+                      "]",
+                      name_, core::indent(data_->toString()));
 }
 
 } // namespace game

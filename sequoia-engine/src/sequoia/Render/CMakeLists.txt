@@ -39,6 +39,10 @@ sequoia_add_library(
           Vertex.cpp
           VertexArrayObject.h
           VertexArrayObject.cpp
+          VertexData.h
+          VertexData.cpp
+          VertexVisitor.h
+          VertexVisitor.cpp
           ViewFrustum.h
           Viewport.h
           Viewport.cpp
@@ -67,6 +71,7 @@ sequoia_add_library(
           GL/GLVertexAttribute.h
           GL/GLVertexAttribute.cpp
           
-  DEPENDS SequoiaCore
+  DEPENDS SequoiaMath
+          SequoiaCore
           ${SEQUOIA_EXTERNAL_LIBRARIES}
 )
