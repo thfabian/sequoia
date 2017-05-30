@@ -55,7 +55,12 @@ Environment::Environment(int argc, char* argv[]) : trace_() {
   } catch(std::exception& e) {
     ErrorHandler::getSingleton().fatal(e.what(), false, false);
   }
-
+  
+  if(vm.count("help")) {
+    std::cout << "\nSequoia Unittests (" << SEQUOIA_VERSION_STRING << ")\n\n" << desc << std::endl;
+    std::exit(EXIT_SUCCESS);
+  }
+    
   // Unittesting always runs in debug mode and with logging on
   singletonManager_->allocateSingleton<core::Logger>(
       vm.count("no-log") ? core::LoggingLevel::Disabled : core::LoggingLevel::Debug);
