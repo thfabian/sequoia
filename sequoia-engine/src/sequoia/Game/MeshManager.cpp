@@ -101,7 +101,7 @@ std::shared_ptr<Mesh> MeshManager::createCube(render::RenderTarget* target, cons
 
     // Set vertex data
     render::Vertex3D* vertex = (render::Vertex3D*)data->getVerticesPtr();
-    for(int i = 0; i < numVertices; ++i) {
+    for(std::size_t i = 0; i < numVertices; ++i) {
       // Position
       for(int j = 0; j < 3; ++j)
         vertex[i].Position[j] = CubeVertexData[i * 9 + j];
