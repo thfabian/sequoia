@@ -33,8 +33,6 @@ TEST(VertexDataTest, WriteAndRead) {
       vertices[i].Color[0] = i;
     }
   });
-  
-  data.dump();
 
   data.read([&numVertices](const Vertex3D* vertices) {
     for(int i = 0; i < numVertices; ++i) {

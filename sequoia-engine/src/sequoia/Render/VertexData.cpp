@@ -45,7 +45,7 @@ VertexData::VertexData(const VertexLayout* layout, std::size_t numVertices, std:
 }
 
 VertexData::~VertexData() {
-  vao_.reset();
+  vao_.release();
 
   memory::aligned_free(verticesPtr_);
   if(indicesPtr_)

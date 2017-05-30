@@ -175,6 +175,7 @@ void GLVertexArrayObject::attachVertexDataDevice() {
 
 void GLVertexArrayObject::freeVertexDataDevice() {
   glDeleteBuffers(1, &vboID_);
+
   if(hasIndices())
     glDeleteBuffers(1, &eboID_);
 

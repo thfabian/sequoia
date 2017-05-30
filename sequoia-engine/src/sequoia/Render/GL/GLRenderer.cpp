@@ -123,7 +123,7 @@ GLRenderer::GLRenderer(GLRenderWindow* target) : target_(target) {
 }
 
 GLRenderer::~GLRenderer() {
-  LOG(INFO) << "Terminating OpenGLrenderer " << this << " ... ";
+  LOG(INFO) << "Terminating OpenGL renderer " << this << " ... ";
 
   glfwMakeContextCurrent(target_->getGLFWwindow());
 

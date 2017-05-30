@@ -13,6 +13,7 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
+#include "sequoia/Core/Logging.h"
 #include "sequoia/Game/MeshManager.h"
 #include "sequoia/Render/RenderSystem.h"
 
@@ -89,6 +90,8 @@ static unsigned int CubeIndices[]  = {   0, 1, 2,   2, 3, 0,                    
 std::shared_ptr<Mesh> MeshManager::createCube(render::RenderTarget* target, const std::string& name,
                                               bool copy, BufferUsageKind usage) {
 
+  LOG(INFO) << "Creating cube mesh \"" << name << "\" ...";
+
   if(staticCubeMeshDataIdx_ == -1) {
     std::size_t numVertices = 24;
     std::size_t numIndices = 36;
@@ -136,6 +139,8 @@ std::shared_ptr<Mesh> MeshManager::createCube(render::RenderTarget* target, cons
   }
 
   const std::shared_ptr<render::VertexData>& data = vertexDataList_[staticCubeMeshDataIdx_];
+
+  LOG(INFO) << "Successfully created cube mesh \"" << name << "\"";
   return std::make_shared<Mesh>(name, data);
 }
 
