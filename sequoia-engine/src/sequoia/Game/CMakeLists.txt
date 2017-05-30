@@ -22,6 +22,10 @@ sequoia_add_library(
           Mesh.cpp
           MeshManager.h
           MeshManager.cpp
+          SceneGraph.h
+          SceneGraph.cpp
+          SceneNode.h
+          SceneNode.cpp
   DEPENDS SequoiaRender
           SequoiaCore
           ${SEQUOIA_EXTERNAL_LIBRARIES}   

@@ -13,15 +13,20 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Unittest/Environment.h"
+#include "sequoia/Game/SceneNode.h"
+#include "sequoia/Unittest/GameTest.h"
 #include <gtest/gtest.h>
 
-int main(int argc, char* argv[]) {
-  // Initialize gtest
-  testing::InitGoogleTest(&argc, argv);
+using namespace sequoia;
+using namespace sequoia::unittest;
+using namespace sequoia::game;
 
-  // Register test environment
-  testing::AddGlobalTestEnvironment(new sequoia::unittest::Environment(argc, argv));
-  
-  return RUN_ALL_TESTS();
+namespace {
+
+class SceneNodeTest : public GameTest {};
+
+TEST_F(SceneNodeTest, SceneNodeStatic) {
+  Game& game = Game::getSingleton();
 }
+
+} // anonymous namespace

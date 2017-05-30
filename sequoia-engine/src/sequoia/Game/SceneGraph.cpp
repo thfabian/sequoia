@@ -13,15 +13,30 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Unittest/Environment.h"
-#include <gtest/gtest.h>
+#include "sequoia/Core/Format.h"
+#include "sequoia/Game/SceneGraph.h"
+#include <iostream>
 
-int main(int argc, char* argv[]) {
-  // Initialize gtest
-  testing::InitGoogleTest(&argc, argv);
+namespace sequoia {
 
-  // Register test environment
-  testing::AddGlobalTestEnvironment(new sequoia::unittest::Environment(argc, argv));
-  
-  return RUN_ALL_TESTS();
+namespace game {
+
+std::string SceneGraph::toString() const {
+  return core::format("SceneGraph[\n"
+                      " nodes = %s\n"
+                      "]",
+                      nodes_.size());
 }
+
+std::string SceneGraph::toDot() const { return std::string(); }
+
+void SceneGraph::dump() const {
+  auto stringify = [](SceneNode* node) { std::cout << node->toString() << "\n"; };
+  apply(stringify);
+}
+
+void SceneGraph::clear() { nodes_.clear(); }
+
+} // namespace game
+
+} // namespace sequoia

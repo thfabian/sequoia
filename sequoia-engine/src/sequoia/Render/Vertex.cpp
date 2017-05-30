@@ -127,26 +127,27 @@ const VertexLayout* Vertex3D::getLayout() noexcept {
 #undef SEQUOIA_SET_LAYOUT
 
 std::string Vertex2D::toString(const Vertex2D& vertex) {
-  return core::format("Vertex2D[\n"
-                      "  %-10s = %s,\n"
-                      "  %-10s = %s,\n"
-                      "  %-10s = %s\n"
-                      "]",
-                      "Position", math::make_vec2(vertex.Position), "TexCoord",
-                      math::make_vec2(vertex.TexCoord), "Color",
-                      math::ivec3(vertex.Color[0], vertex.Color[1], vertex.Color[2]));
+  return core::format(
+      "Vertex2D[\n"
+      "  %-10s = %s,\n"
+      "  %-10s = %s,\n"
+      "  %-10s = %s\n"
+      "]",
+      "Position", math::make_vec2(vertex.Position), "TexCoord", math::make_vec2(vertex.TexCoord),
+      "Color", math::ivec4(vertex.Color[0], vertex.Color[1], vertex.Color[2], vertex.Color[3]));
 }
 
 std::string Vertex3D::toString(const Vertex3D& vertex) {
-  return core::format("Vertex3D[\n"
-                      "  %-10s = %s,\n"
-                      "  %-10s = %s,\n"
-                      "  %-10s = %s,\n"
-                      "  %-10s = %s\n"
-                      "]",
-                      "Position", math::make_vec3(vertex.Position), "Normal",
-                      math::make_vec3(vertex.Normal), "TexCoord", math::make_vec2(vertex.TexCoord),
-                      "Color", math::ivec3(vertex.Color[0], vertex.Color[1], vertex.Color[2]));
+  return core::format(
+      "Vertex3D[\n"
+      "  %-10s = %s,\n"
+      "  %-10s = %s,\n"
+      "  %-10s = %s,\n"
+      "  %-10s = %s\n"
+      "]",
+      "Position", math::make_vec3(vertex.Position), "Normal", math::make_vec3(vertex.Normal),
+      "TexCoord", math::make_vec2(vertex.TexCoord), "Color",
+      math::ivec4(vertex.Color[0], vertex.Color[1], vertex.Color[2], vertex.Color[3]));
 }
 
 void Vertex2DLayout::accept(VertexVisitor& visitor) const { visitor.visit(this); }

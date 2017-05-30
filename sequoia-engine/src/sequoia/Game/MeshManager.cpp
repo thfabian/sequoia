@@ -120,6 +120,7 @@ std::shared_ptr<Mesh> MeshManager::createCube(render::RenderTarget* target, cons
       constexpr auto maxRGBValue = std::numeric_limits<render::Vertex3D::ColorType>::max();
       for(int j = 0; j < 3; ++j)
         vertex[i].Color[j] = maxRGBValue * CubeVertexData[i * 9 + 6 + j];
+      vertex[i].Color[3] = maxRGBValue;
     }
 
     // Set bounding box

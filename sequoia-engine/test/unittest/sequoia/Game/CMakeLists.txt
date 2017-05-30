@@ -17,6 +17,8 @@ sequoia_add_test(
   NAME SequoiaGameTest
   SOURCES TestMeshManager.cpp
           TestMain.cpp
+          TestSceneGraph.cpp
+          TestSceneNodes.cpp
   DEPENDS SequoiaUnittest
           SequoiaGame
           SequoiaRender
