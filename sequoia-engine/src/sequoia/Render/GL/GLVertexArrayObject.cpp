@@ -87,7 +87,7 @@ void GLVertexArrayObject::unbind() {
 
 unsigned int GLVertexArrayObject::getVAOID() const { return vaoID_; }
 
-void GLVertexArrayObject::updateVertexData(std::size_t offset, std::size_t length) {
+void GLVertexArrayObject::writeVertexData(std::size_t offset, std::size_t length) {
   bind();
 
   // TODO: Discardable data should use glBufferData(GL_ARRAY_BUFFER, ..., NULL, ...) first
@@ -102,7 +102,7 @@ void GLVertexArrayObject::updateVertexData(std::size_t offset, std::size_t lengt
   // TODO: Frequently updated data should use glMapBuffer
 }
 
-void GLVertexArrayObject::updateIndexData(std::size_t offset, std::size_t length) {
+void GLVertexArrayObject::writeIndexData(std::size_t offset, std::size_t length) {
   if(!data_->hasIndices())
     return;
 
@@ -138,31 +138,32 @@ void GLVertexArrayObject::attachVertexDataDevice() {
   if(layout->hasPosition()) {
     glEnableVertexAttribArray(GLVertexAttribute::Position);
     glVertexAttribPointer(GLVertexAttribute::Position, layout->PositionNumElement,
-                          getGLType(layout->PositionType), false, layout->SizeOf,
+                          getGLType(layout->PositionType), layout->PositionNormalized, 0,
                           (void*)layout->PositionOffset);
   }
 
   if(layout->hasNormal()) {
     glEnableVertexAttribArray(GLVertexAttribute::Normal);
     glVertexAttribPointer(GLVertexAttribute::Normal, layout->NormalNumElement,
-                          getGLType(layout->NormalType), false, layout->SizeOf,
+                          getGLType(layout->NormalType), layout->NormalNormalized, 0,
                           (void*)layout->NormalOffset);
   }
 
   if(layout->hasTexCoord()) {
     glEnableVertexAttribArray(GLVertexAttribute::TexCoord);
     glVertexAttribPointer(GLVertexAttribute::TexCoord, layout->TexCoordNumElement,
-                          getGLType(layout->TexCoordType), false, layout->SizeOf,
+                          getGLType(layout->TexCoordType), layout->TexCoordNormalized, 0,
                           (void*)layout->TexCoordOffset);
   }
 
   if(layout->hasColor()) {
     glEnableVertexAttribArray(GLVertexAttribute::Color);
     glVertexAttribPointer(GLVertexAttribute::Color, layout->ColorNumElement,
-                          getGLType(layout->ColorType), false, layout->SizeOf,
+                          getGLType(layout->ColorType), layout->ColorNormalized, 0,
                           (void*)layout->ColorOffset);
   }
 
+  // Allocate device memory
   glBufferData(GL_ARRAY_BUFFER, getNumVertexBytes(getNumVertices()), nullptr, getGLUsage(usage_));
 
   if(hasIndices())
@@ -197,7 +198,7 @@ std::size_t GLVertexArrayObject::getNumVertexBytes(std::size_t length) const {
 }
 
 std::size_t GLVertexArrayObject::getNumIndexBytes(std::size_t length) const {
-  return length * sizeof(VertexData::IndicesType);
+  return length * sizeof(VertexIndexType);
 }
 
 } // namespace render

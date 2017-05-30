@@ -23,8 +23,6 @@
 #include "sequoia/Render/VertexArrayObject.h"
 #include "sequoia/Render/VertexVisitor.h"
 
-#include <iostream>
-
 namespace sequoia {
 
 namespace render {
@@ -33,11 +31,18 @@ namespace render {
 /// @ingroup render
 class SEQUOIA_RENDER_API VertexData : public NonCopyable {
 public:
-  using IndicesType = unsigned int;
-
   /// @brief Allocate memory for `numVertices` and `numIndices`
+  ///
+  /// @param layout         Layout of the allocated vertices (`numVertices * layout->SizeOf` bytes
+  ///                       will be allocated)
+  /// @param numVertices    Number of vertices to allocate
+  /// @param numIndices     Number of indices to allocate (`0` disabled indices)
+  /// @param shadowBuffer   Keep an exact copy of the device hardware buffer (i.e a shadow buffer)
+  ///                       on the host
+  ///
   /// @throw RenderException  Out of memory
-  VertexData(const VertexLayout* layout, std::size_t numVertices, std::size_t numIndices = 0);
+  VertexData(const VertexLayout* layout, std::size_t numVertices, std::size_t numIndices,
+             bool shadowBuffer);
 
   /// @brief Deallocate all memory
   ~VertexData();
@@ -79,24 +84,31 @@ public:
   math::AxisAlignedBox& getAxisAlignedBox() { return aab_; }
 
   /// @brief Get the indices vector
-  const IndicesType* getIndicesPtr() const { return indicesPtr_; }
-  IndicesType* getIndicesPtr() { return indicesPtr_; }
+  const VertexIndexType* getIndicesPtr() const { return indicesPtr_; }
+  VertexIndexType* getIndicesPtr() { return indicesPtr_; }
 
-  /// @brief Accept a VertexVisitor to access/modify the underlying host vertex data
-  void accept(VertexVisitor& visitor) const;
+  /// @brief Accept a VertexVisitor to write data to the buffer
+  ///
+  /// This operation will ensure proper snychronize of the host and device data in the end.
+  void acceptWriteVisitor(VertexVisitor& visitor) const { accept(visitor, true); }
 
-  /// @brief Modify the vertex data by running the provided `functor` on it
+  /// @brief Accept a read-only visitor of the vertex data
+  ///
+  /// This operation will ensure proper snychronize of the host and device data in the end.
+  void acceptReadVisitor(VertexVisitor& visitor) const { accept(visitor, false); }
+
+  /// @brief Obtain the vertex data for reading/writing
   ///
   /// @tparam FunctorType   (lambda) function of type `void(VertexType*)` where `VertexType` is one
   ///                       of `{Vertex2D, Vertex3D}`
   /// @param functor        Functor to run on the vertex data
   ///
-  /// Use VertexData::accept to provide your own VertexVisitor.
+  /// This operation will ensure proper snychronize of the host and device data in the end.
   ///
   /// @b Example
   /// @code{.cpp}
   ///   VertexData data(Vertex3D::getLayout(), 64);
-  ///   data.modify([&data](Vertex3D* vertices) {
+  ///   data.write([&data](Vertex3D* vertices) {
   ///     for(int i = 0; i < data.getNumVertices(); ++i) {
   ///       Vertex3D vertex = vertices[i];
   ///       // Do something ...
@@ -104,30 +116,53 @@ public:
   ///
   ///   });
   /// @endcode
+  /// @{
   template <class FunctorType>
-  void modify(FunctorType&& functor) const {
+  void write(FunctorType&& functor) const {
+    modifyImpl<true>(std::forward<FunctorType>(functor));
+  }
+  template <class FunctorType>
+  void read(FunctorType&& functor) const {
+    modifyImpl<false>(std::forward<FunctorType>(functor));
+  }
+  /// @}
+
+  /// @brief Dump the vertex data and indices to `stdout`
+  void dump() const;
+
+  /// @brief Convert to string
+  std::string toString() const;
+
+private:
+  template <bool Write, class FunctorType>
+  void modifyImpl(FunctorType&& functor) const {
     using FirstArgType = core::function_first_argument_t<FunctorType>;
 
-    // First argument has to be VertexType*
+    // First argument has to be `Vertex*` or `const Vertex*`
     static_assert(std::is_pointer<FirstArgType>::value,
                   "invalid functor: type of first argument has to be a pointer");
     using VertexType = typename std::remove_pointer<FirstArgType>::type;
 
     // Check if vertex type is supported
-    static_assert(core::tuple_has_type<VertexType, VertexTypeList>::value,
-                  "invalid functor: invalid 'VertexType' for first argument ");
+    static_assert(
+        core::tuple_has_type<typename std::remove_cv<VertexType>::type, VertexTypeList>::value,
+        "invalid functor: invalid 'VertexType' for first argument ");
     std::function<void(VertexType*)> func = functor;
 
+    // If we read, we expect `const VertexType*`
+    static_assert(Write ? true : std::is_const<VertexType>::value,
+                  "invalid functor: first argument is missing const for pointer type");
+
     // Run functor
-    VertexVisitorRunFunctor<VertexType> visitor(functor);
-    accept(visitor);
+    VertexVisitorRunFunctor<VertexType> visitor(func);
+
+    if(Write)
+      acceptWriteVisitor(visitor);
+    else
+      acceptReadVisitor(visitor);
   }
 
-  /// @brief Dump the vertex data and indices to `stdout`
-  void dump() const;
-  
-  /// @brief Convert to string
-  std::string toString() const;
+  void accept(VertexVisitor& visitor, bool write) const;
 
 private:
   /// Host vertex data
@@ -140,7 +175,7 @@ private:
   std::unique_ptr<VertexArrayObject> vao_;
 
   /// Indices
-  IndicesType* indicesPtr_;
+  VertexIndexType* indicesPtr_;
 
   /// Number of indices
   std::size_t numIndices_;
@@ -150,6 +185,9 @@ private:
 
   /// Local bounding box volume
   math::AxisAlignedBox aab_;
+
+  /// Keep an exact copy of the device hardware buffer
+  bool shadowBuffer_;
 };
 
 } // namespace render

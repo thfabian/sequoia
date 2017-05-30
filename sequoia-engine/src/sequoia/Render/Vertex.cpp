@@ -77,7 +77,8 @@ static const char* typeToString(VertexLayout::Type type) {
   if(has##Name()) {                                                                                \
     ss << "  " #Name "Type = " << typeToString(Name##Type)                                         \
        << ",\n  " #Name "Offset = " << Name##Offset                                                \
-       << ",\n  " #Name "NumElement = " << Name##NumElement << ",\n";                              \
+       << ",\n  " #Name "NumElement = " << Name##NumElement                                        \
+       << ",\n  " #Name "Normalized = " << (Name##Normalized ? "true" : "false") << ",\n";         \
   }
 
 std::string VertexLayout::toString() const {
@@ -95,18 +96,19 @@ std::string VertexLayout::toString() const {
 
 #undef SEQUOIA_PRINT_ATTRIBUTE
 
-#define SEQUOIA_SET_LAYOUT(Layout, VertexType, Name)                                               \
+#define SEQUOIA_SET_LAYOUT(Layout, VertexType, Name, Normalize)                                    \
   using Name##Type_t = decltype(VertexType::Name);                                                 \
   Layout->Name##NumElement = sizeof(Name##Type_t) / sizeof(GetPrimitveType<Name##Type_t>::type);   \
   Layout->Name##Offset = offsetof(VertexType, Name);                                               \
-  Layout->Name##Type = getType<Name##Type_t>();
+  Layout->Name##Type = getType<Name##Type_t>();                                                    \
+  Layout->Name##Normalized = Normalize;
 
 const VertexLayout* Vertex2D::getLayout() noexcept {
   std::call_once(vertex2DInitFlag, [] {
     vertex2DLayout->SizeOf = sizeof(Vertex2D);
-    SEQUOIA_SET_LAYOUT(vertex2DLayout, Vertex2D, Position);
-    SEQUOIA_SET_LAYOUT(vertex2DLayout, Vertex2D, TexCoord);
-    SEQUOIA_SET_LAYOUT(vertex2DLayout, Vertex2D, Color);
+    SEQUOIA_SET_LAYOUT(vertex2DLayout, Vertex2D, Position, false);
+    SEQUOIA_SET_LAYOUT(vertex2DLayout, Vertex2D, TexCoord, false);
+    SEQUOIA_SET_LAYOUT(vertex2DLayout, Vertex2D, Color, true);
   });
   return vertex2DLayout;
 }
@@ -114,10 +116,10 @@ const VertexLayout* Vertex2D::getLayout() noexcept {
 const VertexLayout* Vertex3D::getLayout() noexcept {
   std::call_once(vertex3DInitFlag, [] {
     vertex3DLayout->SizeOf = sizeof(Vertex3D);
-    SEQUOIA_SET_LAYOUT(vertex3DLayout, Vertex3D, Position);
-    SEQUOIA_SET_LAYOUT(vertex3DLayout, Vertex3D, Normal);
-    SEQUOIA_SET_LAYOUT(vertex3DLayout, Vertex3D, TexCoord);
-    SEQUOIA_SET_LAYOUT(vertex3DLayout, Vertex3D, Color);
+    SEQUOIA_SET_LAYOUT(vertex3DLayout, Vertex3D, Position, false);
+    SEQUOIA_SET_LAYOUT(vertex3DLayout, Vertex3D, Normal, false);
+    SEQUOIA_SET_LAYOUT(vertex3DLayout, Vertex3D, TexCoord, false);
+    SEQUOIA_SET_LAYOUT(vertex3DLayout, Vertex3D, Color, true);
   });
   return vertex3DLayout;
 }

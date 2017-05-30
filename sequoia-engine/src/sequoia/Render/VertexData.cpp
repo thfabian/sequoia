@@ -26,15 +26,17 @@ namespace sequoia {
 
 namespace render {
 
-VertexData::VertexData(const VertexLayout* layout, std::size_t numVertices, std::size_t numIndices)
-    : numVertices_(numVertices), numIndices_(numIndices), layout_(layout) {
+VertexData::VertexData(const VertexLayout* layout, std::size_t numVertices, std::size_t numIndices,
+                       bool shadowBuffer)
+    : numVertices_(numVertices), numIndices_(numIndices), layout_(layout),
+      shadowBuffer_(shadowBuffer) {
 
   verticesPtr_ = memory::aligned_alloc(numVertices_ * layout_->SizeOf);
   if(!verticesPtr_)
     SEQUOIA_THROW(RenderSystemException, "failed to allocate vertex data: out of memory");
 
   if(numIndices_ > 0) {
-    indicesPtr_ = (IndicesType*)memory::aligned_alloc(numIndices_ * sizeof(IndicesType));
+    indicesPtr_ = (VertexIndexType*)memory::aligned_alloc(numIndices_ * sizeof(VertexIndexType));
 
     if(!indicesPtr_)
       SEQUOIA_THROW(RenderSystemException, "failed to allocate index data: out of memory");
@@ -63,7 +65,10 @@ void VertexData::setVertexArrayObject(std::unique_ptr<VertexArrayObject> vao,
   vao_->attachVertexData(this, usage);
 }
 
-void VertexData::accept(VertexVisitor& visitor) const {
+void VertexData::accept(VertexVisitor& visitor, bool write) const {
+
+  //  shadowBuffer_
+
   visitor.setNumVertices(numVertices_);
   visitor.setVerticesPtr(verticesPtr_);
   layout_->accept(visitor);
@@ -74,7 +79,7 @@ void VertexData::dump() const {
 
   // Print vertices
   VertexVisitorStringifier visitor;
-  accept(visitor);
+  acceptReadVisitor(visitor);
   std::cout << "  " << core::indent(visitor.toString()) << "]";
 
   // Print indices
@@ -92,10 +97,12 @@ std::string VertexData::toString() const {
                       "  vao = %s,\n"
                       "  numIndices = %s,\n"
                       "  layout = %s,\n"
-                      "  aab = %s\n"
+                      "  aab = %s,\n"
+                      "  shadowBuffer = %s\n"
                       "]",
-                      numVertices_, core::indent(vao_->toString()), numIndices_,
-                      core::indent(layout_->toString()), core::indent(aab_.toString()));
+                      numVertices_, vao_ ? core::indent(vao_->toString()) : "null", numIndices_,
+                      core::indent(layout_->toString()), core::indent(aab_.toString()),
+                      shadowBuffer_ ? "true" : "false");
 }
 
 } // namespace render

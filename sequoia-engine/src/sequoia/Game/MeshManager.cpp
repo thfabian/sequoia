@@ -87,41 +87,43 @@ static unsigned int CubeIndices[]  = {   0, 1, 2,   2, 3, 0,                    
 } // anonymous namespace
 
 std::shared_ptr<Mesh> MeshManager::createCube(render::RenderTarget* target, const std::string& name,
-                                              bool copy) {
+                                              bool copy, BufferUsageKind usage) {
 
   if(staticCubeMeshDataIdx_ == -1) {
     std::size_t numVertices = 24;
     std::size_t numIndices = 36;
 
     std::shared_ptr<render::VertexData> data(
-        new render::VertexData(render::Vertex3D::getLayout(), numVertices, numIndices));
+        new render::VertexData(render::Vertex3D::getLayout(), numVertices, numIndices, false));
 
     // Set vertex data
     render::Vertex3D* vertex = (render::Vertex3D*)data->getVerticesPtr();
     for(int i = 0; i < numVertices; ++i) {
       // Position
-      std::memcpy(vertex[i].Position, &CubeVertexData[i * 9], 3 * sizeof(float));
+      std::memcpy(vertex[i].Position, &CubeVertexData[i * 9],
+                  3 * sizeof(render::Vertex3D::PositionType));
 
       // Normal
-      std::memcpy(vertex[i].Normal, &CubeVertexData[i * 9 + 3], 3 * sizeof(float));
+      std::memcpy(vertex[i].Normal, &CubeVertexData[i * 9 + 3],
+                  3 * sizeof(render::Vertex3D::NormalType));
 
       // TexCoord
       vertex[i].TexCoord[0] = vertex[i].TexCoord[1] = 0;
 
       // Color
-      std::memcpy(vertex[i].Color, &CubeVertexData[i * 9 + 6], 3 * sizeof(float));
+      std::memcpy(vertex[i].Color, &CubeVertexData[i * 9 + 6],
+                  3 * sizeof(render::Vertex3D::ColorType));
     }
 
     // Set bounding box
     data->setAxisAlignedBox(math::AxisAlignedBox(math::vec3(-1, -1, -1), math::vec3(1, 1, 1)));
 
     // Set indices
-    std::memcpy(data->getIndicesPtr(), CubeIndices,
-                numIndices * sizeof(render::VertexData::IndicesType));
+    std::memcpy(data->getIndicesPtr(), CubeIndices, numIndices * sizeof(render::VertexIndexType));
 
     // Set the VAO
     data->setVertexArrayObject(render::RenderSystem::getSingleton().createVertexArrayObject(target),
-                               BufferUsageKind::BK_StaticWriteOnly);
+                               usage);
 
     vertexDataList_.emplace_back(data);
     staticCubeMeshDataIdx_ = vertexDataList_.size() - 1;

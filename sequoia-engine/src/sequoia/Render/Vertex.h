@@ -30,6 +30,13 @@ struct Vertex2DLayout;
 struct Vertex3DLayout;
 class VertexVisitor;
 
+/// @addtogroup render
+/// @{
+
+/// @typedef VertexIndicesType
+/// @brief Type of vertex indices
+using VertexIndexType = unsigned int;
+
 //===------------------------------------------------------------------------------------------===//
 //    VertexLayout
 //===------------------------------------------------------------------------------------------===//
@@ -40,11 +47,11 @@ class VertexVisitor;
 ///   - @b XType : Type `T` of the attribute (e.g `float`)
 ///   - @b XOffset : Offset in the vertex struct (in bytes)
 ///   - @b XNumElement : Number of elements `N` of the attribute
+///   - @b XNormalized : Should be attribute be normalized when uploaded to the GPU?
 ///
 /// where @b X is one of `{ Position, Normal, TexCoord, Color}`.
-///
-/// @ingroup render
 struct SEQUOIA_RENDER_API VertexLayout {
+
   enum Type {
     Invalid,
     UnsignedByte, ///< 8-bit byte
@@ -56,18 +63,22 @@ struct SEQUOIA_RENDER_API VertexLayout {
   Type PositionType = Invalid;
   std::size_t PositionOffset = 0;
   std::size_t PositionNumElement = 0;
+  bool PositionNormalized = false;
 
   Type NormalType = Invalid;
   std::size_t NormalOffset = 0;
   std::size_t NormalNumElement = 0;
+  bool NormalNormalized = false;
 
   Type TexCoordType = Invalid;
   std::size_t TexCoordOffset = 0;
   std::size_t TexCoordNumElement = 0;
+  bool TexCoordNormalized = false;
 
   Type ColorType = Invalid;
   std::size_t ColorOffset = 0;
   std::size_t ColorNumElement = 0;
+  bool ColorNormalized = false;
 
   /// @brief Check if `Position` attribute is available
   bool hasPosition() const { return PositionNumElement > 0; }
@@ -93,11 +104,14 @@ struct SEQUOIA_RENDER_API VertexLayout {
 //===------------------------------------------------------------------------------------------===//
 
 /// @brief Representation of a 2D vertex
-/// @ingroup render
 struct SEQUOIA_RENDER_API Vertex2D {
-  float Position[2];
-  float TexCoord[2];
-  unsigned char Color[4];
+  using PositionType = float;
+  using TexCoordType = float;
+  using ColorType = unsigned char;
+
+  PositionType Position[2];
+  TexCoordType TexCoord[2];
+  ColorType Color[4];
 
   /// @brief Get the layout of the 2D vertices
   /// @note This function is thread-safe.
@@ -105,7 +119,6 @@ struct SEQUOIA_RENDER_API Vertex2D {
 };
 
 /// @brief Layout description of `Vertex2D`
-/// @ingroup render
 struct SEQUOIA_RENDER_API Vertex2DLayout : public VertexLayout {
   using VertexType = Vertex2D;
   virtual void accept(VertexVisitor& visitor) const override;
@@ -116,12 +129,16 @@ struct SEQUOIA_RENDER_API Vertex2DLayout : public VertexLayout {
 //===------------------------------------------------------------------------------------------===//
 
 /// @brief Representation of a 3D vertex
-/// @ingroup render
 struct SEQUOIA_RENDER_API Vertex3D {
-  float Position[3];
-  float Normal[3];
-  float TexCoord[2];
-  float Color[3];
+  using PositionType = float;
+  using NormalType = float;
+  using TexCoordType = float;
+  using ColorType = unsigned char;
+
+  PositionType Position[3];
+  NormalType Normal[3];
+  TexCoordType TexCoord[2];
+  ColorType Color[4];
 
   /// @brief Get the layout of the 3D vertices
   /// @note This function is thread-safe.
@@ -137,8 +154,9 @@ struct SEQUOIA_RENDER_API Vertex3DLayout : public VertexLayout {
 
 /// @typedef VertexTypeList
 /// @brief List of all vertex types
-/// @ingroup render
 using VertexTypeList = std::tuple<Vertex2D, Vertex3D>;
+
+/// @}
 
 } // namespace render
 

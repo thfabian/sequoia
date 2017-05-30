@@ -74,7 +74,7 @@ public:
   VertexArrayObject(RenderSystemKind kind);
 
   /// @brief Attach `vertexData` and store it in a hardware buffer
-  /// 
+  ///
   /// This will create the underlying device hardware buffers. However, the data is only copied to
   /// the GPU once `updateGPU` is called.
   void attachVertexData(VertexData* data, BufferUsageKind usage);
@@ -82,17 +82,17 @@ public:
   /// @brief Free all allocated buffers
   void freeVertexData();
 
-  /// @brief Update the vertex data on the device to match the host (CPU) data
+  /// @brief Update the vertex data on the device to match the data pointer to by `dataPtr`
   ///
   /// @param offset   Offset to start writing
   /// @param length   Number of vertices to write in `[0, getNumVertices())`
-  virtual void updateVertexData(std::size_t offset, std::size_t length) = 0;
+  virtual void writeVertexData(std::size_t offset, std::size_t length) = 0;
 
-  /// @brief Update the index data on the device to match the host (CPU) data
+  /// @brief Update the index data on the device to match the data pointer to by `dataPtr`
   ///
   /// @param offset   Offset to start writing
   /// @param length   Number of vertices to write  in `[0, getNumIndices())`
-  virtual void updateIndexData(std::size_t offset, std::size_t length) = 0;
+  virtual void writeIndexData(std::size_t offset, std::size_t length) = 0;
 
   /// @brief Convert to string
   virtual std::string toString() const = 0;

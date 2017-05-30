@@ -20,11 +20,12 @@ using namespace sequoia::render;
 
 namespace {
 
-TEST(VertexDataTest, Modify) {
-  VertexData data(Vertex3D::getLayout(), 4, 0);
+TEST(VertexDataTest, WriteAndRead) {
+  VertexData data(Vertex3D::getLayout(), 4, 0, true);
 
   std::size_t numVertices = data.getNumVertices();
-  data.modify([&numVertices](Vertex3D* vertices) {
+
+  data.write([&numVertices](Vertex3D* vertices) {
     for(int i = 0; i < numVertices; ++i) {
       vertices[i].Position[0] = i;
       vertices[i].Normal[0] = i;
@@ -32,14 +33,17 @@ TEST(VertexDataTest, Modify) {
       vertices[i].Color[0] = i;
     }
   });
+  
+  std::cout << data.toString() << std::endl;
 
-  Vertex3D* vertices = (Vertex3D*)data.getVerticesPtr();
-  for(int i = 0; i < numVertices; ++i) {
-    EXPECT_EQ(vertices[i].Position[0], i) << "vertex index " << i;
-    EXPECT_EQ(vertices[i].Normal[0], i) << "vertex index " << i;
-    EXPECT_EQ(vertices[i].TexCoord[0], i) << "vertex index " << i;
-    EXPECT_EQ(vertices[i].Color[0], i) << "vertex index " << i;
-  }
+  data.read([&numVertices](const Vertex3D* vertices) {
+    for(int i = 0; i < numVertices; ++i) {
+      EXPECT_EQ(vertices[i].Position[0], i) << "vertex index " << i;
+      EXPECT_EQ(vertices[i].Normal[0], i) << "vertex index " << i;
+      EXPECT_EQ(vertices[i].TexCoord[0], i) << "vertex index " << i;
+      EXPECT_EQ(vertices[i].Color[0], i) << "vertex index " << i;
+    }
+  });
 }
 
 } // anonymous namespace

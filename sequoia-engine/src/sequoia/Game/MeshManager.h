@@ -71,7 +71,8 @@ public:
   ///  v2------v3
   /// @endverbatim
   std::shared_ptr<Mesh> createCube(render::RenderTarget* target, const std::string& name,
-                                   bool copy = false);
+                                   bool copy = false,
+                                   BufferUsageKind usage = BufferUsageKind::BK_StaticWriteOnly);
 };
 
 } // namespace game

@@ -32,10 +32,9 @@ namespace {
 
 class GLVertexArrayObjectTest : public GLRenderTest {};
 
-/// @brief Create dummy VertexData
 template <class VertexDataType>
 std::unique_ptr<VertexData> makeVertexData(std::size_t numVertices, std::size_t numIndices) {
-  return std::make_unique<VertexData>(VertexDataType::getLayout(), numVertices, numIndices);
+  return std::make_unique<VertexData>(VertexDataType::getLayout(), numVertices, numIndices, true);
 }
 
 TEST_F(GLVertexArrayObjectTest, Vertex3D) {
@@ -78,7 +77,7 @@ TEST_F(GLVertexArrayObjectTest, Vertex3D) {
 
     GLint stride;
     glGetVertexAttribiv(GLVertexAttribute::Position, GL_VERTEX_ATTRIB_ARRAY_STRIDE, &stride);
-    EXPECT_EQ(stride, layout->SizeOf);
+    EXPECT_EQ(stride, 0);
 
     void* pointer;
     glGetVertexAttribPointerv(GLVertexAttribute::Position, GL_VERTEX_ATTRIB_ARRAY_POINTER,
@@ -111,7 +110,7 @@ TEST_F(GLVertexArrayObjectTest, Vertex3D) {
 
     GLint stride;
     glGetVertexAttribiv(GLVertexAttribute::Normal, GL_VERTEX_ATTRIB_ARRAY_STRIDE, &stride);
-    EXPECT_EQ(stride, layout->SizeOf);
+    EXPECT_EQ(stride, 0);
 
     void* pointer;
     glGetVertexAttribPointerv(GLVertexAttribute::Normal, GL_VERTEX_ATTRIB_ARRAY_POINTER, &pointer);
@@ -144,7 +143,7 @@ TEST_F(GLVertexArrayObjectTest, Vertex3D) {
 
     GLint stride;
     glGetVertexAttribiv(GLVertexAttribute::TexCoord, GL_VERTEX_ATTRIB_ARRAY_STRIDE, &stride);
-    EXPECT_EQ(stride, layout->SizeOf);
+    EXPECT_EQ(stride, 0);
 
     void* pointer;
     glGetVertexAttribPointerv(GLVertexAttribute::TexCoord, GL_VERTEX_ATTRIB_ARRAY_POINTER,
@@ -164,11 +163,11 @@ TEST_F(GLVertexArrayObjectTest, Vertex3D) {
 
     GLenum type;
     glGetVertexAttribiv(GLVertexAttribute::Color, GL_VERTEX_ATTRIB_ARRAY_TYPE, &type);
-    EXPECT_EQ(type, GL_FLOAT);
+    EXPECT_EQ(type, GL_UNSIGNED_BYTE);
 
     GLint normalized;
     glGetVertexAttribiv(GLVertexAttribute::Color, GL_VERTEX_ATTRIB_ARRAY_NORMALIZED, &normalized);
-    EXPECT_FALSE(normalized);
+    EXPECT_TRUE(normalized);
 
     GLint size;
     glGetVertexAttribiv(GLVertexAttribute::Color, GL_VERTEX_ATTRIB_ARRAY_SIZE, &size);
@@ -176,7 +175,7 @@ TEST_F(GLVertexArrayObjectTest, Vertex3D) {
 
     GLint stride;
     glGetVertexAttribiv(GLVertexAttribute::Color, GL_VERTEX_ATTRIB_ARRAY_STRIDE, &stride);
-    EXPECT_EQ(stride, layout->SizeOf);
+    EXPECT_EQ(stride, 0);
 
     void* pointer;
     glGetVertexAttribPointerv(GLVertexAttribute::Color, GL_VERTEX_ATTRIB_ARRAY_POINTER, &pointer);
@@ -184,8 +183,6 @@ TEST_F(GLVertexArrayObjectTest, Vertex3D) {
   }
 
   glvao->unbind();
-
-  // glvao->updateDevice(0, glvao->getNumVertices());
 }
 
 } // anonymous namespace

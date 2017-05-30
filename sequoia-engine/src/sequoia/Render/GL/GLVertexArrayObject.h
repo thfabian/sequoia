@@ -45,10 +45,10 @@ public:
   unsigned int getVAOID() const;
 
   /// @copydoc VertexArrayObject::updateVertexData
-  virtual void updateVertexData(std::size_t offset, std::size_t length) override;
+  virtual void writeVertexData(std::size_t offset, std::size_t length) override;
 
   /// @copydoc VertexArrayObject::updateIndexData
-  virtual void updateIndexData(std::size_t offset, std::size_t length) override;
+  virtual void writeIndexData(std::size_t offset, std::size_t length) override;
 
   /// @copydoc VertexArrayObject::attachVertexDataDevice
   void attachVertexDataDevice() override;
