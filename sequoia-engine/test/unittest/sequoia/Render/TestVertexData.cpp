@@ -34,7 +34,7 @@ TEST(VertexDataTest, WriteAndRead) {
     }
   });
   
-  std::cout << data.toString() << std::endl;
+  data.dump();
 
   data.read([&numVertices](const Vertex3D* vertices) {
     for(int i = 0; i < numVertices; ++i) {

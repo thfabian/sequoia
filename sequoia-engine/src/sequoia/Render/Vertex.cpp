@@ -16,6 +16,7 @@
 #include "sequoia/Core/Format.h"
 #include "sequoia/Core/StringUtil.h"
 #include "sequoia/Core/Unreachable.h"
+#include "sequoia/Math/Math.h"
 #include "sequoia/Render/Vertex.h"
 #include "sequoia/Render/VertexVisitor.h"
 #include <mutex>
@@ -123,12 +124,34 @@ const VertexLayout* Vertex3D::getLayout() noexcept {
   });
   return vertex3DLayout;
 }
-
 #undef SEQUOIA_SET_LAYOUT
 
-void Vertex3DLayout::accept(VertexVisitor& visitor) const { visitor.visit(this); }
+std::string Vertex2D::toString(const Vertex2D& vertex) {
+  return core::format("Vertex2D[\n"
+                      "  %-10s = %s,\n"
+                      "  %-10s = %s,\n"
+                      "  %-10s = %s\n"
+                      "]",
+                      "Position", math::make_vec2(vertex.Position), "TexCoord",
+                      math::make_vec2(vertex.TexCoord), "Color",
+                      math::ivec3(vertex.Color[0], vertex.Color[1], vertex.Color[2]));
+}
+
+std::string Vertex3D::toString(const Vertex3D& vertex) {
+  return core::format("Vertex3D[\n"
+                      "  %-10s = %s,\n"
+                      "  %-10s = %s,\n"
+                      "  %-10s = %s,\n"
+                      "  %-10s = %s\n"
+                      "]",
+                      "Position", math::make_vec3(vertex.Position), "Normal",
+                      math::make_vec3(vertex.Normal), "TexCoord", math::make_vec2(vertex.TexCoord),
+                      "Color", math::ivec3(vertex.Color[0], vertex.Color[1], vertex.Color[2]));
+}
 
 void Vertex2DLayout::accept(VertexVisitor& visitor) const { visitor.visit(this); }
+
+void Vertex3DLayout::accept(VertexVisitor& visitor) const { visitor.visit(this); }
 
 } // namespace render
 

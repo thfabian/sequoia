@@ -22,46 +22,20 @@ namespace sequoia {
 
 namespace render {
 
-void VertexVisitorStringifier::visit(const Vertex3DLayout* layout) {
-  Vertex3D* vertices = getVerticesPtr(layout);
-
+template <class VertexType>
+std::string toStringImpl(const VertexType* vertices, const std::size_t numVertices) {
   std::stringstream ss;
-  for(std::size_t i = 0; i < getNumVertices(); ++i) {
-    ss << core::format("Vertex3D[\n"
-                       "  index = %i,\n"
-                       "  %-10s = %s,\n"
-                       "  %-10s = %s,\n"
-                       "  %-10s = %s,\n"
-                       "  %-10s = %s\n"
-                       "]",
-                       i, "Position", math::make_vec3(vertices[i].Position), "Normal",
-                       math::make_vec3(vertices[i].Normal), "TexCoord",
-                       math::make_vec2(vertices[i].TexCoord), "Color",
-                       math::make_vec4(vertices[i].Color))
-       << ((i == getNumVertices() - 1) ? "" : ",") << "\n";
-  }
+  for(std::size_t i = 0; i < numVertices; ++i)
+    ss << VertexType::toString(vertices[i]) << ((i == numVertices - 1) ? "" : ",") << "\n";
+  return ss.str();
+}
 
-  string_ = ss.str();
+void VertexVisitorStringifier::visit(const Vertex3DLayout* layout) {
+  string_ = toStringImpl(getVerticesPtr(layout), getNumVertices());
 }
 
 void VertexVisitorStringifier::visit(const Vertex2DLayout* layout) {
-  Vertex2D* vertices = getVerticesPtr(layout);
-
-  std::stringstream ss;
-  for(std::size_t i = 0; i < getNumVertices(); ++i) {
-    ss << core::format("Vertex2D[\n"
-                       "  index = %i,\n"
-                       "  %-10s = %s,\n"
-                       "  %-10s = %s,\n"
-                       "  %-10s = %s\n"
-                       "]",
-                       i, "Position", math::make_vec2(vertices[i].Position), "TexCoord",
-                       math::make_vec2(vertices[i].TexCoord), "Color",
-                       math::make_vec4(vertices[i].Color))
-       << ((i == getNumVertices() - 1) ? "" : ",") << "\n";
-  }
-
-  string_ = ss.str();
+  string_ = toStringImpl(getVerticesPtr(layout), getNumVertices());
 }
 
 } // namespace render

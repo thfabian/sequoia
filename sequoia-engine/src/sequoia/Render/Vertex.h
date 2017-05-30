@@ -116,6 +116,9 @@ struct SEQUOIA_RENDER_API Vertex2D {
   /// @brief Get the layout of the 2D vertices
   /// @note This function is thread-safe.
   static const VertexLayout* getLayout() noexcept;
+
+  /// @brief Convert to string
+  static std::string toString(const Vertex2D& vertex);
 };
 
 /// @brief Layout description of `Vertex2D`
@@ -143,6 +146,9 @@ struct SEQUOIA_RENDER_API Vertex3D {
   /// @brief Get the layout of the 3D vertices
   /// @note This function is thread-safe.
   static const VertexLayout* getLayout() noexcept;
+  
+  /// @brief Convert to string
+  static std::string toString(const Vertex3D& vertex);
 };
 
 /// @brief Layout description of `Vertex3D`

@@ -88,7 +88,8 @@ void VertexData::dump() const {
     for(std::size_t i = 0; i < numIndices_; ++i)
       std::cout << "  " << i << ((i == numIndices_ - 1) ? "" : ",") << "\n";
     std::cout << "]\n";
-  }
+  } else
+    std::cout << "\n";
 }
 
 std::string VertexData::toString() const {

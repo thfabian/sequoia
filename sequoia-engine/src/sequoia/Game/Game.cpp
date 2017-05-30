@@ -99,7 +99,7 @@ void Game::init(bool hideWindow) {
     // Register the game as a keyboard and mouse listener
     renderSystem_->addKeyboardListener(mainWindow_, this);
     renderSystem_->addMouseListener(mainWindow_, this);
-    
+
     // Initialize the mesh manager
     meshManager_ = std::make_unique<MeshManager>();
 
@@ -111,6 +111,12 @@ void Game::init(bool hideWindow) {
 }
 
 void Game::keyboardEvent(const render::KeyboardEvent& event) {}
+
+render::RenderWindow* Game::getMainWindow() { return mainWindow_; }
+
+render::RenderTarget* Game::getMainRenderTarget() {
+  return static_cast<render::RenderTarget*>(mainWindow_);
+}
 
 MeshManager* Game::getMeshManager() { return meshManager_.get(); }
 

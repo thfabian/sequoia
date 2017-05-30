@@ -100,19 +100,23 @@ std::shared_ptr<Mesh> MeshManager::createCube(render::RenderTarget* target, cons
     render::Vertex3D* vertex = (render::Vertex3D*)data->getVerticesPtr();
     for(int i = 0; i < numVertices; ++i) {
       // Position
-      std::memcpy(vertex[i].Position, &CubeVertexData[i * 9],
-                  3 * sizeof(render::Vertex3D::PositionType));
+      for(int j = 0; j < 3; ++j)
+        vertex[i].Position[j] = CubeVertexData[i * 9 + j];
 
       // Normal
-      std::memcpy(vertex[i].Normal, &CubeVertexData[i * 9 + 3],
-                  3 * sizeof(render::Vertex3D::NormalType));
+      for(int j = 0; j < 3; ++j)
+        vertex[i].Normal[j] = CubeVertexData[i * 9 + 3 + j];
 
       // TexCoord
       vertex[i].TexCoord[0] = vertex[i].TexCoord[1] = 0;
 
       // Color
-      std::memcpy(vertex[i].Color, &CubeVertexData[i * 9 + 6],
-                  3 * sizeof(render::Vertex3D::ColorType));
+      static_assert(std::is_integral<render::Vertex3D::ColorType>::value,
+                    "color should be integral");
+
+      constexpr auto maxRGBValue = std::numeric_limits<render::Vertex3D::ColorType>::max();
+      for(int j = 0; j < 3; ++j)
+        vertex[i].Color[j] = maxRGBValue * CubeVertexData[i * 9 + 6 + j];
     }
 
     // Set bounding box
@@ -124,6 +128,8 @@ std::shared_ptr<Mesh> MeshManager::createCube(render::RenderTarget* target, cons
     // Set the VAO
     data->setVertexArrayObject(render::RenderSystem::getSingleton().createVertexArrayObject(target),
                                usage);
+    data->getVertexArrayObject()->writeVertexData(0, numVertices);
+    data->getVertexArrayObject()->writeIndexData(0, numIndices);
 
     vertexDataList_.emplace_back(data);
     staticCubeMeshDataIdx_ = vertexDataList_.size() - 1;

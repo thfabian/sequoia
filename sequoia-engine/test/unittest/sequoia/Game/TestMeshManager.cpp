@@ -26,7 +26,9 @@ namespace {
 class MeshManagerTest : public GameTest {};
 
 TEST_F(MeshManagerTest, Cube) {
+  Game& game = Game::getSingleton();
 
+  auto mesh = game.getMeshManager()->createCube(game.getMainRenderTarget(), "TestCube");
 }
 
 } // anonymous namespace

@@ -53,7 +53,7 @@ public:
 
   /// @brief Cleanup all allocted objects
   ~Game();
-  
+
   /// @brief Initializes the game object by initializing the RenderSystem
   /// @param hideWindow   Hide the main-window
   void init(bool hideWindow = false);
@@ -72,6 +72,13 @@ public:
 
   /// @brief Get the mesh manager
   MeshManager* getMeshManager();
+
+  /// @brief Get the main RenderWindow
+  render::RenderWindow* getMainWindow();
+  
+  /// @brief Get the main RenderTarget
+  render::RenderTarget* getMainRenderTarget();
+  
 };
 
 } // namespace game
