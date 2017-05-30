@@ -236,10 +236,17 @@ macro(sequoia_set_cxx_flags)
   # GCC/Clang
   #    
   else()
+    # Architecture
     sequoia_check_and_set_cxx_flag("-march=native" HAVE_GCC_MARCH_NATIVE)
-    sequoia_check_and_set_cxx_flag("-ftree-vectorize" HAVE_GCC_TREE_VECTORIZE)    
+    
+    # Optimization
+    sequoia_check_and_set_cxx_flag("-ftree-vectorize" HAVE_GCC_TREE_VECTORIZE)
+    sequoia_check_and_set_cxx_flag("-flto" HAVE_GCC_LTO)
+
+    # Warnings
     sequoia_check_and_set_cxx_flag("-Wall" HAVE_GCC_WALL)
     sequoia_check_and_set_cxx_flag("-Werror=return-type" HAVE_GCC_ERROR_RETURN_TYPE)
+    sequoia_check_and_set_cxx_flag("-Wno-sign-compare" HAVE_GCC_WNO_SIGN_COMPARE)
     
     if(BUILD_SHARED_LIBS)
       sequoia_check_and_set_cxx_flag("-fPIC" HAVE_GCC_POSITION_INDEPENDENT_CODE)

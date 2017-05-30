@@ -44,13 +44,13 @@ PrettyStackTrace::PrettyStackTrace()
     : impl_(nullptr)
 #else
     : impl_(new Impl) {
+#endif
 }
 
 PrettyStackTrace::~PrettyStackTrace() {
   if(impl_)
     delete impl_;
 }
-#endif
 
 #else
 

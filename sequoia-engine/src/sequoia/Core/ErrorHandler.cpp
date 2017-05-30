@@ -20,14 +20,13 @@
 
 namespace sequoia {
 
-#define SEQUOIA_CRASH_ON_ERROR 0
-
 SEQUOIA_DECLARE_SINGLETON(core::ErrorHandler);
 
 namespace core {
 
 ErrorHandler::ErrorHandler(UtfString program) {
-  platform::Path p(program);
+  platform::String programStr = program;
+  platform::Path p(programStr);
   program_ = p.stem().native();
 }
 
