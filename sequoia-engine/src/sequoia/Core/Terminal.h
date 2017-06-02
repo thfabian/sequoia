@@ -23,11 +23,10 @@ namespace sequoia {
 
 namespace core {
 
-namespace Terminal {
-
 /// @namespace Terminal
 /// @brief Various terminal manipulation methods, most notably changing the color namespace Terminal
-/// {
+/// @ingroup core
+namespace Terminal {
 
 /// @brief Change the terminal output color.
 ///
@@ -84,9 +83,10 @@ public:
 };
 
 /// @brief Get the current width of the terminal
+/// @ingroup core
 extern SEQUOIA_CORE_API int getWidth();
 
-} // end namespace Terminal
+} // namespace Terminal
 
 } // namespace core
 

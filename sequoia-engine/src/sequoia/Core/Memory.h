@@ -21,6 +21,7 @@
 #include <boost/align/aligned_allocator.hpp>
 #include <boost/align/aligned_delete.hpp>
 #include <boost/align/is_aligned.hpp>
+#include <tbb/cache_aligned_allocator.h>
 
 namespace sequoia {
 
@@ -35,9 +36,13 @@ namespace memory {
 /// @brief Default alignment (32 Bytes)
 static constexpr std::size_t DefaultAlignment = 32;
 
-/// @brief Alligned allocator
+/// @brief Aligned allocator
 template <class T, std::size_t Alignment = DefaultAlignment>
 using aligned_allocator = boost::alignment::aligned_allocator<T, Alignment>;
+
+/// @brief Cache Aligned allocator
+template <class T>
+using cache_aligned_allocator = tbb::cache_aligned_allocator<T>;
 
 /// @brief This function is used to compare the alignment of a pointer
 inline bool is_aligned(const void* ptr, std::size_t alignment = DefaultAlignment) noexcept {
@@ -66,7 +71,7 @@ public:
   }
 };
 
-} // nammespace alignment
+} // nammespace memory
 
 /// @}
 

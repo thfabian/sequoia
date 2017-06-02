@@ -17,6 +17,7 @@
 #define SEQUOIA_GAME_SCENEGRAPH_H
 
 #include "sequoia/Core/NonCopyable.h"
+#include "sequoia/Core/Memory.h"
 #include "sequoia/Game/Export.h"
 #include "sequoia/Game/SceneNode.h"
 
@@ -33,13 +34,20 @@ class SEQUOIA_GAME_API SceneGraph : public NonCopyable {
   std::vector<std::shared_ptr<SceneNode>> nodes_;
 
 public:
-  /// @brief Insert a new scenen node
-  void insert(const std::shared_ptr<SceneNode>& node) { nodes_.emplace_back(node); }
-
   /// @brief Create a new scene node of type `T` and pass `args...` to the constructor
   template <class T, class... Args>
-  void create(Args&&... args) {
-    nodes_.emplace_back(std::make_shared<T>(std::forward<Args>(args)...));
+  static std::shared_ptr<T> create(Args&&... args) {
+    return std::allocate_shared<T, memory::cache_aligned_allocator<T>>(
+      memory::cache_aligned_allocator<T>(), std::forward<Args>(args)...);
+  }
+
+  /// @brief Insert a new scenen `node` into the graph
+  void insert(const std::shared_ptr<SceneNode>& node) { nodes_.emplace_back(node); }
+
+  /// @brief Remove the `node` (and all its children) from the graph
+  template <class T, class... Args>
+  void add(const std::shared_ptr<SceneNode>& node) {
+    nodes_.erase(std::remove(nodes_.begin(), nodes_.end(), node), nodes_.end());
   }
 
   /// @brief Apply `functor` to each node of the graph

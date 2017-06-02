@@ -67,10 +67,13 @@ GLRenderWindow::GLRenderWindow(GLRenderSystem* renderSystem,
     GLFWmonitor** monitors = glfwGetMonitors(&numMonitors);
     SEQUOIA_ASSERT(monitors);
 
-    if(windowHints.Monitor >= numMonitors)
-      SEQUOIA_THROW(RenderSystemException, "invalid monitor '%i' (max number of monitors is %i)",
-                    windowHints.Monitor, numMonitors);
-    monitor = monitors[windowHints.Monitor];
+    if(windowHints.Monitor >= numMonitors) {
+      LOG(WARNING) << "invalid monitor '" << windowHints.Monitor << "' (max number of monitors is " 
+                   << numMonitors << ")";
+      monitor = glfwGetPrimaryMonitor(); 
+    } else {
+      monitor = monitors[windowHints.Monitor];
+    }
   }
 
   LOG(INFO) << "Using monitor " << glfwGetMonitorName(monitor);

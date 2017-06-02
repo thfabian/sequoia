@@ -13,7 +13,9 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
+#include "sequoia/Core/Format.h"
 #include "sequoia/Core/Logging.h"
+#include "sequoia/Core/StringUtil.h"
 #include "sequoia/Game/SceneNode.h"
 
 namespace sequoia {
@@ -23,8 +25,8 @@ namespace game {
 SceneNode::SceneNode(SceneNode::SceneNodeKind kind, const std::shared_ptr<SceneNode>& parent,
                      const std::string& name, const glm::vec3& position,
                      const glm::quat& orientation, float scale)
-    : kind_(kind), parent_(parent), position_(position), orientation_(orientation), scale_(scale),
-      name_(name) {
+    : kind_(kind), mesh_(nullptr), position_(position), orientation_(orientation), scale_(scale), 
+      parent_(parent), name_(name) {
   LOG(DEBUG) << "Creating ScenenNode \"" << name_ << "\"";
 }
 
@@ -34,6 +36,11 @@ void SceneNode::apply(const std::function<void(SceneNode*)>& functor) {
   functor(this);
   for(const auto& child : children_)
     child->apply(functor);
+}
+
+std::string SceneNode::toString() const {
+  auto stringPair = toStringImpl();
+  return core::format("%s[\n%s\n]", stringPair.first, core::indent(stringPair.second));
 }
 
 } // namespace game

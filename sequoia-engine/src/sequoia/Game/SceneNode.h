@@ -17,6 +17,7 @@
 #define SEQUOIA_GAME_SCENENODE_H
 
 #include "sequoia/Game/Export.h"
+#include "sequoia/Game/Mesh.h"
 #include "sequoia/Math/Math.h"
 #include <functional>
 #include <memory>
@@ -31,7 +32,12 @@ namespace game {
 /// @ingroup game
 class SEQUOIA_GAME_API SceneNode : public std::enable_shared_from_this<SceneNode> {
 public:
-  enum SceneNodeKind { SK_Static };
+  enum SceneNodeKind { 
+    SK_Static,
+    SK_StaticLast,
+    SK_Dynamic,
+    SK_DynamicLast
+  };
 
   /// @brief Default constructor
   SceneNode(SceneNodeKind kind, const std::shared_ptr<SceneNode>& parent, const std::string& name,
@@ -42,6 +48,15 @@ public:
 
   /// @name Getter/Setter
   /// @{
+  
+    /// @brief Get the mesh of the node
+  const std::shared_ptr<Mesh>& getMesh() const { return mesh_; }
+
+  /// @brief Set the mesh of the node
+  void setMesh(const std::shared_ptr<Mesh>& mesh) { mesh_ = mesh; }
+  
+  /// @brief Check if the node has a mesh attached
+  bool hasMesh() const { return mesh_ != nullptr; }
 
   /// @brief Get the name of the node
   const std::string& getName() const { return name_; }
@@ -68,7 +83,10 @@ public:
   void setScale(float scale) { scale_ = scale; }
 
   /// @brief Add a child to the scene node
-  void addChild(const std::shared_ptr<SceneNode>& child) { children_.emplace_back(child); }
+  void addChild(const std::shared_ptr<SceneNode>& child) { 
+    children_.emplace_back(child); 
+    children_.back()->setParent(shared_from_this());
+  }
 
   /// @brief Check if the child has any children
   bool hasChildren() const { return !children_.empty(); }
@@ -101,23 +119,28 @@ public:
 
   /// @brief Clone the scene node and all its children
   virtual std::shared_ptr<SceneNode> clone() = 0;
-
+  
   /// @brief Convert the node to string
-  virtual std::string toString() const = 0;
+  virtual std::string toString() const;
 
   /// @brief Get the kind of the ScenenNode
   SceneNodeKind getKind() const { return kind_; }
 
   /// @}
 
+protected:
+  /// @brief Implementation of `toString returns stringified members and title 
+  virtual std::pair<std::string, std::string> toStringImpl() const = 0;
+
 private:
+  /// Type of node
   SceneNodeKind kind_;
 
   /// List of children
   std::vector<std::shared_ptr<SceneNode>> children_;
 
-  /// Parent node (if any)
-  std::weak_ptr<SceneNode> parent_;
+  /// Mesh of the node (if any)
+  std::shared_ptr<Mesh> mesh_;
 
   /// Position of the node
   math::vec3 position_;
@@ -127,6 +150,9 @@ private:
 
   /// Scaling factor
   float scale_;
+
+  /// Parent node (if any)
+  std::weak_ptr<SceneNode> parent_;
 
   /// Name of the node
   std::string name_;
