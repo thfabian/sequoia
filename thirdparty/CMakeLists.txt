@@ -18,6 +18,7 @@ option(USE_SYSTEM_BOOST "Should we use the system Boost?" OFF)
 option(USE_SYSTEM_GLBINDING "Should we use the system glbinding?" OFF)
 option(USE_SYSTEM_GLFW "Should we use the system GLFW?" OFF)
 option(USE_SYSTEM_GLM "Should we use the system glm?" OFF)
+option(USE_SYSTEM_GLSLANG "Should we use the system glslang?" OFF)
 option(USE_SYSTEM_GTEST "Should we use the system GTest?" OFF)
 option(USE_SYSTEM_TBB "Should we use the system TBB?" OFF)
 
@@ -83,6 +84,19 @@ if(USE_SYSTEM_GLM)
   endif()
 else()
   include(External_glm)
+endif()
+
+#
+# glslang
+#
+if(USE_SYSTEM_GLSLANG)
+  find_package(GLSLangValidator)
+  if(DEFINED GLSLANGVALIDATOR_EXECUTABLE)
+    list(APPEND Sequoia_THIRDPARTYLIBS_ARGS 
+         "-DGLSLANGVALIDATOR_EXECUTABLE:PATH=${GLSLANGVALIDATOR_EXECUTABLE}")
+  endif()
+else()
+  include(External_glslang)
 endif()
 
 #

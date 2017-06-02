@@ -60,6 +60,14 @@ set(glm_url "https://github.com/g-truc/glm/archive/${glm_download_version}.tar.g
 set(glm_md5 "26ca8792038da90f67301fa0a3d5b693")
 
 #
+# glslang
+#
+list(APPEND projects glslang)
+set(glslang_version "Overload400-PrecQual.2000")
+set(glslang_url "https://github.com/thfabian/glslang/archive/${glslang_version}.tar.gz")
+set(glslang_md5 "b05a47fe9bfdb6b355515987d4c0f68c")
+
+#
 # GTest
 #
 list(APPEND projects gtest)

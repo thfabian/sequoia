@@ -100,7 +100,7 @@ GLRenderWindow::GLRenderWindow(GLRenderSystem* renderSystem,
 
   if(!window_)
     SEQUOIA_THROW(RenderSystemException,
-                  "failed to initialize GLFW window, requested OpenGL (%i. %i)",
+                  "failed to initialize GLFW window, requested OpenGL (%i.%i)",
                   windowHints.GLMajorVersion, windowHints.GLMinorVersion);
 
   // Move the window to the correct monitor (fullscreen windows are already moved correctly)

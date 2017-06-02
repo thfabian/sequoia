@@ -69,6 +69,7 @@ include(Addglbinding)
 include(AddGLFW)
 include(Addglm)
 include(AddGTest)
+include(AddGLSLangValidator)
 include(AddOpenGL)
 include(AddTBB)
 include(AddPython3)
@@ -97,6 +98,7 @@ sequoia_report_result(
   "${SEQUOIA_GLBINDING_INFO_STR}"
   "${SEQUOIA_GLFW_INFO_STR}"
   "${SEQUOIA_GLM_INFO_STR}"
+  "${SEQUOIA_GLSLANGVALIDATOR_INFO_STR}"
   "${SEQUOIA_GTEST_INFO_STR}"
   "${SEQUOIA_OPENGL_INFO_STR}"
   "${SEQUOIA_PYTHON3_INFO_STR}"

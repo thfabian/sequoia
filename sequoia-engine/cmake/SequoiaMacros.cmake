@@ -222,6 +222,10 @@ macro(sequoia_set_cxx_flags)
     
     sequoia_check_and_set_cxx_flag("/EHsc" HAVE_MSVC_EHSC)
     sequoia_check_and_set_arch_flag()
+
+    # Optimization
+    if(SEQUOIA_OPTIMIZE)
+    endif()
     
     # C4244 - conversion from 'type1' to 'type2', possible loss of data
     sequoia_check_and_set_cxx_flag("/wd4244" HAVE_MSVC_WD4244)
@@ -240,8 +244,12 @@ macro(sequoia_set_cxx_flags)
     sequoia_check_and_set_cxx_flag("-march=native" HAVE_GCC_MARCH_NATIVE)
     
     # Optimization
-    sequoia_check_and_set_cxx_flag("-ftree-vectorize" HAVE_GCC_TREE_VECTORIZE)
-    sequoia_check_and_set_cxx_flag("-flto" HAVE_GCC_LTO)
+    if(SEQUOIA_OPTIMIZE)
+      sequoia_check_and_set_cxx_flag("-ftree-vectorize" HAVE_GCC_TREE_VECTORIZE)
+      sequoia_check_and_set_cxx_flag("-flto" HAVE_GCC_LTO)
+      sequoia_check_and_set_cxx_flag("-ffast-math" HAVE_GCC_FAST_MATH)
+      sequoia_check_and_set_cxx_flag("-fomit-frame-pointer" HAVE_GCC_OMIT_FRAME_POINTER)
+    endif()
 
     # Warnings
     sequoia_check_and_set_cxx_flag("-Wall" HAVE_GCC_WALL)
