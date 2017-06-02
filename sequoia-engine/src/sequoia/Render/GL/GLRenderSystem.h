@@ -94,7 +94,7 @@ public:
   /// @brief Get the renderer of `target`
   GLRenderer* getRenderer(RenderTarget* target) const noexcept;
 
-  SEQUOIA_GL_OBJECT(RenderSystem);
+  SEQUOIA_GL_OBJECT(RenderSystem)
 };
 
 } // namespace render

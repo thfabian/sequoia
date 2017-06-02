@@ -39,7 +39,6 @@ class SEQUOIA_RENDER_API GLRenderWindow : public RenderWindow {
 
   int windowWidth_;
   int windowHeight_;
-  bool IOEnabled_;
 
   std::unique_ptr<GLRenderer> renderer_;
   std::unique_ptr<GLInputSystem> inputSystem_;
@@ -88,9 +87,6 @@ public:
 
   /// @brief Get the associated OpenGL context of this window
   GLInputSystem* getInputSystem();
-
-  /// @brief Check if the window is IO enabled
-  bool isIOEnabled() const;
 
   /// @brief Called upon resizing the window
   void resizeCallback(int width, int height);

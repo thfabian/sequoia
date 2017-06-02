@@ -137,8 +137,7 @@ GLRenderWindow::~GLRenderWindow() {
   LOG(INFO) << "Terminating OpenGL window " << this << " ...";
 
   renderer_.reset();
-  if(IOEnabled_)
-    inputSystem_.reset();
+  inputSystem_.reset();
 
   StaticWindowMap.erase(window_);
   glfwDestroyWindow(window_);
@@ -186,17 +185,15 @@ void GLRenderWindow::init() {
   renderer_ = std::make_unique<GLRenderer>(this);
   renderSystem_->registerRenderer(this, renderer_.get());
 
-  if(IOEnabled_) {
-    LOG(INFO) << "Registering IO callbacks ...";
+  LOG(INFO) << "Registering IO callbacks ...";
 
-    inputSystem_ = std::make_unique<GLInputSystem>(this);
-    renderSystem_->registerInputSystem(this, inputSystem_.get());
+  inputSystem_ = std::make_unique<GLInputSystem>(this);
+  renderSystem_->registerInputSystem(this, inputSystem_.get());
 
-    glfwSetKeyCallback(window_, GLRenderWindow::keyCallbackDispatch);
-    glfwSetMouseButtonCallback(window_, GLRenderWindow::mouseCallbackDispatch);
+  glfwSetKeyCallback(window_, GLRenderWindow::keyCallbackDispatch);
+  glfwSetMouseButtonCallback(window_, GLRenderWindow::mouseCallbackDispatch);
 
-    LOG(INFO) << "Done registering IO callbacks";
-  }
+  LOG(INFO) << "Done registering IO callbacks";
 }
 
 GLFWwindow* GLRenderWindow::getGLFWwindow() { return window_; }
@@ -204,8 +201,6 @@ GLFWwindow* GLRenderWindow::getGLFWwindow() { return window_; }
 GLRenderer* GLRenderWindow::getRenderer() { return renderer_.get(); }
 
 GLInputSystem* GLRenderWindow::getInputSystem() { return inputSystem_.get(); }
-
-bool GLRenderWindow::isIOEnabled() const { return IOEnabled_; }
 
 } // namespace render
 

@@ -123,7 +123,7 @@ public:
   /// @brief Destroy the program
   friend SEQUOIA_RENDER_API void destroyGLProgram(GLProgram* program) noexcept;
 
-  SEQUOIA_GL_OBJECT(Program);
+  SEQUOIA_GL_OBJECT(Program)
 
 private:
   friend class GLProgramManager;

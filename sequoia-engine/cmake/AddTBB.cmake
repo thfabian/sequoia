@@ -21,6 +21,7 @@ endif()
 
 set(components tbb)
 find_package(TBB COMPONENTS ${components} REQUIRED)
+include_directories(SYSTEM ${TBB_INCLUDE_DIRS})
 
 set(tbb_libs)
 set(tbb_dlls)

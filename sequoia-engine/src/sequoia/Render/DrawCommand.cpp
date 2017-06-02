@@ -56,7 +56,7 @@ static const char* drawModeToString(RenderState::DrawModeKind mode) {
   }
 }
 
-std::string RenderState::toString() const noexcept {
+std::string RenderState::toString() const {
   return core::format("RenderState["
                       "  DepthTest=%s,\n"
                       "  DepthFunc=%s,\n"
@@ -65,7 +65,7 @@ std::string RenderState::toString() const noexcept {
                       DepthTest, depthFuncToString(DepthFunc), drawModeToString(DrawMode));
 }
 
-std::string DrawCommand::toString() const noexcept {
+std::string DrawCommand::toString() const {
   return core::format("DrawCommand["
                       "  program=%s,\n"
                       "  vao=%s,\n"

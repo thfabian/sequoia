@@ -16,6 +16,7 @@
 #ifndef SEQUOIA_CORE_STRINGUTIL_H
 #define SEQUOIA_CORE_STRINGUTIL_H
 
+#include "sequoia/Core/Export.h"
 #include <algorithm>
 #include <iterator>
 #include <sstream>
@@ -27,7 +28,7 @@ namespace core {
 
 /// @brief Indent a string by the specified number of spaces
 /// @ingroup core
-extern std::string indent(const std::string& string, int amount = 2);
+SEQUOIA_CORE_API extern std::string indent(const std::string& string, int amount = 2);
 
 namespace internal {
 

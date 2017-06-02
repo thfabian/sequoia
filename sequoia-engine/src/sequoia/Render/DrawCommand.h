@@ -61,7 +61,7 @@ struct SEQUOIA_RENDER_API RenderState {
   DrawModeKind DrawMode = DM_Triangles;
 
   /// @brief Convert to string
-  std::string toString() const noexcept;
+  std::string toString() const;
 };
 
 /// @brief Instructions on how to render the VertexArrayObject
@@ -85,7 +85,7 @@ public:
   const math::mat4& getModelMatrix() const noexcept { return modelMat_; }
 
   /// @brief Convert draw command to string
-  std::string toString() const noexcept;
+  std::string toString() const;
 
 private:
   Program* program_;

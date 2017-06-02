@@ -16,6 +16,7 @@
 #ifndef SEQUOIA_RENDER_GL_GLVERTEXATTRIBUTE_H
 #define SEQUOIA_RENDER_GL_GLVERTEXATTRIBUTE_H
 
+#include "sequoia/Render/Export.h"
 #include <functional>
 
 namespace sequoia {
@@ -24,8 +25,8 @@ namespace render {
 
 /// @brief OpenGL vertex attributes
 /// @ingroup gl
-struct GLVertexAttribute {
-
+struct SEQUOIA_RENDER_API GLVertexAttribute {
+  
   /// @brief OpenGL ids of known vertex attributes
   enum Attribute : unsigned int {
     Position = 0,

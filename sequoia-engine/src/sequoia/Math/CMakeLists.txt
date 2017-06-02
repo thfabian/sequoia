@@ -21,5 +21,6 @@ sequoia_add_library(
           Export.h
           Math.h
           MathFwd.h
-  DEPENDS ${SEQUOIA_EXTERNAL_LIBRARIES}
+  DEPENDS SequoiaCore
+          ${SEQUOIA_EXTERNAL_LIBRARIES}
 )

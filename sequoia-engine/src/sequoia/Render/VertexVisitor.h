@@ -115,8 +115,9 @@ struct RunFunctorImpl<false> {
 } // namespace internal
 
 /// @brief Run the given `functor` on the vertex data
+/// @ingroup render
 template <class VertexType>
-class SEQUOIA_RENDER_API VertexVisitorRunFunctor : public VertexVisitor {
+class VertexVisitorRunFunctor : public VertexVisitor {
   const std::function<void(VertexType*)>& functor_;
 
 public:

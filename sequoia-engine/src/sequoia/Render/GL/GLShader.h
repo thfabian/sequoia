@@ -96,7 +96,7 @@ public:
   /// `InMemory`)
   friend SEQUOIA_RENDER_API void destroyGLShader(GLShader* shader) noexcept;
 
-  SEQUOIA_GL_OBJECT(Shader);
+  SEQUOIA_GL_OBJECT(Shader)
 };
 
 } // namespace render
