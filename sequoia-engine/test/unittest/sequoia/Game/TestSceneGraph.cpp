@@ -13,6 +13,7 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
+#include "sequoia/Game/Scene.h"
 #include "sequoia/Game/SceneGraph.h"
 #include "sequoia/Unittest/GameTest.h"
 #include <gtest/gtest.h>
@@ -25,10 +26,11 @@ namespace {
 
 class SceneGraphTest : public GameTest {};
 
-TEST_F(SceneGraphTest, Construction) { 
-  Game& game = Game::getSingleton(); 
-  
-  std::cout << sizeof(SceneNode) << std::endl;
+TEST_F(SceneGraphTest, Construction) {
+  std::shared_ptr<SceneGraph> graph = std::make_shared<SceneGraph>();
+
+  graph->insert(SceneGraph::create<SceneNode>("TestNode"));
+  EXPECT_EQ(graph->size(), 1);
 }
 
 } // anonymous namespace

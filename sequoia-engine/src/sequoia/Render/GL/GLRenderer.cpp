@@ -15,6 +15,7 @@
 
 #include "sequoia/Core/Logging.h"
 #include "sequoia/Core/StringUtil.h"
+#include "sequoia/Core/Casting.h"
 #include "sequoia/Render/Camera.h"
 #include "sequoia/Render/DrawCommandList.h"
 #include "sequoia/Render/GL/GL.h"
@@ -53,9 +54,8 @@ static const char* getGLType(GLenum type) {
   }
 }
 
-static void GLDebugLogging(GLenum source, GLenum type, GLuint id, GLenum severity,
-                           GLsizei length, const GLchar* message,
-                           const void* userParam) {
+static void GLDebugLogging(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length,
+                           const GLchar* message, const void* userParam) {
   switch(severity) {
   case GL_DEBUG_SEVERITY_LOW:
     LOG(INFO) << "GL_" << getGLType(type) << ": " << message;
@@ -160,9 +160,13 @@ void GLRenderer::render() {
       drawCommand = drawCommandList->next()) {
 
     // Compute the full model view projection matrix
-    glm::mat4 matModelViewProjection = matViewProj * drawCommand->getModelMatrix();
+    glm::mat4 u_ModelViewProjection = matViewProj * drawCommand->getModelMatrix();
 
     // Update the OpenGL state-machine
+
+    // Set the uniforms
+    GLProgram* program = dyn_cast<GLProgram>(drawCommand->getProgram());
+    program->setUniformVariable("u_ModelViewProjection", u_ModelViewProjection);
   }
 }
 

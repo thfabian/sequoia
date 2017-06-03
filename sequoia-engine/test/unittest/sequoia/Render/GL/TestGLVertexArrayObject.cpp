@@ -34,7 +34,8 @@ class GLVertexArrayObjectTest : public GLRenderTest {};
 
 template <class VertexDataType>
 std::unique_ptr<VertexData> makeVertexData(std::size_t numVertices, std::size_t numIndices) {
-  return std::make_unique<VertexData>(VertexDataType::getLayout(), numVertices, numIndices, true);
+  return std::make_unique<VertexData>(VertexDataType::getLayout(), VertexData::DM_Triangles,
+                                      numVertices, numIndices, true);
 }
 
 TEST_F(GLVertexArrayObjectTest, Vertex3D) {

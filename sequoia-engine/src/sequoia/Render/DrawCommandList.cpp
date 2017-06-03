@@ -24,8 +24,8 @@ namespace render {
 std::string DrawCommandListDefault::toString() const noexcept {
   std::stringstream ss;
   ss << "DrawCommandListDefault[\n";
-  for(DrawCommand* cmd : commands_)
-    ss << core::indent(cmd->toString()) << "\n";
+  for(const DrawCommand& cmd : commands_)
+    ss << core::indent(cmd.toString()) << "\n";
   ss << "]";
   return ss.str();
 }

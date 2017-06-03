@@ -21,7 +21,7 @@ using namespace sequoia::render;
 namespace {
 
 TEST(VertexDataTest, WriteAndRead) {
-  VertexData data(Vertex3D::getLayout(), 4, 0, true);
+  VertexData data(Vertex3D::getLayout(), VertexData::DM_Triangles, 4, 0, true);
 
   std::size_t numVertices = data.getNumVertices();
 

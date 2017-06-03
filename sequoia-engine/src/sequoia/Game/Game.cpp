@@ -19,10 +19,12 @@
 #include "sequoia/Core/StringSwitch.h"
 #include "sequoia/Game/Game.h"
 #include "sequoia/Game/MeshManager.h"
+#include "sequoia/Game/Scene.h"
 #include "sequoia/Render/Camera.h"
 #include "sequoia/Render/Exception.h"
 #include "sequoia/Render/RenderSystem.h"
 #include "sequoia/Render/RenderWindow.h"
+#include "sequoia/Render/DrawCommandList.h"
 
 namespace sequoia {
 
@@ -30,7 +32,7 @@ SEQUOIA_DECLARE_SINGLETON(game::Game);
 
 namespace game {
 
-Game::Game() : renderSystem_(nullptr), mainWindow_(nullptr), mainCamera_(nullptr) {}
+Game::Game() : renderSystem_(nullptr), mainWindow_(nullptr), scene_(nullptr) {}
 
 Game::~Game() { cleanup(); }
 
@@ -39,7 +41,12 @@ void Game::run() {
 
   // Start main-loop
   while(!mainWindow_->isClosed()) {
-
+    
+    // Set the draw commands
+    render::DrawCommandList* list = mainWindow_->getDrawCommandList().get();
+    list->clear();
+    scene_->updateDrawCommandList(list);
+    
     // Start rendering all tender targets
     renderSystem_->renderOneFrame();
 
@@ -83,14 +90,9 @@ void Game::init(bool hideWindow) {
 
     mainWindow_ = renderSystem_->createWindow(hint);
 
-    // Create the camera
-    mainCamera_ = std::make_unique<render::Camera>(math::vec3(0, 1, 0));
-    mainCamera_->setEye(math::vec3(4, 3, 3));
-    mainCamera_->setCenter(math::vec3(0, 0, 0));
-
     // Set the viewport of the mainwindow
-    auto viewport = std::make_shared<render::Viewport>(
-        mainCamera_.get(), mainWindow_, 0, 0, mainWindow_->getWidth(), mainWindow_->getHeight());
+    auto viewport = std::make_shared<render::Viewport>(mainWindow_, 0, 0, mainWindow_->getWidth(),
+                                                       mainWindow_->getHeight());
     mainWindow_->setViewport(viewport);
 
     // Initialize the main-window
@@ -103,24 +105,20 @@ void Game::init(bool hideWindow) {
     // Initialize the mesh manager
     meshManager_ = std::make_unique<MeshManager>();
 
+    // Initialize the startup scene
+    sceneList_.emplace_back(std::make_shared<Scene>());
+    scene_ = sceneList_.back().get();
+
+    // TODO: This is not optimal. The Viewport should automatically be informed if the camera of
+    // the scene changes
+    mainWindow_->getViewport()->setCamera(scene_->getCamera());
+
   } catch(render::RenderSystemException& e) {
     ErrorHandler::getSingleton().fatal(e.what());
   }
 
   LOG(INFO) << "Done initializing Game";
 }
-
-void Game::keyboardEvent(const render::KeyboardEvent& event) {}
-
-render::RenderWindow* Game::getMainWindow() { return mainWindow_; }
-
-render::RenderTarget* Game::getMainRenderTarget() {
-  return static_cast<render::RenderTarget*>(mainWindow_);
-}
-
-MeshManager* Game::getMeshManager() { return meshManager_.get(); }
-
-void Game::mouseEvent(const render::MouseEvent& event) {}
 
 void Game::cleanup() {
   LOG(INFO) << "Terminating Game ...";
@@ -130,6 +128,20 @@ void Game::cleanup() {
 
   LOG(INFO) << "Done terminating Game";
 }
+
+void Game::keyboardEvent(const render::KeyboardEvent& event) {}
+
+void Game::mouseEvent(const render::MouseEvent& event) {}
+
+MeshManager* Game::getMeshManager() const { return meshManager_.get(); }
+
+render::RenderWindow* Game::getMainWindow() const { return mainWindow_; }
+
+render::RenderTarget* Game::getMainRenderTarget() const {
+  return static_cast<render::RenderTarget*>(mainWindow_);
+}
+
+Scene* Game::getScene() const { return scene_; }
 
 } // namespace game
 

@@ -187,9 +187,9 @@ void GLVertexArrayObject::freeVertexDataDevice() {
 
 std::string GLVertexArrayObject::toString() const {
   return core::format("GLVertexArrayObject[\n"
-                      "  vaoID=%s,\n"
-                      "  eboID=%s,\n"
-                      "  vboID=%s\n"
+                      "  vaoID = %i,\n"
+                      "  eboID = %i,\n"
+                      "  vboID = %i\n"
                       "]",
                       vaoID_, eboID_, vboID_);
 }

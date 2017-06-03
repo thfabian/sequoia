@@ -31,11 +31,18 @@ std::string SceneGraph::toString() const {
 std::string SceneGraph::toDot() const { return std::string(); }
 
 void SceneGraph::dump() const {
-  auto stringify = [](SceneNode* node) { std::cout << node->toString() << "\n"; };
-  apply(stringify);
+  for(const auto& node : nodes_)
+    std::cout << node->toString() << "\n";
 }
 
 void SceneGraph::clear() { nodes_.clear(); }
+
+std::size_t SceneGraph::size() const {
+  std::size_t s = 0;
+  auto getSize = [&s](SceneNode* node) { ++s; };
+  apply(getSize);
+  return s;
+}
 
 } // namespace game
 

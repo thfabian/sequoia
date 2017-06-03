@@ -59,15 +59,15 @@ class SEQUOIA_RENDER_API Viewport : public Listenable<ViewportListener> {
 
 public:
   /// @brief Initialize the view port
-  ///
-  /// This register the camera as a Viewprot listener and immedialty notfies the camer with a
-  /// `viewportGeometryChanged`
-  Viewport(Camera* camera, RenderTarget* target, int x, int y, int width, int height);
+  Viewport(RenderTarget* target, int x, int y, int width, int height);
   virtual ~Viewport() {}
 
-  /// @brief Get/Set the associated camera
-  Camera* getCamera() const;
+  /// @brief This register the camera as a Viewprot listener and immedialty notfies the camera
+  /// with a `viewportGeometryChanged`
   void setCamera(Camera* camera);
+
+  /// @brief Get the Camera
+  Camera* getCamera() const;
 
   /// @brief Get the associated render target
   RenderTarget* getRenderTarget() const;

@@ -40,8 +40,8 @@ class SEQUOIA_RENDER_API Program : public RenderSystemObject,
                                    public NonCopyable,
                                    public std::enable_shared_from_this<Program> {
 public:
-  virtual ~Program();
   Program(RenderSystemKind kind);
+  virtual ~Program();
 
   /// @brief Get a log of the program
   virtual std::string getLog() const = 0;

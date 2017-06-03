@@ -21,21 +21,17 @@ namespace sequoia {
 
 namespace math {
 
-std::ostream& operator<<(std::ostream& os, const AxisAlignedBox& aab) {
-  return (os << aab.toString());
-}
-
 std::string AxisAlignedBox::toString() const {
   if(extent_ != EK_Finite)
     return core::format("AxisAlignedBox[\n"
-                        "  extent=%s\n"
+                        "  extent = %s\n"
                         "]",
                         extent_ == EK_Null ? "null" : "infinite");
   else
     return core::format("AxisAlignedBox[\n"
-                        "  extent=finite,\n"
-                        "  minimum=%s,\n"
-                        "  maximum=%s\n"
+                        "  extent = finite,\n"
+                        "  minimum = %s,\n"
+                        "  maximum = %s\n"
                         "]",
                         minimum_, maximum_);
 }

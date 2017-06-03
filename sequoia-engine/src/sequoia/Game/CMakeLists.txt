@@ -22,6 +22,8 @@ sequoia_add_library(
           Mesh.cpp
           MeshManager.h
           MeshManager.cpp
+          Scene.h
+          Scene.cpp
           SceneGraph.h
           SceneGraph.cpp
           SceneNode.h

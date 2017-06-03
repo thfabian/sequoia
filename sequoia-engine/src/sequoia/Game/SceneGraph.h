@@ -43,10 +43,9 @@ public:
 
   /// @brief Insert a new scenen `node` into the graph
   void insert(const std::shared_ptr<SceneNode>& node) { nodes_.emplace_back(node); }
-
+  
   /// @brief Remove the `node` (and all its children) from the graph
-  template <class T, class... Args>
-  void add(const std::shared_ptr<SceneNode>& node) {
+  void remove(const std::shared_ptr<SceneNode>& node) {
     nodes_.erase(std::remove(nodes_.begin(), nodes_.end(), node), nodes_.end());
   }
 
@@ -58,6 +57,9 @@ public:
 
   /// @brief Clear the graph
   void clear();
+  
+  /// @brief Get the number of nodes in the graph
+  std::size_t size() const;
 
   /// @brief Convert the graph to string
   std::string toString() const;

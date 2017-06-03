@@ -13,9 +13,9 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
+#include "sequoia/Core/Format.h"
 #include "sequoia/Core/StringUtil.h"
 #include "sequoia/Core/Unreachable.h"
-#include "sequoia/Core/Format.h"
 #include "sequoia/Render/DrawCommand.h"
 #include "sequoia/Render/Program.h"
 #include "sequoia/Render/VertexArrayObject.h"
@@ -47,22 +47,12 @@ static const char* depthFuncToString(RenderState::DepthFuncKind func) {
   }
 }
 
-static const char* drawModeToString(RenderState::DrawModeKind mode) {
-  switch(mode) {
-  case RenderState::DrawModeKind::DM_Triangles:
-    return "Triangles";
-  default:
-    sequoia_unreachable("invalid DrawModeKind");
-  }
-}
-
 std::string RenderState::toString() const {
   return core::format("RenderState["
                       "  DepthTest=%s,\n"
                       "  DepthFunc=%s,\n"
-                      "  DrawMode=%s\n"
                       "]",
-                      DepthTest, depthFuncToString(DepthFunc), drawModeToString(DrawMode));
+                      DepthTest, depthFuncToString(DepthFunc));
 }
 
 std::string DrawCommand::toString() const {

@@ -18,7 +18,6 @@
 #include "sequoia/Core/StringUtil.h"
 #include "sequoia/Game/Mesh.h"
 #include "sequoia/Render/VertexVisitor.h"
-#include <iostream>
 
 namespace sequoia {
 
@@ -32,7 +31,7 @@ void Mesh::accept(render::VertexVisitor& visitor) const { data_->getLayout()->ac
 const std::string& Mesh::getName() const { return name_; }
 
 std::string Mesh::toString() const {
-  return core::format("Mesh["
+  return core::format("Mesh[\n"
                       "  name = %s,\n"
                       "  data = %s\n"
                       "]",

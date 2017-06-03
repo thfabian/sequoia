@@ -217,9 +217,6 @@ public:
   /// @brief Convert to string
   std::string toString() const;
 
-  /// @brief Convert to stream
-  friend SEQUOIA_MATH_API std::ostream& operator<<(std::ostream& os, const AxisAlignedBox& aabb);
-
 private:
   vec3 minimum_;
   vec3 maximum_;

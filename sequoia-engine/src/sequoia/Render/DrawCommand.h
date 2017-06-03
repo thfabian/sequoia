@@ -46,19 +46,11 @@ struct SEQUOIA_RENDER_API RenderState {
     DF_Always        ///< Always passes
   };
 
-  /// @brief Draw mode
-  enum DrawModeKind {
-    DM_Triangles = 0 ///< Treats each triplet of vertices as an independent triangle
-  };
-
   /// Enable Z-Buffer
   bool DepthTest = true;
 
   /// Function to fill the Z-Buffer
   DepthFuncKind DepthFunc = DF_Less;
-
-  /// Mode of drawing
-  DrawModeKind DrawMode = DM_Triangles;
 
   /// @brief Convert to string
   std::string toString() const;
@@ -70,7 +62,7 @@ class SEQUOIA_RENDER_API DrawCommand {
 public:
   DrawCommand(Program* program, VertexArrayObject* vao, RenderState* state,
               const math::mat4& modelMat)
-      : program_(program), vao_(vao), state_(state), modelMat_(modelMat) {}
+      : program_(program), vao_(vao), state_(state), modelMatrix_(modelMat) {}
 
   /// @brief Get the program to use
   Program* getProgram() const noexcept { return program_; }
@@ -82,7 +74,7 @@ public:
   RenderState* getRenderState() const noexcept { return state_; }
 
   /// @brief Get the model matrix
-  const math::mat4& getModelMatrix() const noexcept { return modelMat_; }
+  const math::mat4& getModelMatrix() const noexcept { return modelMatrix_; }
 
   /// @brief Convert draw command to string
   std::string toString() const;
@@ -91,7 +83,7 @@ private:
   Program* program_;
   VertexArrayObject* vao_;
   RenderState* state_;
-  math::mat4 modelMat_;
+  math::mat4 modelMatrix_;
 };
 
 } // namespace render

@@ -31,18 +31,24 @@ namespace render {
 /// @ingroup render
 class SEQUOIA_RENDER_API VertexData : public NonCopyable {
 public:
+  /// @brief Draw mode
+  enum DrawModeKind {
+    DM_Triangles = 0 ///< Treats each triplet of vertices as an independent triangle
+  };
+
   /// @brief Allocate memory for `numVertices` and `numIndices`
   ///
   /// @param layout         Layout of the allocated vertices (`numVertices * layout->SizeOf` bytes
   ///                       will be allocated)
+  /// @param drawMode       Mode to draw the vertices
   /// @param numVertices    Number of vertices to allocate
   /// @param numIndices     Number of indices to allocate (`0` disabled indices)
   /// @param shadowBuffer   Keep an exact copy of the device hardware buffer (i.e a shadow buffer)
   ///                       on the host
   ///
   /// @throw RenderException  Out of memory
-  VertexData(const VertexLayout* layout, std::size_t numVertices, std::size_t numIndices,
-             bool shadowBuffer);
+  VertexData(const VertexLayout* layout, DrawModeKind drawMode, std::size_t numVertices,
+             std::size_t numIndices, bool shadowBuffer);
 
   /// @brief Deallocate all memory
   ~VertexData();
@@ -134,7 +140,7 @@ public:
   std::string toString() const;
 
 private:
-  template <bool Write, class FunctorType>
+  template <bool IsWrite, class FunctorType>
   void modifyImpl(FunctorType&& functor) const {
     using FirstArgType = core::function_first_argument_t<FunctorType>;
 
@@ -150,13 +156,13 @@ private:
     std::function<void(VertexType*)> func = functor;
 
     // If we read, we expect `const VertexType*`
-    static_assert(Write ? true : std::is_const<VertexType>::value,
+    static_assert(IsWrite ? true : std::is_const<VertexType>::value,
                   "invalid functor: first argument is missing const for pointer type");
 
     // Run functor
     VertexVisitorRunFunctor<VertexType> visitor(func);
 
-    if(Write)
+    if(IsWrite)
       acceptWriteVisitor(visitor);
     else
       acceptReadVisitor(visitor);
@@ -174,7 +180,7 @@ private:
   /// Device vertex data
   std::unique_ptr<VertexArrayObject> vao_;
 
-  /// Indices
+  /// Host indices
   VertexIndexType* indicesPtr_;
 
   /// Number of indices
@@ -182,6 +188,9 @@ private:
 
   /// Layout of the vertex
   const render::VertexLayout* layout_;
+
+  /// Mode of drawing the vertices
+  DrawModeKind drawMode_;
 
   /// Local bounding box volume
   math::AxisAlignedBox aab_;

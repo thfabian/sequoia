@@ -97,7 +97,8 @@ std::shared_ptr<Mesh> MeshManager::createCube(render::RenderTarget* target, cons
     std::size_t numIndices = 36;
 
     std::shared_ptr<render::VertexData> data(
-        new render::VertexData(render::Vertex3D::getLayout(), numVertices, numIndices, false));
+        new render::VertexData(render::Vertex3D::getLayout(), render::VertexData::DM_Triangles,
+                               numVertices, numIndices, false));
 
     // Set vertex data
     render::Vertex3D* vertex = (render::Vertex3D*)data->getVerticesPtr();

@@ -26,9 +26,18 @@ namespace sequoia {
 
 namespace render {
 
-VertexData::VertexData(const VertexLayout* layout, std::size_t numVertices, std::size_t numIndices,
-                       bool shadowBuffer)
-    : numVertices_(numVertices), numIndices_(numIndices), layout_(layout),
+static const char* drawModeToString(VertexData::DrawModeKind mode) {
+  switch(mode) {
+  case VertexData::DrawModeKind::DM_Triangles:
+    return "Triangles";
+  default:
+    sequoia_unreachable("invalid DrawModeKind");
+  }
+}
+
+VertexData::VertexData(const VertexLayout* layout, DrawModeKind drawMode, std::size_t numVertices,
+                       std::size_t numIndices, bool shadowBuffer)
+    : numVertices_(numVertices), numIndices_(numIndices), layout_(layout), drawMode_(drawMode),
       shadowBuffer_(shadowBuffer) {
 
   verticesPtr_ = memory::aligned_alloc(numVertices_ * layout_->SizeOf);
@@ -98,12 +107,13 @@ std::string VertexData::toString() const {
                       "  vao = %s,\n"
                       "  numIndices = %s,\n"
                       "  layout = %s,\n"
+                      "  drawMode = %s,\n"
                       "  aab = %s,\n"
                       "  shadowBuffer = %s\n"
                       "]",
                       numVertices_, vao_ ? core::indent(vao_->toString()) : "null", numIndices_,
-                      core::indent(layout_->toString()), core::indent(aab_.toString()),
-                      shadowBuffer_ ? "true" : "false");
+                      core::indent(layout_->toString()), drawModeToString(drawMode_),
+                      core::indent(aab_.toString()), shadowBuffer_ ? "true" : "false");
 }
 
 } // namespace render

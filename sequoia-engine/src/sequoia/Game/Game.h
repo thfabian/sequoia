@@ -28,6 +28,7 @@ namespace sequoia {
 namespace game {
 
 class MeshManager;
+class Scene;
 
 /// @brief Main class holding all game and rendering related objects and running the main-loop
 /// @ingroup game
@@ -45,8 +46,11 @@ class SEQUOIA_GAME_API Game : public Singleton<Game>,
   /// Reference to the main window
   render::RenderWindow* mainWindow_;
 
-  // TODO: should be part of the scene
-  std::unique_ptr<render::Camera> mainCamera_;
+  /// List of scenes
+  std::vector<std::shared_ptr<Scene>> sceneList_;
+
+  /// Currently active scene
+  Scene* scene_;
 
 public:
   Game();
@@ -71,14 +75,16 @@ public:
   /// @}
 
   /// @brief Get the mesh manager
-  MeshManager* getMeshManager();
+  MeshManager* getMeshManager() const;
 
   /// @brief Get the main RenderWindow
-  render::RenderWindow* getMainWindow();
-  
+  render::RenderWindow* getMainWindow() const;
+
   /// @brief Get the main RenderTarget
-  render::RenderTarget* getMainRenderTarget();
-  
+  render::RenderTarget* getMainRenderTarget() const;
+
+  /// @brief Get the main Scene
+  Scene* getScene() const;
 };
 
 } // namespace game

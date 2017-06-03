@@ -15,14 +15,16 @@
 
 #include "sequoia/Core/Assert.h"
 #include "sequoia/Render/Camera.h"
+#include "sequoia/Render/DrawCommandList.h"
 #include "sequoia/Render/RenderTarget.h"
 
 namespace sequoia {
 
 namespace render {
 
-RenderTarget::RenderTarget(RenderTargetKind kind)
-    : kind_(kind), active_(true), viewport_(nullptr) {}
+RenderTarget::RenderTarget(RenderTargetKind kind) : kind_(kind), active_(true), viewport_(nullptr) {
+  list_ = std::make_shared<render::DrawCommandListDefault>();
+}
 
 bool RenderTarget::isActive() const { return active_; }
 

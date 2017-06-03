@@ -32,28 +32,23 @@ namespace game {
 /// @ingroup game
 class SEQUOIA_GAME_API SceneNode : public std::enable_shared_from_this<SceneNode> {
 public:
-  enum SceneNodeKind { 
-    SK_Static,
-    SK_StaticLast,
-    SK_Dynamic,
-    SK_DynamicLast
-  };
+  enum SceneNodeKind { SK_SceneNode, SK_Static, SK_StaticLast, SK_Dynamic, SK_DynamicLast };
 
   /// @brief Default constructor
-  SceneNode(SceneNodeKind kind, const std::string& name);
+  SceneNode(const std::string& name, SceneNodeKind kind = SK_SceneNode);
   SceneNode(const SceneNode&);
 
   virtual ~SceneNode();
 
   /// @name Getter/Setter
   /// @{
-  
-    /// @brief Get the mesh of the node
+
+  /// @brief Get the mesh of the node
   const std::shared_ptr<Mesh>& getMesh() const { return mesh_; }
 
   /// @brief Set the mesh of the node
   void setMesh(const std::shared_ptr<Mesh>& mesh) { mesh_ = mesh; }
-  
+
   /// @brief Check if the node has a mesh attached
   bool hasMesh() const { return mesh_ != nullptr; }
 
@@ -67,9 +62,9 @@ public:
   const math::vec3& getPosition() const { return position_; }
 
   /// @brief Set the position (in world space)
-  void setPosition(const math::vec3& position) { 
+  void setPosition(const math::vec3& position) {
     modelMatrixIsDirty_ = true;
-    position_ = position; 
+    position_ = position;
   }
 
   /// @brief Get the orientation
@@ -78,29 +73,28 @@ public:
   /// @brief Set the orientation (in world space)
   void setOrientation(const math::quat& orientation) {
     modelMatrixIsDirty_ = true;
-    orientation_ = orientation; }
-
-  /// @brief Get the scaling factor
-  float getScale() const {
-    return scale_; 
+    orientation_ = orientation;
   }
 
+  /// @brief Get the scaling factor
+  float getScale() const { return scale_; }
+
   /// @brief Set the scaling factor
-  void setScale(float scale) { 
+  void setScale(float scale) {
     modelMatrixIsDirty_ = true;
-    scale_ = scale; 
+    scale_ = scale;
   }
 
   /// @brief Get the model matrix
-  const math::mat4& getModelMatrix() { 
+  const math::mat4& getModelMatrix() {
     if(modelMatrixIsDirty_)
       computeModelMatrix();
-    return modelMatrix_; 
+    return modelMatrix_;
   }
 
   /// @brief Add a child to the scene node
-  void addChild(const std::shared_ptr<SceneNode>& child) { 
-    children_.emplace_back(child); 
+  void addChild(const std::shared_ptr<SceneNode>& child) {
+    children_.emplace_back(child);
     children_.back()->setParent(shared_from_this());
   }
 
@@ -135,7 +129,7 @@ public:
 
   /// @brief Clone the scene node and all its children
   virtual std::shared_ptr<SceneNode> clone();
-  
+
   /// @brief Convert the node to string
   std::string toString() const;
 
@@ -145,7 +139,7 @@ public:
   /// @}
 
 protected:
-  /// @brief Implementation of `toString` returns stringified members and title 
+  /// @brief Implementation of `toString` returns stringified members and title
   virtual std::pair<std::string, std::string> toStringImpl() const;
 
   /// @brief Compute the model matrix

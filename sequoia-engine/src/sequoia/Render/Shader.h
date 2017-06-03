@@ -46,8 +46,8 @@ public:
     ST_Fragment
   };
 
-  virtual ~Shader();
   Shader(RenderSystemKind kind, ShaderType type);
+  virtual ~Shader();
 
   /// @brief Get the type of the shader
   ShaderType getType() const;

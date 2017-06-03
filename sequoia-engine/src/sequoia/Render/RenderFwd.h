@@ -25,6 +25,7 @@ class Program;
 class RenderSystem;
 class RenderWindow;
 class DrawCommand;
+class DrawCommandList;
 class RenderTarget;
 class Shader;
 class VertexArrayObject;

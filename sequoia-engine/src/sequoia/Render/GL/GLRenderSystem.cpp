@@ -26,8 +26,6 @@
 #include "sequoia/Render/GL/GLShaderManager.h"
 #include "sequoia/Render/GL/GLVertexArrayObject.h"
 
-#include <iostream>
-
 namespace sequoia {
 
 namespace render {
@@ -122,14 +120,11 @@ void GLRenderSystem::removeMouseListener(RenderTarget* target, MouseListener* li
 }
 
 void GLRenderSystem::registerInputSystem(RenderTarget* target, GLInputSystem* inputSystem) {
-  std::cout << inputSystemMap_.size() << std::endl;
   inputSystemMap_[target] = inputSystem;
-  std::cout << inputSystemMap_.size() << std::endl;
 }
 
 GLInputSystem* GLRenderSystem::getInputSystem(RenderTarget* target) const noexcept {
   auto it = inputSystemMap_.find(target);
-  std::cout << inputSystemMap_.size() << std::endl;
   SEQUOIA_ASSERT_MSG(it != inputSystemMap_.end(), "target has no GLInputSystem registered");
   return it->second;
 }

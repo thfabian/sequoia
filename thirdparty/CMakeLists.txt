@@ -87,19 +87,6 @@ else()
 endif()
 
 #
-# glslang
-#
-if(USE_SYSTEM_GLSLANG)
-  find_package(GLSLangValidator)
-  if(DEFINED GLSLANGVALIDATOR_EXECUTABLE)
-    list(APPEND Sequoia_THIRDPARTYLIBS_ARGS 
-         "-DGLSLANGVALIDATOR_EXECUTABLE:PATH=${GLSLANGVALIDATOR_EXECUTABLE}")
-  endif()
-else()
-  include(External_glslang)
-endif()
-
-#
 # GTest
 #
 if(USE_SYSTEM_GTEST)

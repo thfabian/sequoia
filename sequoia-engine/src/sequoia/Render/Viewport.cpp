@@ -13,8 +13,9 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Render/Viewport.h"
+#include "sequoia/Core/Assert.h"
 #include "sequoia/Render/Camera.h"
+#include "sequoia/Render/Viewport.h"
 
 namespace sequoia {
 
@@ -22,20 +23,24 @@ namespace render {
 
 void ViewportListener::viewportGeometryChanged(Viewport* viewport) {}
 
-Viewport::Viewport(Camera* camera, RenderTarget* target, int x, int y, int width, int height)
-    : camera_(camera), target_(target), x_(x), y_(y), width_(width), height_(height) {
+Viewport::Viewport(RenderTarget* target, int x, int y, int width, int height)
+    : camera_(nullptr), target_(target), x_(x), y_(y), width_(width), height_(height) {}
 
+Camera* Viewport::getCamera() const {
+  SEQUOIA_ASSERT(camera_);
+  return camera_;
+}
+
+void Viewport::setCamera(Camera* camera) {
   // Register the camera as a Viewport listener
   addListener(static_cast<ViewportListener*>(camera_));
 
-  // Notify the camera about the new geometry of the viewport
-  for(auto* listener : getListeners<ViewportListener>())
-    listener->viewportGeometryChanged(this);
+  // Set the camera
+  camera_ = camera;
+
+  // Notify the camera about the geometry of the viewport
+  camera_->viewportGeometryChanged(this);
 }
-
-Camera* Viewport::getCamera() const { return camera_; }
-
-void Viewport::setCamera(Camera* camera) { camera_ = camera; }
 
 RenderTarget* Viewport::getRenderTarget() const { return target_; }
 
