@@ -53,19 +53,13 @@ void GLShaderManager::make(const std::shared_ptr<GLShader>& shader,
   }
 
   if(shader->status_ == GLShaderStatus::OnDisk) {
-    LOG(DEBUG) << "Loading shader from disk \"" << UtfString(shader->path_).toAnsiString() << "\"";
+    LOG(DEBUG) << "Loading shader from disk \"" << shader->file_->getPath() << "\"";
 
-    // TODO: use a global asset manager to get the contents of the file
-    std::ifstream file(shader->path_);
-
-    if(!file.is_open())
-      SEQUOIA_THROW(RenderSystemException, PLATFORM_STR("cannot load shader source: '%s'"),
-                    shader->path_.c_str());
-
-    std::stringstream ss;
-    ss << file.rdbuf();
-    shader->code_ = ss.str();
+    shader->code_ = shader->file_->getContent().str();
     shader->status_ = GLShaderStatus::InMemory;
+
+    if(shader->code_.empty())
+      SEQUOIA_THROW(RenderSystemException, "empty shader source: '%s'", shader->file_->getPath());
   }
 
   if(requestedStatus == GLShaderStatus::InMemory)
@@ -78,10 +72,9 @@ void GLShaderManager::make(const std::shared_ptr<GLShader>& shader,
 
     shader->id_ = glCreateShader(GLShader::getGLShaderType(shader->type_));
     if(shader->id_ == 0)
-      SEQUOIA_THROW(RenderSystemException, PLATFORM_STR("cannot create shader: '%s'"),
-                    shader->path_.c_str());
+      SEQUOIA_THROW(RenderSystemException, "cannot create shader: '%s'", shader->file_->getPath());
 
-    idLookupMap_.emplace(shader->id_, pathLookupMap_[shader->path_]);
+    idLookupMap_.emplace(shader->id_, fileLookupMap_[shader->file_]);
 
     LOG(DEBUG) << "Created shader (ID=" << shader->id_ << ")";
     shader->status_ = GLShaderStatus::Created;
@@ -137,17 +130,17 @@ const std::shared_ptr<GLShader>& GLShaderManager::get(unsigned int id) const {
 }
 
 std::shared_ptr<GLShader> GLShaderManager::create(GLShader::ShaderType type,
-                                                  const platform::String& path,
+                                                  const std::shared_ptr<File>& file,
                                                   GLShaderStatus requestedStatus) {
 
   std::shared_ptr<GLShader> shader = nullptr;
-  auto it = pathLookupMap_.find(path);
+  auto it = fileLookupMap_.find(file);
 
-  if(it != pathLookupMap_.end())
+  if(it != fileLookupMap_.end()) {
     shader = shaderList_[it->second];
-  else {
-    shaderList_.emplace_back(std::make_shared<GLShader>(type, path, this));
-    pathLookupMap_[path] = shaderList_.size() - 1;
+  } else {
+    shaderList_.emplace_back(std::make_shared<GLShader>(type, file, this));
+    fileLookupMap_[file] = shaderList_.size() - 1;
     shader = shaderList_.back();
   }
 

@@ -32,25 +32,15 @@ namespace game {
 /// @ingroup game
 class SEQUOIA_GAME_API SceneNode : public std::enable_shared_from_this<SceneNode> {
 public:
-  enum SceneNodeKind { SK_SceneNode, SK_Static, SK_StaticLast, SK_Dynamic, SK_DynamicLast };
+  enum SceneNodeKind { SK_SceneNode, SK_SceneNodeDrawable, SK_SceneNodeDrawableLast };
 
-  /// @brief Default constructor
   SceneNode(const std::string& name, SceneNodeKind kind = SK_SceneNode);
-  SceneNode(const SceneNode&);
+  SceneNode(const SceneNode& other);
 
   virtual ~SceneNode();
 
   /// @name Getter/Setter
   /// @{
-
-  /// @brief Get the mesh of the node
-  const std::shared_ptr<Mesh>& getMesh() const { return mesh_; }
-
-  /// @brief Set the mesh of the node
-  void setMesh(const std::shared_ptr<Mesh>& mesh) { mesh_ = mesh; }
-
-  /// @brief Check if the node has a mesh attached
-  bool hasMesh() const { return mesh_ != nullptr; }
 
   /// @brief Get the name of the node
   const std::string& getName() const { return name_; }
@@ -136,6 +126,9 @@ public:
   /// @brief Get the kind of the ScenenNode
   SceneNodeKind getKind() const { return kind_; }
 
+  /// @brief RTTI implementation
+  static bool classof(const SceneNode* node) noexcept { return node->getKind() == SK_SceneNode; }
+
   /// @}
 
 protected:
@@ -145,15 +138,12 @@ protected:
   /// @brief Compute the model matrix
   void computeModelMatrix();
 
-private:
+protected:
   /// Type of node
   SceneNodeKind kind_;
 
   /// List of children
   std::vector<std::shared_ptr<SceneNode>> children_;
-
-  /// Mesh of the node (if any)
-  std::shared_ptr<Mesh> mesh_;
 
   /// Position of the node
   math::vec3 position_;

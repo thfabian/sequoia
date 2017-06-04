@@ -21,7 +21,7 @@
 #include "sequoia/Core/Singleton.h"
 #include "sequoia/Core/SingletonManager.h"
 #include "sequoia/Unittest/Export.h"
-#include "sequoia/Unittest/RessourcePath.h"
+#include "sequoia/Unittest/TestFile.h"
 #include <gtest/gtest.h>
 #include <string>
 #include <vector>
@@ -58,6 +58,12 @@ public:
 
   /// @brief Get the ressource path of the unittest
   const platform::Path& getRessourcePath() const;
+
+  /// @brief Get the full path of the ressource file specified by `path` relative to the unittest
+  /// ressource root (i.e `Environment::getRessourcePath()`)
+  ///
+  /// @param path   Path relative to the unittest ressource root
+  std::shared_ptr<File> getFile(const char* path) const;
 
 private:
   core::PrettyStackTrace trace_;

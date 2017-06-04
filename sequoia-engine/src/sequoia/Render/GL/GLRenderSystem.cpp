@@ -93,8 +93,8 @@ std::unique_ptr<VertexArrayObject> GLRenderSystem::createVertexArrayObject(Rende
 }
 
 std::shared_ptr<Shader> GLRenderSystem::loadShader(RenderTarget* target, Shader::ShaderType type,
-                                                   const platform::String& path) {
-  return getRenderer(target)->getShaderManager()->create(type, path);
+                                                   const std::shared_ptr<File>& file) {
+  return getRenderer(target)->getShaderManager()->create(type, file);
 }
 
 std::shared_ptr<Program>

@@ -48,4 +48,7 @@
 // Architecture string
 #define SEQUOIA_ARCHITECTURE_STRING "${SEQUOIA_ARCHITECTURE_STRING}"
 
+// Ressource paths
+#define SEQUOIA_RESSOURCEPATH "${SEQUOIA_RESSOURCEPATH}"
+
 #endif

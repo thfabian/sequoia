@@ -21,10 +21,10 @@
 #include "sequoia/Game/MeshManager.h"
 #include "sequoia/Game/Scene.h"
 #include "sequoia/Render/Camera.h"
+#include "sequoia/Render/DrawCommandList.h"
 #include "sequoia/Render/Exception.h"
 #include "sequoia/Render/RenderSystem.h"
 #include "sequoia/Render/RenderWindow.h"
-#include "sequoia/Render/DrawCommandList.h"
 
 namespace sequoia {
 
@@ -41,12 +41,12 @@ void Game::run() {
 
   // Start main-loop
   while(!mainWindow_->isClosed()) {
-    
+
     // Set the draw commands
     render::DrawCommandList* list = mainWindow_->getDrawCommandList().get();
     list->clear();
     scene_->updateDrawCommandList(list);
-    
+
     // Start rendering all tender targets
     renderSystem_->renderOneFrame();
 
@@ -97,6 +97,14 @@ void Game::init(bool hideWindow) {
 
     // Initialize the main-window
     mainWindow_->init();
+
+    // Create default shaders and program
+//    defaultVertexShader_ = renderSystem_->loadShader(mainWindow_, Shader::ST_Vertex,
+//                                                     "assets/sequoia/shader/Default.frag");
+//    defaultFragmentShader_ =
+//        renderSystem_->loadShader(mainWindow_, Shader::ST_Fragment, "assets/sequoia/Default.frag");
+//    defaultProgram_ =
+//        renderSystem_->createProgram(mainWindow_, {defaultVertexShader_, defaultFragmentShader_});
 
     // Register the game as a keyboard and mouse listener
     renderSystem_->addKeyboardListener(mainWindow_, this);

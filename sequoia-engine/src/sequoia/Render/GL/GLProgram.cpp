@@ -76,7 +76,7 @@ GLProgramStatus GLProgram::getStatus() const { return status_; }
 void GLProgram::bind() {
   if(!isValid())
     manager_->makeValid(dyn_pointer_cast<GLProgram>(shared_from_this()));
-  
+
   if(!allUniformVariablesSet_)
     checkUniformVariables();
 
@@ -161,21 +161,21 @@ struct ComputeReturnType<T, false> {
 
 template <class T, bool IsFundamental>
 struct AddressOf {
-  static typename ComputeReturnType<T, IsFundamental>::type doit(const T& value) {
+  static typename ComputeReturnType<T, IsFundamental>::type apply(const T& value) {
     return std::addressof(value);
   }
 };
 
 template <class T>
 struct AddressOf<T, false> {
-  static typename ComputeReturnType<T, false>::type doit(const T& value) {
+  static typename ComputeReturnType<T, false>::type apply(const T& value) {
     return math::value_ptr(value);
   }
 };
 
 template <class T, bool IsFundamental = std::is_fundamental<T>::value>
 inline typename ComputeReturnType<T, IsFundamental>::type addressOf(const T& value) {
-  return AddressOf<T, IsFundamental>::doit(value);
+  return AddressOf<T, IsFundamental>::apply(value);
 }
 
 } // anonymous namespace

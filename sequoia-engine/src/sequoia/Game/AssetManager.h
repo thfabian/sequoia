@@ -13,25 +13,25 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_UNITTEST_RESSOURCEPATH_H
-#define SEQUOIA_UNITTEST_RESSOURCEPATH_H
+#ifndef SEQUOIA_GAME_ASSETMANAGER_H
+#define SEQUOIA_GAME_ASSETMANAGER_H
 
 #include "sequoia/Core/Platform.h"
-#include "sequoia/Unittest/Export.h"
+#include "sequoia/Game/Export.h"
 
 namespace sequoia {
 
-namespace unittest {
+namespace game {
 
-/// @brief Get the full path of the ressource file specified by the `path` relative to the ressource
-/// root (i.e `Environment::getRessourcePath()`)
-///
-/// @param path   Path relative to the ressource root
-///
-/// @ingroup unittest
-extern SEQUOIA_UNITTEST_API platform::String resolveRessourcePath(const char* path);
+/// @brief Load assets from disk
+/// @ingroup game
+class SEQUOIA_GAME_API AssetManager {
+  platform::Path path_;
 
-} // namespace unittest
+public:
+};
+
+} // namespace game
 
 } // namespace sequoia
 

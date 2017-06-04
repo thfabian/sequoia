@@ -71,7 +71,7 @@ public:
 
   /// @brief Load a shader from source for `target`
   virtual std::shared_ptr<Shader> loadShader(RenderTarget* target, Shader::ShaderType type,
-                                             const platform::String& path) = 0;
+                                             const std::shared_ptr<File>& file) = 0;
 
   /// @brief Create a GPU program from the given `shaders` for `target`
   virtual std::shared_ptr<Program>

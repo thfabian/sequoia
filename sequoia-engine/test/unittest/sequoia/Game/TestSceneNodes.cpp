@@ -30,13 +30,11 @@ namespace {
 class SceneNodeTest : public GameTest {};
 
 TEST_F(SceneNodeTest, SceneNode) {
-  Game& game = Game::getSingleton();
-  auto node = SceneGraph::create<SceneNode>("TestNode");
+  auto node = SceneGraph::create<SceneNode>("SceneNode");
 
-  EXPECT_STREQ(node->getName().data(), "TestNode");
+  EXPECT_STREQ(node->getName().data(), "SceneNode");
   EXPECT_EQ(node->getKind(), SceneNode::SK_SceneNode);
   EXPECT_FALSE(node->hasChildren());
-  EXPECT_FALSE(node->hasMesh());
   EXPECT_FALSE(node->hasParent());
 
   // Adjust scale
@@ -58,10 +56,6 @@ TEST_F(SceneNodeTest, SceneNode) {
   EXPECT_EQ(node->getModelMatrix()[1][1], -2.0f);
   EXPECT_EQ(node->getModelMatrix()[2][2], -2.0f);
 
-  // Set a mesh
-  node->setMesh(game.getMeshManager()->createCube(game.getMainRenderTarget(), "TestCube"));
-  EXPECT_TRUE(node->hasMesh());
-
   // Clone node
   auto nodeClone = node->clone();
   nodeClone->setScale(3.0f);
@@ -77,6 +71,29 @@ TEST_F(SceneNodeTest, SceneNode) {
 
   // Test RTTI
   EXPECT_TRUE(isa<SceneNode>(node.get()));
+}
+
+TEST_F(SceneNodeTest, SceneNodeDrawable) {
+  Game& game = Game::getSingleton();
+  auto node = SceneGraph::create<SceneNodeDrawable>("SceneNodeDrawable");
+
+  EXPECT_STREQ(node->getName().data(), "SceneNodeDrawable");
+  EXPECT_EQ(node->getKind(), SceneNode::SK_SceneNodeDrawable);
+  EXPECT_FALSE(node->hasMesh());
+  EXPECT_FALSE(node->hasDrawCommand());
+
+  // Set a mesh
+  node->setMesh(game.getMeshManager()->createCube(game.getMainRenderTarget(), "TestCube"));
+  EXPECT_TRUE(node->hasMesh());
+  
+  // Clone node
+  auto nodeClone = node->clone();
+  nodeClone->setName("copy");
+  EXPECT_EQ(nodeClone->getName(), "copy");
+  EXPECT_EQ(node->getName(), "SceneNodeDrawable");
+
+  // Test RTTI
+  EXPECT_TRUE(isa<SceneNodeDrawable>(node.get()));
 }
 
 } // anonymous namespace

@@ -15,7 +15,9 @@
 
 sequoia_add_library(
   NAME SequoiaGame
-  SOURCES Export.h
+  SOURCES AssetManager.h
+          AssetManager.cpp
+          Export.h
           Game.h
           Game.cpp
           Mesh.h
@@ -28,6 +30,8 @@ sequoia_add_library(
           SceneGraph.cpp
           SceneNode.h
           SceneNode.cpp
+          SceneNodeDrawable.h
+          SceneNodeDrawable.cpp
   DEPENDS SequoiaRender
           SequoiaCore
           ${SEQUOIA_EXTERNAL_LIBRARIES}   

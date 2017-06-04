@@ -16,10 +16,11 @@
 #ifndef SEQUOIA_RENDER_SHADER_H
 #define SEQUOIA_RENDER_SHADER_H
 
+#include "sequoia/Core/File.h"
 #include "sequoia/Core/NonCopyable.h"
-#include "sequoia/Core/Platform.h"
 #include "sequoia/Render/Export.h"
 #include "sequoia/Render/RenderSystemObject.h"
+#include <memory>
 
 namespace sequoia {
 
@@ -52,8 +53,8 @@ public:
   /// @brief Get the type of the shader
   ShaderType getType() const;
 
-  /// @brief Get the source path of the shader
-  virtual platform::String getSourcePath() const = 0;
+  /// @brief Get the source file of the shader
+  virtual const std::shared_ptr<File>& getFile() const = 0;
 
   /// @brief Get the source code of the shader
   virtual std::string getSourceCode() const = 0;

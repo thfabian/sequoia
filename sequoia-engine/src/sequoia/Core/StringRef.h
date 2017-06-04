@@ -118,7 +118,9 @@ public:
   /// @brief Construct an empty string ref
   StringRef() = default;
 
-  /// @brief Disable conversion from nullptr.  This prevents things like if (S == nullptr)
+  /// @brief Disable conversion from nullptr
+  /// 
+  /// This prevents things like if (S == nullptr)
   StringRef(std::nullptr_t) = delete;
 
   /// @brief Construct a string ref from a cstring

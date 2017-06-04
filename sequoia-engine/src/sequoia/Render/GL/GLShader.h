@@ -51,8 +51,8 @@ class SEQUOIA_RENDER_API GLShader : public Shader {
   /// Source code of the shader
   std::string code_;
 
-  /// Source path the shader was loaded from
-  platform::String path_;
+  /// File the shader was loaded from
+  std::shared_ptr<File> file_;
 
 public:
   /// @brief Get OpenGL shader type
@@ -61,11 +61,11 @@ public:
   /// @brief Create the shader object by setting to path to its supposed location on disk
   ///
   /// Shaders should only be created via the factory method GLShaderManager::create.
-  GLShader(ShaderType type, const platform::String& path, GLShaderManager* manager);
+  GLShader(ShaderType type, const std::shared_ptr<File>& file, GLShaderManager* manager);
 
   /// @brief Destroy the shader
   ~GLShader();
-  
+
   /// @brief Check if the shader is valid i.e can be linked into a GPUProgram
   bool isValid() const;
 
@@ -74,8 +74,8 @@ public:
   /// Note that IDs might be reused after a shader has been destroyed.
   unsigned int getID() const;
 
-  /// @copydoc Shader::getSourcePath
-  platform::String getSourcePath() const override;
+  /// @copydoc Shader::getFile
+  const std::shared_ptr<File>& getFile() const override;
 
   /// @copydoc Shader::getSourceCode
   std::string getSourceCode() const override;

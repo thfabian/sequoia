@@ -58,9 +58,10 @@ static const char* statusToString(GLShaderStatus status) {
   }
 }
 
-GLShader::GLShader(Shader::ShaderType type, const platform::String& path, GLShaderManager* manager)
-  : Shader(RK_OpenGL, type), status_(GLShaderStatus::OnDisk), id_(0), manager_(manager), code_(),
-    path_(path) {}
+GLShader::GLShader(Shader::ShaderType type, const std::shared_ptr<File>& file,
+                   GLShaderManager* manager)
+    : Shader(RK_OpenGL, type), status_(GLShaderStatus::OnDisk), id_(0), manager_(manager), code_(),
+      file_(file) {}
 
 GLShader::~GLShader() { destroyGLShader(this); }
 
@@ -68,7 +69,7 @@ bool GLShader::isValid() const { return status_ == GLShaderStatus::Compiled; }
 
 unsigned int GLShader::getID() const { return id_; }
 
-platform::String GLShader::getSourcePath() const { return path_; }
+const std::shared_ptr<File>& GLShader::getFile() const { return file_; }
 
 std::string GLShader::getSourceCode() const { return code_; }
 
@@ -95,7 +96,7 @@ std::string GLShader::toString() const {
                       "  path = \"%s\"\n"
                       "]",
                       shaderTypeToString(type_), statusToString(status_), id_,
-                      UtfString(path_).toAnsiString());
+                      UtfString(file_->getPath()).toAnsiString());
 }
 
 GLShaderStatus GLShader::getStatus() const { return status_; }

@@ -30,6 +30,8 @@ class VertexArrayObject;
 /// @brief State of the render pipline
 /// @ingroup render
 struct SEQUOIA_RENDER_API RenderState {
+  RenderState() = default;
+  RenderState(const RenderState&) = default;
 
   /// @brief Specifies the function used to compare each incoming pixel depth value with the depth
   /// value present in the depth buffer
@@ -60,21 +62,28 @@ struct SEQUOIA_RENDER_API RenderState {
 /// @ingroup render
 class SEQUOIA_RENDER_API DrawCommand {
 public:
-  DrawCommand(Program* program, VertexArrayObject* vao, RenderState* state,
-              const math::mat4& modelMat)
+  DrawCommand(Program* program, VertexArrayObject* vao,
+              const math::mat4& modelMat = math::mat4(1.0f), RenderState state = RenderState())
       : program_(program), vao_(vao), state_(state), modelMatrix_(modelMat) {}
 
-  /// @brief Get the program to use
-  Program* getProgram() const noexcept { return program_; }
+  /// @brief Copy constructor
+  DrawCommand(const DrawCommand&) = default;
 
-  /// @brief Get the vertex data to draw
+  /// @brief Get/Set the program to use
+  Program* getProgram() const noexcept { return program_; }
+  void setProgram(Program* program) noexcept { program_ = program; }
+
+  /// @brief Get/Set the vertex data to draw
   VertexArrayObject* getVertexArrayObject() const noexcept { return vao_; }
+  void setVertexArrayObject(VertexArrayObject* vao) noexcept { vao_ = vao; }
 
   /// @brief Get the state of the render pipeline
-  RenderState* getRenderState() const noexcept { return state_; }
+  const RenderState& getRenderState() const noexcept { return state_; }
+  RenderState& getRenderState() noexcept { return state_; }
 
-  /// @brief Get the model matrix
+  /// @brief Get/Set the model matrix
   const math::mat4& getModelMatrix() const noexcept { return modelMatrix_; }
+  void setModelMatrix(const math::mat4& modelMatrix) noexcept { modelMatrix_ = modelMatrix; }
 
   /// @brief Convert draw command to string
   std::string toString() const;
@@ -82,7 +91,7 @@ public:
 private:
   Program* program_;
   VertexArrayObject* vao_;
-  RenderState* state_;
+  RenderState state_;
   math::mat4 modelMatrix_;
 };
 

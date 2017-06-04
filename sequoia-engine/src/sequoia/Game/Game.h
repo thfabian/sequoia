@@ -46,6 +46,11 @@ class SEQUOIA_GAME_API Game : public Singleton<Game>,
   /// Reference to the main window
   render::RenderWindow* mainWindow_;
 
+  /// Default Shader and Program
+  std::shared_ptr<render::Shader> defaultVertexShader_;
+  std::shared_ptr<render::Shader> defaultFragmentShader_;
+  std::shared_ptr<render::Program> defaultProgram_;
+
   /// List of scenes
   std::vector<std::shared_ptr<Scene>> sceneList_;
 

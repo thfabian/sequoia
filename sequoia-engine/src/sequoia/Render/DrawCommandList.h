@@ -19,6 +19,7 @@
 #include "sequoia/Core/ArrayRef.h"
 #include "sequoia/Render/DrawCommand.h"
 #include "sequoia/Render/Export.h"
+#include "sequoia/Core/AlignedADT.h"
 #include <string>
 #include <vector>
 
@@ -35,7 +36,7 @@ namespace render {
 class SEQUOIA_RENDER_API DrawCommandList {
 protected:
   /// List of commands
-  std::vector<DrawCommand> commands_;
+  core::aligned_vector<DrawCommand> commands_;
 
 public:
   DrawCommandList() { commands_.reserve(1024); }
@@ -43,9 +44,6 @@ public:
   /// @brief Insert a `commands` into the list
   /// @param commands   DrawCommands to insert
   void insert(ArrayRef<DrawCommand*> commands) noexcept {
-    
-    //TODO: implemente commands copy ctor
-    
     for(std::size_t i = 0; i < commands.size(); ++i)
       commands_.push_back(*commands[i]);
   }

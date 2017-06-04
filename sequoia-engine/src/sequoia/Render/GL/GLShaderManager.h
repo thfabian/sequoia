@@ -39,8 +39,8 @@ class SEQUOIA_RENDER_API GLShaderManager : public NonCopyable {
   /// Lookup map for shader ID
   std::unordered_map<unsigned int, std::size_t> idLookupMap_;
 
-  /// Lookup map for path
-  std::unordered_map<platform::String, std::size_t> pathLookupMap_;
+  /// Lookup map for files
+  std::unordered_map<std::shared_ptr<File>, std::size_t> fileLookupMap_;
 
 public:
   /// @brief Destroy all remaining shaders
@@ -49,10 +49,10 @@ public:
   /// @brief Create the shader from source and compile it
   ///
   /// @param type             Type of the shader
-  /// @param path             Path to the shader source
+  /// @param file             File of the shader source
   /// @param requestedStatus  Requested target status
   /// @throws RenderSystemException
-  std::shared_ptr<GLShader> create(GLShader::ShaderType type, const platform::String& path,
+  std::shared_ptr<GLShader> create(GLShader::ShaderType type, const std::shared_ptr<File>& file,
                                    GLShaderStatus requestedStatus = GLShaderStatus::Compiled);
 
   /// @brief Convert the shader to `status`

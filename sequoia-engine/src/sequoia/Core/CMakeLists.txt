@@ -42,14 +42,15 @@ sequoia_add_library(
           Assert.h
           Assert.cpp 
           Casting.h
+          Compiler.h
           EnumState.h
           Export.h
           ErrorHandler.h
           ErrorHandler.cpp
           Exception.h
           Exception.cpp
+          File.h          
           Format.h          
-          Compiler.h
           NonCopyable.h
           Memory.h
           Options.h.in

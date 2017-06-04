@@ -16,10 +16,11 @@
 #ifndef SEQUOIA_GAME_SCENEGRAPH_H
 #define SEQUOIA_GAME_SCENEGRAPH_H
 
-#include "sequoia/Core/NonCopyable.h"
 #include "sequoia/Core/Memory.h"
+#include "sequoia/Core/NonCopyable.h"
 #include "sequoia/Game/Export.h"
 #include "sequoia/Game/SceneNode.h"
+#include "sequoia/Game/SceneNodeDrawable.h"
 
 namespace sequoia {
 
@@ -38,12 +39,12 @@ public:
   template <class T, class... Args>
   static std::shared_ptr<T> create(Args&&... args) {
     return std::allocate_shared<T, memory::cache_aligned_allocator<T>>(
-      memory::cache_aligned_allocator<T>(), std::forward<Args>(args)...);
+        memory::cache_aligned_allocator<T>(), std::forward<Args>(args)...);
   }
 
   /// @brief Insert a new scenen `node` into the graph
   void insert(const std::shared_ptr<SceneNode>& node) { nodes_.emplace_back(node); }
-  
+
   /// @brief Remove the `node` (and all its children) from the graph
   void remove(const std::shared_ptr<SceneNode>& node) {
     nodes_.erase(std::remove(nodes_.begin(), nodes_.end(), node), nodes_.end());
@@ -57,7 +58,7 @@ public:
 
   /// @brief Clear the graph
   void clear();
-  
+
   /// @brief Get the number of nodes in the graph
   std::size_t size() const;
 

@@ -23,9 +23,9 @@ sequoia_add_library(
           Export.h
           GameTest.h
           GameTest.cpp
-          RessourcePath.h
-          RessourcePath.cpp
-
+          TestFile.h
+          TestFile.cpp
+          
           GL/GLEnvironment.h
           GL/GLEnvironment.cpp
           GL/GLRenderTest.h

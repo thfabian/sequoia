@@ -64,7 +64,7 @@ public:
 
   /// @brief Load the shader from source if it has not already been loaded
   virtual std::shared_ptr<Shader> loadShader(RenderTarget* target, Shader::ShaderType type,
-                                             const platform::String& path) override;
+                                             const std::shared_ptr<File>& path) override;
 
   /// @brief Link the shaders into a program if a program of the given shaders does not yet exist
   virtual std::shared_ptr<Program>

@@ -24,15 +24,17 @@ namespace sequoia {
 namespace game {
 
 SceneNode::SceneNode(const std::string& name, SceneNode::SceneNodeKind kind)
-    : kind_(kind), mesh_(nullptr), position_(math::vec3()), orientation_(math::quat()),
-      scale_(1.0f), modelMatrix_(), modelMatrixIsDirty_(true), parent_(), name_(name) {
+    : kind_(kind), position_(math::vec3()), orientation_(math::quat()), scale_(1.0f),
+      modelMatrix_(), modelMatrixIsDirty_(true), parent_(), name_(name) {
   LOG(DEBUG) << "Creating SceneNode \"" << name_ << "\"";
 }
 
 SceneNode::SceneNode(const SceneNode& other)
-    : kind_(other.kind_), mesh_(other.mesh_), position_(other.position_),
-      orientation_(other.orientation_), scale_(other.scale_), modelMatrix_(other.modelMatrix_),
+    : kind_(other.kind_), position_(other.position_), orientation_(other.orientation_),
+      scale_(other.scale_), modelMatrix_(other.modelMatrix_),
       modelMatrixIsDirty_(other.modelMatrixIsDirty_), parent_(other.parent_), name_(other.name_) {
+  LOG(DEBUG) << "Creating copy of SceneNode \"" << name_ << "\"";
+
   for(const auto& child : other.children_)
     children_.emplace_back(child->clone());
 }
@@ -55,20 +57,18 @@ std::string SceneNode::toString() const {
 std::pair<std::string, std::string> SceneNode::toStringImpl() const {
   return std::make_pair(
       "SceneNode",
-      core::format("name = %s,\n"
-                   "mesh = %s,\n"
-                   "position = %s,\n"
-                   "orientation = %s,\n"
-                   "scale = %f,\n"
-                   "parent = %s,\n"
-                   "children = %s,\n",
-                   name_, mesh_ ? mesh_->toString() : "null", position_, orientation_, scale_,
-                   hasParent() ? getParent()->getName() : "null",
-                   hasChildren() ? core::toStringRange(children_,
-                                                       [](const auto& node) {
-                                                         return core::indent(node->toString());
-                                                       })
-                                 : "null"));
+      core::format(
+          "name = %s,\n"
+          "position = %s,\n"
+          "orientation = %s,\n"
+          "scale = %f,\n"
+          "parent = %s,\n"
+          "children = %s,\n",
+          name_, position_, orientation_, scale_, hasParent() ? getParent()->getName() : "null",
+          hasChildren()
+              ? core::toStringRange(children_,
+                                    [](const auto& node) { return core::indent(node->toString()); })
+              : "null"));
 }
 
 void SceneNode::computeModelMatrix() {

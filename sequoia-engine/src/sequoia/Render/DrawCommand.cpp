@@ -57,11 +57,13 @@ std::string RenderState::toString() const {
 
 std::string DrawCommand::toString() const {
   return core::format("DrawCommand["
-                      "  program=%s,\n"
-                      "  vao=%s,\n"
-                      "  renderState=%s,\n"
+                      "  program = %s,\n"
+                      "  vao = %s,\n"
+                      "  renderState = %s,\n"
+                      "  modelMatrix = %s\n"
                       "]",
-                      program_->toString(), vao_->toString(), core::indent(state_->toString()));
+                      program_->toString(), vao_->toString(), core::indent(state_.toString()),
+                      modelMatrix_);
 }
 
 } // namespace render
