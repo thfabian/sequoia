@@ -13,10 +13,12 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
+#include "sequoia/Core/Platform.h"
 #include "sequoia/Core/ErrorHandler.h"
 #include "sequoia/Core/Logging.h"
 #include "sequoia/Core/Options.h"
 #include "sequoia/Core/StringSwitch.h"
+#include "sequoia/Game/AssetManager.h"
 #include "sequoia/Game/Game.h"
 #include "sequoia/Game/MeshManager.h"
 #include "sequoia/Game/Scene.h"
@@ -32,7 +34,9 @@ SEQUOIA_DECLARE_SINGLETON(game::Game);
 
 namespace game {
 
-Game::Game() : renderSystem_(nullptr), mainWindow_(nullptr), scene_(nullptr) {}
+Game::Game()
+    : renderSystem_(nullptr), meshManager_(nullptr), assetManager_(nullptr), mainWindow_(nullptr),
+      scene_(nullptr) {}
 
 Game::~Game() { cleanup(); }
 
@@ -111,7 +115,8 @@ void Game::init(bool hideWindow) {
     renderSystem_->addMouseListener(mainWindow_, this);
 
     // Initialize the mesh manager
-    meshManager_ = std::make_unique<MeshManager>();
+    meshManager_ = std::make_unique<MeshManager>(mainWindow_);
+    assetManager_ = std::make_unique<AssetManager>(PLATFORM_STR(SEQUOIA_RESSOURCEPATH));
 
     // Initialize the startup scene
     sceneList_.emplace_back(std::make_shared<Scene>());

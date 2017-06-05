@@ -21,11 +21,11 @@ namespace sequoia {
 
 namespace game {
 
-MeshManager::MeshManager() : staticCubeMeshDataIdx_(-1) {}
+MeshManager::MeshManager(render::RenderTarget* target)
+    : target_(target), staticCubeMeshDataIdx_(-1) {}
 
-std::shared_ptr<Mesh> MeshManager::load(render::RenderTarget* target, const std::string& name,
-                                        const platform::String& path, bool copy,
-                                        BufferUsageKind usage) {
+std::shared_ptr<Mesh> MeshManager::load(const std::string& name, const std::shared_ptr<File>& file,
+                                        bool modifiable, BufferUsageKind usage) {
   return nullptr;
 }
 
@@ -87,8 +87,8 @@ static unsigned int CubeIndices[]  = {   0, 1, 2,   2, 3, 0,                    
 
 } // anonymous namespace
 
-std::shared_ptr<Mesh> MeshManager::createCube(render::RenderTarget* target, const std::string& name,
-                                              bool copy, BufferUsageKind usage) {
+std::shared_ptr<Mesh> MeshManager::createCube(const std::string& name, bool modifiable,
+                                              BufferUsageKind usage) {
 
   LOG(INFO) << "Creating cube mesh \"" << name << "\" ...";
 
@@ -131,8 +131,8 @@ std::shared_ptr<Mesh> MeshManager::createCube(render::RenderTarget* target, cons
     std::memcpy(data->getIndicesPtr(), CubeIndices, numIndices * sizeof(render::VertexIndexType));
 
     // Set the VAO
-    data->setVertexArrayObject(render::RenderSystem::getSingleton().createVertexArrayObject(target),
-                               usage);
+    data->setVertexArrayObject(
+        render::RenderSystem::getSingleton().createVertexArrayObject(target_), usage);
     data->getVertexArrayObject()->writeVertexData(0, numVertices);
     data->getVertexArrayObject()->writeIndexData(0, numIndices);
 
@@ -143,7 +143,7 @@ std::shared_ptr<Mesh> MeshManager::createCube(render::RenderTarget* target, cons
   const std::shared_ptr<render::VertexData>& data = vertexDataList_[staticCubeMeshDataIdx_];
 
   LOG(INFO) << "Successfully created cube mesh \"" << name << "\"";
-  return std::make_shared<Mesh>(name, data);
+  return std::make_shared<Mesh>(name, data, modifiable);
 }
 
 } // namespace game

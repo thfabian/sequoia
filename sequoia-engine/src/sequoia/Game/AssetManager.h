@@ -16,19 +16,108 @@
 #ifndef SEQUOIA_GAME_ASSETMANAGER_H
 #define SEQUOIA_GAME_ASSETMANAGER_H
 
+#include "sequoia/Core/File.h"
+#include "sequoia/Core/NonCopyable.h"
 #include "sequoia/Core/Platform.h"
 #include "sequoia/Game/Export.h"
+#include <mutex>
+#include <unordered_map>
+#include <vector>
 
 namespace sequoia {
 
 namespace game {
 
-/// @brief Load assets from disk
+class AssetManager;
+
+/// @brief Reference to an asset file loaded by `AssetManager`
 /// @ingroup game
-class SEQUOIA_GAME_API AssetManager {
-  platform::Path path_;
+class SEQUOIA_GAME_API AssetFile : public File {
+  /// Unique idetifier of the file
+  const std::size_t id_;
+
+  /// Refrence to the manager
+  AssetManager* manager_;
 
 public:
+  friend class AssetManager;
+  AssetFile(std::size_t id, AssetManager* manager);
+
+  /// @copydoc AssetFile::getContent
+  StringRef getContent() noexcept override;
+
+  /// @copydoc AssetFile::exists
+  bool exists() const noexcept override;
+
+  /// @copydoc AssetFile::getPath
+  const std::string& getPath() const noexcept override;
+
+  /// @copydoc AssetFile::hash
+  std::size_t hash() const noexcept override;
+
+  /// @copydoc AssetFile::equals
+  bool equals(const File& other) const noexcept override;
+};
+
+/// @brief Load assets from disk
+///
+/// All access to the AssetManager is @b threadsafe.
+///
+/// @ingroup game
+class SEQUOIA_GAME_API AssetManager : public NonCopyable {
+public:
+  /// @brief Type of asset
+  enum AssetKind {
+    AK_Text ///< Plain ASCII text file
+  };
+
+  /// @brief Internal asset representation
+  struct Asset {
+    Asset(AssetManager* manager, std::size_t id, AssetKind kind, const std::string& path);
+
+    /// Unique idetifier of the asset/file
+    std::size_t ID;
+
+    /// Kind of asset
+    AssetKind Kind;
+
+    /// Path to the asset
+    std::string Path;
+
+    /// Content of the file
+    std::string Content;
+
+    /// Reference to the file
+    std::shared_ptr<AssetFile> File;
+  };
+
+  AssetManager(const platform::String& path);
+  
+  /// @brief Load asset from disk
+  /// @threadsafe
+  std::shared_ptr<File> load(const std::string& path, AssetKind kind = AK_Text);
+
+  /// @brief Get the root path to the assets
+  const platform::Path& getAssetPath() const;
+
+  /// @brief Get the path to the file (with respect to the asset `getAssetPath()`)
+  const std::string& getPath(std::size_t id) const;
+
+private:
+  void loadContent(std::unique_ptr<Asset>& asset);
+
+private:
+  /// Global access mutex
+  std::mutex mutex_;
+
+  /// Loaded assets (indexed by `id`s)
+  std::vector<std::unique_ptr<Asset>> assets_;
+
+  /// Map to of path to the index (i.e `id`) in `assets`
+  std::unordered_map<std::string, std::size_t> pathLookupMap_;
+
+  /// Full path to the assets
+  platform::Path assetPath_;
 };
 
 } // namespace game

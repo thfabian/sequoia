@@ -28,6 +28,7 @@ namespace sequoia {
 namespace game {
 
 class MeshManager;
+class AssetManager;
 class Scene;
 
 /// @brief Main class holding all game and rendering related objects and running the main-loop
@@ -40,9 +41,10 @@ class SEQUOIA_GAME_API Game : public Singleton<Game>,
   /// Active render-system
   std::unique_ptr<render::RenderSystem> renderSystem_;
 
-  /// Active mesh manager
+  /// Manager
   std::unique_ptr<MeshManager> meshManager_;
-
+  std::unique_ptr<AssetManager> assetManager_;
+  
   /// Reference to the main window
   render::RenderWindow* mainWindow_;
 

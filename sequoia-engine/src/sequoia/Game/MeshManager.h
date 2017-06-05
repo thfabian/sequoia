@@ -16,23 +16,27 @@
 #ifndef SEQUOIA_GAME_MESHMANAGER_H
 #define SEQUOIA_GAME_MESHMANAGER_H
 
+#include "sequoia/Core/File.h"
 #include "sequoia/Core/Platform.h"
 #include "sequoia/Game/Export.h"
 #include "sequoia/Game/Mesh.h"
 #include "sequoia/Render/RenderFwd.h"
 #include "sequoia/Render/VertexArrayObject.h"
 #include <unordered_map>
+#include <vector>
 
 namespace sequoia {
 
 namespace game {
 
+/// @brief Handle creation of meshes of a specifc `RenderTarget`
+/// @ingroup game
 class SEQUOIA_GAME_API MeshManager : public NonCopyable {
+  /// Target used to create device buffers
+  render::RenderTarget* target_;
+
   /// Record of all the loaded meshes (use count of 1 implies the mesh is *not* in use)
   std::vector<std::shared_ptr<render::VertexData>> vertexDataList_;
-
-  /// Lookup map for path
-  std::unordered_map<platform::String, std::size_t> pathLookupMap_;
 
   /// Index into `meshDataList` for the static cube mesh
   int staticCubeMeshDataIdx_;
@@ -40,17 +44,18 @@ class SEQUOIA_GAME_API MeshManager : public NonCopyable {
 public:
   using BufferUsageKind = render::VertexArrayObject::BufferUsageKind;
 
-  MeshManager();
+  /// @brief Crate mesh-manager for a specific `RenderTarget`
+  MeshManager(render::RenderTarget* target);
 
   /// @brief Load mesh from disk
   ///
   /// @param target       RenderTarget used to allocate the hardware buffers
   /// @param name         Name of the mesh
-  /// @param path         Path to the mesh file
-  /// @param copy         Request a copy of the mesh which allows to modify the vertex data
+  /// @param file         Path to the mesh file
+  /// @param modifiable   Request a copy of the mesh which allows to modify the vertex data
   /// @param usage        Buffer usage of the hardware vertex buffers
-  std::shared_ptr<Mesh> load(render::RenderTarget* target, const std::string& name,
-                             const platform::String& path, bool copy = false,
+  std::shared_ptr<Mesh> load(const std::string& name, const std::shared_ptr<File>& file,
+                             bool modifiable = false,
                              BufferUsageKind usage = BufferUsageKind::BK_StaticWriteOnly);
 
   /// @brief Create a cube mesh which is centered at `(0, 0, 0)` and spans
@@ -58,7 +63,7 @@ public:
   ///
   /// @param target       RenderTarget used to allocate the hardware buffers
   /// @param name         Name of the mesh
-  /// @param copy         Request a copy of the mesh which allows to modify the vertex data
+  /// @param modifiable   Request a copy of the mesh which allows to modify the vertex data
   /// @param usage        Buffer usage of the hardware vertex buffers
   ///
   /// @verbatim
@@ -70,8 +75,7 @@ public:
   ///  |/      |/
   ///  v2------v3
   /// @endverbatim
-  std::shared_ptr<Mesh> createCube(render::RenderTarget* target, const std::string& name,
-                                   bool copy = false,
+  std::shared_ptr<Mesh> createCube(const std::string& name, bool modifieable = false,
                                    BufferUsageKind usage = BufferUsageKind::BK_StaticWriteOnly);
 };
 

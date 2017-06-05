@@ -69,11 +69,11 @@ public:
 
   /// @brief Empty box
   inline AxisAlignedBox() : minimum_(0), maximum_(0), extent_(EK_Null) {}
-    
+
   /// @brief Initialize with `minimum` and `maximum`
   inline AxisAlignedBox(const vec3& minimum, const vec3& maximum)
       : minimum_(minimum), maximum_(maximum), extent_(EK_Finite) {}
-  
+
   /// @brief Get the minimum corner of the box
   inline const vec3& getMinimum() const { return minimum_; }
   inline vec3& getMinimum() { return minimum_; }
@@ -207,6 +207,14 @@ public:
     // otherwise, must be intersecting
     return true;
   }
+
+  /// @brief Comparison
+  /// @{
+  bool operator==(const AxisAlignedBox& other) const noexcept {
+    return minimum_ == other.minimum_ && maximum_ == other.maximum_ && extent_ == other.extent_;
+  }
+  bool operator!=(const AxisAlignedBox& other) const noexcept { return !(*this == other); }
+  /// @}
 
   /// @brief Clear the box
   void clear() {

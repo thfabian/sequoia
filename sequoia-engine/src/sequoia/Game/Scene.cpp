@@ -30,8 +30,7 @@ Scene::Scene() : camera_(nullptr) {
   //
   // Test Scene
   //
-  
-  
+
   // Create the camera
   cameraList_.emplace_back(std::make_shared<render::Camera>(math::vec3(0, 1, 0)));
   camera_ = cameraList_.back().get();
@@ -39,9 +38,8 @@ Scene::Scene() : camera_(nullptr) {
   camera_->setCenter(math::vec3(0, 0, 0));
 
   auto node = SceneGraph::create<SceneNodeDrawable>("TestNode");
-  node->setMesh(game.getMeshManager()->createCube(game.getMainRenderTarget(), "TestCube"));
+  node->setMesh(game.getMeshManager()->createCube("TestCube"));
   sceneGraph_->insert(node);
-  
 }
 
 void Scene::updateDrawCommandList(render::DrawCommandList* list) {}

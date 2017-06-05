@@ -14,6 +14,7 @@
 //===------------------------------------------------------------------------------------------===//
 
 #include "sequoia/Core/Format.h"
+#include "sequoia/Core/Logging.h"
 #include "sequoia/Core/Memory.h"
 #include "sequoia/Core/StringUtil.h"
 #include "sequoia/Game/Mesh.h"
@@ -23,12 +24,13 @@ namespace sequoia {
 
 namespace game {
 
-Mesh::Mesh(const std::string& name, const std::shared_ptr<render::VertexData>& data)
-    : data_(data), name_(name) {}
+Mesh::Mesh(const std::string& name, const std::shared_ptr<render::VertexData>& data,
+           bool isModifiable)
+    : isModifiable_(isModifiable), data_(data), name_(name) {}
 
 void Mesh::accept(render::VertexVisitor& visitor) const { data_->getLayout()->accept(visitor); }
 
-const std::string& Mesh::getName() const { return name_; }
+void Mesh::dump() const { data_->dump(); }
 
 std::string Mesh::toString() const {
   return core::format("Mesh[\n"
@@ -36,6 +38,10 @@ std::string Mesh::toString() const {
                       "  data = %s\n"
                       "]",
                       name_, core::indent(data_->toString()));
+}
+
+void Mesh::logWarning() const {
+  LOG(WARNING) << "Attempting to modify read-only mesh \"" << name_ << "\"";
 }
 
 } // namespace game

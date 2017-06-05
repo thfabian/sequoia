@@ -83,7 +83,7 @@ TEST_F(SceneNodeTest, SceneNodeDrawable) {
   EXPECT_FALSE(node->hasDrawCommand());
 
   // Set a mesh
-  node->setMesh(game.getMeshManager()->createCube(game.getMainRenderTarget(), "TestCube"));
+  node->setMesh(game.getMeshManager()->createCube("TestCube"));
   EXPECT_TRUE(node->hasMesh());
   
   // Clone node

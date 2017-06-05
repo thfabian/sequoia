@@ -28,7 +28,13 @@ class MeshManagerTest : public GameTest {};
 TEST_F(MeshManagerTest, Cube) {
   Game& game = Game::getSingleton();
 
-  auto mesh = game.getMeshManager()->createCube(game.getMainRenderTarget(), "TestCube");
+  std::shared_ptr<Mesh> mesh = game.getMeshManager()->createCube("TestCube");
+
+  EXPECT_EQ(mesh->getVertexData()->getNumIndices(), 36);
+  EXPECT_EQ(mesh->getVertexData()->getNumVertices(), 24);
+  EXPECT_FALSE(mesh->isModifiable());
+  EXPECT_TRUE(mesh->getAxisAlignedBox() ==
+              math::AxisAlignedBox(math::vec3(-1, -1, -1), math::vec3(1, 1, 1)));
 }
 
 } // anonymous namespace
