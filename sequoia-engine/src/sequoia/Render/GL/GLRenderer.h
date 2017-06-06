@@ -16,6 +16,7 @@
 #ifndef SEQUOIA_RENDER_GL_GLRENDERER_H
 #define SEQUOIA_RENDER_GL_GLRENDERER_H
 
+#include "sequoia/Core/File.h"
 #include "sequoia/Core/NonCopyable.h"
 #include "sequoia/Math/Math.h"
 #include "sequoia/Render/Export.h"
@@ -25,6 +26,8 @@ namespace sequoia {
 
 namespace render {
 
+class Shader;
+class Program;
 class GLRenderWindow;
 class GLShaderManager;
 class GLProgramManager;
@@ -39,6 +42,14 @@ class GLStateCacheManager;
 class SEQUOIA_RENDER_API GLRenderer : public NonCopyable {
   GLRenderWindow* target_;
 
+  /// Default shaders
+  std::shared_ptr<Shader> defaultVertexShader_;
+  std::shared_ptr<Shader> defaultFragmentShader_;
+
+  /// Default GPU Program
+  std::shared_ptr<Program> defaultProgram_;
+
+  /// Managers
   std::unique_ptr<GLStateCacheManager> stateCache_;
   std::unique_ptr<GLShaderManager> shaderManager_;
   std::unique_ptr<GLProgramManager> programManager_;
@@ -50,7 +61,7 @@ public:
   /// @brief Release the OpenGL context
   ~GLRenderer();
 
-  /// @brief Render the given target
+  /// @brief Render the target
   void render();
 
   /// @brief Get the shader manager
@@ -61,6 +72,22 @@ public:
 
   /// @brief Get the OpenGL state manager
   GLStateCacheManager* getStateCache();
+
+  /// @brief Load the default vertex and fragment shaders and link them into a program of `target`
+  ///
+  /// @param defaultVertexShaderFile    File containing the default vertex shader
+  /// @param defaultFragmentShaderFile  File containing the default fragment shader
+  void loadDefaultShaders(const std::shared_ptr<File>& defaultVertexShaderFile,
+                          const std::shared_ptr<File>& defaultFragmentShaderFile);
+
+  /// @brief Get the default vertex shader
+  const std::shared_ptr<Shader>& getDefaultVertexShader() const;
+
+  /// @brief Get the default fragment shader
+  const std::shared_ptr<Shader>& getDefaultFragmentShader() const;
+
+  /// @brief Get the default fragment shader
+  const std::shared_ptr<Program>& getDefaultProgram() const;
 };
 
 } // namespace render

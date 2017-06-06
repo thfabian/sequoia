@@ -13,9 +13,9 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
+#include "sequoia/Core/Casting.h"
 #include "sequoia/Core/Logging.h"
 #include "sequoia/Core/StringUtil.h"
-#include "sequoia/Core/Casting.h"
 #include "sequoia/Render/Camera.h"
 #include "sequoia/Render/DrawCommandList.h"
 #include "sequoia/Render/GL/GL.h"
@@ -128,6 +128,10 @@ GLRenderer::~GLRenderer() {
   glfwMakeContextCurrent(target_->getGLFWwindow());
 
   // Destroy all remaining shaders, programs, textures and buffers
+  defaultVertexShader_.reset();
+  defaultFragmentShader_.reset();
+  defaultProgram_.reset();
+
   programManager_.reset();
   shaderManager_.reset();
   glbinding::Binding::releaseCurrentContext();
@@ -175,6 +179,25 @@ GLShaderManager* GLRenderer::getShaderManager() { return shaderManager_.get(); }
 GLProgramManager* GLRenderer::getProgramManager() { return programManager_.get(); }
 
 GLStateCacheManager* GLRenderer::getStateCache() { return stateCache_.get(); }
+
+void GLRenderer::loadDefaultShaders(const std::shared_ptr<File>& defaultVertexShaderFile,
+                                    const std::shared_ptr<File>& defaultFragmentShaderFile) {
+  auto& rsys = RenderSystem::getSingleton();
+
+  defaultVertexShader_ = rsys.loadShader(target_, Shader::ST_Vertex, defaultVertexShaderFile);
+  defaultFragmentShader_ = rsys.loadShader(target_, Shader::ST_Fragment, defaultFragmentShaderFile);
+  defaultProgram_ = rsys.createProgram(target_, {defaultVertexShader_, defaultFragmentShader_});
+}
+
+const std::shared_ptr<Shader>& GLRenderer::getDefaultVertexShader() const {
+  return defaultVertexShader_;
+}
+
+const std::shared_ptr<Shader>& GLRenderer::getDefaultFragmentShader() const {
+  return defaultFragmentShader_;
+}
+
+const std::shared_ptr<Program>& GLRenderer::getDefaultProgram() const { return defaultProgram_; }
 
 } // namespace render
 

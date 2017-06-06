@@ -25,6 +25,8 @@
 #include "sequoia/Render/GL/GLShader.h"
 #include <sstream>
 
+#include <iostream>
+
 namespace sequoia {
 
 namespace render {
@@ -240,7 +242,7 @@ SEQUOIA_SET_UNIFORM_VARIABLE_IMPL(math::fmat4, GL_FLOAT_MAT4,
 void destroyGLProgram(GLProgram* program) noexcept {
   if(program->status_ == GLProgramStatus::Invalid)
     return;
-
+  
   LOG(DEBUG) << "Deleting program (ID=" << program->id_ << ")";
   glDeleteProgram(program->id_);
   program->id_ = 0;

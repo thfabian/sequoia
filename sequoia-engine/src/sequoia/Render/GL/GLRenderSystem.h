@@ -82,6 +82,25 @@ public:
   /// @brief Remove the mouse `listener` of `target`
   virtual void removeMouseListener(RenderTarget* target, MouseListener* listener) override;
 
+  /// @brief Load the default vertex and fragment shaders and link them into a program of `target`
+  ///
+  /// @param defaultVertexShaderFile    File containing the default vertex shader
+  /// @param defaultFragmentShaderFile  File containing the default fragment shader
+  virtual void loadDefaultShaders(RenderTarget* target,
+                                  const std::shared_ptr<File>& defaultVertexShaderFile,
+                                  const std::shared_ptr<File>& defaultFragmentShaderFile) override;
+
+  /// @brief Get the default vertex shader of `target`
+  virtual const std::shared_ptr<Shader>&
+  getDefaultVertexShader(RenderTarget* target) const override;
+
+  /// @brief Get the default fragment shader of `target`
+  virtual const std::shared_ptr<Shader>&
+  getDefaultFragmentShader(RenderTarget* target) const override;
+
+  /// @brief Get the default fragment shader of `target`
+  virtual const std::shared_ptr<Program>& getDefaultProgram(RenderTarget* target) const override;
+
   /// @brief Register the InputSystem of the `target`
   void registerInputSystem(RenderTarget* target, GLInputSystem* inputSystem);
 

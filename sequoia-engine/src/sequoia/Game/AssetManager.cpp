@@ -14,7 +14,9 @@
 //===------------------------------------------------------------------------------------------===//
 
 #include "sequoia/Core/Assert.h"
+#include "sequoia/Core/Exception.h"
 #include "sequoia/Core/Logging.h"
+#include "sequoia/Core/UtfString.h"
 #include "sequoia/Game/AssetManager.h"
 
 namespace sequoia {
@@ -27,9 +29,7 @@ namespace game {
 
 AssetFile::AssetFile(std::size_t id, AssetManager* manager) : id_(id), manager_(manager) {}
 
-StringRef AssetFile::getContent() noexcept { return StringRef(); }
-
-bool AssetFile::exists() const noexcept { return true; }
+StringRef AssetFile::getContent() noexcept { return manager_->getAsset(id_).Content; }
 
 const std::string& AssetFile::getPath() const noexcept { return manager_->getPath(id_); }
 
@@ -47,7 +47,9 @@ AssetManager::Asset::Asset(AssetManager* manager, std::size_t id, AssetManager::
                            const std::string& path)
     : ID(id), Kind(kind), Path(path), File(std::make_shared<AssetFile>(id, manager)) {}
 
-AssetManager::AssetManager(const platform::String& path) : assetPath_(path) {}
+AssetManager::AssetManager(const platform::String& path) {
+  assetPath_ = platform::Path(path) / PLATFORM_STR("assets");
+}
 
 std::shared_ptr<File> AssetManager::load(const std::string& path, AssetManager::AssetKind kind) {
   std::lock_guard<std::mutex> lock(mutex_);
@@ -63,11 +65,11 @@ std::shared_ptr<File> AssetManager::load(const std::string& path, AssetManager::
     // Register new asset
     assets_.emplace_back(std::make_unique<Asset>(this, id, kind, path));
 
-    // Load content
-    loadContent(assets_.back());
-
     // Update lookup map
     pathLookupMap_[path] = id;
+
+    // Load content
+    loadContent(assets_.back());
 
   } else {
     id = it->second;
@@ -80,12 +82,26 @@ std::shared_ptr<File> AssetManager::load(const std::string& path, AssetManager::
 const platform::Path& AssetManager::getAssetPath() const { return assetPath_; }
 
 const std::string& AssetManager::getPath(std::size_t id) const {
-  SEQUOIA_ASSERT_MSG(id >= assets_.size(), "invalid id");
+  SEQUOIA_ASSERT_MSG(id < assets_.size(), "invalid id");
   return assets_[id]->Path;
 }
 
+const AssetManager::Asset& AssetManager::getAsset(std::size_t id) const {
+  SEQUOIA_ASSERT_MSG(id < assets_.size(), "invalid id");
+  return *assets_[id];
+}
+
 void AssetManager::loadContent(std::unique_ptr<AssetManager::Asset>& asset) {
-  // TOOD: load from disk
+  std::string fullPath = platform::toAnsiString(assetPath_ / platform::asPath(asset->Path));
+
+  std::ifstream file(fullPath.c_str());
+
+  if(!file.is_open())
+    SEQUOIA_THROW(core::Exception, "cannot load asset source: '%s'", asset->Path.c_str());
+
+  std::stringstream ss;
+  ss << file.rdbuf();
+  asset->Content = ss.str();
 }
 
 } // namespace game

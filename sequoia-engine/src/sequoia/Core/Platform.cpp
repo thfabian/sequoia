@@ -14,6 +14,7 @@
 //===------------------------------------------------------------------------------------------===//
 
 #include "sequoia/Core/Platform.h"
+#include "sequoia/Core/UtfString.h"
 #include <cstring>
 
 namespace sequoia {
@@ -36,6 +37,33 @@ char* copyCString(const std::string& str) { return copyCStringImpl(str.c_str(), 
 char* copyCString(const char* str) { return copyCStringImpl(str, std::strlen(str)); }
 wchar_t* copyCString(const std::wstring& str) { return copyCStringImpl(str.c_str(), str.size()); }
 wchar_t* copyCString(const wchar_t* str) { return copyCStringImpl(str, std::wcslen(str)); }
+
+Path asPath(const char* path) {
+#ifdef SEQUOIA_ON_WIN32
+  return Path(UtfString(path).toWideString());
+#else
+  return Path(path);
+#endif
+}
+
+Path asPath(const wchar_t* path) {
+#ifdef SEQUOIA_ON_WIN32
+  return Path(path);
+#else
+  return Path(UtfString(path).toAnsiString());
+#endif
+}
+
+Path asPath(const std::string& path) { return asPath(path.c_str()); }
+Path asPath(const std::wstring& path) { return asPath(path.c_str()); }
+
+std::string toAnsiString(const Path& path) {
+#ifdef SEQUOIA_ON_WIN32
+  return UtfString(path.native()).toAnsiString();
+#else
+  return path.native();
+#endif
+}
 
 } // namespace platform
 

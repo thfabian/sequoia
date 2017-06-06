@@ -160,8 +160,9 @@ bool GLProgramManager::checkAttributes(const std::shared_ptr<GLProgram>& program
     LOG(DEBUG) << "Active vertex attribute: name=" << name.get() << ", type=" << type
                << ", location=" << location;
 
-    if(!GLVertexAttribute::isValid(name.get()))
-      SEQUOIA_THROW(RenderSystemException, "invalid vertex attribute '%s' ", name.get());
+    // We don't check attributes which start with `frag_`
+    if(!StringRef(name.get()).startswith("frag_") && !GLVertexAttribute::isValid(name.get()))
+        SEQUOIA_THROW(RenderSystemException, "invalid vertex attribute '%s'", name.get());
   }
 
   LOG(DEBUG) << "Successfully checked vertex attributes of program (ID=" << program->id_ << ")";

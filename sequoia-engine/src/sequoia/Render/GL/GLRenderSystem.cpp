@@ -139,6 +139,25 @@ GLRenderer* GLRenderSystem::getRenderer(RenderTarget* target) const noexcept {
   return it->second;
 }
 
+void GLRenderSystem::loadDefaultShaders(RenderTarget* target,
+                                        const std::shared_ptr<File>& defaultVertexShaderFile,
+                                        const std::shared_ptr<File>& defaultFragmentShaderFile) {
+  getRenderer(target)->loadDefaultShaders(defaultVertexShaderFile, defaultFragmentShaderFile);
+}
+
+const std::shared_ptr<Shader>& GLRenderSystem::getDefaultVertexShader(RenderTarget* target) const {
+  return getRenderer(target)->getDefaultVertexShader();
+}
+
+const std::shared_ptr<Shader>&
+GLRenderSystem::getDefaultFragmentShader(RenderTarget* target) const {
+  return getRenderer(target)->getDefaultFragmentShader();
+}
+
+const std::shared_ptr<Program>& GLRenderSystem::getDefaultProgram(RenderTarget* target) const {
+  return getRenderer(target)->getDefaultProgram();
+}
+
 } // namespace render
 
 } // namespace sequoia

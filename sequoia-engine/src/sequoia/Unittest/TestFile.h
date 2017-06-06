@@ -39,9 +39,6 @@ public:
   /// @copydoc File::getContent
   virtual StringRef getContent() override;
 
-  /// @copydoc File::exists
-  virtual bool exists() const noexcept override;
-
   /// @copydoc File::getPath
   virtual const std::string& getPath() const noexcept override;
 

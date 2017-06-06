@@ -34,9 +34,6 @@ public:
   /// @returns content or empty string if empty
   virtual StringRef getContent() = 0;
 
-  /// @brief Check if file exists
-  virtual bool exists() const noexcept = 0;
-
   /// @brief Get the path to the file (this may return a relative path)
   virtual const std::string& getPath() const noexcept = 0;
 

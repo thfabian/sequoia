@@ -50,10 +50,24 @@ namespace sequoia {
 
 namespace platform {
 
+namespace filesystem = boost::filesystem;
+
 /// @typedef Path
 /// @brief The native path of the platform with respect to `platform::String`
-namespace filesystem = boost::filesystem;
 using Path = filesystem::path;
+
+/// @brief Convert `path` to `platform::Path`
+/// @param path   Path to convert
+/// @{
+SEQUOIA_CORE_API extern platform::Path asPath(const char* path);
+SEQUOIA_CORE_API extern platform::Path asPath(const wchar_t* path);
+SEQUOIA_CORE_API extern platform::Path asPath(const std::string& path);
+SEQUOIA_CORE_API extern platform::Path asPath(const std::wstring& path);
+/// @}
+
+/// @brief Convert `path` to `std::string`
+/// @param path   Path to convert
+SEQUOIA_CORE_API extern std::string toAnsiString(const platform::Path& path);
 
 /// @typedef String
 /// @brief The native string of the platform (`std::string` for Unix and `std::wstring` for Win32)

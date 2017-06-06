@@ -13,10 +13,10 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Render/RenderSystem.h"
 #include "sequoia/Core/Unreachable.h"
 #include "sequoia/Render/Exception.h"
 #include "sequoia/Render/GL/GLRenderSystem.h"
+#include "sequoia/Render/RenderSystem.h"
 
 namespace sequoia {
 
@@ -34,13 +34,13 @@ std::unique_ptr<RenderSystem> RenderSystem::create(RenderSystemKind kind) {
   return nullptr;
 }
 
+RenderSystem::RenderSystem(RenderSystemKind kind) : RenderSystemObject(kind), debugMode_(false) {}
+
 RenderSystem::~RenderSystem() {}
 
 void RenderSystem::setDebugMode(bool debugMode) { debugMode_ = debugMode; }
 
 bool RenderSystem::debugMode() const { return debugMode_; }
-
-RenderSystem::RenderSystem(RenderSystemKind kind) : RenderSystemObject(kind), debugMode_(false) {}
 
 } // namespace render
 

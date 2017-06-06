@@ -28,16 +28,8 @@ TestFile::TestFile(const char* path) : path_(path), content_(nullptr) {}
 
 StringRef TestFile::getContent() {
   if(!content_) {
-
-#ifdef SEQUOIA_ON_WIN32
-    std::string fullPath = UtfString(platform::Path(Environment::getSingleton().getRessourcePath() /
-                                                    UtfString(path_).toWideString())
-                                         .native())
-                               .toAnsiString();
-#else
-    std::string fullPath =
-        platform::Path(Environment::getSingleton().getRessourcePath() / path_).native();
-#endif
+    std::string fullPath = platform::toAnsiString(Environment::getSingleton().getRessourcePath() /
+                                                  platform::asPath(path_));
 
     std::ifstream file(fullPath.c_str());
 
@@ -49,14 +41,6 @@ StringRef TestFile::getContent() {
     content_ = std::make_unique<std::string>(ss.str());
   }
   return StringRef(*content_);
-}
-
-bool TestFile::exists() const noexcept {
-#ifdef SEQUOIA_ON_WIN32
-  return platform::filesystem::exists(UtfString(path_).toWideString());
-#else
-  return platform::filesystem::exists(path_);
-#endif
 }
 
 const std::string& TestFile::getPath() const noexcept { return path_; }

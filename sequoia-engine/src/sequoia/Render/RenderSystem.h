@@ -96,6 +96,23 @@ public:
   /// @brief Check if we run in debug-mode
   bool debugMode() const;
 
+  /// @brief Load the default vertex and fragment shaders and link them into a program of `target`
+  ///
+  /// @param defaultVertexShaderFile    File containing the default vertex shader
+  /// @param defaultFragmentShaderFile  File containing the default fragment shader
+  virtual void loadDefaultShaders(RenderTarget* target,
+                                  const std::shared_ptr<File>& defaultVertexShaderFile,
+                                  const std::shared_ptr<File>& defaultFragmentShaderFile) = 0;
+
+  /// @brief Get the default vertex shader of `target`
+  virtual const std::shared_ptr<Shader>& getDefaultVertexShader(RenderTarget* target) const = 0;
+
+  /// @brief Get the default fragment shader of `target`
+  virtual const std::shared_ptr<Shader>& getDefaultFragmentShader(RenderTarget* target) const = 0;
+
+  /// @brief Get the default fragment shader of `target`
+  virtual const std::shared_ptr<Program>& getDefaultProgram(RenderTarget* target) const = 0;
+
 protected:
   RenderSystem(RenderSystemKind kind);
 

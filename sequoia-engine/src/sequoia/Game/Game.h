@@ -44,14 +44,9 @@ class SEQUOIA_GAME_API Game : public Singleton<Game>,
   /// Manager
   std::unique_ptr<MeshManager> meshManager_;
   std::unique_ptr<AssetManager> assetManager_;
-  
+
   /// Reference to the main window
   render::RenderWindow* mainWindow_;
-
-  /// Default Shader and Program
-  std::shared_ptr<render::Shader> defaultVertexShader_;
-  std::shared_ptr<render::Shader> defaultFragmentShader_;
-  std::shared_ptr<render::Program> defaultProgram_;
 
   /// List of scenes
   std::vector<std::shared_ptr<Scene>> sceneList_;
@@ -89,6 +84,15 @@ public:
 
   /// @brief Get the main RenderTarget
   render::RenderTarget* getMainRenderTarget() const;
+
+  /// @brief Get the default vertex shader
+  const std::shared_ptr<render::Shader>& getDefaultVertexShader() const;
+
+  /// @brief Get the default fragment shader
+  const std::shared_ptr<render::Shader>& getDefaultFragmentShader() const;
+
+  /// @brief Get the default program
+  const std::shared_ptr<render::Program>& getDefaultProgram() const;
 
   /// @brief Get the main Scene
   Scene* getScene() const;

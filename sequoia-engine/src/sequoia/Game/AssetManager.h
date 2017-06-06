@@ -46,9 +46,6 @@ public:
   /// @copydoc AssetFile::getContent
   StringRef getContent() noexcept override;
 
-  /// @copydoc AssetFile::exists
-  bool exists() const noexcept override;
-
   /// @copydoc AssetFile::getPath
   const std::string& getPath() const noexcept override;
 
@@ -92,7 +89,7 @@ public:
   };
 
   AssetManager(const platform::String& path);
-  
+
   /// @brief Load asset from disk
   /// @threadsafe
   std::shared_ptr<File> load(const std::string& path, AssetKind kind = AK_Text);
@@ -102,6 +99,9 @@ public:
 
   /// @brief Get the path to the file (with respect to the asset `getAssetPath()`)
   const std::string& getPath(std::size_t id) const;
+
+  /// @brief Get the asset of `id`
+  const Asset& getAsset(std::size_t id) const;
 
 private:
   void loadContent(std::unique_ptr<Asset>& asset);
