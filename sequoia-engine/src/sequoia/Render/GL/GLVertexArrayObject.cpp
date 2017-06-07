@@ -77,8 +77,8 @@ void GLVertexArrayObject::bind() {
 unsigned int GLVertexArrayObject::getVAOID() const { return vaoID_; }
 
 void GLVertexArrayObject::writeVertexData(std::size_t offset, std::size_t length) {
-  
-  // TODO: use state-cache manager  
+
+  // TODO: use state-cache manager
   bind();
 
   // TODO: Discardable data should use glBufferData(GL_ARRAY_BUFFER, ..., NULL, ...) first
@@ -122,7 +122,7 @@ void GLVertexArrayObject::attachVertexDataDevice() {
   if(hasIndices())
     glGenBuffers(1, &eboID_);
 
-  // Set the vertex attributes
+  // TODO: use state-cache manager
   bind();
 
   const VertexLayout* layout = data_->getLayout();
@@ -130,28 +130,28 @@ void GLVertexArrayObject::attachVertexDataDevice() {
   if(layout->hasPosition()) {
     glEnableVertexAttribArray(GLVertexAttribute::Position);
     glVertexAttribPointer(GLVertexAttribute::Position, layout->PositionNumElement,
-                          getGLType(layout->PositionType), layout->PositionNormalized, 0,
-                          (void*)layout->PositionOffset);
+                          getGLType(layout->PositionType), layout->PositionNormalized,
+                          layout->SizeOf, (void*)layout->PositionOffset);
   }
 
   if(layout->hasNormal()) {
     glEnableVertexAttribArray(GLVertexAttribute::Normal);
     glVertexAttribPointer(GLVertexAttribute::Normal, layout->NormalNumElement,
-                          getGLType(layout->NormalType), layout->NormalNormalized, 0,
+                          getGLType(layout->NormalType), layout->NormalNormalized, layout->SizeOf,
                           (void*)layout->NormalOffset);
   }
 
   if(layout->hasTexCoord()) {
     glEnableVertexAttribArray(GLVertexAttribute::TexCoord);
     glVertexAttribPointer(GLVertexAttribute::TexCoord, layout->TexCoordNumElement,
-                          getGLType(layout->TexCoordType), layout->TexCoordNormalized, 0,
-                          (void*)layout->TexCoordOffset);
+                          getGLType(layout->TexCoordType), layout->TexCoordNormalized,
+                          layout->SizeOf, (void*)layout->TexCoordOffset);
   }
 
   if(layout->hasColor()) {
     glEnableVertexAttribArray(GLVertexAttribute::Color);
     glVertexAttribPointer(GLVertexAttribute::Color, layout->ColorNumElement,
-                          getGLType(layout->ColorType), layout->ColorNormalized, 0,
+                          getGLType(layout->ColorType), layout->ColorNormalized, layout->SizeOf,
                           (void*)layout->ColorOffset);
   }
 

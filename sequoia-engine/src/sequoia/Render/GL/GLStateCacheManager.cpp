@@ -21,8 +21,6 @@
 #include "sequoia/Render/GL/GLVertexAttribute.h"
 #include "sequoia/Render/VertexData.h"
 
-#include <iostream>
-
 namespace sequoia {
 
 namespace render {
@@ -54,8 +52,8 @@ GLStateCacheManager::GLStateCacheManager() {
 }
 
 void GLStateCacheManager::setRenderState(const sequoia::render::RenderState& renderState) {
-//  glEnable(GL_DEPTH_TEST);
-//  glDepthFunc(GL_LESS);
+  glEnable(GL_DEPTH_TEST);
+  glDepthFunc(GL_LESS);
 }
 
 void GLStateCacheManager::setProgram(GLProgram* program) {

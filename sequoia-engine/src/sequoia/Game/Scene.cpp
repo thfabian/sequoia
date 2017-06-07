@@ -42,11 +42,8 @@ Scene::Scene() : camera_(nullptr) {
   camera_->setCenter(math::vec3(0, 0, 0));
 
   auto node = SceneGraph::create<SceneNodeDrawable>("TestNode");
-  //auto mesh = game.getMeshManager()->createCube("TestCube");
-  auto mesh = game.getMeshManager()->createTriangle("TestTriangle");
+  auto mesh = game.getMeshManager()->createCube("TestCube");
   
-  mesh->dump();
-
   auto drawCommand = std::make_shared<render::DrawCommand>(game.getDefaultProgram().get(),
                                                            mesh->getVertexArrayObject());
   node->setDrawCommand(drawCommand);

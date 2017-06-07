@@ -77,23 +77,6 @@ public:
   /// @endverbatim
   std::shared_ptr<Mesh> createCube(const std::string& name, bool modifieable = false,
                                    BufferUsageKind usage = BufferUsageKind::BK_StaticWriteOnly);
-
-  /// @brief Create a simple triangle
-  ///
-  /// @param target       RenderTarget used to allocate the hardware buffers
-  /// @param name         Name of the mesh
-  /// @param modifiable   Request a copy of the mesh which allows to modify the vertex data
-  /// @param usage        Buffer usage of the hardware vertex buffers
-  ///
-  /// @verbatim
-  ///                                                    y
-  ///          v2           v0 = { -1, -1, 0 }           ^
-  ///         /  \          v1 = {  1, -1, 0 }           |
-  ///        /    \         v2 = {  0,  1, 0 }           0---- > x
-  ///       v0-----v1
-  /// @endverbatim
-  std::shared_ptr<Mesh> createTriangle(const std::string& name, bool modifiable = false,
-                                       BufferUsageKind usage = BufferUsageKind::BK_StaticWriteOnly);
 };
 
 } // namespace game
