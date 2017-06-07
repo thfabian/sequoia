@@ -19,10 +19,12 @@ namespace sequoia {
 
 namespace render {
 
-Camera::Camera(const math::vec3& up) : ViewFrustum(), up_(up) {}
+const math::vec3 Camera::Up(0, 1, 0);
+
+Camera::Camera() : ViewFrustum() {}
 
 void Camera::viewportGeometryChanged(Viewport* viewport) {
-  setAspectRatio(viewport->getWidth() / viewport->getHeight());
+  setAspectRatio(float(viewport->getWidth()) / viewport->getHeight());
 }
 
 const math::vec3& Camera::getEye() const { return eye_; }

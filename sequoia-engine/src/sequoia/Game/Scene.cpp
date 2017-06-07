@@ -36,7 +36,7 @@ Scene::Scene() : camera_(nullptr) {
   //
 
   // Create the camera
-  cameraList_.emplace_back(std::make_shared<render::Camera>(math::vec3(0, 1, 0)));
+  cameraList_.emplace_back(std::make_shared<render::Camera>());
   camera_ = cameraList_.back().get();
   camera_->setEye(math::vec3(4, 3, -3));
   camera_->setCenter(math::vec3(0, 0, 0));

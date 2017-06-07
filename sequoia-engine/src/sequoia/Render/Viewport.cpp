@@ -32,11 +32,13 @@ Camera* Viewport::getCamera() const {
 }
 
 void Viewport::setCamera(Camera* camera) {
-  // Register the camera as a Viewport listener
-  addListener(static_cast<ViewportListener*>(camera_));
-
+  SEQUOIA_ASSERT(camera);
+  
   // Set the camera
   camera_ = camera;
+
+  // Register the camera as a Viewport listener
+  addListener(static_cast<ViewportListener*>(camera_));
 
   // Notify the camera about the geometry of the viewport
   camera_->viewportGeometryChanged(this);
@@ -50,8 +52,9 @@ void Viewport::updateGeometry(int x, int y, int width, int height) {
   width_ = width;
   height_ = height;
 
-  for(auto* listener : getListeners<ViewportListener>())
+  for(auto* listener : getListeners<ViewportListener>()) {
     listener->viewportGeometryChanged(this);
+  }
 }
 
 int Viewport::getX() const { return x_; }

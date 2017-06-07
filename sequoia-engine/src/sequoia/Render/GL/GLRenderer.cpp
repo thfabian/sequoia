@@ -177,16 +177,6 @@ void GLRenderer::render() {
     // Bind and draw the buffers
     stateCacheManager_->draw(drawCommand);
   }
-  
-//  auto v = camera->getEye();
-//  float l = std::sqrt(v.x * v.x + v.z * v.z);
-//  float phi = std::asin(v.z / l);  
-//  phi += 0.01f;
-//  if(phi > (0.49 * M_PI))
-//    phi = 0;
-//  v.z = l * std::sin(phi);
-//  v.x = l * std::cos(phi);
-//  camera->setEye(v);
 }
 
 GLShaderManager* GLRenderer::getShaderManager() { return shaderManager_.get(); }

@@ -41,11 +41,10 @@ protected:
   math::vec3 center_;
 
   /// Up vector
-  /// TODO: replace with Coordiante system object
-  math::vec3 up_;
+  static const math::vec3 Up;
 
 public:
-  Camera(const math::vec3& up);
+  Camera();
   virtual ~Camera() {}
 
   /// @brief Get/Set the `eye` of the camera (where the camera is located)
@@ -56,7 +55,7 @@ public:
   const math::vec3& getCenter() const;
   void setCenter(const math::vec3& center);
 
-  const math::vec3& getUp() const { return up_; }
+  const math::vec3& getUp() const { return Up; }
 
   /// @brief The geometry of the associated viewport changed, we need to update our aspect ratio
   void viewportGeometryChanged(Viewport* viewport) override;

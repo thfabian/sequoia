@@ -28,6 +28,8 @@ namespace render {
 class SEQUOIA_RENDER_API ViewportListener {
 public:
   /// @brief The geometry of the Viewport changed
+  ///
+  /// Default implementation does nothing
   virtual void viewportGeometryChanged(Viewport* viewport);
 };
 
