@@ -13,17 +13,21 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
+#include "sequoia/Core/Casting.h"
 #include "sequoia/Game/Game.h"
 #include "sequoia/Game/MeshManager.h"
 #include "sequoia/Game/Scene.h"
 #include "sequoia/Game/SceneGraph.h"
 #include "sequoia/Render/Camera.h"
+#include "sequoia/Render/DrawCommandList.h"
 
 namespace sequoia {
 
 namespace game {
 
 Scene::Scene() : camera_(nullptr) {
+  drawCommandList_.reserve(render::DrawCommandList::DefaultSize);
+
   Game& game = Game::getSingleton();
   sceneGraph_ = std::make_shared<SceneGraph>();
 
@@ -34,15 +38,36 @@ Scene::Scene() : camera_(nullptr) {
   // Create the camera
   cameraList_.emplace_back(std::make_shared<render::Camera>(math::vec3(0, 1, 0)));
   camera_ = cameraList_.back().get();
-  camera_->setEye(math::vec3(4, 3, 3));
+  camera_->setEye(math::vec3(4, 3, -3));
   camera_->setCenter(math::vec3(0, 0, 0));
 
   auto node = SceneGraph::create<SceneNodeDrawable>("TestNode");
-  node->setMesh(game.getMeshManager()->createCube("TestCube"));
+  //auto mesh = game.getMeshManager()->createCube("TestCube");
+  auto mesh = game.getMeshManager()->createTriangle("TestTriangle");
+  
+  mesh->dump();
+
+  auto drawCommand = std::make_shared<render::DrawCommand>(game.getDefaultProgram().get(),
+                                                           mesh->getVertexArrayObject());
+  node->setDrawCommand(drawCommand);
+  node->setMesh(mesh);
+
   sceneGraph_->insert(node);
 }
 
-void Scene::updateDrawCommandList(render::DrawCommandList* list) {}
+void Scene::updateDrawCommandList(render::DrawCommandList* list) {
+  drawCommandList_.clear();
+
+  // Extract all DrawCommands
+  sceneGraph_->apply([this](SceneNode* node) {
+    if(SceneNodeDrawable* drawNode = dyn_cast<SceneNodeDrawable>(node)) {
+      drawCommandList_.emplace_back(drawNode->getDrawCommand().get());
+    }
+  });
+
+  // Copy DrawCommands
+  list->insert(drawCommandList_);
+}
 
 void Scene::addCamera(const std::shared_ptr<render::Camera>& camera) {
   cameraList_.push_back(camera);

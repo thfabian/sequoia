@@ -39,6 +39,8 @@ std::size_t VertexArrayObject::getNumIndices() const { return data_->getNumIndic
 
 bool VertexArrayObject::hasIndices() const { return data_->hasIndices(); }
 
+VertexData* VertexArrayObject::getVertexData() { return data_; }
+
 } // namespace render
 
 } // namespace sequoia

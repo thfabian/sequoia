@@ -25,8 +25,6 @@
 #include "sequoia/Render/GL/GLShader.h"
 #include <sstream>
 
-#include <iostream>
-
 namespace sequoia {
 
 namespace render {
@@ -201,8 +199,6 @@ inline typename ComputeReturnType<T, IsFundamental>::type addressOf(const T& val
           RenderSystemException,                                                                   \
           "invalid rank '%i' of uniform variable '%s' in program (ID=%i), expected '%i'", 1, name, \
           id_, info.Size);                                                                         \
-    if(info.ValueSet)                                                                              \
-      LOG(WARNING) << "Overriding uniform variable '" << name << "'";                              \
     FUNC(id_, info.Location, info.Size, addressOf(value));                                         \
     info.ValueSet = true;                                                                          \
     return true;                                                                                   \
@@ -242,7 +238,7 @@ SEQUOIA_SET_UNIFORM_VARIABLE_IMPL(math::fmat4, GL_FLOAT_MAT4,
 void destroyGLProgram(GLProgram* program) noexcept {
   if(program->status_ == GLProgramStatus::Invalid)
     return;
-  
+
   LOG(DEBUG) << "Deleting program (ID=" << program->id_ << ")";
   glDeleteProgram(program->id_);
   program->id_ = 0;

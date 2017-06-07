@@ -37,7 +37,7 @@ class SEQUOIA_GAME_API Game : public Singleton<Game>,
                               public KeyListener,
                               public MouseListener,
                               public Listenable<KeyListener, MouseListener> {
-
+  
   /// Active render-system
   std::unique_ptr<render::RenderSystem> renderSystem_;
 

@@ -23,13 +23,16 @@
 #include "sequoia/Render/GL/GLRenderWindow.h"
 #include "sequoia/Render/GL/GLRenderer.h"
 #include "sequoia/Render/GL/GLShaderManager.h"
-#include "sequoia/Render/GL/GLStateCache.h"
+#include "sequoia/Render/GL/GLStateCacheManager.h"
 #include "sequoia/Render/RenderSystem.h"
 #include <glbinding/Binding.h>
 #include <glbinding/ContextInfo.h>
 #include <glbinding/Version.h>
 #include <glbinding/glbinding-version.h>
 #include <sstream>
+
+// TODO: Kill me
+#include <iostream>
 
 namespace sequoia {
 
@@ -82,11 +85,11 @@ static std::string functionCallToString(const glbinding::FunctionCall& call) {
   return ss.str();
 }
 
-GLRenderer::GLRenderer(GLRenderWindow* target) : target_(target) {
+GLRenderer::GLRenderer(GLRenderWindow* target) : window_(target) {
   LOG(INFO) << "Creating OpenGL renderer " << this << " ...";
 
   // Bind the context to the current thread
-  glfwMakeContextCurrent(target_->getGLFWwindow());
+  glfwMakeContextCurrent(window_->getGLFWwindow());
 
   // Load function lazily
   glbinding::Binding::initialize(false);
@@ -115,7 +118,7 @@ GLRenderer::GLRenderer(GLRenderWindow* target) : target_(target) {
   LOG(INFO) << "GL renderer: " << glbinding::ContextInfo::renderer();
 
   // Initialize OpenGL related managers
-  stateCache_ = std::make_unique<GLStateCacheManager>();
+  stateCacheManager_ = std::make_unique<GLStateCacheManager>();
   shaderManager_ = std::make_unique<GLShaderManager>();
   programManager_ = std::make_unique<GLProgramManager>();
 
@@ -125,7 +128,7 @@ GLRenderer::GLRenderer(GLRenderWindow* target) : target_(target) {
 GLRenderer::~GLRenderer() {
   LOG(INFO) << "Terminating OpenGL renderer " << this << " ... ";
 
-  glfwMakeContextCurrent(target_->getGLFWwindow());
+  glfwMakeContextCurrent(window_->getGLFWwindow());
 
   // Destroy all remaining shaders, programs, textures and buffers
   defaultVertexShader_.reset();
@@ -140,53 +143,119 @@ GLRenderer::~GLRenderer() {
 }
 
 void GLRenderer::render() {
-  Viewport* viewport = target_->getViewport();
-  Camera* camera = viewport->getCamera();
-  DrawCommandList* drawCommandList = target_->getDrawCommandList().get();
+//  Viewport* viewport = target_->getViewport();
+//  Camera* camera = viewport->getCamera();
+//  DrawCommandList* drawCommandList = target_->getDrawCommandList().get();
 
-  // Compute the projction matrix
-  glm::mat4 matProj =
-      glm::perspective(glm::radians(camera->getFieldOfViewY()), camera->getAspectRatio(),
-                       camera->getZNearClipping(), camera->getZFarClipping());
+//  // Compute the projction matrix
+//  glm::mat4 matProj = glm::perspective(camera->getFieldOfViewY(), camera->getAspectRatio(),
+//                                       camera->getZNearClipping(), camera->getZFarClipping());
+  
+//  // Compute camera view matrix
+//  glm::mat4 matView = glm::lookAt(camera->getEye(), camera->getCenter(), camera->getUp());
 
-  // Compute camera view matrix
-  glm::mat4 matView = glm::lookAt(camera->getEye(), camera->getCenter(), camera->getUp());
+//  // Precompute view projection matrix
+//  glm::mat4 matViewProj = matProj * matView; 
+  
+//  // Clear the screen
+//  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-  // Precompute view projection matrix
-  glm::mat4 matViewProj = matProj * matView;
+//  // Start rendering
+//  DrawCommand* drawCommand = nullptr;
+//  for(drawCommand = drawCommandList->start(); drawCommand != nullptr;
+//      drawCommand = drawCommandList->next()) {
+    
+//    GLProgram* program = dyn_cast<GLProgram>(drawCommand->getProgram());    
+    
+//    // Compute the full model view projection matrix
+//    glm::mat4 u_ModelViewProjection = matViewProj * drawCommand->getModelMatrix();
 
-  // Clear the screen
-  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+//    // Update the OpenGL state-machine
+//    stateCacheManager_->setRenderState(drawCommand->getRenderState());
+          
+//    // Set the uniforms
+//    program->setUniformVariable("u_ModelViewProjection", u_ModelViewProjection);
+//    stateCacheManager_->setProgram(program);    
+    
+//    // Bind and draw the buffers
+//    stateCacheManager_->draw(drawCommand);
+//  }
+  
+	// Dark blue background
+	glClearColor(0.0f, 0.0f, 0.4f, 0.0f);
 
-  // Start rendering
-  DrawCommand* drawCommand = nullptr;
-  for(drawCommand = drawCommandList->start(); drawCommand != nullptr;
-      drawCommand = drawCommandList->next()) {
+	GLuint VertexArrayID;
+	glGenVertexArrays(1, &VertexArrayID);
+	glBindVertexArray(VertexArrayID);
 
-    // Compute the full model view projection matrix
-    glm::mat4 u_ModelViewProjection = matViewProj * drawCommand->getModelMatrix();
+	// Create and compile our GLSL program from the shaders
 
-    // Update the OpenGL state-machine
+	static const GLfloat g_vertex_buffer_data[] = { 
+		-1.0f, -1.0f, 0.0f,
+		 1.0f, -1.0f, 0.0f,
+		 0.0f,  1.0f, 0.0f,
+	};
 
-    // Set the uniforms
-    GLProgram* program = dyn_cast<GLProgram>(drawCommand->getProgram());
-    program->setUniformVariable("u_ModelViewProjection", u_ModelViewProjection);
-  }
+	GLuint vertexbuffer;
+	glGenBuffers(1, &vertexbuffer);
+	glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertex_buffer_data), g_vertex_buffer_data, GL_STATIC_DRAW);
+
+	do{
+
+		// Clear the screen
+		glClear( GL_COLOR_BUFFER_BIT );
+
+		// Use our shader
+		glUseProgram(3);
+
+		// 1rst attribute buffer : vertices
+		glEnableVertexAttribArray(0);
+		glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
+		glVertexAttribPointer(
+			0,                  // attribute 0. No particular reason for 0, but must match the layout in the shader.
+			3,                  // size
+			GL_FLOAT,           // type
+			GL_FALSE,           // normalized?
+			0,                  // stride
+			(void*)0            // array buffer offset
+		);
+
+		// Draw the triangle !
+		glDrawArrays(GL_TRIANGLES, 0, 3); // 3 indices starting at 0 -> 1 triangle
+
+		glDisableVertexAttribArray(0);
+
+		// Swap buffers
+		glfwSwapBuffers(window_->getGLFWwindow());
+		glfwPollEvents();
+
+	} // Check if the ESC key was pressed or the window was closed
+	while( glfwGetKey(window_->getGLFWwindow(), GLFW_KEY_ESCAPE ) != GLFW_PRESS &&
+		   glfwWindowShouldClose(window_->getGLFWwindow()) == 0 );
+
+	// Cleanup VBO
+	glDeleteBuffers(1, &vertexbuffer);
+	glDeleteVertexArrays(1, &VertexArrayID);
+	glDeleteProgram(3);
+
+	// Close OpenGL window and terminate GLFW
+	glfwTerminate();
 }
 
 GLShaderManager* GLRenderer::getShaderManager() { return shaderManager_.get(); }
 
 GLProgramManager* GLRenderer::getProgramManager() { return programManager_.get(); }
 
-GLStateCacheManager* GLRenderer::getStateCache() { return stateCache_.get(); }
+GLStateCacheManager* GLRenderer::getStateCache() { return stateCacheManager_.get(); }
 
 void GLRenderer::loadDefaultShaders(const std::shared_ptr<File>& defaultVertexShaderFile,
                                     const std::shared_ptr<File>& defaultFragmentShaderFile) {
   auto& rsys = RenderSystem::getSingleton();
 
-  defaultVertexShader_ = rsys.loadShader(target_, Shader::ST_Vertex, defaultVertexShaderFile);
-  defaultFragmentShader_ = rsys.loadShader(target_, Shader::ST_Fragment, defaultFragmentShaderFile);
-  defaultProgram_ = rsys.createProgram(target_, {defaultVertexShader_, defaultFragmentShader_});
+  defaultVertexShader_ = rsys.loadShader(window_, Shader::ST_Vertex, defaultVertexShaderFile);
+  defaultFragmentShader_ = rsys.loadShader(window_, Shader::ST_Fragment, defaultFragmentShaderFile);
+  defaultProgram_ = rsys.createProgram(window_, {defaultVertexShader_, defaultFragmentShader_});
 }
 
 const std::shared_ptr<Shader>& GLRenderer::getDefaultVertexShader() const {

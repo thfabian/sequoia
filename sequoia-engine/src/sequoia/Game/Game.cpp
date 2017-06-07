@@ -43,13 +43,14 @@ Game::~Game() { cleanup(); }
 void Game::run() {
   LOG(INFO) << "Starting main-loop ...";
 
+  render::DrawCommandList* drawCommandList = mainWindow_->getDrawCommandList().get();
+  
   // Start main-loop
   while(!mainWindow_->isClosed()) {
 
     // Set the draw commands
-    render::DrawCommandList* list = mainWindow_->getDrawCommandList().get();
-    list->clear();
-    scene_->updateDrawCommandList(list);
+    drawCommandList->clear();
+    scene_->updateDrawCommandList(drawCommandList);
 
     // Start rendering all tender targets
     renderSystem_->renderOneFrame();

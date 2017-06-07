@@ -54,7 +54,7 @@ public:
   ///   - @b aspect : 1.3333
   ///   - @b zNear  : 1.0
   ///   - @b zFar   : 10000.0
-  ViewFrustum() : fovy_(45.0), aspect_(4.0 / 3.0), zNear_(1.0), zFar_(10000.0) {}
+  ViewFrustum() : fovy_(45.0f), aspect_(4.0f / 3.0f), zNear_(0.1f), zFar_(100.0f) {}
 
   ViewFrustum(double fovy, double aspect, double zNear, double zFar)
       : fovy_(fovy), aspect_(aspect), zNear_(zNear), zFar_(zFar) {}

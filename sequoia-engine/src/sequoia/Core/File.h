@@ -27,6 +27,9 @@ namespace sequoia {
 namespace core {
 
 /// @brief File interface
+///
+/// File has specialization for `std::hash<File>` as well as `std::hash<std::shared_ptr<File>>`.
+///
 /// @ingroup core
 class SEQUOIA_CORE_API File {
 public:

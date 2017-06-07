@@ -182,8 +182,6 @@ TEST_F(GLVertexArrayObjectTest, Vertex3D) {
     glGetVertexAttribPointerv(GLVertexAttribute::Color, GL_VERTEX_ATTRIB_ARRAY_POINTER, &pointer);
     EXPECT_EQ((std::size_t)pointer, layout->ColorOffset);
   }
-
-  glvao->unbind();
 }
 
 } // anonymous namespace

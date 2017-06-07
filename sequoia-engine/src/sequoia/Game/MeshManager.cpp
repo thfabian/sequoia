@@ -21,8 +21,10 @@ namespace sequoia {
 
 namespace game {
 
-MeshManager::MeshManager(render::RenderTarget* target)
-    : target_(target), staticCubeMeshDataIdx_(-1) {}
+MeshManager::MeshManager(render::RenderTarget* target) : target_(target) {
+  staticCubeMeshDataIdx_ = -1;
+  staticTriangleMeshDataIdx_ = -1;
+}
 
 std::shared_ptr<Mesh> MeshManager::load(const std::string& name, const std::shared_ptr<File>& file,
                                         bool modifiable, BufferUsageKind usage) {
@@ -83,13 +85,13 @@ static unsigned int CubeIndices[]  = {   0, 1, 2,   2, 3, 0,                    
                                         12,13,14,  14,15,12,                    // left
                                         16,17,18,  18,19,16,                    // bottom
                                         20,21,22,  22,23,20 };                  // back
+
 // clang-format on
 
 } // anonymous namespace
 
 std::shared_ptr<Mesh> MeshManager::createCube(const std::string& name, bool modifiable,
                                               BufferUsageKind usage) {
-
   LOG(INFO) << "Creating cube mesh \"" << name << "\" ...";
 
   if(staticCubeMeshDataIdx_ == -1) {
@@ -143,6 +145,91 @@ std::shared_ptr<Mesh> MeshManager::createCube(const std::string& name, bool modi
   const std::shared_ptr<render::VertexData>& data = vertexDataList_[staticCubeMeshDataIdx_];
 
   LOG(INFO) << "Successfully created cube mesh \"" << name << "\"";
+  return std::make_shared<Mesh>(name, data, modifiable);
+}
+
+//===------------------------------------------------------------------------------------------===//
+//    Cube Triangle
+//===------------------------------------------------------------------------------------------===//
+
+namespace {
+
+// clang-format off
+
+// Simple triangle vertex data in the format {Position, Normal, Color}
+//
+//      v2
+//     /  \
+//    /    \
+//   v0-----v1
+//
+static float TriangleVertexData[] = { -1, -1, 0,  0, 0, -1,  1, 1, 1,          // v0
+                                       1, -1, 0,  0, 0, -1,  1, 1, 0,          // v1
+                                       0,  1, 0,  0, 0, -1,  1, 0, 0 };        // v2
+
+static unsigned int TriangleIndices[] = {0, 1, 2};
+
+// clang-format on
+
+} // anonymous namespace
+
+std::shared_ptr<Mesh> MeshManager::createTriangle(const std::string& name, bool modifiable,
+                                                  MeshManager::BufferUsageKind usage) {
+  LOG(INFO) << "Creating triangle mesh \"" << name << "\" ...";
+
+  if(staticTriangleMeshDataIdx_ == -1) {
+    std::size_t numVertices = 3;
+    // std::size_t numIndices = 3;
+    std::size_t numIndices = 0;
+
+    std::shared_ptr<render::VertexData> data(
+        new render::VertexData(render::Vertex3D::getLayout(), render::VertexData::DM_Triangles,
+                               numVertices, numIndices, false));
+
+    // Set vertex data
+    render::Vertex3D* vertex = (render::Vertex3D*)data->getVerticesPtr();
+    for(std::size_t i = 0; i < numVertices; ++i) {
+      // Position
+      for(int j = 0; j < 3; ++j)
+        vertex[i].Position[j] = TriangleVertexData[i * 9 + j];
+
+      // Normal
+      for(int j = 0; j < 3; ++j)
+        vertex[i].Normal[j] = TriangleVertexData[i * 9 + 3 + j];
+
+      // TexCoord
+      vertex[i].TexCoord[0] = vertex[i].TexCoord[1] = 0;
+
+      // Color
+      static_assert(std::is_integral<render::Vertex3D::ColorType>::value,
+                    "color should be integral");
+
+      constexpr auto maxRGBValue = std::numeric_limits<render::Vertex3D::ColorType>::max();
+      for(int j = 0; j < 3; ++j)
+        vertex[i].Color[j] = maxRGBValue * TriangleVertexData[i * 9 + 6 + j];
+      vertex[i].Color[3] = maxRGBValue;
+    }
+
+    // Set bounding box
+    data->setAxisAlignedBox(math::AxisAlignedBox(math::vec3(-1, -1, 0), math::vec3(1, 1, 0)));
+
+    // Set indices
+    // std::memcpy(data->getIndicesPtr(), TriangleIndices, numIndices *
+    // sizeof(render::VertexIndexType));
+
+    // Set the VAO
+    data->setVertexArrayObject(
+        render::RenderSystem::getSingleton().createVertexArrayObject(target_), usage);
+    data->getVertexArrayObject()->writeVertexData(0, numVertices);
+    // data->getVertexArrayObject()->writeIndexData(0, numIndices);
+
+    vertexDataList_.emplace_back(data);
+    staticTriangleMeshDataIdx_ = vertexDataList_.size() - 1;
+  }
+
+  const std::shared_ptr<render::VertexData>& data = vertexDataList_[staticTriangleMeshDataIdx_];
+
+  LOG(INFO) << "Successfully created triangle mesh \"" << name << "\"";
   return std::make_shared<Mesh>(name, data, modifiable);
 }
 

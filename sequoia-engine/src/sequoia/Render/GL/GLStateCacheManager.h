@@ -13,10 +13,11 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_RENDER_GL_GLSTATECACHE_H
-#define SEQUOIA_RENDER_GL_GLSTATECACHE_H
+#ifndef SEQUOIA_RENDER_GL_GLSTATECACHEMANAGER_H
+#define SEQUOIA_RENDER_GL_GLSTATECACHEMANAGER_H
 
 #include "sequoia/Core/NonCopyable.h"
+#include "sequoia/Render/DrawCommand.h"
 #include "sequoia/Render/Export.h"
 #include <unordered_map>
 
@@ -24,11 +25,33 @@ namespace sequoia {
 
 namespace render {
 
+class GLProgram;
+class GLVertexArrayObject;
+
 /// @brief Manager of the OpenGL state-machine
+///
+/// This keeps an in-memory copy of the OpenGL state-machine to avoid unnecessary state changes.
+///
 /// @ingroup gl
 class SEQUOIA_RENDER_API GLStateCacheManager : public NonCopyable {
-public:
 
+  /// Bound GPU program
+  GLProgram* program_;
+
+  /// Bound VAO
+  GLVertexArrayObject* vao_;
+
+public:
+  GLStateCacheManager();
+
+  /// @brief Set the `RenderState`
+  void setRenderState(const RenderState& renderState);
+
+  /// @brief Set the program to use in the render-pipeline
+  void setProgram(GLProgram* program);
+
+  /// @brief Set the VertexArrayObject object to bind
+  void draw(DrawCommand* command);
 };
 
 } // namespace render

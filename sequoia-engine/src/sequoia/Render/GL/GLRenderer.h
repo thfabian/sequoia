@@ -40,7 +40,7 @@ class GLStateCacheManager;
 /// calls
 /// @ingroup gl
 class SEQUOIA_RENDER_API GLRenderer : public NonCopyable {
-  GLRenderWindow* target_;
+  GLRenderWindow* window_;
 
   /// Default shaders
   std::shared_ptr<Shader> defaultVertexShader_;
@@ -50,7 +50,7 @@ class SEQUOIA_RENDER_API GLRenderer : public NonCopyable {
   std::shared_ptr<Program> defaultProgram_;
 
   /// Managers
-  std::unique_ptr<GLStateCacheManager> stateCache_;
+  std::unique_ptr<GLStateCacheManager> stateCacheManager_;
   std::unique_ptr<GLShaderManager> shaderManager_;
   std::unique_ptr<GLProgramManager> programManager_;
 

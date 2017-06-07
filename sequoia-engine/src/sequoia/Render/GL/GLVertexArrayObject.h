@@ -38,9 +38,6 @@ public:
   /// @brief Bind the VAO
   void bind();
 
-  /// @brief Unbind the VAO
-  void unbind();
-
   /// @brief Get the VAO ID
   unsigned int getVAOID() const;
 

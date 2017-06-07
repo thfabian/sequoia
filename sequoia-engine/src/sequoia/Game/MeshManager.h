@@ -32,14 +32,16 @@ namespace game {
 /// @brief Handle creation of meshes of a specifc `RenderTarget`
 /// @ingroup game
 class SEQUOIA_GAME_API MeshManager : public NonCopyable {
+
   /// Target used to create device buffers
   render::RenderTarget* target_;
 
   /// Record of all the loaded meshes (use count of 1 implies the mesh is *not* in use)
   std::vector<std::shared_ptr<render::VertexData>> vertexDataList_;
 
-  /// Index into `meshDataList` for the static cube mesh
+  /// Indices for the static meshes
   int staticCubeMeshDataIdx_;
+  int staticTriangleMeshDataIdx_;
 
 public:
   using BufferUsageKind = render::VertexArrayObject::BufferUsageKind;
@@ -49,7 +51,6 @@ public:
 
   /// @brief Load mesh from disk
   ///
-  /// @param target       RenderTarget used to allocate the hardware buffers
   /// @param name         Name of the mesh
   /// @param file         Path to the mesh file
   /// @param modifiable   Request a copy of the mesh which allows to modify the vertex data
@@ -61,7 +62,6 @@ public:
   /// @brief Create a cube mesh which is centered at `(0, 0, 0)` and spans
   /// `{-1, 1} x {-1, 1} x {-1, 1}`
   ///
-  /// @param target       RenderTarget used to allocate the hardware buffers
   /// @param name         Name of the mesh
   /// @param modifiable   Request a copy of the mesh which allows to modify the vertex data
   /// @param usage        Buffer usage of the hardware vertex buffers
@@ -77,6 +77,23 @@ public:
   /// @endverbatim
   std::shared_ptr<Mesh> createCube(const std::string& name, bool modifieable = false,
                                    BufferUsageKind usage = BufferUsageKind::BK_StaticWriteOnly);
+
+  /// @brief Create a simple triangle
+  ///
+  /// @param target       RenderTarget used to allocate the hardware buffers
+  /// @param name         Name of the mesh
+  /// @param modifiable   Request a copy of the mesh which allows to modify the vertex data
+  /// @param usage        Buffer usage of the hardware vertex buffers
+  ///
+  /// @verbatim
+  ///                                                    y
+  ///          v2           v0 = { -1, -1, 0 }           ^
+  ///         /  \          v1 = {  1, -1, 0 }           |
+  ///        /    \         v2 = {  0,  1, 0 }           0---- > x
+  ///       v0-----v1
+  /// @endverbatim
+  std::shared_ptr<Mesh> createTriangle(const std::string& name, bool modifiable = false,
+                                       BufferUsageKind usage = BufferUsageKind::BK_StaticWriteOnly);
 };
 
 } // namespace game

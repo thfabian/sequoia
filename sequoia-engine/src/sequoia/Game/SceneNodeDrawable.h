@@ -43,6 +43,8 @@ public:
   const std::shared_ptr<Mesh>& getMesh() const { return mesh_; }
 
   /// @brief Set the Mesh of the node
+  ///
+  /// This also sets the `DrawCommand` if the mesh contains a valid `DrawCommand`.
   void setMesh(const std::shared_ptr<Mesh>& mesh);
 
   /// @brief Check if the node has a Mesh attached

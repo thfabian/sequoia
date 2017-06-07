@@ -65,9 +65,6 @@ GLVertexArrayObject::GLVertexArrayObject()
     : VertexArrayObject(RenderSystemKind::RK_OpenGL), vaoID_(0), eboID_(0), vboID_(0) {}
 
 void GLVertexArrayObject::bind() {
-
-  // TODO: Check the state-cache and only bind if needed
-
   glBindVertexArray(vaoID_);
   glBindBuffer(GL_ARRAY_BUFFER, vboID_);
 
@@ -77,17 +74,11 @@ void GLVertexArrayObject::bind() {
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
-void GLVertexArrayObject::unbind() {
-  // TODO: Check the state-cache and only bind if needed
-
-  glBindBuffer(GL_ARRAY_BUFFER, 0);
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-  glBindVertexArray(0);
-}
-
 unsigned int GLVertexArrayObject::getVAOID() const { return vaoID_; }
 
 void GLVertexArrayObject::writeVertexData(std::size_t offset, std::size_t length) {
+  
+  // TODO: use state-cache manager  
   bind();
 
   // TODO: Discardable data should use glBufferData(GL_ARRAY_BUFFER, ..., NULL, ...) first
@@ -106,6 +97,7 @@ void GLVertexArrayObject::writeIndexData(std::size_t offset, std::size_t length)
   if(!data_->hasIndices())
     return;
 
+  // TODO: use state-cache manager
   bind();
 
   // TODO: Discardable data should use glBufferData(GL_ARRAY_BUFFER, ..., NULL, ...) first

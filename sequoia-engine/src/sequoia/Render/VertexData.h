@@ -68,6 +68,9 @@ public:
 
   /// @brief Do we draw with indices?
   bool hasIndices() const { return (indicesPtr_ != nullptr); }
+    
+  /// @brief Get the draw-mode
+  DrawModeKind getDrawMode() const { return drawMode_; }
 
   /// @brief Set the vertex array object
   ///

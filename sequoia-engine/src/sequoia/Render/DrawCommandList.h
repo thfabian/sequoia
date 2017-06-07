@@ -16,10 +16,10 @@
 #ifndef SEQUOIA_RENDER_DRAWCOMMANDLIST_H
 #define SEQUOIA_RENDER_DRAWCOMMANDLIST_H
 
+#include "sequoia/Core/AlignedADT.h"
 #include "sequoia/Core/ArrayRef.h"
 #include "sequoia/Render/DrawCommand.h"
 #include "sequoia/Render/Export.h"
-#include "sequoia/Core/AlignedADT.h"
 #include <string>
 #include <vector>
 
@@ -39,9 +39,13 @@ protected:
   core::aligned_vector<DrawCommand> commands_;
 
 public:
-  DrawCommandList() { commands_.reserve(1024); }
+  /// @brief Default size of a DrawCommandList
+  static constexpr std::size_t DefaultSize = 1024;
 
-  /// @brief Insert a `commands` into the list
+  DrawCommandList() { commands_.reserve(DefaultSize); }
+
+  /// @brief Copy `commands` into the list of DrawCommands (after this operation the `commands` can
+  /// be modified again)
   /// @param commands   DrawCommands to insert
   void insert(ArrayRef<DrawCommand*> commands) noexcept {
     for(std::size_t i = 0; i < commands.size(); ++i)

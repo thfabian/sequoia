@@ -105,6 +105,9 @@ public:
 
   /// @brief Do we draw with indices?
   bool hasIndices() const;
+  
+  /// @brief Get the underlying VertexData
+  VertexData* getVertexData();
 
 protected:
   /// @brief Allocate vertex buffers on the GPU
