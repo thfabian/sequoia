@@ -18,6 +18,7 @@
 
 #include "sequoia/Math/Math.h"
 #include "sequoia/Render/Export.h"
+#include "sequoia/Render/RenderState.h"
 #include <string>
 
 namespace sequoia {
@@ -26,37 +27,6 @@ namespace render {
 
 class Program;
 class VertexArrayObject;
-
-/// @brief State of the render pipline
-/// @ingroup render
-struct SEQUOIA_RENDER_API RenderState {
-  RenderState() = default;
-  RenderState(const RenderState&) = default;
-
-  /// @brief Specifies the function used to compare each incoming pixel depth value with the depth
-  /// value present in the depth buffer
-  enum DepthFuncKind {
-    DF_Never = 0,    ///< Never passes
-    DF_Less,         ///< Passes if the incoming depth value is less than the stored depth value
-    DF_Equal,        ///< Passes if the incoming depth value is equal to the stored depth value
-    DF_LessEqual,    ///< Passes if the incoming depth value is less than or equal to the stored
-                     ///  depth value
-    DF_Greater,      ///< Passes if the incoming depth value is greater than the stored depth value
-    DF_NotEqual,     ///< Passes if the incoming depth value is not equal to the stored depth value
-    DF_GreaterEqual, ///< Passes if the incoming depth value is greater than or equal to the
-                     ///  stored depth value
-    DF_Always        ///< Always passes
-  };
-
-  /// Enable Z-Buffer
-  bool DepthTest = true;
-
-  /// Function to fill the Z-Buffer
-  DepthFuncKind DepthFunc = DF_Less;
-
-  /// @brief Convert to string
-  std::string toString() const;
-};
 
 /// @brief Instructions on how to render the VertexArrayObject
 /// @ingroup render

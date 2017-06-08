@@ -13,27 +13,15 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Core/Format.h"
-#include "sequoia/Core/StringUtil.h"
-#include "sequoia/Render/DrawCommand.h"
-#include "sequoia/Render/Program.h"
-#include "sequoia/Render/VertexArrayObject.h"
+// clang-format off
 
-namespace sequoia {
+// RENDER_STATE(Type, Name, Value)
+//
+//  - Type  = Type of the state
+//  - Name  = Name of the state
+//  - Value = Default value of the state
+// 
+RENDER_STATE(bool, DepthTest, true)
+RENDER_STATE(RenderState::DepthFuncKind, DepthFunc, RenderState::DF_Less)
 
-namespace render {
-
-std::string DrawCommand::toString() const {
-  return core::format("DrawCommand["
-                      "  program = %s,\n"
-                      "  vao = %s,\n"
-                      "  renderState = %s,\n"
-                      "  modelMatrix = %s\n"
-                      "]",
-                      program_->toString(), vao_->toString(), core::indent(state_.toString()),
-                      modelMatrix_);
-}
-
-} // namespace render
-
-} // namespace sequoia
+// clang-format on

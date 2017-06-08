@@ -19,6 +19,7 @@
 #include "sequoia/Core/NonCopyable.h"
 #include "sequoia/Render/DrawCommand.h"
 #include "sequoia/Render/Export.h"
+#include "sequoia/Render/RenderState.h"
 #include <unordered_map>
 
 namespace sequoia {
@@ -41,6 +42,9 @@ class SEQUOIA_RENDER_API GLStateCacheManager : public NonCopyable {
   /// Bound VAO
   GLVertexArrayObject* vao_;
 
+  /// Current RenderState
+  std::unique_ptr<RenderStateCache> state_;
+
 public:
   GLStateCacheManager();
 
@@ -52,6 +56,9 @@ public:
 
   /// @brief Set the VertexArrayObject object to bind
   void draw(DrawCommand* command);
+
+  /// @brief Get the currently active RenderState
+  const RenderState& getRenderState() const;
 };
 
 } // namespace render

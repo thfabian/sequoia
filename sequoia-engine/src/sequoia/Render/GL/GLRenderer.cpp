@@ -147,13 +147,13 @@ void GLRenderer::render() {
   // Compute the projction matrix
   glm::mat4 matProj = glm::perspective(camera->getFieldOfViewY(), camera->getAspectRatio(),
                                        camera->getZNearClipping(), camera->getZFarClipping());
-  
+
   // Compute camera view matrix
   glm::mat4 matView = glm::lookAt(camera->getEye(), camera->getCenter(), camera->getUp());
 
   // Precompute view projection matrix
-  glm::mat4 matViewProj = matProj * matView; 
-  
+  glm::mat4 matViewProj = matProj * matView;
+
   // Clear the screen
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -161,19 +161,19 @@ void GLRenderer::render() {
   DrawCommand* drawCommand = nullptr;
   for(drawCommand = drawCommandList->start(); drawCommand != nullptr;
       drawCommand = drawCommandList->next()) {
-    
-    GLProgram* program = dyn_cast<GLProgram>(drawCommand->getProgram());    
-    
-    // Compute the full model view projection matrix
+
+    GLProgram* program = dyn_cast<GLProgram>(drawCommand->getProgram());
+
+    // Compute the full model-view-projection matrix
     glm::mat4 u_ModelViewProjection = matViewProj * drawCommand->getModelMatrix();
 
     // Update the OpenGL state-machine
     stateCacheManager_->setRenderState(drawCommand->getRenderState());
-          
+
     // Set the uniforms
     program->setUniformVariable("u_ModelViewProjection", u_ModelViewProjection);
-    stateCacheManager_->setProgram(program);    
-    
+    stateCacheManager_->setProgram(program);
+
     // Bind and draw the buffers
     stateCacheManager_->draw(drawCommand);
   }

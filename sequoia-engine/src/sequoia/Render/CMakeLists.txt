@@ -27,6 +27,9 @@ sequoia_add_library(
           Program.h
           Program.cpp
           RenderFwd.h
+          RenderState.h
+          RenderState.cpp
+          RenderState.inc
           RenderSystem.h
           RenderSystem.cpp
           RenderSystemObject.h
