@@ -78,7 +78,7 @@ TEST_F(GLVertexArrayObjectTest, Vertex3D) {
 
     GLint stride;
     glGetVertexAttribiv(GLVertexAttribute::Position, GL_VERTEX_ATTRIB_ARRAY_STRIDE, &stride);
-    EXPECT_EQ(stride, 0);
+    EXPECT_EQ(stride, Vertex3D::getLayout()->SizeOf);
 
     void* pointer;
     glGetVertexAttribPointerv(GLVertexAttribute::Position, GL_VERTEX_ATTRIB_ARRAY_POINTER,
@@ -111,7 +111,7 @@ TEST_F(GLVertexArrayObjectTest, Vertex3D) {
 
     GLint stride;
     glGetVertexAttribiv(GLVertexAttribute::Normal, GL_VERTEX_ATTRIB_ARRAY_STRIDE, &stride);
-    EXPECT_EQ(stride, 0);
+    EXPECT_EQ(stride, Vertex3D::getLayout()->SizeOf);
 
     void* pointer;
     glGetVertexAttribPointerv(GLVertexAttribute::Normal, GL_VERTEX_ATTRIB_ARRAY_POINTER, &pointer);
@@ -144,7 +144,7 @@ TEST_F(GLVertexArrayObjectTest, Vertex3D) {
 
     GLint stride;
     glGetVertexAttribiv(GLVertexAttribute::TexCoord, GL_VERTEX_ATTRIB_ARRAY_STRIDE, &stride);
-    EXPECT_EQ(stride, 0);
+    EXPECT_EQ(stride, Vertex3D::getLayout()->SizeOf);
 
     void* pointer;
     glGetVertexAttribPointerv(GLVertexAttribute::TexCoord, GL_VERTEX_ATTRIB_ARRAY_POINTER,
@@ -176,7 +176,7 @@ TEST_F(GLVertexArrayObjectTest, Vertex3D) {
 
     GLint stride;
     glGetVertexAttribiv(GLVertexAttribute::Color, GL_VERTEX_ATTRIB_ARRAY_STRIDE, &stride);
-    EXPECT_EQ(stride, 0);
+    EXPECT_EQ(stride, Vertex3D::getLayout()->SizeOf);
 
     void* pointer;
     glGetVertexAttribPointerv(GLVertexAttribute::Color, GL_VERTEX_ATTRIB_ARRAY_POINTER, &pointer);

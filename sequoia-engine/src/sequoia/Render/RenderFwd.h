@@ -22,11 +22,13 @@ namespace render {
 
 class Camera;
 class Program;
-class RenderSystem;
-class RenderWindow;
 class DrawCommand;
 class DrawCommandList;
+struct RenderState;
+class RenderStateCache;
+class RenderSystem;
 class RenderTarget;
+class RenderWindow;
 class Shader;
 class VertexArrayObject;
 struct VertexLayout;
