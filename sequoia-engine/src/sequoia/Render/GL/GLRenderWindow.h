@@ -95,7 +95,8 @@ public:
   /// @{
   static void resizeCallbackDispatch(GLFWwindow* window, int width, int height);
   static void keyCallbackDispatch(GLFWwindow* window, int key, int scancode, int action, int mods);
-  static void mouseCallbackDispatch(GLFWwindow* window, int button, int action, int mods);
+  static void mouseButtonCallbackDispatch(GLFWwindow* window, int button, int action, int mods);
+  static void mousePositionCallbackDispatch(GLFWwindow* window, double xpos, double ypos);
   /// @}
 
   /// @brief Static map of all GLFWwindows to their respective GLRenderWindows

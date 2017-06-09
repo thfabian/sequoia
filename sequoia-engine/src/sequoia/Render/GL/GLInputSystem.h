@@ -39,8 +39,11 @@ public:
   /// @brief GLFW callback for the keyboard
   void keyCallback(int key, int action, int mods) noexcept;
 
-  /// @brief GLFW callback for the mouse
-  void mouseCallback(int button, int action, int mods) noexcept;
+  /// @brief GLFW callback for the mouse button
+  void mouseButtonCallback(int button, int action, int mods) noexcept;
+
+  /// @brief GLFW callback for the mouse position
+  void mousePositionCallback(double xpos, double ypos) noexcept;
 };
 
 } // namespace render

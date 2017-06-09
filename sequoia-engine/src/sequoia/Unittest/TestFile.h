@@ -38,13 +38,13 @@ public:
   TestFile(const char* path);
 
   /// @copydoc File::getData
-  virtual const Byte* getData() override;
+  const Byte* getData() override;
 
   /// @copydoc File::getNumBytes
-  virtual std::size_t getNumBytes() override;
+  std::size_t getNumBytes() override;
 
   /// @copydoc File::getPath
-  virtual const std::string& getPath() const noexcept override;
+  const std::string& getPath() const noexcept override;
 
   /// @copydoc File::hash
   std::size_t hash() const noexcept override;

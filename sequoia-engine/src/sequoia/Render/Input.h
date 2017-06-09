@@ -233,7 +233,7 @@ public:
 
 /// @brief Mouse button event
 /// @ingroup render
-struct MouseEvent {
+struct MouseButtonEvent {
   /// The RenderTarget that recieved the event
   RenderTarget* Target;
 
@@ -256,12 +256,33 @@ struct MouseEvent {
   inline bool released() const noexcept { return (Action == Action_Released); }
 };
 
+/// @brief Mouse position event
+///
+/// The mouse position (`xpos`, `ypos`) is measured in screen coordinates but relative to the
+/// top-left corner of the window client area. On platforms that provide it, the full sub-pixel
+/// cursor position is passed on.
+///
+/// @ingroup render
+struct MousePositionEvent {
+  /// The RenderTarget that recieved the event
+  RenderTarget* Target;
+
+  /// X-position measured measured in screen coordinates but relative to the top-left corner
+  double XPos;
+
+  /// Y-position measured measured in screen coordinates but relative to the top-left corner
+  double YPos;
+};
+
 /// @brief Listener of mouse events
 /// @ingroup render
 class SEQUOIA_RENDER_API MouseListener {
 public:
-  /// @brief Handle mouse event
-  virtual void mouseEvent(const MouseEvent& event) = 0;
+  /// @brief Handle mouse button event
+  virtual void mouseButtonEvent(const MouseButtonEvent& event) = 0;
+
+  /// @brief Handle mouse position event
+  virtual void mousePositionEvent(const MousePositionEvent& event) = 0;
 };
 
 } // namespace render
@@ -271,7 +292,8 @@ using render::MouseButton;
 using render::KeyModifier;
 using render::KeyAction;
 
-using MouseEvent = render::MouseEvent;
+using MouseButtonEvent = render::MouseButtonEvent;
+using MousePositionEvent = render::MousePositionEvent;
 using MouseListener = render::MouseListener;
 
 using KeyboardEvent = render::KeyboardEvent;

@@ -27,10 +27,16 @@ void GLInputSystem::keyCallback(int key, int action, int mods) noexcept {
     listener->keyboardEvent(event);
 }
 
-void GLInputSystem::mouseCallback(int button, int action, int mods) noexcept {
-  MouseEvent event{target_, (MouseButton)button, (KeyAction)action, mods};
+void GLInputSystem::mouseButtonCallback(int button, int action, int mods) noexcept {
+  MouseButtonEvent event{target_, (MouseButton)button, (KeyAction)action, mods};
   for(MouseListener* listener : getListeners<MouseListener>())
-    listener->mouseEvent(event);
+    listener->mouseButtonEvent(event);
+}
+
+void GLInputSystem::mousePositionCallback(double xpos, double ypos) noexcept {
+  MousePositionEvent event{target_, xpos, ypos};
+  for(MouseListener* listener : getListeners<MouseListener>())
+    listener->mousePositionEvent(event);
 }
 
 } // namespace render

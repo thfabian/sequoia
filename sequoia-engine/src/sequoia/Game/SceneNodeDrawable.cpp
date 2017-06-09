@@ -49,7 +49,6 @@ render::DrawCommand* SceneNodeDrawable::prepareDrawCommand() {
                      "no VertexArrayObject set in DrawCommand");
   SEQUOIA_ASSERT_MSG(drawCommand_->getProgram(), "no Program set in DrawCommand");
 
-
   // Copy ModelMatrix to the draw command
   drawCommand_->setModelMatrix(getModelMatrix());
 

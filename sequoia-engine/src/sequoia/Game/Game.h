@@ -70,12 +70,6 @@ public:
   /// @brief Run the main-loop
   void run();
 
-  /// @brief Listener implementations
-  /// @{
-  void mouseEvent(const render::MouseEvent& event) override;
-  void keyboardEvent(const render::KeyboardEvent& event) override;
-  /// @}
-
   /// @brief Get the mesh manager
   MeshManager* getMeshManager() const;
 
@@ -99,6 +93,13 @@ public:
 
   /// @brief Get the main Scene
   Scene* getScene() const;
+
+  /// @brief Listener implementations
+  /// @{
+  void mouseButtonEvent(const render::MouseButtonEvent& event) override;
+  void mousePositionEvent(const render::MousePositionEvent& event) override;
+  void keyboardEvent(const render::KeyboardEvent& event) override;
+  /// @}
 };
 
 } // namespace game

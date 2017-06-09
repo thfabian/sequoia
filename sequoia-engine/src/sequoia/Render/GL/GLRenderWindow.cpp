@@ -169,8 +169,14 @@ void GLRenderWindow::keyCallbackDispatch(GLFWwindow* window, int key, int scanco
   GLRenderWindow::StaticWindowMap[window]->getInputSystem()->keyCallback(key, action, mods);
 }
 
-void GLRenderWindow::mouseCallbackDispatch(GLFWwindow* window, int button, int action, int mods) {
-  GLRenderWindow::StaticWindowMap[window]->getInputSystem()->mouseCallback(button, action, mods);
+void GLRenderWindow::mouseButtonCallbackDispatch(GLFWwindow* window, int button, int action,
+                                                 int mods) {
+  GLRenderWindow::StaticWindowMap[window]->getInputSystem()->mouseButtonCallback(button, action,
+                                                                                 mods);
+}
+
+void GLRenderWindow::mousePositionCallbackDispatch(GLFWwindow* window, double xpos, double ypos) {
+  GLRenderWindow::StaticWindowMap[window]->getInputSystem()->mousePositionCallback(xpos, ypos);
 }
 
 int GLRenderWindow::getWidth() const { return windowWidth_; }
@@ -191,7 +197,7 @@ void GLRenderWindow::init() {
   renderSystem_->registerInputSystem(this, inputSystem_.get());
 
   glfwSetKeyCallback(window_, GLRenderWindow::keyCallbackDispatch);
-  glfwSetMouseButtonCallback(window_, GLRenderWindow::mouseCallbackDispatch);
+  glfwSetMouseButtonCallback(window_, GLRenderWindow::mouseButtonCallbackDispatch);
 
   LOG(INFO) << "Done registering IO callbacks";
 }

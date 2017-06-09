@@ -148,9 +148,20 @@ void Game::cleanup() {
   LOG(INFO) << "Done terminating Game";
 }
 
-void Game::keyboardEvent(const render::KeyboardEvent& event) {}
+void Game::keyboardEvent(const render::KeyboardEvent& event) {
+  for(KeyboardListener* listener : getListeners<KeyboardListener>())
+    listener->keyboardEvent(event);
+}
 
-void Game::mouseEvent(const render::MouseEvent& event) {}
+void Game::mouseButtonEvent(const render::MouseButtonEvent& event) {
+  for(MouseListener* listener : getListeners<MouseListener>())
+    listener->mouseButtonEvent(event);
+}
+
+void Game::mousePositionEvent(const render::MousePositionEvent& event) {
+  for(MouseListener* listener : getListeners<MouseListener>())
+    listener->mousePositionEvent(event);
+}
 
 MeshManager* Game::getMeshManager() const { return meshManager_.get(); }
 
