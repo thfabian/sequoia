@@ -24,7 +24,10 @@ namespace sequoia {
 
 namespace game {
 
-SceneNodeDrawable::SceneNodeDrawable(const std::string& name) : Base(name, SK_SceneNodeDrawable) {}
+SceneNodeDrawable::SceneNodeDrawable(const std::string& name) : Base(name, SK_SceneNodeDrawable) {
+  drawCommand_ = std::make_shared<render::DrawCommand>();
+  mesh_ = nullptr;
+}
 
 SceneNodeDrawable::SceneNodeDrawable(const SceneNodeDrawable& other)
     : Base(other), drawCommand_(other.drawCommand_), mesh_(other.mesh_) {}
@@ -33,25 +36,21 @@ SceneNodeDrawable::~SceneNodeDrawable() {}
 
 void SceneNodeDrawable::setMesh(const std::shared_ptr<Mesh>& mesh) {
   mesh_ = mesh;
-  if(hasDrawCommand())
-    drawCommand_->setVertexArrayObject(mesh_->getVertexArrayObject());
+  drawCommand_->setVertexArrayObject(mesh_->getVertexArrayObject());
 }
 
-void SceneNodeDrawable::setDrawCommand(const std::shared_ptr<render::DrawCommand>& drawCommand) {
-  drawCommand_ = drawCommand;
-  if(hasMesh())
-    drawCommand_->setVertexArrayObject(mesh_->getVertexArrayObject());
+void SceneNodeDrawable::setProgram(const std::shared_ptr<render::Program>& program) {
+  drawCommand_->setProgram(program.get());
 }
 
 render::DrawCommand* SceneNodeDrawable::prepareDrawCommand() {
-  SEQUOIA_ASSERT_MSG(drawCommand_, "no DrawCommand set");
   SEQUOIA_ASSERT_MSG(mesh_, "no Mesh set in DrawCommand");
+  SEQUOIA_ASSERT_MSG(drawCommand_->getVertexArrayObject(),
+                     "no VertexArrayObject set in DrawCommand");
   SEQUOIA_ASSERT_MSG(drawCommand_->getProgram(), "no Program set in DrawCommand");
 
-  // Set VAO
-  drawCommand_->setVertexArrayObject(mesh_->getVertexArrayObject());
 
-  // Set ModelMatrix
+  // Copy ModelMatrix to the draw command
   drawCommand_->setModelMatrix(getModelMatrix());
 
   return drawCommand_.get();

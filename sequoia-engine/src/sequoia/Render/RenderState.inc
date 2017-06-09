@@ -15,13 +15,19 @@
 
 // clang-format off
 
-// RENDER_STATE(Type, Name, Value)
+#if !defined(RENDER_STATE)
+#error "RENDER_STATE not defined"
+#endif
+
+// RENDER_STATE_DECL(Type, Name, BitfieldWidth, DefaultValue)
 //
-//  - Type  = Type of the state
-//  - Name  = Name of the state
-//  - Value = Default value of the state
-// 
-RENDER_STATE(bool, DepthTest, true)
-RENDER_STATE(RenderState::DepthFuncKind, DepthFunc, RenderState::DF_Less)
+//  - Type            = Type of the state
+//  - Name            = Name of the state
+//  - BitfieldWidth   = Witdh of the bitfield (may be empty)
+//  - DefaultValue    = Value used to initialize the state
+//
+ 
+RENDER_STATE(bool, DepthTest, : 1, true)
+RENDER_STATE(RenderState::DepthFuncKind, DepthFunc, , RenderState::DF_Less)
 
 // clang-format on

@@ -13,18 +13,19 @@
 ##
 ##===------------------------------------------------------------------------------------------===##
 
-sequoia_add_test(
-  NAME SequoiaGameTest
-  SOURCES TestAssetManager.cpp
-          TestMeshManager.cpp
-          TestMain.cpp
-          TestSceneGraph.cpp
-          TestSceneNodes.cpp
-  DEPENDS SequoiaUnittest
-          SequoiaGame
-          SequoiaRender
-          SequoiaDriver
-          SequoiaCore
-          ${SEQUOIA_UNITTEST_EXTERNAL_LIBRARIES}
+ExternalProject_Add(
+  stb
+  DOWNLOAD_DIR ${download_dir}
+  URL ${stb_url}
+  URL_MD5 ${stb_md5}
+  BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}/stb"
+  INSTALL_DIR "${Sequoia_INSTALL_PREFIX}/stb"
+  CMAKE_ARGS
+    -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
+    -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
 )
 
+ExternalProject_Get_Property(stb install_dir)
+set(STB_ROOT "${install_dir}" CACHE INTERNAL "")
+
+list(APPEND Sequoia_THIRDPARTYLIBS_ARGS "-DSTB_ROOT:PATH=${STB_ROOT}")

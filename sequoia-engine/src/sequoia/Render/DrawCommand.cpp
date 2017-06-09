@@ -16,22 +16,19 @@
 #include "sequoia/Core/Format.h"
 #include "sequoia/Core/StringUtil.h"
 #include "sequoia/Render/DrawCommand.h"
-#include "sequoia/Render/Program.h"
-#include "sequoia/Render/VertexArrayObject.h"
 
 namespace sequoia {
 
 namespace render {
 
 std::string DrawCommand::toString() const {
-  return core::format("DrawCommand["
-                      "  program = %s,\n"
-                      "  vao = %s,\n"
+  std::stringstream ss;
+  ss << modelMatrix_;
+  return core::format("DrawCommand[\n"
                       "  renderState = %s,\n"
                       "  modelMatrix = %s\n"
                       "]",
-                      program_->toString(), vao_->toString(), core::indent(state_.toString()),
-                      modelMatrix_);
+                      core::indent(state_.toString()), core::indent(ss.str()));
 }
 
 } // namespace render

@@ -16,6 +16,7 @@
 #ifndef SEQUOIA_UNITTEST_TESTFILE_H
 #define SEQUOIA_UNITTEST_TESTFILE_H
 
+#include "sequoia/Core/AlignedADT.h"
 #include "sequoia/Core/File.h"
 #include "sequoia/Unittest/Export.h"
 
@@ -27,7 +28,7 @@ namespace unittest {
 /// @ingroup unittest
 class SEQUOIA_UNITTEST_API TestFile : public File {
   std::string path_;
-  std::unique_ptr<std::string> content_;
+  aligned_vector<Byte> data_;
 
 public:
   /// @brief Set the full path of the ressource file specified by `path` relative to the unittest
@@ -36,8 +37,11 @@ public:
   /// @param path   Path relative to the unittest ressource root
   TestFile(const char* path);
 
-  /// @copydoc File::getContent
-  virtual StringRef getContent() override;
+  /// @copydoc File::getData
+  virtual const Byte* getData() override;
+
+  /// @copydoc File::getNumBytes
+  virtual std::size_t getNumBytes() override;
 
   /// @copydoc File::getPath
   virtual const std::string& getPath() const noexcept override;
@@ -47,6 +51,9 @@ public:
 
   /// @copydoc File::equals
   bool equals(const File& other) const noexcept override;
+
+private:
+  void load();
 };
 
 } // namespace unittest

@@ -13,18 +13,12 @@
 ##
 ##===------------------------------------------------------------------------------------------===##
 
-sequoia_add_test(
-  NAME SequoiaGameTest
-  SOURCES TestAssetManager.cpp
-          TestMeshManager.cpp
-          TestMain.cpp
-          TestSceneGraph.cpp
-          TestSceneNodes.cpp
-  DEPENDS SequoiaUnittest
-          SequoiaGame
-          SequoiaRender
-          SequoiaDriver
-          SequoiaCore
-          ${SEQUOIA_UNITTEST_EXTERNAL_LIBRARIES}
+find_package(stb REQUIRED)
+include_directories(SYSTEM ${STB_INCLUDE_DIRS})
+
+sequoia_export_package_variable(
+  stb
+  ${STB_FOUND} 
+  "stb: Found" 
 )
 

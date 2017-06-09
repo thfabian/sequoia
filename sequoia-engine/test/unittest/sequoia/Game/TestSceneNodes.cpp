@@ -80,12 +80,11 @@ TEST_F(SceneNodeTest, SceneNodeDrawable) {
   EXPECT_STREQ(node->getName().data(), "SceneNodeDrawable");
   EXPECT_EQ(node->getKind(), SceneNode::SK_SceneNodeDrawable);
   EXPECT_FALSE(node->hasMesh());
-  EXPECT_FALSE(node->hasDrawCommand());
 
   // Set a mesh
   node->setMesh(game.getMeshManager()->createCube("TestCube"));
   EXPECT_TRUE(node->hasMesh());
-  
+
   // Clone node
   auto nodeClone = node->clone();
   nodeClone->setName("copy");

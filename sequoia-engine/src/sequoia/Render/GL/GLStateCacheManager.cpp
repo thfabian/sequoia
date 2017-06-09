@@ -50,11 +50,7 @@ struct GetIndexType<unsigned int> {
 /// @ingroup gl
 class GLRenderStateCache : public RenderStateCache {
 public:
-  GLRenderStateCache() : RenderStateCache() {
-#define RENDER_STATE(Type, Name, Value) Name##Changed(state_.Name);
-#include "sequoia/Render/RenderState.inc"
-#undef RENDER_STATE
-  }
+  GLRenderStateCache() : RenderStateCache() { initState(); }
 
 protected:
   /// @brief Enable/Disable the capability `cap`
@@ -99,45 +95,41 @@ protected:
       sequoia_unreachable("invalid DepthFuncKind");
     }
   }
+
+  virtual void ProgramChanged(Program* program) override {
+    if(program)
+      dyn_cast<GLProgram>(program)->bind();
+  }
+
+  virtual void VertexArrayObjectChanged(VertexArrayObject* vao) override {
+    if(vao)
+      dyn_cast<GLVertexArrayObject>(vao)->bind();
+  }
 };
 
 } // anonymous namespace
 
-GLStateCacheManager::GLStateCacheManager() {
-  program_ = nullptr;
-  vao_ = nullptr;
-
-  state_ = std::make_unique<GLRenderStateCache>();
-}
-
-void GLStateCacheManager::setRenderState(const RenderState& state) {
-  state_->setRenderState(state);
-}
-
-void GLStateCacheManager::setProgram(GLProgram* program) {
-  if(program_ != program) {
-    program_ = program;
-    program_->bind();
-  }
-}
+GLStateCacheManager::GLStateCacheManager() { stateCache_ = std::make_unique<GLRenderStateCache>(); }
 
 void GLStateCacheManager::draw(DrawCommand* command) {
-  GLVertexArrayObject* vao = dyn_cast<GLVertexArrayObject>(command->getVertexArrayObject());
+  // Update the render-state
+  stateCache_->setRenderState(command->getRenderState());
+  const RenderState& state = getRenderState();
 
-  if(vao != vao_) {
-    vao_ = vao;
-    vao_->bind();
-  }
+  // Draw the VAO
+  GLVertexArrayObject* vao = dyn_cast<GLVertexArrayObject>(state.VertexArrayObject);
 
-  if(vao_->hasIndices()) {
-    glDrawElements(getGLDrawMode(vao_->getVertexData()->getDrawMode()), vao_->getNumIndices(),
+  if(vao->hasIndices()) {
+    glDrawElements(getGLDrawMode(vao->getVertexData()->getDrawMode()), vao->getNumIndices(),
                    GetIndexType<VertexIndexType>::value, (void*)0);
   } else {
-    glDrawArrays(getGLDrawMode(vao_->getVertexData()->getDrawMode()), 0, vao_->getNumVertices());
+    glDrawArrays(getGLDrawMode(vao->getVertexData()->getDrawMode()), 0, vao->getNumVertices());
   }
 }
 
-const RenderState& GLStateCacheManager::getRenderState() const { return state_->getRenderState(); }
+const RenderState& GLStateCacheManager::getRenderState() const {
+  return stateCache_->getRenderState();
+}
 
 } // namespace render
 

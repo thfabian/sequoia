@@ -13,19 +13,34 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Core/AlignedADT.h"
+#include "sequoia/Game/AssetManager.h"
+#include "sequoia/Unittest/Environment.h"
+#include "sequoia/Unittest/GameTest.h"
+#include <fstream>
 #include <gtest/gtest.h>
+#include <sstream>
 
-using namespace sequoia::core;
+using namespace sequoia;
+using namespace sequoia::unittest;
+using namespace sequoia::game;
 
 namespace {
 
-TEST(AlignedADTTest, Vector) {
-  aligned_vector<double> vec;
-  EXPECT_TRUE(memory::is_aligned(vec.data()));
-  vec.push_back(1.0);
-  vec.push_back(2.0);
-  EXPECT_EQ(vec.size(), 2);
+TEST(AssetManagerTest, LoadFromDisk) {
+  auto& env = Environment::getSingleton();
+  AssetManager manager(env.getRessourcePath().native(), PLATFORM_STR(""));
+
+  // Load ASCII file
+  auto file = manager.load("sequoia/Game/TestAssetManager/test.txt");
+
+  std::ifstream ifs(
+      platform::toAnsiString(env.getRessourcePath() /
+                             platform::asPath("sequoia/Game/TestAssetManager/test.txt"))
+          .c_str());
+  std::stringstream ss;
+  ss << ifs.rdbuf();
+
+  EXPECT_STREQ(file->getDataAsString().c_str(), ss.str().c_str());
 }
 
 } // anonymous namespace

@@ -16,8 +16,8 @@
 #ifndef SEQUOIA_CORE_FILE_H
 #define SEQUOIA_CORE_FILE_H
 
+#include "sequoia/Core/Byte.h"
 #include "sequoia/Core/Export.h"
-#include "sequoia/Core/StringRef.h"
 #include <functional>
 #include <memory>
 #include <string>
@@ -33,9 +33,16 @@ namespace core {
 /// @ingroup core
 class SEQUOIA_CORE_API File {
 public:
+  virtual ~File() {}
+
   /// @brief Get the content of the file
-  /// @returns content or empty string if empty
-  virtual StringRef getContent() = 0;
+  virtual const Byte* getData() = 0;
+
+  /// @brief Get the number of bytes stored in the file
+  virtual std::size_t getNumBytes() = 0;
+
+  /// @brief Get a **copy** of the data as a string
+  std::string getDataAsString() { return std::string((const char*)getData(), getNumBytes()); }
 
   /// @brief Get the path to the file (this may return a relative path)
   virtual const std::string& getPath() const noexcept = 0;

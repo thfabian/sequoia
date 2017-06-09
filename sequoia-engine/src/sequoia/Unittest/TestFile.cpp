@@ -14,6 +14,7 @@
 //===------------------------------------------------------------------------------------------===//
 
 #include "sequoia/Core/Exception.h"
+#include "sequoia/Core/Memory.h"
 #include "sequoia/Core/UtfString.h"
 #include "sequoia/Unittest/Environment.h"
 #include "sequoia/Unittest/TestFile.h"
@@ -24,23 +25,35 @@ namespace sequoia {
 
 namespace unittest {
 
-TestFile::TestFile(const char* path) : path_(path), content_(nullptr) {}
+TestFile::TestFile(const char* path) : path_(path) {}
 
-StringRef TestFile::getContent() {
-  if(!content_) {
-    std::string fullPath = platform::toAnsiString(Environment::getSingleton().getRessourcePath() /
-                                                  platform::asPath(path_));
+const Byte* TestFile::getData() {
+  if(data_.empty())
+    load();
+  return data_.data();
+}
 
-    std::ifstream file(fullPath.c_str());
+std::size_t TestFile::getNumBytes() {
+  if(data_.empty())
+    load();
+  return data_.size();
+}
 
-    if(!file.is_open())
-      SEQUOIA_THROW(core::Exception, "cannot load source: '%s'", fullPath.c_str());
+void TestFile::load() {
+  std::string fullPath = platform::toAnsiString(Environment::getSingleton().getRessourcePath() /
+                                                platform::asPath(path_));
+  std::ifstream file(fullPath.c_str());
 
-    std::stringstream ss;
-    ss << file.rdbuf();
-    content_ = std::make_unique<std::string>(ss.str());
-  }
-  return StringRef(*content_);
+  if(!file.is_open())
+    SEQUOIA_THROW(core::Exception, "cannot load asset source: '%s'", path_.c_str());
+
+  // Allocate memory
+  file.seekg(0, std::ios_base::end);
+  data_.resize(file.tellg());
+  file.seekg(0, std::ios_base::beg);
+
+  // Read ASCII file
+  file.read(reinterpret_cast<char*>(data_.data()), data_.size());
 }
 
 const std::string& TestFile::getPath() const noexcept { return path_; }

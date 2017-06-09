@@ -40,7 +40,8 @@ sequoia_add_library(
           ArrayRef.h
           Any.h
           Assert.h
-          Assert.cpp 
+          Assert.cpp
+          Byte.h
           Casting.h
           Compiler.h
           EnumState.h
@@ -49,18 +50,20 @@ sequoia_add_library(
           ErrorHandler.cpp
           Exception.h
           Exception.cpp
-          File.h          
-          Format.h          
-          NonCopyable.h
-          Memory.h
-          Options.h.in
-          Options.inc.in
-          Options.cpp
+          File.h    
+          Format.h 
+          Image.h
+          Image.cpp         
           Listenable.h
           Logging.h
           Logging.cpp
           MicroBenchmark.h
           MicroBenchmark.cpp
+          NonCopyable.h
+          Memory.h
+          Options.h.in
+          Options.inc.in
+          Options.cpp
           Platform.h
           Platform.cpp   
           PrettyStackTrace.h

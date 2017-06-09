@@ -13,19 +13,21 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Core/AlignedADT.h"
-#include <gtest/gtest.h>
+#ifndef SEQUOIA_CORE_BYTE_H
+#define SEQUOIA_CORE_BYTE_H
 
-using namespace sequoia::core;
+namespace sequoia {
 
-namespace {
+namespace core {
 
-TEST(AlignedADTTest, Vector) {
-  aligned_vector<double> vec;
-  EXPECT_TRUE(memory::is_aligned(vec.data()));
-  vec.push_back(1.0);
-  vec.push_back(2.0);
-  EXPECT_EQ(vec.size(), 2);
-}
+/// @typedef Byte
+/// @brief 8-bit Byte definition
+using Byte = unsigned char;
 
-} // anonymous namespace
+} // namespace core
+
+using Byte = core::Byte;
+
+} // namespace sequoia
+
+#endif

@@ -109,7 +109,8 @@ void Game::init(bool hideWindow) {
 
     // Initialize the mesh manager
     meshManager_ = std::make_unique<MeshManager>(mainWindow_);
-    assetManager_ = std::make_unique<AssetManager>(PLATFORM_STR(SEQUOIA_RESSOURCEPATH));
+    assetManager_ =
+        std::make_unique<AssetManager>(PLATFORM_STR(SEQUOIA_RESSOURCEPATH), PLATFORM_STR("assets"));
 
     // Create default shaders and program
     renderSystem_->loadDefaultShaders(mainWindow_,
@@ -152,6 +153,8 @@ void Game::keyboardEvent(const render::KeyboardEvent& event) {}
 void Game::mouseEvent(const render::MouseEvent& event) {}
 
 MeshManager* Game::getMeshManager() const { return meshManager_.get(); }
+
+AssetManager* Game::getAssetManager() const { return assetManager_.get(); }
 
 render::RenderWindow* Game::getMainWindow() const { return mainWindow_; }
 

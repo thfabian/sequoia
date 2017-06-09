@@ -53,13 +53,14 @@ public:
   /// @brief Get the DrawCommand of the node
   const std::shared_ptr<render::DrawCommand>& getDrawCommand() const { return drawCommand_; }
 
-  /// @brief Set the DrawCommand of the node
-  void setDrawCommand(const std::shared_ptr<render::DrawCommand>& drawCommand);
-
-  /// @brief Check if the node has a DrawCommand attached
-  bool hasDrawCommand() const { return drawCommand_ != nullptr; }
+  /// @brief Set the Program used in the render-pipeline when invoking the `DrawCommand`
+  void setProgram(const std::shared_ptr<render::Program>& program);
 
   /// @brief Prepare the DrawCommand for rendering
+  ///
+  /// @note
+  /// This copies the model-matrix and the render-state to an internal queue and the values can be
+  /// be modified freely afterwards without corrupting the rendering.
   render::DrawCommand* prepareDrawCommand();
 
   /// @}

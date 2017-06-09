@@ -18,8 +18,8 @@ option(USE_SYSTEM_BOOST "Should we use the system Boost?" OFF)
 option(USE_SYSTEM_GLBINDING "Should we use the system glbinding?" OFF)
 option(USE_SYSTEM_GLFW "Should we use the system GLFW?" OFF)
 option(USE_SYSTEM_GLM "Should we use the system glm?" OFF)
-option(USE_SYSTEM_GLSLANG "Should we use the system glslang?" OFF)
 option(USE_SYSTEM_GTEST "Should we use the system GTest?" OFF)
+option(USE_SYSTEM_STB "Should we use the system stb?" OFF)
 option(USE_SYSTEM_TBB "Should we use the system TBB?" OFF)
 
 #
@@ -96,6 +96,18 @@ if(USE_SYSTEM_GTEST)
   endif()
 else()
   include(External_gtest)
+endif()
+
+#
+# stb
+#
+if(USE_SYSTEM_STB)
+  find_package(stb REQUIRED)
+  if(DEFINED STB_ROOT)
+    list(APPEND Sequoia_THIRDPARTYLIBS_ARGS "-DSTB_ROOT:PATH=${STB_ROOT}")
+  endif()
+else()
+  include(External_stb)
 endif()
 
 #

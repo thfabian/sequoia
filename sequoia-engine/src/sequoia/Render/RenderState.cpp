@@ -16,7 +16,9 @@
 #include "sequoia/Core/Format.h"
 #include "sequoia/Core/StringUtil.h"
 #include "sequoia/Core/Unreachable.h"
+#include "sequoia/Render/Program.h"
 #include "sequoia/Render/RenderState.h"
+#include "sequoia/Render/VertexArrayObject.h"
 
 namespace sequoia {
 
@@ -60,27 +62,57 @@ std::string printValue(const RenderState::DepthFuncKind& value) {
   return depthFuncToString(value);
 }
 
+RenderState::RenderState() {
+#define RENDER_STATE(Type, Name, BitfieldWidth, DefaultValue) this->Name = DefaultValue;
+#include "sequoia/Render/RenderState.inc"
+#undef RENDER_STATE
+
+  Program = nullptr;
+  VertexArrayObject = nullptr;
+}
+
 std::string RenderState::toString() const {
   std::stringstream ss;
   ss << "RenderState[\n";
-#define RENDER_STATE(Type, Name, Value) ss << "  " #Name " = " << printValue<Type>(Name) << ",\n";
+#define RENDER_STATE(Type, Name, BitfieldWidth, DefaultValue)                                      \
+  ss << "  " #Name " = " << printValue<Type>(Name) << ",\n";
 #include "sequoia/Render/RenderState.inc"
 #undef RENDER_STATE
-  ss << "]";
 
+  ss << "  Program = " << (Program ? core::indent(Program->toString()) : "null") << ",\n";
+  ss << "  VertexArrayObject = "
+     << (VertexArrayObject ? core::indent(VertexArrayObject->toString()) : "null") << "\n";
+
+  ss << "]";
   return ss.str();
 }
 
 RenderStateCache::~RenderStateCache() {}
 
+void RenderStateCache::initState() noexcept {
+#define RENDER_STATE(Type, Name, BitfieldWidth, DefaultValue) Name##Changed(state_.Name);
+#include "sequoia/Render/RenderState.inc"
+#undef RENDER_STATE
+}
+
 void RenderStateCache::setRenderState(const RenderState& state) noexcept {
-#define RENDER_STATE(Type, Name, Value)                                                            \
+#define RENDER_STATE(Type, Name, BitfieldWidth, DefaultValue)                                      \
   if(state_.Name != state.Name) {                                                                  \
     Name##Changed(state.Name);                                                                     \
     state_.Name = state.Name;                                                                      \
   }
 #include "sequoia/Render/RenderState.inc"
 #undef RENDER_STATE
+
+  if(state_.Program != state.Program) {
+    ProgramChanged(state.Program);
+    state_.Program = state.Program;
+  }
+
+  if(state_.VertexArrayObject != state.VertexArrayObject) {
+    VertexArrayObjectChanged(state.VertexArrayObject);
+    state_.VertexArrayObject = state.VertexArrayObject;
+  }
 }
 
 const RenderState& RenderStateCache::getRenderState() const { return state_; }

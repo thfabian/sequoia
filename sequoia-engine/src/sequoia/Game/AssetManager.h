@@ -16,6 +16,7 @@
 #ifndef SEQUOIA_GAME_ASSETMANAGER_H
 #define SEQUOIA_GAME_ASSETMANAGER_H
 
+#include "sequoia/Core/AlignedADT.h"
 #include "sequoia/Core/File.h"
 #include "sequoia/Core/NonCopyable.h"
 #include "sequoia/Core/Platform.h"
@@ -43,8 +44,11 @@ public:
   friend class AssetManager;
   AssetFile(std::size_t id, AssetManager* manager);
 
-  /// @copydoc AssetFile::getContent
-  StringRef getContent() noexcept override;
+  /// @copydoc AssetFile::getData
+  const Byte* getData() override;
+
+  /// @copydoc AssetFile::getNumBytes
+  std::size_t getNumBytes() override;
 
   /// @copydoc AssetFile::getPath
   const std::string& getPath() const noexcept override;
@@ -69,26 +73,31 @@ public:
   };
 
   /// @brief Internal asset representation
-  struct Asset {
+  struct Asset : public NonCopyable {
     Asset(AssetManager* manager, std::size_t id, AssetKind kind, const std::string& path);
-
+    ~Asset();
+  
     /// Unique idetifier of the asset/file
     std::size_t ID;
-
+  
     /// Kind of asset
     AssetKind Kind;
-
+  
     /// Path to the asset
     std::string Path;
-
+  
     /// Content of the file
-    std::string Content;
-
+    aligned_vector<Byte> Data;
+  
     /// Reference to the file
     std::shared_ptr<AssetFile> File;
   };
 
-  AssetManager(const platform::String& path);
+  /// @brief Initialize the manager with an archive
+  ///
+  /// @param path     Full path to the archive
+  /// @param archive  Name of the archive file or directory
+  AssetManager(const platform::String& path, const platform::String& archive);
 
   /// @brief Load asset from disk
   /// @threadsafe
@@ -104,7 +113,7 @@ public:
   const Asset& getAsset(std::size_t id) const;
 
 private:
-  void loadContent(std::unique_ptr<Asset>& asset);
+  void loadFromDisk(std::unique_ptr<Asset>& asset);
 
 private:
   /// Global access mutex

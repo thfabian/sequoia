@@ -16,6 +16,7 @@
 #include "sequoia/Core/Assert.h"
 #include "sequoia/Core/Exception.h"
 #include "sequoia/Core/Logging.h"
+#include "sequoia/Core/Memory.h"
 #include "sequoia/Core/UtfString.h"
 #include "sequoia/Game/AssetManager.h"
 
@@ -29,7 +30,9 @@ namespace game {
 
 AssetFile::AssetFile(std::size_t id, AssetManager* manager) : id_(id), manager_(manager) {}
 
-StringRef AssetFile::getContent() noexcept { return manager_->getAsset(id_).Content; }
+const Byte* AssetFile::getData() { return manager_->getAsset(id_).Data.data(); }
+
+std::size_t AssetFile::getNumBytes() { return manager_->getAsset(id_).Data.size(); }
 
 const std::string& AssetFile::getPath() const noexcept { return manager_->getPath(id_); }
 
@@ -47,8 +50,10 @@ AssetManager::Asset::Asset(AssetManager* manager, std::size_t id, AssetManager::
                            const std::string& path)
     : ID(id), Kind(kind), Path(path), File(std::make_shared<AssetFile>(id, manager)) {}
 
-AssetManager::AssetManager(const platform::String& path) {
-  assetPath_ = platform::Path(path) / PLATFORM_STR("assets");
+AssetManager::Asset::~Asset() {}
+
+AssetManager::AssetManager(const platform::String& path, const platform::String& archive) {
+  assetPath_ = platform::Path(path) / archive;
 }
 
 std::shared_ptr<File> AssetManager::load(const std::string& path, AssetManager::AssetKind kind) {
@@ -69,7 +74,7 @@ std::shared_ptr<File> AssetManager::load(const std::string& path, AssetManager::
     pathLookupMap_[path] = id;
 
     // Load content
-    loadContent(assets_.back());
+    loadFromDisk(assets_.back());
 
   } else {
     id = it->second;
@@ -91,17 +96,20 @@ const AssetManager::Asset& AssetManager::getAsset(std::size_t id) const {
   return *assets_[id];
 }
 
-void AssetManager::loadContent(std::unique_ptr<AssetManager::Asset>& asset) {
+void AssetManager::loadFromDisk(std::unique_ptr<AssetManager::Asset>& asset) {
   std::string fullPath = platform::toAnsiString(assetPath_ / platform::asPath(asset->Path));
-
   std::ifstream file(fullPath.c_str());
 
   if(!file.is_open())
     SEQUOIA_THROW(core::Exception, "cannot load asset source: '%s'", asset->Path.c_str());
 
-  std::stringstream ss;
-  ss << file.rdbuf();
-  asset->Content = ss.str();
+  // Allocate memory
+  file.seekg(0, std::ios_base::end);
+  asset->Data.resize(file.tellg());
+  file.seekg(0, std::ios_base::beg);
+
+  // Read ASCII file
+  file.read(reinterpret_cast<char*>(asset->Data.data()), asset->Data.size());
 }
 
 } // namespace game

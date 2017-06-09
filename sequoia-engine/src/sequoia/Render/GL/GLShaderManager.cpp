@@ -55,9 +55,9 @@ void GLShaderManager::make(const std::shared_ptr<GLShader>& shader,
   if(shader->status_ == GLShaderStatus::OnDisk) {
     LOG(DEBUG) << "Loading shader from disk \"" << shader->file_->getPath() << "\"";
 
-    shader->code_ = shader->file_->getContent().str();
+    shader->code_ = shader->file_->getDataAsString();
     shader->status_ = GLShaderStatus::InMemory;
-
+    
     if(shader->code_.empty())
       SEQUOIA_THROW(RenderSystemException, "empty shader source: '%s'", shader->file_->getPath());
   }
@@ -86,7 +86,7 @@ void GLShaderManager::make(const std::shared_ptr<GLShader>& shader,
   if(shader->status_ == GLShaderStatus::Created) {
     LOG(DEBUG) << "Compiling shader (ID=" << shader->id_ << ") ...";
 
-    const char* code = shader->code_.c_str();
+    const char* code = shader->code_.c_str();    
     glShaderSource(shader->id_, 1, &code, nullptr);
     glCompileShader(shader->id_);
 

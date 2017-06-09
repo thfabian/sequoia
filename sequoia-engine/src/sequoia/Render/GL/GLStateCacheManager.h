@@ -26,35 +26,18 @@ namespace sequoia {
 
 namespace render {
 
-class GLProgram;
-class GLVertexArrayObject;
-
 /// @brief Manager of the OpenGL state-machine
 ///
 /// This keeps an in-memory copy of the OpenGL state-machine to avoid unnecessary state changes.
 ///
 /// @ingroup gl
 class SEQUOIA_RENDER_API GLStateCacheManager : public NonCopyable {
-
-  /// Bound GPU program
-  GLProgram* program_;
-
-  /// Bound VAO
-  GLVertexArrayObject* vao_;
-
-  /// Current RenderState
-  std::unique_ptr<RenderStateCache> state_;
+  std::unique_ptr<RenderStateCache> stateCache_;
 
 public:
   GLStateCacheManager();
 
-  /// @brief Set the `RenderState`
-  void setRenderState(const RenderState& renderState);
-
-  /// @brief Set the program to use in the render-pipeline
-  void setProgram(GLProgram* program);
-
-  /// @brief Set the VertexArrayObject object to bind
+  /// @brief Draw the `command` and update hte RenderState *if* necessary
   void draw(DrawCommand* command);
 
   /// @brief Get the currently active RenderState

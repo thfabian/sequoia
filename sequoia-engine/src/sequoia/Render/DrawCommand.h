@@ -25,27 +25,24 @@ namespace sequoia {
 
 namespace render {
 
-class Program;
-class VertexArrayObject;
-
 /// @brief Instructions on how to render the VertexArrayObject
 /// @ingroup render
 class SEQUOIA_RENDER_API DrawCommand {
 public:
-  DrawCommand(Program* program, VertexArrayObject* vao,
-              const math::mat4& modelMat = math::mat4(1.0f), RenderState state = RenderState())
-      : program_(program), vao_(vao), state_(state), modelMatrix_(modelMat) {}
+  DrawCommand(const RenderState& state = RenderState(),
+              const math::mat4& modelMat = math::mat4(1.0f))
+      : state_(state), modelMatrix_(modelMat) {}
 
   /// @brief Copy constructor
   DrawCommand(const DrawCommand&) = default;
 
   /// @brief Get/Set the program to use
-  Program* getProgram() const noexcept { return program_; }
-  void setProgram(Program* program) noexcept { program_ = program; }
+  Program* getProgram() const noexcept { return state_.Program; }
+  void setProgram(Program* program) noexcept { state_.Program = program; }
 
   /// @brief Get/Set the vertex data to draw
-  VertexArrayObject* getVertexArrayObject() const noexcept { return vao_; }
-  void setVertexArrayObject(VertexArrayObject* vao) noexcept { vao_ = vao; }
+  VertexArrayObject* getVertexArrayObject() const noexcept { return state_.VertexArrayObject; }
+  void setVertexArrayObject(VertexArrayObject* vao) noexcept { state_.VertexArrayObject = vao; }
 
   /// @brief Get the state of the render pipeline
   const RenderState& getRenderState() const noexcept { return state_; }
@@ -59,8 +56,6 @@ public:
   std::string toString() const;
 
 private:
-  Program* program_;
-  VertexArrayObject* vao_;
   RenderState state_;
   math::mat4 modelMatrix_;
 };

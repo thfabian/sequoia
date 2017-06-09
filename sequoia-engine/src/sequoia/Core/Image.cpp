@@ -13,30 +13,37 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_CORE_ALIGNEDADT_H
-#define SEQUOIA_CORE_ALIGNEDADT_H
+#include "sequoia/Core/Exception.h"
+#include "sequoia/Core/Image.h"
 
-#include "sequoia/Core/Memory.h"
-#include <vector>
+#ifndef NDEBUG
+#define STBI_FAILURE_USERMSG
+#endif
+
+#define STBI_SUPPORT_ZLIB
+#define STBI_ONLY_PNG
+#define STBI_ONLY_JPEG
+#define STBI_ONLY_BMP
+#define STB_IMAGE_IMPLEMENTATION
+#include <stb/stb_image.h>
 
 namespace sequoia {
 
 namespace core {
 
-/// @addtogroup core
-/// @{
+Image::Image(const std::shared_ptr<File>& file) : file_(file) {
+  pixelData_ = stbi_load_from_memory(file_->getData(), file_->getNumBytes(), &width_, &height_,
+                                     &numChannels_, 0);
+  if(!pixelData_)
+    SEQUOIA_THROW(core::Exception, "failed to load image \"%s\": %s", file_->getPath(),
+                  stbi_failure_reason());
+}
 
-/// @brief Aligned version of `std::vector`
-template <class T>
-using aligned_vector = std::vector<T, memory::aligned_allocator<T>>;
-
-/// @}
+Image::~Image() {
+  if(pixelData_)
+    stbi_image_free(pixelData_);
+}
 
 } // namespace core
 
-template <class T>
-using aligned_vector = core::aligned_vector<T>;
-
 } // namespace sequoia
-
-#endif

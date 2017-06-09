@@ -24,6 +24,9 @@ namespace sequoia {
 
 namespace render {
 
+class Program;
+class VertexArrayObject;
+
 /// @brief State of the render pipline
 ///
 /// <table>
@@ -31,9 +34,9 @@ namespace render {
 /// <tr><th>Type                          <th>Name             <th>Default Value
 ///     <th>Explanation
 /// <tr><td>bool                          <td>DepthTest        <td>true
-///     <td>Enable Z-buffer (depth) test
+///     <td>Enable Z-buffer (depth) test.
 /// <tr><td>RenderState::DepthFuncKind    <td>DetpthFunc       <td>RenderState::DF_Less
-///     <td>Function used for depth testing
+///     <td>Function used for depth testing.
 /// </table>
 ///
 /// To add a new state:
@@ -42,8 +45,9 @@ namespace render {
 ///
 /// @ingroup render
 struct SEQUOIA_RENDER_API RenderState {
-  RenderState() = default;
+  RenderState();
   RenderState(const RenderState&) = default;
+  RenderState(RenderState&&) = default;
 
   /// @brief Specifies the function used to compare each incoming pixel depth value with the depth
   /// value present in the depth buffer
@@ -60,9 +64,15 @@ struct SEQUOIA_RENDER_API RenderState {
     DF_Always        ///< Always passes
   };
 
-#define RENDER_STATE(Type, Name, Value) Type Name = Value;
+#define RENDER_STATE(Type, Name, BitfieldWidth, DefaultValue) Type Name BitfieldWidth;
 #include "sequoia/Render/RenderState.inc"
 #undef RENDER_STATE
+
+  /// Program used in the render-pipeline
+  render::Program* Program;
+
+  /// VertexArrayObject used to retrieve the vertex and index buffer objects
+  render::VertexArrayObject* VertexArrayObject;
 
   /// @brief Convert to string
   std::string toString() const;
@@ -70,9 +80,9 @@ struct SEQUOIA_RENDER_API RenderState {
 
 /// @brief Keep track of changes in the RenderState
 ///
-/// To update a state, call `setRenderState` with the new `RenderState`. If the state **name**
-/// changes, the method **nameChanged** will be invoked withe the new state as an argument.
-/// Note that the internal state will be updated automatically afterwards.
+/// To update a complete render state, call `setRenderState` with the new `RenderState`. If a single
+/// state **name** changes, the method **nameChanged** will be invoked withe the new state as an
+/// argument. Note that the internal state will be updated automatically afterwards.
 ///
 /// @ingroup render
 class SEQUOIA_RENDER_API RenderStateCache {
@@ -81,12 +91,22 @@ protected:
   RenderState state_;
 
 protected:
-#define RENDER_STATE(Type, Name, Value) virtual void Name##Changed(Type value) = 0;
+#define RENDER_STATE(Type, Name, BitfieldWidth, DefaultValue)                                      \
+  virtual void Name##Changed(Type value) = 0;
 #include "sequoia/Render/RenderState.inc"
 #undef RENDER_STATE
 
+  /// @brief GPU program changed
+  virtual void ProgramChanged(Program* program) = 0;
+
+  /// @brief VertexArrayObject changed
+  virtual void VertexArrayObjectChanged(VertexArrayObject* vao) = 0;
+
 public:
   virtual ~RenderStateCache();
+
+  /// @brief Initialize the the state by calling all **Changed** methods
+  void initState() noexcept;
 
   /// @brief Set the interal render-state to `state` and call the appropriate methods for every
   /// state change
