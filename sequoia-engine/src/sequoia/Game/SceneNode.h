@@ -32,15 +32,20 @@ namespace game {
 /// @ingroup game
 class SEQUOIA_GAME_API SceneNode : public std::enable_shared_from_this<SceneNode> {
 public:
-  enum SceneNodeKind { SK_SceneNode, SK_SceneNodeDrawable, SK_SceneNodeDrawableLast };
+  enum SceneNodeKind {
+    SK_SceneNode,
+    SK_Drawable,
+    SK_DrawableLast,
+    SK_CameraController,
+    SK_CameraControllerFree,
+    SK_CameraControllerLast
+  };
 
   SceneNode(const std::string& name, SceneNodeKind kind = SK_SceneNode);
   SceneNode(const SceneNode& other);
 
+  /// @brief Virtual destructor
   virtual ~SceneNode();
-
-  /// @name Getter/Setter
-  /// @{
 
   /// @brief Get the name of the node
   const std::string& getName() const { return name_; }
@@ -104,18 +109,8 @@ public:
   /// @brief Set the parent node
   void setParent(const std::shared_ptr<SceneNode>& parent) { parent_ = parent; }
 
-  /// @}
-
-  /// @name Streaming operations
-  /// @{
-
   /// @brief Apply `functor` to the node and all its children
   void apply(const std::function<void(SceneNode*)>& functor);
-
-  /// @}
-
-  /// @name Miscellaneous
-  /// @{
 
   /// @brief Clone the scene node and all its children
   virtual std::shared_ptr<SceneNode> clone();
@@ -129,8 +124,6 @@ public:
   /// @brief RTTI implementation
   static bool classof(const SceneNode* node) noexcept { return node->getKind() == SK_SceneNode; }
 
-  /// @}
-
 protected:
   /// @brief Implementation of `toString` returns stringified members and title
   virtual std::pair<std::string, std::string> toStringImpl() const;
@@ -138,7 +131,7 @@ protected:
   /// @brief Compute the model matrix
   void computeModelMatrix();
 
-protected:
+private:
   /// Type of node
   SceneNodeKind kind_;
 

@@ -44,7 +44,7 @@ void Game::run() {
   LOG(INFO) << "Starting main-loop ...";
 
   render::DrawCommandList* drawCommandList = mainWindow_->getDrawCommandList().get();
-  
+
   // Start main-loop
   while(!mainWindow_->isClosed()) {
 
@@ -120,10 +120,10 @@ void Game::init(bool hideWindow) {
     // Initialize the startup scene
     sceneList_.emplace_back(std::make_shared<Scene>());
     scene_ = sceneList_.back().get();
-    
+
     // TODO: This is not optimal. The Viewport should automatically be informed if the camera of
     // the scene changes
-    mainWindow_->getViewport()->setCamera(scene_->getCamera());
+    mainWindow_->getViewport()->setCamera(scene_->getActiveCamera().get());
 
   } catch(render::RenderSystemException& e) {
     ErrorHandler::getSingleton().fatal(e.what());

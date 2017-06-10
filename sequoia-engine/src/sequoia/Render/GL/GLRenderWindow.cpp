@@ -196,9 +196,11 @@ void GLRenderWindow::init() {
   inputSystem_ = std::make_unique<GLInputSystem>(this);
   renderSystem_->registerInputSystem(this, inputSystem_.get());
 
+  glfwSetInputMode(window_, GLFW_STICKY_KEYS, 1);  
   glfwSetKeyCallback(window_, GLRenderWindow::keyCallbackDispatch);
   glfwSetMouseButtonCallback(window_, GLRenderWindow::mouseButtonCallbackDispatch);
-
+  glfwSetCursorPosCallback(window_, GLRenderWindow::mousePositionCallbackDispatch);
+  
   LOG(INFO) << "Done registering IO callbacks";
 }
 

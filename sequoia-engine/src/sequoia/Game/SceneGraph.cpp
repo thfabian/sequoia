@@ -15,6 +15,7 @@
 
 #include "sequoia/Core/Format.h"
 #include "sequoia/Game/SceneGraph.h"
+#include "sequoia/Game/SceneNode.h"
 #include <iostream>
 
 namespace sequoia {

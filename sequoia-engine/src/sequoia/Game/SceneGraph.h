@@ -20,11 +20,14 @@
 #include "sequoia/Core/NonCopyable.h"
 #include "sequoia/Game/Export.h"
 #include "sequoia/Game/SceneNode.h"
-#include "sequoia/Game/SceneNodeDrawable.h"
+#include <memory>
+#include <vector>
 
 namespace sequoia {
 
 namespace game {
+
+class SceneNode;
 
 /// @brief SceneGraphs hold all objects in the scene and are primarly used to stream data to all
 /// nodes

@@ -21,11 +21,14 @@
 #include "sequoia/Render/Camera.h"
 #include "sequoia/Render/DrawCommandList.h"
 
+#include "sequoia/Game/Drawable.h"
+#include "sequoia/Game/CameraControllerFree.h"
+
 namespace sequoia {
 
 namespace game {
 
-Scene::Scene() : camera_(nullptr) {
+Scene::Scene() : activeCamera_(nullptr) {
   drawCommandList_.reserve(render::DrawCommandList::DefaultSize);
 
   Game& game = Game::getSingleton();
@@ -36,18 +39,20 @@ Scene::Scene() : camera_(nullptr) {
   //
 
   // Create the camera
-  cameraList_.emplace_back(std::make_shared<render::Camera>());
-  camera_ = cameraList_.back().get();
-  camera_->setEye(math::vec3(4, 3, -3));
-  camera_->setCenter(math::vec3(0, 0, 0));
+  activeCamera_ = std::make_shared<render::Camera>();
+  activeCamera_->setEye(math::vec3(4, 3, -3));
+  activeCamera_->setCenter(math::vec3(0, 0, 0));
 
-  auto node = SceneGraph::create<SceneNodeDrawable>("TestNode");
-  node->setProgram(game.getDefaultProgram());
-  
+  auto cube = SceneGraph::create<Drawable>("TestNode");
+  cube->setProgram(game.getDefaultProgram());
+
   auto mesh = game.getMeshManager()->createCube("TestCube");
-  node->setMesh(mesh);
+  cube->setMesh(mesh);
+  sceneGraph_->insert(cube);
 
-  sceneGraph_->insert(node);
+  auto controller = SceneGraph::create<CameraControllerFree>("Camera");
+  controller->setCamera(activeCamera_);
+  sceneGraph_->insert(controller);
 }
 
 void Scene::updateDrawCommandList(render::DrawCommandList* list) {
@@ -55,8 +60,10 @@ void Scene::updateDrawCommandList(render::DrawCommandList* list) {
 
   // Extract all DrawCommands
   sceneGraph_->apply([this](SceneNode* node) {
-    if(SceneNodeDrawable* drawNode = dyn_cast<SceneNodeDrawable>(node)) {
-      drawCommandList_.emplace_back(drawNode->getDrawCommand().get());
+    if(Drawable* drawNode = dyn_cast<Drawable>(node)) {
+      if(drawNode->isActive()) {
+        drawCommandList_.emplace_back(drawNode->prepareDrawCommand());
+      }
     }
   });
 
@@ -64,11 +71,11 @@ void Scene::updateDrawCommandList(render::DrawCommandList* list) {
   list->insert(drawCommandList_);
 }
 
-void Scene::addCamera(const std::shared_ptr<render::Camera>& camera) {
-  cameraList_.push_back(camera);
+void Scene::setActiveCamera(const std::shared_ptr<render::Camera>& camera) {
+  activeCamera_ = camera;
 }
 
-render::Camera* Scene::getCamera() const { return camera_; }
+const std::shared_ptr<render::Camera>& Scene::getActiveCamera() const { return activeCamera_; }
 
 SceneGraph* Scene::getSceneGraph() const { return sceneGraph_.get(); }
 

@@ -14,7 +14,6 @@
 //===------------------------------------------------------------------------------------------===//
 
 #include "sequoia/Core/Casting.h"
-#include "sequoia/Game/MeshManager.h"
 #include "sequoia/Game/Scene.h"
 #include "sequoia/Game/SceneGraph.h"
 #include "sequoia/Game/SceneNode.h"
@@ -29,7 +28,7 @@ namespace {
 
 class SceneNodeTest : public GameTest {};
 
-TEST_F(SceneNodeTest, SceneNode) {
+TEST_F(SceneNodeTest, Construction) {
   auto node = SceneGraph::create<SceneNode>("SceneNode");
 
   EXPECT_STREQ(node->getName().data(), "SceneNode");
@@ -71,28 +70,6 @@ TEST_F(SceneNodeTest, SceneNode) {
 
   // Test RTTI
   EXPECT_TRUE(isa<SceneNode>(node.get()));
-}
-
-TEST_F(SceneNodeTest, SceneNodeDrawable) {
-  Game& game = Game::getSingleton();
-  auto node = SceneGraph::create<SceneNodeDrawable>("SceneNodeDrawable");
-
-  EXPECT_STREQ(node->getName().data(), "SceneNodeDrawable");
-  EXPECT_EQ(node->getKind(), SceneNode::SK_SceneNodeDrawable);
-  EXPECT_FALSE(node->hasMesh());
-
-  // Set a mesh
-  node->setMesh(game.getMeshManager()->createCube("TestCube"));
-  EXPECT_TRUE(node->hasMesh());
-
-  // Clone node
-  auto nodeClone = node->clone();
-  nodeClone->setName("copy");
-  EXPECT_EQ(nodeClone->getName(), "copy");
-  EXPECT_EQ(node->getName(), "SceneNodeDrawable");
-
-  // Test RTTI
-  EXPECT_TRUE(isa<SceneNodeDrawable>(node.get()));
 }
 
 } // anonymous namespace

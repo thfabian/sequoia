@@ -31,18 +31,15 @@ class SceneGraph;
 /// @brief State of a scene
 /// @ingroup game
 class SEQUOIA_GAME_API Scene : public NonCopyable {
-  
+
   /// List of currently active DrawCommands of this scene
   std::vector<render::DrawCommand*> drawCommandList_;
 
   /// Graph of the scene
   std::shared_ptr<SceneGraph> sceneGraph_;
 
-  /// List of cameras
-  std::vector<std::shared_ptr<render::Camera>> cameraList_;
-
   /// Currently active camera
-  render::Camera* camera_;
+  std::shared_ptr<render::Camera> activeCamera_;
 
 public:
   /// @brief Create an empty scene
@@ -52,10 +49,10 @@ public:
   void updateDrawCommandList(render::DrawCommandList* list);
 
   /// @brief Set the active Camera
-  void addCamera(const std::shared_ptr<render::Camera>& camera);
-
+  void setActiveCamera(const std::shared_ptr<render::Camera>& camera);
+  
   /// @brief Get the active Camera
-  render::Camera* getCamera() const;
+  const std::shared_ptr<render::Camera>& getActiveCamera() const;
 
   /// @brief Get the SceneGraph
   SceneGraph* getSceneGraph() const;

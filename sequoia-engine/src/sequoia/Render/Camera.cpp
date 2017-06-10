@@ -13,6 +13,7 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
+#include "sequoia/Core/Format.h"
 #include "sequoia/Render/Camera.h"
 
 namespace sequoia {
@@ -34,6 +35,18 @@ void Camera::setEye(const math::vec3& eye) { eye_ = eye; }
 const math::vec3& Camera::getCenter() const { return center_; }
 
 void Camera::setCenter(const math::vec3& center) { center_ = center; }
+
+std::string Camera::toString() const {
+  return core::format("Camera[\n"
+                      "  fovy = %f,\n"
+                      "  aspect = %f,\n"
+                      "  zNear = %f,\n"
+                      "  zFar = %f,\n"
+                      "  eye = %s,\n"
+                      "  center = %s\n"
+                      "]",
+                      fovy_, aspect_, zNear_, zFar_, eye_, center_);
+}
 
 } // namespace render
 

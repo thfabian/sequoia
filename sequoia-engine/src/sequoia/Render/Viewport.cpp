@@ -24,7 +24,7 @@ namespace render {
 void ViewportListener::viewportGeometryChanged(Viewport* viewport) {}
 
 Viewport::Viewport(RenderTarget* target, int x, int y, int width, int height)
-    : camera_(nullptr), target_(target), x_(x), y_(y), width_(width), height_(height) {}
+    : target_(target), camera_(nullptr), x_(x), y_(y), width_(width), height_(height) {}
 
 Camera* Viewport::getCamera() const {
   SEQUOIA_ASSERT(camera_);

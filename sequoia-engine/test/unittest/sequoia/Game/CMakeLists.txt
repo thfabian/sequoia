@@ -16,10 +16,12 @@
 sequoia_add_test(
   NAME SequoiaGameTest
   SOURCES TestAssetManager.cpp
+          TestCameraController.cpp
+          TestDrawable.cpp
           TestMeshManager.cpp
           TestMain.cpp
           TestSceneGraph.cpp
-          TestSceneNodes.cpp
+          TestSceneNode.cpp
   DEPENDS SequoiaUnittest
           SequoiaGame
           SequoiaRender

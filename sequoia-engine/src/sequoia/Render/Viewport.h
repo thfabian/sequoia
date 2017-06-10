@@ -51,8 +51,8 @@ public:
 ///
 /// @ingroup render
 class SEQUOIA_RENDER_API Viewport : public Listenable<ViewportListener> {
-  Camera* camera_;
   RenderTarget* target_;
+  Camera* camera_;
 
   int x_;
   int y_;
