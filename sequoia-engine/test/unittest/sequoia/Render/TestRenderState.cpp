@@ -14,8 +14,9 @@
 //===------------------------------------------------------------------------------------------===//
 
 #include "sequoia/Render/RenderState.h"
-#include <algorithm>
 #include <gtest/gtest.h>
+#include <algorithm>
+#include <memory>
 
 using namespace sequoia::render;
 

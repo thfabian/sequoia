@@ -33,8 +33,10 @@ public:
               const math::mat4& modelMat = math::mat4(1.0f))
       : state_(state), modelMatrix_(modelMat) {}
 
-  /// @brief Copy constructor
   DrawCommand(const DrawCommand&) = default;
+  DrawCommand(DrawCommand&&) = default;
+  DrawCommand& operator=(const DrawCommand&) = default;
+  DrawCommand& operator=(DrawCommand&&) = default;
 
   /// @brief Get/Set the program to use
   Program* getProgram() const noexcept { return state_.Program; }

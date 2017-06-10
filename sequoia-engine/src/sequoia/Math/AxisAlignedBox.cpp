@@ -15,7 +15,6 @@
 
 #include "sequoia/Core/Format.h"
 #include "sequoia/Math/AxisAlignedBox.h"
-#include <iostream>
 
 namespace sequoia {
 

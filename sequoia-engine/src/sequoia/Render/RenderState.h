@@ -49,6 +49,9 @@ struct SEQUOIA_RENDER_API RenderState {
   RenderState(const RenderState&) = default;
   RenderState(RenderState&&) = default;
 
+  RenderState& operator=(const RenderState&) = default;
+  RenderState& operator=(RenderState&&) = default;
+
   /// @brief Specifies the function used to compare each incoming pixel depth value with the depth
   /// value present in the depth buffer
   enum DepthFuncKind : std::uint8_t {
