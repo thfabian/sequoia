@@ -56,29 +56,32 @@ def update_license(file, comment, lang):
                                      license_template.format(comment, (82 - len(lang)) * '-', lang))
         
     
-    with open(file, 'w') as f:
-        f.write(new_data)
+    #with open(file, 'w') as f:
+        #f.write(new_data)
         
 def main():
     parser = ArgumentParser("license-update.py", 
                             description="Update the license of all files.")
-    parser.add_argument("dirs", help="directories to traverse")
+    parser.add_argument("dirs", help="directories to traverse", metavar='dir', nargs='+')
     parser.add_argument("-v", "--verbose", dest="verbose", action='store_true',
                         help="enable verbose logging")
     args = parser.parse_args()
-    
-    for dir in args.dir:
-        for root, sub_folders, files in walk(args.dir):
+
+    for dir in args.dirs:
+        for root, sub_folders, files in walk(dir):
             for filename in files:
                 if filename.endswith(".py"):
                     lang = 'Python'
                     comment = '##'
-                elif filename.endswith(".cpp") or filename.endswith(".h") or filename.endswith(".inc"):
+                elif filename.endswith(".cpp") or filename.endswith(".h") or \
+                     filename.endswith(".inc"):
                     lang = 'C++'
                     comment = '//' 
                 elif filename.endswith(".cmake"):
                     lang = 'CMake'  
-                    comment = '##'                
+                    comment = '##'      
+                else:
+                    continue
                 
                 file = path.join(root, filename)
                 update_license(file, comment, lang)

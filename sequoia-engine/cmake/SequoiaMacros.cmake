@@ -370,12 +370,12 @@ macro(sequoia_add_target_clean_all)
                   "${CMAKE_SOURCE_DIR}/cmake/scripts/CleanAll.cmake")
 endmacro()
 
-## sequoia_update_license
-## ----------------------
+## sequoia_add_target_update_license
+## ---------------------------------
 ##
-## e
+## Update the license of all CMake, C++ and Python files
 ##
-function( sequoia_update_license)
+macro( sequoia_add_target_update_license)
   add_custom_target(update-license
     COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_SOURCE_DIR}/tools/license-update/license-update.py
             ${CMAKE_SOURCE_DIR}/tools
@@ -386,7 +386,7 @@ function( sequoia_update_license)
             ${CMAKE_SOURCE_DIR}/cmake
     COMMENT "Updating licenses"
   )
-endfunction()
+endmacro()
 
 ## sequoia_add_target_clang_format
 ## -------------------------------
