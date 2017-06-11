@@ -35,14 +35,11 @@ namespace render {
 /// @ingroup render
 class SEQUOIA_RENDER_API Camera : public ViewFrustum, public ViewportListener {
 protected:
-  /// Eye of the camera (where the camera is located)
-  math::vec3 eye_;
-
   /// Center of the scene (where the camera points to)
   math::vec3 center_;
 
-  /// Up vector
-  static const math::vec3 Up;
+  /// Eye of the camera (where the camera is located)
+  math::vec3 eye_;
 
 public:
   Camera();
@@ -56,12 +53,9 @@ public:
   const math::vec3& getCenter() const;
   void setCenter(const math::vec3& center);
 
-  /// @brief Get the up vector `(0, 1, 0)`
-  const math::vec3& getUp() const { return Up; }
-
   /// @brief The geometry of the associated viewport changed, we need to update our aspect ratio
   void viewportGeometryChanged(Viewport* viewport) override;
-  
+
   /// @brief Convert to string
   std::string toString() const;
 };

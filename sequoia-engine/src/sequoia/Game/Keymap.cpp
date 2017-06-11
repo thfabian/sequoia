@@ -14,38 +14,19 @@
 //===------------------------------------------------------------------------------------------===//
 
 #include "sequoia/Core/Format.h"
-#include "sequoia/Game/SceneGraph.h"
-#include "sequoia/Game/SceneNode.h"
-#include <iostream>
+#include "sequoia/Game/Keymap.h"
 
 namespace sequoia {
 
 namespace game {
 
-std::string SceneGraph::toString() const {
-  return core::format("SceneGraph[\n"
-                      " nodes = %s\n"
+std::string Keymap::toString() const {
+  return core::format("Keymap[\n"
+                      "  key = %s,\n"
+                      "  button = %s,\n"
+                      "  mod = %s\n"
                       "]",
-                      nodes_.size());
-}
-
-std::string SceneGraph::toDot() const { return std::string(); }
-
-void SceneGraph::dump() const {
-  for(const auto& node : nodes_)
-    std::cout << node->toString() << "\n";
-}
-
-void SceneGraph::update(const SceneNode::UpdateEvent& event) {
-  apply([&event](SceneNode* node) { node->update(event); });
-}
-
-void SceneGraph::clear() { nodes_.clear(); }
-
-std::size_t SceneGraph::size() const {
-  std::size_t s = 0;
-  apply([&s](SceneNode* node) { ++s; });
-  return s;
+                      key_, button_, mod_);
 }
 
 } // namespace game

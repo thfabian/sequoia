@@ -13,7 +13,11 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
+#ifndef SEQUOIA_GAME_CAMERACONTROLLERFREE
+#define SEQUOIA_GAME_CAMERACONTROLLERFREE
+
 #include "sequoia/Game/CameraController.h"
+#include "sequoia/Game/Keymap.h"
 #include "sequoia/Render/Input.h"
 #include "sequoia/Render/RenderFwd.h"
 
@@ -29,11 +33,21 @@ class SEQUOIA_GAME_API CameraControllerFree final : public CameraController,
 public:
   using Base = CameraController;
 
-  CameraControllerFree(const std::string& name, SceneNodeKind kind = SK_CameraControllerFree);
+  CameraControllerFree(
+      const std::string& name, SceneNodeKind kind = SK_CameraControllerFree,
+      const std::shared_ptr<Keymap>& forwardKey = Keymap::makeDefault(render::Key_W),
+      const std::shared_ptr<Keymap>& backwardKey = Keymap::makeDefault(render::Key_S),
+      const std::shared_ptr<Keymap>& leftKey = Keymap::makeDefault(render::Key_A),
+      const std::shared_ptr<Keymap>& rightKey = Keymap::makeDefault(render::Key_D),
+      const std::shared_ptr<Keymap>& upKey = Keymap::makeDefault(render::Key_Space),
+      const std::shared_ptr<Keymap>& downKey = Keymap::makeDefault(render::Key_C));
   CameraControllerFree(const CameraControllerFree& other);
 
   /// @brief Virtual destructor
   virtual ~CameraControllerFree();
+  
+  /// @brief Set the position (in world space)
+  virtual void setPosition(const math::vec3& position) override;
 
   /// @brief Set camera and register as a mouse and key listener
   virtual void setCamera(const std::shared_ptr<render::Camera>& camera) override;
@@ -43,6 +57,16 @@ public:
 
   /// @brief Check if we move a Camera
   bool isActive() const { return hasCamera(); }
+
+  /// @brief Update the position of the node
+  virtual void update(const UpdateEvent& event) override;
+
+  /// @brief Get/Set the top-speed
+  void setTopSpeed(float topSpeed) { topSpeed_ = topSpeed; }
+  float getTopSpeed() const { return topSpeed_; }
+
+  /// @brief Manually stop the camera
+  void manualStop();
 
   /// @brief Clone the scene node and all its children
   virtual std::shared_ptr<SceneNode> clone() override;
@@ -62,8 +86,28 @@ public:
 protected:
   /// @brief Implementation of `toString` returns stringified members and title
   virtual std::pair<std::string, std::string> toStringImpl() const override;
+
+private:
+  std::shared_ptr<Keymap> forwardKey_;  ///< Forward key
+  std::shared_ptr<Keymap> backwardKey_; ///< Backward key
+  std::shared_ptr<Keymap> leftKey_;     ///< Left key
+  std::shared_ptr<Keymap> rightKey_;    ///< Right key
+  std::shared_ptr<Keymap> upKey_;       ///< Up key
+  std::shared_ptr<Keymap> downKey_;     ///< Down key
+
+  float topSpeed_;
+  math::vec3 velocity_;
+  bool fastMove_ : 1;
+  bool goingForward_ : 1;
+  bool goingBack_ : 1;
+  bool goingLeft_ : 1;
+  bool goingRight_ : 1;
+  bool goingUp_ : 1;
+  bool goingDown_ : 1;
 };
 
 } // namespace game
 
 } // namespace sequoia
+
+#endif

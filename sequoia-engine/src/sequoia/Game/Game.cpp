@@ -52,6 +52,9 @@ void Game::run() {
     drawCommandList->clear();
     scene_->updateDrawCommandList(drawCommandList);
 
+    // Compute next time-step
+    scene_->update();
+
     // Start rendering all tender targets
     renderSystem_->renderOneFrame();
 

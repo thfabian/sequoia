@@ -24,6 +24,7 @@ sequoia_add_library(
           Export.h
           Exception.h
           Input.h
+          Input.cpp
           Program.h
           Program.cpp
           RenderFwd.h

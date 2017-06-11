@@ -53,6 +53,9 @@ public:
     nodes_.erase(std::remove(nodes_.begin(), nodes_.end(), node), nodes_.end());
   }
 
+  /// @brief Update all nodes to indicate we moved on to the next time-step
+  virtual void update(const SceneNode::UpdateEvent& event);
+
   /// @brief Apply `functor` to each node of the graph
   void apply(const std::function<void(SceneNode*)>& functor) const {
     for(const auto& node : nodes_)

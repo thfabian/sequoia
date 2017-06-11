@@ -30,6 +30,8 @@ sequoia_add_library(
           Mesh.cpp
           MeshManager.h
           MeshManager.cpp
+          Keymap.h
+          Keymap.cpp
           Scene.h
           Scene.cpp
           SceneGraph.h

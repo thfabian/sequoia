@@ -18,6 +18,7 @@ sequoia_add_test(
   SOURCES TestAssetManager.cpp
           TestCameraController.cpp
           TestDrawable.cpp
+          TestKeymap.cpp
           TestMeshManager.cpp
           TestMain.cpp
           TestSceneGraph.cpp

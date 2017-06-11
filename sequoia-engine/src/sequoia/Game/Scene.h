@@ -50,12 +50,15 @@ public:
 
   /// @brief Set the active Camera
   void setActiveCamera(const std::shared_ptr<render::Camera>& camera);
-  
+
   /// @brief Get the active Camera
   const std::shared_ptr<render::Camera>& getActiveCamera() const;
 
   /// @brief Get the SceneGraph
   SceneGraph* getSceneGraph() const;
+
+  /// @brief Update the scene and progress to the next time-step
+  virtual void update();
 };
 
 } // namespace game

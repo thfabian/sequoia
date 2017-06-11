@@ -18,6 +18,7 @@ sequoia_add_library(
   SOURCES AxisAlignedBox.h
           AxisAlignedBox.cpp
           Constants.h 
+          CoordinateSystem.h
           Export.h
           Math.h
           MathFwd.h

@@ -18,6 +18,7 @@
 #include "sequoia/Core/StringUtil.h"
 #include "sequoia/Game/SceneGraph.h"
 #include "sequoia/Game/SceneNode.h"
+#include "sequoia/Math/CoordinateSystem.h"
 
 namespace sequoia {
 
@@ -41,11 +42,23 @@ SceneNode::SceneNode(const SceneNode& other)
 
 SceneNode::~SceneNode() { LOG(DEBUG) << "Deleting SceneNode \"" << name_ << "\""; }
 
+math::mat3 SceneNode::getLocalAxes() const {
+  math::vec3 axisX = getOrientation() * math::CoordinateSystem::X();
+  math::vec3 axisY = getOrientation() * math::CoordinateSystem::Y();
+  math::vec3 axisZ = getOrientation() * math::CoordinateSystem::Z();
+  return math::mat3(axisX.x, axisY.x, axisZ.x, axisX.y, axisY.y, axisZ.y, axisX.z, axisY.z,
+                    axisZ.z);
+}
+
 void SceneNode::apply(const std::function<void(SceneNode*)>& functor) {
   functor(this);
   for(const auto& child : children_)
     child->apply(functor);
 }
+
+void SceneNode::update(const UpdateEvent& event) {}
+
+void SceneNode::move(const glm::vec3& offset) { setPosition(getPosition() + offset); }
 
 std::shared_ptr<SceneNode> SceneNode::clone() { return SceneGraph::create<SceneNode>(*this); }
 

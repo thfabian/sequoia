@@ -17,6 +17,7 @@
 #define SEQUOIA_RENDER_INPUT_H
 
 #include "sequoia/Render/Export.h"
+#include <iosfwd>
 
 namespace sequoia {
 
@@ -42,7 +43,7 @@ class RenderTarget;
 ///
 /// @ingroup render
 enum KeyboardKey : int {
-  Key_Unknown = -1,
+  Key_Invalid = -1,
 
   Key_Space = 32,
   Key_Apostrophe = 39,
@@ -165,12 +166,18 @@ enum KeyboardKey : int {
   Key_RightAlt = 346,
   Key_RightSuper = 347,
   Key_Menu = 348,
-  Key_Last = Key_Menu
+  Key_Last = Key_Menu,
 };
+
+/// @brief Stream KeyboardKey
+/// @ingroup render
+SEQUOIA_RENDER_API extern std::ostream& operator<<(std::ostream& os, KeyboardKey key) noexcept;
 
 /// @brief Mouse buttons
 /// @ingroup render
 enum MouseButton : int {
+  MouseButton_Invalid = -1,
+
   MouseButton_1 = 0,
   MouseButton_2 = 1,
   MouseButton_3 = 2,
@@ -182,17 +189,26 @@ enum MouseButton : int {
   MouseButton_Last = MouseButton_8,
   MouseButton_Left = MouseButton_1,
   MouseButton_Right = MouseButton_2,
-  MouseButton_Middle = MouseButton_3
+  MouseButton_Middle = MouseButton_3,
 };
+
+/// @brief Stream MouseButton
+/// @ingroup render
+SEQUOIA_RENDER_API extern std::ostream& operator<<(std::ostream& os, MouseButton button) noexcept;
 
 /// @brief Keyboard modifiers
 /// @ingroup render
 enum KeyModifier : int {
+  Mod_NoModifier = 0x0000,
   Mod_Shift = 0x0001,
   Mod_Ctrl = 0x0002,
   Mod_Alt = 0x0004,
   Mod_Super = 0x0008
 };
+
+/// @brief Stream KeyModifier
+/// @ingroup render
+SEQUOIA_RENDER_API extern std::ostream& operator<<(std::ostream& os, KeyModifier mod) noexcept;
 
 /// @brief Key and button actions
 /// @ingroup render
@@ -201,6 +217,7 @@ enum KeyAction : int { Action_Released = 0, Action_Pressed = 1, Action_Repeat = 
 /// @brief Keyboard event
 /// @ingroup render
 struct KeyboardEvent {
+
   /// The RenderTarget that recieved the event
   RenderTarget* Target;
 
@@ -219,6 +236,9 @@ struct KeyboardEvent {
   /// @brief Check if the key was pressed
   inline bool pressed() const noexcept { return (Action == Action_Pressed); }
 
+  /// @brief Check if the key was repeated
+  inline bool repeated() const noexcept { return (Action == Action_Repeat); }
+
   /// @brief Check if the key was released
   inline bool released() const noexcept { return (Action == Action_Released); }
 };
@@ -234,6 +254,7 @@ public:
 /// @brief Mouse button event
 /// @ingroup render
 struct MouseButtonEvent {
+
   /// The RenderTarget that recieved the event
   RenderTarget* Target;
 
@@ -252,6 +273,9 @@ struct MouseButtonEvent {
   /// @brief Check if the key was pressed
   inline bool pressed() const noexcept { return (Action == Action_Pressed); }
 
+  /// @brief Check if the key was repeated
+  inline bool repeated() const noexcept { return (Action == Action_Repeat); }
+
   /// @brief Check if the key was released
   inline bool released() const noexcept { return (Action == Action_Released); }
 };
@@ -264,6 +288,7 @@ struct MouseButtonEvent {
 ///
 /// @ingroup render
 struct MousePositionEvent {
+
   /// The RenderTarget that recieved the event
   RenderTarget* Target;
 

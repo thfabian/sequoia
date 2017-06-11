@@ -16,6 +16,7 @@
 #include "sequoia/Core/Casting.h"
 #include "sequoia/Core/Logging.h"
 #include "sequoia/Core/StringUtil.h"
+#include "sequoia/Math/CoordinateSystem.h"
 #include "sequoia/Render/Camera.h"
 #include "sequoia/Render/DrawCommandList.h"
 #include "sequoia/Render/GL/GL.h"
@@ -149,7 +150,8 @@ void GLRenderer::render() {
                                        camera->getZNearClipping(), camera->getZFarClipping());
 
   // Compute camera view matrix
-  glm::mat4 matView = glm::lookAt(camera->getEye(), camera->getCenter(), camera->getUp());
+  glm::mat4 matView =
+      glm::lookAt(camera->getEye(), camera->getCenter(), math::CoordinateSystem::Up());
 
   // Precompute view projection matrix
   glm::mat4 matViewProj = matProj * matView;

@@ -13,6 +13,9 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
+#ifndef SEQUOIA_GAME_CAMERACONTROLLER
+#define SEQUOIA_GAME_CAMERACONTROLLER
+
 #include "sequoia/Game/SceneNode.h"
 #include "sequoia/Render/Camera.h"
 #include "sequoia/Render/RenderFwd.h"
@@ -65,3 +68,5 @@ private:
 } // namespace game
 
 } // namespace sequoia
+
+#endif

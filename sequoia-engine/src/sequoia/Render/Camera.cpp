@@ -20,8 +20,6 @@ namespace sequoia {
 
 namespace render {
 
-const math::vec3 Camera::Up(0, 1, 0);
-
 Camera::Camera() : ViewFrustum() {}
 
 void Camera::viewportGeometryChanged(Viewport* viewport) {

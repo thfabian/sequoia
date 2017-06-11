@@ -43,6 +43,12 @@ public:
 
   SceneNode(const std::string& name, SceneNodeKind kind = SK_SceneNode);
   SceneNode(const SceneNode& other);
+    
+  /// @brief Event indicating we moved to the next time-step
+  struct UpdateEvent {
+    /// Time since last update (i.e time-step)
+    float TimeStep;
+  };
 
   /// @brief Virtual destructor
   virtual ~SceneNode();
@@ -57,7 +63,7 @@ public:
   const math::vec3& getPosition() const { return position_; }
 
   /// @brief Set the position (in world space)
-  void setPosition(const math::vec3& position) {
+  virtual void setPosition(const math::vec3& position) {
     modelMatrixIsDirty_ = true;
     position_ = position;
   }
@@ -66,7 +72,7 @@ public:
   const math::quat& getOrientation() const { return orientation_; }
 
   /// @brief Set the orientation (in world space)
-  void setOrientation(const math::quat& orientation) {
+  virtual void setOrientation(const math::quat& orientation) {
     modelMatrixIsDirty_ = true;
     orientation_ = orientation;
   }
@@ -75,10 +81,14 @@ public:
   float getScale() const { return scale_; }
 
   /// @brief Set the scaling factor
-  void setScale(float scale) {
+  virtual void setScale(float scale) {
     modelMatrixIsDirty_ = true;
     scale_ = scale;
   }
+
+  /// @brief Get a matrix whose columns are the local axes based on the nodes orientation
+  /// relative to it's parent
+  math::mat3 getLocalAxes() const;
 
   /// @brief Get the model matrix
   const math::mat4& getModelMatrix() {
@@ -112,6 +122,12 @@ public:
   /// @brief Apply `functor` to the node and all its children
   void apply(const std::function<void(SceneNode*)>& functor);
 
+  /// @brief Update the node to indicate we moved on to the next time-step
+  virtual void update(const UpdateEvent& event);
+
+  /// @brief Move the node by `offset`
+  virtual void move(const math::vec3& offset);
+
   /// @brief Clone the scene node and all its children
   virtual std::shared_ptr<SceneNode> clone();
 
@@ -139,16 +155,16 @@ private:
   std::vector<std::shared_ptr<SceneNode>> children_;
 
   /// Position of the node
-  math::vec3 position_;
+  mutable math::vec3 position_;
 
   /// Orientation of the node
-  math::quat orientation_;
+  mutable math::quat orientation_;
 
   /// Scaling factor
-  float scale_;
+  mutable float scale_;
 
   /// ModelView matrix
-  math::mat4 modelMatrix_;
+  mutable math::mat4 modelMatrix_;
 
   /// ModelView matrix needs to be recomputed
   bool modelMatrixIsDirty_;
