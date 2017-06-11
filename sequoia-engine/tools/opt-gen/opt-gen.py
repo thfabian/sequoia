@@ -277,7 +277,7 @@ class OptionList(object):
         self.generate_file_impl(False, input_include_file, output_include_file)
         
 def main():
-    parser = ArgumentParser("sequoia-opt-gen.py input", 
+    parser = ArgumentParser("opt-gen.py input", 
                             description="Generate a C++ header (*.h) and include (*.inc) file"
                                         " from the given input options (specified in JSON). "
                                         "The input header and include file need to exist and" 

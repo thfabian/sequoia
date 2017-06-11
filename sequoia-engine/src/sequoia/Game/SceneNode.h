@@ -155,16 +155,16 @@ private:
   std::vector<std::shared_ptr<SceneNode>> children_;
 
   /// Position of the node
-  mutable math::vec3 position_;
+  math::vec3 position_;
 
   /// Orientation of the node
-  mutable math::quat orientation_;
+  math::quat orientation_;
 
   /// Scaling factor
-  mutable float scale_;
+  float scale_;
 
   /// ModelView matrix
-  mutable math::mat4 modelMatrix_;
+  math::mat4 modelMatrix_;
 
   /// ModelView matrix needs to be recomputed
   bool modelMatrixIsDirty_;

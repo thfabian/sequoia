@@ -30,9 +30,9 @@ TEST(KeymapTest, Key) {
     EXPECT_EQ(map.getMod(), Mod_NoModifier);
     EXPECT_EQ(map.getButton(), MouseButton_Invalid);
 
-    KeyboardEvent eventTrue{nullptr, Key_W, Action_Pressed, 0};
-    KeyboardEvent eventFalse1{nullptr, Key_S, Action_Pressed, 0};
-    MouseButtonEvent eventFalse2{nullptr, MouseButton_Left, Action_Pressed, 0};
+    render::KeyboardEvent eventTrue{nullptr, Key_W, Action_Pressed, 0};
+    render::KeyboardEvent eventFalse1{nullptr, Key_S, Action_Pressed, 0};
+    render::MouseButtonEvent eventFalse2{nullptr, MouseButton_Left, Action_Pressed, 0};
 
     EXPECT_TRUE(map.handle(eventTrue));
     EXPECT_FALSE(map.handle(eventFalse1));
@@ -46,9 +46,9 @@ TEST(KeymapTest, Key) {
     EXPECT_EQ(map.getMod(), Mod_Alt);
     EXPECT_EQ(map.getButton(), MouseButton_Invalid);
 
-    KeyboardEvent eventTrue{nullptr, Key_W, Action_Pressed, (1 << Mod_Alt)};
-    KeyboardEvent eventFalse1{nullptr, Key_W, Action_Pressed, (1 << Mod_Ctrl)};
-    MouseButtonEvent eventFalse2{nullptr, MouseButton_Left, Action_Pressed, (1 << Mod_Alt)};
+    render::KeyboardEvent eventTrue{nullptr, Key_W, Action_Pressed, (1 << Mod_Alt)};
+    render::KeyboardEvent eventFalse1{nullptr, Key_W, Action_Pressed, (1 << Mod_Ctrl)};
+    render::MouseButtonEvent eventFalse2{nullptr, MouseButton_Left, Action_Pressed, (1 << Mod_Alt)};
 
     EXPECT_TRUE(map.handle(eventTrue));
     EXPECT_FALSE(map.handle(eventFalse1));
@@ -64,9 +64,9 @@ TEST(KeymapTest, Mouse) {
     EXPECT_EQ(map.getMod(), Mod_NoModifier);
     EXPECT_EQ(map.getButton(), MouseButton_Right);
 
-    MouseButtonEvent eventTrue{nullptr, MouseButton_Right, Action_Pressed, 0};
-    MouseButtonEvent eventFalse1{nullptr, MouseButton_Left, Action_Pressed, 0};
-    KeyboardEvent eventFalse2{nullptr, Key_S, Action_Pressed, 0};
+    render::MouseButtonEvent eventTrue{nullptr, MouseButton_Right, Action_Pressed, 0};
+    render::MouseButtonEvent eventFalse1{nullptr, MouseButton_Left, Action_Pressed, 0};
+    render::KeyboardEvent eventFalse2{nullptr, Key_S, Action_Pressed, 0};
 
     EXPECT_TRUE(map.handle(eventTrue));
     EXPECT_FALSE(map.handle(eventFalse1));
@@ -80,9 +80,10 @@ TEST(KeymapTest, Mouse) {
     EXPECT_EQ(map.getMod(), Mod_Alt);
     EXPECT_EQ(map.getButton(), MouseButton_Right);
 
-    MouseButtonEvent eventTrue{nullptr, MouseButton_Right, Action_Pressed, (1 << Mod_Alt)};
-    MouseButtonEvent eventFalse1{nullptr, MouseButton_Left, Action_Pressed, (1 << Mod_Ctrl)};
-    KeyboardEvent eventFalse2{nullptr, Key_S, Action_Pressed, (1 << Mod_Alt)};
+    render::MouseButtonEvent eventTrue{nullptr, MouseButton_Right, Action_Pressed, (1 << Mod_Alt)};
+    render::MouseButtonEvent eventFalse1{nullptr, MouseButton_Left, Action_Pressed,
+                                         (1 << Mod_Ctrl)};
+    render::KeyboardEvent eventFalse2{nullptr, Key_S, Action_Pressed, (1 << Mod_Alt)};
 
     EXPECT_TRUE(map.handle(eventTrue));
     EXPECT_FALSE(map.handle(eventFalse1));

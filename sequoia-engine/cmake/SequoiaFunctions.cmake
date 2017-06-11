@@ -218,7 +218,7 @@ function(sequoia_generate_options)
     message(FATAL_ERROR "invalid argument ${ARG_UNPARSED_ARGUMENTS}")
   endif()
 
-  set(script ${CMAKE_SOURCE_DIR}/tools/sequoia-opt-gen/sequoia-opt-gen.py)
+  set(script ${CMAKE_SOURCE_DIR}/tools/opt-gen/opt-gen.py)
   set(script_path "\"${script}\"")
   set(script_args --input-header="${ARG_INPUT_HEADER}"
                   --input-include="${ARG_INPUT_INCLUDE}"
@@ -230,7 +230,7 @@ function(sequoia_generate_options)
 
   string(REPLACE "${CMAKE_BINARY_DIR}/" "" header "${ARG_OUTPUT_HEADER}")
   
-  # Run sequoia-opt-gen.py
+  # Run opt-gen.py
   add_custom_command(
     OUTPUT ${ARG_OUTPUT_HEADER} ${ARG_OUTPUT_INCLUDE}
     COMMAND ${PYTHON_EXECUTABLE} ${script_path} ${script_args}
