@@ -378,12 +378,7 @@ endmacro()
 macro( sequoia_add_target_update_license)
   add_custom_target(update-license
     COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_SOURCE_DIR}/tools/license-update/license-update.py
-            ${CMAKE_SOURCE_DIR}/tools
-            ${CMAKE_SOURCE_DIR}/src
-            ${CMAKE_SOURCE_DIR}/test
-            ${CMAKE_SOURCE_DIR}/ressources
-            ${CMAKE_SOURCE_DIR}/docs
-            ${CMAKE_SOURCE_DIR}/cmake
+            ${CMAKE_SOURCE_DIR}
     COMMENT "Updating licenses"
   )
 endmacro()

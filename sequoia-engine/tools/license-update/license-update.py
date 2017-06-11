@@ -78,7 +78,7 @@ def main():
                      filename.endswith(".inc"):
                     lang = 'C++'
                     comment = '//' 
-                elif filename.endswith(".cmake"):
+                elif filename.endswith(".cmake") or filename == "CMakeLists.txt":
                     lang = 'CMake'  
                     comment = '##'      
                 else:
