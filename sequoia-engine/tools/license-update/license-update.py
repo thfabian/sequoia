@@ -6,7 +6,7 @@
 ##                       | (___   ___  __ _ _   _  ___  _  __ _ 
 ##                        \___ \ / _ \/ _` | | | |/ _ \| |/ _` |
 ##                        ____) |  __/ (_| | |_| | (_) | | (_| |
-##                       |_____/ \___|\__, |\__,_|\___/|_|\__,_| - Game Engine
+##                       |_____/ \___|\__, |\__,_|\___/|_|\__,_| - Game Engine (2016-2017)
 ##                                       | |                    
 ##                                       |_| 
 ##
@@ -50,14 +50,15 @@ def update_license(file, comment, lang):
         
         first_idx = read_data.find(first_line)
         last_idx = read_data.find(last_line) + len(last_line)
-    
+        if first_idx == -1 or last_idx == -1:
+            return
+        
         replacement_str = read_data[first_idx:last_idx]
         new_data = read_data.replace(replacement_str, 
                                      license_template.format(comment, (82 - len(lang)) * '-', lang))
-        
-    
-    #with open(file, 'w') as f:
-        #f.write(new_data)
+                                     
+    with open(file, 'w') as f:
+        f.write(new_data)
         
 def main():
     parser = ArgumentParser("license-update.py", 
