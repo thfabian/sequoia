@@ -41,10 +41,6 @@ GLRenderWindow::GLRenderWindow(GLRenderSystem* renderSystem,
     glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
   }
 
-  // Use atleast OpenGL 3.3
-  glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, windowHints.GLMajorVersion);
-  glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, windowHints.GLMinorVersion);
-
   // Set Antialiasing
   glfwWindowHint(GLFW_SAMPLES, windowHints.MSAA);
   LOG(INFO) << "Using MSAA: " << windowHints.MSAA;
@@ -78,33 +74,49 @@ GLRenderWindow::GLRenderWindow(GLRenderSystem* renderSystem,
 
   LOG(INFO) << "Using monitor " << glfwGetMonitorName(monitor);
   const GLFWvidmode* mode = glfwGetVideoMode(monitor);
-
-  // Select the window-mode
-  if(windowHints.WindowMode == WindowHint::WK_Fullscreen) {
-    window_ =
-        glfwCreateWindow(mode->width, mode->height, windowHints.Title.c_str(), monitor, nullptr);
-  } else {
-
-    glfwWindowHint(GLFW_RED_BITS, mode->redBits);
-    glfwWindowHint(GLFW_GREEN_BITS, mode->greenBits);
-    glfwWindowHint(GLFW_BLUE_BITS, mode->blueBits);
-    glfwWindowHint(GLFW_REFRESH_RATE, mode->refreshRate);
-
-    if(windowHints.WindowMode == WindowHint::WK_Window) {
-      window_ = glfwCreateWindow(windowHints.Width, windowHints.Height, windowHints.Title.c_str(),
-                                 nullptr, nullptr);
-    } else if(windowHints.WindowMode == WindowHint::WK_WindowedFullscreen) {
-      window_ =
-          glfwCreateWindow(mode->width, mode->height, windowHints.Title.c_str(), nullptr, nullptr);
-    } else
-      sequoia_unreachable("invalid window-mode");
-  }
+  
   LOG(INFO) << "Using window mode: " << windowHints.WindowMode;
 
-  if(!window_)
-    SEQUOIA_THROW(RenderSystemException,
-                  "failed to initialize GLFW window, requested OpenGL (%i.%i)",
-                  windowHints.GLMajorVersion, windowHints.GLMinorVersion);
+  // Select the window-mode
+  auto createWindow = [&](bool throwOnError, int major, int minor) { 
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, major);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, minor);
+  
+    LOG(INFO) << "Attempting to initialize GLFW window, requesting OpenGL (" << major << "." << minor << ")";
+  
+    if(windowHints.WindowMode == WindowHint::WK_Fullscreen) {
+     window_ =
+        glfwCreateWindow(mode->width, mode->height, windowHints.Title.c_str(), monitor, nullptr);
+    } else {
+      glfwWindowHint(GLFW_RED_BITS, mode->redBits);
+      glfwWindowHint(GLFW_GREEN_BITS, mode->greenBits);
+      glfwWindowHint(GLFW_BLUE_BITS, mode->blueBits);
+      glfwWindowHint(GLFW_REFRESH_RATE, mode->refreshRate);
+
+      if(windowHints.WindowMode == WindowHint::WK_Window) {
+        window_ = glfwCreateWindow(windowHints.Width, windowHints.Height, windowHints.Title.c_str(),
+                                   nullptr, nullptr);
+      } else if(windowHints.WindowMode == WindowHint::WK_WindowedFullscreen) {
+        window_ =
+            glfwCreateWindow(mode->width, mode->height, windowHints.Title.c_str(), nullptr, nullptr);
+      } else
+        sequoia_unreachable("invalid window-mode");
+    }
+ 
+     if(throwOnError && !window_)
+       SEQUOIA_THROW(RenderSystemException,
+                     "failed to initialize GLFW window, required atleast OpenGL Core (>= 3.3)");
+  };
+  
+  createWindow(false, windowHints.GLMajorVersion, windowHints.GLMinorVersion);
+  if(!window_) {
+    LOG(WARNING) << "Failed to initialize GLFW window, requested OpenGL (" << windowHints.GLMajorVersion << "." << windowHints.GLMinorVersion << ")";
+  
+    // We need atleast OpenGL 3.3
+    createWindow(true, 3, 3);
+  }
+  
+  LOG(INFO) << "Sucessfuly initialized GLFW window";
 
   // Move the window to the correct monitor (fullscreen windows are already moved correctly)
   if(windowHints.WindowMode != WindowHint::WK_Fullscreen) {
