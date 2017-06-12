@@ -1,21 +1,21 @@
 //===--------------------------------------------------------------------------------*- C++ -*-===//
-//                         _____                        _       
-//                        / ____|                      (_)      
-//                       | (___   ___  __ _ _   _  ___  _  __ _ 
+//                         _____                        _
+//                        / ____|                      (_)
+//                       | (___   ___  __ _ _   _  ___  _  __ _
 //                        \___ \ / _ \/ _` | | | |/ _ \| |/ _` |
 //                        ____) |  __/ (_| | |_| | (_) | | (_| |
 //                       |_____/ \___|\__, |\__,_|\___/|_|\__,_| - Game Engine (2016-2017)
-//                                       | |                    
-//                                       |_| 
+//                                       | |
+//                                       |_|
 //
 // This file is distributed under the MIT License (MIT).
 // See LICENSE.txt for details.
 //
 //===------------------------------------------------------------------------------------------===//
 
+#include "sequoia/Render/GL/GLShaderManager.h"
 #include "sequoia/Core/Logging.h"
 #include "sequoia/Render/Exception.h"
-#include "sequoia/Render/GL/GLShaderManager.h"
 #include <boost/lexical_cast.hpp>
 #include <fstream>
 #include <sstream>
@@ -57,7 +57,7 @@ void GLShaderManager::make(const std::shared_ptr<GLShader>& shader,
 
     shader->code_ = shader->file_->getDataAsString();
     shader->status_ = GLShaderStatus::InMemory;
-    
+
     if(shader->code_.empty())
       SEQUOIA_THROW(RenderSystemException, "empty shader source: '%s'", shader->file_->getPath());
   }
@@ -86,7 +86,7 @@ void GLShaderManager::make(const std::shared_ptr<GLShader>& shader,
   if(shader->status_ == GLShaderStatus::Created) {
     LOG(DEBUG) << "Compiling shader (ID=" << shader->id_ << ") ...";
 
-    const char* code = shader->code_.c_str();    
+    const char* code = shader->code_.c_str();
     glShaderSource(shader->id_, 1, &code, nullptr);
     glCompileShader(shader->id_);
 

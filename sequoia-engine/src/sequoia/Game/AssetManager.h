@@ -1,12 +1,12 @@
 //===--------------------------------------------------------------------------------*- C++ -*-===//
-//                         _____                        _       
-//                        / ____|                      (_)      
-//                       | (___   ___  __ _ _   _  ___  _  __ _ 
+//                         _____                        _
+//                        / ____|                      (_)
+//                       | (___   ___  __ _ _   _  ___  _  __ _
 //                        \___ \ / _ \/ _` | | | |/ _ \| |/ _` |
 //                        ____) |  __/ (_| | |_| | (_) | | (_| |
 //                       |_____/ \___|\__, |\__,_|\___/|_|\__,_| - Game Engine (2016-2017)
-//                                       | |                    
-//                                       |_| 
+//                                       | |
+//                                       |_|
 //
 // This file is distributed under the MIT License (MIT).
 // See LICENSE.txt for details.
@@ -76,19 +76,19 @@ public:
   struct Asset : public NonCopyable {
     Asset(AssetManager* manager, std::size_t id, AssetKind kind, const std::string& path);
     ~Asset();
-  
+
     /// Unique idetifier of the asset/file
     std::size_t ID;
-  
+
     /// Kind of asset
     AssetKind Kind;
-  
+
     /// Path to the asset
     std::string Path;
-  
+
     /// Content of the file
     aligned_vector<Byte> Data;
-  
+
     /// Reference to the file
     std::shared_ptr<AssetFile> File;
   };

@@ -1,12 +1,12 @@
 //===--------------------------------------------------------------------------------*- C++ -*-===//
-//                         _____                        _       
-//                        / ____|                      (_)      
-//                       | (___   ___  __ _ _   _  ___  _  __ _ 
+//                         _____                        _
+//                        / ____|                      (_)
+//                       | (___   ___  __ _ _   _  ___  _  __ _
 //                        \___ \ / _ \/ _` | | | |/ _ \| |/ _` |
 //                        ____) |  __/ (_| | |_| | (_) | | (_| |
 //                       |_____/ \___|\__, |\__,_|\___/|_|\__,_| - Game Engine (2016-2017)
-//                                       | |                    
-//                                       |_| 
+//                                       | |
+//                                       |_|
 //
 // This file is distributed under the MIT License (MIT).
 // See LICENSE.txt for details.
@@ -49,7 +49,7 @@ GLRenderWindow::GLRenderWindow(GLRenderSystem* renderSystem,
   // functionality deprecated in the requested version of OpenGL is removed
   glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, true);
   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-  
+
   if(RenderSystem::getSingleton().debugMode()) {
     glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, true);
   }
@@ -64,9 +64,9 @@ GLRenderWindow::GLRenderWindow(GLRenderSystem* renderSystem,
     SEQUOIA_ASSERT(monitors);
 
     if(windowHints.Monitor >= numMonitors) {
-      LOG(WARNING) << "invalid monitor '" << windowHints.Monitor << "' (max number of monitors is " 
+      LOG(WARNING) << "invalid monitor '" << windowHints.Monitor << "' (max number of monitors is "
                    << numMonitors << ")";
-      monitor = glfwGetPrimaryMonitor(); 
+      monitor = glfwGetPrimaryMonitor();
     } else {
       monitor = monitors[windowHints.Monitor];
     }
@@ -74,19 +74,20 @@ GLRenderWindow::GLRenderWindow(GLRenderSystem* renderSystem,
 
   LOG(INFO) << "Using monitor " << glfwGetMonitorName(monitor);
   const GLFWvidmode* mode = glfwGetVideoMode(monitor);
-  
+
   LOG(INFO) << "Using window mode: " << windowHints.WindowMode;
 
   // Select the window-mode
-  auto createWindow = [&](bool throwOnError, int major, int minor) { 
+  auto createWindow = [&](bool throwOnError, int major, int minor) {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, major);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, minor);
-  
-    LOG(INFO) << "Attempting to initialize GLFW window, requesting OpenGL (" << major << "." << minor << ")";
-  
+
+    LOG(INFO) << "Attempting to initialize GLFW window, requesting OpenGL (" << major << "."
+              << minor << ")";
+
     if(windowHints.WindowMode == WindowHint::WK_Fullscreen) {
-     window_ =
-        glfwCreateWindow(mode->width, mode->height, windowHints.Title.c_str(), monitor, nullptr);
+      window_ =
+          glfwCreateWindow(mode->width, mode->height, windowHints.Title.c_str(), monitor, nullptr);
     } else {
       glfwWindowHint(GLFW_RED_BITS, mode->redBits);
       glfwWindowHint(GLFW_GREEN_BITS, mode->greenBits);
@@ -97,25 +98,26 @@ GLRenderWindow::GLRenderWindow(GLRenderSystem* renderSystem,
         window_ = glfwCreateWindow(windowHints.Width, windowHints.Height, windowHints.Title.c_str(),
                                    nullptr, nullptr);
       } else if(windowHints.WindowMode == WindowHint::WK_WindowedFullscreen) {
-        window_ =
-            glfwCreateWindow(mode->width, mode->height, windowHints.Title.c_str(), nullptr, nullptr);
+        window_ = glfwCreateWindow(mode->width, mode->height, windowHints.Title.c_str(), nullptr,
+                                   nullptr);
       } else
         sequoia_unreachable("invalid window-mode");
     }
- 
-     if(throwOnError && !window_)
-       SEQUOIA_THROW(RenderSystemException,
-                     "failed to initialize GLFW window, required atleast OpenGL Core (>= 3.3)");
+
+    if(throwOnError && !window_)
+      SEQUOIA_THROW(RenderSystemException,
+                    "failed to initialize GLFW window, required atleast OpenGL Core (>= 3.3)");
   };
-  
+
   createWindow(false, windowHints.GLMajorVersion, windowHints.GLMinorVersion);
   if(!window_) {
-    LOG(WARNING) << "Failed to initialize GLFW window, requested OpenGL (" << windowHints.GLMajorVersion << "." << windowHints.GLMinorVersion << ")";
-  
+    LOG(WARNING) << "Failed to initialize GLFW window, requested OpenGL ("
+                 << windowHints.GLMajorVersion << "." << windowHints.GLMinorVersion << ")";
+
     // We need atleast OpenGL 3.3
     createWindow(true, 3, 3);
   }
-  
+
   LOG(INFO) << "Sucessfuly initialized GLFW window";
 
   // Move the window to the correct monitor (fullscreen windows are already moved correctly)
@@ -208,11 +210,11 @@ void GLRenderWindow::init() {
   inputSystem_ = std::make_unique<GLInputSystem>(this);
   renderSystem_->registerInputSystem(this, inputSystem_.get());
 
-  glfwSetInputMode(window_, GLFW_STICKY_KEYS, 1);  
+  glfwSetInputMode(window_, GLFW_STICKY_KEYS, 1);
   glfwSetKeyCallback(window_, GLRenderWindow::keyCallbackDispatch);
   glfwSetMouseButtonCallback(window_, GLRenderWindow::mouseButtonCallbackDispatch);
   glfwSetCursorPosCallback(window_, GLRenderWindow::mousePositionCallbackDispatch);
-  
+
   LOG(INFO) << "Done registering IO callbacks";
 }
 

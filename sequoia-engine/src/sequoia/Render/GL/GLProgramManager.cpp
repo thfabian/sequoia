@@ -1,23 +1,23 @@
 //===--------------------------------------------------------------------------------*- C++ -*-===//
-//                         _____                        _       
-//                        / ____|                      (_)      
-//                       | (___   ___  __ _ _   _  ___  _  __ _ 
+//                         _____                        _
+//                        / ____|                      (_)
+//                       | (___   ___  __ _ _   _  ___  _  __ _
 //                        \___ \ / _ \/ _` | | | |/ _ \| |/ _` |
 //                        ____) |  __/ (_| | |_| | (_) | | (_| |
 //                       |_____/ \___|\__, |\__,_|\___/|_|\__,_| - Game Engine (2016-2017)
-//                                       | |                    
-//                                       |_| 
+//                                       | |
+//                                       |_|
 //
 // This file is distributed under the MIT License (MIT).
 // See LICENSE.txt for details.
 //
 //===------------------------------------------------------------------------------------------===//
 
+#include "sequoia/Render/GL/GL.h"
 #include "sequoia/Core/Casting.h"
 #include "sequoia/Core/Logging.h"
 #include "sequoia/Core/StringRef.h"
 #include "sequoia/Render/Exception.h"
-#include "sequoia/Render/GL/GL.h"
 #include "sequoia/Render/GL/GLProgramManager.h"
 #include "sequoia/Render/GL/GLShaderManager.h"
 #include "sequoia/Render/GL/GLVertexAttribute.h"
@@ -163,7 +163,7 @@ bool GLProgramManager::checkAttributes(const std::shared_ptr<GLProgram>& program
 
     // We don't check attributes which start with `frag_`
     if(!StringRef(name.get()).startswith("frag_") && !GLVertexAttribute::isValid(name.get()))
-        SEQUOIA_THROW(RenderSystemException, "invalid vertex attribute '%s'", name.get());
+      SEQUOIA_THROW(RenderSystemException, "invalid vertex attribute '%s'", name.get());
   }
 
   LOG(DEBUG) << "Successfully checked vertex attributes of program (ID=" << program->id_ << ")";

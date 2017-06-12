@@ -1,22 +1,22 @@
 //===--------------------------------------------------------------------------------*- C++ -*-===//
-//                         _____                        _       
-//                        / ____|                      (_)      
-//                       | (___   ___  __ _ _   _  ___  _  __ _ 
+//                         _____                        _
+//                        / ____|                      (_)
+//                       | (___   ___  __ _ _   _  ___  _  __ _
 //                        \___ \ / _ \/ _` | | | |/ _ \| |/ _` |
 //                        ____) |  __/ (_| | |_| | (_) | | (_| |
 //                       |_____/ \___|\__, |\__,_|\___/|_|\__,_| - Game Engine (2016-2017)
-//                                       | |                    
-//                                       |_| 
+//                                       | |
+//                                       |_|
 //
 // This file is distributed under the MIT License (MIT).
 // See LICENSE.txt for details.
 //
 //===------------------------------------------------------------------------------------------===//
 
+#include "sequoia/Game/Scene.h"
 #include "sequoia/Core/Casting.h"
 #include "sequoia/Game/Game.h"
 #include "sequoia/Game/MeshManager.h"
-#include "sequoia/Game/Scene.h"
 #include "sequoia/Game/SceneGraph.h"
 #include "sequoia/Render/Camera.h"
 #include "sequoia/Render/DrawCommandList.h"

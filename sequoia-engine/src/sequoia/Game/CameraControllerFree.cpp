@@ -32,9 +32,9 @@ CameraControllerFree::CameraControllerFree(const std::string& name, SceneNodeKin
                                            const std::shared_ptr<Keymap>& upKey,
                                            const std::shared_ptr<Keymap>& downKey)
     : Base(name, kind), forwardKey_(forwardKey), backwardKey_(backwardKey), leftKey_(leftKey),
-      rightKey_(rightKey), upKey_(upKey), downKey_(downKey), speed_(5.0f),
-      goingForward_(false), goingBack_(false), goingLeft_(false), goingRight_(false),
-      goingUp_(false), goingDown_(false) {}
+      rightKey_(rightKey), upKey_(upKey), downKey_(downKey), speed_(5.0f), goingForward_(false),
+      goingBack_(false), goingLeft_(false), goingRight_(false), goingUp_(false), goingDown_(false) {
+}
 
 CameraControllerFree::CameraControllerFree(const CameraControllerFree& other) : Base(other) {}
 
