@@ -62,8 +62,8 @@ public:
   virtual void update(const UpdateEvent& event) override;
 
   /// @brief Get/Set the top-speed
-  void setTopSpeed(float topSpeed) { topSpeed_ = topSpeed; }
-  float getTopSpeed() const { return topSpeed_; }
+  void sertSpeed(float speed) { speed_ = speed; }
+  float getSpeed() const { return speed_; }
 
   /// @brief Manually stop the camera
   void manualStop();
@@ -95,9 +95,7 @@ private:
   std::shared_ptr<Keymap> upKey_;       ///< Up key
   std::shared_ptr<Keymap> downKey_;     ///< Down key
 
-  float topSpeed_;
-  math::vec3 velocity_;
-  bool fastMove_ : 1;
+  float speed_;
   bool goingForward_ : 1;
   bool goingBack_ : 1;
   bool goingLeft_ : 1;

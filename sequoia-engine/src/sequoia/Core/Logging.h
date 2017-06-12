@@ -67,6 +67,8 @@ class SEQUOIA_CORE_API LoggerProxy {
 
 public:
   LoggerProxy(const LoggerProxy&) = default;
+  LoggerProxy(LoggerProxy&&) = default;
+
   LoggerProxy(std::mutex* lock, LoggingLevel level, std::stringstream* ss, const char* file,
               int line);
   LoggerProxy();

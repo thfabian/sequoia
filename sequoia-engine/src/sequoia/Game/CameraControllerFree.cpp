@@ -1,20 +1,20 @@
 //===--------------------------------------------------------------------------------*- C++ -*-===//
-//                         _____                        _       
-//                        / ____|                      (_)      
-//                       | (___   ___  __ _ _   _  ___  _  __ _ 
+//                         _____                        _
+//                        / ____|                      (_)
+//                       | (___   ___  __ _ _   _  ___  _  __ _
 //                        \___ \ / _ \/ _` | | | |/ _ \| |/ _` |
 //                        ____) |  __/ (_| | |_| | (_) | | (_| |
 //                       |_____/ \___|\__, |\__,_|\___/|_|\__,_| - Game Engine (2016-2017)
-//                                       | |                    
-//                                       |_| 
+//                                       | |
+//                                       |_|
 //
 // This file is distributed under the MIT License (MIT).
 // See LICENSE.txt for details.
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Core/Format.h"
 #include "sequoia/Game/CameraControllerFree.h"
+#include "sequoia/Core/Format.h"
 #include "sequoia/Game/Game.h"
 #include "sequoia/Game/SceneGraph.h"
 
@@ -32,7 +32,7 @@ CameraControllerFree::CameraControllerFree(const std::string& name, SceneNodeKin
                                            const std::shared_ptr<Keymap>& upKey,
                                            const std::shared_ptr<Keymap>& downKey)
     : Base(name, kind), forwardKey_(forwardKey), backwardKey_(backwardKey), leftKey_(leftKey),
-      rightKey_(rightKey), upKey_(upKey), downKey_(downKey), topSpeed_(5.0f), velocity_(0),
+      rightKey_(rightKey), upKey_(upKey), downKey_(downKey), speed_(5.0f),
       goingForward_(false), goingBack_(false), goingLeft_(false), goingRight_(false),
       goingUp_(false), goingDown_(false) {}
 
@@ -43,9 +43,9 @@ CameraControllerFree::~CameraControllerFree() {}
 void CameraControllerFree::setPosition(const glm::vec3& position) {
   Base::setPosition(position);
   if(hasCamera()) {
-    math::vec3 centerOffsetToEye = getCamera()->getEye() - getCamera()->getCenter();
+    math::vec3 eyeToOffset = getCamera()->getCenter() - getCamera()->getEye();
     getCamera()->setEye(getPosition());
-    getCamera()->setEye(getPosition() + centerOffsetToEye);
+    getCamera()->setCenter(getPosition() + eyeToOffset);
   }
 }
 
@@ -53,6 +53,9 @@ void CameraControllerFree::setCamera(const std::shared_ptr<render::Camera>& came
   Base::setCamera(camera);
   Game::getSingleton().addListener(static_cast<MouseListener*>(this));
   Game::getSingleton().addListener(static_cast<KeyListener*>(this));
+
+  // Position scene node at the eye
+  setPosition(getCamera()->getEye());
 }
 
 void CameraControllerFree::removeCamera() {
@@ -62,46 +65,29 @@ void CameraControllerFree::removeCamera() {
 }
 
 void CameraControllerFree::update(const UpdateEvent& event) {
-  math::mat3 axes = getLocalAxes();
+  if(!goingForward_ && !goingBack_ && !goingRight_ && !goingLeft_ && !goingUp_ && !goingDown_)
+    return;
 
-  // Build our acceleration vector based on keyboard input composite
-  math::vec3 accel(0);
+  math::mat3 axes = getLocalAxes();
+  math::vec3 dir(0);
 
   if(goingForward_)
-    accel += axes[2];
+    dir += axes[2];
   if(goingBack_)
-    accel -= axes[2];
+    dir -= axes[2];
   if(goingRight_)
-    accel += axes[0];
+    dir -= axes[0];
   if(goingLeft_)
-    accel -= axes[0];
+    dir += axes[0];
   if(goingUp_)
-    accel += axes[1];
+    dir += axes[1];
   if(goingDown_)
-    accel -= axes[1];
+    dir -= axes[1];
 
-  const float topSpeed = fastMove_ ? topSpeed_ * 20 : topSpeed_;
-
-  if(math::length2(accel) != 0) {
-    // If accelerating, try to reach top speed in a certain time
-    accel = math::normalize(accel);
-    velocity_ += accel * topSpeed * event.TimeStep * 1.0f;
-  } else
-    // If not accelerating, try to stop in a certain time
-    velocity_ -= velocity_ * event.TimeStep * 1.0f;
-
-  const float tooSmall = std::numeric_limits<float>::epsilon();
-
-  // Keep camera velocity below top speed and above epsilon
-  const float vel2 = math::length2(velocity_);
-  if(vel2 > topSpeed * topSpeed) {
-    velocity_ = math::normalize(velocity_);
-    velocity_ *= topSpeed;
-  } else if(vel2 < tooSmall * tooSmall)
-    velocity_ = math::vec3(0);
-
-  if(velocity_ != math::vec3(0))
-    move(velocity_ * event.TimeStep);
+  if(dir != math::vec3(0)) {
+    dir = math::normalize(dir);
+    move(speed_ * event.TimeStep * dir);
+  }
 }
 
 void CameraControllerFree::manualStop() {
@@ -111,7 +97,6 @@ void CameraControllerFree::manualStop() {
   goingRight_ = false;
   goingUp_ = false;
   goingDown_ = false;
-  velocity_ = math::vec3(0);
 }
 
 std::shared_ptr<SceneNode> CameraControllerFree::clone() {
