@@ -40,15 +40,6 @@ CameraControllerFree::CameraControllerFree(const CameraControllerFree& other) : 
 
 CameraControllerFree::~CameraControllerFree() {}
 
-void CameraControllerFree::setPosition(const glm::vec3& position) {
-  Base::setPosition(position);
-  if(hasCamera()) {
-    math::vec3 eyeToOffset = getCamera()->getCenter() - getCamera()->getEye();
-    getCamera()->setEye(getPosition());
-    getCamera()->setCenter(getPosition() + eyeToOffset);
-  }
-}
-
 void CameraControllerFree::setCamera(const std::shared_ptr<render::Camera>& camera) {
   Base::setCamera(camera);
   Game::getSingleton().addListener(static_cast<MouseListener*>(this));
@@ -86,7 +77,20 @@ void CameraControllerFree::update(const UpdateEvent& event) {
 
   if(dir != math::vec3(0)) {
     dir = math::normalize(dir);
-    move(speed_ * event.TimeStep * dir);
+    translate(speed_ * event.TimeStep * dir);
+  }
+  
+  if(hasCamera()) {
+    std::cout << getModelMatrix() << std::endl;
+    std::cout << getCamera()->getEye() << std::endl;
+    std::cout << getCamera()->getCenter() << std::endl;
+    
+    math::vec3 eyeToCenter = getCamera()->getCenter() - getCamera()->getEye();
+    getCamera()->setEye(getModelMatrix() * math::vec4(0, 0, 0, 1.0f));
+    getCamera()->setCenter(getModelMatrix() * math::vec4(eyeToCenter, 1.0f));
+    
+    std::cout << getCamera()->getEye() << std::endl;
+    std::cout << getCamera()->getCenter() << std::endl;    
   }
 }
 
@@ -131,6 +135,7 @@ void CameraControllerFree::mouseButtonEvent(const render::MouseButtonEvent& even
 void CameraControllerFree::mousePositionEvent(const render::MousePositionEvent& event) {
   if(!hasCamera())
     return;
+  
 }
 
 std::pair<std::string, std::string> CameraControllerFree::toStringImpl() const {

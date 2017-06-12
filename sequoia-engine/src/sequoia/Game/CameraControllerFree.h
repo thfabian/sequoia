@@ -46,9 +46,6 @@ public:
   /// @brief Virtual destructor
   virtual ~CameraControllerFree();
 
-  /// @brief Set the position (in world space)
-  virtual void setPosition(const math::vec3& position) override;
-
   /// @brief Set camera and register as a mouse and key listener
   virtual void setCamera(const std::shared_ptr<render::Camera>& camera) override;
 

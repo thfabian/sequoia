@@ -13,10 +13,10 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Render/GL/GL.h"
 #include "sequoia/Core/Logging.h"
 #include "sequoia/Core/Unreachable.h"
 #include "sequoia/Render/Exception.h"
+#include "sequoia/Render/GL/GL.h"
 #include "sequoia/Render/GL/GLInputSystem.h"
 #include "sequoia/Render/GL/GLRenderSystem.h"
 #include "sequoia/Render/GL/GLRenderWindow.h"
@@ -202,12 +202,14 @@ void GLRenderWindow::swapBuffers() { glfwSwapBuffers(window_); }
 void GLRenderWindow::update() { renderer_->render(); }
 
 void GLRenderWindow::init() {
+  SEQUOIA_ASSERT_MSG(hasViewport(), "RenderTarget::init() called with no Viewport set");
+
   renderer_ = std::make_unique<GLRenderer>(this);
   renderSystem_->registerRenderer(this, renderer_.get());
 
   LOG(INFO) << "Registering IO callbacks ...";
 
-  inputSystem_ = std::make_unique<GLInputSystem>(this);
+  inputSystem_ = std::make_unique<GLInputSystem>(this, window_);
   renderSystem_->registerInputSystem(this, inputSystem_.get());
 
   glfwSetInputMode(window_, GLFW_STICKY_KEYS, 1);

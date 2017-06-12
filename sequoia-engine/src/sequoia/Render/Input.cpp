@@ -13,8 +13,10 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Render/Input.h"
+#include "sequoia/Core/Format.h"
+#include "sequoia/Core/StringUtil.h"
 #include "sequoia/Core/Unreachable.h"
+#include "sequoia/Render/Input.h"
 #include <iostream>
 
 namespace sequoia {
@@ -26,6 +28,17 @@ namespace {
 static const char* MouseButtonStrings[] = {
     "Left", "Right", "Middle", "Button 4", "Button 5", "Button 6", "Button 7", "Button 8",
 };
+
+static std::string modToString(int mods) {
+  if(mods == 0)
+    return "{}";
+
+  std::vector<KeyModifier> modvec;
+  for(auto mod : {Mod_Shift, Mod_Ctrl, Mod_Alt, Mod_Super})
+    if(mods & (1 << (mod)))
+      modvec.push_back(mod);
+  return core::RangeToString(", ", "{", "}")(modvec);
+}
 
 } // anonymous namespace
 
@@ -207,6 +220,34 @@ std::ostream& operator<<(std::ostream& os, KeyModifier mod) noexcept {
 
   sequoia_unreachable("invalid mod");
   return os;
+}
+
+std::string KeyboardEvent::toString() const {
+  return core::format("KeyboardEvent[\n"
+                      "  Key = %s,\n"
+                      "  Action = %s,\n"
+                      "  Mods = %s\n"
+                      "]",
+                      Key, Action, modToString(Mods));
+}
+
+std::string MouseButtonEvent::toString() const {
+  return core::format("MouseButtonEvent[\n"
+                      "  Button = %s,\n"
+                      "  Action = %s,\n"
+                      "  Mods = %s\n"
+                      "]",
+                      Button, Action, modToString(Mods));
+}
+
+std::string MousePositionEvent::toString() const {
+  return core::format("MousePositionEvent[\n"
+                      "  XPos = %i,\n"
+                      "  YPos = %i,\n"
+                      "  XOffset = %i,\n"
+                      "  YOffset = %i\n"
+                      "]",
+                      XPos, YPos, XOffset, YOffset);
 }
 
 } // namespace render

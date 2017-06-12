@@ -18,6 +18,7 @@
 
 #include "sequoia/Render/Export.h"
 #include <iosfwd>
+#include <string>
 
 namespace sequoia {
 
@@ -216,7 +217,7 @@ enum KeyAction : int { Action_Released = 0, Action_Pressed = 1, Action_Repeat = 
 
 /// @brief Keyboard event
 /// @ingroup render
-struct KeyboardEvent {
+struct SEQUOIA_RENDER_API KeyboardEvent {
 
   /// The RenderTarget that recieved the event
   RenderTarget* Target;
@@ -241,6 +242,9 @@ struct KeyboardEvent {
 
   /// @brief Check if the key was released
   inline bool released() const noexcept { return (Action == Action_Released); }
+
+  /// @brief Convert to string
+  std::string toString() const;
 };
 
 /// @brief Listener of keyboard events
@@ -253,7 +257,7 @@ public:
 
 /// @brief Mouse button event
 /// @ingroup render
-struct MouseButtonEvent {
+struct SEQUOIA_RENDER_API MouseButtonEvent {
 
   /// The RenderTarget that recieved the event
   RenderTarget* Target;
@@ -278,25 +282,49 @@ struct MouseButtonEvent {
 
   /// @brief Check if the key was released
   inline bool released() const noexcept { return (Action == Action_Released); }
+
+  /// @brief Convert to string
+  std::string toString() const;
 };
 
 /// @brief Mouse position event
 ///
-/// The mouse position (`xpos`, `ypos`) is measured in screen coordinates but relative to the
-/// top-left corner of the window client area. On platforms that provide it, the full sub-pixel
-/// cursor position is passed on.
+/// The mouse position (`XPos`, `YPos`) is measured in screen coordinates but relative to the
+/// top-left corner of the window client area.
+///
+/// In addition, the offset, relative to the last event, is provided. This allows to construct the
+/// movement of the mouse since the last event.
+///
+/// @verbatim
+///
+///           (XOffset, YOffset)
+///       O------------------------> O  (Xpos, YPos)
+///       ^                          ^
+///       |                          |
+///  Last position            Current position
+///
+/// @endverbatim
 ///
 /// @ingroup render
-struct MousePositionEvent {
+struct SEQUOIA_RENDER_API MousePositionEvent {
 
   /// The RenderTarget that recieved the event
   RenderTarget* Target;
 
-  /// X-position measured measured in screen coordinates but relative to the top-left corner
-  double XPos;
+  /// X-position measured in screen coordinates but relative to the top-left corner
+  int XPos;
 
-  /// Y-position measured measured in screen coordinates but relative to the top-left corner
-  double YPos;
+  /// Y-position measured in screen coordinates but relative to the top-left corner
+  int YPos;
+
+  /// Offset in the X-position in screeen coordiantes since the last event
+  int XOffset;
+
+  /// Offset in the X-position in screeen coordiantes since the last event
+  int YOffset;
+
+  /// @brief Convert to string
+  std::string toString() const;
 };
 
 /// @brief Listener of mouse events

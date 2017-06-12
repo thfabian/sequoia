@@ -20,6 +20,7 @@
 #include "sequoia/Core/NonCopyable.h"
 #include "sequoia/Math/Math.h"
 #include "sequoia/Render/Export.h"
+#include "sequoia/Render/Viewport.h"
 #include <memory>
 
 namespace sequoia {
@@ -39,7 +40,7 @@ class GLStateCacheManager;
 /// tabs on the OpenGL state machine and is it the only one who is allowed to perform OpenGL API
 /// calls
 /// @ingroup gl
-class SEQUOIA_RENDER_API GLRenderer : public NonCopyable {
+class SEQUOIA_RENDER_API GLRenderer : public ViewportListener, public NonCopyable {
   GLRenderWindow* window_;
 
   /// Default shaders
@@ -56,7 +57,9 @@ class SEQUOIA_RENDER_API GLRenderer : public NonCopyable {
 
 public:
   /// @brief Initialize the OpenGL context and bind it to the calling thread
-  GLRenderer(GLRenderWindow* target);
+  ///
+  /// This also registers the renderer as a viewport listener of `window`.
+  GLRenderer(GLRenderWindow* window);
 
   /// @brief Release the OpenGL context
   ~GLRenderer();
@@ -88,6 +91,9 @@ public:
 
   /// @brief Get the default fragment shader
   const std::shared_ptr<Program>& getDefaultProgram() const;
+
+  /// @brief Adjust viewport
+  virtual void viewportGeometryChanged(Viewport* viewport) override;
 };
 
 } // namespace render

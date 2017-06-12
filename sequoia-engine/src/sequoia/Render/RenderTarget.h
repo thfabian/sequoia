@@ -73,7 +73,7 @@ public:
   /// @brief Get the `DrawCommandList`
   const std::shared_ptr<DrawCommandList>& getDrawCommandList();
 
-protected:
+private:
   RenderTargetKind kind_;
 
   /// Is the target rendered?

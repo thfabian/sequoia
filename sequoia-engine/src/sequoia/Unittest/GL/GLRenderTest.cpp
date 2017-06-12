@@ -13,10 +13,11 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Unittest/GL/GLRenderTest.h"
 #include "sequoia/Core/Logging.h"
 #include "sequoia/Render/GL/GLRenderWindow.h"
 #include "sequoia/Render/RenderSystem.h"
+#include "sequoia/Render/Viewport.h"
+#include "sequoia/Unittest/GL/GLRenderTest.h"
 
 namespace sequoia {
 
@@ -31,6 +32,13 @@ void GLRenderTest::SetUp() {
   hints.GLMinorVersion = 5;
   hints.WindowMode = render::RenderWindow::WindowHint::WK_Window;
   window_ = (render::GLRenderWindow*)render::RenderSystem::getSingleton().createWindow(hints);
+
+  // Initialize Viewport
+  auto viewport =
+      std::make_shared<render::Viewport>(window_, 0, 0, window_->getWidth(), window_->getHeight());
+  window_->setViewport(viewport);
+
+  // Initialize OpenGL
   window_->init();
 }
 

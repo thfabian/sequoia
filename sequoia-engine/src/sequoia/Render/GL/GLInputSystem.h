@@ -33,8 +33,11 @@ class RenderTarget;
 class SEQUOIA_RENDER_API GLInputSystem : public Listenable<KeyboardListener, MouseListener> {
   RenderTarget* target_;
 
+  /// Previous mouse positions
+  int prevPosX_, prevPosY_;
+
 public:
-  GLInputSystem(RenderTarget* target);
+  GLInputSystem(RenderTarget* target, GLFWwindow* window);
 
   /// @brief GLFW callback for the keyboard
   void keyCallback(int key, int action, int mods) noexcept;
@@ -43,7 +46,7 @@ public:
   void mouseButtonCallback(int button, int action, int mods) noexcept;
 
   /// @brief GLFW callback for the mouse position
-  void mousePositionCallback(double xpos, double ypos) noexcept;
+  void mousePositionCallback(int xpos, int ypos) noexcept;
 };
 
 } // namespace render

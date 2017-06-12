@@ -32,6 +32,7 @@ namespace game {
 /// @ingroup game
 class SEQUOIA_GAME_API SceneNode : public std::enable_shared_from_this<SceneNode> {
 public:
+  /// @brief RTTI distincion
   enum SceneNodeKind {
     SK_SceneNode,
     SK_Drawable,
@@ -41,8 +42,12 @@ public:
     SK_CameraControllerLast
   };
 
-  SceneNode(const std::string& name, SceneNodeKind kind = SK_SceneNode);
-  SceneNode(const SceneNode& other);
+  /// @brief Enumeration denoting the spaces which a transform can be relative to
+  enum TransformSpace {
+    TS_Local,  ///< Transform is relative to the local space
+    TS_Parent, ///< Transform is relative to the space of the parent node
+    TS_World   ///< Transform is relative to world space
+  };
 
   /// @brief Event indicating we moved to the next time-step
   struct UpdateEvent {
@@ -50,8 +55,14 @@ public:
     float TimeStep;
   };
 
+  SceneNode(const std::string& name, SceneNodeKind kind = SK_SceneNode);
+  SceneNode(const SceneNode& other);
+
   /// @brief Virtual destructor
   virtual ~SceneNode();
+
+  /// @name Getter/Setter
+  /// @{
 
   /// @brief Get the name of the node
   const std::string& getName() const { return name_; }
@@ -63,7 +74,7 @@ public:
   const math::vec3& getPosition() const { return position_; }
 
   /// @brief Set the position (in world space)
-  virtual void setPosition(const math::vec3& position) {
+  void setPosition(const math::vec3& position) {
     modelMatrixIsDirty_ = true;
     position_ = position;
   }
@@ -72,10 +83,13 @@ public:
   const math::quat& getOrientation() const { return orientation_; }
 
   /// @brief Set the orientation (in world space)
-  virtual void setOrientation(const math::quat& orientation) {
+  void setOrientation(const math::quat& orientation) {
     modelMatrixIsDirty_ = true;
     orientation_ = orientation;
   }
+
+  /// @brief Resets the orientation (local axes as world axes, no rotation)
+  void resetOrientation();
 
   /// @brief Get the scaling factor
   float getScale() const { return scale_; }
@@ -119,14 +133,46 @@ public:
   /// @brief Set the parent node
   void setParent(const std::shared_ptr<SceneNode>& parent) { parent_ = parent; }
 
+  /// @}
+  /// @name Operations
+  /// @{
+
   /// @brief Apply `functor` to the node and all its children
   void apply(const std::function<void(SceneNode*)>& functor);
 
   /// @brief Update the node to indicate we moved on to the next time-step
   virtual void update(const UpdateEvent& event);
 
-  /// @brief Move the node by `offset`
-  virtual void move(const math::vec3& offset);
+  /// @brief Translate the node by `d`
+  virtual void translate(const math::vec3& d, TransformSpace relativeTo = TS_Parent);
+
+  /// @brief Rotate the node by `q`
+  virtual void rotate(const math::quat& q, TransformSpace relativeTo = TS_Parent);
+
+  /// @brief Rotate the node by `angle` around `axis`
+  ///
+  /// @param axis   Axis to rotate around
+  /// @param angle  Angle in radians
+  void rotate(const math::vec3& axis, float angle, TransformSpace relativeTo = TS_Parent);
+
+  /// @brief Rotate the node by `angle` around X-axis
+  ///
+  /// @param angle  Angle in radians
+  void pitch(float angle, TransformSpace relativeTo = TS_Parent);
+
+  /// @brief Rotate the node by `angle` around Y-axis
+  ///
+  /// @param angle  Angle in radians
+  void yaw(float angle, TransformSpace relativeTo = TS_Parent);
+
+  /// @brief Rotate the node by `angle` around Z-axis
+  ///
+  /// @param angle  Angle in radians
+  void roll(float angle, TransformSpace relativeTo = TS_Parent);
+
+  /// @}
+  /// @name Miscallenous
+  /// @{
 
   /// @brief Clone the scene node and all its children
   virtual std::shared_ptr<SceneNode> clone();
@@ -136,6 +182,8 @@ public:
 
   /// @brief Get the kind of the ScenenNode
   SceneNodeKind getKind() const { return kind_; }
+
+  /// @}
 
   /// @brief RTTI implementation
   static bool classof(const SceneNode* node) noexcept { return node->getKind() == SK_SceneNode; }
@@ -154,10 +202,10 @@ private:
   /// List of children
   std::vector<std::shared_ptr<SceneNode>> children_;
 
-  /// Position of the node
+  /// Position of the node relative to it's parent.
   math::vec3 position_;
 
-  /// Orientation of the node
+  /// Orientation of the node relative to it's parent.
   math::quat orientation_;
 
   /// Scaling factor

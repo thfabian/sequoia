@@ -42,6 +42,8 @@ SceneNode::SceneNode(const SceneNode& other)
 
 SceneNode::~SceneNode() { LOG(DEBUG) << "Deleting SceneNode \"" << name_ << "\""; }
 
+void SceneNode::resetOrientation() { setOrientation(math::quat()); }
+
 math::mat3 SceneNode::getLocalAxes() const {
   math::vec3 axisX = getOrientation() * math::CoordinateSystem::X();
   math::vec3 axisY = getOrientation() * math::CoordinateSystem::Y();
@@ -58,7 +60,33 @@ void SceneNode::apply(const std::function<void(SceneNode*)>& functor) {
 
 void SceneNode::update(const UpdateEvent& event) {}
 
-void SceneNode::move(const glm::vec3& offset) { setPosition(getPosition() + offset); }
+void SceneNode::translate(const math::vec3& d, TransformSpace relativeTo) {
+  setPosition(getPosition() + d);
+}
+
+void SceneNode::rotate(const math::quat& q, TransformSpace relativeTo) {
+  math::quat newOrientation = q * getOrientation();
+  
+  // Normalize quaternion to avoid drift
+  newOrientation = math::normalize(newOrientation);
+  setOrientation(newOrientation);
+}
+
+void SceneNode::rotate(const math::vec3& axis, float angle, SceneNode::TransformSpace relativeTo) {
+  rotate(math::angleAxis(angle, axis), relativeTo);
+}
+
+void SceneNode::roll(float angle, TransformSpace relativeTo) {
+  rotate(math::CoordinateSystem::Z(), angle, relativeTo);
+}
+
+void SceneNode::pitch(float angle, TransformSpace relativeTo) {
+  rotate(math::CoordinateSystem::X(), angle, relativeTo);
+}
+
+void SceneNode::yaw(float angle, TransformSpace relativeTo) {
+  rotate(math::CoordinateSystem::Y(), angle, relativeTo);
+}
 
 std::shared_ptr<SceneNode> SceneNode::clone() { return SceneGraph::create<SceneNode>(*this); }
 

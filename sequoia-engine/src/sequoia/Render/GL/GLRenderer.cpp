@@ -13,13 +13,13 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Render/GL/GL.h"
 #include "sequoia/Core/Casting.h"
 #include "sequoia/Core/Logging.h"
 #include "sequoia/Core/StringUtil.h"
 #include "sequoia/Math/CoordinateSystem.h"
 #include "sequoia/Render/Camera.h"
 #include "sequoia/Render/DrawCommandList.h"
+#include "sequoia/Render/GL/GL.h"
 #include "sequoia/Render/GL/GLProgramManager.h"
 #include "sequoia/Render/GL/GLRenderWindow.h"
 #include "sequoia/Render/GL/GLRenderer.h"
@@ -83,7 +83,7 @@ static std::string functionCallToString(const glbinding::FunctionCall& call) {
   return ss.str();
 }
 
-GLRenderer::GLRenderer(GLRenderWindow* target) : window_(target) {
+GLRenderer::GLRenderer(GLRenderWindow* window) : window_(window) {
   LOG(INFO) << "Creating OpenGL renderer " << this << " ...";
 
   // Bind the context to the current thread
@@ -114,6 +114,9 @@ GLRenderer::GLRenderer(GLRenderWindow* target) : window_(target) {
   LOG(INFO) << "GL version: " << glbinding::ContextInfo::version().toString();
   LOG(INFO) << "GL vendor: " << glbinding::ContextInfo::vendor();
   LOG(INFO) << "GL renderer: " << glbinding::ContextInfo::renderer();
+
+  // Register as Viewport listener
+  window_->getViewport()->addListener(static_cast<ViewportListener*>(this));
 
   // Initialize OpenGL related managers
   stateCacheManager_ = std::make_unique<GLStateCacheManager>();
@@ -199,6 +202,10 @@ const std::shared_ptr<Shader>& GLRenderer::getDefaultFragmentShader() const {
 }
 
 const std::shared_ptr<Program>& GLRenderer::getDefaultProgram() const { return defaultProgram_; }
+
+void GLRenderer::viewportGeometryChanged(Viewport* viewport) {
+  glViewport(viewport->getX(), viewport->getY(), viewport->getWidth(), viewport->getHeight());
+}
 
 } // namespace render
 
