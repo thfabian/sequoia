@@ -80,7 +80,6 @@ protected:
 
 } // namespace core
 
-/// @macro SEQUOIA_DECLARE_EXCPETION_BASE
 /// @brief Declare a an exception `Type` which derives from `BaseType`
 /// @ingroup core
 #define SEQUOIA_DECLARE_EXCPETION_BASE(Type, BaseType)                                             \
@@ -95,7 +94,6 @@ protected:
     virtual ~Type() noexcept {}                                                                    \
   };
 
-/// @macro SEQUOIA_DECLARE_EXCPETION
 /// @brief Declare a an exception `Type` deriving from `core::sequoia::Exception`
 /// @ingroup core
 #define SEQUOIA_DECLARE_EXCPETION(Type)                                                            \
@@ -103,7 +101,6 @@ protected:
 
 #define SEQUOIA_THROW_IMPL(exception, line, file, ...) throw exception(line, file, __VA_ARGS__)
 
-/// @macro SEQUOIA_THROW
 /// @brief Throw an `exception` and add current line and file information in debug mode
 ///
 /// @param exception    Exception to throw

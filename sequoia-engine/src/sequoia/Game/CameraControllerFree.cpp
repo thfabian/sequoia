@@ -13,12 +13,11 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Game/CameraControllerFree.h"
 #include "sequoia/Core/Format.h"
+#include "sequoia/Game/CameraControllerFree.h"
 #include "sequoia/Game/Game.h"
 #include "sequoia/Game/SceneGraph.h"
-
-#include <iostream>
+#include "sequoia/Math/CoordinateSystem.h"
 
 namespace sequoia {
 
@@ -56,11 +55,17 @@ void CameraControllerFree::removeCamera() {
 }
 
 void CameraControllerFree::update(const UpdateEvent& event) {
-  if(!goingForward_ && !goingBack_ && !goingRight_ && !goingLeft_ && !goingUp_ && !goingDown_)
+  if(!hasCamera())
+    return;
+
+  if(!updateNeeded_ && !goingForward_ && !goingBack_ && !goingRight_ && !goingLeft_ && !goingUp_ &&
+     !goingDown_)
     return;
 
   math::mat3 axes = getLocalAxes();
   math::vec3 dir(0);
+
+  // yaw(math::Radian::fromDegree(15.0f));
 
   if(goingForward_)
     dir += axes[2];
@@ -79,28 +84,16 @@ void CameraControllerFree::update(const UpdateEvent& event) {
     dir = math::normalize(dir);
     translate(speed_ * event.TimeStep * dir);
   }
-  
-  if(hasCamera()) {
-    std::cout << getModelMatrix() << std::endl;
-    std::cout << getCamera()->getEye() << std::endl;
-    std::cout << getCamera()->getCenter() << std::endl;
-    
-    math::vec3 eyeToCenter = getCamera()->getCenter() - getCamera()->getEye();
-    getCamera()->setEye(getModelMatrix() * math::vec4(0, 0, 0, 1.0f));
-    getCamera()->setCenter(getModelMatrix() * math::vec4(eyeToCenter, 1.0f));
-    
-    std::cout << getCamera()->getEye() << std::endl;
-    std::cout << getCamera()->getCenter() << std::endl;    
-  }
-}
 
-void CameraControllerFree::manualStop() {
-  goingForward_ = false;
-  goingBack_ = false;
-  goingLeft_ = false;
-  goingRight_ = false;
-  goingUp_ = false;
-  goingDown_ = false;
+  render::Camera* camera = getCamera().get();
+
+  math::vec4 eyeAtOrigin = math::vec4(0.0f, 0.0f, 0.0f, 1.0f);
+  math::vec4 upAtOrigin = math::vec4(math::CoordinateSystem::Up(), 0.0f);
+  math::vec4 centerAtOrigin = eyeAtOrigin + camera->getEyeToCenterOffset();
+
+  camera->setEye(getModelMatrix() * eyeAtOrigin);
+  camera->setCenter(getModelMatrix() * centerAtOrigin);
+  camera->setUp(math::normalize(getModelMatrix() * upAtOrigin));
 }
 
 std::shared_ptr<SceneNode> CameraControllerFree::clone() {
@@ -135,7 +128,6 @@ void CameraControllerFree::mouseButtonEvent(const render::MouseButtonEvent& even
 void CameraControllerFree::mousePositionEvent(const render::MousePositionEvent& event) {
   if(!hasCamera())
     return;
-  
 }
 
 std::pair<std::string, std::string> CameraControllerFree::toStringImpl() const {

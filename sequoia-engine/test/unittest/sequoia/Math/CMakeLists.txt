@@ -17,6 +17,7 @@ sequoia_add_test(
   NAME SequoiaMathTest
   SOURCES TestAxisAlignedBox.cpp
           TestMain.cpp
+          TestMath.cpp
   DEPENDS SequoiaUnittest
           SequoiaMath
           SequoiaCore

@@ -49,7 +49,16 @@ struct constants {
 
   /// @brief 4/3*pi
   static constexpr T four_thirds_pi = 4.188790204786390984616857844372670512e+00;
+
+  /// @brief Conversion from degree to radian
+  static constexpr T deg2rad = math::constants<T>::pi / T(180.0);
+
+  /// @brief Conversion from radian to degree
+  static constexpr T rad2deg = T(180.0) / math::constants<T>::pi;
 };
+
+/// @brief Floating point specialization of `constants`
+using constantsf = constants<float>;
 
 } // namespace math
 

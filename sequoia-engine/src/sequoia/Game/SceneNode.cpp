@@ -13,11 +13,11 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Game/SceneNode.h"
 #include "sequoia/Core/Format.h"
 #include "sequoia/Core/Logging.h"
 #include "sequoia/Core/StringUtil.h"
 #include "sequoia/Game/SceneGraph.h"
+#include "sequoia/Game/SceneNode.h"
 #include "sequoia/Math/CoordinateSystem.h"
 
 namespace sequoia {
@@ -66,25 +66,26 @@ void SceneNode::translate(const math::vec3& d, TransformSpace relativeTo) {
 
 void SceneNode::rotate(const math::quat& q, TransformSpace relativeTo) {
   math::quat newOrientation = q * getOrientation();
-  
+
   // Normalize quaternion to avoid drift
   newOrientation = math::normalize(newOrientation);
   setOrientation(newOrientation);
 }
 
-void SceneNode::rotate(const math::vec3& axis, float angle, SceneNode::TransformSpace relativeTo) {
-  rotate(math::angleAxis(angle, axis), relativeTo);
+void SceneNode::rotate(const math::vec3& axis, const math::Radian& angle,
+                       SceneNode::TransformSpace relativeTo) {
+  rotate(math::angleAxis(angle.inRadians(), axis), relativeTo);
 }
 
-void SceneNode::roll(float angle, TransformSpace relativeTo) {
+void SceneNode::roll(const math::Radian& angle, TransformSpace relativeTo) {
   rotate(math::CoordinateSystem::Z(), angle, relativeTo);
 }
 
-void SceneNode::pitch(float angle, TransformSpace relativeTo) {
+void SceneNode::pitch(const math::Radian& angle, TransformSpace relativeTo) {
   rotate(math::CoordinateSystem::X(), angle, relativeTo);
 }
 
-void SceneNode::yaw(float angle, TransformSpace relativeTo) {
+void SceneNode::yaw(const math::Radian& angle, TransformSpace relativeTo) {
   rotate(math::CoordinateSystem::Y(), angle, relativeTo);
 }
 

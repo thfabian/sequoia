@@ -17,6 +17,7 @@ sequoia_add_test(
   NAME SequoiaGameTest
   SOURCES TestAssetManager.cpp
           TestCameraController.cpp
+          TestCameraControllerFree.cpp
           TestDrawable.cpp
           TestKeymap.cpp
           TestMeshManager.cpp

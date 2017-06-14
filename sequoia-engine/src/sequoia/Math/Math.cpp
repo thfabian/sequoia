@@ -13,19 +13,27 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_MATH_MATHFWD_H
-#define SEQUOIA_MATH_MATHFWD_H
-
-#include <glm/fwd.hpp>
+#include "sequoia/Core/Format.h"
+#include "sequoia/Math/Math.h"
 
 namespace sequoia {
 
 namespace math {
 
-using namespace glm;
+std::string Radian::toString() const {
+  return core::format("Radian[\n"
+                      "  rad = %f\n"
+                      "]",
+                      rad_);
+}
+
+std::string Degree::toString() const {
+  return core::format("Degree[\n"
+                      "  deg = %f\n"
+                      "]",
+                      deg_);
+}
 
 } // namespace math
 
 } // namspace sequoia
-
-#endif

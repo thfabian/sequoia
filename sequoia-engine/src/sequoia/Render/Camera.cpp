@@ -13,26 +13,20 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Render/Camera.h"
 #include "sequoia/Core/Format.h"
+#include "sequoia/Render/Camera.h"
 
 namespace sequoia {
 
 namespace render {
 
-Camera::Camera() : ViewFrustum() {}
+Camera::Camera()
+    : ViewFrustum(), center_(0.f, 0.f, 0.f, 1.f), eye_(0.f, 0.f, -10.f, 1.f),
+      up_(0.f, 1.f, 0.f, 0.f) {}
 
 void Camera::viewportGeometryChanged(Viewport* viewport) {
   setAspectRatio(float(viewport->getWidth()) / viewport->getHeight());
 }
-
-const math::vec3& Camera::getEye() const { return eye_; }
-
-void Camera::setEye(const math::vec3& eye) { eye_ = eye; }
-
-const math::vec3& Camera::getCenter() const { return center_; }
-
-void Camera::setCenter(const math::vec3& center) { center_ = center; }
 
 std::string Camera::toString() const {
   return core::format("Camera[\n"
@@ -41,9 +35,10 @@ std::string Camera::toString() const {
                       "  zNear = %f,\n"
                       "  zFar = %f,\n"
                       "  eye = %s,\n"
-                      "  center = %s\n"
+                      "  center = %s,\n"
+                      "  up = %s\n"
                       "]",
-                      fovy_, aspect_, zNear_, zFar_, eye_, center_);
+                      fovy_, aspect_, zNear_, zFar_, eye_, center_, up_);
 }
 
 } // namespace render

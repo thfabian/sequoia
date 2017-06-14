@@ -153,22 +153,23 @@ public:
   ///
   /// @param axis   Axis to rotate around
   /// @param angle  Angle in radians
-  void rotate(const math::vec3& axis, float angle, TransformSpace relativeTo = TS_Parent);
+  void rotate(const math::vec3& axis, const math::Radian& angle,
+              TransformSpace relativeTo = TS_Parent);
 
   /// @brief Rotate the node by `angle` around X-axis
   ///
   /// @param angle  Angle in radians
-  void pitch(float angle, TransformSpace relativeTo = TS_Parent);
+  void pitch(const math::Radian& angle, TransformSpace relativeTo = TS_Parent);
 
   /// @brief Rotate the node by `angle` around Y-axis
   ///
   /// @param angle  Angle in radians
-  void yaw(float angle, TransformSpace relativeTo = TS_Parent);
+  void yaw(const math::Radian& angle, TransformSpace relativeTo = TS_Parent);
 
   /// @brief Rotate the node by `angle` around Z-axis
   ///
   /// @param angle  Angle in radians
-  void roll(float angle, TransformSpace relativeTo = TS_Parent);
+  void roll(const math::Radian& angle, TransformSpace relativeTo = TS_Parent);
 
   /// @}
   /// @name Miscallenous

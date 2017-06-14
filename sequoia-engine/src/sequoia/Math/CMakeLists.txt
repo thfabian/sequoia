@@ -21,7 +21,7 @@ sequoia_add_library(
           CoordinateSystem.h
           Export.h
           Math.h
-          MathFwd.h
+          Math.cpp
   DEPENDS SequoiaCore
           ${SEQUOIA_EXTERNAL_LIBRARIES}
 )

@@ -155,9 +155,7 @@ private:
 
 } // namespace core
 
-/// @macro LOG
 /// @brief Loggging macro
-///
 /// @threadsafe Logging is thread-safe
 /// @ingroup core
 #ifdef LOG

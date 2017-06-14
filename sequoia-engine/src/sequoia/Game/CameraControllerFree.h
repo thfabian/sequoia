@@ -62,9 +62,6 @@ public:
   void sertSpeed(float speed) { speed_ = speed; }
   float getSpeed() const { return speed_; }
 
-  /// @brief Manually stop the camera
-  void manualStop();
-
   /// @brief Clone the scene node and all its children
   virtual std::shared_ptr<SceneNode> clone() override;
 
@@ -99,6 +96,7 @@ private:
   bool goingRight_ : 1;
   bool goingUp_ : 1;
   bool goingDown_ : 1;
+  bool updateNeeded_ : 1;
 };
 
 } // namespace game

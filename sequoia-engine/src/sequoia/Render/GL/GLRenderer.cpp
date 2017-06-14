@@ -153,8 +153,8 @@ void GLRenderer::render() {
                                        camera->getZNearClipping(), camera->getZFarClipping());
 
   // Compute camera view matrix
-  glm::mat4 matView =
-      glm::lookAt(camera->getEye(), camera->getCenter(), math::CoordinateSystem::Up());
+  glm::mat4 matView = glm::lookAt(math::vec3(camera->getEye()), math::vec3(camera->getCenter()),
+                                  math::vec3(camera->getUp()));
 
   // Precompute view projection matrix
   glm::mat4 matViewProj = matProj * matView;
