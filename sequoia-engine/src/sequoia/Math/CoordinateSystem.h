@@ -22,15 +22,17 @@ namespace sequoia {
 
 namespace math {
 
-/// @brief Definition of the coordinate-system
+/// @brief Definition of the coordinate-system (Right-hand side)
 ///
 /// @verbatim
-///     y
-///     |   z
-///     |  /
-///     | /
-///     |/
-///     0---------> x
+///         y
+///         |
+///         |
+///         |
+///         0---------> x
+///        /
+///       /
+///      z
 /// @endverbatim
 ///
 /// @ingroup math

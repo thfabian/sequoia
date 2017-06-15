@@ -40,7 +40,7 @@ Scene::Scene() : activeCamera_(nullptr) {
 
   // Create the camera
   activeCamera_ = std::make_shared<render::Camera>();
-    
+
   auto cube = SceneGraph::create<Drawable>("TestNode");
   cube->setProgram(game.getDefaultProgram());
 
