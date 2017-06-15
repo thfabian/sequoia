@@ -24,8 +24,7 @@ sequoia_add_test(
           TestSingletonManager.cpp
           TestStringRef.cpp
           TestVersion.cpp
-  DEPENDS SequoiaUnittest
-          SequoiaCore
-          ${SEQUOIA_UNITTEST_EXTERNAL_LIBRARIES}
+  DEPENDS Sequoia
+          ${SEQUOIA_EXTERNAL_LIBRARIES}
 )
 

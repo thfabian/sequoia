@@ -24,11 +24,7 @@ sequoia_add_test(
           TestMain.cpp
           TestSceneGraph.cpp
           TestSceneNode.cpp
-  DEPENDS SequoiaUnittest
-          SequoiaGame
-          SequoiaRender
-          SequoiaDriver
-          SequoiaCore
-          ${SEQUOIA_UNITTEST_EXTERNAL_LIBRARIES}
+  DEPENDS Sequoia
+          ${SEQUOIA_EXTERNAL_LIBRARIES}
 )
 

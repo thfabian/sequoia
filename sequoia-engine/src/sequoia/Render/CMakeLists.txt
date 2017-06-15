@@ -13,7 +13,7 @@
 ##
 ##===------------------------------------------------------------------------------------------===##
 
-sequoia_add_library(
+sequoia_add_objects(
   NAME SequoiaRender
   SOURCES Camera.h
           Camera.cpp
@@ -74,8 +74,5 @@ sequoia_add_library(
           GL/GLVertexArrayObject.cpp
           GL/GLVertexAttribute.h
           GL/GLVertexAttribute.cpp
-          
-  DEPENDS SequoiaMath
-          SequoiaCore
-          ${SEQUOIA_EXTERNAL_LIBRARIES}
+  DEPENDS SequoiaCore
 )

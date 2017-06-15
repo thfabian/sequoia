@@ -23,9 +23,6 @@ sequoia_add_test(
           TestRenderState.cpp
           TestVertex.cpp
           TestVertexData.cpp
-  DEPENDS SequoiaUnittest
-          SequoiaRender
-          SequoiaDriver
-          SequoiaCore
-          ${SEQUOIA_UNITTEST_EXTERNAL_LIBRARIES}
+  DEPENDS Sequoia
+          ${SEQUOIA_EXTERNAL_LIBRARIES}
 )

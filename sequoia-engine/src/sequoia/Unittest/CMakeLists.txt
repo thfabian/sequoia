@@ -16,7 +16,7 @@
 # Generate Config.h
 sequoia_configure_file(Config.h.cmake)
 
-sequoia_add_library(
+sequoia_add_objects(
   NAME SequoiaUnittest
   SOURCES Environment.h
           Environment.cpp
@@ -32,8 +32,5 @@ sequoia_add_library(
           GL/GLEnvironment.cpp
           GL/GLRenderTest.h
           GL/GLRenderTest.cpp
-  DEPENDS SequoiaDriver
-          SequoiaRender
-          SequoiaCore
-          ${SEQUOIA_GTEST_LIBRARIES}
+  DEPENDS SequoiaCore
 )

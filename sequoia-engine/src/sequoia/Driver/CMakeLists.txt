@@ -13,7 +13,7 @@
 ##
 ##===------------------------------------------------------------------------------------------===##
 
-sequoia_add_library(
+sequoia_add_objects(
   NAME SequoiaDriver
   SOURCES Export.h
           Driver.cpp
@@ -24,22 +24,5 @@ sequoia_add_library(
           ConsoleLogger.cpp
           Win32Console.h
           Win32Console.cpp
-  DEPENDS SequoiaGame
-          SequoiaRender
-          #SequoiaMath
-          SequoiaCore
-          ${SEQUOIA_EXTERNAL_LIBRARIES}
+  DEPENDS SequoiaCore
 )
-
-sequoia_add_executable(
-  NAME Sequoia
-  WIN32_APPLICATION
-  SOURCES Main.cpp
-  DEPENDS SequoiaDriver
-          SequoiaGame
-          SequoiaRender
-          #SequoiaMath
-          SequoiaCore
-          ${SEQUOIA_EXTERNAL_LIBRARIES}
-)
-

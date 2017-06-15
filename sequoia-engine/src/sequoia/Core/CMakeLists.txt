@@ -34,7 +34,7 @@ sequoia_generate_options(
   OPTIONS ${options}
 )
 
-sequoia_add_library(
+sequoia_add_objects(
   NAME SequoiaCore
   SOURCES AlignedADT.h
           ArrayRef.h
@@ -90,6 +90,5 @@ sequoia_add_library(
           ${option_header}
           ${option_include}
           ${options}
-  DEPENDS ${SEQUOIA_EXTERNAL_LIBRARIES}
 )
 

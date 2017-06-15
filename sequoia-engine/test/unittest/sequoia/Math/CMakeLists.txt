@@ -18,9 +18,7 @@ sequoia_add_test(
   SOURCES TestAxisAlignedBox.cpp
           TestMain.cpp
           TestMath.cpp
-  DEPENDS SequoiaUnittest
-          SequoiaMath
-          SequoiaCore
-          ${SEQUOIA_UNITTEST_EXTERNAL_LIBRARIES}
+  DEPENDS Sequoia
+          ${SEQUOIA_EXTERNAL_LIBRARIES}
 )
 

@@ -13,13 +13,36 @@
 ##
 ##===------------------------------------------------------------------------------------------===##
 
+# Compile object libraries
 add_subdirectory(Core)
 add_subdirectory(Math)
 add_subdirectory(Render)
 add_subdirectory(Driver)
 add_subdirectory(Game)
 
+set(UnittestTarget)
 if(SEQUOIA_TESTING)
   add_subdirectory(Unittest)
+  set(UnittestTarget SequoiaUnittest)
 endif()
+
+# Link objects into a single library
+sequoia_link_objects(
+  NAME Sequoia
+  SOURCES SequoiaCore
+          SequoiaMath
+          SequoiaRender
+          SequoiaDriver
+          SequoiaGame
+          ${UnittestTarget}
+  DEPENDS ${SEQUOIA_EXTERNAL_LIBRARIES}
+)
+
+# Compile standalone driver
+sequoia_add_executable(
+  NAME SequoiaStandalone
+  WIN32_APPLICATION
+  SOURCES Driver/Main.cpp
+  DEPENDS Sequoia
+)
 

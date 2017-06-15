@@ -13,10 +13,5 @@
 ##
 ##===------------------------------------------------------------------------------------------===##
 
-set(SEQUOIA_UNITTEST_EXTERNAL_LIBRARIES
-  ${SEQUOIA_GTEST_LIBRARIES}
-  ${SEQUOIA_EXTERNAL_LIBRARIES}
-)
-
 add_subdirectory(sequoia)
 

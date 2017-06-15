@@ -77,19 +77,19 @@ function(sequoia_run_cppcheck TARGET)
   add_dependencies(cppcheck Cppcheck-${TARGET})
 endfunction()
 
-## sequoia_add_library
+## sequoia_add_objects
 ## -------------------
 ##
-## Create a static/shared library depending on the varialble BUILD_SHARED_LIBS.
-## All header files (".h") in the directory of the source files are treated as dependencies of the
-## library.
-##    
-##    NAME:STRING=<>             - Name of the library.
-##    SOURCES:STRING=<>          - List of source files.
-##    DEPENDS:STRING=<>          - List of external libraries and/or CMake targets treated as
-##                                 dependencies of the library.
+## Create an "object" library of the given sources. The objects can be referred to with  
+## $<TARGET_OBJECTS:NAME>.
 ##
-function(sequoia_add_library)
+## Use `sequoia_link_objects` to create the library.
+##
+##    NAME:STRING=<>             - Name of the object library.
+##    SOURCES:STRING=<>          - List of source files.
+##    DEPENDS:STRING=<>          - List of CMake targets this object library depends on.
+##
+function(sequoia_add_objects)
   # Parse arguments
   set(options)
   set(one_value_args NAME)
@@ -108,15 +108,18 @@ function(sequoia_add_library)
     endif()
   endforeach()
   
-  # Add library
-  add_library(${ARG_NAME} ${ARG_SOURCES})
-  target_link_libraries(${ARG_NAME} ${ARG_DEPENDS})
-
+  # Add object library
+  add_library(${ARG_NAME} OBJECT ${ARG_SOURCES})
+  if(ARG_DEPENDS)
+    add_dependencies(${ARG_NAME} ${ARG_DEPENDS})
+  endif()
+    
   # Use folders in Visual Studio  
   if(MSVC)
     set_property(GLOBAL PROPERTY USE_FOLDERS ON)
     foreach(src ${ARG_SOURCES})
       get_filename_component(dir ${src} DIRECTORY)
+      # Keep directories (e.g GL/Foo.h goes into Sources/GL/Foo.h)
       if(dir)
         set(group "Sources\\${dir}")
         source_group("${group}" FILES ${src})
@@ -129,6 +132,36 @@ function(sequoia_add_library)
   if(SEQUOIA_HAS_CPPCHECK)
    sequoia_run_cppcheck(${ARG_NAME} ${ARG_SOURCES})
   endif()
+endfunction()
+
+## sequoia_link_objects
+## --------------------
+##
+## Link the given objects into a single static or dynamic library (depending on BUILD_SHARED_LIBS)
+##
+##    NAME:STRING=<>             - Name of the library.
+##    OBJECTS:STRING=<>          - List of CMake targets whose objects files will be used. Note this
+##                                 effectivly links $<TARGET_OBJECTS:Target> into a library.
+##    DEPENDS:STRING=<>          - List of external dependencies (i.e libraries)
+##
+function(sequoia_link_objects)
+  # Parse arguments
+  set(options)
+  set(one_value_args NAME)
+  set(multi_value_args SOURCES DEPENDS)
+  cmake_parse_arguments(ARG "${options}" "${one_value_args}" "${multi_value_args}" ${ARGN})
+  
+  if(NOT("${ARG_UNPARSED_ARGUMENTS}" STREQUAL ""))
+    message(FATAL_ERROR "invalid argument ${ARG_UNPARSED_ARGUMENTS}")
+  endif()
+  
+  set(objects)
+  foreach(target ${ARG_SOURCES})
+    list(APPEND objects $<TARGET_OBJECTS:${target}>)
+  endforeach()
+  
+  add_library(${ARG_NAME} ${objects})
+  target_link_libraries(${ARG_NAME} ${ARG_DEPENDS})
   
   if(WIN32 AND NOT(MSVC_IDE))
     set_property(TARGET ${ARG_NAME} PROPERTY ARCHIVE_OUTPUT_DIRECTORY 
@@ -201,8 +234,6 @@ endfunction()
 ## ----------------
 ##
 ## Create an executable and register it in CTest.
-## All header files (".h") in the directory of the source files are treated as dependencies of the
-## library.
 ##    
 ##    NAME:STRING=<>             - Name of the test.
 ##    SOURCES:STRING=<>          - List of source files.
@@ -218,9 +249,8 @@ function(sequoia_add_test)
   # Add executable
   sequoia_add_executable(${ARGN})
   
-  # Add test
+  # Register the test with CTest
   add_test(NAME CTest-${ARG_NAME} COMMAND $<TARGET_FILE:${ARG_NAME}> --gtest_color=yes)
-
 endfunction()
 
 ## sequoia_generate_options
