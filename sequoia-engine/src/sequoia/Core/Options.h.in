@@ -27,7 +27,7 @@ namespace core {
 
 /// @brief Options of sequoia
 /// @ingroup core
-struct SEQUOIA_CORE_API Options : public Singleton<Options> {
+struct SEQUOIA_API Options : public Singleton<Options> {
 
   // ${SEQUOIA_DECL_HEADER_OPTIONS}
 

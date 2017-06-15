@@ -64,7 +64,8 @@ namespace render {}
 /// @brief Namespace of the unittest library.
 namespace unittest {}
 
-}
+} // namespace sequoia
+
 #endif
 
 #include "sequoia/Core/Compiler.h"
