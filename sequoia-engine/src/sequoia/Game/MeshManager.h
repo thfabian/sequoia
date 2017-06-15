@@ -18,7 +18,7 @@
 
 #include "sequoia/Core/File.h"
 #include "sequoia/Core/Platform.h"
-#include "sequoia/Game/Export.h"
+#include "sequoia/Core/Export.h"
 #include "sequoia/Game/Mesh.h"
 #include "sequoia/Render/RenderFwd.h"
 #include "sequoia/Render/VertexArrayObject.h"

@@ -16,7 +16,7 @@
 #ifndef SEQUOIA_RENDER_GL_GLVERTEXATTRIBUTE_H
 #define SEQUOIA_RENDER_GL_GLVERTEXATTRIBUTE_H
 
-#include "sequoia/Render/Export.h"
+#include "sequoia/Core/Export.h"
 #include <functional>
 
 namespace sequoia {

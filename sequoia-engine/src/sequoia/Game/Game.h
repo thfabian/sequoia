@@ -18,7 +18,7 @@
 
 #include "sequoia/Core/Listenable.h"
 #include "sequoia/Core/Singleton.h"
-#include "sequoia/Game/Export.h"
+#include "sequoia/Core/Export.h"
 #include "sequoia/Render/Input.h"
 #include "sequoia/Render/RenderFwd.h"
 #include <memory>

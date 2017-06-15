@@ -16,7 +16,7 @@
 #ifndef SEQUOIA_GAME_SCENENODE_H
 #define SEQUOIA_GAME_SCENENODE_H
 
-#include "sequoia/Game/Export.h"
+#include "sequoia/Core/Export.h"
 #include "sequoia/Game/Mesh.h"
 #include "sequoia/Math/Math.h"
 #include <functional>

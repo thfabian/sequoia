@@ -16,7 +16,7 @@
 #ifndef SEQUOIA_RENDER_RENDERSTATE_H
 #define SEQUOIA_RENDER_RENDERSTATE_H
 
-#include "sequoia/Render/Export.h"
+#include "sequoia/Core/Export.h"
 #include <cstdint>
 #include <string>
 

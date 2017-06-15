@@ -17,7 +17,7 @@
 #define SEQUOIA_UNITTEST_TEST_H
 
 #include "sequoia/Math/Math.h"
-#include "sequoia/Unittest/Export.h"
+#include "sequoia/Core/Export.h"
 #include <gtest/gtest.h>
 
 namespace sequoia {

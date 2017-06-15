@@ -19,7 +19,7 @@
 #include "sequoia/Core/File.h"
 #include "sequoia/Core/NonCopyable.h"
 #include "sequoia/Math/Math.h"
-#include "sequoia/Render/Export.h"
+#include "sequoia/Core/Export.h"
 #include "sequoia/Render/Viewport.h"
 #include <memory>
 

@@ -16,7 +16,7 @@
 #ifndef SEQUOIA_DRIVER_COMMANDLINE_H
 #define SEQUOIA_DRIVER_COMMANDLINE_H
 
-#include "sequoia/Driver/Export.h"
+#include "sequoia/Core/Export.h"
 #include <string>
 #include <vector>
 

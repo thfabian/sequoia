@@ -18,7 +18,7 @@
 
 #include "sequoia/Core/Memory.h"
 #include "sequoia/Core/NonCopyable.h"
-#include "sequoia/Game/Export.h"
+#include "sequoia/Core/Export.h"
 #include "sequoia/Game/SceneNode.h"
 #include <memory>
 #include <vector>

@@ -18,7 +18,7 @@
 
 #include "sequoia/Core/Assert.h"
 #include "sequoia/Core/NonCopyable.h"
-#include "sequoia/Render/Export.h"
+#include "sequoia/Core/Export.h"
 #include "sequoia/Render/GL/GLProgram.h"
 #include <memory>
 #include <unordered_map>

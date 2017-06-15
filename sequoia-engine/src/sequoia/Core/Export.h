@@ -38,7 +38,7 @@ namespace platform {}
 
 #include "sequoia/Core/Compiler.h"
 
-#if defined(SEQUOIA_SHARED_LIBRARIES) && defined(SequoiaCore_EXPORTS)
+#if defined(SEQUOIA_SHARED_LIBRARIES)
 #define SEQUOIA_API SEQUOIA_API_EXPORT
 #else
 #define SEQUOIA_API SEQUOIA_API_IMPORT

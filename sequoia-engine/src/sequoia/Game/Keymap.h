@@ -16,7 +16,7 @@
 #ifndef SEQUOIA_GAME_KEYMAP_H
 #define SEQUOIA_GAME_KEYMAP_H
 
-#include "sequoia/Game/Export.h"
+#include "sequoia/Core/Export.h"
 #include "sequoia/Render/Input.h"
 #include <memory>
 #include <string>

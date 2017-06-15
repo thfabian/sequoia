@@ -17,7 +17,7 @@
 #define SEQUOIA_RENDER_DRAWCOMMAND_H
 
 #include "sequoia/Math/Math.h"
-#include "sequoia/Render/Export.h"
+#include "sequoia/Core/Export.h"
 #include "sequoia/Render/RenderState.h"
 #include <string>
 

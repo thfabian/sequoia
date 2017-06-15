@@ -20,7 +20,7 @@
 #include "sequoia/Core/PrettyStackTrace.h"
 #include "sequoia/Core/Singleton.h"
 #include "sequoia/Core/SingletonManager.h"
-#include "sequoia/Unittest/Export.h"
+#include "sequoia/Core/Export.h"
 #include "sequoia/Unittest/TestFile.h"
 #include <gtest/gtest.h>
 #include <string>

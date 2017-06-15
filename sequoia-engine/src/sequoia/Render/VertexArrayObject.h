@@ -17,7 +17,7 @@
 #define SEQUOIA_RENDER_VERTEXARRAYOBJECT_H
 
 #include "sequoia/Core/NonCopyable.h"
-#include "sequoia/Render/Export.h"
+#include "sequoia/Core/Export.h"
 #include "sequoia/Render/RenderSystemObject.h"
 #include "sequoia/Render/Vertex.h"
 #include <memory>

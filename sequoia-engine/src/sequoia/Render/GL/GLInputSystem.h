@@ -17,7 +17,7 @@
 #define SEQUOIA_RENDER_GL_GLINPUTSYSTEM_H
 
 #include "sequoia/Core/Listenable.h"
-#include "sequoia/Render/Export.h"
+#include "sequoia/Core/Export.h"
 #include "sequoia/Render/Input.h"
 
 struct GLFWwindow;

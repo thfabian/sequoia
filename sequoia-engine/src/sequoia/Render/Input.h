@@ -16,7 +16,7 @@
 #ifndef SEQUOIA_RENDER_INPUT_H
 #define SEQUOIA_RENDER_INPUT_H
 
-#include "sequoia/Render/Export.h"
+#include "sequoia/Core/Export.h"
 #include <iosfwd>
 #include <string>
 

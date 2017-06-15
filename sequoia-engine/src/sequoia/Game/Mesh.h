@@ -17,7 +17,7 @@
 #define SEQUOIA_GAME_MESH_H
 
 #include "sequoia/Core/NonCopyable.h"
-#include "sequoia/Game/Export.h"
+#include "sequoia/Core/Export.h"
 #include "sequoia/Render/VertexData.h"
 #include <memory>
 

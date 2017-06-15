@@ -20,7 +20,7 @@
 #include "sequoia/Core/File.h"
 #include "sequoia/Core/NonCopyable.h"
 #include "sequoia/Core/Platform.h"
-#include "sequoia/Game/Export.h"
+#include "sequoia/Core/Export.h"
 #include <mutex>
 #include <unordered_map>
 #include <vector>

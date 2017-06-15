@@ -18,7 +18,7 @@
 
 #include "sequoia/Core/Logging.h"
 #include "sequoia/Core/Singleton.h"
-#include "sequoia/Driver/Export.h"
+#include "sequoia/Core/Export.h"
 #include <iosfwd>
 #include <memory>
 #include <string>

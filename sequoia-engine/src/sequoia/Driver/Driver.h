@@ -17,7 +17,7 @@
 #define SEQUOIA_DRIVER_DRIVER_H
 
 #include "sequoia/Core/Platform.h"
-#include "sequoia/Driver/Export.h"
+#include "sequoia/Core/Export.h"
 
 namespace sequoia {
 

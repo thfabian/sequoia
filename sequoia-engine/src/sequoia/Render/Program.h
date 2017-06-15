@@ -17,7 +17,7 @@
 #define SEQUOIA_RENDER_PROGRAM_H
 
 #include "sequoia/Core/NonCopyable.h"
-#include "sequoia/Render/Export.h"
+#include "sequoia/Core/Export.h"
 #include "sequoia/Render/RenderSystemObject.h"
 #include <memory>
 #include <set>

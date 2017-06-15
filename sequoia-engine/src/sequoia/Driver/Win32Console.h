@@ -13,7 +13,7 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Driver/Export.h"
+#include "sequoia/Core/Export.h"
 
 #ifdef SEQUOIA_ON_WIN32
 

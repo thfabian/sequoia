@@ -19,7 +19,7 @@
 #include "sequoia/Core/NonCopyable.h"
 #include "sequoia/Core/Platform.h"
 #include "sequoia/Core/Singleton.h"
-#include "sequoia/Render/Export.h"
+#include "sequoia/Core/Export.h"
 #include "sequoia/Render/Input.h"
 #include "sequoia/Render/RenderFwd.h"
 #include "sequoia/Render/RenderSystemObject.h"

@@ -18,7 +18,7 @@
 
 #include "sequoia/Core/NonCopyable.h"
 #include "sequoia/Render/DrawCommand.h"
-#include "sequoia/Render/Export.h"
+#include "sequoia/Core/Export.h"
 #include "sequoia/Render/RenderState.h"
 #include <unordered_map>
 

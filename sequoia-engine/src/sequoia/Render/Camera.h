@@ -18,7 +18,7 @@
 
 #include "sequoia/Core/Assert.h"
 #include "sequoia/Math/Math.h"
-#include "sequoia/Render/Export.h"
+#include "sequoia/Core/Export.h"
 #include "sequoia/Render/ViewFrustum.h"
 #include "sequoia/Render/Viewport.h"
 #include <memory>

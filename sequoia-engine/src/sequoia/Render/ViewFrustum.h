@@ -16,7 +16,7 @@
 #ifndef SEQUOIA_RENDER_VIEWFRUSTUM_H
 #define SEQUOIA_RENDER_VIEWFRUSTUM_H
 
-#include "sequoia/Render/Export.h"
+#include "sequoia/Core/Export.h"
 
 namespace sequoia {
 

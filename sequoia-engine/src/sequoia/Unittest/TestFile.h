@@ -18,7 +18,7 @@
 
 #include "sequoia/Core/AlignedADT.h"
 #include "sequoia/Core/File.h"
-#include "sequoia/Unittest/Export.h"
+#include "sequoia/Core/Export.h"
 
 namespace sequoia {
 

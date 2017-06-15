@@ -17,7 +17,7 @@
 #define SEQUOIA_RENDER_VERTEXVISITOR_H
 
 #include "sequoia/Core/Assert.h"
-#include "sequoia/Render/Export.h"
+#include "sequoia/Core/Export.h"
 #include "sequoia/Render/Vertex.h"
 #include <cstddef>
 #include <functional>

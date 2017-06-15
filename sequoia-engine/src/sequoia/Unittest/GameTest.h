@@ -18,7 +18,7 @@
 
 #include "sequoia/Core/NonCopyable.h"
 #include "sequoia/Game/Game.h"
-#include "sequoia/Unittest/Export.h"
+#include "sequoia/Core/Export.h"
 #include <gtest/gtest.h>
 
 namespace sequoia {

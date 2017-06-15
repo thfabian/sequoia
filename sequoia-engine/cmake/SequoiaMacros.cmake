@@ -220,16 +220,12 @@ macro(sequoia_set_cxx_flags)
     add_definitions(-DNOMINMAX)
     add_definitions(-DUNICODE)
     
-    if(BUILD_SHARED_LIBS)
-      add_definitions(-DSEQUOIA_BUILD_SHARED_LIBS)    
-    endif()
-      
     sequoia_check_and_set_cxx_flag("/EHsc" HAVE_MSVC_EHSC)
     sequoia_check_and_set_arch_flag()
 
     # Optimization
     if(SEQUOIA_OPTIMIZE)
-      #
+      # TODO: figure out the LTO flags etc...
     endif()
     
     # C4244 - conversion from 'type1' to 'type2', possible loss of data

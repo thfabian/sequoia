@@ -17,7 +17,7 @@
 #define SEQUOIA_RENDER_VERTEX_H
 
 #include "sequoia/Core/Assert.h"
-#include "sequoia/Render/Export.h"
+#include "sequoia/Core/Export.h"
 #include <cstddef>
 #include <string>
 

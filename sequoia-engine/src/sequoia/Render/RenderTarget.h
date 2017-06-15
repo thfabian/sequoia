@@ -17,7 +17,7 @@
 #define SEQUOIA_RENDER_RENDERTARGET_H
 
 #include "sequoia/Core/Listenable.h"
-#include "sequoia/Render/Export.h"
+#include "sequoia/Core/Export.h"
 #include "sequoia/Render/Viewport.h"
 #include <memory>
 

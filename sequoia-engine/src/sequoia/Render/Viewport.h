@@ -17,7 +17,7 @@
 #define SEQUOIA_RENDER_VIEWPORT_H
 
 #include "sequoia/Core/Listenable.h"
-#include "sequoia/Render/Export.h"
+#include "sequoia/Core/Export.h"
 #include "sequoia/Render/RenderFwd.h"
 
 namespace sequoia {
