@@ -25,6 +25,8 @@ sequoia_add_library(
           GameTest.cpp
           TestFile.h
           TestFile.cpp
+          Test.h
+          Test.cpp
           
           GL/GLEnvironment.h
           GL/GLEnvironment.cpp

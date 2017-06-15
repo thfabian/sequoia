@@ -28,6 +28,8 @@ namespace game {
 /// @ingroup game
 class SEQUOIA_GAME_API CameraController : public SceneNode {
 public:
+  friend class render::Camera;
+
   using Base = SceneNode;
 
   CameraController(const std::string& name, SceneNodeKind kind = SK_CameraController);
@@ -47,6 +49,9 @@ public:
 
   /// @brief Check if the node has a camera attached
   bool hasCamera() const { return camera_ != nullptr; }
+
+  /// @brief Update the camera position
+  virtual void update(const UpdateEvent& event) override;
 
   /// @brief Clone the scene node and all its children
   virtual std::shared_ptr<SceneNode> clone() override;

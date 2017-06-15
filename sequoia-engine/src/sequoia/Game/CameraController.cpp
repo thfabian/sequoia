@@ -13,8 +13,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Game/CameraController.h"
 #include "sequoia/Core/Format.h"
+#include "sequoia/Game/CameraController.h"
 #include "sequoia/Game/SceneGraph.h"
 #include "sequoia/Render/Camera.h"
 
@@ -32,6 +32,15 @@ CameraController::~CameraController() {}
 
 void CameraController::setCamera(const std::shared_ptr<render::Camera>& camera) {
   camera_ = camera;
+  setPosition(camera->getPosition());
+  setOrientation(camera->getOrientation());
+}
+
+void CameraController::update(const SceneNode::UpdateEvent& event) {
+  if(hasCamera()) {
+    camera_->setPosition(getPosition());
+    camera_->setOrientation(getOrientation());
+  }
 }
 
 std::shared_ptr<SceneNode> CameraController::clone() {

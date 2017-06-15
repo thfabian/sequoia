@@ -17,7 +17,8 @@ add_subdirectory(GL)
 
 sequoia_add_test(
   NAME SequoiaRenderTest
-  SOURCES TestMain.cpp
+  SOURCES TestCamera.cpp
+          TestMain.cpp
           TestInput.cpp
           TestRenderState.cpp
           TestVertex.cpp

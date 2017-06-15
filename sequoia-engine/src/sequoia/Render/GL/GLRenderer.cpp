@@ -148,16 +148,8 @@ void GLRenderer::render() {
   Camera* camera = viewport->getCamera();
   DrawCommandList* drawCommandList = window_->getDrawCommandList().get();
 
-  // Compute the projction matrix
-  glm::mat4 matProj = glm::perspective(camera->getFieldOfViewY(), camera->getAspectRatio(),
-                                       camera->getZNearClipping(), camera->getZFarClipping());
-
-  // Compute camera view matrix
-  glm::mat4 matView = glm::lookAt(math::vec3(camera->getEye()), math::vec3(camera->getCenter()),
-                                  math::vec3(camera->getUp()));
-
-  // Precompute view projection matrix
-  glm::mat4 matViewProj = matProj * matView;
+  // Compute projection view matrix
+  math::mat4 matViewProj = camera->getViewProjectionMatrix();
 
   // Clear the screen
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

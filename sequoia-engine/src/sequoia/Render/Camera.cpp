@@ -14,15 +14,64 @@
 //===------------------------------------------------------------------------------------------===//
 
 #include "sequoia/Core/Format.h"
+#include "sequoia/Math/CoordinateSystem.h"
 #include "sequoia/Render/Camera.h"
 
 namespace sequoia {
 
 namespace render {
 
-Camera::Camera()
-    : ViewFrustum(), center_(0.f, 0.f, 0.f, 1.f), eye_(0.f, 0.f, -10.f, 1.f),
-      up_(0.f, 1.f, 0.f, 0.f) {}
+Camera::Camera(const math::vec3& eye, const math::vec3& center, math::vec3 up)
+    : ViewFrustum(), position_(eye), modelMatrixIsDirty_(true) {
+
+  math::vec3 eyeToCenter = center - eye;
+  eyeToCenterDistance_ = math::length(eyeToCenter);
+
+  // Compute the local axes
+  //
+  //        up                                u
+  //         ^                                ^
+  //         |                                 \
+  //         |                                  \
+  //        eye ----> center     ===>            0--------> f
+  //                                             /
+  //                                            /
+  //                                           s
+  //
+  //  1. Compute the direction between eye and center => f
+  //  2. Compute the z-direction by `f x up` => s
+  //  3. Compute the up-direction by `s x f` => u
+  //  4. Local axes are `(f, u, s)`
+  //
+  const math::vec3 f = math::normalize(eyeToCenter);
+  const math::vec3 s = math::normalize(math::cross(f, math::normalize(up)));
+  const math::vec3 u = math::cross(s, f);
+  math::mat3 localAxes(f, u, s);
+
+  setPosition(eye);
+  setOrientation(math::normalize(math::quat(localAxes)));
+}
+
+glm::vec3 Camera::getEye() const {
+  // modelMat * (0, 0, 0, 1)
+  return math::vec3(getModelMatrix()[3]);
+}
+
+glm::vec3 Camera::getCenter() const {
+  // eye + modelMat * (1, 0, 0, 0) * eyeToCenterDistance
+  return getEye() + math::vec3(getModelMatrix()[0] * eyeToCenterDistance_);
+}
+
+glm::vec3 Camera::getUp() const {
+  // modelMat * (0, 1, 0, 0)
+  return math::vec3(math::normalize(getModelMatrix()[math::CoordinateSystem::getUpIndex()]));
+}
+
+glm::mat4 Camera::getViewProjectionMatrix() const {
+  return (math::perspective(getFieldOfViewY(), getAspectRatio(), getZNearClipping(),
+                            getZFarClipping()) *
+          math::lookAt(getEye(), getCenter(), getUp()));
+}
 
 void Camera::viewportGeometryChanged(Viewport* viewport) {
   setAspectRatio(float(viewport->getWidth()) / viewport->getHeight());
@@ -38,7 +87,22 @@ std::string Camera::toString() const {
                       "  center = %s,\n"
                       "  up = %s\n"
                       "]",
-                      fovy_, aspect_, zNear_, zFar_, eye_, center_, up_);
+                      fovy_, aspect_, zNear_, zFar_, getEye(), getCenter(), getUp());
+}
+
+const math::mat4& Camera::getModelMatrix() const {
+  if(modelMatrixIsDirty_)
+    computeModelMatrix();
+  return modelMatrix_;
+}
+
+void Camera::computeModelMatrix() const {
+  // ModelMatrix = TranslationMatrix * RotatationMatrix
+  modelMatrix_ = math::mat4(1.0f);
+  modelMatrix_ = math::translate(modelMatrix_, position_);
+  modelMatrix_ = modelMatrix_ * math::mat4_cast(orientation_);
+
+  modelMatrixIsDirty_ = false;
 }
 
 } // namespace render

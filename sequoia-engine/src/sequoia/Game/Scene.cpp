@@ -24,6 +24,8 @@
 #include "sequoia/Game/CameraControllerFree.h"
 #include "sequoia/Game/Drawable.h"
 
+#include <iostream>
+
 namespace sequoia {
 
 namespace game {
@@ -40,9 +42,7 @@ Scene::Scene() : activeCamera_(nullptr) {
 
   // Create the camera
   activeCamera_ = std::make_shared<render::Camera>();
-  activeCamera_->setEye(math::vec3(0, 0, -20));
-  activeCamera_->setCenter(math::vec3(0, 0, 0));
-
+    
   auto cube = SceneGraph::create<Drawable>("TestNode");
   cube->setProgram(game.getDefaultProgram());
 

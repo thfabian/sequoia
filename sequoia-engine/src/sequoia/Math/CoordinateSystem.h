@@ -45,6 +45,9 @@ struct CoordinateSystem {
   static constexpr vec3 Z() noexcept { return vec3(0, 0, 1); }
 
   /// @brief Get the upward pointing direction
+  static constexpr std::size_t getUpIndex() noexcept { return 1; }
+
+  /// @brief Get the upward pointing direction
   static constexpr vec3 Up() noexcept { return CoordinateSystem::Y(); }
 };
 

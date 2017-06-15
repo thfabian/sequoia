@@ -48,8 +48,7 @@ math::mat3 SceneNode::getLocalAxes() const {
   math::vec3 axisX = getOrientation() * math::CoordinateSystem::X();
   math::vec3 axisY = getOrientation() * math::CoordinateSystem::Y();
   math::vec3 axisZ = getOrientation() * math::CoordinateSystem::Z();
-  return math::mat3(axisX.x, axisY.x, axisZ.x, axisX.y, axisY.y, axisZ.y, axisX.z, axisY.z,
-                    axisZ.z);
+  return math::mat3(axisX, axisY, axisZ);
 }
 
 void SceneNode::apply(const std::function<void(SceneNode*)>& functor) {

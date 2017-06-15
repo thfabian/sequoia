@@ -19,6 +19,8 @@
 #include "sequoia/Game/SceneGraph.h"
 #include "sequoia/Math/CoordinateSystem.h"
 
+#include <iostream>
+
 namespace sequoia {
 
 namespace game {
@@ -43,9 +45,6 @@ void CameraControllerFree::setCamera(const std::shared_ptr<render::Camera>& came
   Base::setCamera(camera);
   Game::getSingleton().addListener(static_cast<MouseListener*>(this));
   Game::getSingleton().addListener(static_cast<KeyListener*>(this));
-
-  // Position scene node at the eye
-  setPosition(getCamera()->getEye());
 }
 
 void CameraControllerFree::removeCamera() {
@@ -57,7 +56,7 @@ void CameraControllerFree::removeCamera() {
 void CameraControllerFree::update(const UpdateEvent& event) {
   if(!hasCamera())
     return;
-
+  
   if(!updateNeeded_ && !goingForward_ && !goingBack_ && !goingRight_ && !goingLeft_ && !goingUp_ &&
      !goingDown_)
     return;
@@ -65,7 +64,8 @@ void CameraControllerFree::update(const UpdateEvent& event) {
   math::mat3 axes = getLocalAxes();
   math::vec3 dir(0);
 
-  // yaw(math::Radian::fromDegree(15.0f));
+//  pitch(math::Radian::fromDegree(3.0f));  
+  //std::cout << axes[2] << std::endl;
 
   if(goingForward_)
     dir += axes[2];
@@ -85,15 +85,8 @@ void CameraControllerFree::update(const UpdateEvent& event) {
     translate(speed_ * event.TimeStep * dir);
   }
 
-  render::Camera* camera = getCamera().get();
-
-  math::vec4 eyeAtOrigin = math::vec4(0.0f, 0.0f, 0.0f, 1.0f);
-  math::vec4 upAtOrigin = math::vec4(math::CoordinateSystem::Up(), 0.0f);
-  math::vec4 centerAtOrigin = eyeAtOrigin + camera->getEyeToCenterOffset();
-
-  camera->setEye(getModelMatrix() * eyeAtOrigin);
-  camera->setCenter(getModelMatrix() * centerAtOrigin);
-  camera->setUp(math::normalize(getModelMatrix() * upAtOrigin));
+  // Update camera position
+  Base::update(event);
 }
 
 std::shared_ptr<SceneNode> CameraControllerFree::clone() {
