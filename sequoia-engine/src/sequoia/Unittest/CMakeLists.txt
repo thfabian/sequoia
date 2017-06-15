@@ -20,7 +20,6 @@ sequoia_add_objects(
   NAME SequoiaUnittest
   SOURCES Environment.h
           Environment.cpp
-          Export.h
           GameTest.h
           GameTest.cpp
           TestFile.h

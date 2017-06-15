@@ -21,7 +21,6 @@ sequoia_add_objects(
           DrawCommand.cpp
           DrawCommandList.h
           DrawCommandList.cpp
-          Export.h
           Exception.h
           Input.h
           Input.cpp

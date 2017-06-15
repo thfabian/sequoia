@@ -19,7 +19,6 @@ sequoia_add_objects(
           AxisAlignedBox.cpp
           Constants.h 
           CoordinateSystem.h
-          Export.h
           Math.h
           Math.cpp
   DEPENDS SequoiaCore
