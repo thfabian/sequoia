@@ -17,8 +17,24 @@
 #define SEQUOIA_CORE_EXPORT_H
 
 #ifdef SEQUOIA_DOXYGEN_INVOKED
+
 /// @defgroup core Core
 /// @brief Core infrastructure of Sequoia.
+
+/// @defgroup driver Driver
+/// @brief Driver infrastructure of Sequoia.
+
+/// @defgroup game Game
+/// @brief Main game infrastructure of Sequoia.
+
+/// @defgroup math Math
+/// @brief Math and linear algebra utilities.
+
+/// @defgroup render Render
+/// @brief Rendering and input devices.
+
+/// @defgroup unittest Unittest
+/// @brief Unittest infrastructure of Sequoia.
 
 /// @namespace sequoia
 /// @brief Namespace of the sequoia project.
@@ -32,6 +48,21 @@ namespace core {}
 /// @brief Platform specific implementations and typedefs
 namespace platform {}
 
+/// @namespace driver
+/// @brief Namespace containing the driver library.
+namespace driver {}
+
+/// @namespace game
+/// @brief Namespace containing the driver library.
+namespace game {}
+
+/// @namespace render
+/// @brief Namespace of the rendering library.
+namespace render {}
+
+/// @namespace unittest
+/// @brief Namespace of the unittest library.
+namespace unittest {}
 
 }
 #endif

@@ -15,8 +15,7 @@
 
 sequoia_add_objects(
   NAME SequoiaDriver
-  SOURCES Export.h
-          Driver.cpp
+  SOURCES Driver.cpp
           Driver.h
           CommandLine.h
           CommandLine.cpp
