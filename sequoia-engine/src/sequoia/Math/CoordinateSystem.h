@@ -36,19 +36,19 @@ namespace math {
 /// @ingroup math
 struct CoordinateSystem {
   /// @brief Get the X unit-direction
-  static constexpr vec3 X() noexcept { return vec3(1, 0, 0); }
+  static inline vec3 X() noexcept { return vec3(1, 0, 0); }
 
   /// @brief Get the Y unit-direction
-  static constexpr vec3 Y() noexcept { return vec3(0, 1, 0); }
+  static inline vec3 Y() noexcept { return vec3(0, 1, 0); }
 
   /// @brief Get the Z unit-direction
-  static constexpr vec3 Z() noexcept { return vec3(0, 0, 1); }
+  static inline vec3 Z() noexcept { return vec3(0, 0, 1); }
 
   /// @brief Get the upward pointing direction
-  static constexpr std::size_t getUpIndex() noexcept { return 1; }
+  static inline std::size_t getUpIndex() noexcept { return 1; }
 
   /// @brief Get the upward pointing direction
-  static constexpr vec3 Up() noexcept { return CoordinateSystem::Y(); }
+  static inline vec3 Up() noexcept { return CoordinateSystem::Y(); }
 };
 
 } // namespace math

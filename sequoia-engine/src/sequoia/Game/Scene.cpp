@@ -24,8 +24,6 @@
 #include "sequoia/Game/CameraControllerFree.h"
 #include "sequoia/Game/Drawable.h"
 
-#include <iostream>
-
 namespace sequoia {
 
 namespace game {
