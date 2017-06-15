@@ -36,7 +36,7 @@ enum class GLShaderStatus {
 
 /// @brief OpenGL shader
 /// @ingroup gl
-class SEQUOIA_RENDER_API GLShader : public Shader {
+class SEQUOIA_API GLShader : public Shader {
   friend class GLShaderManager;
 
   /// Status of the shader
@@ -94,7 +94,7 @@ public:
 
   /// @brief Destroy the shader by deregistering it from OpenGL (i.e it's status will be changed to
   /// `InMemory`)
-  friend SEQUOIA_RENDER_API void destroyGLShader(GLShader* shader) noexcept;
+  friend SEQUOIA_API void destroyGLShader(GLShader* shader) noexcept;
 
   SEQUOIA_GL_OBJECT(Shader)
 };

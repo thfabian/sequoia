@@ -26,7 +26,7 @@ namespace unittest {
 
 /// @brief Simple wrapper to an actual file on disk in `Environment::getRessourcePath()`
 /// @ingroup unittest
-class SEQUOIA_UNITTEST_API TestFile : public File {
+class SEQUOIA_API TestFile : public File {
   std::string path_;
   aligned_vector<Byte> data_;
 

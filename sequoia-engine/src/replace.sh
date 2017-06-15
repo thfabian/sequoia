@@ -10,7 +10,7 @@ NEW="$2"
 
 echo "Replacing '$OLD' with '$NEW'"
 
-DPATH=$(find ./src/ -name '*.cpp' -o -name '*.h')
+DPATH=$(find ./sequoia -name '*.cpp' -o -name '*.h')
 TFILE="/tmp/out.tmp.$$"
 
 for f in $DPATH

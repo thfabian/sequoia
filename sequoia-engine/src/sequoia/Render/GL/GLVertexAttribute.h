@@ -25,7 +25,7 @@ namespace render {
 
 /// @brief OpenGL vertex attributes
 /// @ingroup gl
-struct SEQUOIA_RENDER_API GLVertexAttribute {
+struct SEQUOIA_API GLVertexAttribute {
 
   /// @brief OpenGL ids of known vertex attributes
   enum Attribute : unsigned int {

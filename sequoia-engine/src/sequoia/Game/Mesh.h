@@ -29,7 +29,7 @@ class MeshManager;
 
 /// @brief Ressource holding the 3D mesh
 /// @ingroup game
-class SEQUOIA_GAME_API Mesh : public NonCopyable {
+class SEQUOIA_API Mesh : public NonCopyable {
 public:
   friend class MeshManager;
 

@@ -31,7 +31,7 @@ namespace game {
 
 /// @brief Handle creation of meshes of a specifc `RenderTarget`
 /// @ingroup game
-class SEQUOIA_GAME_API MeshManager : public NonCopyable {
+class SEQUOIA_API MeshManager : public NonCopyable {
 
   /// Target used to create device buffers
   render::RenderTarget* target_;

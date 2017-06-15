@@ -35,7 +35,7 @@ namespace math {
 /// (AABB) for collision and visibility determination.
 ///
 /// @ingroup math
-class SEQUOIA_MATH_API AxisAlignedBox {
+class SEQUOIA_API AxisAlignedBox {
 public:
   /// @brief Type of extent
   enum ExtentKind { EK_Null, EK_Finite, EK_Infinite };

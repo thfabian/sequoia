@@ -26,7 +26,7 @@ namespace unittest {
 
 /// @brief OpenGL test environment
 /// @ingroup unittest
-class SEQUOIA_UNITTEST_API GLEnvironment : public Environment {
+class SEQUOIA_API GLEnvironment : public Environment {
   std::unique_ptr<render::RenderSystem> renderSystem_;
 
 public:

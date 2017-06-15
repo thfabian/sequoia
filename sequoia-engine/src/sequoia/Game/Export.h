@@ -31,9 +31,9 @@ namespace game {}
 #include "sequoia/Core/Compiler.h"
 
 #if defined(SEQUOIA_SHARED_LIBRARIES) && defined(SequoiaGame_EXPORTS)
-#define SEQUOIA_GAME_API SEQUOIA_API_EXPORT
+#define SEQUOIA_API SEQUOIA_API_EXPORT
 #else
-#define SEQUOIA_GAME_API SEQUOIA_API_IMPORT
+#define SEQUOIA_API SEQUOIA_API_IMPORT
 #endif
 
 #endif

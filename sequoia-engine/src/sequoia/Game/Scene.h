@@ -30,7 +30,7 @@ class SceneGraph;
 
 /// @brief State of a scene
 /// @ingroup game
-class SEQUOIA_GAME_API Scene : public NonCopyable {
+class SEQUOIA_API Scene : public NonCopyable {
 
   /// List of currently active DrawCommands of this scene
   std::vector<render::DrawCommand*> drawCommandList_;

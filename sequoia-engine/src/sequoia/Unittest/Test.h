@@ -27,11 +27,11 @@ namespace unittest {
 namespace internal {
 
 /// @brief Test if `abs(expected - actual) < absErr`
-SEQUOIA_UNITTEST_API std::pair<bool, std::string> compareHelper(float expected, float actual,
+SEQUOIA_API std::pair<bool, std::string> compareHelper(float expected, float actual,
                                                                 float absErr);
 
 /// @brief Test if `abs(expected - actual) < absErr` for each element
-SEQUOIA_UNITTEST_API std::pair<bool, std::string>
+SEQUOIA_API std::pair<bool, std::string>
 compareHelper(const math::vec3& expected, const math::vec3& actual, float absErr,
               const char* expectedStr, const char* actualStr);
 

@@ -36,7 +36,7 @@ class Shader;
 ///
 /// @see RenderSystem::createPogram
 /// @ingroup render
-class SEQUOIA_RENDER_API Program : public RenderSystemObject,
+class SEQUOIA_API Program : public RenderSystemObject,
                                    public NonCopyable,
                                    public std::enable_shared_from_this<Program> {
 public:

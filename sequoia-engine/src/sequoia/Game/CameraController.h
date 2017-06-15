@@ -26,7 +26,7 @@ namespace game {
 
 /// @brief Control a camera
 /// @ingroup game
-class SEQUOIA_GAME_API CameraController : public SceneNode {
+class SEQUOIA_API CameraController : public SceneNode {
 public:
   friend class render::Camera;
 

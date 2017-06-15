@@ -32,7 +32,7 @@ namespace render {
 /// A ShaderManager is attached to a specific OpenGL context.
 ///
 /// @ingroup gl
-class SEQUOIA_RENDER_API GLShaderManager : public NonCopyable {
+class SEQUOIA_API GLShaderManager : public NonCopyable {
   /// Record of all the registered shaders (use count of 1 implies the shader is *not* in use)
   std::vector<std::shared_ptr<GLShader>> shaderList_;
 

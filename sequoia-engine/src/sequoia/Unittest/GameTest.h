@@ -27,7 +27,7 @@ namespace unittest {
 
 /// @brief Handle creation and initialization of the game object
 /// @ingroup unittest
-class SEQUOIA_UNITTEST_API GameTest : public testing::Test, public NonCopyable {
+class SEQUOIA_API GameTest : public testing::Test, public NonCopyable {
   std::unique_ptr<game::Game> game_;
 
 protected:

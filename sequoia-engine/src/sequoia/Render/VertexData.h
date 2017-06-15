@@ -29,7 +29,7 @@ namespace render {
 
 /// @brief Storage of vertex data on the host and device
 /// @ingroup render
-class SEQUOIA_RENDER_API VertexData : public NonCopyable {
+class SEQUOIA_API VertexData : public NonCopyable {
 public:
   /// @brief Draw mode
   enum DrawModeKind {

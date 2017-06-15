@@ -33,7 +33,7 @@ class Scene;
 
 /// @brief Main class holding all game and rendering related objects and running the main-loop
 /// @ingroup game
-class SEQUOIA_GAME_API Game : public Singleton<Game>,
+class SEQUOIA_API Game : public Singleton<Game>,
                               public KeyListener,
                               public MouseListener,
                               public Listenable<KeyListener, MouseListener> {

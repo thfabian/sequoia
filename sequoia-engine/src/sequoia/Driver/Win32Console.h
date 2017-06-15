@@ -23,7 +23,7 @@ namespace driver {
 
 /// @brief Attach a Win32 Console for debugging purposes
 /// @ingroup driver
-class SEQUOIA_DRIVER_API Win32Console {
+class SEQUOIA_API Win32Console {
 public:
   /// @brief Attach a Win32 console to the current process
   Win32Console();

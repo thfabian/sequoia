@@ -25,7 +25,7 @@ namespace sequoia {
 namespace render {
 
 /// @brief Viewport Listeners
-class SEQUOIA_RENDER_API ViewportListener {
+class SEQUOIA_API ViewportListener {
 public:
   /// @brief The geometry of the Viewport changed
   ///
@@ -50,7 +50,7 @@ public:
 /// a single target as destination.
 ///
 /// @ingroup render
-class SEQUOIA_RENDER_API Viewport : public Listenable<ViewportListener> {
+class SEQUOIA_API Viewport : public Listenable<ViewportListener> {
   RenderTarget* target_;
   Camera* camera_;
 

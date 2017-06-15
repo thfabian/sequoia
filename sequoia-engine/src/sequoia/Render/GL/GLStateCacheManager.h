@@ -31,7 +31,7 @@ namespace render {
 /// This keeps an in-memory copy of the OpenGL state-machine to avoid unnecessary state changes.
 ///
 /// @ingroup gl
-class SEQUOIA_RENDER_API GLStateCacheManager : public NonCopyable {
+class SEQUOIA_API GLStateCacheManager : public NonCopyable {
   std::unique_ptr<RenderStateCache> stateCache_;
 
 public:

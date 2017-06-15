@@ -31,9 +31,9 @@ namespace math {}
 #include "sequoia/Core/Compiler.h"
 
 #if defined(SEQUOIA_SHARED_LIBRARIES) && defined(SequoiaMath_EXPORTS)
-#define SEQUOIA_MATH_API SEQUOIA_API_EXPORT
+#define SEQUOIA_API SEQUOIA_API_EXPORT
 #else
-#define SEQUOIA_MATH_API SEQUOIA_API_IMPORT
+#define SEQUOIA_API SEQUOIA_API_IMPORT
 #endif
 
 #endif

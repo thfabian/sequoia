@@ -45,7 +45,7 @@ class Viewport;
 ///   obviously, `zFar > zNear`.
 ///
 /// @ingroup render
-class SEQUOIA_RENDER_API ViewFrustum {
+class SEQUOIA_API ViewFrustum {
 public:
   using ValueType = float;
 

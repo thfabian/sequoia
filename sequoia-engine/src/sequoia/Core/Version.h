@@ -28,7 +28,7 @@ namespace core {
 /// @brief Utility to compare Sequoia versions
 ///
 /// @ingroup core
-class SEQUOIA_CORE_API Version {
+class SEQUOIA_API Version {
   int major_, minor_, patch_;
 
 public:
@@ -85,7 +85,7 @@ public:
   std::string toString() const;
 
   /// @brief Convert to stream
-  SEQUOIA_CORE_API friend std::ostream& operator<<(std::ostream& stream, const Version& version);
+  SEQUOIA_API friend std::ostream& operator<<(std::ostream& stream, const Version& version);
 };
 
 } // namespace core

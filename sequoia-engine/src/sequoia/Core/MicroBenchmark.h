@@ -126,7 +126,7 @@ namespace core {
 /// @endcode
 ///
 /// @ingroup core
-class SEQUOIA_CORE_API MicroBenchmarker {
+class SEQUOIA_API MicroBenchmarker {
   class MicroBenchmarkerImpl;
   std::unique_ptr<MicroBenchmarkerImpl> impl_;
 
@@ -159,7 +159,7 @@ private:
   MicroBenchmarker();
 };
 
-extern SEQUOIA_CORE_API MicroBenchmarker* MicroBenchmarkerGlobal;
+extern SEQUOIA_API MicroBenchmarker* MicroBenchmarkerGlobal;
 
 } // namespace core
 

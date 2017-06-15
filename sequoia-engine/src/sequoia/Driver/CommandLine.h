@@ -26,7 +26,7 @@ namespace driver {
 
 /// @brief Parse command-line arguments and update the `Options`
 /// @ingroup driver
-class SEQUOIA_DRIVER_API CommandLine {
+class SEQUOIA_API CommandLine {
 public:
   CommandLine() = delete;
 

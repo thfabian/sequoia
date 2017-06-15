@@ -61,7 +61,7 @@ namespace game {
 /// @endcode
 ///
 /// @ingroup game
-class SEQUOIA_GAME_API Keymap {
+class SEQUOIA_API Keymap {
 
   /// Associated key (if any)
   render::KeyboardKey key_ = render::Key_Invalid;

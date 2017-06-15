@@ -33,7 +33,7 @@ namespace render {
 ///
 /// @see RenderSystem::loadShader
 /// @ingroup render
-class SEQUOIA_RENDER_API Shader : public RenderSystemObject,
+class SEQUOIA_API Shader : public RenderSystemObject,
                                   public NonCopyable,
                                   public std::enable_shared_from_this<Shader> {
 public:

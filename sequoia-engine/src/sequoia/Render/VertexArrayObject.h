@@ -32,7 +32,7 @@ class VertexData;
 ///
 /// @see RenderSystem::createVertexArrayObject
 /// @ingroup render
-class SEQUOIA_RENDER_API VertexArrayObject : public RenderSystemObject, public NonCopyable {
+class SEQUOIA_API VertexArrayObject : public RenderSystemObject, public NonCopyable {
 public:
   /// @brief Usage hint of the vertex buffer
   enum BufferUsageKind {

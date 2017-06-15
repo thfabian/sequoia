@@ -25,7 +25,7 @@ namespace driver {
 
 /// @brief Initialize the engine and created the main Game object
 /// @ingroup driver
-class SEQUOIA_DRIVER_API Driver {
+class SEQUOIA_API Driver {
 public:
   Driver() = delete;
 

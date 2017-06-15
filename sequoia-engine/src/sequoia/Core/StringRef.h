@@ -88,7 +88,7 @@ class StringRef;
 /// For this reason, it is not in general safe to store a StringRef.
 ///
 /// @ingroup core
-class SEQUOIA_CORE_API StringRef {
+class SEQUOIA_API StringRef {
 public:
   typedef const char* iterator;
   typedef const char* const_iterator;
@@ -606,7 +606,7 @@ public:
   /// @}
 
   /// @brief Convert to stream
-  SEQUOIA_CORE_API friend std::ostream& operator<<(std::ostream& stream, const StringRef& str);
+  SEQUOIA_API friend std::ostream& operator<<(std::ostream& stream, const StringRef& str);
 };
 
 /// @name StringRef Comparison Operators

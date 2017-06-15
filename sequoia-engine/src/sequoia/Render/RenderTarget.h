@@ -29,7 +29,7 @@ class DrawCommandList;
 
 /// @brief A canvas which can receive the results of a rendering operation
 /// @ingroup render
-class SEQUOIA_RENDER_API RenderTarget {
+class SEQUOIA_API RenderTarget {
 public:
   /// @brief Discriminator for RTTI (dyn_cast<> et al.)
   enum RenderTargetKind { RK_RenderWindow, RK_GLRenderWindow, RK_RenderWindowLast };

@@ -29,7 +29,7 @@ namespace driver {
 
 /// @brief Console/File Logger
 /// @ingroup driver
-class SEQUOIA_DRIVER_API ConsoleLogger : public core::LoggerListener,
+class SEQUOIA_API ConsoleLogger : public core::LoggerListener,
                                          public Singleton<ConsoleLogger> {
   /// std::cout or alias of `file_`
   std::ostream* stream_;

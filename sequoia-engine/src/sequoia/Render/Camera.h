@@ -33,7 +33,7 @@ namespace render {
 /// Sequoia renders scenes from a camera viewpoint into a buffer of some sort, normally a window or
 /// a texture (a subclass of RenderTarget).
 /// @ingroup render
-class SEQUOIA_RENDER_API Camera : public ViewFrustum, public ViewportListener {
+class SEQUOIA_API Camera : public ViewFrustum, public ViewportListener {
 protected:
   /// Translation of the camera
   math::vec3 position_;

@@ -33,7 +33,7 @@ class GLShader;
 
 /// @brief Create and compile OpenGL GPU programs
 /// @ingroup gl
-class SEQUOIA_RENDER_API GLProgramManager : public NonCopyable {
+class SEQUOIA_API GLProgramManager : public NonCopyable {
   /// Record of all the registered programs (use count of 1 implies the program is *not* in use)
   std::vector<std::shared_ptr<GLProgram>> programList_;
 

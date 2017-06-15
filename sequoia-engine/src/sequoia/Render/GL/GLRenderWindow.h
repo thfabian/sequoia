@@ -33,7 +33,7 @@ class GLInputSystem;
 
 /// @brief OpenGL render window
 /// @ingroup gl
-class SEQUOIA_RENDER_API GLRenderWindow : public RenderWindow {
+class SEQUOIA_API GLRenderWindow : public RenderWindow {
   GLRenderSystem* renderSystem_;
   GLFWwindow* window_;
 

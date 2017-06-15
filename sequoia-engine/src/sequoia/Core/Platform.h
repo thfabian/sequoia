@@ -59,15 +59,15 @@ using Path = filesystem::path;
 /// @brief Convert `path` to `platform::Path`
 /// @param path   Path to convert
 /// @{
-SEQUOIA_CORE_API extern platform::Path asPath(const char* path);
-SEQUOIA_CORE_API extern platform::Path asPath(const wchar_t* path);
-SEQUOIA_CORE_API extern platform::Path asPath(const std::string& path);
-SEQUOIA_CORE_API extern platform::Path asPath(const std::wstring& path);
+SEQUOIA_API extern platform::Path asPath(const char* path);
+SEQUOIA_API extern platform::Path asPath(const wchar_t* path);
+SEQUOIA_API extern platform::Path asPath(const std::string& path);
+SEQUOIA_API extern platform::Path asPath(const std::wstring& path);
 /// @}
 
 /// @brief Convert `path` to `std::string`
 /// @param path   Path to convert
-SEQUOIA_CORE_API extern std::string toAnsiString(const platform::Path& path);
+SEQUOIA_API extern std::string toAnsiString(const platform::Path& path);
 
 /// @typedef String
 /// @brief The native string of the platform (`std::string` for Unix and `std::wstring` for Win32)
@@ -100,10 +100,10 @@ using Char = String::value_type;
 /// @brief Return a copy of the string `str`
 /// @throw std::bad_alloc  Out of memory
 /// @{
-SEQUOIA_CORE_API extern char* copyCString(const std::string& str);
-SEQUOIA_CORE_API extern char* copyCString(const char* str);
-SEQUOIA_CORE_API extern wchar_t* copyCString(const std::wstring& wstr);
-SEQUOIA_CORE_API extern wchar_t* copyCString(const wchar_t* wstr);
+SEQUOIA_API extern char* copyCString(const std::string& str);
+SEQUOIA_API extern char* copyCString(const char* str);
+SEQUOIA_API extern wchar_t* copyCString(const std::wstring& wstr);
+SEQUOIA_API extern wchar_t* copyCString(const wchar_t* wstr);
 /// @}
 
 /// @}

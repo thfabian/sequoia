@@ -172,7 +172,7 @@ enum KeyboardKey : int {
 
 /// @brief Stream KeyboardKey
 /// @ingroup render
-SEQUOIA_RENDER_API extern std::ostream& operator<<(std::ostream& os, KeyboardKey key) noexcept;
+SEQUOIA_API extern std::ostream& operator<<(std::ostream& os, KeyboardKey key) noexcept;
 
 /// @brief Mouse buttons
 /// @ingroup render
@@ -195,7 +195,7 @@ enum MouseButton : int {
 
 /// @brief Stream MouseButton
 /// @ingroup render
-SEQUOIA_RENDER_API extern std::ostream& operator<<(std::ostream& os, MouseButton button) noexcept;
+SEQUOIA_API extern std::ostream& operator<<(std::ostream& os, MouseButton button) noexcept;
 
 /// @brief Keyboard modifiers
 /// @ingroup render
@@ -209,7 +209,7 @@ enum KeyModifier : int {
 
 /// @brief Stream KeyModifier
 /// @ingroup render
-SEQUOIA_RENDER_API extern std::ostream& operator<<(std::ostream& os, KeyModifier mod) noexcept;
+SEQUOIA_API extern std::ostream& operator<<(std::ostream& os, KeyModifier mod) noexcept;
 
 /// @brief Key and button actions
 /// @ingroup render
@@ -217,7 +217,7 @@ enum KeyAction : int { Action_Released = 0, Action_Pressed = 1, Action_Repeat = 
 
 /// @brief Keyboard event
 /// @ingroup render
-struct SEQUOIA_RENDER_API KeyboardEvent {
+struct SEQUOIA_API KeyboardEvent {
 
   /// The RenderTarget that recieved the event
   RenderTarget* Target;
@@ -249,7 +249,7 @@ struct SEQUOIA_RENDER_API KeyboardEvent {
 
 /// @brief Listener of keyboard events
 /// @ingroup render
-class SEQUOIA_RENDER_API KeyboardListener {
+class SEQUOIA_API KeyboardListener {
 public:
   /// @brief Handle keyboard event
   virtual void keyboardEvent(const KeyboardEvent& event) = 0;
@@ -257,7 +257,7 @@ public:
 
 /// @brief Mouse button event
 /// @ingroup render
-struct SEQUOIA_RENDER_API MouseButtonEvent {
+struct SEQUOIA_API MouseButtonEvent {
 
   /// The RenderTarget that recieved the event
   RenderTarget* Target;
@@ -306,7 +306,7 @@ struct SEQUOIA_RENDER_API MouseButtonEvent {
 /// @endverbatim
 ///
 /// @ingroup render
-struct SEQUOIA_RENDER_API MousePositionEvent {
+struct SEQUOIA_API MousePositionEvent {
 
   /// The RenderTarget that recieved the event
   RenderTarget* Target;
@@ -329,7 +329,7 @@ struct SEQUOIA_RENDER_API MousePositionEvent {
 
 /// @brief Listener of mouse events
 /// @ingroup render
-class SEQUOIA_RENDER_API MouseListener {
+class SEQUOIA_API MouseListener {
 public:
   /// @brief Handle mouse button event
   virtual void mouseButtonEvent(const MouseButtonEvent& event) = 0;

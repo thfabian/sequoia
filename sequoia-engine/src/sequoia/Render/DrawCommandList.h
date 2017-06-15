@@ -33,7 +33,7 @@ namespace render {
 /// rendering state machine.
 ///
 /// @ingroup render
-class SEQUOIA_RENDER_API DrawCommandList {
+class SEQUOIA_API DrawCommandList {
 protected:
   /// List of commands
   core::aligned_vector<DrawCommand> commands_;
@@ -69,7 +69,7 @@ public:
 
 /// @brief Default draw command list without any sorting
 /// @ingroup render
-class SEQUOIA_RENDER_API DrawCommandListDefault : public DrawCommandList {
+class SEQUOIA_API DrawCommandListDefault : public DrawCommandList {
   std::size_t index_;
 
 public:

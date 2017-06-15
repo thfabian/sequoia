@@ -40,7 +40,7 @@ class GLStateCacheManager;
 /// tabs on the OpenGL state machine and is it the only one who is allowed to perform OpenGL API
 /// calls
 /// @ingroup gl
-class SEQUOIA_RENDER_API GLRenderer : public ViewportListener, public NonCopyable {
+class SEQUOIA_API GLRenderer : public ViewportListener, public NonCopyable {
   GLRenderWindow* window_;
 
   /// Default shaders

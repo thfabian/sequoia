@@ -25,7 +25,7 @@ namespace core {
 
 /// @brief Hardware-independent image representation that allows direct access to the pixel data
 /// @ingroup core
-class SEQUOIA_CORE_API Image {
+class SEQUOIA_API Image {
 
   /// File of the image
   std::shared_ptr<File> file_;

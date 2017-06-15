@@ -24,7 +24,7 @@ namespace render {
 
 /// @brief Abstract base class of all RenderWindows
 /// @ingroup render
-class SEQUOIA_RENDER_API RenderWindow : public RenderTarget {
+class SEQUOIA_API RenderWindow : public RenderTarget {
 public:
   /// @brief Hints used to construct the window
   struct WindowHint {

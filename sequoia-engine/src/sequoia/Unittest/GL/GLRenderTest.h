@@ -27,7 +27,7 @@ namespace unittest {
 
 /// @brief Handle creation and initialization of OpenGL RenderWindows for unittesting
 /// @ingroup unittest
-class SEQUOIA_UNITTEST_API GLRenderTest : public testing::Test, public NonCopyable {
+class SEQUOIA_API GLRenderTest : public testing::Test, public NonCopyable {
   render::GLRenderWindow* window_;
 
 protected:

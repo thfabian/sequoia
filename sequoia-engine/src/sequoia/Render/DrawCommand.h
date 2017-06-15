@@ -27,7 +27,7 @@ namespace render {
 
 /// @brief Instructions on how to render the VertexArrayObject
 /// @ingroup render
-class SEQUOIA_RENDER_API DrawCommand {
+class SEQUOIA_API DrawCommand {
 public:
   DrawCommand(const RenderState& state = RenderState(),
               const math::mat4& modelMat = math::mat4(1.0f))

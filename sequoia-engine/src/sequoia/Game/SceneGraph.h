@@ -32,7 +32,7 @@ class SceneNode;
 /// @brief SceneGraphs hold all objects in the scene and are primarly used to stream data to all
 /// nodes
 /// @ingroup game
-class SEQUOIA_GAME_API SceneGraph : public NonCopyable {
+class SEQUOIA_API SceneGraph : public NonCopyable {
 
   /// Top-level nodes
   std::vector<std::shared_ptr<SceneNode>> nodes_;

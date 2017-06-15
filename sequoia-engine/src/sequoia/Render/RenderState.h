@@ -44,7 +44,7 @@ class VertexArrayObject;
 ///   2. Implement the `Changed` methods in all RenderStateChanges classes
 ///
 /// @ingroup render
-struct SEQUOIA_RENDER_API RenderState {
+struct SEQUOIA_API RenderState {
   RenderState();
   RenderState(const RenderState&) = default;
   RenderState(RenderState&&) = default;
@@ -88,7 +88,7 @@ struct SEQUOIA_RENDER_API RenderState {
 /// argument. Note that the internal state will be updated automatically afterwards.
 ///
 /// @ingroup render
-class SEQUOIA_RENDER_API RenderStateCache {
+class SEQUOIA_API RenderStateCache {
 protected:
   /// Current render-state
   RenderState state_;

@@ -28,7 +28,7 @@ namespace core {
 
 /// @brief Indent a string by the specified number of spaces
 /// @ingroup core
-SEQUOIA_CORE_API extern std::string indent(const std::string& string, int amount = 2);
+SEQUOIA_API extern std::string indent(const std::string& string, int amount = 2);
 
 namespace internal {
 

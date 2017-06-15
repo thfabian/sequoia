@@ -55,7 +55,7 @@ namespace render {
 ///   VertexData::modify
 ///
 /// @ingroup render
-class SEQUOIA_RENDER_API VertexVisitor {
+class SEQUOIA_API VertexVisitor {
   void* verticesPtr_ = nullptr; ///< Pointer to the vertex data
   std::size_t numVertices_ = 0; ///< Number of vertices
 
@@ -85,7 +85,7 @@ public:
 
 /// @brief Convert vertex-data to string
 /// @ingroup render
-class SEQUOIA_RENDER_API VertexVisitorStringifier : public VertexVisitor {
+class SEQUOIA_API VertexVisitorStringifier : public VertexVisitor {
   std::string string_;
 
 public:

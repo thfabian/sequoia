@@ -26,7 +26,7 @@ namespace core {
 
 /// @brief Global error handler
 /// @ingroup core
-class SEQUOIA_CORE_API ErrorHandler : public Singleton<ErrorHandler> {
+class SEQUOIA_API ErrorHandler : public Singleton<ErrorHandler> {
   UtfString program_;
 
 public:

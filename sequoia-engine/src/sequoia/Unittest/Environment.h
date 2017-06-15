@@ -32,7 +32,7 @@ namespace unittest {
 
 /// @brief Global test environment
 /// @ingroup unittest
-class SEQUOIA_UNITTEST_API Environment : public testing::Environment,
+class SEQUOIA_API Environment : public testing::Environment,
                                          public Singleton<Environment> {
 public:
   /// @brief Parse command-line

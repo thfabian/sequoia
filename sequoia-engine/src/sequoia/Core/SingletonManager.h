@@ -32,7 +32,7 @@ namespace core {
 /// The destructor deallocates all registered Singletons.
 ///
 /// @ingroup core
-class SEQUOIA_CORE_API SingletonManager : public Singleton<SingletonManager> {
+class SEQUOIA_API SingletonManager : public Singleton<SingletonManager> {
   using ListType = std::list<any>;
   ListType singletons_;
 

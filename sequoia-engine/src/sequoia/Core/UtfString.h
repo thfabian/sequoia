@@ -89,7 +89,7 @@ namespace core {
 /// program requires complex string handling.
 ///
 /// @ingroup core
-class SEQUOIA_CORE_API UtfString {
+class SEQUOIA_API UtfString {
 public:
   typedef std::basic_string<std::uint32_t>::iterator Iterator; ///< Iterator type
   typedef std::basic_string<std::uint32_t>::const_iterator
@@ -434,8 +434,8 @@ public:
   ConstIterator end() const;
 
 private:
-  friend SEQUOIA_CORE_API bool operator==(const UtfString& left, const UtfString& right);
-  friend SEQUOIA_CORE_API bool operator<(const UtfString& left, const UtfString& right);
+  friend SEQUOIA_API bool operator==(const UtfString& left, const UtfString& right);
+  friend SEQUOIA_API bool operator<(const UtfString& left, const UtfString& right);
 
   std::basic_string<std::uint32_t> string_; ///< Internal string of UTF-32 characters
 };
@@ -447,7 +447,7 @@ private:
 /// @param right Right operand (a string)
 ///
 /// @return True if both strings are equal
-SEQUOIA_CORE_API extern bool operator==(const UtfString& left, const UtfString& right);
+SEQUOIA_API extern bool operator==(const UtfString& left, const UtfString& right);
 
 /// @relates UtfString
 /// @brief Overload of != operator to compare two UTF-32 strings
@@ -456,7 +456,7 @@ SEQUOIA_CORE_API extern bool operator==(const UtfString& left, const UtfString& 
 /// @param right Right operand (a string)
 ///
 /// @return True if both strings are different
-SEQUOIA_CORE_API extern bool operator!=(const UtfString& left, const UtfString& right);
+SEQUOIA_API extern bool operator!=(const UtfString& left, const UtfString& right);
 
 /// @relates UtfString
 /// @brief Overload of < operator to compare two UTF-32 strings
@@ -465,7 +465,7 @@ SEQUOIA_CORE_API extern bool operator!=(const UtfString& left, const UtfString& 
 /// @param right Right operand (a string)
 ///
 /// @return True if @a left is lexicographically before @a right
-SEQUOIA_CORE_API extern bool operator<(const UtfString& left, const UtfString& right);
+SEQUOIA_API extern bool operator<(const UtfString& left, const UtfString& right);
 
 /// @relates UtfString
 /// @brief Overload of > operator to compare two UTF-32 strings
@@ -474,7 +474,7 @@ SEQUOIA_CORE_API extern bool operator<(const UtfString& left, const UtfString& r
 /// @param right Right operand (a string)
 ///
 /// @return True if @a left is lexicographically after @a right
-SEQUOIA_CORE_API extern bool operator>(const UtfString& left, const UtfString& right);
+SEQUOIA_API extern bool operator>(const UtfString& left, const UtfString& right);
 
 /// @relates UtfString
 /// @brief Overload of <= operator to compare two UTF-32 strings
@@ -483,7 +483,7 @@ SEQUOIA_CORE_API extern bool operator>(const UtfString& left, const UtfString& r
 /// @param right Right operand (a string)
 ///
 /// @return True if @a left is lexicographically before or equivalent to @a right
-SEQUOIA_CORE_API extern bool operator<=(const UtfString& left, const UtfString& right);
+SEQUOIA_API extern bool operator<=(const UtfString& left, const UtfString& right);
 
 /// @relates UtfString
 /// @brief Overload of >= operator to compare two UTF-32 strings
@@ -492,7 +492,7 @@ SEQUOIA_CORE_API extern bool operator<=(const UtfString& left, const UtfString& 
 /// @param right Right operand (a string)
 ///
 /// @return True if @a left is lexicographically after or equivalent to @a right
-SEQUOIA_CORE_API extern bool operator>=(const UtfString& left, const UtfString& right);
+SEQUOIA_API extern bool operator>=(const UtfString& left, const UtfString& right);
 
 /// @relates UtfString
 /// @brief Overload of binary + operator to concatenate two strings
@@ -501,7 +501,7 @@ SEQUOIA_CORE_API extern bool operator>=(const UtfString& left, const UtfString& 
 /// @param right Right operand (a string)
 ///
 /// @return Concatenated string
-SEQUOIA_CORE_API extern UtfString operator+(const UtfString& left, const UtfString& right);
+SEQUOIA_API extern UtfString operator+(const UtfString& left, const UtfString& right);
 
 } // namespace core
 

@@ -30,7 +30,7 @@ namespace game {
 
 /// @brief Base class of all scene nodes in the SceneGraph
 /// @ingroup game
-class SEQUOIA_GAME_API SceneNode : public std::enable_shared_from_this<SceneNode> {
+class SEQUOIA_API SceneNode : public std::enable_shared_from_this<SceneNode> {
 public:
   /// @brief RTTI distincion
   enum SceneNodeKind {

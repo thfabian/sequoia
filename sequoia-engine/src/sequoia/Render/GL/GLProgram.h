@@ -38,7 +38,7 @@ enum class GLProgramStatus {
 /// @brief OpenGL implementation of a GPUProgram
 /// @see RenderSystem::createPogram
 /// @ingroup gl
-class SEQUOIA_RENDER_API GLProgram : public Program {
+class SEQUOIA_API GLProgram : public Program {
 public:
   /// @brief Represent uniform variables in shaders
   struct GLUniformInfo {
@@ -121,7 +121,7 @@ public:
   virtual std::string toString() const override;
 
   /// @brief Destroy the program
-  friend SEQUOIA_RENDER_API void destroyGLProgram(GLProgram* program) noexcept;
+  friend SEQUOIA_API void destroyGLProgram(GLProgram* program) noexcept;
 
   SEQUOIA_GL_OBJECT(Program)
 

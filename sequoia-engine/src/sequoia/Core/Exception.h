@@ -29,7 +29,7 @@ namespace core {
 
 /// @brief Base class for all sequoia library exceptions
 /// @ingroup core
-class SEQUOIA_CORE_API Exception : public std::exception {
+class SEQUOIA_API Exception : public std::exception {
 public:
   /// @brief Initialize the exception
   ///

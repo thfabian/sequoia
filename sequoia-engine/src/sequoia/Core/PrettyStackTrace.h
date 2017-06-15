@@ -35,7 +35,7 @@ namespace core {
 /// not do anything.
 ///
 /// @ingroup core
-class SEQUOIA_CORE_API PrettyStackTrace : public Singleton<PrettyStackTrace> {
+class SEQUOIA_API PrettyStackTrace : public Singleton<PrettyStackTrace> {
   class Impl;
   Impl* impl_;
 

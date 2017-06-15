@@ -33,7 +33,7 @@ class AssetManager;
 
 /// @brief Reference to an asset file loaded by `AssetManager`
 /// @ingroup game
-class SEQUOIA_GAME_API AssetFile : public File {
+class SEQUOIA_API AssetFile : public File {
   /// Unique idetifier of the file
   const std::size_t id_;
 
@@ -65,7 +65,7 @@ public:
 /// All access to the AssetManager is @b threadsafe.
 ///
 /// @ingroup game
-class SEQUOIA_GAME_API AssetManager : public NonCopyable {
+class SEQUOIA_API AssetManager : public NonCopyable {
 public:
   /// @brief Type of asset
   enum AssetKind {

@@ -27,7 +27,7 @@ class Mesh;
 
 /// @brief SceneNode which can be drawn
 /// @ingroup game
-class SEQUOIA_GAME_API SceneNodeDrawable : public SceneNode {
+class SEQUOIA_API SceneNodeDrawable : public SceneNode {
 public:
   using Base = SceneNode;
 

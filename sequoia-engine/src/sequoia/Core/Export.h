@@ -31,15 +31,17 @@ namespace core {}
 /// @namespace platform
 /// @brief Platform specific implementations and typedefs
 namespace platform {}
+
+
 }
 #endif
 
 #include "sequoia/Core/Compiler.h"
 
 #if defined(SEQUOIA_SHARED_LIBRARIES) && defined(SequoiaCore_EXPORTS)
-#define SEQUOIA_CORE_API SEQUOIA_API_EXPORT
+#define SEQUOIA_API SEQUOIA_API_EXPORT
 #else
-#define SEQUOIA_CORE_API SEQUOIA_API_IMPORT
+#define SEQUOIA_API SEQUOIA_API_IMPORT
 #endif
 
 #endif

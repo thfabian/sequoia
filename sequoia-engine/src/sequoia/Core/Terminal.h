@@ -44,7 +44,7 @@ namespace Terminal {
 /// false.
 ///
 /// @ingroup core
-class SEQUOIA_CORE_API Color {
+class SEQUOIA_API Color {
 public:
   enum Code {
     None = 0,
@@ -84,7 +84,7 @@ public:
 
 /// @brief Get the current width of the terminal
 /// @ingroup core
-extern SEQUOIA_CORE_API int getWidth();
+extern SEQUOIA_API int getWidth();
 
 } // namespace Terminal
 

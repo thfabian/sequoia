@@ -35,7 +35,7 @@ enum class LoggingLevel { Debug = 0, Info, Warning, Error, Disabled };
 
 /// @brief Logger listener
 /// @ingroup core
-class SEQUOIA_CORE_API LoggerListener {
+class SEQUOIA_API LoggerListener {
 public:
   virtual ~LoggerListener() {}
 
@@ -57,7 +57,7 @@ public:
 
 namespace internal {
 
-class SEQUOIA_CORE_API LoggerProxy {
+class SEQUOIA_API LoggerProxy {
   std::mutex* lock_;
   const LoggingLevel level_;
   std::stringstream* ss_;
@@ -117,7 +117,7 @@ public:
 ///
 /// @threadsafe
 /// @ingroup core
-class SEQUOIA_CORE_API Logger : public Singleton<Logger>, public Listenable<LoggerListener> {
+class SEQUOIA_API Logger : public Singleton<Logger>, public Listenable<LoggerListener> {
   const LoggingLevel level_;
   std::stringstream ss_;
   std::mutex lock_;

@@ -50,7 +50,7 @@ using VertexIndexType = unsigned int;
 ///   - @b XNormalized : Should be attribute be normalized when uploaded to the GPU?
 ///
 /// where @b X is one of `{ Position, Normal, TexCoord, Color}`.
-struct SEQUOIA_RENDER_API VertexLayout {
+struct SEQUOIA_API VertexLayout {
 
   enum Type {
     Invalid,
@@ -104,7 +104,7 @@ struct SEQUOIA_RENDER_API VertexLayout {
 //===------------------------------------------------------------------------------------------===//
 
 /// @brief Representation of a 2D vertex
-struct SEQUOIA_RENDER_API Vertex2D {
+struct SEQUOIA_API Vertex2D {
   using PositionType = float;
   using TexCoordType = float;
   using ColorType = unsigned char;
@@ -122,7 +122,7 @@ struct SEQUOIA_RENDER_API Vertex2D {
 };
 
 /// @brief Layout description of `Vertex2D`
-struct SEQUOIA_RENDER_API Vertex2DLayout : public VertexLayout {
+struct SEQUOIA_API Vertex2DLayout : public VertexLayout {
   using VertexType = Vertex2D;
   virtual void accept(VertexVisitor& visitor) const override;
 };
@@ -132,7 +132,7 @@ struct SEQUOIA_RENDER_API Vertex2DLayout : public VertexLayout {
 //===------------------------------------------------------------------------------------------===//
 
 /// @brief Representation of a 3D vertex
-struct SEQUOIA_RENDER_API Vertex3D {
+struct SEQUOIA_API Vertex3D {
   using PositionType = float;
   using NormalType = float;
   using TexCoordType = float;
@@ -153,7 +153,7 @@ struct SEQUOIA_RENDER_API Vertex3D {
 
 /// @brief Layout description of `Vertex3D`
 /// @ingroup render
-struct SEQUOIA_RENDER_API Vertex3DLayout : public VertexLayout {
+struct SEQUOIA_API Vertex3DLayout : public VertexLayout {
   using VertexType = Vertex3D;
   virtual void accept(VertexVisitor& visitor) const override;
 };
