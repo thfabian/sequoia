@@ -92,7 +92,7 @@ macro(sequoia_set_cxx_standard MIN_CXX_STANDARD)
     # Try the latest possible standards first (-std=c++1z or /std:c++latest)    
     if(WIN32 AND NOT MINGW)
       #set(std_cxx_latest "c++latest")
-      # We need to use boost >= 1.63 for this
+      # TODO: We need to use boost >= 1.63 for this
     else()
       set(std_cxx_latest "c++17" "c++1z")      
     endif()
@@ -220,11 +220,16 @@ macro(sequoia_set_cxx_flags)
     add_definitions(-DNOMINMAX)
     add_definitions(-DUNICODE)
     
+    if(BUILD_SHARED_LIBS)
+      add_definitions(-DSEQUOIA_BUILD_SHARED_LIBS)    
+    endif()
+      
     sequoia_check_and_set_cxx_flag("/EHsc" HAVE_MSVC_EHSC)
     sequoia_check_and_set_arch_flag()
 
     # Optimization
     if(SEQUOIA_OPTIMIZE)
+      #
     endif()
     
     # C4244 - conversion from 'type1' to 'type2', possible loss of data
