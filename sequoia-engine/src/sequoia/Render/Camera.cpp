@@ -42,7 +42,7 @@ void Camera::lookAt(const math::vec3& eye, const math::vec3& center, math::vec3 
   //  1. Compute the direction between eye and center => f
   //  2. Compute the z-direction by `f x up` => s
   //  3. Compute the up-direction by `s x f` => u
-  //  4. Local axes are `(f, u, s)`
+  //  4. Local axes are `(s, u, -f) == `(x, y, z)`
   //
   const math::vec3 f = math::normalize(eyeToCenter);
   const math::vec3 s = math::normalize(math::cross(f, math::normalize(up)));
@@ -65,7 +65,7 @@ glm::vec3 Camera::getCenter() const {
 
 glm::vec3 Camera::getUp() const {
   // modelMat * (0, 1, 0, 0)
-  return math::vec3(math::normalize(getModelMatrix()[math::CoordinateSystem::getUpIndex()]));
+  return math::normalize(math::vec3(getModelMatrix()[math::CoordinateSystem::getUpIndex()]));
 }
 
 glm::mat4 Camera::getViewProjectionMatrix() const {

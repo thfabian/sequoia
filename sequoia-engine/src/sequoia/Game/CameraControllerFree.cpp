@@ -122,10 +122,13 @@ void CameraControllerFree::mousePositionEvent(const render::MousePositionEvent& 
   if(!hasCamera())
     return;
   
-  std::cout << event.XOffset << "  " << event.YOffset << std::endl;
+  //std::cout << event.XOffset << "  " << event.YOffset << std::endl;
   
-  yaw(math::Radian::fromDegree(-event.XOffset * 0.15f));
-  pitch(math::Radian::fromDegree(-event.YOffset * 0.15f));
+  rotate(getOrientation() * math::CoordinateSystem::Y(), 
+         math::Radian::fromDegree(-event.XOffset * 0.15f));
+         
+  rotate(getOrientation() * math::CoordinateSystem::X(), 
+         math::Radian::fromDegree(-event.YOffset * 0.15f));
   
   updateNeeded_ = true;
 }
