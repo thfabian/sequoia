@@ -36,7 +36,7 @@ CameraControllerFree::CameraControllerFree(const std::string& name, SceneNodeKin
     : Base(name, kind), forwardKey_(forwardKey), backwardKey_(backwardKey), leftKey_(leftKey),
       rightKey_(rightKey), upKey_(upKey), downKey_(downKey), speed_(5.0f), goingForward_(false),
       goingBack_(false), goingLeft_(false), goingRight_(false), goingUp_(false), goingDown_(false),
-      updateNeeded_(false) {}
+      xOffset_(0), yOffset_(0) {}
 
 CameraControllerFree::CameraControllerFree(const CameraControllerFree& other) : Base(other) {}
 
@@ -58,9 +58,9 @@ void CameraControllerFree::update(const UpdateEvent& event) {
   if(!hasCamera())
     return;
 
-  if(!updateNeeded_ && !goingForward_ && !goingBack_ && !goingRight_ && !goingLeft_ && !goingUp_ &&
-     !goingDown_)
-    return;
+//  if(xOffset_ == 0 && yOffset_ == 0 && !goingForward_ && !goingBack_ && !goingRight_ && !goingLeft_ 
+//     && !goingUp_ && !goingDown_)
+//    return;
 
   math::mat3 axes = getLocalAxes();
   math::vec3 dir(0);
@@ -83,10 +83,15 @@ void CameraControllerFree::update(const UpdateEvent& event) {
     translate(speed_ * event.TimeStep * dir);
   }
 
-  // Update camera position
+std::cout << xOffset_ << " " << yOffset_ << std::endl;
+
+  math::quat newOrientation = math::angleAxis(math::Radian::fromDegree(-xOffset_ * 0.15f).inRadians(), getOrientation() * math::CoordinateSystem::Y());
+  newOrientation *= math::angleAxis(math::Radian::fromDegree(-yOffset_ * 0.15f).inRadians(), getOrientation() * math::CoordinateSystem::X());
+  newOrientation = math::normalize(newOrientation);
+  setOrientation(newOrientation);
+    
+  // Update camera position and orientation
   Base::update(event);
-  
-  updateNeeded_ = false;
 }
 
 std::shared_ptr<SceneNode> CameraControllerFree::clone() {
@@ -121,16 +126,8 @@ void CameraControllerFree::mouseButtonEvent(const render::MouseButtonEvent& even
 void CameraControllerFree::mousePositionEvent(const render::MousePositionEvent& event) {
   if(!hasCamera())
     return;
-  
-  //std::cout << event.XOffset << "  " << event.YOffset << std::endl;
-  
-  rotate(getOrientation() * math::CoordinateSystem::Y(), 
-         math::Radian::fromDegree(-event.XOffset * 0.15f));
-         
-  rotate(getOrientation() * math::CoordinateSystem::X(), 
-         math::Radian::fromDegree(-event.YOffset * 0.15f));
-  
-  updateNeeded_ = true;
+  xOffset_ += event.XOffset;
+  yOffset_ += event.YOffset;
 }
 
 std::pair<std::string, std::string> CameraControllerFree::toStringImpl() const {

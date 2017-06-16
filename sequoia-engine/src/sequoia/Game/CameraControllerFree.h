@@ -96,7 +96,8 @@ private:
   bool goingRight_ : 1;
   bool goingUp_ : 1;
   bool goingDown_ : 1;
-  bool updateNeeded_ : 1;
+  int xOffset_;
+  int yOffset_;
 };
 
 } // namespace game
