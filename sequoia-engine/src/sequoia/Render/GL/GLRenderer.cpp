@@ -15,6 +15,7 @@
 
 #include "sequoia/Core/Casting.h"
 #include "sequoia/Core/Logging.h"
+#include "sequoia/Core/Options.h"
 #include "sequoia/Core/StringUtil.h"
 #include "sequoia/Math/CoordinateSystem.h"
 #include "sequoia/Render/Camera.h"
@@ -114,6 +115,10 @@ GLRenderer::GLRenderer(GLRenderWindow* window) : window_(window) {
   LOG(INFO) << "GL version: " << glbinding::ContextInfo::version().toString();
   LOG(INFO) << "GL vendor: " << glbinding::ContextInfo::vendor();
   LOG(INFO) << "GL renderer: " << glbinding::ContextInfo::renderer();
+
+  // Enable VSync?
+  if(Options::getSingleton().Render.VSync)
+    glfwSwapInterval(1);
 
   // Register as Viewport listener
   window_->getViewport()->addListener(static_cast<ViewportListener*>(this));

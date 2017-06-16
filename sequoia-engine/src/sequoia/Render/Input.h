@@ -232,7 +232,7 @@ struct SEQUOIA_API KeyboardEvent {
   int Mods;
 
   /// @brief Check if modifier key were held down
-  inline bool mod(KeyModifier modifier) const noexcept { return (Mods & (1 << modifier)); }
+  inline bool mod(KeyModifier modifier) const noexcept { return (Mods & modifier); }
 
   /// @brief Check if the key was pressed
   inline bool pressed() const noexcept { return (Action == Action_Pressed); }
@@ -272,7 +272,7 @@ struct SEQUOIA_API MouseButtonEvent {
   int Mods;
 
   /// @brief Check if modifier key were held down
-  inline bool mod(KeyModifier modifier) const noexcept { return (Mods & (1 << modifier)); }
+  inline bool mod(KeyModifier modifier) const noexcept { return (Mods & modifier); }
 
   /// @brief Check if the key was pressed
   inline bool pressed() const noexcept { return (Action == Action_Pressed); }

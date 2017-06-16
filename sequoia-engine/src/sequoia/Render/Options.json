@@ -22,6 +22,11 @@
                 "value_allowed" : "0,1,2,4,8",
                 "doc" : "Set the value of multisample anti-aliasing (MSAA)"
             },
+            "VSync" : {
+                "value_type" : "bool",
+                "value_default" : "true",
+                "doc" : "Enable vertical synchronization"
+            },
             "GLMajorVersion" : {
                 "value_type" : "int",
                 "value_default" : "4",

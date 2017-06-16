@@ -76,8 +76,11 @@ public:
   /// @copydoc RenderTarget::swapBuffers
   virtual void swapBuffers() override;
 
-  /// @copydoc RenderTarget::updateImpl
+  /// @copydoc RenderTarget::update
   virtual void update() override;
+
+  /// @copydoc RenderTarget::setCursorMode
+  virtual void setCursorMode(CursorModeKind mode) override;
 
   /// @brief Get the window
   GLFWwindow* getGLFWwindow();

@@ -18,6 +18,7 @@
 #include "sequoia/Game/Game.h"
 #include "sequoia/Game/SceneGraph.h"
 #include "sequoia/Math/CoordinateSystem.h"
+#include "sequoia/Render/RenderSystem.h"
 
 #include <iostream>
 
@@ -34,8 +35,8 @@ CameraControllerFree::CameraControllerFree(const std::string& name, SceneNodeKin
                                            const std::shared_ptr<Keymap>& downKey)
     : Base(name, kind), forwardKey_(forwardKey), backwardKey_(backwardKey), leftKey_(leftKey),
       rightKey_(rightKey), upKey_(upKey), downKey_(downKey), speed_(5.0f), goingForward_(false),
-      goingBack_(false), goingLeft_(false), goingRight_(false), goingUp_(false), goingDown_(false) {
-}
+      goingBack_(false), goingLeft_(false), goingRight_(false), goingUp_(false), goingDown_(false),
+      updateNeeded_(false) {}
 
 CameraControllerFree::CameraControllerFree(const CameraControllerFree& other) : Base(other) {}
 
@@ -56,7 +57,7 @@ void CameraControllerFree::removeCamera() {
 void CameraControllerFree::update(const UpdateEvent& event) {
   if(!hasCamera())
     return;
-  
+
   if(!updateNeeded_ && !goingForward_ && !goingBack_ && !goingRight_ && !goingLeft_ && !goingUp_ &&
      !goingDown_)
     return;
@@ -64,17 +65,14 @@ void CameraControllerFree::update(const UpdateEvent& event) {
   math::mat3 axes = getLocalAxes();
   math::vec3 dir(0);
 
-//  pitch(math::Radian::fromDegree(3.0f));  
-  //std::cout << axes[2] << std::endl;
-
   if(goingForward_)
-    dir += axes[2];
-  if(goingBack_)
     dir -= axes[2];
+  if(goingBack_)
+    dir += axes[2];
   if(goingRight_)
-    dir -= axes[0];
-  if(goingLeft_)
     dir += axes[0];
+  if(goingLeft_)
+    dir -= axes[0];
   if(goingUp_)
     dir += axes[1];
   if(goingDown_)
@@ -87,6 +85,8 @@ void CameraControllerFree::update(const UpdateEvent& event) {
 
   // Update camera position
   Base::update(event);
+  
+  updateNeeded_ = false;
 }
 
 std::shared_ptr<SceneNode> CameraControllerFree::clone() {
@@ -121,6 +121,13 @@ void CameraControllerFree::mouseButtonEvent(const render::MouseButtonEvent& even
 void CameraControllerFree::mousePositionEvent(const render::MousePositionEvent& event) {
   if(!hasCamera())
     return;
+  
+  std::cout << event.XOffset << "  " << event.YOffset << std::endl;
+  
+  yaw(math::Radian::fromDegree(-event.XOffset * 0.15f));
+  pitch(math::Radian::fromDegree(-event.YOffset * 0.15f));
+  
+  updateNeeded_ = true;
 }
 
 std::pair<std::string, std::string> CameraControllerFree::toStringImpl() const {

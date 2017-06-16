@@ -30,6 +30,7 @@ namespace game {
 class MeshManager;
 class AssetManager;
 class Scene;
+class Keymap;
 
 /// @brief Main class holding all game and rendering related objects and running the main-loop
 /// @ingroup game
@@ -47,6 +48,10 @@ class SEQUOIA_API Game : public Singleton<Game>,
 
   /// Reference to the main window
   render::RenderWindow* mainWindow_;
+  
+  /// Keymap to quit the game
+  std::shared_ptr<Keymap> quitKey_;
+  bool shouldClose_;
 
   /// List of scenes
   std::vector<std::shared_ptr<Scene>> sceneList_;
@@ -70,6 +75,9 @@ public:
   /// @brief Run the main-loop
   void run();
 
+  /// @brief Set the quit key (use `nullptr` to disable the quit key)
+  void setQuitKey(const std::shared_ptr<Keymap>& key);
+
   /// @brief Get the mesh manager
   MeshManager* getMeshManager() const;
 
@@ -90,6 +98,7 @@ public:
 
   /// @brief Get the default program
   const std::shared_ptr<render::Program>& getDefaultProgram() const;
+  
 
   /// @brief Get the main Scene
   Scene* getScene() const;

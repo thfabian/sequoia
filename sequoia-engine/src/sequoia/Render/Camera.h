@@ -17,8 +17,8 @@
 #define SEQUOIA_RENDER_CAMERA
 
 #include "sequoia/Core/Assert.h"
-#include "sequoia/Math/Math.h"
 #include "sequoia/Core/Export.h"
+#include "sequoia/Math/Math.h"
 #include "sequoia/Render/ViewFrustum.h"
 #include "sequoia/Render/Viewport.h"
 #include <memory>
@@ -32,6 +32,21 @@ namespace render {
 ///
 /// Sequoia renders scenes from a camera viewpoint into a buffer of some sort, normally a window or
 /// a texture (a subclass of RenderTarget).
+///
+/// Note in the untransformed coordinate-system the camera is starring down the negative Z-axis and
+/// the eye is located at the origin.
+///
+/// @verbatim
+///           Y
+///           |  center
+///           | /
+///           |/
+///          eye-------X
+///          /
+///         /
+///        Z
+/// @endverbatim
+///
 /// @ingroup render
 class SEQUOIA_API Camera : public ViewFrustum, public ViewportListener {
 protected:
@@ -52,8 +67,8 @@ public:
   /// @brief Initialize the camera
   ///
   /// By default the camera is located at `(0, 0, 10)` and stares down at `(0, 0, 0)`.
-  Camera(const math::vec3& eye = math::vec3(2, 2, 2),
-         const math::vec3& center = math::vec3(0, 0, 0), math::vec3 up = math::vec3(0, 1, 0));
+  Camera(const math::vec3& eye = math::vec3(0, 0, 10),
+         const math::vec3& center = math::vec3(0, 0, 0), const math::vec3& up = math::vec3(0, 1, 0));
 
   virtual ~Camera() {}
 
@@ -63,8 +78,15 @@ public:
   /// @brief Get/Set the `center` of the camera (where the camera points to)
   math::vec3 getCenter() const;
 
-  /// @brief Get/Set the `up` direction of the camera (defines local coordiante system)
+  /// @brief Get/Set the `up` direction of the camera
   math::vec3 getUp() const;
+
+  /// @brief Position the camera at the `eye` starring at `center`
+  ///
+  /// @param eye      Specifies the position of the eye point (where the camera is located)
+  /// @param center   Specifies the position of the reference point (where the camera points to)
+  /// @param up       Specifies the direction of the up vector
+  void lookAt(const math::vec3& eye, const math::vec3& center, math::vec3 up);
 
   /// @brief Get the view projection matrix
   ///

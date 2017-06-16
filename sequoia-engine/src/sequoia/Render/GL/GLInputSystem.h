@@ -16,8 +16,8 @@
 #ifndef SEQUOIA_RENDER_GL_GLINPUTSYSTEM_H
 #define SEQUOIA_RENDER_GL_GLINPUTSYSTEM_H
 
-#include "sequoia/Core/Listenable.h"
 #include "sequoia/Core/Export.h"
+#include "sequoia/Core/Listenable.h"
 #include "sequoia/Render/Input.h"
 
 struct GLFWwindow;
@@ -26,18 +26,18 @@ namespace sequoia {
 
 namespace render {
 
-class RenderTarget;
+class GLRenderWindow;
 
 /// @brief Handle keyboard and mouse events
 /// @ingroup gl
 class SEQUOIA_API GLInputSystem : public Listenable<KeyboardListener, MouseListener> {
-  RenderTarget* target_;
+  GLRenderWindow* window_;
 
   /// Previous mouse positions
   int prevPosX_, prevPosY_;
 
 public:
-  GLInputSystem(RenderTarget* target, GLFWwindow* window);
+  GLInputSystem(GLRenderWindow* target, bool centerCursor);
 
   /// @brief GLFW callback for the keyboard
   void keyCallback(int key, int action, int mods) noexcept;
@@ -47,6 +47,12 @@ public:
 
   /// @brief GLFW callback for the mouse position
   void mousePositionCallback(int xpos, int ypos) noexcept;
+
+  /// @brief Center the cursor
+  void centerCursor();
+  
+  /// @brief Set mouse position to `(xpos, ypos)`
+  void setCursorPosition(int xpos, int ypos);
 };
 
 } // namespace render

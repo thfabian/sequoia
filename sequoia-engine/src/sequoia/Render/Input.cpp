@@ -35,9 +35,13 @@ static std::string modToString(int mods) {
 
   std::vector<KeyModifier> modvec;
   for(auto mod : {Mod_Shift, Mod_Ctrl, Mod_Alt, Mod_Super})
-    if(mods & (1 << (mod)))
+    if(mods & mod)
       modvec.push_back(mod);
-  return core::RangeToString(", ", "{", "}")(modvec);
+  return core::RangeToString(", ", "{", "}")(modvec, [](KeyModifier key) {
+    std::stringstream ss;
+    ss << key;
+    return ss.str();
+  });
 }
 
 } // anonymous namespace

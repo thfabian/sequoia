@@ -13,13 +13,14 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Game/Game.h"
 #include "sequoia/Core/ErrorHandler.h"
 #include "sequoia/Core/Logging.h"
 #include "sequoia/Core/Options.h"
 #include "sequoia/Core/Platform.h"
 #include "sequoia/Core/StringSwitch.h"
 #include "sequoia/Game/AssetManager.h"
+#include "sequoia/Game/Game.h"
+#include "sequoia/Game/Keymap.h"
 #include "sequoia/Game/MeshManager.h"
 #include "sequoia/Game/Scene.h"
 #include "sequoia/Render/Camera.h"
@@ -36,7 +37,7 @@ namespace game {
 
 Game::Game()
     : renderSystem_(nullptr), meshManager_(nullptr), assetManager_(nullptr), mainWindow_(nullptr),
-      scene_(nullptr) {}
+      quitKey_(nullptr), shouldClose_(false), scene_(nullptr) {}
 
 Game::~Game() { cleanup(); }
 
@@ -46,7 +47,10 @@ void Game::run() {
   render::DrawCommandList* drawCommandList = mainWindow_->getDrawCommandList().get();
 
   // Start main-loop
-  while(!mainWindow_->isClosed()) {
+  while(!mainWindow_->isClosed() && !shouldClose_) {
+
+    // Query I/O events
+    renderSystem_->pollEvents();
 
     // Set the draw commands
     drawCommandList->clear();
@@ -60,13 +64,12 @@ void Game::run() {
 
     // Update screen
     renderSystem_->swapBuffers();
-
-    // Query I/O events
-    renderSystem_->pollEvents();
   }
 
   LOG(INFO) << "Done with main-loop";
 }
+
+void Game::setQuitKey(const std::shared_ptr<Keymap>& key) { quitKey_ = key; }
 
 void Game::init(bool hideWindow) {
   LOG(INFO) << "Initializing Game ...";
@@ -90,11 +93,7 @@ void Game::init(bool hideWindow) {
                           .Case("fullscreen", WindowModeKind::WK_Fullscreen)
                           .Case("windowed-fullscreen", WindowModeKind::WK_WindowedFullscreen)
                           .Default(WindowModeKind::WK_Window);
-    hint.MSAA = opt.Render.MSAA;
     hint.HideWindow = hideWindow;
-
-    hint.GLMajorVersion = opt.Render.GLMajorVersion;
-    hint.GLMinorVersion = opt.Render.GLMinorVersion;
 
     mainWindow_ = renderSystem_->createWindow(hint);
 
@@ -105,6 +104,8 @@ void Game::init(bool hideWindow) {
 
     // Initialize the main-window
     mainWindow_->init();
+    mainWindow_->setCursorMode(render::RenderTarget::CK_Disabled);
+    quitKey_ = Keymap::makeDefault(render::Key_Q, render::Mod_Ctrl);
 
     // Register the game as a keyboard and mouse listener
     renderSystem_->addKeyboardListener(mainWindow_, this);
@@ -152,6 +153,9 @@ void Game::cleanup() {
 }
 
 void Game::keyboardEvent(const render::KeyboardEvent& event) {
+  if(quitKey_ && quitKey_->handle(event))
+    shouldClose_ = true;
+
   for(KeyboardListener* listener : getListeners<KeyboardListener>())
     listener->keyboardEvent(event);
 }

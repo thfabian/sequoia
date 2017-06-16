@@ -16,8 +16,8 @@
 #ifndef SEQUOIA_RENDER_RENDERTARGET_H
 #define SEQUOIA_RENDER_RENDERTARGET_H
 
-#include "sequoia/Core/Listenable.h"
 #include "sequoia/Core/Export.h"
+#include "sequoia/Core/Listenable.h"
 #include "sequoia/Render/Viewport.h"
 #include <memory>
 
@@ -33,6 +33,14 @@ class SEQUOIA_API RenderTarget {
 public:
   /// @brief Discriminator for RTTI (dyn_cast<> et al.)
   enum RenderTargetKind { RK_RenderWindow, RK_GLRenderWindow, RK_RenderWindowLast };
+
+  /// @brief Set the mode of the cursor
+  enum CursorModeKind {
+    CK_Disabled, ///< This will hide the cursor and lock it to the specified window. It should be
+                 ///  constantly re-centered
+    CK_Hidden,   ///< Cursor becomes hidden when it is over a window
+    CK_Normal    ///< Keep the cursor provided by the operating system
+  };
 
   RenderTarget(RenderTargetKind kind);
   virtual ~RenderTarget() {}
@@ -50,6 +58,9 @@ public:
 
   /// @brief Tells the target to update it's contents
   virtual void update() = 0;
+
+  /// @brief Set if the cursor should be hidden cursor
+  virtual void setCursorMode(CursorModeKind mode) = 0;
 
   /// @brief Is the target rendered?
   bool isActive() const;

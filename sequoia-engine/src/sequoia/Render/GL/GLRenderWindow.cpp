@@ -14,6 +14,7 @@
 //===------------------------------------------------------------------------------------------===//
 
 #include "sequoia/Core/Logging.h"
+#include "sequoia/Core/Options.h"
 #include "sequoia/Core/Unreachable.h"
 #include "sequoia/Render/Exception.h"
 #include "sequoia/Render/GL/GL.h"
@@ -33,6 +34,8 @@ GLRenderWindow::GLRenderWindow(GLRenderSystem* renderSystem,
                                const RenderWindow::WindowHint& windowHints)
     : RenderWindow(RK_GLRenderWindow), renderSystem_(renderSystem), window_(nullptr),
       windowWidth_(-1), windowHeight_(-1), renderer_(nullptr), inputSystem_(nullptr) {
+  Options& opt = Options::getSingleton();
+
   LOG(INFO) << "Initializing OpenGL window " << this << " ...";
 
   // Open the window hidden?
@@ -42,8 +45,8 @@ GLRenderWindow::GLRenderWindow(GLRenderSystem* renderSystem,
   }
 
   // Set Antialiasing
-  glfwWindowHint(GLFW_SAMPLES, windowHints.MSAA);
-  LOG(INFO) << "Using MSAA: " << windowHints.MSAA;
+  glfwWindowHint(GLFW_SAMPLES, opt.Render.MSAA);
+  LOG(INFO) << "Using MSAA: " << opt.Render.MSAA;
 
   // Specifies whether the OpenGL context should be forward-compatible, i.e. one where all
   // functionality deprecated in the requested version of OpenGL is removed
@@ -109,10 +112,10 @@ GLRenderWindow::GLRenderWindow(GLRenderSystem* renderSystem,
                     "failed to initialize GLFW window, required atleast OpenGL Core (>= 3.3)");
   };
 
-  createWindow(false, windowHints.GLMajorVersion, windowHints.GLMinorVersion);
+  createWindow(false, opt.Render.GLMajorVersion, opt.Render.GLMinorVersion);
   if(!window_) {
     LOG(WARNING) << "Failed to initialize GLFW window, requested OpenGL ("
-                 << windowHints.GLMajorVersion << "." << windowHints.GLMinorVersion << ")";
+                 << opt.Render.GLMajorVersion << "." << opt.Render.GLMinorVersion << ")";
 
     // We need atleast OpenGL 3.3
     createWindow(true, 3, 3);
@@ -147,6 +150,25 @@ GLRenderWindow::GLRenderWindow(GLRenderSystem* renderSystem,
   LOG(INFO) << "Done initializing OpenGL window " << this;
 }
 
+void GLRenderWindow::init() {
+  SEQUOIA_ASSERT_MSG(hasViewport(), "RenderTarget::init() called with no Viewport set");
+
+  renderer_ = std::make_unique<GLRenderer>(this);
+  renderSystem_->registerRenderer(this, renderer_.get());
+
+  LOG(INFO) << "Registering IO callbacks ...";
+
+  inputSystem_ = std::make_unique<GLInputSystem>(this, true);
+  renderSystem_->registerInputSystem(this, inputSystem_.get());
+
+  glfwSetInputMode(window_, GLFW_STICKY_KEYS, 1);
+  glfwSetKeyCallback(window_, GLRenderWindow::keyCallbackDispatch);
+  glfwSetMouseButtonCallback(window_, GLRenderWindow::mouseButtonCallbackDispatch);
+  glfwSetCursorPosCallback(window_, GLRenderWindow::mousePositionCallbackDispatch);
+
+  LOG(INFO) << "Done registering IO callbacks";
+}
+
 GLRenderWindow::~GLRenderWindow() {
   LOG(INFO) << "Terminating OpenGL window " << this << " ...";
 
@@ -179,7 +201,6 @@ void GLRenderWindow::resizeCallbackDispatch(GLFWwindow* window, int width, int h
 
 void GLRenderWindow::keyCallbackDispatch(GLFWwindow* window, int key, int scancode, int action,
                                          int mods) {
-  (void)scancode;
   GLRenderWindow::StaticWindowMap[window]->getInputSystem()->keyCallback(key, action, mods);
 }
 
@@ -201,23 +222,19 @@ void GLRenderWindow::swapBuffers() { glfwSwapBuffers(window_); }
 
 void GLRenderWindow::update() { renderer_->render(); }
 
-void GLRenderWindow::init() {
-  SEQUOIA_ASSERT_MSG(hasViewport(), "RenderTarget::init() called with no Viewport set");
-
-  renderer_ = std::make_unique<GLRenderer>(this);
-  renderSystem_->registerRenderer(this, renderer_.get());
-
-  LOG(INFO) << "Registering IO callbacks ...";
-
-  inputSystem_ = std::make_unique<GLInputSystem>(this, window_);
-  renderSystem_->registerInputSystem(this, inputSystem_.get());
-
-  //glfwSetInputMode(window_, GLFW_STICKY_KEYS, 1);
-  glfwSetKeyCallback(window_, GLRenderWindow::keyCallbackDispatch);
-  glfwSetMouseButtonCallback(window_, GLRenderWindow::mouseButtonCallbackDispatch);
-  glfwSetCursorPosCallback(window_, GLRenderWindow::mousePositionCallbackDispatch);
-
-  LOG(INFO) << "Done registering IO callbacks";
+void GLRenderWindow::setCursorMode(RenderTarget::CursorModeKind mode) {
+  switch(mode) {
+  case CK_Disabled:
+    glfwSetInputMode(window_, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    getInputSystem()->centerCursor();
+    break;
+  case CK_Hidden:
+    glfwSetInputMode(window_, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+    break;
+  case CK_Normal:
+    glfwSetInputMode(window_, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+    break;
+  }
 }
 
 GLFWwindow* GLRenderWindow::getGLFWwindow() { return window_; }

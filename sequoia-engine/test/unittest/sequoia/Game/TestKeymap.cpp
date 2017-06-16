@@ -1,12 +1,12 @@
 //===--------------------------------------------------------------------------------*- C++ -*-===//
-//                         _____                        _       
-//                        / ____|                      (_)      
-//                       | (___   ___  __ _ _   _  ___  _  __ _ 
+//                         _____                        _
+//                        / ____|                      (_)
+//                       | (___   ___  __ _ _   _  ___  _  __ _
 //                        \___ \ / _ \/ _` | | | |/ _ \| |/ _` |
 //                        ____) |  __/ (_| | |_| | (_) | | (_| |
 //                       |_____/ \___|\__, |\__,_|\___/|_|\__,_| - Game Engine (2016-2017)
-//                                       | |                    
-//                                       |_| 
+//                                       | |
+//                                       |_|
 //
 // This file is distributed under the MIT License (MIT).
 // See LICENSE.txt for details.
@@ -46,9 +46,9 @@ TEST(KeymapTest, Key) {
     EXPECT_EQ(map.getMod(), Mod_Alt);
     EXPECT_EQ(map.getButton(), MouseButton_Invalid);
 
-    render::KeyboardEvent eventTrue{nullptr, Key_W, Action_Pressed, (1 << Mod_Alt)};
-    render::KeyboardEvent eventFalse1{nullptr, Key_W, Action_Pressed, (1 << Mod_Ctrl)};
-    render::MouseButtonEvent eventFalse2{nullptr, MouseButton_Left, Action_Pressed, (1 << Mod_Alt)};
+    render::KeyboardEvent eventTrue{nullptr, Key_W, Action_Pressed, Mod_Alt};
+    render::KeyboardEvent eventFalse1{nullptr, Key_W, Action_Pressed, Mod_Ctrl};
+    render::MouseButtonEvent eventFalse2{nullptr, MouseButton_Left, Action_Pressed, Mod_Alt};
 
     EXPECT_TRUE(map.handle(eventTrue));
     EXPECT_FALSE(map.handle(eventFalse1));
@@ -80,10 +80,9 @@ TEST(KeymapTest, Mouse) {
     EXPECT_EQ(map.getMod(), Mod_Alt);
     EXPECT_EQ(map.getButton(), MouseButton_Right);
 
-    render::MouseButtonEvent eventTrue{nullptr, MouseButton_Right, Action_Pressed, (1 << Mod_Alt)};
-    render::MouseButtonEvent eventFalse1{nullptr, MouseButton_Left, Action_Pressed,
-                                         (1 << Mod_Ctrl)};
-    render::KeyboardEvent eventFalse2{nullptr, Key_S, Action_Pressed, (1 << Mod_Alt)};
+    render::MouseButtonEvent eventTrue{nullptr, MouseButton_Right, Action_Pressed, Mod_Alt};
+    render::MouseButtonEvent eventFalse1{nullptr, MouseButton_Left, Action_Pressed, Mod_Ctrl};
+    render::KeyboardEvent eventFalse2{nullptr, Key_S, Action_Pressed, Mod_Alt};
 
     EXPECT_TRUE(map.handle(eventTrue));
     EXPECT_FALSE(map.handle(eventFalse1));

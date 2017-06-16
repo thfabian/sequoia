@@ -35,6 +35,8 @@ TEST_F(CameraControllerTest, CameraController) {
   EXPECT_EQ(node->getKind(), SceneNode::SK_CameraController);
   EXPECT_FALSE(node->hasCamera());
 
+  // TODO: test setPosition/setOrientation and check eye and center
+  
   // Clone node
   auto nodeClone = node->clone();
   nodeClone->setName("copy");

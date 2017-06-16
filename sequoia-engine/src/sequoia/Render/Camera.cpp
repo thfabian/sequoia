@@ -21,22 +21,23 @@ namespace sequoia {
 
 namespace render {
 
-Camera::Camera(const math::vec3& eye, const math::vec3& center, math::vec3 up)
-    : ViewFrustum(), position_(eye), modelMatrixIsDirty_(true) {
+Camera::Camera(const math::vec3& eye, const math::vec3& center, const math::vec3& up)
+    : ViewFrustum(), modelMatrixIsDirty_(true) {
+  lookAt(eye, center, up);
+}
 
+void Camera::lookAt(const math::vec3& eye, const math::vec3& center, math::vec3 up) {
   math::vec3 eyeToCenter = center - eye;
   eyeToCenterDistance_ = math::length(eyeToCenter);
 
-  // Compute the local axes
+  // Note that by default the eye is located at the origin and the center is on the negatice Z-axis
+  // The upvector is (0, 1, 0).
   //
-  //        up                                u
-  //         ^                                ^
-  //         |                                 \
-  //         |                                  \
-  //        eye ----> center     ===>            0--------> f
-  //                                             /
-  //                                            /
-  //                                           s
+  //        up
+  //         ^   center                        u     f
+  //         |  /                               \   /
+  //         | /                                 \ /
+  //        eye              ===>                 0------> s
   //
   //  1. Compute the direction between eye and center => f
   //  2. Compute the z-direction by `f x up` => s
@@ -46,7 +47,7 @@ Camera::Camera(const math::vec3& eye, const math::vec3& center, math::vec3 up)
   const math::vec3 f = math::normalize(eyeToCenter);
   const math::vec3 s = math::normalize(math::cross(f, math::normalize(up)));
   const math::vec3 u = math::cross(s, f);
-  math::mat3 localAxes(f, u, s);
+  math::mat3 localAxes(s, u, -f);
 
   setPosition(eye);
   setOrientation(math::normalize(math::quat(localAxes)));
@@ -58,8 +59,8 @@ glm::vec3 Camera::getEye() const {
 }
 
 glm::vec3 Camera::getCenter() const {
-  // eye + modelMat * (1, 0, 0, 0) * eyeToCenterDistance
-  return getEye() + math::vec3(getModelMatrix()[0] * eyeToCenterDistance_);
+  // eye + modelMat * (0, 0, -1, 0) * eyeToCenterDistance
+  return getEye() + math::vec3(getModelMatrix()[2] * (-eyeToCenterDistance_));
 }
 
 glm::vec3 Camera::getUp() const {

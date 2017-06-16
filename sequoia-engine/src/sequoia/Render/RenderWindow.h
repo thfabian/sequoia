@@ -47,18 +47,6 @@ public:
 
     /// Use hidden window?
     bool HideWindow = false;
-
-    /// Full-scene anti-aliasing
-    int MSAA = 0;
-
-    /// OpenGL major version
-    int GLMajorVersion = 3;
-
-    /// OpenGL minor version
-    int GLMinorVersion = 3;
-
-    /// Is IO enabled (i.e captures Keyboard and Mouse events)?
-    bool IOEnabled = true;
   };
 
   RenderWindow(RenderTargetKind kind) : RenderTarget(kind) {}

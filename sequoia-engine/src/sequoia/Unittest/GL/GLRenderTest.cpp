@@ -28,8 +28,6 @@ render::GLRenderWindow* GLRenderTest::getWindow() const { return window_; }
 void GLRenderTest::SetUp() {
   render::RenderWindow::WindowHint hints;
   hints.HideWindow = true;
-  hints.GLMajorVersion = 4;
-  hints.GLMinorVersion = 5;
   hints.WindowMode = render::RenderWindow::WindowHint::WK_Window;
   window_ = (render::GLRenderWindow*)render::RenderSystem::getSingleton().createWindow(hints);
 
