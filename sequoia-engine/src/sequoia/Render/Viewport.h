@@ -25,6 +25,7 @@ namespace sequoia {
 namespace render {
 
 /// @brief Viewport Listeners
+/// @ingroup render
 class SEQUOIA_API ViewportListener {
 public:
   /// @brief The geometry of the Viewport changed

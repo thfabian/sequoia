@@ -41,7 +41,9 @@ namespace render {
 /// time.
 ///
 /// @ingroup render
-class SEQUOIA_API RenderSystem : public Singleton<RenderSystem>, public RenderSystemObject {
+class SEQUOIA_API RenderSystem : public Singleton<RenderSystem>,
+                                 public Listenable<InputEventListener>,
+                                 public RenderSystemObject {
 public:
   /// @brief Create the RenderSystem of the given `kind`
   /// @remark Terminates the program on failure

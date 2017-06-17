@@ -26,7 +26,7 @@ Camera::Camera(const math::vec3& eye, const math::vec3& center, const math::vec3
   lookAt(eye, center, up);
 }
 
-void Camera::lookAt(const math::vec3& eye, const math::vec3& center, math::vec3 up) {
+void Camera::lookAt(const math::vec3& eye, const math::vec3& center, const math::vec3& up) {
   math::vec3 eyeToCenter = center - eye;
   eyeToCenterDistance_ = math::length(eyeToCenter);
 
@@ -51,6 +51,11 @@ void Camera::lookAt(const math::vec3& eye, const math::vec3& center, math::vec3 
 
   setPosition(eye);
   setOrientation(math::normalize(math::quat(localAxes)));
+
+  for(auto listener : getListeners<CameraPositionListener>()) {
+    listener->cameraListenerPositionChanged(this);
+    listener->cameraListenerRotationChanged(this);
+  }
 }
 
 glm::vec3 Camera::getEye() const {
@@ -69,9 +74,19 @@ glm::vec3 Camera::getUp() const {
 }
 
 glm::mat4 Camera::getViewProjectionMatrix() const {
-  return (math::perspective(getFieldOfViewY(), getAspectRatio(), getZNearClipping(),
-                            getZFarClipping()) *
+  return (math::perspective(math::Degree(getFieldOfViewY()).inRadians(), getAspectRatio(),
+                            getZNearClipping(), getZFarClipping()) *
           math::lookAt(getEye(), getCenter(), getUp()));
+}
+
+void Camera::setPosition(const glm::vec3& position) {
+  modelMatrixIsDirty_ = true;
+  position_ = position;
+}
+
+void Camera::setOrientation(const glm::quat& orientation) {
+  modelMatrixIsDirty_ = true;
+  orientation_ = orientation;
 }
 
 void Camera::viewportGeometryChanged(Viewport* viewport) {

@@ -33,7 +33,8 @@ std::unordered_map<GLFWwindow*, GLRenderWindow*> GLRenderWindow::StaticWindowMap
 GLRenderWindow::GLRenderWindow(GLRenderSystem* renderSystem,
                                const RenderWindow::WindowHint& windowHints)
     : RenderWindow(RK_GLRenderWindow), renderSystem_(renderSystem), window_(nullptr),
-      windowWidth_(-1), windowHeight_(-1), renderer_(nullptr), inputSystem_(nullptr) {
+      windowWidth_(-1), windowHeight_(-1), mode_(CursorModeKind::CK_Normal), renderer_(nullptr),
+      inputSystem_(nullptr) {
   Options& opt = Options::getSingleton();
 
   LOG(INFO) << "Initializing OpenGL window " << this << " ...";
@@ -165,6 +166,9 @@ void GLRenderWindow::init() {
   glfwSetKeyCallback(window_, GLRenderWindow::keyCallbackDispatch);
   glfwSetMouseButtonCallback(window_, GLRenderWindow::mouseButtonCallbackDispatch);
   glfwSetCursorPosCallback(window_, GLRenderWindow::mousePositionCallbackDispatch);
+  glfwSetCursorEnterCallback(window_, GLRenderWindow::mouseEnterCallbackDispatch);
+
+  renderSystem_->addListener<InputEventListener>(static_cast<InputEventListener*>(this));
 
   LOG(INFO) << "Done registering IO callbacks";
 }
@@ -214,6 +218,21 @@ void GLRenderWindow::mousePositionCallbackDispatch(GLFWwindow* window, double xp
   GLRenderWindow::StaticWindowMap[window]->getInputSystem()->mousePositionCallback(xpos, ypos);
 }
 
+void GLRenderWindow::mouseEnterCallbackDispatch(GLFWwindow* window, int entered) {
+  if(entered) {
+    GLRenderWindow* glWindow = GLRenderWindow::StaticWindowMap[window];
+    if(glWindow->getCursorMode() == RenderTarget::CursorModeKind::CK_Disabled)
+      glWindow->getInputSystem()->centerCursor();
+  }
+}
+
+void GLRenderWindow::inputEventStart() {}
+
+void GLRenderWindow::inputEventStop() {
+  if(mode_ == CK_Disabled)
+    getInputSystem()->centerCursor();
+}
+
 int GLRenderWindow::getWidth() const { return windowWidth_; }
 
 int GLRenderWindow::getHeight() const { return windowHeight_; }
@@ -223,10 +242,10 @@ void GLRenderWindow::swapBuffers() { glfwSwapBuffers(window_); }
 void GLRenderWindow::update() { renderer_->render(); }
 
 void GLRenderWindow::setCursorMode(RenderTarget::CursorModeKind mode) {
-  switch(mode) {
+  mode_ = mode;
+  switch(mode_) {
   case CK_Disabled:
     glfwSetInputMode(window_, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-    getInputSystem()->centerCursor();
     break;
   case CK_Hidden:
     glfwSetInputMode(window_, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
@@ -237,7 +256,11 @@ void GLRenderWindow::setCursorMode(RenderTarget::CursorModeKind mode) {
   }
 }
 
+void GLRenderWindow::centerCursor() { getInputSystem()->centerCursor(); }
+
 GLFWwindow* GLRenderWindow::getGLFWwindow() { return window_; }
+
+RenderTarget::CursorModeKind GLRenderWindow::getCursorMode() { return mode_; }
 
 GLRenderer* GLRenderWindow::getRenderer() { return renderer_.get(); }
 

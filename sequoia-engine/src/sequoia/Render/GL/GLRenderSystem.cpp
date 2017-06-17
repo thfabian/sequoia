@@ -65,13 +65,21 @@ RenderWindow* GLRenderSystem::createWindow(const RenderWindow::WindowHint& hints
 void GLRenderSystem::destroyTarget(RenderTarget* target) {
   rendererMap_.erase(target);
   for(auto it = renderTargets_.begin(); it != renderTargets_.end();)
-    if(it->get() == target) {
+    if(it->get() == target)
       it = renderTargets_.erase(it);
-    } else
+    else
       ++it;
 }
 
-void GLRenderSystem::pollEvents() { glfwPollEvents(); }
+void GLRenderSystem::pollEvents() {
+  for(auto* listener : getListeners<InputEventListener>())
+    listener->inputEventStart();
+
+  glfwPollEvents();
+
+  for(auto* listener : getListeners<InputEventListener>())
+    listener->inputEventStop();
+}
 
 void GLRenderSystem::renderOneFrame() {
   std::for_each(renderTargets_.begin(), renderTargets_.end(), [](const auto& target) {

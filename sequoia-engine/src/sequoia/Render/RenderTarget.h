@@ -59,8 +59,11 @@ public:
   /// @brief Tells the target to update it's contents
   virtual void update() = 0;
 
-  /// @brief Set if the cursor should be hidden cursor
+  /// @brief Set the mode of the cursor
   virtual void setCursorMode(CursorModeKind mode) = 0;
+
+  /// @brief Center the cursor in the middle of the window
+  virtual void centerCursor() = 0;
 
   /// @brief Is the target rendered?
   bool isActive() const;

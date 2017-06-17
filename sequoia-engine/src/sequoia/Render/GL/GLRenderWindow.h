@@ -17,6 +17,7 @@
 #define SEQUOIA_RENDER_GL_GLRENDERWINDOW_H
 
 #include "sequoia/Render/RenderWindow.h"
+#include "sequoia/Render/Input.h"
 #include <string>
 #include <unordered_map>
 #include <vector>
@@ -33,12 +34,16 @@ class GLInputSystem;
 
 /// @brief OpenGL render window
 /// @ingroup gl
-class SEQUOIA_API GLRenderWindow : public RenderWindow {
+class SEQUOIA_API GLRenderWindow : public RenderWindow, public InputEventListener {
   GLRenderSystem* renderSystem_;
   GLFWwindow* window_;
 
+  /// Short-hard or window geometry
   int windowWidth_;
   int windowHeight_;
+
+  /// Mode of the cursor
+  CursorModeKind mode_;
 
   std::unique_ptr<GLRenderer> renderer_;
   std::unique_ptr<GLInputSystem> inputSystem_;
@@ -81,9 +86,15 @@ public:
 
   /// @copydoc RenderTarget::setCursorMode
   virtual void setCursorMode(CursorModeKind mode) override;
+  
+  /// @copydoc RenderTarget::centerCursor
+  virtual void centerCursor() override;
 
   /// @brief Get the window
   GLFWwindow* getGLFWwindow();
+  
+  /// @brief Get the cursor mode
+  CursorModeKind getCursorMode();
 
   /// @brief Get the associated OpenGL context of this window
   GLRenderer* getRenderer();
@@ -100,12 +111,20 @@ public:
   static void keyCallbackDispatch(GLFWwindow* window, int key, int scancode, int action, int mods);
   static void mouseButtonCallbackDispatch(GLFWwindow* window, int button, int action, int mods);
   static void mousePositionCallbackDispatch(GLFWwindow* window, double xpos, double ypos);
+  static void mouseEnterCallbackDispatch(GLFWwindow* window, int entered);  
   /// @}
 
+  /// @copydoc InputEventListener::inputEventStart
+  virtual void inputEventStart() override;
+  
+  /// @copydoc InputEventListener::inputEventStop
+  virtual void inputEventStop() override;
+  
   /// @brief Static map of all GLFWwindows to their respective GLRenderWindows
   static std::unordered_map<GLFWwindow*, GLRenderWindow*> StaticWindowMap;
 
   static bool classof(const RenderTarget* target) { return target->getKind() == RK_GLRenderWindow; }
+  
 };
 
 } // namespace render

@@ -29,6 +29,7 @@ endif()
 
 option(SEQUOIA_ASSERTS "Enable asserts" ${BUILD_IS_NOT_RELEASE})
 option(SEQUOIA_OPTIMIZE "Enable all optimizations" ${BUILD_IS_RELEASE})
+option(SEQUOIA_USE_CCACHE "Use compile cache if available" ON)
 
 ##===---------------------------------- Testing -----------------------------------------------===##
 option(SEQUOIA_TESTING "Enable testing" ON)

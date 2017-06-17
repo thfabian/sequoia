@@ -36,6 +36,10 @@ class SEQUOIA_API GLInputSystem : public Listenable<KeyboardListener, MouseListe
   /// Previous mouse positions
   int prevPosX_, prevPosY_;
 
+  /// Ignore the next mouse position event (by default the first mouse event is dropped as on Linux
+  /// this sometimes has some wired coordiantes especially if launched on a secondary monitor)
+  bool ignoreNextMousePosEvent_;
+
 public:
   GLInputSystem(GLRenderWindow* target, bool centerCursor);
 
@@ -50,7 +54,7 @@ public:
 
   /// @brief Center the cursor
   void centerCursor();
-  
+
   /// @brief Set mouse position to `(xpos, ypos)`
   void setCursorPosition(int xpos, int ypos);
 };

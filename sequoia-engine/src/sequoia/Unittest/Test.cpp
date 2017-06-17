@@ -25,6 +25,12 @@ namespace unittest {
 
 namespace internal {
 
+namespace {
+
+static const char* Dimensions[] = {"X", "Y", "Z", "W"};
+
+} // anonymous namespace
+
 std::pair<bool, std::string> compareHelper(float expected, float actual, float absErr) {
   if(std::isnan(expected))
     return std::make_pair(false, "  abs(expected - actual) < absErr    FAILED\n"
@@ -54,25 +60,29 @@ std::pair<bool, std::string> compareHelper(float expected, float actual, float a
   return std::make_pair(true, std::string());
 }
 
-std::pair<bool, std::string> compareHelper(const glm::vec3& expected, const glm::vec3& actual,
-                                           float absErr, const char* expectedStr,
+std::pair<bool, std::string> compareHelper(const float* expected, const float* actual,
+                                           std::size_t size, float absErr, const char* expectedStr,
                                            const char* actualStr) {
-  const char* dim[] = {"X", "Y", "Z"};
-  bool hasError = false;
+  SEQUOIA_ASSERT(size <= 4);
 
+  bool hasError = false;
   std::stringstream ss;
 
-  for(int i = 0; i < 3; ++i) {
+  for(std::size_t i = 0; i < size; ++i) {
     auto test = compareHelper(expected[i], actual[i], absErr);
+
+    auto vecToStr = [&size](const float* ptr) {
+      return core::RangeToString()(std::vector<float>(ptr, ptr + size));
+    };
 
     if(!test.first) {
       if(!hasError) {
         ss << "ERROR:  abs(" << expectedStr << " - " << actualStr << ") < absErr\n"
-           << "\n  " << expectedStr << " = " << expected << "\n  " << actualStr << " = " << actual
-           << "\n";
+           << "\n  " << expectedStr << " = " << vecToStr(expected) << "\n  " << actualStr << " = "
+           << vecToStr(actual) << "\n";
         hasError = true;
       }
-      ss << "\n  " << dim[i] << ":\n  " << core::indent(test.second);
+      ss << "\n  " << Dimensions[i] << ":\n  " << core::indent(test.second);
     }
   }
 

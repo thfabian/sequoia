@@ -20,6 +20,7 @@
 #include "sequoia/Game/SceneGraph.h"
 #include "sequoia/Render/Camera.h"
 #include "sequoia/Render/DrawCommandList.h"
+#include "sequoia/Render/RenderWindow.h"
 
 #include "sequoia/Game/CameraControllerFree.h"
 #include "sequoia/Game/Drawable.h"
@@ -37,20 +38,29 @@ Scene::Scene() : activeCamera_(nullptr) {
   //
   // Test Scene
   //
-
+  
   // Create the camera
   activeCamera_ = std::make_shared<render::Camera>();
+  
+  auto cubeMesh = game.getMeshManager()->createCube("TestCube");
 
-  auto cube = SceneGraph::create<Drawable>("TestNode");
-  cube->setProgram(game.getDefaultProgram());
-
-  auto mesh = game.getMeshManager()->createCube("TestCube");
-  cube->setMesh(mesh);
-  sceneGraph_->insert(cube);
-
+  auto cubeOrigin = SceneGraph::create<Drawable>("TestCubeOrigin");
+  cubeOrigin->setProgram(game.getDefaultProgram());
+  cubeOrigin->setMesh(cubeMesh);
+  sceneGraph_->insert(cubeOrigin);
+  
+  auto cubePlusZ = SceneGraph::create<Drawable>("TestCube+Z");
+  cubePlusZ->setProgram(game.getDefaultProgram());
+  cubePlusZ->setMesh(cubeMesh);
+  cubePlusZ->translate(math::vec3(0, 0, 20));
+  sceneGraph_->insert(cubePlusZ);
+  
   auto controller = SceneGraph::create<CameraControllerFree>("Camera");
+  controller->translate(math::vec3(0, 0, 10));
   controller->setCamera(activeCamera_);
   sceneGraph_->insert(controller);
+
+  game.getMainWindow()->setCursorMode(render::RenderTarget::CK_Disabled);    
 }
 
 void Scene::updateDrawCommandList(render::DrawCommandList* list) {

@@ -24,12 +24,10 @@ namespace sequoia {
 
 namespace game {
 
-/// @brief Control a camera
+/// @brief SceneNode controlling a camera
 /// @ingroup game
-class SEQUOIA_API CameraController : public SceneNode {
+class SEQUOIA_API CameraController : public SceneNode, public render::CameraPositionListener {
 public:
-  friend class render::Camera;
-
   using Base = SceneNode;
 
   CameraController(const std::string& name, SceneNodeKind kind = SK_CameraController);
@@ -45,7 +43,7 @@ public:
   const std::shared_ptr<render::Camera>& getCamera() const { return camera_; }
 
   /// @brief Remove the attached camera
-  virtual void removeCamera() { camera_ = nullptr; }
+  virtual void removeCamera();
 
   /// @brief Check if the node has a camera attached
   bool hasCamera() const { return camera_ != nullptr; }
@@ -60,6 +58,12 @@ public:
   static bool classof(const SceneNode* node) noexcept {
     return node->getKind() >= SK_CameraController && node->getKind() < SK_CameraControllerLast;
   }
+
+  /// @copydoc CameraPositionListener::cameraListenerPositionChanged
+  virtual void cameraListenerPositionChanged(render::Camera* camera) override;
+
+  /// @copydoc CameraPositionListener::cameraListenerRotationChanged
+  virtual void cameraListenerRotationChanged(render::Camera* camera) override;
 
 protected:
   /// @brief Implementation of `toString` returns stringified members and title

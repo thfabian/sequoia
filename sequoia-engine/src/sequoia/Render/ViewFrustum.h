@@ -17,6 +17,7 @@
 #define SEQUOIA_RENDER_VIEWFRUSTUM_H
 
 #include "sequoia/Core/Export.h"
+#include "sequoia/Math/Math.h"
 
 namespace sequoia {
 
@@ -47,8 +48,6 @@ class Viewport;
 /// @ingroup render
 class SEQUOIA_API ViewFrustum {
 public:
-  using ValueType = float;
-
   /// @brief Default constructor with
   ///   - @b fovy   : 45.0
   ///   - @b aspect : 1.3333
@@ -63,34 +62,34 @@ public:
 
   /// @brief Specifies the field of view angle, in  @b degrees, in the `y `direction
   /// @{
-  void setFieldOfViewY(ValueType fovy) { fovy_ = fovy; }
-  ValueType getFieldOfViewY() const { return fovy_; }
+  void setFieldOfViewY(math::Degree fovy) { fovy_ = fovy; }
+  math::Degree getFieldOfViewY() const { return fovy_; }
   /// @}
 
   /// @brief Specifies the aspect ratio that determines the field of view in the `x` direction. The
   /// aspect ratio is the ratio of `x` (width) to `y` (height)
   /// @{
-  void setAspectRatio(ValueType aspect) { aspect_ = aspect; }
-  ValueType getAspectRatio() const { return aspect_; }
+  void setAspectRatio(float aspect) { aspect_ = aspect; }
+  float getAspectRatio() const { return aspect_; }
   /// @}
 
   /// @brief Specifies the distance from the viewer to the near clipping plane (always positive)
   /// @{
-  void setZNearClipping(ValueType zNear) { zNear_ = zNear; }
-  ValueType getZNearClipping() const { return zNear_; }
+  void setZNearClipping(float zNear) { zNear_ = zNear; }
+  float getZNearClipping() const { return zNear_; }
   /// @}
 
   /// @brief Specifies the distance from the viewer to the far clipping plane (always positive)
   /// @{
-  void setZFarClipping(ValueType zFar) { zFar_ = zFar; }
-  ValueType getZFarClipping() const { return zFar_; }
+  void setZFarClipping(float zFar) { zFar_ = zFar; }
+  float getZFarClipping() const { return zFar_; }
   /// @}
 
 protected:
-  ValueType fovy_;
-  ValueType aspect_;
-  ValueType zNear_;
-  ValueType zFar_;
+  math::Degree fovy_;
+  float aspect_;
+  float zNear_;
+  float zFar_;
 };
 
 } // namespace render

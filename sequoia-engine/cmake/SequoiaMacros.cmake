@@ -260,6 +260,11 @@ macro(sequoia_set_cxx_flags)
     if(BUILD_SHARED_LIBS)
       sequoia_check_and_set_cxx_flag("-fPIC" HAVE_GCC_POSITION_INDEPENDENT_CODE)
     endif()
+
+    if(SEQUOIA_USE_CCACHE AND SEQUOIA_COMPILER_CLANG)
+      sequoia_check_and_set_cxx_flag("-Qunused-arguments" HAVE_CLANG_UNUSED_ARGUMENTS)
+      sequoia_check_and_set_cxx_flag("-fcolor-diagnostics" HAVE_CLANG_COLOR_DIAGNOSTICS)
+    endif()
   endif()
 endmacro()
 

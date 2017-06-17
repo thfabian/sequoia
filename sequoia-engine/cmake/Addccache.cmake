@@ -13,38 +13,23 @@
 ##
 ##===------------------------------------------------------------------------------------------===##
 
-#.rst:
-# FindCppcheck
-# ------------
-#
-# This script locates Cppcheck. This script makes use of the standard find_package arguments 
-# ``REQUIRED`` and ``QUIET``. CPPCHECK_FOUND will report if cppcheck has been found.
-#
-# Result Variables
-# ^^^^^^^^^^^^^^^^
-#
-# Defines the following variables:
-#
-#   CPPCHECK_FOUND           - System has cppcheck
-#   CPPCHECK_EXECUTABLE      - The location cppcheck
-#
-# Hints
-# ^^^^^
-#
-# You can directly set ``CPPCHECK_EXECUTABLE`` if the script has trouble finding Cppcheck.
+if(NOT(MSVC))
+  find_package(ccache)
 
-include(FindPackageHandleStandardArgs)
+  if(CCACHE_FOUND)
+    set(SEQUOIA_HAS_CCACHE 1)
+    sequoia_export_package_variable(
+      ccache 
+      ${CCACHE_FOUND} 
+      "ccache: Found" 
+    )
 
-if(NOT DEFINED CPPCHECK_EXECUTABLE)
-  find_program(CPPCHECK_EXECUTABLE NAMES cppcheck)
+    if(SEQUOIA_USE_CCACHE)
+      set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE ${CCACHE_EXECUTABLE})
+      set_property(GLOBAL PROPERTY RULE_LAUNCH_LINK ${CCACHE_EXECUTABLE})
+    endif()
+
+  else()
+    set(SEQUOIA_HAS_CCACHE 0)
+  endif()
 endif()
-
-find_package_handle_standard_args(Cppcheck 
-  FOUND_VAR 
-    CPPCHECK_FOUND 
-  REQUIRED_VARS 
-    CPPCHECK_EXECUTABLE
-)
-
-mark_as_advanced(CPPCHECK_EXECUTABLE)
-

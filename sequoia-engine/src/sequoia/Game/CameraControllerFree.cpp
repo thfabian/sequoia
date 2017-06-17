@@ -20,8 +20,6 @@
 #include "sequoia/Math/CoordinateSystem.h"
 #include "sequoia/Render/RenderSystem.h"
 
-#include <iostream>
-
 namespace sequoia {
 
 namespace game {
@@ -34,9 +32,10 @@ CameraControllerFree::CameraControllerFree(const std::string& name, SceneNodeKin
                                            const std::shared_ptr<Keymap>& upKey,
                                            const std::shared_ptr<Keymap>& downKey)
     : Base(name, kind), forwardKey_(forwardKey), backwardKey_(backwardKey), leftKey_(leftKey),
-      rightKey_(rightKey), upKey_(upKey), downKey_(downKey), speed_(5.0f), goingForward_(false),
+      rightKey_(rightKey), upKey_(upKey), downKey_(downKey), moveSpeed_(5.0f), goingForward_(false),
       goingBack_(false), goingLeft_(false), goingRight_(false), goingUp_(false), goingDown_(false),
-      xOffset_(0), yOffset_(0) {}
+      rotUpdateNeeded_(false), rotationSpeed_(1.0f), yawOffset_(0), yaw_(0), pitchOffset_(0),
+      pitch_(0) {}
 
 CameraControllerFree::CameraControllerFree(const CameraControllerFree& other) : Base(other) {}
 
@@ -58,9 +57,9 @@ void CameraControllerFree::update(const UpdateEvent& event) {
   if(!hasCamera())
     return;
 
-//  if(xOffset_ == 0 && yOffset_ == 0 && !goingForward_ && !goingBack_ && !goingRight_ && !goingLeft_ 
-//     && !goingUp_ && !goingDown_)
-//    return;
+  if(!rotUpdateNeeded_ && !goingForward_ && !goingBack_ && !goingRight_ && !goingLeft_ &&
+     !goingUp_ && !goingDown_)
+    return;
 
   math::mat3 axes = getLocalAxes();
   math::vec3 dir(0);
@@ -80,16 +79,35 @@ void CameraControllerFree::update(const UpdateEvent& event) {
 
   if(dir != math::vec3(0)) {
     dir = math::normalize(dir);
-    translate(speed_ * event.TimeStep * dir);
+    translate(moveSpeed_ * event.TimeStep * dir);
   }
 
-std::cout << xOffset_ << " " << yOffset_ << std::endl;
+  if(rotUpdateNeeded_) {
+    yawOffset_ *= rotationSpeed_ * event.TimeStep;
+    pitchOffset_ *= rotationSpeed_ * event.TimeStep;
 
-  math::quat newOrientation = math::angleAxis(math::Radian::fromDegree(-xOffset_ * 0.15f).inRadians(), getOrientation() * math::CoordinateSystem::Y());
-  newOrientation *= math::angleAxis(math::Radian::fromDegree(-yOffset_ * 0.15f).inRadians(), getOrientation() * math::CoordinateSystem::X());
-  newOrientation = math::normalize(newOrientation);
-  setOrientation(newOrientation);
-    
+    auto warp = [](float degree) {
+      while(degree < 0.f)
+        degree += 360.f;
+      while(degree >= 360.f)
+        degree -= 360.f;
+      return degree;
+    };
+
+    // Keep yaw and pitch between [0, 360)
+    yaw_ = warp(yaw_ + yawOffset_);
+    pitch_ = warp(pitch_ + pitchOffset_);
+
+    // Build a quaternion from euler angles (pitch, yaw, roll), in radians.
+    math::quat newOrientation(math::vec3(math::Radian::fromDegree(-pitch_).inRadians(),
+                                         math::Radian::fromDegree(-yaw_).inRadians(), 0));
+    setOrientation(newOrientation);
+
+    rotUpdateNeeded_ = false;
+    yawOffset_ = 0.0f;
+    pitchOffset_ = 0.0f;
+  }
+
   // Update camera position and orientation
   Base::update(event);
 }
@@ -126,8 +144,10 @@ void CameraControllerFree::mouseButtonEvent(const render::MouseButtonEvent& even
 void CameraControllerFree::mousePositionEvent(const render::MousePositionEvent& event) {
   if(!hasCamera())
     return;
-  xOffset_ += event.XOffset;
-  yOffset_ += event.YOffset;
+
+  yawOffset_ += event.XOffset;
+  pitchOffset_ += event.YOffset;
+  rotUpdateNeeded_ = true;
 }
 
 std::pair<std::string, std::string> CameraControllerFree::toStringImpl() const {

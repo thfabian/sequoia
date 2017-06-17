@@ -66,6 +66,7 @@ include(AddThreads)
 include(AddBackward)
 include(AddBoost)
 include(AddCppcheck)
+include(Addccache)
 include(Addglbinding)
 include(AddGLFW)
 include(Addglm)
@@ -97,6 +98,7 @@ sequoia_report_result(
   "${SEQUOIA_BOOST_INFO_STR}"
   "${SEQUOIA_BACKWARD_INFO_STR}"
   "${SEQUOIA_CPPCHECK_INFO_STR}"
+  "${SEQUOIA_CCACHE_INFO_STR}"
   "${SEQUOIA_GLBINDING_INFO_STR}"
   "${SEQUOIA_GLFW_INFO_STR}"
   "${SEQUOIA_GLM_INFO_STR}"

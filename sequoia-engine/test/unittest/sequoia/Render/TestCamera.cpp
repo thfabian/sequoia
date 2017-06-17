@@ -25,22 +25,22 @@ namespace {
 TEST(CameraTest, Initialization) {
   {
     Camera camera(math::vec3(0, 0, -10), math::vec3(0, 0, 0));
-    EXPECT_VEC3_NEAR(camera.getEye(), math::vec3(0, 0, -10), 1e-05f);
-    EXPECT_VEC3_NEAR(camera.getCenter(), math::vec3(0, 0, 0), 1e-05f);
-    EXPECT_VEC3_NEAR(camera.getUp(), math::vec3(0, 1, 0), 1e-05f);
+    EXPECT_VEC_NEAR(camera.getEye(), math::vec3(0, 0, -10), 1e-05f);
+    EXPECT_VEC_NEAR(camera.getCenter(), math::vec3(0, 0, 0), 1e-05f);
+    EXPECT_VEC_NEAR(camera.getUp(), math::vec3(0, 1, 0), 1e-05f);
   }
 
   {
     Camera camera(math::vec3(0, 0, 10), math::vec3(0, 0, 0));
-    EXPECT_VEC3_NEAR(camera.getEye(), math::vec3(0, 0, 10), 1e-05f);
-    EXPECT_VEC3_NEAR(camera.getCenter(), math::vec3(0, 0, 0), 1e-05f);
-    EXPECT_VEC3_NEAR(camera.getUp(), math::vec3(0, 1, 0), 1e-05f);
+    EXPECT_VEC_NEAR(camera.getEye(), math::vec3(0, 0, 10), 1e-05f);
+    EXPECT_VEC_NEAR(camera.getCenter(), math::vec3(0, 0, 0), 1e-05f);
+    EXPECT_VEC_NEAR(camera.getUp(), math::vec3(0, 1, 0), 1e-05f);
   }
 
   {
     Camera camera(math::vec3(0, 0, 0), math::vec3(-5, -5, -5));
-    EXPECT_VEC3_NEAR(camera.getEye(), math::vec3(0, 0, 0), 1e-05f);
-    EXPECT_VEC3_NEAR(camera.getCenter(), math::vec3(-5, -5, -5), 1e-05f);
+    EXPECT_VEC_NEAR(camera.getEye(), math::vec3(0, 0, 0), 1e-05f);
+    EXPECT_VEC_NEAR(camera.getCenter(), math::vec3(-5, -5, -5), 1e-05f);
   }
 }
 

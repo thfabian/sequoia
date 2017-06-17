@@ -15,6 +15,7 @@
 
 #include "sequoia/Core/Format.h"
 #include "sequoia/Math/Math.h"
+#include <iostream>
 
 namespace sequoia {
 
@@ -27,12 +28,16 @@ std::string Radian::toString() const {
                       rad_);
 }
 
+std::ostream& operator<<(std::ostream& os, const Radian& rad) { return (os << rad.rad_); }
+
 std::string Degree::toString() const {
   return core::format("Degree[\n"
                       "  deg = %f\n"
                       "]",
                       deg_);
 }
+
+std::ostream& operator<<(std::ostream& os, const Degree& deg) { return (os << deg.deg_); }
 
 } // namespace math
 

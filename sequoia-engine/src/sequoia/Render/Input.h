@@ -338,6 +338,17 @@ public:
   virtual void mousePositionEvent(const MousePositionEvent& event) = 0;
 };
 
+/// @brief Listener of mouse events
+/// @ingroup render
+class SEQUOIA_API InputEventListener {
+public:
+  /// @brief Start polling input events
+  virtual void inputEventStart() = 0;
+
+  /// @brief Stop polling input events
+  virtual void inputEventStop() = 0;
+};
+
 } // namespace render
 
 using render::KeyboardKey;

@@ -58,9 +58,13 @@ public:
   /// @brief Update the position of the node
   virtual void update(const UpdateEvent& event) override;
 
-  /// @brief Get/Set the top-speed
-  void sertSpeed(float speed) { speed_ = speed; }
-  float getSpeed() const { return speed_; }
+  /// @brief Get/Set the move speed
+  void serMoveSpeed(float speed) { moveSpeed_ = speed; }
+  float getMoveSpeed() const { return moveSpeed_; }
+
+  /// @brief Get/Set the rotation speed
+  void serRotationSpeed(float speed) { rotationSpeed_ = speed; }
+  float getRotationSpeed() const { return rotationSpeed_; }
 
   /// @brief Clone the scene node and all its children
   virtual std::shared_ptr<SceneNode> clone() override;
@@ -89,15 +93,27 @@ private:
   std::shared_ptr<Keymap> upKey_;       ///< Up key
   std::shared_ptr<Keymap> downKey_;     ///< Down key
 
-  float speed_;
-  bool goingForward_ : 1;
-  bool goingBack_ : 1;
-  bool goingLeft_ : 1;
-  bool goingRight_ : 1;
-  bool goingUp_ : 1;
-  bool goingDown_ : 1;
-  int xOffset_;
-  int yOffset_;
+  /// Speed for moving the camera
+  float moveSpeed_;
+
+  bool goingForward_;
+  bool goingBack_;
+  bool goingLeft_;
+  bool goingRight_;
+  bool goingUp_;
+  bool goingDown_;
+  bool rotUpdateNeeded_;
+
+  /// Speed for rotating the camera
+  float rotationSpeed_;
+
+  /// Rotation around Y-axis (in degree)
+  float yawOffset_;
+  float yaw_;
+
+  /// Rotation around X-axis (in degree)
+  float pitchOffset_;
+  float pitch_;
 };
 
 } // namespace game

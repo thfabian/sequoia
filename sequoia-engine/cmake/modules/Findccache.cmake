@@ -14,37 +14,37 @@
 ##===------------------------------------------------------------------------------------------===##
 
 #.rst:
-# FindCppcheck
-# ------------
+# Findccache
+# ----------
 #
-# This script locates Cppcheck. This script makes use of the standard find_package arguments 
-# ``REQUIRED`` and ``QUIET``. CPPCHECK_FOUND will report if cppcheck has been found.
+# This script locates ccache. This script makes use of the standard find_package arguments 
+# ``REQUIRED`` and ``QUIET``. CCACHE_FOUND will report if ccache has been found.
 #
 # Result Variables
 # ^^^^^^^^^^^^^^^^
 #
 # Defines the following variables:
 #
-#   CPPCHECK_FOUND           - System has cppcheck
-#   CPPCHECK_EXECUTABLE      - The location cppcheck
+#   CCACHE_FOUND           - System has ccache
+#   CCACHE_EXECUTABLE      - The location ccache
 #
 # Hints
 # ^^^^^
 #
-# You can directly set ``CPPCHECK_EXECUTABLE`` if the script has trouble finding Cppcheck.
+# You can directly set ``CCACHE_EXECUTABLE`` if the script has trouble finding ccache.
 
 include(FindPackageHandleStandardArgs)
 
-if(NOT DEFINED CPPCHECK_EXECUTABLE)
-  find_program(CPPCHECK_EXECUTABLE NAMES cppcheck)
+if(NOT DEFINED CCACHE_EXECUTABLE)
+  find_program(CCACHE_EXECUTABLE NAMES ccache)
 endif()
 
-find_package_handle_standard_args(Cppcheck 
+find_package_handle_standard_args(ccache 
   FOUND_VAR 
-    CPPCHECK_FOUND 
+    CCACHE_FOUND 
   REQUIRED_VARS 
-    CPPCHECK_EXECUTABLE
+    CCACHE_EXECUTABLE
 )
 
-mark_as_advanced(CPPCHECK_EXECUTABLE)
+mark_as_advanced(CCACHE_EXECUTABLE)
 

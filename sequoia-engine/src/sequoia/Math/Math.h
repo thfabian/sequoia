@@ -16,6 +16,7 @@
 #ifndef SEQUOIA_MATH_MATH_H
 #define SEQUOIA_MATH_MATH_H
 
+#include "sequoia/Core/Export.h"
 #include "sequoia/Math/Constants.h"
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -38,7 +39,7 @@ class Degree;
 /// between them.
 ///
 /// @ingroup math
-class Radian {
+class SEQUOIA_API Radian {
   float rad_;
 
 public:
@@ -112,6 +113,9 @@ public:
 
   /// @brief Convert to string
   std::string toString() const;
+
+  /// @brief Convert to stream
+  SEQUOIA_API friend std::ostream& operator<<(std::ostream& os, const Radian& rad);
 };
 
 /// @brief Wrapper class which indicates a given angle value is in Degrees
@@ -120,7 +124,7 @@ public:
 /// between them.
 ///
 /// @ingroup math
-class Degree {
+class SEQUOIA_API Degree {
   float deg_;
 
 public:
@@ -205,6 +209,9 @@ public:
 
   /// @brief Convert to string
   std::string toString() const;
+
+  /// @brief Convert to stream
+  SEQUOIA_API friend std::ostream& operator<<(std::ostream& os, const Degree& deg);
 };
 
 inline Radian Radian::fromDegree(const Degree& deg) noexcept {

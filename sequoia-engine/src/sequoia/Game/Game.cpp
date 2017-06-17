@@ -45,10 +45,10 @@ void Game::run() {
   LOG(INFO) << "Starting main-loop ...";
 
   render::DrawCommandList* drawCommandList = mainWindow_->getDrawCommandList().get();
-
+  
   // Start main-loop
   while(!mainWindow_->isClosed() && !shouldClose_) {
-
+    
     // Query I/O events
     renderSystem_->pollEvents();
 
@@ -104,9 +104,8 @@ void Game::init(bool hideWindow) {
 
     // Initialize the main-window
     mainWindow_->init();
-    mainWindow_->setCursorMode(render::RenderTarget::CK_Disabled);
     quitKey_ = Keymap::makeDefault(render::Key_Q, render::Mod_Ctrl);
-
+    
     // Register the game as a keyboard and mouse listener
     renderSystem_->addKeyboardListener(mainWindow_, this);
     renderSystem_->addMouseListener(mainWindow_, this);
@@ -128,7 +127,7 @@ void Game::init(bool hideWindow) {
     // TODO: This is not optimal. The Viewport should automatically be informed if the camera of
     // the scene changes
     mainWindow_->getViewport()->setCamera(scene_->getActiveCamera().get());
-
+    
   } catch(render::RenderSystemException& e) {
     ErrorHandler::getSingleton().fatal(e.what());
   }

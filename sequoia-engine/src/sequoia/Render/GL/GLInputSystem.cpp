@@ -22,7 +22,7 @@ namespace sequoia {
 namespace render {
 
 GLInputSystem::GLInputSystem(GLRenderWindow* window, bool centerCursor)
-    : window_(window), prevPosX_(0), prevPosY_(0) {
+    : window_(window), prevPosX_(0), prevPosY_(0), ignoreNextMousePosEvent_(true) {
 
   if(centerCursor)
     this->centerCursor();
@@ -46,6 +46,11 @@ void GLInputSystem::mouseButtonCallback(int button, int action, int mods) noexce
 }
 
 void GLInputSystem::mousePositionCallback(int xPos, int yPos) noexcept {
+  if(ignoreNextMousePosEvent_) {
+    ignoreNextMousePosEvent_ = false;
+    return;
+  }
+  
   MousePositionEvent event{window_, xPos, yPos, xPos - prevPosX_, yPos - prevPosY_};
   for(MouseListener* listener : getListeners<MouseListener>())
     listener->mousePositionEvent(event);
@@ -61,8 +66,8 @@ void GLInputSystem::centerCursor() {
   prevPosY_ = yPos;
 }
 
-void GLInputSystem::setCursorPosition(int xpos, int ypos) {
-  glfwSetCursorPos(window_->getGLFWwindow(), xpos, ypos);
+void GLInputSystem::setCursorPosition(int xPos, int yPos) {
+  glfwSetCursorPos(window_->getGLFWwindow(), xPos, yPos);
 }
 
 } // namespace render

@@ -28,6 +28,17 @@ namespace sequoia {
 
 namespace render {
 
+/// @brief Listen to changes in the position of the Camera
+/// @ingroup render
+class SEQUOIA_API CameraPositionListener {
+public:
+  /// @brief The camera position changed
+  virtual void cameraListenerPositionChanged(Camera* camera) = 0;
+
+  /// @brief The camera rotation changed
+  virtual void cameraListenerRotationChanged(Camera* camera) = 0;
+};
+
 /// @brief A viewpoint from which the scene will be rendered
 ///
 /// Sequoia renders scenes from a camera viewpoint into a buffer of some sort, normally a window or
@@ -48,7 +59,9 @@ namespace render {
 /// @endverbatim
 ///
 /// @ingroup render
-class SEQUOIA_API Camera : public ViewFrustum, public ViewportListener {
+class SEQUOIA_API Camera final : public ViewFrustum,
+                                 public ViewportListener,
+                                 public Listenable<CameraPositionListener> {
 protected:
   /// Translation of the camera
   math::vec3 position_;
@@ -68,7 +81,8 @@ public:
   ///
   /// By default the camera is located at `(0, 0, 10)` and stares down at `(0, 0, 0)`.
   Camera(const math::vec3& eye = math::vec3(0, 0, 10),
-         const math::vec3& center = math::vec3(0, 0, 0), const math::vec3& up = math::vec3(0, 1, 0));
+         const math::vec3& center = math::vec3(0, 0, 0),
+         const math::vec3& up = math::vec3(0, 1, 0));
 
   virtual ~Camera() {}
 
@@ -86,7 +100,8 @@ public:
   /// @param eye      Specifies the position of the eye point (where the camera is located)
   /// @param center   Specifies the position of the reference point (where the camera points to)
   /// @param up       Specifies the direction of the up vector
-  void lookAt(const math::vec3& eye, const math::vec3& center, math::vec3 up);
+  void lookAt(const math::vec3& eye, const math::vec3& center,
+              const math::vec3& up = math::vec3(0, 1, 0));
 
   /// @brief Get the view projection matrix
   ///
@@ -102,15 +117,10 @@ public:
   math::mat4 getViewProjectionMatrix() const;
 
   /// @brief Set the position of the camera (equivalent to `setEye()`)
-  void setPosition(const math::vec3& position) {
-    modelMatrixIsDirty_ = true;
-    position_ = position;
-  }
+  void setPosition(const math::vec3& position);
+
   /// @brief Set the orientation of the camera (in world space)
-  void setOrientation(const math::quat& orientation) {
-    modelMatrixIsDirty_ = true;
-    orientation_ = orientation;
-  }
+  void setOrientation(const math::quat& orientation);
 
   /// @brief Get the position (this is equivalent to `getEye()`)
   const math::vec3& getPosition() const { return position_; }

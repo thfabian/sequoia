@@ -16,8 +16,8 @@
 #ifndef SEQUOIA_UNITTEST_TEST_H
 #define SEQUOIA_UNITTEST_TEST_H
 
-#include "sequoia/Math/Math.h"
 #include "sequoia/Core/Export.h"
+#include "sequoia/Math/Math.h"
 #include <gtest/gtest.h>
 
 namespace sequoia {
@@ -27,13 +27,13 @@ namespace unittest {
 namespace internal {
 
 /// @brief Test if `abs(expected - actual) < absErr`
-SEQUOIA_API std::pair<bool, std::string> compareHelper(float expected, float actual,
-                                                                float absErr);
+SEQUOIA_API std::pair<bool, std::string> compareHelper(float expected, float actual, float absErr);
 
 /// @brief Test if `abs(expected - actual) < absErr` for each element
-SEQUOIA_API std::pair<bool, std::string>
-compareHelper(const math::vec3& expected, const math::vec3& actual, float absErr,
-              const char* expectedStr, const char* actualStr);
+SEQUOIA_API std::pair<bool, std::string> compareHelper(const float* expected, const float* actual,
+                                                       std::size_t size, float absErr,
+                                                       const char* expectedStr,
+                                                       const char* actualStr);
 
 } // namespace internal
 
@@ -42,10 +42,14 @@ compareHelper(const math::vec3& expected, const math::vec3& actual, float absErr
 /// This effectivly tests `abs(expected - actual) < absErr` for each element.
 ///
 /// @ingroup unittest
-#define EXPECT_VEC3_NEAR(expected, actual, absErr)                                                 \
+#define EXPECT_VEC_NEAR(expected, actual, absErr)                                                  \
   {                                                                                                \
-    auto __sequoia_test__ =                                                                        \
-        sequoia::unittest::internal::compareHelper(expected, actual, absErr, #expected, #actual);  \
+    EXPECT_EQ(expected.length(), actual.length())                                                  \
+        << "\"" << #expected << "\" size " << expected.length() << " not equal to \"" << #actual   \
+        << "\" size " << actual.length();                                                          \
+    auto __sequoia_test__ = sequoia::unittest::internal::compareHelper(                            \
+        math::value_ptr(expected), math::value_ptr(actual), expected.length(), absErr, #expected,  \
+        #actual);                                                                                  \
     EXPECT_TRUE((__sequoia_test__.first)) << __sequoia_test__.second;                              \
   }
 

@@ -34,6 +34,12 @@ void CameraController::setCamera(const std::shared_ptr<render::Camera>& camera) 
   camera_ = camera;
   setPosition(camera->getPosition());
   setOrientation(camera->getOrientation());
+  camera_->addListener<render::CameraPositionListener>(this);
+}
+
+void CameraController::removeCamera() {
+  camera_->removeListener<render::CameraPositionListener>(this);
+  camera_ = nullptr;
 }
 
 void CameraController::update(const SceneNode::UpdateEvent& event) {
@@ -45,6 +51,14 @@ void CameraController::update(const SceneNode::UpdateEvent& event) {
 
 std::shared_ptr<SceneNode> CameraController::clone() {
   return SceneGraph::create<CameraController>(*this);
+}
+
+void CameraController::cameraListenerPositionChanged(render::Camera* camera) {
+  setPosition(camera->getPosition());
+}
+
+void CameraController::cameraListenerRotationChanged(render::Camera* camera) {
+  setOrientation(camera->getOrientation());
 }
 
 std::pair<std::string, std::string> CameraController::toStringImpl() const {
