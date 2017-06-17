@@ -36,22 +36,6 @@ TEST_F(CameraControllerFreeTest, CameraControllerFree) {
   EXPECT_EQ(node->getKind(), SceneNode::SK_CameraControllerFree);
   EXPECT_FALSE(node->hasCamera());
 
-  std::shared_ptr<render::Camera> camera = std::make_shared<render::Camera>();
-//  camera->setCenter(math::vec3(0, 0, 0));
-//  camera->setEye(math::vec3(5, 5, 5));
-//  node->setCamera(camera);
-//  EXPECT_TRUE(node->hasCamera());
-//  EXPECT_TRUE(node->isActive());
-
-//  // Node should be positioned at eye
-//  EXPECT_EQ(node->getPosition(), math::vec3(camera->getEye()));
-
-//  auto reset = [&camera, &node]() {
-//    camera->setCenter(math::vec3(0, 0, 1));
-//    camera->setEye(math::vec3(0, 0, 0));
-//    node->setPosition(math::vec3(0, 0, 0));
-//  };
-  
   // Clone node
   auto nodeClone = node->clone();
   nodeClone->setName("copy");

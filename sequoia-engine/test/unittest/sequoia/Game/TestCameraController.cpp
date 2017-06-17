@@ -38,20 +38,23 @@ TEST_F(CameraControllerTest, CameraController) {
   // Create Camera and attach to scene node
   auto camera = std::make_shared<render::Camera>(math::vec3(0, 0, 10), math::vec3(0, 0, 0));
   node->setCamera(camera);
-  EXPECT_TRUE(node->hasCamera());    
+  EXPECT_TRUE(node->hasCamera());
 
   // Check scene node is positioned correctly
   EXPECT_EQ(node->getPosition(), math::vec3(0, 0, 10));
   EXPECT_VEC_NEAR(node->getOrientation(), math::quat(), 1e-06f);
-  
+
   // Move the camera and check scene node is positioned correctly
   camera->lookAt(math::vec3(10, 10, 10), math::vec3(0, 0, 0));
   EXPECT_EQ(node->getPosition(), math::vec3(10, 10, 10));
-  EXPECT_VEC_NEAR(node->getOrientation(), math::quat(), 1e-06f);
-  
+  EXPECT_VEC_NEAR(node->getOrientation(), camera->getOrientation(), 1e-06f);
+
   // Detach camera
   node->removeCamera();
-  EXPECT_FALSE(node->hasCamera());  
+  EXPECT_FALSE(node->hasCamera());
+
+  node->setPosition(math::vec3(0));
+  EXPECT_NE(node->getPosition(), camera->getPosition());
 
   // Clone node
   auto nodeClone = node->clone();

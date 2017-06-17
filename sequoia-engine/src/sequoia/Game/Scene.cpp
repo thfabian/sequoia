@@ -14,6 +14,7 @@
 //===------------------------------------------------------------------------------------------===//
 
 #include "sequoia/Core/Casting.h"
+#include "sequoia/Core/Format.h"
 #include "sequoia/Game/Game.h"
 #include "sequoia/Game/MeshManager.h"
 #include "sequoia/Game/Scene.h"
@@ -38,29 +39,35 @@ Scene::Scene() : activeCamera_(nullptr) {
   //
   // Test Scene
   //
-  
+
   // Create the camera
   activeCamera_ = std::make_shared<render::Camera>();
-  
+
   auto cubeMesh = game.getMeshManager()->createCube("TestCube");
 
   auto cubeOrigin = SceneGraph::create<Drawable>("TestCubeOrigin");
   cubeOrigin->setProgram(game.getDefaultProgram());
   cubeOrigin->setMesh(cubeMesh);
   sceneGraph_->insert(cubeOrigin);
-  
-  auto cubePlusZ = SceneGraph::create<Drawable>("TestCube+Z");
-  cubePlusZ->setProgram(game.getDefaultProgram());
-  cubePlusZ->setMesh(cubeMesh);
-  cubePlusZ->translate(math::vec3(0, 0, 20));
-  sceneGraph_->insert(cubePlusZ);
-  
+
+  float dx = 3.0f;
+  int N = 10;
+  for(int i = 0; i < N; ++i) {
+    for(int j = 0; j < N; ++j) {
+      auto cube = SceneGraph::create<Drawable>(core::format("TestCube_%i_%i", i, j));
+      cube->setProgram(game.getDefaultProgram());
+      cube->setMesh(cubeMesh);
+      cube->translate(math::vec3((i - N / 2) * dx, 0, (j - N / 2) * dx));
+      cube->setScale(float(i) / N);
+      sceneGraph_->insert(cube);
+    }
+  }
+
   auto controller = SceneGraph::create<CameraControllerFree>("Camera");
-  controller->translate(math::vec3(0, 0, 10));
   controller->setCamera(activeCamera_);
   sceneGraph_->insert(controller);
 
-  game.getMainWindow()->setCursorMode(render::RenderTarget::CK_Disabled);    
+  game.getMainWindow()->setCursorMode(render::RenderTarget::CK_Disabled);
 }
 
 void Scene::updateDrawCommandList(render::DrawCommandList* list) {
