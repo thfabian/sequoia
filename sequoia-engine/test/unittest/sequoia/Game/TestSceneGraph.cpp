@@ -1,12 +1,12 @@
 //===--------------------------------------------------------------------------------*- C++ -*-===//
-//                         _____                        _       
-//                        / ____|                      (_)      
-//                       | (___   ___  __ _ _   _  ___  _  __ _ 
+//                         _____                        _
+//                        / ____|                      (_)
+//                       | (___   ___  __ _ _   _  ___  _  __ _
 //                        \___ \ / _ \/ _` | | | |/ _ \| |/ _` |
 //                        ____) |  __/ (_| | |_| | (_) | | (_| |
 //                       |_____/ \___|\__, |\__,_|\___/|_|\__,_| - Game Engine (2016-2017)
-//                                       | |                    
-//                                       |_| 
+//                                       | |
+//                                       |_|
 //
 // This file is distributed under the MIT License (MIT).
 // See LICENSE.txt for details.
@@ -29,7 +29,7 @@ class SceneGraphTest : public GameTest {};
 TEST_F(SceneGraphTest, Construction) {
   std::shared_ptr<SceneGraph> graph = std::make_shared<SceneGraph>();
 
-  graph->insert(SceneGraph::create<SceneNode>("TestNode"));
+  graph->insert(SceneNode::create<SceneNode>("TestNode"));
   EXPECT_EQ(graph->size(), 1);
 }
 

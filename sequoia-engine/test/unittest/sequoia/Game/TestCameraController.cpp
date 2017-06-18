@@ -29,7 +29,7 @@ namespace {
 class CameraControllerTest : public GameTest {};
 
 TEST_F(CameraControllerTest, CameraController) {
-  auto node = SceneGraph::create<CameraController>("CameraController");
+  auto node = SceneNode::create<CameraController>("CameraController");
 
   EXPECT_STREQ(node->getName().data(), "CameraController");
   EXPECT_EQ(node->getKind(), SceneNode::SK_CameraController);

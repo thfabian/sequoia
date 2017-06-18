@@ -41,9 +41,7 @@ public:
   void insert(const std::shared_ptr<SceneNode>& node) { nodes_.emplace_back(node); }
 
   /// @brief Remove the `node` (and all its children) from the graph
-  void remove(const std::shared_ptr<SceneNode>& node) {
-    nodes_.erase(std::remove(nodes_.begin(), nodes_.end(), node), nodes_.end());
-  }
+  void remove(const std::shared_ptr<SceneNode>& node);
 
   /// @brief Update all nodes to indicate we moved on to the next time-step
   virtual void update(const SceneNode::UpdateEvent& event);

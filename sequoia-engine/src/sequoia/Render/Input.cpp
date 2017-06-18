@@ -49,6 +49,9 @@ static std::string modToString(int mods) {
 std::ostream& operator<<(std::ostream& os, KeyboardKey key) noexcept {
   if(key == Key_Invalid)
     return (os << "Invalid");
+  
+  if(key == Key_Space)
+    return (os << "Space");
 
   if(key <= Key_GraveAccent)
     return (os << char(key));

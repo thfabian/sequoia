@@ -30,7 +30,7 @@ namespace {
 class CameraControllerFreeTest : public GameTest {};
 
 TEST_F(CameraControllerFreeTest, CameraControllerFree) {
-  auto node = SceneGraph::create<CameraControllerFree>("CameraControllerFree");
+  auto node = SceneNode::create<CameraControllerFree>("CameraControllerFree");
 
   EXPECT_STREQ(node->getName().data(), "CameraControllerFree");
   EXPECT_EQ(node->getKind(), SceneNode::SK_CameraControllerFree);
@@ -50,6 +50,8 @@ TEST_F(CameraControllerFreeTest, CameraControllerFree) {
   nodeClone->setName("copy");
   EXPECT_EQ(nodeClone->getName(), "copy");
   EXPECT_EQ(node->getName(), "CameraControllerFree");
+  
+  std::cout << node->toString() << std::endl;
 
   // Test RTTI
   EXPECT_TRUE(isa<CameraController>(node.get()));

@@ -46,18 +46,16 @@ Scene::Scene() : activeCamera_(nullptr) {
 
   auto cubeMesh = game.getMeshManager()->createCube("TestCube");
 
-  auto cubeOrigin = SceneNode::create<Drawable>("TestCubeOrigin");
-  cubeOrigin->setProgram(game.getDefaultProgram());
-  cubeOrigin->setMesh(cubeMesh);
+  std::shared_ptr<SceneNode> cubeOrigin = SceneNode::create("TestCubeOrigin");
+  cubeOrigin->addCapability<Drawable>(cubeMesh);
   sceneGraph_->insert(cubeOrigin);
 
   float dx = 3.0f;
   int N = 100;
   for(int i = 0; i < N; ++i) {
     for(int j = 0; j < N; ++j) {
-      auto cube = SceneNode::create<Drawable>(core::format("TestCube_%i_%i", i, j));
-      cube->setProgram(game.getDefaultProgram());
-      cube->setMesh(cubeMesh);
+      auto cube = SceneNode::create(core::format("TestCube_%i_%i", i, j));
+      cube->addCapability<Drawable>(cubeMesh, game.getDefaultProgram());
       cube->translate(math::vec3((i - N / 2) * dx, 0, (j - N / 2) * dx));
       cube->setScale(float(i) / N);
       sceneGraph_->insert(cube);
@@ -76,9 +74,9 @@ void Scene::updateDrawCommandList(render::DrawCommandList* list) {
 
   // Extract all DrawCommands
   sceneGraph_->apply([this](SceneNode* node) {
-    if(Drawable* drawNode = dyn_cast<Drawable>(node)) {
-      if(drawNode->isActive()) {
-        drawCommandList_.emplace_back(drawNode->prepareDrawCommand());
+    if(Drawable* draw = node->get<Drawable>()) {
+      if(draw->isActive()) {
+        drawCommandList_.emplace_back(draw->prepareDrawCommand());
       }
     }
   });

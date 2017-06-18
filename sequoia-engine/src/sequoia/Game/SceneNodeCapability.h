@@ -17,6 +17,7 @@
 #define SEQUOIA_GAME_SCENENODECAPABILITY_H
 
 #include "sequoia/Core/Export.h"
+#include <memory>
 #include <string>
 
 namespace sequoia {
@@ -31,11 +32,16 @@ class SEQUOIA_API SceneNodeCapability {
   SceneNode* node_;
 
 public:
+  /// @brief Default constructor
+  ///
+  /// @note All subclasses are required to have `SceneNode* node` as their first argument in their
+  /// constructors to be compatible with
+  /// @ref sequoia::game::SceneNode::addCapability "SceneNode::addCapability"
   SceneNodeCapability(SceneNode* node) : node_(node) {}
 
   /// @brief Enum for distinguishing capabilities
   /// @note The name of the enum needs to correspond to the type name of the SceneNodeCapability
-  enum Kind { Drawable = 0, NumElements };
+  enum Kind { Drawable = 0, NumCapabilities };
 
   /// @brief Virtual destructor
   virtual ~SceneNodeCapability() {}
@@ -50,8 +56,8 @@ public:
   /// @brief Convert to string
   virtual std::string toString() const = 0;
 
-  /// @brief Clone the capability using `node` as the new SceneNode
-  virtual std::shared_ptr<SceneNodeCapability> clone(SceneNode* node) = 0;
+  /// @brief Clone the capability using `node` as the new attached SceneNode
+  virtual std::shared_ptr<SceneNodeCapability> clone(SceneNode* node) const = 0;
 };
 
 namespace internal {
@@ -63,8 +69,7 @@ struct InvalidCapabilityType {
 
 template <class T>
 struct InvalidCapabilityKind {
-  static_assert(T::INVALID_CAPABILITY_KIND, "invalid decorator kind");
-  static constexpr SceneNodeCapability::Kind value = SceneNodeCapability::NumElements;
+  static constexpr SceneNodeCapability::Kind value = SceneNodeCapability::NumCapabilities;
 };
 
 } // namespace internal
@@ -72,12 +77,13 @@ struct InvalidCapabilityKind {
 template <SceneNodeCapability::Kind Kind>
 struct SceneNodeCapabilityToType {
   using type = typename internal::InvalidCapabilityType<Kind>::type;
-  static_assert(!std::is_same<type, void>::value, "invalid decorator type");
+  static_assert(!std::is_same<type, void>::value, "invalid SceneNodeCapability type");
 };
 
 template <class T>
 struct SceneNodeCapabilityToKind {
   static constexpr SceneNodeCapability::Kind value = internal::InvalidCapabilityKind<T>::value;
+  static_assert(value != SceneNodeCapability::NumCapabilities, "invalid SceneNodeCapability::Kind");
 };
 
 /// @brief Register a new SceneNodeCapability

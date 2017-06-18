@@ -16,8 +16,9 @@
 #ifndef SEQUOIA_GAME_DRAWABLE_H
 #define SEQUOIA_GAME_DRAWABLE_H
 
-#include "sequoia/Game/SceneNode.h"
+#include "sequoia/Game/SceneNodeCapability.h"
 #include "sequoia/Render/RenderFwd.h"
+#include <memory>
 
 namespace sequoia {
 
@@ -25,17 +26,32 @@ namespace game {
 
 class Mesh;
 
-/// @brief A SceneNode which can be drawn
+/// @brief Add the capability to a SceneNode to be drawn to the screen
 /// @ingroup game
-class SEQUOIA_API Drawable : public SceneNode {
-public:
-  using Base = SceneNode;
+class SEQUOIA_API Drawable final : public SceneNodeCapability {
+  /// Is drawing enabled?
+  bool active_;
 
-  Drawable(const std::string& name, SceneNodeKind kind = SK_Drawable);
-  Drawable(const Drawable& other);
+  /// DrawCommand of the mesh
+  std::shared_ptr<render::DrawCommand> drawCommand_;
+
+  /// Mesh of the node
+  std::shared_ptr<Mesh> mesh_;
+
+public:
+  using Base = SceneNodeCapability;
 
   /// @brief Virtual destructor
   virtual ~Drawable();
+
+  /// @brief Construct with mesh and GPU porgram
+  ///
+  /// @param mesh       Mesh to use
+  /// @param program    GPU program to use, if `NULL` the default program of the game will be used
+  ///                   (Game::getDefaultProgram())
+  Drawable(SceneNode* node, const std::shared_ptr<Mesh>& mesh, render::Program* program = nullptr);
+  Drawable(SceneNode* node, const std::shared_ptr<Mesh>& mesh,
+           const std::shared_ptr<render::Program>& program);
 
   /// @brief Get the Mesh of the node
   const std::shared_ptr<Mesh>& getMesh() const { return mesh_; }
@@ -51,8 +67,12 @@ public:
   /// @brief Get the DrawCommand of the node
   const std::shared_ptr<render::DrawCommand>& getDrawCommand() const { return drawCommand_; }
 
+  /// @brief Get the RenderState of the DrawCommand
+  render::RenderState& getRenderState();
+  const render::RenderState& getRenderState() const;
+
   /// @brief Set the Program used in the render-pipeline when invoking the `DrawCommand`
-  void setProgram(const std::shared_ptr<render::Program>& program);
+  void setProgram(render::Program* program);
 
   /// @brief Is the node rendered?
   bool isActive() const { return active_; }
@@ -62,33 +82,18 @@ public:
 
   /// @brief Prepare the DrawCommand for rendering
   ///
-  /// @note
-  /// This copies the model-matrix and the render-state to an internal queue and the values can be
-  /// be modified freely afterwards without corrupting the rendering.
+  /// @note This copies the model-matrix and the render-state to an internal queue and the values
+  /// can be modified freely afterwards without corrupting the rendering.
   render::DrawCommand* prepareDrawCommand();
 
-  /// @brief Clone the scene node and all its children
-  virtual std::shared_ptr<SceneNode> clone() override;
+  /// @copydoc SceneNodeCapability::toString
+  virtual std::string toString() const override;
 
-  /// @brief RTTI implementation
-  static bool classof(const SceneNode* node) noexcept {
-    return node->getKind() >= SK_Drawable && node->getKind() < SK_DrawableLast;
-  }
-
-protected:
-  /// @brief Implementation of `toString` returns stringified members and title
-  virtual std::pair<std::string, std::string> toStringImpl() const override;
-
-private:
-  /// Is drawing enabled?
-  bool active_;
-
-  /// DrawCommand of the mesh
-  std::shared_ptr<render::DrawCommand> drawCommand_;
-
-  /// Mesh of the node
-  std::shared_ptr<Mesh> mesh_;
+  /// @copydoc SceneNodeCapability::clone
+  virtual std::shared_ptr<SceneNodeCapability> clone(SceneNode* node) const override;
 };
+
+SEQUOIA_REGISTER_SCENENODE_CAPABILITY(Drawable)
 
 } // namespace game
 

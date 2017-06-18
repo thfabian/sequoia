@@ -23,8 +23,6 @@ sequoia_add_objects(
           CameraControllerFree.cpp
           Drawable.h
           Drawable.cpp
-          Drawable2.h
-          Drawable2.cpp
           Game.h
           Game.cpp
           Mesh.h

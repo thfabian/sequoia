@@ -16,6 +16,7 @@
 #include "sequoia/Core/Format.h"
 #include "sequoia/Game/SceneGraph.h"
 #include "sequoia/Game/SceneNode.h"
+#include <algorithm>
 #include <iostream>
 
 namespace sequoia {
@@ -34,6 +35,10 @@ std::string SceneGraph::toDot() const { return std::string(); }
 void SceneGraph::dump() const {
   for(const auto& node : nodes_)
     std::cout << node->toString() << "\n";
+}
+
+void SceneGraph::remove(const std::shared_ptr<SceneNode>& node) {
+  nodes_.erase(std::remove(nodes_.begin(), nodes_.end(), node), nodes_.end());
 }
 
 void SceneGraph::update(const SceneNode::UpdateEvent& event) {

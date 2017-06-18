@@ -17,8 +17,9 @@
 #define SEQUOIA_GAME_SCENENODE_H
 
 #include "sequoia/Core/Export.h"
-#include "sequoia/Math/Math.h"
 #include "sequoia/Game/SceneNodeAlloc.h"
+#include "sequoia/Game/SceneNodeCapability.h"
+#include "sequoia/Math/Math.h"
 #include <functional>
 #include <memory>
 #include <string>
@@ -32,18 +33,16 @@ namespace game {
 /// @ingroup game
 class SEQUOIA_API SceneNode : public std::enable_shared_from_this<SceneNode> {
 public:
-  /// @brief Create an object of type `T` (using AllocatorType) with `args...`
-  template <class T, class... Args>
+  /// @brief Create a SceneNode of type `T` by passing `args...` to the constructor
+  template <class T = SceneNode, class... Args>
   static std::shared_ptr<T> create(Args&&... args) {
-    static_assert(std::is_base_of<SceneNode, T>::value, "not a SceneNode");
+    static_assert(std::is_base_of<SceneNode, T>::value, "type 'T' is not a SceneNode");
     return SceneNodeAlloc::create<T>(std::forward<Args>(args)...);
   }
 
   /// @brief RTTI distincion
   enum SceneNodeKind {
     SK_SceneNode,
-    SK_Drawable,
-    SK_DrawableLast,
     SK_CameraController,
     SK_CameraControllerFree,
     SK_CameraControllerLast
@@ -178,6 +177,37 @@ public:
   /// @param angle  Angle in radians
   void roll(const math::Radian& angle, TransformSpace relativeTo = TS_Parent);
 
+  /// @name Capabilities
+  /// @{
+
+  /// @brief Add a new SceneNodeCapability of type `T` by passing `args...` to the constructor
+  ///
+  /// @note The first argument of the constructor, which is the pointer to the respective SceneNode,
+  /// is added automatically.
+  template <class T, class... Args>
+  void addCapability(Args&&... args) {
+    capabilities_[SceneNodeCapabilityToKind<T>::value] =
+        SceneNodeAlloc::create<T>(this, std::forward<Args>(args)...);
+  }
+
+  /// @brief Check if the SceneNode poses the given SceneNodeCapability
+  /// @returns `true` if capability is available, `false` on absence
+  template <class T>
+  inline bool is() const noexcept {
+    return capabilities_[SceneNodeCapabilityToKind<T>::value] != nullptr;
+  }
+
+  /// @brief Get the SceneNodeCapability of type `T`
+  /// @returns pointer to the capability or `NULL` if capability is absence
+  template <class T>
+  inline const T* get() const noexcept {
+    return static_cast<const T*>(capabilities_[SceneNodeCapabilityToKind<T>::value].get());
+  }
+  template <class T>
+  inline T* get() noexcept {
+    return static_cast<T*>(capabilities_[SceneNodeCapabilityToKind<T>::value].get());
+  }
+
   /// @}
   /// @name Miscallenous
   /// @{
@@ -206,6 +236,10 @@ protected:
 private:
   /// Type of node
   SceneNodeKind kind_;
+
+  /// Capabilities of the node (nullptr indicates absence of the capability)
+  std::array<std::shared_ptr<SceneNodeCapability>, SceneNodeCapability::NumCapabilities>
+      capabilities_;
 
   /// List of children
   std::vector<std::shared_ptr<SceneNode>> children_;
