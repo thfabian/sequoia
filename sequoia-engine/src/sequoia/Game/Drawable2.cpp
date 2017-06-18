@@ -4,7 +4,7 @@
 //                       | (___   ___  __ _ _   _  ___  _  __ _
 //                        \___ \ / _ \/ _` | | | |/ _ \| |/ _` |
 //                        ____) |  __/ (_| | |_| | (_) | | (_| |
-//                       |_____/ \___|\__, |\__,_|\___/|_|\__,_| - Game Engine (2016-2017)
+//                       |_____/ \___|\__, |\__,_|\___/|_|\__,_| - Game Engine
 //                                       | |
 //                                       |_|
 //
@@ -13,33 +13,33 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Game/Drawable.h"
 #include "sequoia/Core/Assert.h"
 #include "sequoia/Core/Format.h"
+#include "sequoia/Game/Drawable2.h"
+#include "sequoia/Game/Game.h"
 #include "sequoia/Game/Mesh.h"
+#include "sequoia/Game/SceneNode.h"
+#include "sequoia/Game/SceneNodeAlloc.h"
 #include "sequoia/Render/DrawCommand.h"
 
 namespace sequoia {
 
 namespace game {
 
-Drawable::Drawable(const std::string& name, SceneNodeKind kind)
-    : Base(name, kind), active_(true), drawCommand_(std::make_shared<render::DrawCommand>()),
-      mesh_(nullptr) {}
-
-Drawable::Drawable(const Drawable& other)
-    : Base(other), active_(other.active_), drawCommand_(other.drawCommand_), mesh_(other.mesh_) {}
-
 Drawable::~Drawable() {}
+
+Drawable::Drawable(SceneNode* node, const std::shared_ptr<Mesh>& mesh, render::Program* program)
+    : Base(node), active_(true), drawCommand_(SceneNodeAlloc::create<render::DrawCommand>()) {
+  setMesh(mesh);
+  setProgram(program ? program : Game::getSingleton().getDefaultProgram().get());
+}
 
 void Drawable::setMesh(const std::shared_ptr<Mesh>& mesh) {
   mesh_ = mesh;
   drawCommand_->setVertexArrayObject(mesh_->getVertexArrayObject());
 }
 
-void Drawable::setProgram(const std::shared_ptr<render::Program>& program) {
-  drawCommand_->setProgram(program.get());
-}
+void Drawable::setProgram(render::Program* program) { drawCommand_->setProgram(program); }
 
 render::DrawCommand* Drawable::prepareDrawCommand() {
   SEQUOIA_ASSERT(active_);
@@ -49,20 +49,21 @@ render::DrawCommand* Drawable::prepareDrawCommand() {
   SEQUOIA_ASSERT_MSG(drawCommand_->getProgram(), "no Program set in DrawCommand");
 
   // Copy ModelMatrix to the draw command
-  drawCommand_->setModelMatrix(getModelMatrix());
+  drawCommand_->setModelMatrix(getNode()->getModelMatrix());
 
   return drawCommand_.get();
 }
 
-std::shared_ptr<SceneNode> Drawable::clone() { return SceneNode::create<Drawable>(*this); }
+std::shared_ptr<SceneNodeCapability> Drawable::clone(SceneNode* node) {
+  return SceneNodeAlloc::create<Drawable>(node, mesh_, drawCommand_->getProgram());
+}
 
-std::pair<std::string, std::string> Drawable::toStringImpl() const {
-  return std::make_pair("Drawable", core::format("%s"
-                                                 "drawCommand = %s,\n"
-                                                 "mesh = %s,\n",
-                                                 Base::toStringImpl().second,
-                                                 drawCommand_ ? drawCommand_->toString() : "null",
-                                                 mesh_ ? mesh_->toString() : "null"));
+std::string Drawable::toString() const {
+  return core::format("Drawable[\n"
+                      "  drawCommand = %s,\n"
+                      "  mesh = %s,\n"
+                      "]",
+                      drawCommand_->toString(), mesh_ ? mesh_->toString() : "null");
 }
 
 } // namespace game

@@ -16,7 +16,6 @@
 #include "sequoia/Core/Format.h"
 #include "sequoia/Game/CameraControllerFree.h"
 #include "sequoia/Game/Game.h"
-#include "sequoia/Game/SceneGraph.h"
 
 namespace sequoia {
 
@@ -117,7 +116,7 @@ void CameraControllerFree::update(const UpdateEvent& event) {
 }
 
 std::shared_ptr<SceneNode> CameraControllerFree::clone() {
-  return SceneGraph::create<CameraControllerFree>(*this);
+  return SceneNode::create<CameraControllerFree>(*this);
 }
 
 void CameraControllerFree::keyboardEvent(const render::KeyboardEvent& event) {

@@ -46,7 +46,7 @@ Scene::Scene() : activeCamera_(nullptr) {
 
   auto cubeMesh = game.getMeshManager()->createCube("TestCube");
 
-  auto cubeOrigin = SceneGraph::create<Drawable>("TestCubeOrigin");
+  auto cubeOrigin = SceneNode::create<Drawable>("TestCubeOrigin");
   cubeOrigin->setProgram(game.getDefaultProgram());
   cubeOrigin->setMesh(cubeMesh);
   sceneGraph_->insert(cubeOrigin);
@@ -55,7 +55,7 @@ Scene::Scene() : activeCamera_(nullptr) {
   int N = 100;
   for(int i = 0; i < N; ++i) {
     for(int j = 0; j < N; ++j) {
-      auto cube = SceneGraph::create<Drawable>(core::format("TestCube_%i_%i", i, j));
+      auto cube = SceneNode::create<Drawable>(core::format("TestCube_%i_%i", i, j));
       cube->setProgram(game.getDefaultProgram());
       cube->setMesh(cubeMesh);
       cube->translate(math::vec3((i - N / 2) * dx, 0, (j - N / 2) * dx));
@@ -64,7 +64,7 @@ Scene::Scene() : activeCamera_(nullptr) {
     }
   }
 
-  auto controller = SceneGraph::create<CameraControllerFree>("Camera");
+  auto controller = SceneNode::create<CameraControllerFree>("Camera");
   controller->setCamera(activeCamera_);
   sceneGraph_->insert(controller);
 

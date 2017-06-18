@@ -15,7 +15,6 @@
 
 #include "sequoia/Core/Format.h"
 #include "sequoia/Game/CameraController.h"
-#include "sequoia/Game/SceneGraph.h"
 #include "sequoia/Render/Camera.h"
 
 namespace sequoia {
@@ -50,7 +49,7 @@ void CameraController::update(const SceneNode::UpdateEvent& event) {
 }
 
 std::shared_ptr<SceneNode> CameraController::clone() {
-  return SceneGraph::create<CameraController>(*this);
+  return SceneNode::create<CameraController>(*this);
 }
 
 void CameraController::cameraListenerPositionChanged(render::Camera* camera) {

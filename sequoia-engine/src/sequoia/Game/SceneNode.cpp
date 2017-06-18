@@ -16,7 +16,6 @@
 #include "sequoia/Core/Format.h"
 #include "sequoia/Core/Logging.h"
 #include "sequoia/Core/StringUtil.h"
-#include "sequoia/Game/SceneGraph.h"
 #include "sequoia/Game/SceneNode.h"
 #include "sequoia/Math/CoordinateSystem.h"
 
@@ -90,7 +89,7 @@ void SceneNode::yaw(const math::Radian& angle, TransformSpace relativeTo) {
   rotate(math::CoordinateSystem::Y(), angle, relativeTo);
 }
 
-std::shared_ptr<SceneNode> SceneNode::clone() { return SceneGraph::create<SceneNode>(*this); }
+std::shared_ptr<SceneNode> SceneNode::clone() { return SceneNode::create<SceneNode>(*this); }
 
 std::string SceneNode::toString() const {
   auto stringPair = toStringImpl();

@@ -17,8 +17,8 @@
 #define SEQUOIA_GAME_SCENENODE_H
 
 #include "sequoia/Core/Export.h"
-#include "sequoia/Game/Mesh.h"
 #include "sequoia/Math/Math.h"
+#include "sequoia/Game/SceneNodeAlloc.h"
 #include <functional>
 #include <memory>
 #include <string>
@@ -32,6 +32,13 @@ namespace game {
 /// @ingroup game
 class SEQUOIA_API SceneNode : public std::enable_shared_from_this<SceneNode> {
 public:
+  /// @brief Create an object of type `T` (using AllocatorType) with `args...`
+  template <class T, class... Args>
+  static std::shared_ptr<T> create(Args&&... args) {
+    static_assert(std::is_base_of<SceneNode, T>::value, "not a SceneNode");
+    return SceneNodeAlloc::create<T>(std::forward<Args>(args)...);
+  }
+
   /// @brief RTTI distincion
   enum SceneNodeKind {
     SK_SceneNode,
