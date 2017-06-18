@@ -16,12 +16,14 @@
 #ifndef SEQUOIA_GAME_SCENEGRAPH_H
 #define SEQUOIA_GAME_SCENEGRAPH_H
 
+#include "sequoia/Core/Export.h"
 #include "sequoia/Core/Memory.h"
 #include "sequoia/Core/NonCopyable.h"
-#include "sequoia/Core/Export.h"
 #include "sequoia/Game/SceneNode.h"
 #include <memory>
 #include <vector>
+
+#define SEQUOIA_SCENEGRAPH_USE_TBB 1
 
 namespace sequoia {
 
@@ -41,8 +43,13 @@ public:
   /// @brief Create a new scene node of type `T` and pass `args...` to the constructor
   template <class T, class... Args>
   static std::shared_ptr<T> create(Args&&... args) {
+#if SEQUOIA_SCENEGRAPH_USE_TBB
     return std::allocate_shared<T, memory::cache_aligned_allocator<T>>(
         memory::cache_aligned_allocator<T>(), std::forward<Args>(args)...);
+#else
+    return std::allocate_shared<T, std::allocator<T>>(std::allocator<T>(),
+                                                      std::forward<Args>(args)...);
+#endif
   }
 
   /// @brief Insert a new scenen `node` into the graph

@@ -154,13 +154,18 @@ public:
   /// @{
   Degree operator+(const Degree& d) const noexcept { return Degree(deg_ + d.deg_); }
   Degree operator+(const Radian& r) const noexcept { return Degree(deg_ + r.inDegrees()); }
+  Degree operator+(float d) const noexcept { return Degree(deg_ + d); }
   /// @}
 
   /// @name Substract
   /// @{
   Degree operator-(const Degree& d) const noexcept { return Degree(deg_ - d.deg_); }
   Degree operator-(const Radian& r) const noexcept { return Degree(deg_ - r.inDegrees()); }
+  Degree operator-(float d) const noexcept { return Degree(deg_ - d); }
   /// @}
+
+  /// @name Negate
+  Degree operator-() const noexcept { return Degree(-deg_); }
 
   /// @name Increment
   /// @{
@@ -172,6 +177,7 @@ public:
     deg_ += r.inDegrees();
     return *this;
   }
+  Degree& operator+=(float d) noexcept { return (*this += Degree(d)); }
   /// @}
 
   /// @name Decrement
@@ -184,6 +190,20 @@ public:
     deg_ -= r.inDegrees();
     return *this;
   }
+  Degree& operator-=(float d) noexcept { return (*this -= Degree(d)); }
+  /// @}
+
+  /// @name Multiplication
+  /// @{
+  Degree& operator*=(const Degree& d) noexcept {
+    deg_ *= d.deg_;
+    return *this;
+  }
+  Degree& operator*=(const Radian& r) noexcept {
+    deg_ *= r.inDegrees();
+    return *this;
+  }
+  Degree& operator*=(float d) noexcept { return (*this *= Degree(d)); }
   /// @}
 
   /// @name Comparison
@@ -194,6 +214,13 @@ public:
   bool operator!=(const Degree& d) const noexcept { return deg_ != d.deg_; }
   bool operator>=(const Degree& d) const noexcept { return deg_ >= d.deg_; }
   bool operator>(const Degree& d) const noexcept { return deg_ > d.deg_; }
+
+  bool operator<(float d) const noexcept { return deg_ < d; }
+  bool operator<=(float d) const noexcept { return deg_ <= d; }
+  bool operator==(float d) const noexcept { return deg_ == d; }
+  bool operator!=(float d) const noexcept { return deg_ != d; }
+  bool operator>=(float d) const noexcept { return deg_ >= d; }
+  bool operator>(float d) const noexcept { return deg_ > d; }
   /// @}
 
   float inDegrees() const noexcept { return deg_; }

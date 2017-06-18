@@ -15,6 +15,8 @@
 
 #include "sequoia/Core/Casting.h"
 #include "sequoia/Core/Format.h"
+#include "sequoia/Core/Logging.h"
+#include "sequoia/Game/CameraControllerFree.h"
 #include "sequoia/Game/Game.h"
 #include "sequoia/Game/MeshManager.h"
 #include "sequoia/Game/Scene.h"
@@ -23,7 +25,6 @@
 #include "sequoia/Render/DrawCommandList.h"
 #include "sequoia/Render/RenderWindow.h"
 
-#include "sequoia/Game/CameraControllerFree.h"
 #include "sequoia/Game/Drawable.h"
 
 namespace sequoia {
@@ -51,7 +52,7 @@ Scene::Scene() : activeCamera_(nullptr) {
   sceneGraph_->insert(cubeOrigin);
 
   float dx = 3.0f;
-  int N = 10;
+  int N = 100;
   for(int i = 0; i < N; ++i) {
     for(int j = 0; j < N; ++j) {
       auto cube = SceneGraph::create<Drawable>(core::format("TestCube_%i_%i", i, j));

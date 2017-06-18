@@ -17,8 +17,6 @@
 #include "sequoia/Math/CoordinateSystem.h"
 #include "sequoia/Render/Camera.h"
 
-#include <iostream>
-
 namespace sequoia {
 
 namespace render {
@@ -51,10 +49,6 @@ void Camera::lookAt(const math::vec3& eye, const math::vec3& center, const math:
   const math::vec3 u = math::cross(s, f);
   math::mat3 localAxes(s, u, -f);
 
-  std::cout << s << std::endl;
-  std::cout << u << std::endl;
-  std::cout << f << std::endl;
-  
   setPosition(eye);
   setOrientation(math::normalize(math::quat(localAxes)));
 

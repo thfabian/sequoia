@@ -203,13 +203,6 @@ macro(sequoia_set_cxx_flags)
     add_definitions(-DNDEBUG)
     add_definitions(-DSEQUOIA_DISABLE_ASSERTS)
   endif()
-    
-  #
-  # Add shared library flags
-  #
-  if(BUILD_SHARED_LIBS)
-    add_definitions(-DSEQUOIA_SHARED_LIBRARIES)
-  endif()
 
   #
   # MSVC

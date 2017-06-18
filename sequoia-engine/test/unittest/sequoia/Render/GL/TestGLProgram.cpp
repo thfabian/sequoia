@@ -1,12 +1,12 @@
 //===--------------------------------------------------------------------------------*- C++ -*-===//
-//                         _____                        _       
-//                        / ____|                      (_)      
-//                       | (___   ___  __ _ _   _  ___  _  __ _ 
+//                         _____                        _
+//                        / ____|                      (_)
+//                       | (___   ___  __ _ _   _  ___  _  __ _
 //                        \___ \ / _ \/ _` | | | |/ _ \| |/ _` |
 //                        ____) |  __/ (_| | |_| | (_) | | (_| |
 //                       |_____/ \___|\__, |\__,_|\___/|_|\__,_| - Game Engine (2016-2017)
-//                                       | |                    
-//                                       |_| 
+//                                       | |
+//                                       |_|
 //
 // This file is distributed under the MIT License (MIT).
 // See LICENSE.txt for details.
@@ -158,6 +158,7 @@ TEST_F(GLProgramTest, VertexAttributesAll) {
 }
 
 TEST_F(GLProgramTest, VertexAttributesFail) {
+#if SEQUOIA_ENABLE_ASSERTS
   Environment& env = Environment::getSingleton();
   RenderSystem& rsys = RenderSystem::getSingleton();
 
@@ -166,6 +167,7 @@ TEST_F(GLProgramTest, VertexAttributesFail) {
       env.getFile("sequoia/Render/GL/TestGLProgramManager/VertexAttributesFail.vert"));
 
   EXPECT_THROW((rsys.createProgram(getWindow(), {vertexShader})), RenderSystemException);
+#endif
 }
 
 } // anonymous namespace

@@ -24,6 +24,8 @@
 #include <algorithm>
 #include <boost/functional/hash.hpp>
 
+#include <iostream>
+
 namespace sequoia {
 
 namespace render {
@@ -162,8 +164,9 @@ bool GLProgramManager::checkAttributes(const std::shared_ptr<GLProgram>& program
                << ", location=" << location;
 
     // We don't check attributes which start with `frag_`
-    if(!StringRef(name.get()).startswith("frag_") && !GLVertexAttribute::isValid(name.get()))
+    if(!StringRef(name.get()).startswith("frag_") && !GLVertexAttribute::isValid(name.get())) {
       SEQUOIA_THROW(RenderSystemException, "invalid vertex attribute '%s'", name.get());
+    }
   }
 
   LOG(DEBUG) << "Successfully checked vertex attributes of program (ID=" << program->id_ << ")";

@@ -27,20 +27,22 @@ namespace game {
 SceneNode::SceneNode(const std::string& name, SceneNode::SceneNodeKind kind)
     : kind_(kind), position_(math::vec3()), orientation_(math::quat()), scale_(1.0f),
       modelMatrix_(), modelMatrixIsDirty_(true), parent_(), name_(name) {
-  LOG(DEBUG) << "Creating SceneNode \"" << name_ << "\"";
+  //LOG(DEBUG) << "Creating SceneNode \"" << name_ << "\"";
 }
 
 SceneNode::SceneNode(const SceneNode& other)
     : kind_(other.kind_), position_(other.position_), orientation_(other.orientation_),
       scale_(other.scale_), modelMatrix_(other.modelMatrix_),
       modelMatrixIsDirty_(other.modelMatrixIsDirty_), parent_(other.parent_), name_(other.name_) {
-  LOG(DEBUG) << "Creating copy of SceneNode \"" << name_ << "\"";
+  //LOG(DEBUG) << "Creating copy of SceneNode \"" << name_ << "\"";
 
   for(const auto& child : other.children_)
     children_.emplace_back(child->clone());
 }
 
-SceneNode::~SceneNode() { LOG(DEBUG) << "Deleting SceneNode \"" << name_ << "\""; }
+SceneNode::~SceneNode() { 
+  //LOG(DEBUG) << "Deleting SceneNode \"" << name_ << "\""; 
+}
 
 void SceneNode::resetOrientation() { setOrientation(math::quat()); }
 

@@ -19,6 +19,7 @@
 #include "sequoia/Core/Logging.h"
 #include "sequoia/Core/Memory.h"
 #include "sequoia/Core/UtfString.h"
+#include <fstream>
 
 namespace sequoia {
 

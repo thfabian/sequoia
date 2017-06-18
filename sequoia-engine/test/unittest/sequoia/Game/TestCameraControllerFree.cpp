@@ -19,7 +19,7 @@
 #include "sequoia/Game/Scene.h"
 #include "sequoia/Game/SceneGraph.h"
 #include "sequoia/Unittest/GameTest.h"
-#include <gtest/gtest.h>
+#include "sequoia/Unittest/Test.h"
 
 using namespace sequoia;
 using namespace sequoia::unittest;
@@ -35,6 +35,15 @@ TEST_F(CameraControllerFreeTest, CameraControllerFree) {
   EXPECT_STREQ(node->getName().data(), "CameraControllerFree");
   EXPECT_EQ(node->getKind(), SceneNode::SK_CameraControllerFree);
   EXPECT_FALSE(node->hasCamera());
+
+  auto camera = std::make_shared<render::Camera>(math::vec3(10, 10, 10), math::vec3(-1, 5, 0));
+  node->setCamera(camera);
+  EXPECT_TRUE(node->hasCamera());
+
+  // Check that the correct orientation (i.e yaw and pitch) was captured
+  node->update(SceneNode::UpdateEvent());
+  EXPECT_VEC_NEAR(node->getCamera()->getEye(), math::vec3(10, 10, 10), 1e-05f);
+  EXPECT_VEC_NEAR(node->getCamera()->getCenter(), math::vec3(-1, 5, 0), 1e-05f);
 
   // Clone node
   auto nodeClone = node->clone();

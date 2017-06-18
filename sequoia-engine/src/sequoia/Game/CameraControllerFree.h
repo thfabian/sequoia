@@ -27,9 +27,9 @@ namespace game {
 
 /// @brief Free-looking camera
 /// @ingroup game
-class SEQUOIA_API CameraControllerFree : public CameraController,
-                                         public MouseListener,
-                                         public KeyListener {
+class SEQUOIA_API CameraControllerFree final : public CameraController,
+                                               public MouseListener,
+                                               public KeyListener {
 public:
   using Base = CameraController;
 
@@ -108,12 +108,12 @@ private:
   float rotationSpeed_;
 
   /// Rotation around Y-axis (in degree)
-  float yawOffset_;
-  float yaw_;
+  math::Degree yawOffset_;
+  math::Degree yaw_;
 
   /// Rotation around X-axis (in degree)
-  float pitchOffset_;
-  float pitch_;
+  math::Degree pitchOffset_;
+  math::Degree pitch_;
 };
 
 } // namespace game

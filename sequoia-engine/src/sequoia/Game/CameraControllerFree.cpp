@@ -17,8 +17,6 @@
 #include "sequoia/Game/CameraControllerFree.h"
 #include "sequoia/Game/Game.h"
 #include "sequoia/Game/SceneGraph.h"
-#include "sequoia/Math/CoordinateSystem.h"
-#include "sequoia/Render/RenderSystem.h"
 
 namespace sequoia {
 
@@ -45,6 +43,12 @@ void CameraControllerFree::setCamera(const std::shared_ptr<render::Camera>& came
   Base::setCamera(camera);
   Game::getSingleton().addListener(static_cast<MouseListener*>(this));
   Game::getSingleton().addListener(static_cast<KeyListener*>(this));
+
+  // Extract yaw and pitch from the current orientation
+  math::vec3 eulerAngles = math::eulerAngles(getOrientation());
+  pitch_ = -math::Degree::fromRadian(eulerAngles.x);
+  yaw_ = -math::Degree::fromRadian(eulerAngles.y);
+  rotUpdateNeeded_ = true;
 }
 
 void CameraControllerFree::removeCamera() {
@@ -86,7 +90,7 @@ void CameraControllerFree::update(const UpdateEvent& event) {
     yawOffset_ *= rotationSpeed_ * event.TimeStep;
     pitchOffset_ *= rotationSpeed_ * event.TimeStep;
 
-    auto warp = [](float degree) {
+    auto warp = [](auto degree) {
       while(degree < 0.f)
         degree += 360.f;
       while(degree >= 360.f)

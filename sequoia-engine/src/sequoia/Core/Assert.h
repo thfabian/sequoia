@@ -21,21 +21,25 @@
 
 #if defined(SEQUOIA_DISABLE_ASSERTS) || defined(NDEBUG)
 
+#define SEQUOIA_ENABLE_ASSERTS 0
+
 #define SEQUOIA_ASSERT(expr) ((void)0)
 #define SEQUOIA_ASSERT_MSG(expr, msg) ((void)0)
 
 #else
 
+#define SEQUOIA_ENABLE_ASSERTS 1
+
 namespace sequoia {
 
 namespace core {
 
-SEQUOIA_API extern void assertionFailed(const char* expr, const char* function,
-                                             const char* file, long line);
-SEQUOIA_API extern void assertionFailedMsg(const char* expr, const char* msg,
-                                                const char* function, const char* file, long line);
+SEQUOIA_API extern void assertionFailed(const char* expr, const char* function, const char* file,
+                                        long line);
+SEQUOIA_API extern void assertionFailedMsg(const char* expr, const char* msg, const char* function,
+                                           const char* file, long line);
 SEQUOIA_API extern void assertionFailedMsg(char const* expr, const wchar_t* msg,
-                                                char const* function, const char* file, long line);
+                                           char const* function, const char* file, long line);
 
 } // namespace core
 

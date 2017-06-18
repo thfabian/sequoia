@@ -113,7 +113,12 @@ function(sequoia_add_objects)
   if(ARG_DEPENDS)
     add_dependencies(${ARG_NAME} ${ARG_DEPENDS})
   endif()
-    
+  
+  # Add shared library flags
+  if(BUILD_SHARED_LIBS)
+    target_compile_definitions(${ARG_NAME} PRIVATE -DSEQUOIA_SHARED_LIBRARIES)
+  endif()  
+  
   # Use folders in Visual Studio  
   if(MSVC)
     set_property(GLOBAL PROPERTY USE_FOLDERS ON)

@@ -41,11 +41,10 @@ class PrettyStackTrace::Impl {
 
 PrettyStackTrace::PrettyStackTrace()
 #if defined(SEQUOIA_DISABLE_ASSERTS) || defined(NDEBUG)
-    : impl_(nullptr)
+    : impl_(nullptr) {}
 #else
-    : impl_(new Impl) {
+    : impl_(new Impl) {} 
 #endif
-}
 
 PrettyStackTrace::~PrettyStackTrace() {
   if(impl_)
