@@ -13,7 +13,7 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Core/Image.h"
+#include "sequoia/Core/Color.h"
 #include "sequoia/Unittest/Environment.h"
 #include <gtest/gtest.h>
 
@@ -23,22 +23,27 @@ using namespace sequoia::core;
 
 namespace {
 
-TEST(ImageTest, LoadPNG) {
-  Environment& env = Environment::getSingleton();
-  auto file = env.getFile("sequoia/Core/TestImage/test.png");
-  
-  EXPECT_EQ(file->getNumBytes(), 193);
+TEST(ColorTest, ColorG) {
+  static_assert(ColorG::NumChannels == 1, "");
+  static_assert(ColorG::Format == ColorFormat::G, "");
 
-  Image image(file);
-  EXPECT_EQ(image.getHeight(), 32);
-  EXPECT_EQ(image.getWidth(), 32);
-  EXPECT_EQ(image.getNumChannels(), 3);
-  
-  // Top left is blue
-  
-  // Top right is green
-  
-  // Bottom left is red
+  ColorG color1(12);
+  EXPECT_EQ(color1[0], 12);
+  EXPECT_EQ(color1.r(), 12);
+  EXPECT_EQ(color1.getChannel<0>(), 12);
+  EXPECT_EQ(color1.getChannel(0), 12);
+  EXPECT_TRUE(color1 == ColorG(12));
+
+  Byte pixelData[4] = {255, 254, 253, 252};
+  ColorG color2(pixelData);
+  EXPECT_EQ(color2[0], 255);
+  EXPECT_EQ(color2.r(), 255);
+  EXPECT_EQ(color2.getChannel<0>(), 255);
+  EXPECT_EQ(color2.getChannel(0), 255);
+  EXPECT_TRUE(color2 == ColorG(255));
+
+  EXPECT_TRUE(color2 != color1);
+  EXPECT_TRUE(color2 == color2);
 }
 
 } // anonymous namespace

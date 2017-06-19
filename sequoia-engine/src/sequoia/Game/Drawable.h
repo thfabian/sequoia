@@ -86,6 +86,9 @@ public:
   /// can be modified freely afterwards without corrupting the rendering.
   render::DrawCommand* prepareDrawCommand();
 
+  /// @copydoc SceneNodeCapability::update
+  virtual void update(const SceneNodeUpdateEvent& event) override;
+
   /// @copydoc SceneNodeCapability::toString
   virtual std::string toString() const override;
 

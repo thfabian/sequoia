@@ -44,6 +44,8 @@ sequoia_add_objects(
           Byte.h
           Casting.h
           Compiler.h
+          Color.h
+          Color.cpp
           EnumState.h
           Export.h
           ErrorHandler.h

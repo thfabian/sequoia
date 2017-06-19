@@ -35,9 +35,9 @@ SEQUOIA_DECLARE_SINGLETON(game::Game);
 
 namespace game {
 
-Game::Game()
+Game::Game(std::string name)
     : renderSystem_(nullptr), meshManager_(nullptr), assetManager_(nullptr), mainWindow_(nullptr),
-      quitKey_(nullptr), shouldClose_(false), scene_(nullptr) {}
+      quitKey_(nullptr), shouldClose_(false), scene_(nullptr), name_(name) {}
 
 Game::~Game() { cleanup(); }
 
@@ -45,10 +45,10 @@ void Game::run() {
   LOG(INFO) << "Starting main-loop ...";
 
   render::DrawCommandList* drawCommandList = mainWindow_->getDrawCommandList().get();
-  
+
   // Start main-loop
   while(!mainWindow_->isClosed() && !shouldClose_) {
-    
+
     // Query I/O events
     renderSystem_->pollEvents();
 
@@ -72,7 +72,7 @@ void Game::run() {
 void Game::setQuitKey(const std::shared_ptr<Keymap>& key) { quitKey_ = key; }
 
 void Game::init(bool hideWindow) {
-  LOG(INFO) << "Initializing Game ...";
+  LOG(INFO) << "Initializing " << name_ << " ...";
   using namespace render;
 
   Options& opt = Options::getSingleton();
@@ -105,7 +105,7 @@ void Game::init(bool hideWindow) {
     // Initialize the main-window
     mainWindow_->init();
     quitKey_ = Keymap::makeDefault(render::Key_Q, render::Mod_Ctrl);
-    
+
     // Register the game as a keyboard and mouse listener
     renderSystem_->addKeyboardListener(mainWindow_, this);
     renderSystem_->addMouseListener(mainWindow_, this);
@@ -127,16 +127,16 @@ void Game::init(bool hideWindow) {
     // TODO: This is not optimal. The Viewport should automatically be informed if the camera of
     // the scene changes
     mainWindow_->getViewport()->setCamera(scene_->getActiveCamera().get());
-    
+
   } catch(render::RenderSystemException& e) {
     ErrorHandler::getSingleton().fatal(e.what());
   }
 
-  LOG(INFO) << "Done initializing Game";
+  LOG(INFO) << "Done initializing " << name_;
 }
 
 void Game::cleanup() {
-  LOG(INFO) << "Terminating Game ...";
+  LOG(INFO) << "Terminating " << name_ << " ...";
 
   // Free all the scenes
   sceneList_.clear();
@@ -148,7 +148,7 @@ void Game::cleanup() {
   // Free all RenderSystem objects
   renderSystem_.reset();
 
-  LOG(INFO) << "Done terminating Game";
+  LOG(INFO) << "Done terminating " << name_;
 }
 
 void Game::keyboardEvent(const render::KeyboardEvent& event) {

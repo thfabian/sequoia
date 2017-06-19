@@ -17,6 +17,7 @@
 #define SEQUOIA_RENDER_VERTEX_H
 
 #include "sequoia/Core/Assert.h"
+#include "sequoia/Core/Byte.h"
 #include "sequoia/Core/Export.h"
 #include <cstddef>
 #include <string>
@@ -107,7 +108,7 @@ struct SEQUOIA_API VertexLayout {
 struct SEQUOIA_API Vertex2D {
   using PositionType = float;
   using TexCoordType = float;
-  using ColorType = unsigned char;
+  using ColorType = Byte;
 
   PositionType Position[2];
   TexCoordType TexCoord[2];
@@ -136,7 +137,7 @@ struct SEQUOIA_API Vertex3D {
   using PositionType = float;
   using NormalType = float;
   using TexCoordType = float;
-  using ColorType = unsigned char;
+  using ColorType = Byte;
 
   PositionType Position[3];
   NormalType Normal[3];

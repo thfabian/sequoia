@@ -56,7 +56,7 @@ void CameraControllerFree::removeCamera() {
   Game::getSingleton().removeListener(static_cast<KeyListener*>(this));
 }
 
-void CameraControllerFree::update(const UpdateEvent& event) {
+void CameraControllerFree::update(const UpdateEvent& event) {  
   if(!hasCamera())
     return;
 

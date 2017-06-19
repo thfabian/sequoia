@@ -25,6 +25,7 @@ namespace sequoia {
 namespace game {
 
 class SceneNode;
+struct SceneNodeUpdateEvent;
 
 /// @brief Attach capabilities to scene nodes like Drawable, Animable or Soundable
 /// @ingroup game
@@ -52,6 +53,9 @@ public:
 
   /// @brief Set the SceneNode
   void setNode(SceneNode* node) { node_ = node; }
+
+  /// @brief Update the node to indicate the scene progressed to the next time-step
+  virtual void update(const SceneNodeUpdateEvent& event) = 0;
 
   /// @brief Convert to string
   virtual std::string toString() const = 0;

@@ -63,7 +63,11 @@ void SceneNode::apply(const std::function<void(SceneNode*)>& functor) {
     child->apply(functor);
 }
 
-void SceneNode::update(const UpdateEvent& event) {}
+void SceneNode::update(const UpdateEvent& event) {
+  for(int i = 0; i < capabilities_.size(); ++i)
+    if(capabilities_[i])
+      capabilities_[i]->update(event);
+}
 
 void SceneNode::translate(const math::vec3& d, TransformSpace relativeTo) {
   setPosition(getPosition() + d);

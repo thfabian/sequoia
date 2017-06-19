@@ -13,11 +13,11 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Unittest/TestFile.h"
 #include "sequoia/Core/Exception.h"
 #include "sequoia/Core/Memory.h"
 #include "sequoia/Core/UtfString.h"
 #include "sequoia/Unittest/Environment.h"
+#include "sequoia/Unittest/TestFile.h"
 #include <fstream>
 #include <sstream>
 

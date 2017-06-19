@@ -25,11 +25,11 @@ namespace sequoia {
 
 namespace game {
 
-/// @brief This class abstracts the key mapping.
+/// @brief This class abstracts the key mapping
 ///
 /// To allow remapping of keys at runtime, you should use this abstraction. For example, you might
-/// want to move your character forward if the `W` key was pressed. Yet, someone else might want to
-/// move the character with `E`. If your class is hardcoded on the key `W`, you would need to
+/// want to move your character forward with the `W` key was pressed. Yet, someone else might want
+/// to move the character with `E`. If your class is hardcoded on the key `W`, you would need to
 /// recompile the entire application. This class provides a remedy for this problem, it allows to
 /// bind the key to the action dynamically at runtime.
 ///
@@ -43,18 +43,18 @@ namespace game {
 /// }
 /// @endcode
 ///
-/// you should use `Keymap`. This means, your character object should have a member like
+/// you should use `Keymap`. This means, your character object should have a member
 ///
 /// @code{.cpp}
 /// std::shared_ptr<Keymap> forwardKeymap;
 /// @endcode
 ///
-/// which is initialized from a global Keymapping repository (so that it can be updated). And the
+/// which is initialized from a global Keymapping repository (so that it can be updated). The
 /// event will be handled the following:
 ///
 /// @code{.cpp}
 /// void handleEvent(const KeyboardEvent& event) {
-///  if(forwardKeymap(event)) {
+///  if(forwardKeymap->handle(event)) {
 ///    moveForward();
 ///  }
 /// }

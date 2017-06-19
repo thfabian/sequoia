@@ -29,10 +29,18 @@ namespace sequoia {
 
 namespace game {
 
+/// @brief Event indicating the scenen has progressed to the next time-step
+struct SceneNodeUpdateEvent {
+  /// Time since last update (i.e time-step)
+  float TimeStep;
+};
+
 /// @brief Base class of all scene nodes in the SceneGraph
 /// @ingroup game
 class SEQUOIA_API SceneNode : public std::enable_shared_from_this<SceneNode> {
 public:
+  using UpdateEvent = SceneNodeUpdateEvent;
+
   /// @brief Create a SceneNode of type `T` by passing `args...` to the constructor
   template <class T = SceneNode, class... Args>
   static std::shared_ptr<T> create(Args&&... args) {
@@ -53,12 +61,6 @@ public:
     TS_Local,  ///< Transform is relative to the local space
     TS_Parent, ///< Transform is relative to the space of the parent node
     TS_World   ///< Transform is relative to world space
-  };
-
-  /// @brief Event indicating we moved to the next time-step
-  struct UpdateEvent {
-    /// Time since last update (i.e time-step)
-    float TimeStep;
   };
 
   SceneNode(const std::string& name, SceneNodeKind kind = SK_SceneNode);
@@ -146,7 +148,7 @@ public:
   /// @brief Apply `functor` to the node and all its children
   void apply(const std::function<void(SceneNode*)>& functor);
 
-  /// @brief Update the node to indicate we moved on to the next time-step
+  /// @brief Update the node to indicate the scene progressed to the next time-step
   virtual void update(const UpdateEvent& event);
 
   /// @brief Translate the node by `d`

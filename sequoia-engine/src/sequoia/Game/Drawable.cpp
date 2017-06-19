@@ -63,6 +63,8 @@ render::DrawCommand* Drawable::prepareDrawCommand() {
   return drawCommand_.get();
 }
 
+void Drawable::update(const SceneNodeUpdateEvent& event) {}
+
 std::shared_ptr<SceneNodeCapability> Drawable::clone(SceneNode* node) const {
   return SceneNodeAlloc::create<Drawable>(node, mesh_, drawCommand_->getProgram());
 }

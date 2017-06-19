@@ -42,6 +42,7 @@ void CameraController::removeCamera() {
 }
 
 void CameraController::update(const SceneNode::UpdateEvent& event) {
+  Base::update(event);
   if(hasCamera()) {
     camera_->setPosition(getPosition());
     camera_->setOrientation(getOrientation());

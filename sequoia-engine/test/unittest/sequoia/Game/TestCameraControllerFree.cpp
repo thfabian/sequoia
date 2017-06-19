@@ -51,8 +51,6 @@ TEST_F(CameraControllerFreeTest, CameraControllerFree) {
   EXPECT_EQ(nodeClone->getName(), "copy");
   EXPECT_EQ(node->getName(), "CameraControllerFree");
   
-  std::cout << node->toString() << std::endl;
-
   // Test RTTI
   EXPECT_TRUE(isa<CameraController>(node.get()));
   EXPECT_TRUE(isa<CameraControllerFree>(node.get()));

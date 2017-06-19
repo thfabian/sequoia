@@ -16,9 +16,9 @@
 #ifndef SEQUOIA_GAME_GAME_H
 #define SEQUOIA_GAME_GAME_H
 
+#include "sequoia/Core/Export.h"
 #include "sequoia/Core/Listenable.h"
 #include "sequoia/Core/Singleton.h"
-#include "sequoia/Core/Export.h"
 #include "sequoia/Render/Input.h"
 #include "sequoia/Render/RenderFwd.h"
 #include <memory>
@@ -35,9 +35,9 @@ class Keymap;
 /// @brief Main class holding all game and rendering related objects and running the main-loop
 /// @ingroup game
 class SEQUOIA_API Game : public Singleton<Game>,
-                              public KeyListener,
-                              public MouseListener,
-                              public Listenable<KeyListener, MouseListener> {
+                         public KeyListener,
+                         public MouseListener,
+                         public Listenable<KeyListener, MouseListener> {
 
   /// Active render-system
   std::unique_ptr<render::RenderSystem> renderSystem_;
@@ -48,7 +48,7 @@ class SEQUOIA_API Game : public Singleton<Game>,
 
   /// Reference to the main window
   render::RenderWindow* mainWindow_;
-  
+
   /// Keymap to quit the game
   std::shared_ptr<Keymap> quitKey_;
   bool shouldClose_;
@@ -59,8 +59,11 @@ class SEQUOIA_API Game : public Singleton<Game>,
   /// Currently active scene
   Scene* scene_;
 
+  /// Name of the game
+  std::string name_;
+  
 public:
-  Game();
+  Game(std::string name = "Game");
 
   /// @brief Cleanup all allocted objects
   ~Game();
@@ -98,7 +101,6 @@ public:
 
   /// @brief Get the default program
   const std::shared_ptr<render::Program>& getDefaultProgram() const;
-  
 
   /// @brief Get the main Scene
   Scene* getScene() const;
