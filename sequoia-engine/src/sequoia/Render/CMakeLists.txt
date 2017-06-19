@@ -38,6 +38,8 @@ sequoia_add_objects(
           RenderWindow.h
           Shader.h
           Shader.cpp
+          Texture.h
+          Texture.cpp
           Vertex.h
           Vertex.cpp
           VertexArrayObject.h
@@ -69,6 +71,10 @@ sequoia_add_objects(
           GL/GLShaderManager.cpp
           GL/GLStateCacheManager.h
           GL/GLStateCacheManager.cpp
+          GL/GLTexture.h
+          GL/GLTexture.cpp
+          GL/GLTextureManager.h
+          GL/GLTextureManager.cpp
           GL/GLVertexArrayObject.h
           GL/GLVertexArrayObject.cpp
           GL/GLVertexAttribute.h

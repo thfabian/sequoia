@@ -16,6 +16,7 @@
 #ifndef SEQUOIA_CORE_IMAGE_H
 #define SEQUOIA_CORE_IMAGE_H
 
+#include "sequoia/Core/Color.h"
 #include "sequoia/Core/Export.h"
 #include "sequoia/Core/File.h"
 
@@ -57,6 +58,13 @@ public:
   /// format.
   const unsigned char* getPixelData() const { return pixelData_; }
 
+  /// @brief Get read-only access to the pixel at position `(i, j)` with color of type `T`
+  template <class T>
+  inline T at(int i, int j) const noexcept {
+    static_assert(IsColor<T>::value, "not a Color");
+    return T(pixelData_ + numChannels_ * (i * width_ + j));
+  }
+
   /// @brief Get the color mode used in the pixel data
 
   /// @brief Get the width of the image in pixels
@@ -84,6 +92,8 @@ public:
 };
 
 } // namespace core
+
+using Image = core::Image;
 
 } // namespace sequoia
 

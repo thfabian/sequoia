@@ -13,37 +13,41 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Core/Exception.h"
+#ifndef SEQUOIA_RENDER_TEXTURE_H
+#define SEQUOIA_RENDER_TEXTURE_H
+
+#include "sequoia/Core/Export.h"
 #include "sequoia/Core/Image.h"
-
-#ifndef NDEBUG
-#define STBI_FAILURE_USERMSG
-#endif
-
-#define STBI_SUPPORT_ZLIB
-#define STBI_ONLY_PNG
-#define STBI_ONLY_JPEG
-#define STBI_ONLY_BMP
-#define STB_IMAGE_IMPLEMENTATION
-#include <stb/stb_image.h>
+#include "sequoia/Core/NonCopyable.h"
+#include "sequoia/Render/RenderSystemObject.h"
 
 namespace sequoia {
 
-namespace core {
+namespace render {
 
-Image::Image(const std::shared_ptr<File>& file) : file_(file) {
-  pixelData_ = stbi_load_from_memory(file_->getData(), file_->getNumBytes(), &width_, &height_,
-                                     &numChannels_, 0);
-  if(!pixelData_)
-    SEQUOIA_THROW(core::Exception, "failed to load image \"%s\": %s", file_->getPath(),
-                  stbi_failure_reason());
-}
+/// @brief Texture object
+///
+/// @see RenderSystem::loadTexture
+/// @ingroup render
+class SEQUOIA_API Texture : public RenderSystemObject,
+                            public NonCopyable,
+                            public std::enable_shared_from_this<Texture> {
+public:
+  Texture(RenderSystemKind kind);
+  virtual ~Texture();
 
-Image::~Image() {
-  if(pixelData_)
-    stbi_image_free(pixelData_);
-}
+  /// @brief Get the underlying file of the Texture
+  virtual const std::shared_ptr<File>& getFile() const = 0;
 
-} // namespace core
+  /// @brief Get a log of the shader
+  virtual std::string getLog() const = 0;
+
+  /// @brief Convert to string
+  virtual std::string toString() const = 0;
+};
+
+} // render
 
 } // namespace sequoia
+
+#endif

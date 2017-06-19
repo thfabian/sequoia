@@ -19,6 +19,7 @@
 #include "sequoia/Core/Logging.h"
 #include "sequoia/Core/Memory.h"
 #include "sequoia/Core/UtfString.h"
+#include "sequoia/Core/StringRef.h"
 #include <fstream>
 
 namespace sequoia {
@@ -41,6 +42,16 @@ std::size_t AssetFile::hash() const noexcept { return std::hash<std::size_t>()(i
 
 bool AssetFile::equals(const File& other) const noexcept {
   return id_ == static_cast<const AssetFile*>(&other)->id_;
+}
+
+std::string AssetFile::getFilename() const noexcept {
+  StringRef str(manager_->getPath(id_));
+  return str.substr(str.find_last_of("/\\") + 1).str();
+}
+
+std::string AssetFile::getExtension() const noexcept {
+  StringRef str(manager_->getPath(id_));
+  return str.substr(str.find_last_of(".")).str();
 }
 
 //===------------------------------------------------------------------------------------------===//

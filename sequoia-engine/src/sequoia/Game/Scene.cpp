@@ -61,7 +61,7 @@ Scene::Scene() : activeCamera_(nullptr) {
       sceneGraph_->insert(cube);
     }
   }
-
+  
   auto controller = SceneNode::create<CameraControllerFree>("Camera");
   controller->setCamera(activeCamera_);
   sceneGraph_->insert(controller);

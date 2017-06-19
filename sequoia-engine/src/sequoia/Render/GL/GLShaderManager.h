@@ -17,8 +17,8 @@
 #define SEQUOIA_RENDER_GL_GLSHADERMANAGER_H
 
 #include "sequoia/Core/Assert.h"
-#include "sequoia/Core/NonCopyable.h"
 #include "sequoia/Core/Export.h"
+#include "sequoia/Core/NonCopyable.h"
 #include "sequoia/Render/GL/GLShader.h"
 #include <unordered_map>
 #include <vector>
@@ -33,6 +33,7 @@ namespace render {
 ///
 /// @ingroup gl
 class SEQUOIA_API GLShaderManager : public NonCopyable {
+
   /// Record of all the registered shaders (use count of 1 implies the shader is *not* in use)
   std::vector<std::shared_ptr<GLShader>> shaderList_;
 

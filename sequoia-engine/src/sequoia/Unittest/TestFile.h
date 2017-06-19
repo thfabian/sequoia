@@ -17,8 +17,8 @@
 #define SEQUOIA_UNITTEST_TESTFILE_H
 
 #include "sequoia/Core/AlignedADT.h"
-#include "sequoia/Core/File.h"
 #include "sequoia/Core/Export.h"
+#include "sequoia/Core/File.h"
 
 namespace sequoia {
 
@@ -51,6 +51,12 @@ public:
 
   /// @copydoc File::equals
   bool equals(const File& other) const noexcept override;
+
+  /// @copydoc File::getFilename
+  std::string getFilename() const noexcept override;
+
+  /// @copydoc File::getExtension
+  std::string getExtension() const noexcept override;
 
 private:
   void load();

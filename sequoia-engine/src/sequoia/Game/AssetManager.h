@@ -17,10 +17,10 @@
 #define SEQUOIA_GAME_ASSETMANAGER_H
 
 #include "sequoia/Core/AlignedADT.h"
+#include "sequoia/Core/Export.h"
 #include "sequoia/Core/File.h"
 #include "sequoia/Core/NonCopyable.h"
 #include "sequoia/Core/Platform.h"
-#include "sequoia/Core/Export.h"
 #include <mutex>
 #include <unordered_map>
 #include <vector>
@@ -44,20 +44,26 @@ public:
   friend class AssetManager;
   AssetFile(std::size_t id, AssetManager* manager);
 
-  /// @copydoc AssetFile::getData
+  /// @copydoc File::getData
   const Byte* getData() override;
 
-  /// @copydoc AssetFile::getNumBytes
+  /// @copydoc File::getNumBytes
   std::size_t getNumBytes() override;
 
-  /// @copydoc AssetFile::getPath
+  /// @copydoc File::getPath
   const std::string& getPath() const noexcept override;
 
-  /// @copydoc AssetFile::hash
+  /// @copydoc File::hash
   std::size_t hash() const noexcept override;
 
-  /// @copydoc AssetFile::equals
+  /// @copydoc File::equals
   bool equals(const File& other) const noexcept override;
+
+  /// @copydoc File::getFilename
+  std::string getFilename() const noexcept override;
+
+  /// @copydoc File::getExtension
+  std::string getExtension() const noexcept override;
 };
 
 /// @brief Load assets from disk

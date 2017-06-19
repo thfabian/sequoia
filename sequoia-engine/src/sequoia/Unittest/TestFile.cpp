@@ -15,6 +15,7 @@
 
 #include "sequoia/Core/Exception.h"
 #include "sequoia/Core/Memory.h"
+#include "sequoia/Core/StringRef.h"
 #include "sequoia/Core/UtfString.h"
 #include "sequoia/Unittest/Environment.h"
 #include "sequoia/Unittest/TestFile.h"
@@ -62,6 +63,16 @@ std::size_t TestFile::hash() const noexcept { return std::hash<std::string>()(ge
 
 bool TestFile::equals(const core::File& other) const noexcept {
   return getPath() == other.getPath();
+}
+
+std::string TestFile::getFilename() const noexcept {
+  StringRef str(path_);
+  return str.substr(str.find_last_of("/\\") + 1).str();
+}
+
+std::string TestFile::getExtension() const noexcept {
+  StringRef str(path_);
+  return str.substr(str.find_last_of(".")).str();
 }
 
 } // namespace unittest
