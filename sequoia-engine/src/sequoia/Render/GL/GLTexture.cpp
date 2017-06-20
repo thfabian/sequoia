@@ -13,6 +13,7 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
+#include "sequoia/Core/Format.h"
 #include "sequoia/Render/GL/GLTexture.h"
 
 namespace sequoia {
@@ -25,7 +26,13 @@ const std::shared_ptr<File>& GLTexture::getFile() const { return image_->getFile
 
 std::string GLTexture::getLog() const { return std::string(); }
 
-std::string GLTexture::toString() const { return std::string(); }
+std::string GLTexture::toString() const {
+  return core::format("GLTexture[\n"
+                      " image = %s,\n"
+                      " param = %s"
+                      "]",
+                      image_->toString(), param_.toString());
+}
 
 } // render
 

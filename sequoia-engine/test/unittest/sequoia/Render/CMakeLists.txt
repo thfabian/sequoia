@@ -21,6 +21,7 @@ sequoia_add_test(
           TestMain.cpp
           TestInput.cpp
           TestRenderState.cpp
+          TestTexture.cpp
           TestVertex.cpp
           TestVertexData.cpp
   DEPENDS Sequoia

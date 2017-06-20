@@ -17,7 +17,7 @@
 #include "sequoia/Core/StringUtil.h"
 #include "sequoia/Core/Unreachable.h"
 #include "sequoia/Render/Input.h"
-#include <iostream>
+#include <ostream>
 
 namespace sequoia {
 

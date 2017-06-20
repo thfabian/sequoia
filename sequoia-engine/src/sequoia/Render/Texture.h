@@ -20,10 +20,87 @@
 #include "sequoia/Core/Image.h"
 #include "sequoia/Core/NonCopyable.h"
 #include "sequoia/Render/RenderSystemObject.h"
+#include <functional>
 
 namespace sequoia {
 
 namespace render {
+
+/// @brief Parameters used to construct the Texture
+/// @ingroup render
+struct SEQUOIA_API TextureParameter {
+
+  /// @brief Filter used when minifying
+  enum FilterKind : std::int8_t {
+    FK_Nearest = 0, ///< Select the texel nearest to the texture coordinate
+    FK_Linear       ///< Perform a weighted linear blend between the nearest adjacent samples
+  };
+
+  /// @brief Sampling used for edges
+  ///
+  /// Normalized texture coordinates are not limited to values between 0.0 and 1.0. They can be any
+  /// floating-point number. When a texture coordinate is not within the [0, 1] range, a heuristic
+  /// must be employed to decide what the color value will be.
+  enum EdgeSamplingKind : std::int8_t {
+    EK_Repeat = 0, ///< The texture coordinate wraps around the texture. So a texture coordinate of
+                   ///-0.2 becomes the equivalent of 0.8.
+    EK_MirroredRepeat, ///< The texture coordinate wraps around like a mirror. -0.2 becomes 0.2,
+                       ///-1.2 becomes 0.8, etc.
+    EK_ClampToEdge,    ///< The texture coordinate is clamped to the [0, 1] range.
+    EK_ClampToBorder,  ///< The texture coordinate is clamped to the [0, 1] range, but the edge
+                       ///  texels are blended with a constant border color.
+  };
+
+  /// Is this a compressed texture (.dds)
+  bool IsCompressed = false;
+
+  /// Dimensionality of the texture
+  int Dim = 2;
+
+  /// Filter used when minifying the texture
+  ///
+  /// Minification means that the area of the fragment in texture space is larger than a texel.
+  FilterKind MinFilter = FK_Linear;
+
+  /// Filter used when magnifying the texture
+  ///
+  /// Magnification means that the area of the fragment in texture space is smaller than a texel.
+  FilterKind MaxFilter = FK_Linear;
+
+  /// Use mipmap for minification?
+  bool UseMipmap = true;
+
+  /// Interpolate between two mipmap levels (requires `UseMipmap == true`)
+  bool InterpolateBetweenMipmaps = true;
+
+  /// Edge sampling used for the first dimension
+  EdgeSamplingKind Dim1EdgeSampling = EK_Repeat;
+
+  /// Edge sampling used for the first dimension
+  EdgeSamplingKind Dim2EdgeSampling = EK_Repeat;
+
+  /// Edge sampling used for the first dimension
+  EdgeSamplingKind Dim3EdgeSampling = EK_Repeat;
+
+  /// @name Construts
+  /// @{
+  TextureParameter() = default;
+  TextureParameter(const TextureParameter&) = default;
+  TextureParameter(TextureParameter&&) = default;
+
+  TextureParameter& operator=(const TextureParameter&) = default;
+  TextureParameter& operator=(TextureParameter&&) = default;
+  /// @}
+
+  /// @name Comparison
+  /// @{
+  bool operator==(const TextureParameter& other) const noexcept;
+  bool operator!=(const TextureParameter& other) const noexcept { return !(other == *this); }
+  /// @}
+
+  /// @brief Convert to string
+  std::string toString() const;
+};
 
 /// @brief Texture object
 ///
@@ -49,5 +126,14 @@ public:
 } // render
 
 } // namespace sequoia
+
+namespace std {
+
+template <>
+struct hash<sequoia::render::TextureParameter> {
+  std::size_t operator()(const sequoia::render::TextureParameter& param) const;
+};
+
+} // namespace std
 
 #endif

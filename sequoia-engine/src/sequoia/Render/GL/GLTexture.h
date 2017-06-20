@@ -23,9 +23,13 @@ namespace sequoia {
 namespace render {
 
 class GLTexture : public Texture {
+  friend class GLTextureManager;
 
-  /// Image used as basis of texture
+  /// Image used as basis of the texture
   std::shared_ptr<Image> image_;
+
+  /// Parameter of the texture
+  TextureParameter param_;
 
 public:
   ~GLTexture();

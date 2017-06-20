@@ -24,8 +24,6 @@
 #include <algorithm>
 #include <boost/functional/hash.hpp>
 
-#include <iostream>
-
 namespace sequoia {
 
 namespace render {

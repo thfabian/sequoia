@@ -44,6 +44,8 @@ Image::~Image() {
     stbi_image_free(pixelData_);
 }
 
+std::string Image::toString() const { return std::string("qwe"); }
+
 } // namespace core
 
 } // namespace sequoia

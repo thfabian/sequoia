@@ -89,6 +89,9 @@ public:
 
   /// @brief Get the file of the image
   const std::shared_ptr<File>& getFile() const { return file_; }
+
+  /// @brief Convert to string
+  virtual std::string toString() const ;
 };
 
 } // namespace core

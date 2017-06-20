@@ -13,8 +13,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Render/GL/GL.h"
 #include "sequoia/Core/Casting.h"
+#include "sequoia/Render/GL/GL.h"
 #include "sequoia/Render/GL/GLProgram.h"
 #include "sequoia/Render/GL/GLStateCacheManager.h"
 #include "sequoia/Render/GL/GLVertexArrayObject.h"
@@ -112,6 +112,7 @@ protected:
 GLStateCacheManager::GLStateCacheManager() { stateCache_ = std::make_unique<GLRenderStateCache>(); }
 
 void GLStateCacheManager::draw(DrawCommand* command) {
+
   // Update the render-state
   stateCache_->setRenderState(command->getRenderState());
   const RenderState& state = getRenderState();
