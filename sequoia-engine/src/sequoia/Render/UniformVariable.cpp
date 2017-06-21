@@ -25,15 +25,18 @@ namespace render {
 
 namespace {
 
-static std::string AnyString(const core::any& data, UniformType type) {
+static std::string VariantString(const UniformVariable::DataType& data, UniformType type) {
   std::stringstream ss;
   switch(type) {
 #define UNIFORM_VARIABLE_TYPE(Type, Enum, Name)                                                    \
   case Enum:                                                                                       \
-    ss << (*core::any_cast<Type>(&data));                                                          \
+    ss << boost::get<Type>(data);                                                                  \
     break;
 #include "sequoia/Render/UniformVariable.inc"
 #undef UNIFORM_VARIABLE_TYPE
+  case UniformType::Invalid:
+    ss << "<invalid>";
+    break;
   default:
     sequoia_unreachable("invalid type");
   }
@@ -50,6 +53,9 @@ std::ostream& operator<<(std::ostream& os, UniformType type) {
     break;
 #include "sequoia/Render/UniformVariable.inc"
 #undef UNIFORM_VARIABLE_TYPE
+  case UniformType::Invalid:
+    os << "Invalid";
+    break;
   default:
     sequoia_unreachable("invalid type");
   }
@@ -62,7 +68,7 @@ std::string UniformVariable::toString() const {
                       "  type = %s,\n"
                       "  data = %s\n"
                       "]",
-                      name_, type_, AnyString(data_, type_));
+                      name_, type_, VariantString(data_, type_));
 }
 
 } // namespace render

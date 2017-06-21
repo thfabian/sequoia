@@ -18,14 +18,12 @@
 
 #include "sequoia/Core/Compiler.h"
 
-// clang-format off
-#if SEQUOIA_HAS_CXX1Z && __has_include(<experimental/any>)
+#if SEQUOIA_HAS_CXX1Z && __has_include(<any>)
 #define SEQUOIA_USE_STD_ANY
-#include <experimental/any>
+#include <any>
 #else
 #include <boost/any.hpp>
 #endif
-// clang-format on
 
 namespace sequoia {
 
@@ -35,8 +33,8 @@ namespace core {
 /// @brief Type-safe container for single values of *any* type
 /// @ingroup core
 #ifdef SEQUOIA_USE_STD_ANY
-using std::experimental::any;
-using std::experimental::any_cast;
+using std::any;
+using std::any_cast;
 #else
 using boost::any;
 using boost::any_cast;

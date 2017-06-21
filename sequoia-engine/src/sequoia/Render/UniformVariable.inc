@@ -26,7 +26,14 @@
 //  - Name  = Name of the type
 //
  
+UNIFORM_VARIABLE_TYPE(bool, UniformType::Bool, "Bool")
 UNIFORM_VARIABLE_TYPE(int, UniformType::Int, "Int")
 UNIFORM_VARIABLE_TYPE(float, UniformType::Float, "Float")
+UNIFORM_VARIABLE_TYPE(math::fvec2, UniformType::Float2, "Float2")
+UNIFORM_VARIABLE_TYPE(math::fvec3, UniformType::Float3, "Float3")
+UNIFORM_VARIABLE_TYPE(math::fvec4, UniformType::Float4, "Float4")
+UNIFORM_VARIABLE_TYPE(math::fmat2, UniformType::Float2x2, "Float2x2")
+UNIFORM_VARIABLE_TYPE(math::fmat3, UniformType::Float3x3, "Float3x3")
+UNIFORM_VARIABLE_TYPE(math::fmat4, UniformType::Float4x4, "Float4x4")
 
 // clang-format on

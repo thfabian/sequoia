@@ -16,9 +16,11 @@
 #ifndef SEQUOIA_RENDER_UNIFORMVARIABLE_H
 #define SEQUOIA_RENDER_UNIFORMVARIABLE_H
 
-#include "sequoia/Core/Any.h"
 #include "sequoia/Core/Exception.h"
 #include "sequoia/Core/Export.h"
+#include "sequoia/Math/Math.h"
+#include <boost/variant/get.hpp>
+#include <boost/variant/variant.hpp>
 #include <iosfwd>
 
 namespace sequoia {
@@ -27,7 +29,18 @@ namespace render {
 
 /// @brief Type of uniform variables
 /// @ingroup render
-enum class UniformType { Invalid, Int, Float };
+enum class UniformType {
+  Invalid,
+  Bool,
+  Int,
+  Float,
+  Float2,
+  Float3,
+  Float4,
+  Float2x2,
+  Float3x3,
+  Float4x4
+};
 
 /// @brief Stream UniformType
 /// @ingroup render
@@ -78,54 +91,96 @@ struct TypeToUniformType {
 /// @brief Uniform variable
 /// @ingroup render
 class SEQUOIA_API UniformVariable {
+public:
+  struct InvalidData {
+    bool operator==(const InvalidData& other) const noexcept { return true; }
+    bool operator!=(const InvalidData& other) const noexcept { return false; }
+  };
 
+  using DataType = boost::variant<
+#define UNIFORM_VARIABLE_TYPE(Type, Enum, Name) Type,
+#include "sequoia/Render/UniformVariable.inc"
+#undef UNIFORM_VARIABLE_TYPE
+      InvalidData>;
+
+  /// @brief Construct with `name` and `data`
+  ///
+  /// @param name   Name of the uniform variable
+  /// @param data   Data of the uniform variable
+  template <class T>
+  UniformVariable(const std::string& name, const T& data) : name_(name) {
+    this->set(data);
+  }
+
+  UniformVariable() : data_(InvalidData{}), type_(UniformType::Invalid), name_("") {}
+  UniformVariable(const UniformVariable&) = default;
+  UniformVariable(UniformVariable&&) = default;
+
+  UniformVariable& operator=(const UniformVariable&) = default;
+  UniformVariable& operator=(UniformVariable&&) = default;
+
+  /// @brief Get the data of the variable as type `T`
+  /// @throws core::Exception  type of the uniform variable is not of type `T`
+  template <class T>
+  inline const T& get() const {
+    if(!isOfType<T>()) {
+      UniformType type = internal::TypeToUniformType<T>::value;
+      SEQUOIA_THROW(core::Exception, "invalid type '%s' of uniform variable '%s', expected '%s'",
+                    type, name_, type_);
+    }
+    return boost::get<T>(data_);
+  }
+
+  /// @brief Set data of the variable (this copies the `data`)
+  template <class T>
+  inline void set(const T& data) noexcept {
+    type_ = internal::TypeToUniformType<T>::value;
+    data_ = data;
+  }
+
+  /// @brief Check if uniform variable is of type `T`
+  template <class T>
+  inline bool isOfType() const noexcept {
+    return internal::TypeToUniformType<T>::value == type_;
+  }
+
+  /// @brief Set the name of the variable
+  inline void setName(const std::string& name) { name_ = name; }
+
+  /// @brief Get the name of the variable
+  inline const std::string& getName() const noexcept { return name_; }
+
+  /// @brief Get the type of the variable
+  inline UniformType getType() const noexcept { return type_; }
+
+  /// @brief Is the variable empty
+  bool empty() const noexcept { return type_ == UniformType::Invalid; }
+
+  /// @name Comparison
+  /// @{
+  inline bool operator==(const UniformVariable& other) const noexcept {
+    return name_ == other.name_ && type_ == other.type_ && data_ == other.data_;
+  }
+  inline bool operator!=(const UniformVariable& other) const noexcept { return !(*this == other); }
+  /// @}
+
+  /// @brief Convert to string
+  std::string toString() const;
+
+private:
   /// Data of the variable
-  core::any data_;
+  DataType data_;
 
   /// Type of the variable
   UniformType type_;
 
   /// Name of the variable
   std::string name_;
-
-public:
-  /// @brief Get the data of the variable as type `T`
-  /// @throws core::Exception  type of the uniform variable is not of type `T`
-  template <class T>
-  const T& get() const {
-    if(!isOfType<T>())
-      SEQUOIA_THROW(core::Exception, "invalid type '%s' of uniform variable '%s', expected '%s' ",
-                    internal::TypeToUniformType<T>::value, name_, type_);
-    return *core::any_cast<T>(&data_);
-  }
-
-  /// @brief Set data of the variable (this copies the `data`)
-  template <class T>
-  void set(const T& data) {
-    type_ = internal::TypeToUniformType<T>::value;
-    data_ = core::any(data);
-  }
-
-  /// @brief Check if uniform variable is of type `T`
-  template <class T>
-  bool isOfType() const noexcept {
-    return internal::TypeToUniformType<T>::value == type_;
-  }
-
-  /// @brief Set the name of the variable
-  void setName(const std::string& name) { name_ = name; }
-
-  /// @brief Get the name of the variable
-  const std::string& getName() const noexcept { return name_; }
-
-  /// @brief Get the type of the variable
-  UniformType getType() const noexcept { return type_; }
-
-  /// @brief Convert to string
-  std::string toString() const;
 };
 
 } // namespace render
+
+using UniformVariable = render::UniformVariable;
 
 } // namespace sequoia
 
