@@ -40,6 +40,9 @@ sequoia_add_objects(
           Shader.cpp
           Texture.h
           Texture.cpp
+          UniformVariable.h
+          UniformVariable.cpp
+          UniformVariable.inc
           Vertex.h
           Vertex.cpp
           VertexArrayObject.h

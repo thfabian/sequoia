@@ -15,19 +15,18 @@
 
 // clang-format off
 
-#if !defined(RENDER_STATE)
-#error "RENDER_STATE not defined"
+#if !defined(UNIFORM_VARIABLE_TYPE)
+#error "UNIFORM_VARIABLE_TYPE not defined"
 #endif
 
-// RENDER_STATE(Type, Name, BitfieldWidth, DefaultValue)
+// UNIFORM_VARIABLE_TYPE(Type, Enum, Name)
 //
-//  - Type            = Type of the state
-//  - Name            = Name of the state
-//  - BitfieldWidth   = Width of the bitfield (may be empty)
-//  - DefaultValue    = Value used to initialize the state
+//  - Type  = C++ type
+//  - Enum  = Eunum of the type (UniformType)
+//  - Name  = Name of the type
 //
  
-RENDER_STATE(bool, DepthTest, : 1, true)
-RENDER_STATE(RenderState::DepthFuncKind, DepthFunc, , RenderState::DF_Less)
+UNIFORM_VARIABLE_TYPE(int, UniformType::Int, "Int")
+UNIFORM_VARIABLE_TYPE(float, UniformType::Float, "Float")
 
 // clang-format on
