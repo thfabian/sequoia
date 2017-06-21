@@ -16,9 +16,9 @@
 #ifndef SEQUOIA_GAME_MESHMANAGER_H
 #define SEQUOIA_GAME_MESHMANAGER_H
 
+#include "sequoia/Core/Export.h"
 #include "sequoia/Core/File.h"
 #include "sequoia/Core/Platform.h"
-#include "sequoia/Core/Export.h"
 #include "sequoia/Game/Mesh.h"
 #include "sequoia/Render/RenderFwd.h"
 #include "sequoia/Render/VertexArrayObject.h"
@@ -41,7 +41,6 @@ class SEQUOIA_API MeshManager : public NonCopyable {
 
   /// Indices for the static meshes
   int staticCubeMeshDataIdx_;
-  int staticTriangleMeshDataIdx_;
 
 public:
   using BufferUsageKind = render::VertexArrayObject::BufferUsageKind;
@@ -77,6 +76,12 @@ public:
   /// @endverbatim
   std::shared_ptr<Mesh> createCube(const std::string& name, bool modifieable = false,
                                    BufferUsageKind usage = BufferUsageKind::BK_StaticWriteOnly);
+
+  /// @brief Get number of registered meshes
+  std::size_t getNumMeshes() const;
+
+  /// @brief Free all unused meshes
+  void freeUnusedMeshes();
 };
 
 } // namespace game

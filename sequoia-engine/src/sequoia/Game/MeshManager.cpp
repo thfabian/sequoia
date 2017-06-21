@@ -13,8 +13,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Game/MeshManager.h"
 #include "sequoia/Core/Logging.h"
+#include "sequoia/Game/MeshManager.h"
 #include "sequoia/Render/RenderSystem.h"
 
 namespace sequoia {
@@ -23,7 +23,6 @@ namespace game {
 
 MeshManager::MeshManager(render::RenderTarget* target) : target_(target) {
   staticCubeMeshDataIdx_ = -1;
-  staticTriangleMeshDataIdx_ = -1;
 }
 
 std::shared_ptr<Mesh> MeshManager::load(const std::string& name, const std::shared_ptr<File>& file,
@@ -146,6 +145,19 @@ std::shared_ptr<Mesh> MeshManager::createCube(const std::string& name, bool modi
 
   LOG(INFO) << "Successfully created cube mesh \"" << name << "\"";
   return std::make_shared<Mesh>(name, data, modifiable);
+}
+
+std::size_t MeshManager::getNumMeshes() const { return vertexDataList_.size(); }
+
+void MeshManager::freeUnusedMeshes() {
+  auto it = std::remove_if(
+      vertexDataList_.begin(), vertexDataList_.end(),
+      [](const std::shared_ptr<render::VertexData>& meshPtr) { return meshPtr.use_count() == 1; });
+
+  if(it != vertexDataList_.end()) {
+    LOG(INFO) << "Removing " << std::distance(it, vertexDataList_.end()) << " unused meshes";
+    vertexDataList_.erase(it, vertexDataList_.end());
+  }
 }
 
 } // namespace game
