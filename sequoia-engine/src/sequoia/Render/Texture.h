@@ -51,9 +51,6 @@ struct SEQUOIA_API TextureParameter {
                        ///  texels are blended with a constant border color.
   };
 
-  /// Is this a compressed texture (.dds)
-  bool IsCompressed = false;
-
   /// Dimensionality of the texture
   int Dim = 2;
 
@@ -113,8 +110,11 @@ public:
   Texture(RenderSystemKind kind);
   virtual ~Texture();
 
-  /// @brief Get the underlying file of the Texture
-  virtual const std::shared_ptr<File>& getFile() const = 0;
+  /// @brief Get the underlying image of the Texture
+  virtual const std::shared_ptr<Image>& getImage() const = 0;
+
+  /// @brief Get the texture parameters
+  virtual const TextureParameter& getParameter() const = 0;
 
   /// @brief Get a log of the shader
   virtual std::string getLog() const = 0;

@@ -169,7 +169,7 @@ void GLRenderer::render() {
     // Compute the full model-view-projection matrix
     glm::mat4 u_ModelViewProjection = matViewProj * drawCommand->getModelMatrix();
     program->setUniformVariable("u_ModelViewProjection", u_ModelViewProjection);
-
+    
     // Update the OpenGL state-machine and draw the command
     stateCacheManager_->draw(drawCommand);
   }

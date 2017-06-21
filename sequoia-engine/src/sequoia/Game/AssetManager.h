@@ -60,10 +60,10 @@ public:
   bool equals(const File& other) const noexcept override;
 
   /// @copydoc File::getFilename
-  std::string getFilename() const noexcept override;
+  StringRef getFilename() const noexcept override;
 
   /// @copydoc File::getExtension
-  std::string getExtension() const noexcept override;
+  StringRef getExtension() const noexcept override;
 };
 
 /// @brief Load assets from disk
@@ -73,21 +73,13 @@ public:
 /// @ingroup game
 class SEQUOIA_API AssetManager : public NonCopyable {
 public:
-  /// @brief Type of asset
-  enum AssetKind {
-    AK_Text ///< Plain ASCII text file
-  };
-
   /// @brief Internal asset representation
   struct Asset : public NonCopyable {
-    Asset(AssetManager* manager, std::size_t id, AssetKind kind, const std::string& path);
+    Asset(AssetManager* manager, std::size_t id, const std::string& path);
     ~Asset();
 
     /// Unique idetifier of the asset/file
     std::size_t ID;
-
-    /// Kind of asset
-    AssetKind Kind;
 
     /// Path to the asset
     std::string Path;
@@ -106,8 +98,8 @@ public:
   AssetManager(const platform::String& path, const platform::String& archive);
 
   /// @brief Load asset from disk
-  /// @threadsafe
-  std::shared_ptr<File> load(const std::string& path, AssetKind kind = AK_Text);
+  /// @remark Thread-safe
+  std::shared_ptr<File> load(const std::string& path);
 
   /// @brief Get the root path to the assets
   const platform::Path& getAssetPath() const;

@@ -16,8 +16,8 @@
 #ifndef SEQUOIA_RENDER_GL_GLRENDERWINDOW_H
 #define SEQUOIA_RENDER_GL_GLRENDERWINDOW_H
 
-#include "sequoia/Render/RenderWindow.h"
 #include "sequoia/Render/Input.h"
+#include "sequoia/Render/RenderWindow.h"
 #include <string>
 #include <unordered_map>
 #include <vector>
@@ -34,7 +34,7 @@ class GLInputSystem;
 
 /// @brief OpenGL render window
 /// @ingroup gl
-class SEQUOIA_API GLRenderWindow : public RenderWindow, public InputEventListener {
+class SEQUOIA_API GLRenderWindow final : public RenderWindow, public InputEventListener {
   GLRenderSystem* renderSystem_;
   GLFWwindow* window_;
 
@@ -86,13 +86,13 @@ public:
 
   /// @copydoc RenderTarget::setCursorMode
   virtual void setCursorMode(CursorModeKind mode) override;
-  
+
   /// @copydoc RenderTarget::centerCursor
   virtual void centerCursor() override;
 
   /// @brief Get the window
   GLFWwindow* getGLFWwindow();
-  
+
   /// @brief Get the cursor mode
   CursorModeKind getCursorMode();
 
@@ -111,20 +111,19 @@ public:
   static void keyCallbackDispatch(GLFWwindow* window, int key, int scancode, int action, int mods);
   static void mouseButtonCallbackDispatch(GLFWwindow* window, int button, int action, int mods);
   static void mousePositionCallbackDispatch(GLFWwindow* window, double xpos, double ypos);
-  static void mouseEnterCallbackDispatch(GLFWwindow* window, int entered);  
+  static void mouseEnterCallbackDispatch(GLFWwindow* window, int entered);
   /// @}
 
   /// @copydoc InputEventListener::inputEventStart
   virtual void inputEventStart() override;
-  
+
   /// @copydoc InputEventListener::inputEventStop
   virtual void inputEventStop() override;
-  
+
   /// @brief Static map of all GLFWwindows to their respective GLRenderWindows
   static std::unordered_map<GLFWwindow*, GLRenderWindow*> StaticWindowMap;
 
   static bool classof(const RenderTarget* target) { return target->getKind() == RK_GLRenderWindow; }
-  
 };
 
 } // namespace render

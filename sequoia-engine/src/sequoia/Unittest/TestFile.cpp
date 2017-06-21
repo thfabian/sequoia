@@ -65,14 +65,14 @@ bool TestFile::equals(const core::File& other) const noexcept {
   return getPath() == other.getPath();
 }
 
-std::string TestFile::getFilename() const noexcept {
+StringRef TestFile::getFilename() const noexcept {
   StringRef str(path_);
-  return str.substr(str.find_last_of("/\\") + 1).str();
+  return str.substr(str.find_last_of("/\\") + 1);
 }
 
-std::string TestFile::getExtension() const noexcept {
+StringRef TestFile::getExtension() const noexcept {
   StringRef str(path_);
-  return str.substr(str.find_last_of(".")).str();
+  return str.substr(str.find_last_of("."));
 }
 
 } // namespace unittest

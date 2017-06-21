@@ -24,7 +24,7 @@ namespace render {
 
 /// @brief OpenGL vertex array object (VAO) with VBO and EBOs
 /// @ingroup gl
-class SEQUOIA_API GLVertexArrayObject : public VertexArrayObject {
+class SEQUOIA_API GLVertexArrayObject final : public VertexArrayObject {
   /// OpenGL ids
   unsigned int vaoID_, eboID_, vboID_;
 

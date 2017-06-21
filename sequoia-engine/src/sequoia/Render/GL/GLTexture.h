@@ -22,7 +22,7 @@ namespace sequoia {
 
 namespace render {
 
-class GLTexture : public Texture {
+class GLTexture final : public Texture {
   friend class GLTextureManager;
 
   /// Image used as basis of the texture
@@ -32,10 +32,14 @@ class GLTexture : public Texture {
   TextureParameter param_;
 
 public:
+  GLTexture(std::shared_ptr<Image> image, TextureParameter& param);
   ~GLTexture();
 
-  /// @copydoc Texture::getFile
-  const std::shared_ptr<File>& getFile() const override;
+  /// @copydoc Texture::getImage
+  const std::shared_ptr<Image>& getImage() const override;
+
+  /// @copydoc Texture::getParameter
+  const TextureParameter& getParameter() const override;
 
   /// @copydoc Texture::getLog
   std::string getLog() const override;

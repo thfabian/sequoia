@@ -2,10 +2,14 @@
 
 // Input
 in vec4 frag_Color;
+in vec2 frag_TexCoord;
 
 // Output
 out vec4 out_Color;
 
+// Uniforms
+uniform sampler2D tex0_Sampler;
+
 void main() {
-  out_Color = frag_Color;
+  out_Color = texture(tex0_Sampler, frag_TexCoord) + frag_Color;
 }

@@ -36,7 +36,7 @@ enum class GLShaderStatus {
 
 /// @brief OpenGL shader
 /// @ingroup gl
-class SEQUOIA_API GLShader : public Shader {
+class SEQUOIA_API GLShader final : public Shader {
   friend class GLShaderManager;
 
   /// Status of the shader

@@ -25,9 +25,87 @@ namespace sequoia {
 namespace core {
 
 /// @brief Hardware-independent image representation that allows direct access to the pixel data
+///
+/// @note To load images use Image::load
 /// @ingroup core
 class SEQUOIA_API Image {
+public:
+  /// @brief RTTI discriminator
+  enum ImageFormat {
+    IK_Unknown,
+    IK_PNG,  ///< PNGImage
+    IK_JPEG, ///< JPEGImage
+    IK_BMP   ///< BMPImage
+  };
 
+  /// @brief Load image from file using the given format
+  ///
+  /// @param file     File to load the image from
+  /// @param format   Initialize image of the given format (If `IK_Unknow` is provided, the format
+  ///                 is deduced from from the file extension)
+  ///
+  /// @throws Exception   Failed to load image
+  static std::shared_ptr<Image> load(const std::shared_ptr<File>& file,
+                                     ImageFormat format = IK_Unknown);
+
+  Image(ImageFormat format);
+  virtual ~Image();
+
+  /// @brief Get the pixel data
+  ///
+  /// The pixel data consists of `width` scanlines of `height` pixels, with each pixel consisting
+  /// of `numChannels` interleaved 8-bit components; the first pixel pointed to is top-left-most in
+  /// the image. There is no padding between image scanlines or between pixels, regardless of
+  /// format.
+  virtual const unsigned char* getPixelData() const = 0;
+
+  /// @brief Get read-only access to the pixel at position `(i, j)` with color of type `T`
+  ///
+  /// @note This function should be merely used for debugging purposes.
+  template <class T>
+  inline T at(int i, int j) const noexcept {
+    static_assert(IsColor<T>::value, "not a Color");
+    return T(getPixelData() + getNumChannels() * (i * getWidth() + j));
+  }
+
+  /// @brief Get the width of the image in pixels
+  virtual int getWidth() const = 0;
+
+  /// @brief Get the height of the image in pixels
+  virtual int getHeight() const = 0;
+
+  /// @brief Get number of interleaved 8-bit components of each pixel
+  ///
+  /// An output image with N components has the following components interleaved in this order in
+  /// each pixel:
+  ///
+  ///   |  N = #comp |   Components             |
+  ///   |------------|:-------------------------|
+  ///   |   1        |  grey                    |
+  ///   |   2        |  grey, alpha             |
+  ///   |   3        |  red, green, blue        |
+  ///   |   4        |  red, green, blue, alpha |
+  ///
+  virtual int getNumChannels() const = 0;
+
+  /// @brief Get the file of the image
+  virtual const std::shared_ptr<File>& getFile() const = 0;
+
+  /// @brief Get the image format
+  ImageFormat getFormat() const { return format_; }
+
+  /// @brief Convert to string
+  virtual std::string toString() const = 0;
+
+private:
+  /// Loaded image format
+  ImageFormat format_;
+};
+
+/// @brief Uncompressed image formats (PNG, JPEG, BMP)
+/// @ingroup core
+class SEQUOIA_API UncompressedImage : public Image {
+protected:
   /// File of the image
   std::shared_ptr<File> file_;
 
@@ -44,54 +122,59 @@ class SEQUOIA_API Image {
   int numChannels_;
 
 public:
-  /// @brief Initialize the image with a file and load the image
-  ///
-  /// @throws Exception   Failed to load image
-  Image(const std::shared_ptr<File>& file);
-  ~Image();
+  UncompressedImage(ImageFormat format, const std::shared_ptr<File>& file);
+  virtual ~UncompressedImage();
 
-  /// @brief Get the pixel data
-  ///
-  /// The pixel data consists of `width` scanlines of `height` pixels, with each pixel consisting
-  /// of `numChannels` interleaved 8-bit components; the first pixel pointed to is top-left-most in
-  /// the image. There is no padding between image scanlines or between pixels, regardless of
-  /// format.
-  const unsigned char* getPixelData() const { return pixelData_; }
+  /// @copydoc Image::getPixelData
+  virtual const unsigned char* getPixelData() const override { return pixelData_; }
 
-  /// @brief Get read-only access to the pixel at position `(i, j)` with color of type `T`
-  template <class T>
-  inline T at(int i, int j) const noexcept {
-    static_assert(IsColor<T>::value, "not a Color");
-    return T(pixelData_ + numChannels_ * (i * width_ + j));
-  }
+  /// @copydoc Image::getWidth
+  virtual int getWidth() const override { return width_; }
 
-  /// @brief Get the color mode used in the pixel data
+  /// @copydoc Image::getHeight
+  virtual int getHeight() const override { return height_; }
 
-  /// @brief Get the width of the image in pixels
-  int getWidth() const { return width_; }
+  /// @copydoc Image::getNumChannels
+  virtual int getNumChannels() const override { return numChannels_; }
 
-  /// @brief Get the height of the image in pixels
-  int getHeight() const { return height_; }
+  /// @copydoc Image::getFile
+  virtual const std::shared_ptr<File>& getFile() const override { return file_; }
 
-  /// @brief Get number of interleaved 8-bit components of each pixel
-  ///
-  /// An output image with N components has the following components interleaved in this order in
-  /// each pixel:
-  ///
-  ///   |  N = #comp |   Components             |
-  ///   |------------|:-------------------------|
-  ///   |   1        |  grey                    |
-  ///   |   2        |  grey, alpha             |
-  ///   |   3        |  red, green, blue        |
-  ///   |   4        |  red, green, blue, alpha |
-  ///
-  int getNumChannels() const { return numChannels_; }
+  /// @copydoc Image::toString
+  virtual std::string toString() const override;
 
-  /// @brief Get the file of the image
-  const std::shared_ptr<File>& getFile() const { return file_; }
+  /// @brief Get the name of the image (e.g PNGImage)
+  virtual const char* getName() const = 0;
+};
 
-  /// @brief Convert to string
-  virtual std::string toString() const ;
+/// @brief Portable Network Graphics (PNG) image
+/// @ingroup core
+class SEQUOIA_API PNGImage : public UncompressedImage {
+public:
+  PNGImage(const std::shared_ptr<File>& file);
+  static bool classof(const Image* image) { return image->getFormat() == Image::IK_PNG; }
+
+  virtual const char* getName() const override { return "PNGImage"; };
+};
+
+/// @brief Joint Photographic Experts Group (JPEG) image
+/// @ingroup core
+class SEQUOIA_API JPEGImage : public UncompressedImage {
+public:
+  JPEGImage(const std::shared_ptr<File>& file);
+  static bool classof(const Image* image) { return image->getFormat() == Image::IK_JPEG; }
+
+  virtual const char* getName() const override { return "JPEGImage"; };
+};
+
+/// @brief Windows Bitmap (BMP) image
+/// @ingroup core
+class SEQUOIA_API BMPImage : public UncompressedImage {
+public:
+  BMPImage(const std::shared_ptr<File>& file);
+  static bool classof(const Image* image) { return image->getFormat() == Image::IK_BMP; }
+
+  virtual const char* getName() const override { return "BMPImage"; };
 };
 
 } // namespace core

@@ -57,8 +57,7 @@ Texture::Texture(RenderSystemKind kind) : RenderSystemObject(kind) {}
 Texture::~Texture() {}
 
 bool TextureParameter::operator==(const TextureParameter& other) const noexcept {
-  return IsCompressed == other.IsCompressed &&                           //
-         Dim == other.Dim &&                                             //
+  return Dim == other.Dim &&                                             //
          MinFilter == other.MinFilter &&                                 //
          MaxFilter == other.MaxFilter &&                                 //
          UseMipmap == other.UseMipmap &&                                 //
@@ -69,22 +68,21 @@ bool TextureParameter::operator==(const TextureParameter& other) const noexcept 
 }
 
 std::string TextureParameter::toString() const {
-  return core::format(
-      "TextureParameter[\n"
-      "  IsCompressed = %s,\n"
-      "  Dim = %s,\n"
-      "  MinFilter = %s,\n"
-      "  MaxFilter = %s,\n"
-      "  UseMipmap = %s,\n"
-      "  InterpolateBetweenMipmaps = %s,\n"
-      "  Dim1EdgeSampling = %s,\n"
-      "  Dim2EdgeSampling = %s,\n"
-      "  Dim3EdgeSampling = %s\n"
-      "]",
-      IsCompressed ? "true" : "false", Dim, FilterKindToString(MinFilter),
-      FilterKindToString(MaxFilter), UseMipmap ? "true" : "false",
-      InterpolateBetweenMipmaps ? "true" : "false", EdgeSamplingKindToString(Dim1EdgeSampling),
-      EdgeSamplingKindToString(Dim2EdgeSampling), EdgeSamplingKindToString(Dim3EdgeSampling));
+  return core::format("TextureParameter[\n"
+                      "  Dim = %s,\n"
+                      "  MinFilter = %s,\n"
+                      "  MaxFilter = %s,\n"
+                      "  UseMipmap = %s,\n"
+                      "  InterpolateBetweenMipmaps = %s,\n"
+                      "  Dim1EdgeSampling = %s,\n"
+                      "  Dim2EdgeSampling = %s,\n"
+                      "  Dim3EdgeSampling = %s\n"
+                      "]",
+                      Dim, FilterKindToString(MinFilter), FilterKindToString(MaxFilter),
+                      UseMipmap ? "true" : "false", InterpolateBetweenMipmaps ? "true" : "false",
+                      EdgeSamplingKindToString(Dim1EdgeSampling),
+                      EdgeSamplingKindToString(Dim2EdgeSampling),
+                      EdgeSamplingKindToString(Dim3EdgeSampling));
 }
 
 } // namespace render
@@ -107,9 +105,9 @@ void hash_combine(std::size_t& seed, T&& arg, Args&&... args) {
 std::size_t hash<sequoia::render::TextureParameter>::
 operator()(const sequoia::render::TextureParameter& param) const {
   std::size_t seed = 0;
-  hash_combine(seed, param.IsCompressed, param.Dim, param.MinFilter, param.MaxFilter,
-               param.UseMipmap, param.InterpolateBetweenMipmaps, param.Dim1EdgeSampling,
-               param.Dim2EdgeSampling, param.Dim3EdgeSampling);
+  hash_combine(seed, param.Dim, param.MinFilter, param.MaxFilter, param.UseMipmap,
+               param.InterpolateBetweenMipmaps, param.Dim1EdgeSampling, param.Dim2EdgeSampling,
+               param.Dim3EdgeSampling);
   return seed;
 }
 

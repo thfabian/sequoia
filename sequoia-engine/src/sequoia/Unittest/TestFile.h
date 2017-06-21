@@ -53,10 +53,10 @@ public:
   bool equals(const File& other) const noexcept override;
 
   /// @copydoc File::getFilename
-  std::string getFilename() const noexcept override;
+  StringRef getFilename() const noexcept override;
 
   /// @copydoc File::getExtension
-  std::string getExtension() const noexcept override;
+  StringRef getExtension() const noexcept override;
 
 private:
   void load();

@@ -38,7 +38,7 @@ enum class GLProgramStatus {
 /// @brief OpenGL implementation of a GPUProgram
 /// @see RenderSystem::createPogram
 /// @ingroup gl
-class SEQUOIA_API GLProgram : public Program {
+class SEQUOIA_API GLProgram final : public Program {
 public:
   /// @brief Represent uniform variables in shaders
   struct GLUniformInfo {

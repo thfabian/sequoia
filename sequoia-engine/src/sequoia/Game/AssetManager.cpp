@@ -13,13 +13,13 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Game/AssetManager.h"
 #include "sequoia/Core/Assert.h"
 #include "sequoia/Core/Exception.h"
 #include "sequoia/Core/Logging.h"
 #include "sequoia/Core/Memory.h"
-#include "sequoia/Core/UtfString.h"
 #include "sequoia/Core/StringRef.h"
+#include "sequoia/Core/UtfString.h"
+#include "sequoia/Game/AssetManager.h"
 #include <fstream>
 
 namespace sequoia {
@@ -44,23 +44,22 @@ bool AssetFile::equals(const File& other) const noexcept {
   return id_ == static_cast<const AssetFile*>(&other)->id_;
 }
 
-std::string AssetFile::getFilename() const noexcept {
+StringRef AssetFile::getFilename() const noexcept {
   StringRef str(manager_->getPath(id_));
-  return str.substr(str.find_last_of("/\\") + 1).str();
+  return str.substr(str.find_last_of("/\\") + 1);
 }
 
-std::string AssetFile::getExtension() const noexcept {
+StringRef AssetFile::getExtension() const noexcept {
   StringRef str(manager_->getPath(id_));
-  return str.substr(str.find_last_of(".")).str();
+  return str.substr(str.find_last_of("."));
 }
 
 //===------------------------------------------------------------------------------------------===//
 //    AssetManager
 //===------------------------------------------------------------------------------------------===//
 
-AssetManager::Asset::Asset(AssetManager* manager, std::size_t id, AssetManager::AssetKind kind,
-                           const std::string& path)
-    : ID(id), Kind(kind), Path(path), File(std::make_shared<AssetFile>(id, manager)) {}
+AssetManager::Asset::Asset(AssetManager* manager, std::size_t id, const std::string& path)
+    : ID(id), Path(path), File(std::make_shared<AssetFile>(id, manager)) {}
 
 AssetManager::Asset::~Asset() {}
 
@@ -68,7 +67,7 @@ AssetManager::AssetManager(const platform::String& path, const platform::String&
   assetPath_ = platform::Path(path) / archive;
 }
 
-std::shared_ptr<File> AssetManager::load(const std::string& path, AssetManager::AssetKind kind) {
+std::shared_ptr<File> AssetManager::load(const std::string& path) {
   std::lock_guard<std::mutex> lock(mutex_);
 
   LOG(INFO) << "Loading asset \"" << path << "\" ...";
@@ -80,7 +79,7 @@ std::shared_ptr<File> AssetManager::load(const std::string& path, AssetManager::
     id = assets_.size();
 
     // Register new asset
-    assets_.emplace_back(std::make_unique<Asset>(this, id, kind, path));
+    assets_.emplace_back(std::make_unique<Asset>(this, id, path));
 
     // Update lookup map
     pathLookupMap_[path] = id;

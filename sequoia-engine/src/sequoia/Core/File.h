@@ -18,6 +18,7 @@
 
 #include "sequoia/Core/Byte.h"
 #include "sequoia/Core/Export.h"
+#include "sequoia/Core/StringRef.h"
 #include <functional>
 #include <memory>
 #include <string>
@@ -48,10 +49,10 @@ public:
   virtual const std::string& getPath() const noexcept = 0;
 
   /// @brief Get the name to the file
-  virtual std::string getFilename() const noexcept = 0;
+  virtual StringRef getFilename() const noexcept = 0;
 
   /// @brief Get the extension to the file
-  virtual std::string getExtension() const noexcept = 0;
+  virtual StringRef getExtension() const noexcept = 0;
 
   /// @brief Compute hash of the path of the file
   virtual std::size_t hash() const noexcept = 0;

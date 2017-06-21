@@ -30,7 +30,7 @@ class GLInputSystem;
 
 /// @brief OpenGL render-system
 /// @ingroup gl
-class SEQUOIA_API GLRenderSystem : public RenderSystem {
+class SEQUOIA_API GLRenderSystem final : public RenderSystem {
   std::vector<std::shared_ptr<RenderTarget>> renderTargets_;
 
   std::unordered_map<RenderTarget*, GLRenderer*> rendererMap_;

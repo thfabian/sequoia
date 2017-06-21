@@ -19,6 +19,7 @@
 #include "sequoia/Game/SceneNodeCapability.h"
 #include "sequoia/Render/RenderFwd.h"
 #include <memory>
+#include <unordered_map>
 
 namespace sequoia {
 
@@ -37,6 +38,9 @@ class SEQUOIA_API Drawable final : public SceneNodeCapability {
 
   /// Mesh of the node
   std::shared_ptr<Mesh> mesh_;
+
+  /// Map of sampler and related textures
+  std::unordered_map<std::string, std::shared_ptr<render::Texture>> samplerTextureMap_;
 
 public:
   using Base = SceneNodeCapability;

@@ -95,7 +95,7 @@ protected:
       sequoia_unreachable("invalid DepthFuncKind");
     }
   }
-
+  
   virtual void ProgramChanged(Program* program) override {
     if(program)
       dyn_cast<GLProgram>(program)->bind();

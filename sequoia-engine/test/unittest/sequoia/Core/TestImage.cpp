@@ -23,13 +23,13 @@ using namespace sequoia::core;
 
 namespace {
 
-TEST(ImageTest, LoadPNG) {
+TEST(ImageTest, PNGImage) {
   Environment& env = Environment::getSingleton();
   auto file = env.getFile("sequoia/Core/TestImage/test.png");
 
   EXPECT_EQ(file->getNumBytes(), 193);
 
-  Image image(file);
+  Image& image = *Image::load(file);
   EXPECT_EQ(image.getHeight(), 32);
   EXPECT_EQ(image.getWidth(), 32);
   EXPECT_EQ(image.getNumChannels(), 3);
@@ -50,13 +50,13 @@ TEST(ImageTest, LoadPNG) {
   EXPECT_EQ(image.at<ColorRGB>(0, 8), ColorRGB(255, 255, 0));
 }
 
-TEST(ImageTest, LoadJPEG) {
+TEST(ImageTest, JPEGImage) {
   Environment& env = Environment::getSingleton();
   auto file = env.getFile("sequoia/Core/TestImage/test.jpg");
 
   EXPECT_EQ(file->getNumBytes(), 905);
 
-  Image image(file);
+  Image& image = *Image::load(file);
   EXPECT_EQ(image.getHeight(), 32);
   EXPECT_EQ(image.getWidth(), 32);
   EXPECT_EQ(image.getNumChannels(), 3);
@@ -79,13 +79,13 @@ TEST(ImageTest, LoadJPEG) {
   EXPECT_EQ(image.at<ColorRGB>(0, 8), ColorRGB(255, 231, 41));
 }
 
-TEST(ImageTest, LoadBMP) {
+TEST(ImageTest, BMPImage) {
   Environment& env = Environment::getSingleton();
   auto file = env.getFile("sequoia/Core/TestImage/test.bmp");
 
   EXPECT_EQ(file->getNumBytes(), 714);
 
-  Image image(file);
+  Image& image = *Image::load(file);
   EXPECT_EQ(image.getHeight(), 32);
   EXPECT_EQ(image.getWidth(), 32);
   EXPECT_EQ(image.getNumChannels(), 4);

@@ -14,7 +14,10 @@
 //===------------------------------------------------------------------------------------------===//
 
 #include "sequoia/Core/Exception.h"
+#include "sequoia/Core/Format.h"
 #include "sequoia/Core/Image.h"
+#include "sequoia/Core/StringSwitch.h"
+#include "sequoia/Core/Unreachable.h"
 
 #ifndef NDEBUG
 #define STBI_FAILURE_USERMSG
@@ -31,7 +34,32 @@ namespace sequoia {
 
 namespace core {
 
-Image::Image(const std::shared_ptr<File>& file) : file_(file) {
+Image::~Image() {}
+
+std::shared_ptr<Image> Image::load(const std::shared_ptr<File>& file, Image::ImageFormat format) {
+  if(format == Image::IK_Unknown)
+    format = core::StringSwitch<Image::ImageFormat>(file->getExtension())
+                 .Case(".png", Image::IK_PNG)
+                 .Cases(".jpg", ".jpeg", ".jpe", Image::IK_JPEG)
+                 .Cases(".bmp", ".dib", Image::IK_BMP)
+                 .Default(Image::IK_Unknown);
+
+  switch(format) {
+  case Image::IK_PNG:
+    return std::make_shared<PNGImage>(file);
+  case Image::IK_JPEG:
+    return std::make_shared<JPEGImage>(file);
+  case Image::IK_BMP:
+    return std::make_shared<BMPImage>(file);
+  default:
+    sequoia_unreachable("invalid image format");
+  }
+}
+
+Image::Image(Image::ImageFormat format) : format_(format) {}
+
+UncompressedImage::UncompressedImage(ImageFormat format, const std::shared_ptr<File>& file)
+    : Image(format), file_(file) {
   pixelData_ = stbi_load_from_memory(file_->getData(), file_->getNumBytes(), &width_, &height_,
                                      &numChannels_, 0);
   if(!pixelData_)
@@ -39,12 +67,27 @@ Image::Image(const std::shared_ptr<File>& file) : file_(file) {
                   stbi_failure_reason());
 }
 
-Image::~Image() {
+UncompressedImage::~UncompressedImage() {
   if(pixelData_)
     stbi_image_free(pixelData_);
 }
 
-std::string Image::toString() const { return std::string("qwe"); }
+std::string UncompressedImage::toString() const {
+  return core::format("%s[\n"
+                      "  file = %s\n"
+                      "  pixelData = %s\n"
+                      "  width = %i,\n"
+                      "  height = %i,\n"
+                      "  numChannels = %i\n"
+                      "]",
+                      getName(), file_->getPath(), pixelData_, width_, height_, numChannels_);
+}
+
+PNGImage::PNGImage(const std::shared_ptr<File>& file) : UncompressedImage(Image::IK_PNG, file) {}
+
+JPEGImage::JPEGImage(const std::shared_ptr<File>& file) : UncompressedImage(Image::IK_JPEG, file) {}
+
+BMPImage::BMPImage(const std::shared_ptr<File>& file) : UncompressedImage(Image::IK_BMP, file) {}
 
 } // namespace core
 

@@ -30,6 +30,7 @@ class RenderSystem;
 class RenderTarget;
 class RenderWindow;
 class Shader;
+class Texture;
 class VertexArrayObject;
 struct VertexLayout;
 struct Vertex2DLayout;
