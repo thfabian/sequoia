@@ -167,7 +167,7 @@ void GLRenderer::render() {
     GLProgram* program = dyn_cast<GLProgram>(drawCommand->getProgram());
 
     // Compute the full model-view-projection matrix
-    glm::mat4 u_ModelViewProjection = matViewProj * drawCommand->getModelMatrix();
+    UniformVariable u_ModelViewProjection = matViewProj * drawCommand->getModelMatrix();
     program->setUniformVariable("u_ModelViewProjection", u_ModelViewProjection);
     
     // Update the OpenGL state-machine and draw the command

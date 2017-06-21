@@ -28,8 +28,7 @@ TEST(UniformVariableTest, DefaultConstructor) {
 }
 
 TEST(UniformVariableTest, ValueConstructor) {
-  UniformVariable u("name", 5.0f);
-  EXPECT_EQ(u.getName(), "name");
+  UniformVariable u(5.0f);
   EXPECT_EQ(u.getType(), render::UniformType::Float);
   EXPECT_EQ(u.get<float>(), 5.0f);
 
@@ -43,15 +42,13 @@ TEST(UniformVariableTest, ValueConstructor) {
 }
 
 TEST(UniformVariableTest, Comparison) {
-  UniformVariable u1("name", 5.0f);
-  UniformVariable u2("name2", 5.0f);
-  UniformVariable u3("name", 5.1f);
-  UniformVariable u4("name", 5);
+  UniformVariable u1(5.0f);
+  UniformVariable u2(5.1f);
+  UniformVariable u3(5);
 
   EXPECT_EQ(u1, u1);
   EXPECT_NE(u1, u2);
   EXPECT_NE(u1, u3);
-  EXPECT_NE(u1, u4);
 }
 
 } // anonymous namespace

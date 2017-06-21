@@ -16,10 +16,12 @@
 #ifndef SEQUOIA_RENDER_DRAWCOMMAND_H
 #define SEQUOIA_RENDER_DRAWCOMMAND_H
 
-#include "sequoia/Math/Math.h"
 #include "sequoia/Core/Export.h"
+#include "sequoia/Math/Math.h"
 #include "sequoia/Render/RenderState.h"
+#include "sequoia/Render/UniformVariable.h"
 #include <string>
+#include <unordered_map>
 
 namespace sequoia {
 
@@ -54,12 +56,31 @@ public:
   const math::mat4& getModelMatrix() const noexcept { return modelMatrix_; }
   void setModelMatrix(const math::mat4& modelMatrix) noexcept { modelMatrix_ = modelMatrix; }
 
+  /// @brief Get the uniform variable `name`
+  UniformVariable& getUniformVariable(const std::string& name) noexcept {
+    return variables_.find(name)->second;
+  }
+  const UniformVariable& getUniformVariable(const std::string& name) const noexcept {
+    return variables_.find(name)->second;
+  }
+
+  /// @brief Set the uniform variable `name` to `value`
+  void setUniformVariable(const std::string& name, const UniformVariable& value) noexcept {
+    variables_[name] = value;
+  }
+
   /// @brief Convert draw command to string
   std::string toString() const;
 
 private:
+  /// State of the render state-machine
   RenderState state_;
+
+  /// ModelMatrix used to compute the Model-View-Projection matrix
   math::mat4 modelMatrix_;
+
+  /// Map of the uniform variables send to the associated program
+  std::unordered_map<std::string, UniformVariable> variables_;
 };
 
 } // namespace render

@@ -104,15 +104,13 @@ public:
       InvalidData>;
 
   /// @brief Construct with `name` and `data`
-  ///
-  /// @param name   Name of the uniform variable
   /// @param data   Data of the uniform variable
   template <class T>
-  UniformVariable(const std::string& name, const T& data) : name_(name) {
+  UniformVariable(const T& data) {
     this->set(data);
   }
 
-  UniformVariable() : data_(InvalidData{}), type_(UniformType::Invalid), name_("") {}
+  UniformVariable() : data_(InvalidData{}), type_(UniformType::Invalid) {}
   UniformVariable(const UniformVariable&) = default;
   UniformVariable(UniformVariable&&) = default;
 
@@ -125,8 +123,8 @@ public:
   inline const T& get() const {
     if(!isOfType<T>()) {
       UniformType type = internal::TypeToUniformType<T>::value;
-      SEQUOIA_THROW(core::Exception, "invalid type '%s' of uniform variable '%s', expected '%s'",
-                    type, name_, type_);
+      SEQUOIA_THROW(core::Exception, "invalid type '%s' of uniform variable, expected '%s'", type,
+                    type_);
     }
     return boost::get<T>(data_);
   }
@@ -144,12 +142,6 @@ public:
     return internal::TypeToUniformType<T>::value == type_;
   }
 
-  /// @brief Set the name of the variable
-  inline void setName(const std::string& name) { name_ = name; }
-
-  /// @brief Get the name of the variable
-  inline const std::string& getName() const noexcept { return name_; }
-
   /// @brief Get the type of the variable
   inline UniformType getType() const noexcept { return type_; }
 
@@ -159,7 +151,7 @@ public:
   /// @name Comparison
   /// @{
   inline bool operator==(const UniformVariable& other) const noexcept {
-    return name_ == other.name_ && type_ == other.type_ && data_ == other.data_;
+    return type_ == other.type_ && data_ == other.data_;
   }
   inline bool operator!=(const UniformVariable& other) const noexcept { return !(*this == other); }
   /// @}
@@ -173,9 +165,6 @@ private:
 
   /// Type of the variable
   UniformType type_;
-
-  /// Name of the variable
-  std::string name_;
 };
 
 } // namespace render

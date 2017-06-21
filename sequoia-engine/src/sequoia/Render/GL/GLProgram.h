@@ -19,6 +19,7 @@
 #include "sequoia/Math/Math.h"
 #include "sequoia/Render/GL/GL.h"
 #include "sequoia/Render/Program.h"
+#include "sequoia/Render/UniformVariable.h"
 #include <unordered_map>
 
 namespace sequoia {
@@ -86,24 +87,13 @@ public:
 
   /// @brief Get map of uniform variables
   const std::unordered_map<std::string, GLUniformInfo>& getUniformVariables() const;
+  std::unordered_map<std::string, GLUniformInfo> getUniformVariables();
 
   /// @brief Set the uniform variable `name` to `value`
   ///
   /// @throws RenderSystemException   Variable `name` has incompatible type
   /// @returns `true` if variable has been successfully set, `false` if variable does not exist
-  /// @{
-  bool setUniformVariable(const std::string& name, const float& value);
-  bool setUniformVariable(const std::string& name, const int& value);
-  bool setUniformVariable(const std::string& name, const math::fvec2& value);
-  bool setUniformVariable(const std::string& name, const math::fvec3& value);
-  bool setUniformVariable(const std::string& name, const math::fvec4& value);
-  bool setUniformVariable(const std::string& name, const math::ivec2& value);
-  bool setUniformVariable(const std::string& name, const math::ivec3& value);
-  bool setUniformVariable(const std::string& name, const math::ivec4& value);
-  bool setUniformVariable(const std::string& name, const math::fmat2& value);
-  bool setUniformVariable(const std::string& name, const math::fmat3& value);
-  bool setUniformVariable(const std::string& name, const math::fmat4& value);
-  /// @}
+  bool setUniformVariable(const std::string& name, const UniformVariable& value);
 
   /// @brief Check if all uniform variables have been set
   bool checkUniformVariables();

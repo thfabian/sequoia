@@ -13,17 +13,19 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Render/GL/GL.h"
 #include "sequoia/Core/Casting.h"
 #include "sequoia/Core/Format.h"
 #include "sequoia/Core/Logging.h"
 #include "sequoia/Core/StringUtil.h"
 #include "sequoia/Core/Unreachable.h"
 #include "sequoia/Render/Exception.h"
+#include "sequoia/Render/GL/GL.h"
 #include "sequoia/Render/GL/GLProgram.h"
 #include "sequoia/Render/GL/GLProgramManager.h"
 #include "sequoia/Render/GL/GLShader.h"
 #include <sstream>
+
+#include <iostream>
 
 namespace sequoia {
 
@@ -64,6 +66,10 @@ bool GLProgram::removeShader(const std::shared_ptr<Shader>& shader) {
 
 const std::unordered_map<std::string, GLProgram::GLUniformInfo>&
 GLProgram::getUniformVariables() const {
+  return uniformInfoMap_;
+}
+
+std::unordered_map<std::string, GLProgram::GLUniformInfo> GLProgram::getUniformVariables() {
   return uniformInfoMap_;
 }
 
@@ -178,41 +184,43 @@ inline typename ComputeReturnType<T, IsFundamental>::type addressOf(const T& val
   return AddressOf<T, IsFundamental>::apply(value);
 }
 
-} // anonymous namespace
-
 #define SEQUOIA_SET_UNIFORM_VARIABLE_IMPL(TYPE, GL_TYPE, FUNC)                                     \
-  bool GLProgram::setUniformVariable(const std::string& name, const TYPE& value) {                 \
-    SEQUOIA_ASSERT(status_ == GLProgramStatus::Linked);                                            \
-    auto it = uniformInfoMap_.find(name);                                                          \
-    if(it == uniformInfoMap_.end()) {                                                              \
+  bool setUniformVariableImpl(GLProgram* program, const std::string& name, const TYPE& value) {    \
+    SEQUOIA_ASSERT(program->getStatus() == GLProgramStatus::Linked);                               \
+    auto it = program->getUniformVariables().find(name);                                           \
+  std::cout << name << "  " << it->second.Type << "  " << GL_TYPE << std::endl;\
+    if(it == program->getUniformVariables().end()) {                                               \
       LOG(WARNING) << "Setting non-existing uniform variable '" << name << "'";                    \
       return false;                                                                                \
     }                                                                                              \
-    GLUniformInfo& info = it->second;                                                              \
+    GLProgram::GLUniformInfo& info = it->second;                                                   \
     if(info.Type != GL_TYPE)                                                                       \
       SEQUOIA_THROW(                                                                               \
           RenderSystemException,                                                                   \
           "invalid type '%s' of uniform variable '%s' in program (ID=%i), expected '%s'", GL_TYPE, \
-          name, id_, info.Type);                                                                   \
+          name, program->getID(), info.Type);                                                      \
     if(info.Size != 1)                                                                             \
       SEQUOIA_THROW(                                                                               \
           RenderSystemException,                                                                   \
           "invalid rank '%i' of uniform variable '%s' in program (ID=%i), expected '%i'", 1, name, \
-          id_, info.Size);                                                                         \
-    FUNC(id_, info.Location, info.Size, addressOf(value));                                         \
+          program->getID(), info.Size);                                                            \
+    FUNC(program->getID(), info.Location, info.Size, addressOf(value));                            \
     info.ValueSet = true;                                                                          \
     return true;                                                                                   \
   }
 
-SEQUOIA_SET_UNIFORM_VARIABLE_IMPL(float, GL_FLOAT, glProgramUniform1fv)
 SEQUOIA_SET_UNIFORM_VARIABLE_IMPL(int, GL_INT, glProgramUniform1iv)
+SEQUOIA_SET_UNIFORM_VARIABLE_IMPL(float, GL_FLOAT, glProgramUniform1fv)
 
 SEQUOIA_SET_UNIFORM_VARIABLE_IMPL(math::fvec2, GL_FLOAT_VEC2, glProgramUniform2fv)
 SEQUOIA_SET_UNIFORM_VARIABLE_IMPL(math::fvec3, GL_FLOAT_VEC3, glProgramUniform3fv)
 SEQUOIA_SET_UNIFORM_VARIABLE_IMPL(math::fvec4, GL_FLOAT_VEC4, glProgramUniform4fv)
-SEQUOIA_SET_UNIFORM_VARIABLE_IMPL(math::ivec2, GL_INT_VEC2, glProgramUniform2iv)
-SEQUOIA_SET_UNIFORM_VARIABLE_IMPL(math::ivec3, GL_INT_VEC3, glProgramUniform3iv)
-SEQUOIA_SET_UNIFORM_VARIABLE_IMPL(math::ivec4, GL_INT_VEC4, glProgramUniform4iv)
+
+SEQUOIA_SET_UNIFORM_VARIABLE_IMPL(bool, GL_BOOL, ([](GLuint program, GLint location, GLsizei count,
+                                                     const bool* value) {
+                                    GLboolean valuePtr = *value;
+                                    glProgramUniform1bv(program, location, count, &valuePtr);
+                                  }))
 
 SEQUOIA_SET_UNIFORM_VARIABLE_IMPL(math::fmat2, GL_FLOAT_MAT2,
                                   ([](GLuint program, GLint location, GLsizei count,
@@ -234,6 +242,21 @@ SEQUOIA_SET_UNIFORM_VARIABLE_IMPL(math::fmat4, GL_FLOAT_MAT4,
                                   }))
 
 #undef SEQUOIA_SET_UNIFORM_VARIABLE_IMPL
+
+} // anonymous namespace
+
+bool GLProgram::setUniformVariable(const std::string& name, const UniformVariable& value) {
+  switch(value.getType()) {
+#define UNIFORM_VARIABLE_TYPE(Type, Enum, Name)                                                    \
+  case Enum:                                                                                       \
+    return setUniformVariableImpl(this, name, value.get<Type>());
+#include "sequoia/Render/UniformVariable.inc"
+#undef UNIFORM_VARIABLE_TYPE
+  default:
+    sequoia_unreachable("invalid type");
+  };
+  return false;
+}
 
 void destroyGLProgram(GLProgram* program) noexcept {
   if(program->status_ == GLProgramStatus::Invalid)

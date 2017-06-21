@@ -27,6 +27,8 @@
 
 #include "sequoia/Game/Drawable.h"
 
+#include <iostream>
+
 namespace sequoia {
 
 namespace game {
@@ -80,6 +82,8 @@ void Scene::updateDrawCommandList(render::DrawCommandList* list) {
       }
     }
   });
+  
+  std::cout << drawCommandList_.front()->toString() << std::endl;
 
   // Copy DrawCommands
   list->insert(drawCommandList_);

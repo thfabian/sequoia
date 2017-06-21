@@ -54,12 +54,12 @@ struct SEQUOIA_API TextureParameter {
   /// Dimensionality of the texture
   int Dim = 2;
 
-  /// Filter used when minifying the texture
+  /// @brief Filter used when minifying the texture
   ///
   /// Minification means that the area of the fragment in texture space is larger than a texel.
   FilterKind MinFilter = FK_Linear;
 
-  /// Filter used when magnifying the texture
+  /// @brief Filter used when magnifying the texture
   ///
   /// Magnification means that the area of the fragment in texture space is smaller than a texel.
   FilterKind MaxFilter = FK_Linear;
