@@ -114,7 +114,7 @@ public:
   virtual const std::shared_ptr<Image>& getImage() const = 0;
 
   /// @brief Get the texture parameters
-  virtual const TextureParameter& getParameter() const = 0;
+  virtual const std::shared_ptr<TextureParameter>& getParameter() const = 0;
 
   /// @brief Get a log of the shader
   virtual std::string getLog() const = 0;
@@ -132,6 +132,13 @@ namespace std {
 template <>
 struct hash<sequoia::render::TextureParameter> {
   std::size_t operator()(const sequoia::render::TextureParameter& param) const;
+};
+
+template <>
+struct hash<std::shared_ptr<sequoia::render::TextureParameter>> {
+  std::size_t operator()(const std::shared_ptr<sequoia::render::TextureParameter>& param) const {
+    return hash<sequoia::render::TextureParameter>()(*param);
+  }
 };
 
 } // namespace std

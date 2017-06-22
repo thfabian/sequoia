@@ -13,9 +13,10 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_RENDER_GL_TEXTURE_H
-#define SEQUOIA_RENDER_GL_TEXTURE_H
+#ifndef SEQUOIA_RENDER_GL_TEXTUREMANAGER_H
+#define SEQUOIA_RENDER_GL_TEXTUREMANAGER_H
 
+#include "sequoia/Core/HashCombine.h"
 #include "sequoia/Render/GL/GLTexture.h"
 #include <memory>
 #include <unordered_map>
@@ -39,14 +40,14 @@ class SEQUOIA_API GLTextureManager : public NonCopyable {
   std::unordered_map<unsigned int, std::size_t> idLookupMap_;
 
   /// Lookup map for files
-  std::unordered_map<std::shared_ptr<File>, std::size_t> fileLookupMap_;
+  std::unordered_map<GLTexture::Desc, std::size_t> descLookupMap_;
 
 public:
   /// @brief Destroy all remaining textures
   ~GLTextureManager();
 };
 
-} // render
+} // namespace render
 
 } // namespace sequoia
 

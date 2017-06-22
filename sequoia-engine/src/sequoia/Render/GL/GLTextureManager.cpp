@@ -19,7 +19,10 @@ namespace sequoia {
 
 namespace render {
 
-GLTextureManager::~GLTextureManager() {}
+GLTextureManager::~GLTextureManager()
+{
+  
+}
 
 } // render
 

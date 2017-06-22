@@ -16,6 +16,7 @@
 #ifndef SEQUOIA_RENDER_GL_GLTEXTURE_H
 #define SEQUOIA_RENDER_GL_GLTEXTURE_H
 
+#include "sequoia/Core/HashCombine.h"
 #include "sequoia/Render/Texture.h"
 
 namespace sequoia {
@@ -29,17 +30,17 @@ class GLTexture final : public Texture {
   std::shared_ptr<Image> image_;
 
   /// Parameter of the texture
-  TextureParameter param_;
+  std::shared_ptr<TextureParameter> param_;
 
 public:
-  GLTexture(std::shared_ptr<Image> image, TextureParameter& param);
+  GLTexture(std::shared_ptr<Image> image, const std::shared_ptr<TextureParameter>& param);
   ~GLTexture();
 
   /// @copydoc Texture::getImage
   const std::shared_ptr<Image>& getImage() const override;
 
   /// @copydoc Texture::getParameter
-  const TextureParameter& getParameter() const override;
+  const std::shared_ptr<TextureParameter>& getParameter() const override;
 
   /// @copydoc Texture::getLog
   std::string getLog() const override;
@@ -47,11 +48,44 @@ public:
   /// @copydoc Texture::toString
   std::string toString() const override;
 
+  /// @brief Texture description (image + parameter)
+  class Desc {
+    std::shared_ptr<Image> image_;
+    std::shared_ptr<TextureParameter> param_;
+
+  public:
+    Desc(const std::shared_ptr<Image>& image, const std::shared_ptr<TextureParameter>& param)
+        : image_(image), param_(param) {}
+
+    const std::shared_ptr<Image>& getImage() const { return image_; }
+    const std::shared_ptr<TextureParameter>& getParam() const { return param_; }
+
+    inline bool operator==(const Desc& other) const noexcept {
+      return image_ == other.image_ && param_ == other.param_;
+    }
+    inline bool operator!=(const Desc& other) const noexcept { return !(*this == other); }
+  };
+
   SEQUOIA_GL_OBJECT(Texture)
 };
 
 } // render
 
 } // namespace sequoia
+
+namespace std {
+
+template <>
+struct hash<sequoia::render::GLTexture::Desc> {
+  std::size_t operator()(const sequoia::render::GLTexture::Desc& desc) const {
+    std::size_t seed = 0;
+    sequoia::core::hashCombine(seed,
+                               std::hash<sequoia::render::TextureParameter>()(*desc.getParam()),
+                               std::hash<sequoia::core::Image>()(*desc.getImage()));
+    return seed;
+  }
+};
+
+} // namespace std
 
 #endif

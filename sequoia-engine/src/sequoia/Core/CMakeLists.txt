@@ -53,7 +53,8 @@ sequoia_add_objects(
           Exception.h
           Exception.cpp
           File.h    
-          Format.h 
+          Format.h
+          HashCombine.h
           Image.h
           Image.cpp         
           Listenable.h

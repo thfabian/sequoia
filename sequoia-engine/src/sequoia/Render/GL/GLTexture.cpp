@@ -20,14 +20,14 @@ namespace sequoia {
 
 namespace render {
 
-GLTexture::GLTexture(std::shared_ptr<Image> image, TextureParameter& param)
+GLTexture::GLTexture(std::shared_ptr<Image> image, const std::shared_ptr<TextureParameter>& param)
     : Texture(RK_OpenGL), image_(image), param_(param) {}
 
 GLTexture::~GLTexture() {}
 
 const std::shared_ptr<Image>& GLTexture::getImage() const { return image_; }
 
-const TextureParameter& GLTexture::getParameter() const { return param_; }
+const std::shared_ptr<TextureParameter>& GLTexture::getParameter() const { return param_; }
 
 std::string GLTexture::getLog() const { return std::string(); }
 
@@ -36,7 +36,7 @@ std::string GLTexture::toString() const {
                       " image = %s,\n"
                       " param = %s"
                       "]",
-                      image_->toString(), param_.toString());
+                      image_->toString(), param_->toString());
 }
 
 } // render

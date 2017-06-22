@@ -14,9 +14,9 @@
 //===------------------------------------------------------------------------------------------===//
 
 #include "sequoia/Core/Format.h"
+#include "sequoia/Core/HashCombine.h"
 #include "sequoia/Core/Unreachable.h"
 #include "sequoia/Render/Texture.h"
-#include <boost/functional/hash.hpp>
 
 namespace sequoia {
 
@@ -91,23 +91,12 @@ std::string TextureParameter::toString() const {
 
 namespace std {
 
-template <class T, class... Args>
-void hash_combine(std::size_t& seed, T&& arg) {
-  boost::hash_combine(seed, arg);
-}
-
-template <class T, class... Args>
-void hash_combine(std::size_t& seed, T&& arg, Args&&... args) {
-  boost::hash_combine(seed, arg);
-  hash_combine(seed, args...);
-}
-
 std::size_t hash<sequoia::render::TextureParameter>::
 operator()(const sequoia::render::TextureParameter& param) const {
   std::size_t seed = 0;
-  hash_combine(seed, param.Dim, param.MinFilter, param.MaxFilter, param.UseMipmap,
-               param.InterpolateBetweenMipmaps, param.Dim1EdgeSampling, param.Dim2EdgeSampling,
-               param.Dim3EdgeSampling);
+  sequoia::core::hashCombine(seed, param.Dim, param.MinFilter, param.MaxFilter, param.UseMipmap,
+                             param.InterpolateBetweenMipmaps, param.Dim1EdgeSampling,
+                             param.Dim2EdgeSampling, param.Dim3EdgeSampling);
   return seed;
 }
 

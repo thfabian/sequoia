@@ -18,6 +18,7 @@
 #include "sequoia/Core/Image.h"
 #include "sequoia/Core/StringSwitch.h"
 #include "sequoia/Core/Unreachable.h"
+#include "sequoia/Core/HashCombine.h"
 
 #ifndef NDEBUG
 #define STBI_FAILURE_USERMSG
@@ -81,6 +82,12 @@ std::string UncompressedImage::toString() const {
                       "  numChannels = %i\n"
                       "]",
                       getName(), file_->getPath(), pixelData_, width_, height_, numChannels_);
+}
+
+std::size_t UncompressedImage::hash() const noexcept {
+  std::size_t seed = 0;
+  core::hashCombine(seed, file_->hash(), pixelData_, width_, height_, numChannels_);
+  return seed;
 }
 
 PNGImage::PNGImage(const std::shared_ptr<File>& file) : UncompressedImage(Image::IK_PNG, file) {}

@@ -91,6 +91,9 @@ public:
   /// @brief Get the file of the image
   virtual const std::shared_ptr<File>& getFile() const = 0;
 
+  /// @brief Get a unique hash of the image
+  virtual std::size_t hash() const noexcept = 0;
+
   /// @brief Get the image format
   ImageFormat getFormat() const { return format_; }
 
@@ -143,6 +146,9 @@ public:
   /// @copydoc Image::toString
   virtual std::string toString() const override;
 
+  /// @copydoc Image::getHash
+  virtual std::size_t hash() const noexcept override;
+
   /// @brief Get the name of the image (e.g PNGImage)
   virtual const char* getName() const = 0;
 };
@@ -182,5 +188,21 @@ public:
 using Image = core::Image;
 
 } // namespace sequoia
+
+namespace std {
+
+template <>
+struct hash<sequoia::core::Image> {
+  std::size_t operator()(const sequoia::core::Image& image) const { return image.hash(); }
+};
+
+template <>
+struct hash<shared_ptr<sequoia::core::Image>> {
+  std::size_t operator()(const shared_ptr<sequoia::core::Image>& image) const {
+    return image->hash();
+  }
+};
+
+} // namespace std
 
 #endif
