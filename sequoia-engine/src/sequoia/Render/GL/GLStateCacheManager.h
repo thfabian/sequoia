@@ -16,9 +16,9 @@
 #ifndef SEQUOIA_RENDER_GL_GLSTATECACHEMANAGER_H
 #define SEQUOIA_RENDER_GL_GLSTATECACHEMANAGER_H
 
+#include "sequoia/Core/Export.h"
 #include "sequoia/Core/NonCopyable.h"
 #include "sequoia/Render/DrawCommand.h"
-#include "sequoia/Core/Export.h"
 #include "sequoia/Render/RenderState.h"
 #include <unordered_map>
 
@@ -26,13 +26,15 @@ namespace sequoia {
 
 namespace render {
 
+class GLRenderStateCache;
+
 /// @brief Manager of the OpenGL state-machine
 ///
 /// This keeps an in-memory copy of the OpenGL state-machine to avoid unnecessary state changes.
 ///
 /// @ingroup gl
 class SEQUOIA_API GLStateCacheManager : public NonCopyable {
-  std::unique_ptr<RenderStateCache> stateCache_;
+  std::shared_ptr<GLRenderStateCache> stateCache_;
 
 public:
   GLStateCacheManager();
@@ -42,6 +44,9 @@ public:
 
   /// @brief Get the currently active RenderState
   const RenderState& getRenderState() const;
+  
+  /// @brief Start rendering (resets some internal variables)
+  void startRendering();
 };
 
 } // namespace render

@@ -38,7 +38,7 @@ namespace {
 
 // clang-format off
 
-// Simple cube vertex data in the format {Position, Normal, Color}
+// Simple cube vertex data in the format {Position, Normal, Color, UV}
 //
 //    v6----- v5
 //   /|      /|
@@ -48,35 +48,36 @@ namespace {
 //  |/      |/
 //  v2------v3
 //
-static float CubeVertexData[] = {   1, 1, 1,   0, 0, 1,   1, 1, 1,              // v0 (front)
-                                   -1, 1, 1,   0, 0, 1,   1, 1, 0,              // v1
-                                   -1,-1, 1,   0, 0, 1,   1, 0, 0,              // v2
-                                    1,-1, 1,   0, 0, 1,   1, 0, 1,              // v3
+static int CubeVertexDataStride = 11;
+static float CubeVertexData[] = {   1, 1, 1,   0, 0, 1,   1, 1, 1,   1, 1,      // v0 (front)
+                                   -1, 1, 1,   0, 0, 1,   1, 1, 0,   0, 1,      // v1
+                                   -1,-1, 1,   0, 0, 1,   1, 0, 0,   0, 0,      // v2
+                                    1,-1, 1,   0, 0, 1,   1, 0, 1,   1, 0,      // v3
             
-                                    1, 1, 1,   1, 0, 0,   1, 1, 1,              // v0 (right)
-                                    1,-1, 1,   1, 0, 0,   1, 0, 1,              // v3
-                                    1,-1,-1,   1, 0, 0,   0, 0, 1,              // v4
-                                    1, 1,-1,   1, 0, 0,   0, 1, 1,              // v5
+                                    1, 1, 1,   1, 0, 0,   1, 1, 1,   0, 1,      // v0 (right)
+                                    1,-1, 1,   1, 0, 0,   1, 0, 1,   0, 0,      // v3
+                                    1,-1,-1,   1, 0, 0,   0, 0, 1,   1, 0,      // v4
+                                    1, 1,-1,   1, 0, 0,   0, 1, 1,   1, 1,      // v5
             
-                                    1, 1, 1,   0, 1, 0,   1, 1, 1,              // v0 (top)
-                                    1, 1,-1,   0, 1, 0,   0, 1, 1,              // v5
-                                   -1, 1,-1,   0, 1, 0,   0, 1, 0,              // v6
-                                   -1, 1, 1,   0, 1, 0,   1, 1, 0,              // v1
+                                    1, 1, 1,   0, 1, 0,   1, 1, 1,   1, 0,      // v0 (top)
+                                    1, 1,-1,   0, 1, 0,   0, 1, 1,   1, 1,      // v5
+                                   -1, 1,-1,   0, 1, 0,   0, 1, 0,   0, 1,      // v6
+                                   -1, 1, 1,   0, 1, 0,   1, 1, 0,   0, 0,      // v1
             
-                                   -1, 1, 1,  -1, 0, 0,   1, 1, 0,              // v1 (left)
-                                   -1, 1,-1,  -1, 0, 0,   0, 1, 0,              // v6
-                                   -1,-1,-1,  -1, 0, 0,   0, 0, 0,              // v7
-                                   -1,-1, 1,  -1, 0, 0,   1, 0, 0,              // v2
+                                   -1, 1, 1,  -1, 0, 0,   1, 1, 0,   1, 1,      // v1 (left)
+                                   -1, 1,-1,  -1, 0, 0,   0, 1, 0,   0, 1,      // v6
+                                   -1,-1,-1,  -1, 0, 0,   0, 0, 0,   0, 0,      // v7
+                                   -1,-1, 1,  -1, 0, 0,   1, 0, 0,   1, 0,      // v2
             
-                                   -1,-1,-1,   0,-1, 0,   0, 0, 0,              // v7 (bottom)
-                                    1,-1,-1,   0,-1, 0,   0, 0, 1,              // v4
-                                    1,-1, 1,   0,-1, 0,   1, 0, 1,              // v3
-                                   -1,-1, 1,   0,-1, 0,   1, 0, 0,              // v2
+                                   -1,-1,-1,   0,-1, 0,   0, 0, 0,   0, 0,      // v7 (bottom)
+                                    1,-1,-1,   0,-1, 0,   0, 0, 1,   1, 0,      // v4
+                                    1,-1, 1,   0,-1, 0,   1, 0, 1,   1, 1,      // v3
+                                   -1,-1, 1,   0,-1, 0,   1, 0, 0,   0, 1,      // v2
             
-                                    1,-1,-1,   0, 0,-1,   0, 0, 1,              // v4 (back)
-                                   -1,-1,-1,   0, 0,-1,   0, 0, 0,              // v7
-                                   -1, 1,-1,   0, 0,-1,   0, 1, 0,              // v6
-                                    1, 1,-1,   0, 0,-1,   0, 1, 1 };            // v5
+                                    1,-1,-1,   0, 0,-1,   0, 0, 1,   0, 1,      // v4 (back)
+                                   -1,-1,-1,   0, 0,-1,   0, 0, 0,   1, 1,      // v7
+                                   -1, 1,-1,   0, 0,-1,   0, 1, 0,   1, 0,      // v6
+                                    1, 1,-1,   0, 0,-1,   0, 1, 1,   0, 0  };   // v5
 
 static unsigned int CubeIndices[]  = {   0, 1, 2,   2, 3, 0,                    // front
                                          4, 5, 6,   6, 7, 4,                    // right
@@ -100,36 +101,40 @@ std::shared_ptr<Mesh> MeshManager::createCube(const std::string& name, bool modi
     std::shared_ptr<render::VertexData> data(
         new render::VertexData(render::Vertex3D::getLayout(), render::VertexData::DM_Triangles,
                                numVertices, numIndices, false));
-
+    
     // Set vertex data
     render::Vertex3D* vertex = (render::Vertex3D*)data->getVerticesPtr();
     for(std::size_t i = 0; i < numVertices; ++i) {
       // Position
-      for(int j = 0; j < 3; ++j)
-        vertex[i].Position[j] = CubeVertexData[i * 9 + j];
-
+      for(int j = 0; j < 3; ++j) 
+        vertex[i].Position[j] = CubeVertexData[i * CubeVertexDataStride + j];
+        
       // Normal
       for(int j = 0; j < 3; ++j)
-        vertex[i].Normal[j] = CubeVertexData[i * 9 + 3 + j];
-
-      // TexCoord
-      vertex[i].TexCoord[0] = vertex[i].TexCoord[1] = 0;
-
+        vertex[i].Normal[j] = CubeVertexData[i * CubeVertexDataStride + 3 + j];
+            
       // Color
       static_assert(std::is_integral<render::Vertex3D::ColorType>::value,
                     "color should be integral");
 
       constexpr auto maxRGBValue = std::numeric_limits<render::Vertex3D::ColorType>::max();
       for(int j = 0; j < 3; ++j)
-        vertex[i].Color[j] = maxRGBValue * CubeVertexData[i * 9 + 6 + j];
+        vertex[i].Color[j] = maxRGBValue * CubeVertexData[i * CubeVertexDataStride + 6 + j];
       vertex[i].Color[3] = maxRGBValue;
+      
+      // TexCoord
+      for(int j = 0; j < 2; ++j)
+        vertex[i].TexCoord[j] = CubeVertexData[i * CubeVertexDataStride + 9 + j];
     }
+    
 
     // Set bounding box
     data->setAxisAlignedBox(math::AxisAlignedBox(math::vec3(-1, -1, -1), math::vec3(1, 1, 1)));
 
     // Set indices
     std::memcpy(data->getIndicesPtr(), CubeIndices, numIndices * sizeof(render::VertexIndexType));
+    
+    //data->dump();
 
     // Set the VAO
     data->setVertexArrayObject(

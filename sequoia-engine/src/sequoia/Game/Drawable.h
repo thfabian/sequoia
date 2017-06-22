@@ -18,6 +18,7 @@
 
 #include "sequoia/Game/SceneNodeCapability.h"
 #include "sequoia/Render/RenderFwd.h"
+#include "sequoia/Render/UniformVariable.h"
 #include <memory>
 #include <unordered_map>
 
@@ -78,6 +79,12 @@ public:
   /// @brief Set the Program used in the render-pipeline when invoking the `DrawCommand`
   void setProgram(render::Program* program);
 
+  /// @brief Set a uniform variable
+  template <class T>
+  void setUniformVariable(const std::string& name, const T& variable) {
+    setUniformVariableImpl(name, variable);
+  }
+
   /// @brief Is the node rendered?
   bool isActive() const { return active_; }
 
@@ -98,6 +105,9 @@ public:
 
   /// @copydoc SceneNodeCapability::clone
   virtual std::shared_ptr<SceneNodeCapability> clone(SceneNode* node) const override;
+
+private:
+  void setUniformVariableImpl(const std::string& name, UniformVariable variable);
 };
 
 SEQUOIA_REGISTER_SCENENODE_CAPABILITY(Drawable)

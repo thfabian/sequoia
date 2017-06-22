@@ -69,6 +69,10 @@ std::shared_ptr<SceneNodeCapability> Drawable::clone(SceneNode* node) const {
   return SceneNodeAlloc::create<Drawable>(node, mesh_, drawCommand_->getProgram());
 }
 
+void Drawable::setUniformVariableImpl(const std::string& name, UniformVariable variable) {
+  drawCommand_->setUniformVariable(name, variable);
+}
+
 std::string Drawable::toString() const {
   return core::format("Drawable[\n"
                       "  drawCommand = %s,\n"

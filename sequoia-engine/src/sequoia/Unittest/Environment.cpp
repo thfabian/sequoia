@@ -13,13 +13,13 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Unittest/Environment.h"
 #include "sequoia/Core/ErrorHandler.h"
 #include "sequoia/Core/Logging.h"
 #include "sequoia/Core/Options.h"
 #include "sequoia/Driver/CommandLine.h"
 #include "sequoia/Driver/ConsoleLogger.h"
 #include "sequoia/Unittest/Config.h"
+#include "sequoia/Unittest/Environment.h"
 #include <boost/program_options.hpp>
 
 namespace po = boost::program_options;
@@ -30,7 +30,7 @@ SEQUOIA_DECLARE_SINGLETON(unittest::Environment);
 
 namespace unittest {
 
-Environment::Environment(int argc, char* argv[]) : trace_() {
+Environment::Environment(int argc, char* argv[]) : trace_(), benchmark_(false) {
   singletonManager_ = std::make_unique<core::SingletonManager>();
   singletonManager_->allocateSingleton<ErrorHandler>(argc > 0 ? argv[0] : "SequoiaTest");
 
@@ -45,7 +45,9 @@ Environment::Environment(int argc, char* argv[]) : trace_() {
       // --no-debug
       ("no-debug", "Disable debug mode.")
       // --no-log
-      ("no-log", "Disable logging.");
+      ("no-log", "Disable logging.")
+      // --benchmark
+      ("benchmark", "Run benchmarks.");
 
   po::variables_map vm;
 
@@ -70,7 +72,9 @@ Environment::Environment(int argc, char* argv[]) : trace_() {
 
   Options::getSingleton().Core.Debug = !vm.count("no-debug");
 
+  benchmark_ = vm.count("benchmark");
   path_ = SEQUOIA_UNITTEST_RESSOURCEPATH;
+
   if(!platform::filesystem::exists(path_))
     ErrorHandler::getSingleton().fatal(PLATFORM_STR("invalid ressource path: '") + path_.native() +
                                        PLATFORM_STR("'"));

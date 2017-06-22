@@ -62,6 +62,23 @@ std::ostream& operator<<(std::ostream& os, UniformType type) {
   return os;
 }
 
+bool UniformVariable::operator==(const UniformVariable& other) const noexcept {
+  if(type_ != other.type_)
+    return false;
+
+  switch(type_) {
+#define UNIFORM_VARIABLE_TYPE(Type, Enum, Name)                                                    \
+  case Enum:                                                                                       \
+    return boost::get<Type>(data_) == boost::get<Type>(other.data_);
+#include "sequoia/Render/UniformVariable.inc"
+#undef UNIFORM_VARIABLE_TYPE
+  case UniformType::Invalid:
+    return boost::get<InvalidData>(data_) == boost::get<InvalidData>(other.data_);
+  default:
+    sequoia_unreachable("invalid type");
+  }
+}
+
 std::string UniformVariable::toString() const {
   return core::format("UniformVariable[\n"
                       "  type = %s,\n"

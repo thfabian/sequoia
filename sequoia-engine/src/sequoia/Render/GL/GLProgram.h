@@ -21,6 +21,7 @@
 #include "sequoia/Render/Program.h"
 #include "sequoia/Render/UniformVariable.h"
 #include <unordered_map>
+#include <unordered_set>
 
 namespace sequoia {
 
@@ -87,13 +88,13 @@ public:
 
   /// @brief Get map of uniform variables
   const std::unordered_map<std::string, GLUniformInfo>& getUniformVariables() const;
-  std::unordered_map<std::string, GLUniformInfo> getUniformVariables();
+  std::unordered_map<std::string, GLUniformInfo>& getUniformVariables();
 
   /// @brief Set the uniform variable `name` to `value`
   ///
   /// @throws RenderSystemException   Variable `name` has incompatible type
   /// @returns `true` if variable has been successfully set, `false` if variable does not exist
-  bool setUniformVariable(const std::string& name, const UniformVariable& value);
+  bool setUniformVariable(const std::string& name, const UniformVariable& variable);
 
   /// @brief Check if all uniform variables have been set
   bool checkUniformVariables();
@@ -113,6 +114,9 @@ public:
   /// @brief Destroy the program
   friend SEQUOIA_API void destroyGLProgram(GLProgram* program) noexcept;
 
+  /// @brief Issue a warning about setting a non-existing variable
+  void reportWarningForInvalidUniformVariable(const std::string& name);
+
   SEQUOIA_GL_OBJECT(Program)
 
 private:
@@ -129,6 +133,9 @@ private:
 
   /// Cache if all uniform variables have been set
   bool allUniformVariablesSet_;
+
+  /// Cache if we already issued a warning for setting a non-existing variable
+  std::unordered_set<std::string> reportedWarningForInvalidUniformVariable_;
 
   /// Shaders compiled into the program
   std::set<std::shared_ptr<Shader>> shaders_;

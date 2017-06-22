@@ -150,10 +150,8 @@ public:
 
   /// @name Comparison
   /// @{
-  inline bool operator==(const UniformVariable& other) const noexcept {
-    return type_ == other.type_ && data_ == other.data_;
-  }
-  inline bool operator!=(const UniformVariable& other) const noexcept { return !(*this == other); }
+  bool operator==(const UniformVariable& other) const noexcept;
+  bool operator!=(const UniformVariable& other) const noexcept { return !(*this == other); }
   /// @}
 
   /// @brief Convert to string

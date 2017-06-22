@@ -21,6 +21,8 @@
 #include "sequoia/Render/GL/GLVertexAttribute.h"
 #include "sequoia/Render/VertexData.h"
 
+#include <iostream>
+
 namespace sequoia {
 
 namespace render {
@@ -46,11 +48,52 @@ struct GetIndexType<unsigned int> {
   static constexpr GLenum value = GL_UNSIGNED_INT;
 };
 
+} // anonymous namespace
+
 /// @brief OpenGL implementation of the RenderStateCache
 /// @ingroup gl
 class GLRenderStateCache : public RenderStateCache {
+
+  /// Keep track of the values of the uniform variables of the Programs
+  std::unordered_map<unsigned int, std::unordered_map<std::string, UniformVariable>>
+      programUniformMap_;
+
 public:
   GLRenderStateCache() : RenderStateCache() { initState(); }
+
+  /// @brief Update the uniform variables of a program if necessary
+  void setUniformVariables(
+      Program* program, const std::unordered_map<std::string, UniformVariable>& newUniformVariables) {
+    GLProgram* glProgram = dyn_cast<GLProgram>(program);
+  
+    // We only update the variable if we *have* to!
+    std::unordered_map<std::string, UniformVariable>& oldUniformVariable =
+        programUniformMap_[glProgram->getID()];
+  
+    // Program has already been processed, only update the variables if they differ
+    for(const auto& nameVariablePair : newUniformVariables) {
+      const std::string& name = nameVariablePair.first;
+      const UniformVariable& variable = nameVariablePair.second;
+      
+      auto it = oldUniformVariable.find(name);
+      bool updateNeeded = false;
+      if(it == oldUniformVariable.end()) {
+        updateNeeded = true;
+      } else {
+        if(it->second != variable)
+          updateNeeded = true;
+      }
+  
+      if(updateNeeded) {
+        //std::cout << name << "\n" << variable.toString() << std::endl;        
+        glProgram->setUniformVariable(name, variable);
+        oldUniformVariable[name] = variable;
+      }
+    }
+  }
+
+  /// @brief Reset the uniform variables
+  void resetUniformVariables() { programUniformMap_.clear(); }
 
 protected:
   /// @brief Enable/Disable the capability `cap`
@@ -95,7 +138,7 @@ protected:
       sequoia_unreachable("invalid DepthFuncKind");
     }
   }
-  
+
   virtual void ProgramChanged(Program* program) override {
     if(program)
       dyn_cast<GLProgram>(program)->bind();
@@ -107,11 +150,13 @@ protected:
   }
 };
 
-} // anonymous namespace
-
 GLStateCacheManager::GLStateCacheManager() { stateCache_ = std::make_unique<GLRenderStateCache>(); }
 
 void GLStateCacheManager::draw(DrawCommand* command) {
+
+  // Set the uniform variables if necessary
+  if(!command->getUniformVariables().empty())
+    stateCache_->setUniformVariables(command->getProgram(), command->getUniformVariables());
 
   // Update the render-state
   stateCache_->setRenderState(command->getRenderState());
@@ -131,6 +176,8 @@ void GLStateCacheManager::draw(DrawCommand* command) {
 const RenderState& GLStateCacheManager::getRenderState() const {
   return stateCache_->getRenderState();
 }
+
+void GLStateCacheManager::startRendering() { stateCache_->resetUniformVariables(); }
 
 } // namespace render
 

@@ -137,7 +137,7 @@ void Game::init(bool hideWindow) {
 
 void Game::cleanup() {
   LOG(INFO) << "Terminating " << name_ << " ...";
-
+  
   // Free all the scenes
   sceneList_.clear();
 

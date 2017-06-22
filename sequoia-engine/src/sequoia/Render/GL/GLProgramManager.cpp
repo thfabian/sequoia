@@ -103,6 +103,7 @@ void GLProgramManager::getUniforms(const std::shared_ptr<GLProgram>& program) co
 
   program->uniformInfoMap_.clear();
   program->allUniformVariablesSet_ = false;
+  program->reportedWarningForInvalidUniformVariable_.clear();
 
   int numActiveUniforms = 0;
   glGetProgramiv(program->id_, GL_ACTIVE_UNIFORMS, &numActiveUniforms);

@@ -64,6 +64,14 @@ public:
     return variables_.find(name)->second;
   }
 
+  /// @brief Get the uniform variables
+  std::unordered_map<std::string, UniformVariable>& getUniformVariables() noexcept {
+    return variables_;
+  }
+  const std::unordered_map<std::string, UniformVariable>& getUniformVariables() const noexcept {
+    return variables_;
+  }
+
   /// @brief Set the uniform variable `name` to `value`
   void setUniformVariable(const std::string& name, const UniformVariable& value) noexcept {
     variables_[name] = value;

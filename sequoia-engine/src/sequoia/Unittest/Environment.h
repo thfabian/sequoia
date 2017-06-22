@@ -16,11 +16,11 @@
 #ifndef SEQUOIA_UNITTEST_ENVIRONMENT_H
 #define SEQUOIA_UNITTEST_ENVIRONMENT_H
 
+#include "sequoia/Core/Export.h"
 #include "sequoia/Core/Platform.h"
 #include "sequoia/Core/PrettyStackTrace.h"
 #include "sequoia/Core/Singleton.h"
 #include "sequoia/Core/SingletonManager.h"
-#include "sequoia/Core/Export.h"
 #include "sequoia/Unittest/TestFile.h"
 #include <gtest/gtest.h>
 #include <string>
@@ -32,8 +32,7 @@ namespace unittest {
 
 /// @brief Global test environment
 /// @ingroup unittest
-class SEQUOIA_API Environment : public testing::Environment,
-                                         public Singleton<Environment> {
+class SEQUOIA_API Environment : public testing::Environment, public Singleton<Environment> {
 public:
   /// @brief Parse command-line
   Environment(int argc, char* argv[]);
@@ -65,11 +64,29 @@ public:
   /// @param path   Path relative to the unittest ressource root
   std::shared_ptr<File> getFile(const char* path) const;
 
+  /// @brief Run the benchmarks?
+  bool runBenchmarks() const { return benchmark_; }
+
 private:
+  /// Stack trace
   core::PrettyStackTrace trace_;
+
+  /// Path of the ressources
   platform::Path path_;
+
+  /// Run the benchmarks?
+  bool benchmark_;
+
   std::unique_ptr<core::SingletonManager> singletonManager_;
 };
+
+/// @brief Indicate this test is a benchmark test and should be skipped if
+/// `Environment::runBenchmarks()` returns `false`
+#define SEQUOIA_BENCHMARK_TEST                                                                     \
+  do {                                                                                             \
+    if(!sequoia::unittest::Environment::getSingleton().runBenchmarks())                            \
+      return;                                                                                      \
+  } while(0)
 
 } // namespace unittest
 

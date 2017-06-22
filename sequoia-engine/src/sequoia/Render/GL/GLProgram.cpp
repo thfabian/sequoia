@@ -25,8 +25,6 @@
 #include "sequoia/Render/GL/GLShader.h"
 #include <sstream>
 
-#include <iostream>
-
 namespace sequoia {
 
 namespace render {
@@ -69,7 +67,7 @@ GLProgram::getUniformVariables() const {
   return uniformInfoMap_;
 }
 
-std::unordered_map<std::string, GLProgram::GLUniformInfo> GLProgram::getUniformVariables() {
+std::unordered_map<std::string, GLProgram::GLUniformInfo>& GLProgram::getUniformVariables() {
   return uniformInfoMap_;
 }
 
@@ -153,6 +151,14 @@ std::string GLProgram::toString() const {
           : "null");
 }
 
+void GLProgram::reportWarningForInvalidUniformVariable(const std::string& name) {
+  if(reportedWarningForInvalidUniformVariable_.count(name) == 0) {
+    LOG(WARNING) << "Setting non-existing uniform variable '" << name << "' in program (ID=" << id_
+                 << ")";
+    reportedWarningForInvalidUniformVariable_.emplace(name);
+  }
+}
+
 namespace {
 
 template <class T, bool IsFundamental>
@@ -188,9 +194,8 @@ inline typename ComputeReturnType<T, IsFundamental>::type addressOf(const T& val
   bool setUniformVariableImpl(GLProgram* program, const std::string& name, const TYPE& value) {    \
     SEQUOIA_ASSERT(program->getStatus() == GLProgramStatus::Linked);                               \
     auto it = program->getUniformVariables().find(name);                                           \
-  std::cout << name << "  " << it->second.Type << "  " << GL_TYPE << std::endl;\
     if(it == program->getUniformVariables().end()) {                                               \
-      LOG(WARNING) << "Setting non-existing uniform variable '" << name << "'";                    \
+      program->reportWarningForInvalidUniformVariable(name);                                       \
       return false;                                                                                \
     }                                                                                              \
     GLProgram::GLUniformInfo& info = it->second;                                                   \
@@ -245,11 +250,11 @@ SEQUOIA_SET_UNIFORM_VARIABLE_IMPL(math::fmat4, GL_FLOAT_MAT4,
 
 } // anonymous namespace
 
-bool GLProgram::setUniformVariable(const std::string& name, const UniformVariable& value) {
-  switch(value.getType()) {
+bool GLProgram::setUniformVariable(const std::string& name, const UniformVariable& variable) {
+  switch(variable.getType()) {
 #define UNIFORM_VARIABLE_TYPE(Type, Enum, Name)                                                    \
   case Enum:                                                                                       \
-    return setUniformVariableImpl(this, name, value.get<Type>());
+    return setUniformVariableImpl(this, name, variable.get<Type>());
 #include "sequoia/Render/UniformVariable.inc"
 #undef UNIFORM_VARIABLE_TYPE
   default:

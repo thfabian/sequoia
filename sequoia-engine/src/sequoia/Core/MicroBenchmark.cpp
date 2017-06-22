@@ -13,9 +13,9 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Core/MicroBenchmark.h"
 #include "sequoia/Core/Exception.h"
 #include "sequoia/Core/Format.h"
+#include "sequoia/Core/MicroBenchmark.h"
 #include "sequoia/Core/Platform.h"
 #include "sequoia/Core/StringSwitch.h"
 #include <algorithm>
@@ -153,7 +153,9 @@ public:
     Accumulator Acc[2];
   };
 
-  MicroBenchmarkerImpl() {
+  MicroBenchmarkerImpl() { init(); }
+
+  void init() {
     sentinel_.Name = "__root__";
     stack_.push_back(&sentinel_);
   }
@@ -206,6 +208,12 @@ public:
     outStream_.flush();
   }
 
+  void reset() {
+    stack_.clear();
+    tree_.clear();
+    init();
+  }
+
 private:
   Measurement getMeasurementOverhead() {
     double cycle = timer_.cycles();
@@ -217,9 +225,8 @@ private:
   }
 
   void processStart(const std::string& name, const Measurement& measurement) {
-    static bool firstStart = true;
-    if(firstStart)
-      firstStart = false;
+    if(firstStart_)
+      firstStart_ = false;
     else {
       for(Node* node : stack_) {
         node->CurrentRun.Cycle += measurement.Cycle;
@@ -315,15 +322,13 @@ private:
   std::unordered_map<std::string, Node> tree_;
   std::ostream& outStream_ = std::cout;
 
+  bool firstStart_ = true;
   Node sentinel_;
 };
 
 MicroBenchmarker* MicroBenchmarkerGlobal = nullptr;
 
-void MicroBenchmarker::init() {
-  assert(!MicroBenchmarkerGlobal && "MicroBenchmark already initialized!");
-  MicroBenchmarkerGlobal = new MicroBenchmarker();
-}
+void MicroBenchmarker::init() { MicroBenchmarkerGlobal = new MicroBenchmarker(); }
 
 MicroBenchmarker::MicroBenchmarker() { impl_ = std::make_unique<MicroBenchmarkerImpl>(); }
 
@@ -339,7 +344,11 @@ void MicroBenchmarker::stopTimer() { impl_->stopTimer(); }
 
 void MicroBenchmarker::setTimerMode(const char* mode) { impl_->setTimerMode(mode); }
 
-void MicroBenchmarker::print() { impl_->print(); }
+void MicroBenchmarker::print() {
+  impl_->print();
+  delete MicroBenchmarkerGlobal;
+  MicroBenchmarkerGlobal = nullptr;
+}
 
 } // namespace core
 

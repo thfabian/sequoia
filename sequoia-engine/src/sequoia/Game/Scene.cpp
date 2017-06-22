@@ -17,6 +17,7 @@
 #include "sequoia/Core/Format.h"
 #include "sequoia/Core/Logging.h"
 #include "sequoia/Game/CameraControllerFree.h"
+#include "sequoia/Game/Drawable.h"
 #include "sequoia/Game/Game.h"
 #include "sequoia/Game/MeshManager.h"
 #include "sequoia/Game/Scene.h"
@@ -24,10 +25,6 @@
 #include "sequoia/Render/Camera.h"
 #include "sequoia/Render/DrawCommandList.h"
 #include "sequoia/Render/RenderWindow.h"
-
-#include "sequoia/Game/Drawable.h"
-
-#include <iostream>
 
 namespace sequoia {
 
@@ -83,8 +80,6 @@ void Scene::updateDrawCommandList(render::DrawCommandList* list) {
     }
   });
   
-  std::cout << drawCommandList_.front()->toString() << std::endl;
-
   // Copy DrawCommands
   list->insert(drawCommandList_);
 }

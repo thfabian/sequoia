@@ -14,6 +14,7 @@ uniform mat4 u_ModelViewProjection;
 
 void main() {
   gl_Position = u_ModelViewProjection * vec4(in_Position, 1.0f);
+
   frag_Color = in_Color;
   frag_TexCoord = in_TexCoord;
 }
