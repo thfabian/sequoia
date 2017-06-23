@@ -23,13 +23,27 @@ namespace sequoia {
 
 namespace render {
 
+/// @brief Status of an OpenGL program
+/// @ingroup gl
+enum class GLTextureStatus {
+  Invalid = 0,
+  Created, ///< Texture was registered within OpenGL and recieved a unique ID
+  Loaded,  ///< Texture was successfully uploaded to the device
+};
+
 class GLTexture final : public Texture {
   friend class GLTextureManager;
+
+  /// Status of the texture
+  GLTextureStatus status_;
+
+  /// OpenGL texture index
+  unsigned int id_;
 
   /// Image used as basis of the texture
   std::shared_ptr<Image> image_;
 
-  /// Parameter of the texture
+  /// Parameters of the texture
   std::shared_ptr<TextureParameter> param_;
 
 public:
@@ -48,7 +62,7 @@ public:
   /// @copydoc Texture::toString
   std::string toString() const override;
 
-  /// @brief Texture description (image + parameter)
+  /// @brief Texture description (Image + TextureParameter)
   class Desc {
     std::shared_ptr<Image> image_;
     std::shared_ptr<TextureParameter> param_;

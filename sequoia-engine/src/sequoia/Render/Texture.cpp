@@ -15,8 +15,10 @@
 
 #include "sequoia/Core/Format.h"
 #include "sequoia/Core/HashCombine.h"
+#include "sequoia/Core/StringUtil.h"
 #include "sequoia/Core/Unreachable.h"
 #include "sequoia/Render/Texture.h"
+#include <vector>
 
 namespace sequoia {
 
@@ -50,6 +52,38 @@ const char* EdgeSamplingKindToString(TextureParameter::EdgeSamplingKind kind) no
   }
 }
 
+const char* TextureKindToString(TextureParameter::TextureKind kind) noexcept {
+  switch(kind) {
+  case TextureParameter::TK_1D:
+    return "1D";
+  case TextureParameter::TK_2D:
+    return "2D";
+  case TextureParameter::TK_3D:
+    return "3D";
+  case TextureParameter::TK_CubeMap:
+    return "CubeMap";
+  default:
+    sequoia_unreachable("invalid EdgeSamplingKind");
+  }
+}
+
+std::string UsageKindToString(TextureParameter::UsageKind kind) noexcept {
+  std::vector<const char*> usages;
+
+  if(kind & TextureParameter::UK_Static)
+    usages.push_back("Static");
+  if(kind & TextureParameter::UK_Dynamic)
+    usages.push_back("Dynamic");
+  if(kind & TextureParameter::UK_WriteOnly)
+    usages.push_back("WriteOnly");
+  if(kind & TextureParameter::UK_Discardable)
+    usages.push_back("Discardable");
+  if(kind & TextureParameter::UK_Rendertarget)
+    usages.push_back("Rendertarget");
+
+  return core::RangeToString(", ", "{", "}")(usages);
+}
+
 } // anonymous namespace
 
 Texture::Texture(RenderSystemKind kind) : RenderSystemObject(kind) {}
@@ -57,7 +91,8 @@ Texture::Texture(RenderSystemKind kind) : RenderSystemObject(kind) {}
 Texture::~Texture() {}
 
 bool TextureParameter::operator==(const TextureParameter& other) const noexcept {
-  return Dim == other.Dim &&                                             //
+  return Kind == other.Kind &&                                           //
+         Usage == other.Usage &&                                         //
          MinFilter == other.MinFilter &&                                 //
          MaxFilter == other.MaxFilter &&                                 //
          UseMipmap == other.UseMipmap &&                                 //
@@ -68,21 +103,22 @@ bool TextureParameter::operator==(const TextureParameter& other) const noexcept 
 }
 
 std::string TextureParameter::toString() const {
-  return core::format("TextureParameter[\n"
-                      "  Dim = %s,\n"
-                      "  MinFilter = %s,\n"
-                      "  MaxFilter = %s,\n"
-                      "  UseMipmap = %s,\n"
-                      "  InterpolateBetweenMipmaps = %s,\n"
-                      "  Dim1EdgeSampling = %s,\n"
-                      "  Dim2EdgeSampling = %s,\n"
-                      "  Dim3EdgeSampling = %s\n"
-                      "]",
-                      Dim, FilterKindToString(MinFilter), FilterKindToString(MaxFilter),
-                      UseMipmap ? "true" : "false", InterpolateBetweenMipmaps ? "true" : "false",
-                      EdgeSamplingKindToString(Dim1EdgeSampling),
-                      EdgeSamplingKindToString(Dim2EdgeSampling),
-                      EdgeSamplingKindToString(Dim3EdgeSampling));
+  return core::format(
+      "TextureParameter[\n"
+      "  Kind = %s,\n"
+      "  Usage = %s,\n"
+      "  MinFilter = %s,\n"
+      "  MaxFilter = %s,\n"
+      "  UseMipmap = %s,\n"
+      "  InterpolateBetweenMipmaps = %s,\n"
+      "  Dim1EdgeSampling = %s,\n"
+      "  Dim2EdgeSampling = %s,\n"
+      "  Dim3EdgeSampling = %s\n"
+      "]",
+      TextureKindToString(Kind), UsageKindToString(Usage), FilterKindToString(MinFilter),
+      FilterKindToString(MaxFilter), UseMipmap ? "true" : "false",
+      InterpolateBetweenMipmaps ? "true" : "false", EdgeSamplingKindToString(Dim1EdgeSampling),
+      EdgeSamplingKindToString(Dim2EdgeSampling), EdgeSamplingKindToString(Dim3EdgeSampling));
 }
 
 } // namespace render
@@ -94,9 +130,10 @@ namespace std {
 std::size_t hash<sequoia::render::TextureParameter>::
 operator()(const sequoia::render::TextureParameter& param) const {
   std::size_t seed = 0;
-  sequoia::core::hashCombine(seed, param.Dim, param.MinFilter, param.MaxFilter, param.UseMipmap,
-                             param.InterpolateBetweenMipmaps, param.Dim1EdgeSampling,
-                             param.Dim2EdgeSampling, param.Dim3EdgeSampling);
+  sequoia::core::hashCombine(seed, param.Kind, param.Usage, param.MinFilter, param.MaxFilter,
+                             param.UseMipmap, param.InterpolateBetweenMipmaps,
+                             param.Dim1EdgeSampling, param.Dim2EdgeSampling,
+                             param.Dim3EdgeSampling);
   return seed;
 }
 

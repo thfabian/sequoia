@@ -170,8 +170,6 @@ enum KeyboardKey : int {
   Key_Last = Key_Menu,
 };
 
-/// @brief Stream KeyboardKey
-/// @ingroup render
 SEQUOIA_API extern std::ostream& operator<<(std::ostream& os, KeyboardKey key) noexcept;
 
 /// @brief Mouse buttons
@@ -193,8 +191,6 @@ enum MouseButton : int {
   MouseButton_Middle = MouseButton_3,
 };
 
-/// @brief Stream MouseButton
-/// @ingroup render
 SEQUOIA_API extern std::ostream& operator<<(std::ostream& os, MouseButton button) noexcept;
 
 /// @brief Keyboard modifiers
@@ -207,8 +203,6 @@ enum KeyModifier : int {
   Mod_Super = 0x0008
 };
 
-/// @brief Stream KeyModifier
-/// @ingroup render
 SEQUOIA_API extern std::ostream& operator<<(std::ostream& os, KeyModifier mod) noexcept;
 
 /// @brief Key and button actions

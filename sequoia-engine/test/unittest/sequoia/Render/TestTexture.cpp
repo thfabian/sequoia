@@ -35,7 +35,7 @@ TEST(TextureParameterTest, Comparison) {
 TEST(TextureParameterTest, Hash) {
   TextureParameter param1;
   TextureParameter param2;
-
+  
   EXPECT_EQ(std::hash<TextureParameter>()(param1), std::hash<TextureParameter>()(param1));
   EXPECT_EQ(std::hash<TextureParameter>()(param1), std::hash<TextureParameter>()(param2));
 

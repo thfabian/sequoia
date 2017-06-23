@@ -51,8 +51,58 @@ struct SEQUOIA_API TextureParameter {
                        ///  texels are blended with a constant border color.
   };
 
-  /// Dimensionality of the texture
-  int Dim = 2;
+  /// @brief Type of texture
+  enum TextureKind : std::int8_t {
+    TK_1D = 0,  ///< 1D texture, used in combination with 1D texture coordinates
+    TK_2D,      ///< 2D texture, used in combination with 2D texture coordinates (default)
+    TK_3D,      ///< 3D volume texture, used in combination with 3D texture coordinates
+    TK_CubeMap, ///< Cube map (six two dimensional textures, one for each cube face), used in
+                ///  combination with 3D texture coordinates
+  };
+
+  /// @brief Usage of the texture (determines allocation strategy)
+  enum UsageKind : std::int8_t {
+    /// Static texture which the application rarely modifies once created. Modifying the contents
+    /// of this texture will involve a performance hit.
+    UK_Static = 1,
+
+    /// Indicates the application would like to modify this texture with the CPU fairly often.
+    /// This is the least optimal texture setting.
+    UK_Dynamic = 2,
+
+    /// Indicates the application will never read the contents of the texture back, it will only
+    /// ever write data.
+    UK_WriteOnly = 4,
+
+    /// Indicates that the application will be refilling the contents of the texture regularly (not
+    /// just updating, but generating the contents from scratch), and therefore does not mind if
+    /// the contents of the texture are lost somehow and need to be recreated. This allows and
+    /// additional level of optimisation on the texture.
+    UK_Discardable = 8,
+
+    /// Combination of `UK_Static` and `UK_WriteOnly`. This is the optimal texture usage setting.
+    UK_StaticWriteOnly = 5,
+
+    /// Combination of `UK_Dynamic` and `UK_WriteOnly`.
+    UK_DynamicWriteOnly = 6,
+
+    /// Combination of `UK_Dynamic`, `UK_WriteOnly` and `UK_Discardable`. This means that you
+    /// expect to replace the entire contents of the texture on an extremely regular basis, most
+    /// likely every frame. By selecting this option, you free the system up from having to be
+    /// concerned about losing the existing contents of the texture at any time, because if it does
+    /// lose them, you will be replacing them next frame anyway.
+    UK_DynamicWriteOnlyDiscardable = 14,
+
+    /// This texture will be a render target, i.e. used as a target for render to texture setting
+    /// this flag will ignore all other texture usages
+    UK_Rendertarget = 16
+  };
+  
+  /// @brief Type of texture
+  TextureKind Kind = TK_2D;
+
+  /// Usage of the texture
+  UsageKind Usage = UK_StaticWriteOnly;
 
   /// @brief Filter used when minifying the texture
   ///
@@ -94,6 +144,9 @@ struct SEQUOIA_API TextureParameter {
   bool operator==(const TextureParameter& other) const noexcept;
   bool operator!=(const TextureParameter& other) const noexcept { return !(other == *this); }
   /// @}
+  
+  /// @brief Set the Usage
+  inline void setUsage(std::int8_t usageBits) noexcept { Usage = static_cast<UsageKind>(usageBits); }
 
   /// @brief Convert to string
   std::string toString() const;
