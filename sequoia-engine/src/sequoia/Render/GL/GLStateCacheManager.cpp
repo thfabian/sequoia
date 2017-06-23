@@ -61,20 +61,33 @@ class GLRenderStateCache : public RenderStateCache {
 public:
   GLRenderStateCache() : RenderStateCache() { initState(); }
 
+  /// @brief Bind the `program`
+  void bindProgram(Program* program) {
+    if(getRenderState().Program != program)
+      ProgramChanged(program);
+  }
+
+  /// @brief Bind the given `VBO`
+  void bindVertexArrayObject(VertexArrayObject* vao) {
+    if(getRenderState().VertexArrayObject != vao)
+      VertexArrayObjectChanged(vao);
+  }
+
   /// @brief Update the uniform variables of a program if necessary
-  void setUniformVariables(
-      Program* program, const std::unordered_map<std::string, UniformVariable>& newUniformVariables) {
+  void
+  setUniformVariables(Program* program,
+                      const std::unordered_map<std::string, UniformVariable>& newUniformVariables) {
     GLProgram* glProgram = dyn_cast<GLProgram>(program);
-  
+
     // We only update the variable if we *have* to!
     std::unordered_map<std::string, UniformVariable>& oldUniformVariable =
         programUniformMap_[glProgram->getID()];
-  
+
     // Program has already been processed, only update the variables if they differ
     for(const auto& nameVariablePair : newUniformVariables) {
       const std::string& name = nameVariablePair.first;
       const UniformVariable& variable = nameVariablePair.second;
-      
+
       auto it = oldUniformVariable.find(name);
       bool updateNeeded = false;
       if(it == oldUniformVariable.end()) {
@@ -83,9 +96,9 @@ public:
         if(it->second != variable)
           updateNeeded = true;
       }
-  
+
       if(updateNeeded) {
-        //std::cout << name << "\n" << variable.toString() << std::endl;        
+        // std::cout << name << "\n" << variable.toString() << std::endl;
         glProgram->setUniformVariable(name, variable);
         oldUniformVariable[name] = variable;
       }
@@ -175,6 +188,12 @@ void GLStateCacheManager::draw(DrawCommand* command) {
 
 const RenderState& GLStateCacheManager::getRenderState() const {
   return stateCache_->getRenderState();
+}
+
+void GLStateCacheManager::bindProgram(Program* program) { stateCache_->bindProgram(program); }
+
+void GLStateCacheManager::bindVertexArrayObject(VertexArrayObject* vao) {
+  stateCache_->bindVertexArrayObject(vao);
 }
 
 void GLStateCacheManager::startRendering() { stateCache_->resetUniformVariables(); }

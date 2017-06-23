@@ -13,10 +13,12 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Render/GL/GL.h"
 #include "sequoia/Core/Format.h"
 #include "sequoia/Core/StringUtil.h"
 #include "sequoia/Core/Unreachable.h"
+#include "sequoia/Render/GL/GL.h"
+#include "sequoia/Render/GL/GLRenderer.h"
+#include "sequoia/Render/GL/GLStateCacheManager.h"
 #include "sequoia/Render/GL/GLVertexArrayObject.h"
 #include "sequoia/Render/GL/GLVertexAttribute.h"
 #include "sequoia/Render/VertexData.h"
@@ -61,8 +63,9 @@ GLVertexArrayObject::~GLVertexArrayObject() {
     freeVertexDataDevice();
 }
 
-GLVertexArrayObject::GLVertexArrayObject()
-    : VertexArrayObject(RenderSystemKind::RK_OpenGL), vaoID_(0), eboID_(0), vboID_(0) {}
+GLVertexArrayObject::GLVertexArrayObject(GLRenderer* renderer)
+    : VertexArrayObject(RenderSystemKind::RK_OpenGL), vaoID_(0), eboID_(0), vboID_(0),
+      renderer_(renderer) {}
 
 void GLVertexArrayObject::bind() {
   glBindVertexArray(vaoID_);
@@ -78,8 +81,8 @@ unsigned int GLVertexArrayObject::getVAOID() const { return vaoID_; }
 
 void GLVertexArrayObject::writeVertexData(std::size_t offset, std::size_t length) {
 
-  // TODO: use state-cache manager
-  bind();
+  // Bind program
+  renderer_->getStateCacheManager()->bindVertexArrayObject(this);
 
   // TODO: Discardable data should use glBufferData(GL_ARRAY_BUFFER, ..., NULL, ...) first
 
@@ -97,8 +100,8 @@ void GLVertexArrayObject::writeIndexData(std::size_t offset, std::size_t length)
   if(!data_->hasIndices())
     return;
 
-  // TODO: use state-cache manager
-  bind();
+  // Bind program
+  renderer_->getStateCacheManager()->bindVertexArrayObject(this);
 
   // TODO: Discardable data should use glBufferData(GL_ARRAY_BUFFER, ..., NULL, ...) first
 
@@ -122,11 +125,12 @@ void GLVertexArrayObject::attachVertexDataDevice() {
   if(hasIndices())
     glGenBuffers(1, &eboID_);
 
-  // TODO: use state-cache manager
-  bind();
+  // Bind program
+  renderer_->getStateCacheManager()->bindVertexArrayObject(this);
 
   const VertexLayout* layout = data_->getLayout();
 
+  // Enable the active attributes
   if(layout->hasPosition()) {
     glEnableVertexAttribArray(GLVertexAttribute::Position);
     glVertexAttribPointer(GLVertexAttribute::Position, layout->PositionNumElement,

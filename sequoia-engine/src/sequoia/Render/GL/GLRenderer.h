@@ -74,7 +74,7 @@ public:
   GLProgramManager* getProgramManager();
 
   /// @brief Get the OpenGL state manager
-  GLStateCacheManager* getStateCache();
+  GLStateCacheManager* getStateCacheManager();
 
   /// @brief Load the default vertex and fragment shaders and link them into a program of `target`
   ///

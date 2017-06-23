@@ -70,10 +70,8 @@ public:
   GLProgramStatus getStatus() const;
 
   /// @brief Bind the program to the current render pipline
+  /// @note Do not call this function directly, use `GLRenderer::bindProgram` instead
   void bind();
-
-  /// @brief Unbind the program
-  void unbind();
 
   /// @brief Add the `shader` to the program
   ///

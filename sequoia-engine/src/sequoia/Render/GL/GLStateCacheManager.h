@@ -44,7 +44,13 @@ public:
 
   /// @brief Get the currently active RenderState
   const RenderState& getRenderState() const;
-  
+
+  /// @brief Bind the `program`
+  void bindProgram(Program* program);
+
+  /// @brief Bind the given vertex array object `vao`
+  void bindVertexArrayObject(VertexArrayObject* vao);
+
   /// @brief Start rendering (resets some internal variables)
   void startRendering();
 };

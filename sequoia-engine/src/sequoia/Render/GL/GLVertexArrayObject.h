@@ -22,6 +22,8 @@ namespace sequoia {
 
 namespace render {
 
+class GLRenderer;
+
 /// @brief OpenGL vertex array object (VAO) with VBO and EBOs
 /// @ingroup gl
 class SEQUOIA_API GLVertexArrayObject final : public VertexArrayObject {
@@ -31,11 +33,15 @@ class SEQUOIA_API GLVertexArrayObject final : public VertexArrayObject {
   /// Are the buffers allocated?
   bool allocated_;
 
+  /// Assocaited Renderer
+  GLRenderer* renderer_;
+
 public:
   virtual ~GLVertexArrayObject();
-  GLVertexArrayObject();
+  GLVertexArrayObject(GLRenderer* renderer);
 
   /// @brief Bind the VAO
+  /// @note Do not call this function directly, use `GLRenderer::bindVertexArrayObject` instead
   void bind();
 
   /// @brief Get the VAO ID

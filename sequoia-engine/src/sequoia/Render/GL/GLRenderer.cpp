@@ -181,7 +181,7 @@ GLShaderManager* GLRenderer::getShaderManager() { return shaderManager_.get(); }
 
 GLProgramManager* GLRenderer::getProgramManager() { return programManager_.get(); }
 
-GLStateCacheManager* GLRenderer::getStateCache() { return stateCacheManager_.get(); }
+GLStateCacheManager* GLRenderer::getStateCacheManager() { return stateCacheManager_.get(); }
 
 void GLRenderer::loadDefaultShaders(const std::shared_ptr<File>& defaultVertexShaderFile,
                                     const std::shared_ptr<File>& defaultFragmentShaderFile) {

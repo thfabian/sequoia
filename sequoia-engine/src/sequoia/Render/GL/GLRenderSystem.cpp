@@ -96,8 +96,7 @@ void GLRenderSystem::swapBuffers() {
 }
 
 std::unique_ptr<VertexArrayObject> GLRenderSystem::createVertexArrayObject(RenderTarget* target) {
-  (void)target;
-  return std::make_unique<GLVertexArrayObject>();
+  return std::make_unique<GLVertexArrayObject>(getRenderer(target));
 }
 
 std::shared_ptr<Shader> GLRenderSystem::loadShader(RenderTarget* target, Shader::ShaderType type,

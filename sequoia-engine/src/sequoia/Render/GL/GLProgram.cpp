@@ -87,8 +87,6 @@ void GLProgram::bind() {
   glUseProgram(id_);
 }
 
-void GLProgram::unbind() { glUseProgram(0); }
-
 bool GLProgram::checkUniformVariables() {
   allUniformVariablesSet_ = true;
   for(const auto& nameInfoPair : uniformInfoMap_) {
