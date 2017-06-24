@@ -14,6 +14,7 @@
 //===------------------------------------------------------------------------------------------===//
 
 #include "sequoia/Core/Color.h"
+#include "sequoia/Core/Unreachable.h"
 #include <ostream>
 
 namespace sequoia {
@@ -30,6 +31,8 @@ std::ostream& operator<<(std::ostream& os, ColorFormat format) {
     return (os << "RGB");
   case ColorFormat::RGBA:
     return (os << "RGBA");
+  default:
+    sequoia_unreachable("invalid format");
   }
 }
 

@@ -20,7 +20,6 @@
 
 using namespace sequoia;
 using namespace sequoia::unittest;
-using namespace sequoia::core;
 
 namespace {
 
@@ -34,7 +33,7 @@ TEST(ImageTest, PNGImage) {
   EXPECT_EQ(image->getHeight(), 32);
   EXPECT_EQ(image->getWidth(), 32);
   EXPECT_EQ(image->getNumChannels(), 3);
-  EXPECT_EQ(image->getColorFormat(), ColorFormat::RGB);
+  EXPECT_EQ(image->getColorFormat(), core::ColorFormat::RGB);
 
   // Top left is blue
   EXPECT_EQ(image->at<ColorRGB>(0, 0), ColorRGB(0, 0, 255));
@@ -63,7 +62,7 @@ TEST(ImageTest, JPEGImage) {
   EXPECT_EQ(image->getHeight(), 32);
   EXPECT_EQ(image->getWidth(), 32);
   EXPECT_EQ(image->getNumChannels(), 3);
-  EXPECT_EQ(image->getColorFormat(), ColorFormat::RGB);
+  EXPECT_EQ(image->getColorFormat(), core::ColorFormat::RGB);
 
   // JPEG is a lossy format so we don't get the exact colors
 
@@ -94,7 +93,7 @@ TEST(ImageTest, BMPImage) {
   EXPECT_EQ(image->getHeight(), 32);
   EXPECT_EQ(image->getWidth(), 32);
   EXPECT_EQ(image->getNumChannels(), 4);
-  EXPECT_EQ(image->getColorFormat(), ColorFormat::RGBA);
+  EXPECT_EQ(image->getColorFormat(), core::ColorFormat::RGBA);
 
   // Top left is blue
   EXPECT_EQ(image->at<ColorRGB>(0, 0), ColorRGB(0, 0, 255));

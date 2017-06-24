@@ -44,7 +44,7 @@ enum class UniformType {
 
 /// @brief Stream UniformType
 /// @ingroup render
-std::ostream& operator<<(std::ostream& os, UniformType type);
+SEQUOIA_API extern std::ostream& operator<<(std::ostream& os, UniformType type);
 
 namespace internal {
 

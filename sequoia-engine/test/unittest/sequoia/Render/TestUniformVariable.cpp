@@ -20,7 +20,6 @@
 
 using namespace sequoia;
 using namespace sequoia::unittest;
-using namespace sequoia::render;
 
 namespace {
 

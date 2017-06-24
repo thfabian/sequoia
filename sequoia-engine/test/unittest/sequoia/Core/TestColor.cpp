@@ -19,13 +19,12 @@
 
 using namespace sequoia;
 using namespace sequoia::unittest;
-using namespace sequoia::core;
 
 namespace {
 
 TEST(ColorTest, ColorG) {
   static_assert(ColorG::NumChannels == 1, "");
-  static_assert(ColorG::Format == ColorFormat::G, "");
+  static_assert(ColorG::Format == core::ColorFormat::G, "");
 
   ColorG color1(12);
   EXPECT_EQ(color1[0], 12);
@@ -48,7 +47,7 @@ TEST(ColorTest, ColorG) {
 
 TEST(ColorTest, ColorGA) {
   static_assert(ColorGA::NumChannels == 2, "");
-  static_assert(ColorGA::Format == ColorFormat::GA, "");
+  static_assert(ColorGA::Format == core::ColorFormat::GA, "");
 
   ColorGA color1(12, 13);
   EXPECT_EQ(color1[0], 12);
@@ -70,7 +69,7 @@ TEST(ColorTest, ColorGA) {
 
 TEST(ColorTest, ColorRGB) {
   static_assert(ColorRGB::NumChannels == 3, "");
-  static_assert(ColorRGB::Format == ColorFormat::RGB, "");
+  static_assert(ColorRGB::Format == core::ColorFormat::RGB, "");
 
   ColorRGB color1(12, 13, 14);
   EXPECT_EQ(color1[0], 12);
@@ -96,7 +95,7 @@ TEST(ColorTest, ColorRGB) {
 
 TEST(ColorTest, ColorRGBA) {
   static_assert(ColorRGBA::NumChannels == 4, "");
-  static_assert(ColorRGBA::Format == ColorFormat::RGBA, "");
+  static_assert(ColorRGBA::Format == core::ColorFormat::RGBA, "");
 
   ColorRGBA color1(12, 13, 14, 15);
   EXPECT_EQ(color1[0], 12);

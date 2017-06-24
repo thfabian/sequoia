@@ -42,7 +42,7 @@ enum class ColorFormat : std::uint8_t {
   RGBA = SEQUOIA_COLOR_SET_NUM_CHANNELS(4) + 3, ///< red, green, blue, alpha
 };
 
-std::ostream& operator<<(std::ostream& os, ColorFormat format);
+SEQUOIA_API extern std::ostream& operator<<(std::ostream& os, ColorFormat format);
 
 #undef SEQUOIA_COLOR_SET_NUM_CHANNELS
 
@@ -154,7 +154,7 @@ struct IsColor : std::false_type {};
 /// @see sequoia::core::Color
 /// @ingroup core
 using ColorRGBA = core::Color<core::ColorFormat::RGBA>;
-SEQUOIA_API std::ostream& operator<<(std::ostream& os, const ColorRGBA& color);
+SEQUOIA_API extern std::ostream& operator<<(std::ostream& os, const ColorRGBA& color);
 
 template <>
 struct IsColor<ColorRGBA> : std::true_type {};
@@ -163,7 +163,7 @@ struct IsColor<ColorRGBA> : std::true_type {};
 /// @see sequoia::core::Color
 /// @ingroup core
 using ColorRGB = core::Color<core::ColorFormat::RGB>;
-SEQUOIA_API std::ostream& operator<<(std::ostream& os, const ColorRGB& color);
+SEQUOIA_API extern std::ostream& operator<<(std::ostream& os, const ColorRGB& color);
 
 template <>
 struct IsColor<ColorRGB> : std::true_type {};
@@ -172,7 +172,7 @@ struct IsColor<ColorRGB> : std::true_type {};
 /// @see sequoia::core::Color
 /// @ingroup core
 using ColorGA = core::Color<core::ColorFormat::GA>;
-SEQUOIA_API std::ostream& operator<<(std::ostream& os, const ColorGA& color);
+SEQUOIA_API extern std::ostream& operator<<(std::ostream& os, const ColorGA& color);
 
 template <>
 struct IsColor<ColorGA> : std::true_type {};
@@ -181,7 +181,7 @@ struct IsColor<ColorGA> : std::true_type {};
 /// @see sequoia::core::Color
 /// @ingroup core
 using ColorG = core::Color<core::ColorFormat::G>;
-SEQUOIA_API std::ostream& operator<<(std::ostream& os, const ColorG& color);
+SEQUOIA_API extern std::ostream& operator<<(std::ostream& os, const ColorG& color);
 
 template <>
 struct IsColor<ColorG> : std::true_type {};

@@ -15,7 +15,6 @@
 
 #include "sequoia/Render/Texture.h"
 #include "sequoia/Core/Format.h"
-#include "sequoia/Core/HashCombine.h"
 #include "sequoia/Core/StringUtil.h"
 #include "sequoia/Core/Unreachable.h"
 #include <vector>
@@ -124,17 +123,3 @@ std::string TextureParameter::toString() const {
 } // namespace render
 
 } // namespace sequoia
-
-namespace std {
-
-std::size_t hash<sequoia::render::TextureParameter>::
-operator()(const sequoia::render::TextureParameter& param) const {
-  std::size_t seed = 0;
-  sequoia::core::hashCombine(seed, param.Kind, param.Usage, param.MinFilter, param.MagFilter,
-                             param.UseMipmap, param.InterpolateBetweenMipmaps,
-                             param.Dim1EdgeSampling, param.Dim2EdgeSampling,
-                             param.Dim3EdgeSampling);
-  return seed;
-}
-
-} // namespace std

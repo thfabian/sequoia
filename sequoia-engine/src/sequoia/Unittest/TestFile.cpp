@@ -43,10 +43,10 @@ std::size_t TestFile::getNumBytes() {
 void TestFile::load() {
   std::string fullPath = platform::toAnsiString(Environment::getSingleton().getRessourcePath() /
                                                 platform::asPath(path_));
-  std::ifstream file(fullPath.c_str());
+  std::ifstream file(fullPath.c_str(), std::ifstream::in | std::ifstream::binary);
 
   if(!file.is_open())
-    SEQUOIA_THROW(core::Exception, "cannot load asset source: '%s'", path_.c_str());
+    SEQUOIA_THROW(core::Exception, "cannot load file: '%s'", path_.c_str());
 
   // Allocate memory
   file.seekg(0, std::ios_base::end);

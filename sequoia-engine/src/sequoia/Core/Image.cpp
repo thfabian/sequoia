@@ -46,6 +46,7 @@ std::shared_ptr<Image> Image::load(const std::shared_ptr<File>& file, Image::Ima
                  .Cases(".bmp", ".dib", Image::IF_BMP)
                  .Default(Image::IF_Unknown);
 
+
   switch(format) {
   case Image::IF_PNG:
     return std::make_shared<PNGImage>(file);
@@ -64,10 +65,11 @@ Image::Image(Image::ImageFormat format) : format_(format) {}
 UncompressedImage::UncompressedImage(ImageFormat format, const std::shared_ptr<File>& file)
     : Image(format), file_(file) {
 
+  // TODO: STB is not reentrant ... we need to use different library for image loading
+  //       Probably best to use the native libraries (libpng, libjpeg, ...) or DevIL
   int numChannels = 0;
   pixelData_ = stbi_load_from_memory(file_->getData(), file_->getNumBytes(), &width_, &height_,
                                      &numChannels, 0);
-
   if(!pixelData_)
     SEQUOIA_THROW(core::Exception, "failed to load image \"%s\": %s", file_->getPath(),
                   stbi_failure_reason());

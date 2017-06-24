@@ -18,6 +18,7 @@
 
 #include "sequoia/Core/Export.h"
 #include "sequoia/Core/Image.h"
+#include "sequoia/Core/HashCombine.h"
 #include "sequoia/Core/NonCopyable.h"
 #include "sequoia/Render/RenderSystemObject.h"
 #include <functional>
@@ -186,7 +187,14 @@ namespace std {
 
 template <>
 struct hash<sequoia::render::TextureParameter> {
-  std::size_t operator()(const sequoia::render::TextureParameter& param) const;
+  std::size_t operator()(const sequoia::render::TextureParameter& param) const {
+    std::size_t seed = 0;
+    sequoia::core::hashCombine(seed, param.Kind, param.Usage, param.MinFilter, param.MagFilter,
+                               param.UseMipmap, param.InterpolateBetweenMipmaps,
+                               param.Dim1EdgeSampling, param.Dim2EdgeSampling,
+                               param.Dim3EdgeSampling);
+    return seed;
+  }
 };
 
 template <>

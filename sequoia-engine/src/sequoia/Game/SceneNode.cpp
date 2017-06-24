@@ -19,6 +19,7 @@
 #include "sequoia/Core/StringRef.h"
 #include "sequoia/Core/StringUtil.h"
 #include "sequoia/Math/CoordinateSystem.h"
+#include <numeric>
 
 namespace sequoia {
 

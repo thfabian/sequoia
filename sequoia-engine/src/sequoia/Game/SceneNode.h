@@ -20,6 +20,7 @@
 #include "sequoia/Game/SceneNodeAlloc.h"
 #include "sequoia/Game/SceneNodeCapability.h"
 #include "sequoia/Math/Math.h"
+#include <array>
 #include <functional>
 #include <memory>
 #include <string>
