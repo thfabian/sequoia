@@ -52,7 +52,9 @@ sequoia_add_objects(
           ErrorHandler.cpp
           Exception.h
           Exception.cpp
-          File.h    
+          File.h
+          File.cpp
+          FileType.inc
           Format.h
           HashCombine.h
           Image.h

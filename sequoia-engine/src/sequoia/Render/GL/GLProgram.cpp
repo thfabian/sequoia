@@ -250,8 +250,8 @@ SEQUOIA_SET_UNIFORM_VARIABLE_IMPL(math::fmat4, GL_FLOAT_MAT4,
 
 bool GLProgram::setUniformVariable(const std::string& name, const UniformVariable& variable) {
   switch(variable.getType()) {
-#define UNIFORM_VARIABLE_TYPE(Type, Enum, Name)                                                    \
-  case Enum:                                                                                       \
+#define UNIFORM_VARIABLE_TYPE(Type, Name)                                                          \
+  case UniformType::Name:                                                                          \
     return setUniformVariableImpl(this, name, variable.get<Type>());
 #include "sequoia/Render/UniformVariable.inc"
 #undef UNIFORM_VARIABLE_TYPE

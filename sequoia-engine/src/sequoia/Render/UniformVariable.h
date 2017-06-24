@@ -16,9 +16,9 @@
 #ifndef SEQUOIA_RENDER_UNIFORMVARIABLE_H
 #define SEQUOIA_RENDER_UNIFORMVARIABLE_H
 
-#include "sequoia/Core/Exception.h"
 #include "sequoia/Core/Export.h"
 #include "sequoia/Math/Math.h"
+#include "sequoia/Render/Exception.h"
 #include <boost/variant/get.hpp>
 #include <boost/variant/variant.hpp>
 #include <iosfwd>
@@ -31,15 +31,9 @@ namespace render {
 /// @ingroup render
 enum class UniformType {
   Invalid,
-  Bool,
-  Int,
-  Float,
-  Float2,
-  Float3,
-  Float4,
-  Float2x2,
-  Float3x3,
-  Float4x4
+#define UNIFORM_VARIABLE_TYPE(Type, Name) Name,
+#include "sequoia/Render/UniformVariable.inc"
+#undef UNIFORM_VARIABLE_TYPE
 };
 
 /// @brief Stream UniformType
@@ -59,9 +53,9 @@ struct UniformTypeToType {
   static_assert(!std::is_same<type, void>::value, "invalid UniformType");
 };
 
-#define UNIFORM_VARIABLE_TYPE(Type, Enum, Name)                                                    \
+#define UNIFORM_VARIABLE_TYPE(Type, Name)                                                          \
   template <>                                                                                      \
-  struct UniformTypeToType<Enum> {                                                                 \
+  struct UniformTypeToType<UniformType::Name> {                                                    \
     using type = Type;                                                                             \
   };
 #include "sequoia/Render/UniformVariable.inc"
@@ -78,10 +72,10 @@ struct TypeToUniformType {
   static_assert(value == UniformType::Invalid, "invalid type");
 };
 
-#define UNIFORM_VARIABLE_TYPE(Type, Enum, Name)                                                    \
+#define UNIFORM_VARIABLE_TYPE(Type, Name)                                                          \
   template <>                                                                                      \
   struct TypeToUniformType<Type> {                                                                 \
-    static constexpr UniformType value = Enum;                                                     \
+    static constexpr UniformType value = UniformType::Name;                                        \
   };
 #include "sequoia/Render/UniformVariable.inc"
 #undef UNIFORM_VARIABLE_TYPE
@@ -98,7 +92,7 @@ public:
   };
 
   using DataType = boost::variant<
-#define UNIFORM_VARIABLE_TYPE(Type, Enum, Name) Type,
+#define UNIFORM_VARIABLE_TYPE(Type, Name) Type,
 #include "sequoia/Render/UniformVariable.inc"
 #undef UNIFORM_VARIABLE_TYPE
       InvalidData>;
@@ -123,8 +117,8 @@ public:
   inline const T& get() const {
     if(!isOfType<T>()) {
       UniformType type = internal::TypeToUniformType<T>::value;
-      SEQUOIA_THROW(core::Exception, "invalid type '%s' of uniform variable, expected '%s'", type,
-                    type_);
+      SEQUOIA_THROW(RenderSystemException, "invalid type '%s' of uniform variable, expected '%s'",
+                    type, type_);
     }
     return boost::get<T>(data_);
   }

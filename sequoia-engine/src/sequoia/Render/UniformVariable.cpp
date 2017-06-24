@@ -13,9 +13,9 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Render/UniformVariable.h"
 #include "sequoia/Core/Format.h"
 #include "sequoia/Core/Unreachable.h"
+#include "sequoia/Render/UniformVariable.h"
 #include <ostream>
 #include <sstream>
 
@@ -28,8 +28,8 @@ namespace {
 static std::string VariantToString(const UniformVariable::DataType& data, UniformType type) {
   std::stringstream ss;
   switch(type) {
-#define UNIFORM_VARIABLE_TYPE(Type, Enum, Name)                                                    \
-  case Enum:                                                                                       \
+#define UNIFORM_VARIABLE_TYPE(Type, Name)                                                          \
+  case UniformType::Name:                                                                          \
     ss << boost::get<Type>(data);                                                                  \
     break;
 #include "sequoia/Render/UniformVariable.inc"
@@ -47,9 +47,9 @@ static std::string VariantToString(const UniformVariable::DataType& data, Unifor
 
 std::ostream& operator<<(std::ostream& os, UniformType type) {
   switch(type) {
-#define UNIFORM_VARIABLE_TYPE(Type, Enum, Name)                                                    \
-  case Enum:                                                                                       \
-    os << Name;                                                                                    \
+#define UNIFORM_VARIABLE_TYPE(Type, Name)                                                          \
+  case UniformType::Name:                                                                          \
+    os << #Name;                                                                                   \
     break;
 #include "sequoia/Render/UniformVariable.inc"
 #undef UNIFORM_VARIABLE_TYPE
@@ -67,8 +67,8 @@ bool UniformVariable::operator==(const UniformVariable& other) const noexcept {
     return false;
 
   switch(type_) {
-#define UNIFORM_VARIABLE_TYPE(Type, Enum, Name)                                                    \
-  case Enum:                                                                                       \
+#define UNIFORM_VARIABLE_TYPE(Type, Name)                                                          \
+  case UniformType::Name:                                                                          \
     return boost::get<Type>(data_) == boost::get<Type>(other.data_);
 #include "sequoia/Render/UniformVariable.inc"
 #undef UNIFORM_VARIABLE_TYPE

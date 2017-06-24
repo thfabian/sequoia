@@ -15,24 +15,20 @@
 
 // clang-format off
 
-#if !defined(UNIFORM_VARIABLE_TYPE)
-#error "UNIFORM_VARIABLE_TYPE not defined"
+#if !defined(FILE_TYPE)
+#error "FILE_TYPE not defined"
 #endif
 
-// UNIFORM_VARIABLE_TYPE(Type, Enum, Name)
+// FILE_TYPE(Name, IsBinary, Extensions)
 //
-//  - Type  = C++ type
-//  - Name  = Name of the type
+//  - Name            = Name of the file-type
+//  - IsBinary        = Is the associated file-type a binary format?
+//  - Extension       = List of of extensions, separated by '|'
 //
  
-UNIFORM_VARIABLE_TYPE(bool, Bool)
-UNIFORM_VARIABLE_TYPE(int, Int)
-UNIFORM_VARIABLE_TYPE(float, Float)
-UNIFORM_VARIABLE_TYPE(math::fvec2, Float2)
-UNIFORM_VARIABLE_TYPE(math::fvec3, Float3)
-UNIFORM_VARIABLE_TYPE(math::fvec4, Float4)
-UNIFORM_VARIABLE_TYPE(math::fmat2, Float2x2)
-UNIFORM_VARIABLE_TYPE(math::fmat3, Float3x3)
-UNIFORM_VARIABLE_TYPE(math::fmat4, Float4x4)
+FILE_TYPE(Text, false, ".txt|.frag|.vert|.geom")
+FILE_TYPE(Png, true, ".png")
+FILE_TYPE(Jpeg, true, ".jpg|.jpeg|.jpe")
+FILE_TYPE(Bmp, true, ".bmp|.dib")
 
 // clang-format on

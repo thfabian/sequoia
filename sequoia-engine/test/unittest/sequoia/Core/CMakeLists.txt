@@ -19,6 +19,7 @@ sequoia_add_test(
           TestArrayRef.cpp
           TestColor.cpp
           TestImage.cpp
+          TestFile.cpp
           TestMain.cpp
           TestMemory.cpp
           TestPlatform.cpp

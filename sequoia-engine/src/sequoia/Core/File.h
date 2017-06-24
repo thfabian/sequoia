@@ -22,10 +22,20 @@
 #include <functional>
 #include <memory>
 #include <string>
+#include <array>
 
 namespace sequoia {
 
 namespace core {
+
+/// @brief Supported file types
+/// @ingroup core
+enum class FileType {
+  Unknown,
+#define FILE_TYPE(Name, IsBinary, Extensions) Name,
+#include "sequoia/Core/FileType.inc"
+#undef FILE_TYPE
+};
 
 /// @brief File interface
 ///
@@ -34,6 +44,11 @@ namespace core {
 /// @ingroup core
 class SEQUOIA_API File {
 public:
+  /// @brief Initialize the file
+  /// @param type   Type of the file
+  File(FileType type) : type_(type) {}
+
+  /// @brief Virtual destructor
   virtual ~File() {}
 
   /// @brief Get the content of the file
@@ -65,6 +80,24 @@ public:
   bool operator==(const File& other) { return equals(other); }
   bool operator!=(const File& other) { return !equals(other); }
   /// @}
+
+  /// @brief Get the type of the file
+  FileType getType() const noexcept { return type_; }
+
+  /// @brief Check if the file is a binary file
+  bool isBinary() const noexcept { return File::IsBinary(type_); }
+
+  /// @brief Get the FileType from the extension of `path`
+  static FileType TypeFromExtension(StringRef path) noexcept;
+
+  /// @brief Get the name of the FileType `type`
+  static const char* TypeToString(FileType type) noexcept;
+
+  /// @brief Check if the given FileType `type` is a binary format
+  static bool IsBinary(FileType type) noexcept;
+
+private:
+  FileType type_;
 };
 
 /// @name Comparison operator for Files
@@ -83,6 +116,7 @@ inline bool operator!=(const std::shared_ptr<File>& a, const std::shared_ptr<Fil
 } // namespace core
 
 using File = core::File;
+using FileType = core::FileType;
 
 } // namespace sequoia
 

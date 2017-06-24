@@ -35,7 +35,9 @@ public:
   /// ressource root (i.e `Environment::getRessourcePath()`)
   ///
   /// @param path   Path relative to the unittest ressource root
-  TestFile(const char* path);
+  /// @param type   Type of the file (if `FileType::Unknown` is passed, the type is deduced from the
+  ///               extension of `path`
+  TestFile(const char* path, FileType type = FileType::Unknown);
 
   /// @copydoc File::getData
   const Byte* getData() override;

@@ -42,7 +42,7 @@ class SEQUOIA_API AssetFile : public File {
 
 public:
   friend class AssetManager;
-  AssetFile(std::size_t id, AssetManager* manager);
+  AssetFile(FileType type, std::size_t id, AssetManager* manager);
 
   /// @copydoc File::getData
   const Byte* getData() override;
@@ -78,7 +78,7 @@ class SEQUOIA_API AssetManager : public NonCopyable {
 public:
   /// @brief Internal asset representation
   struct Asset : public NonCopyable {
-    Asset(AssetManager* manager, std::size_t id, const std::string& path);
+    Asset(AssetManager* manager, FileType type, std::size_t id, const std::string& path);
     ~Asset();
 
     /// Unique idetifier of the asset/file
@@ -102,12 +102,14 @@ public:
 
   /// @brief Load asset from disk
   /// @remark Thread-safe
-  std::shared_ptr<File> load(const std::string& path);
+  std::shared_ptr<File> load(const std::string& path, FileType type = FileType::Unknown);
 
   /// @brief Load image from disk (or file)
   /// @remark Thread-safe
   /// @{
-  std::shared_ptr<Image> loadImage(const std::string& path) { return loadImage(load(path)); }
+  std::shared_ptr<Image> loadImage(const std::string& path, FileType type = FileType::Unknown) {
+    return loadImage(load(path, type));
+  }
   std::shared_ptr<Image> loadImage(const std::shared_ptr<File>& file);
   /// @}
 

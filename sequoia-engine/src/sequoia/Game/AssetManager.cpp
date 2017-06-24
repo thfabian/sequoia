@@ -13,12 +13,12 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Game/AssetManager.h"
 #include "sequoia/Core/Assert.h"
 #include "sequoia/Core/Logging.h"
 #include "sequoia/Core/Memory.h"
 #include "sequoia/Core/StringRef.h"
 #include "sequoia/Core/UtfString.h"
+#include "sequoia/Game/AssetManager.h"
 #include "sequoia/Game/Exception.h"
 #include <fstream>
 
@@ -30,7 +30,8 @@ namespace game {
 //    AssetFile
 //===------------------------------------------------------------------------------------------===//
 
-AssetFile::AssetFile(std::size_t id, AssetManager* manager) : id_(id), manager_(manager) {}
+AssetFile::AssetFile(FileType type, std::size_t id, AssetManager* manager)
+    : File(type), id_(id), manager_(manager) {}
 
 const Byte* AssetFile::getData() { return manager_->getAsset(id_).Data.data(); }
 
@@ -58,8 +59,9 @@ StringRef AssetFile::getExtension() const noexcept {
 //    AssetManager
 //===------------------------------------------------------------------------------------------===//
 
-AssetManager::Asset::Asset(AssetManager* manager, std::size_t id, const std::string& path)
-    : ID(id), Path(path), File(std::make_shared<AssetFile>(id, manager)) {}
+AssetManager::Asset::Asset(AssetManager* manager, FileType type, std::size_t id,
+                           const std::string& path)
+    : ID(id), Path(path), File(std::make_shared<AssetFile>(type, id, manager)) {}
 
 AssetManager::Asset::~Asset() {}
 
@@ -67,9 +69,15 @@ AssetManager::AssetManager(const platform::String& path, const platform::String&
   assetPath_ = platform::Path(path) / archive;
 }
 
-std::shared_ptr<File> AssetManager::load(const std::string& path) {
-  LOG(INFO) << "Loading asset \"" << path << "\" ...";
-
+std::shared_ptr<File> AssetManager::load(const std::string& path, FileType type) {
+  if(type == FileType::Unknown) 
+    type = File::TypeFromExtension(path);
+  
+  if(type == FileType::Unknown)
+    LOG(WARNING) << "Cannot deduce extension for '" << path << "'";
+  
+  LOG(INFO) << "Loading asset \"" << path << "\" (" << File::TypeToString(type) << ") ...";
+  
   auto it = pathLookupMap_.find(path);
   std::size_t id = std::size_t(-1);
 
@@ -77,7 +85,7 @@ std::shared_ptr<File> AssetManager::load(const std::string& path) {
     id = assets_.size();
 
     // Register new asset
-    assets_.emplace_back(std::make_unique<Asset>(this, id, path));
+    assets_.emplace_back(std::make_unique<Asset>(this, type, id, path));
 
     // Update lookup map
     pathLookupMap_[path] = id;
@@ -121,10 +129,15 @@ const AssetManager::Asset& AssetManager::getAsset(std::size_t id) const {
 
 void AssetManager::loadFromDisk(std::unique_ptr<AssetManager::Asset>& asset) {
   std::string fullPath = platform::toAnsiString(assetPath_ / platform::asPath(asset->Path));
-  std::ifstream file(fullPath.c_str());
+
+  std::ios_base::openmode mode = std::ios_base::in;
+  if(asset->File->isBinary())
+    mode |= std::ios_base::binary;
+
+  std::ifstream file(fullPath.c_str(), mode);
 
   if(!file.is_open())
-    SEQUOIA_THROW(GameException, "cannot load asset source: '%s'", asset->Path.c_str());
+    SEQUOIA_THROW(GameException, "cannot load asset: '%s'", asset->Path.c_str());
 
   // Allocate memory
   file.seekg(0, std::ios_base::end);

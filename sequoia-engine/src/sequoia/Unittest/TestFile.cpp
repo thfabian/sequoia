@@ -13,12 +13,12 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Unittest/TestFile.h"
 #include "sequoia/Core/Exception.h"
 #include "sequoia/Core/Memory.h"
 #include "sequoia/Core/StringRef.h"
 #include "sequoia/Core/UtfString.h"
 #include "sequoia/Unittest/Environment.h"
+#include "sequoia/Unittest/TestFile.h"
 #include <fstream>
 #include <sstream>
 
@@ -26,7 +26,8 @@ namespace sequoia {
 
 namespace unittest {
 
-TestFile::TestFile(const char* path) : path_(path) {}
+TestFile::TestFile(const char* path, FileType type)
+    : File(File::TypeFromExtension(path)), path_(path) {}
 
 const Byte* TestFile::getData() {
   if(data_.empty())
@@ -43,7 +44,11 @@ std::size_t TestFile::getNumBytes() {
 void TestFile::load() {
   std::string fullPath = platform::toAnsiString(Environment::getSingleton().getRessourcePath() /
                                                 platform::asPath(path_));
-  std::ifstream file(fullPath.c_str(), std::ifstream::in | std::ifstream::binary);
+  std::ios_base::openmode mode = std::ios_base::in;
+  if(isBinary())
+    mode |= std::ios_base::binary;
+
+  std::ifstream file(fullPath.c_str(), mode);
 
   if(!file.is_open())
     SEQUOIA_THROW(core::Exception, "cannot load file: '%s'", path_.c_str());

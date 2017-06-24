@@ -13,26 +13,22 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-// clang-format off
+#include "sequoia/Core/File.h"
+#include <gtest/gtest.h>
 
-#if !defined(UNIFORM_VARIABLE_TYPE)
-#error "UNIFORM_VARIABLE_TYPE not defined"
-#endif
+using namespace sequoia::core;
 
-// UNIFORM_VARIABLE_TYPE(Type, Enum, Name)
-//
-//  - Type  = C++ type
-//  - Name  = Name of the type
-//
- 
-UNIFORM_VARIABLE_TYPE(bool, Bool)
-UNIFORM_VARIABLE_TYPE(int, Int)
-UNIFORM_VARIABLE_TYPE(float, Float)
-UNIFORM_VARIABLE_TYPE(math::fvec2, Float2)
-UNIFORM_VARIABLE_TYPE(math::fvec3, Float3)
-UNIFORM_VARIABLE_TYPE(math::fvec4, Float4)
-UNIFORM_VARIABLE_TYPE(math::fmat2, Float2x2)
-UNIFORM_VARIABLE_TYPE(math::fmat3, Float3x3)
-UNIFORM_VARIABLE_TYPE(math::fmat4, Float4x4)
+namespace {
 
-// clang-format on
+TEST(FileTest, Extension) {
+  EXPECT_EQ(File::TypeFromExtension(".txt"), FileType::Text);
+  EXPECT_EQ(File::TypeFromExtension(".jpeg"), FileType::Jpeg);
+  EXPECT_EQ(File::TypeFromExtension("bogus"), FileType::Unknown);
+}
+
+TEST(FileTest, ToString) {
+  EXPECT_STREQ(File::TypeToString(FileType::Png), "Png");
+  EXPECT_STREQ(File::TypeToString(FileType::Bmp), "Bmp");
+}
+
+} // anonymous namespace
