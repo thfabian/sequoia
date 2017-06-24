@@ -27,20 +27,24 @@ namespace sequoia {
 namespace core {
 
 // Encode the number of used channels in the highest 2 bits of an 8 bit field
-#define SEQUOIA_COLOR_SET_NUM_CHANNELS(NumChannels) ((NumChannels - 1) << 6)
-#define SEQUOIA_COLOR_GET_NUM_CHANNELS(Format) (((Format & 0xC0) >> 6) + 1)
+#define SEQUOIA_COLOR_SET_NUM_CHANNELS(NumChannels) ((std::uint8_t(NumChannels) - 1) << 6)
+#define SEQUOIA_COLOR_GET_NUM_CHANNELS(Format) (((std::uint8_t(Format) & 0xC0) >> 6) + 1)
 
 /// @brief Format of the Color
 ///
 /// The highest two bits encode the number of required channels.
 ///
 /// @ingroup core
-enum ColorFormat : std::uint8_t {
+enum class ColorFormat : std::uint8_t {
   G = SEQUOIA_COLOR_SET_NUM_CHANNELS(1) + 0,    ///< grey
   GA = SEQUOIA_COLOR_SET_NUM_CHANNELS(2) + 1,   ///< grey, alpha
   RGB = SEQUOIA_COLOR_SET_NUM_CHANNELS(3) + 2,  ///< red, green, blue
   RGBA = SEQUOIA_COLOR_SET_NUM_CHANNELS(4) + 3, ///< red, green, blue, alpha
 };
+
+std::ostream& operator<<(std::ostream& os, ColorFormat format);
+
+#undef SEQUOIA_COLOR_SET_NUM_CHANNELS
 
 /// @brief Representation of a 32-bit Color in given format
 /// @ingroup core
@@ -140,9 +144,6 @@ struct Color {
       data[i] = 0;
   }
 };
-
-#undef SEQUOIA_COLOR_SET_NUM_CHANNELS
-#undef SEQUOIA_COLOR_GET_NUM_CHANNELS
 
 } // namespace core
 

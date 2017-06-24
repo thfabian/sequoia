@@ -13,6 +13,7 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
+#include "sequoia/Core/Assert.h"
 #include "sequoia/Core/Casting.h"
 #include "sequoia/Core/Logging.h"
 #include "sequoia/Core/StringRef.h"
@@ -43,8 +44,10 @@ void GLProgramManager::make(const std::shared_ptr<GLProgram>& program,
   if(program->status_ == GLProgramStatus::Linked && requestedStatus != GLProgramStatus::Invalid)
     return;
 
-  if(requestedStatus == GLProgramStatus::Invalid)
+  if(requestedStatus == GLProgramStatus::Invalid) {
     destroyGLProgram(program.get());
+    return;
+  }
 
   if(program->status_ == GLProgramStatus::Invalid) {
     program->id_ = glCreateProgram();

@@ -16,10 +16,10 @@
 #ifndef SEQUOIA_RENDER_GL_GLRENDERER_H
 #define SEQUOIA_RENDER_GL_GLRENDERER_H
 
+#include "sequoia/Core/Export.h"
 #include "sequoia/Core/File.h"
 #include "sequoia/Core/NonCopyable.h"
 #include "sequoia/Math/Math.h"
-#include "sequoia/Core/Export.h"
 #include "sequoia/Render/Viewport.h"
 #include <memory>
 
@@ -32,6 +32,7 @@ class Program;
 class GLRenderWindow;
 class GLShaderManager;
 class GLProgramManager;
+class GLTextureManager;
 class GLStateCacheManager;
 
 /// @brief OpenGL based renderer
@@ -54,6 +55,7 @@ class SEQUOIA_API GLRenderer : public ViewportListener, public NonCopyable {
   std::unique_ptr<GLStateCacheManager> stateCacheManager_;
   std::unique_ptr<GLShaderManager> shaderManager_;
   std::unique_ptr<GLProgramManager> programManager_;
+  std::unique_ptr<GLTextureManager> textureManager_;
 
 public:
   /// @brief Initialize the OpenGL context and bind it to the calling thread
@@ -72,6 +74,9 @@ public:
 
   /// @brief Get the program manager
   GLProgramManager* getProgramManager();
+
+  /// @brief Get the texture manager
+  GLTextureManager* getTextureManager();
 
   /// @brief Get the OpenGL state manager
   GLStateCacheManager* getStateCacheManager();

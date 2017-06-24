@@ -17,7 +17,7 @@
 #define SEQUOIA_RENDER_GL_GLPROGRAM_H
 
 #include "sequoia/Math/Math.h"
-#include "sequoia/Render/GL/GL.h"
+#include "sequoia/Render/GL/GLFwd.h"
 #include "sequoia/Render/Program.h"
 #include "sequoia/Render/UniformVariable.h"
 #include <unordered_map>

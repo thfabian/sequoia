@@ -63,12 +63,17 @@ public:
   virtual std::unique_ptr<VertexArrayObject> createVertexArrayObject(RenderTarget* target) override;
 
   /// @brief Load the shader from source if it has not already been loaded
-  virtual std::shared_ptr<Shader> loadShader(RenderTarget* target, Shader::ShaderType type,
-                                             const std::shared_ptr<File>& path) override;
+  virtual std::shared_ptr<Shader> createShader(RenderTarget* target, Shader::ShaderType type,
+                                               const std::shared_ptr<File>& path) override;
 
   /// @brief Link the shaders into a program if a program of the given shaders does not yet exist
   virtual std::shared_ptr<Program>
   createProgram(RenderTarget* target, const std::set<std::shared_ptr<Shader>>& shaders) override;
+
+  /// @brief Create a texture of the given image
+  virtual std::shared_ptr<Texture>
+  createTexture(RenderTarget* target, const std::shared_ptr<Image>& image,
+                const TextureParameter& param = TextureParameter()) override;
 
   /// @brief Add the keyboard `listener` to `target`
   virtual void addKeyboardListener(RenderTarget* target, KeyboardListener* listener) override;

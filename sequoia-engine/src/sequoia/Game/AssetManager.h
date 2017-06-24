@@ -19,9 +19,9 @@
 #include "sequoia/Core/AlignedADT.h"
 #include "sequoia/Core/Export.h"
 #include "sequoia/Core/File.h"
+#include "sequoia/Core/Image.h"
 #include "sequoia/Core/NonCopyable.h"
 #include "sequoia/Core/Platform.h"
-#include <mutex>
 #include <unordered_map>
 #include <vector>
 
@@ -64,6 +64,9 @@ public:
 
   /// @copydoc File::getExtension
   StringRef getExtension() const noexcept override;
+
+  /// @brief Get the `id`
+  std::size_t getID() const noexcept { return id_; }
 };
 
 /// @brief Load assets from disk
@@ -94,12 +97,19 @@ public:
   /// @brief Initialize the manager with an archive
   ///
   /// @param path     Full path to the archive
-  /// @param archive  Name of the archive file or directory
+  /// @param archive  Name of the archive file or directory (can be empty)
   AssetManager(const platform::String& path, const platform::String& archive);
 
   /// @brief Load asset from disk
   /// @remark Thread-safe
   std::shared_ptr<File> load(const std::string& path);
+
+  /// @brief Load image from disk (or file)
+  /// @remark Thread-safe
+  /// @{
+  std::shared_ptr<Image> loadImage(const std::string& path) { return loadImage(load(path)); }
+  std::shared_ptr<Image> loadImage(const std::shared_ptr<File>& file);
+  /// @}
 
   /// @brief Get the root path to the assets
   const platform::Path& getAssetPath() const;
@@ -114,14 +124,14 @@ private:
   void loadFromDisk(std::unique_ptr<Asset>& asset);
 
 private:
-  /// Global access mutex
-  std::mutex mutex_;
-
   /// Loaded assets (indexed by `id`s)
   std::vector<std::unique_ptr<Asset>> assets_;
 
   /// Map to of path to the index (i.e `id`) in `assets`
   std::unordered_map<std::string, std::size_t> pathLookupMap_;
+
+  /// Map of file to image
+  std::unordered_map<std::shared_ptr<File>, std::shared_ptr<Image>> imageCache_;
 
   /// Full path to the assets
   platform::Path assetPath_;

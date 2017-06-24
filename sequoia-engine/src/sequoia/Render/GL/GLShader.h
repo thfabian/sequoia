@@ -16,7 +16,7 @@
 #ifndef SEQUOIA_RENDER_GL_GLSHADER_H
 #define SEQUOIA_RENDER_GL_GLSHADER_H
 
-#include "sequoia/Render/GL/GL.h"
+#include "sequoia/Render/GL/GLFwd.h"
 #include "sequoia/Render/Shader.h"
 
 namespace sequoia {

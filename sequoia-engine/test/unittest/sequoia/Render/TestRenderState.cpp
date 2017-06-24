@@ -37,10 +37,14 @@ protected:
     changes_.emplace_back("VertexArrayObject");
   }
 
+  void TextureChanged(int textureUnit, Texture* texture) override {
+    changes_.emplace_back("Texture" + std::to_string(textureUnit));
+  }
+
 public:
   RenderStateCacheTest() : RenderStateCache() { initState(); }
   const std::vector<std::string>& getChanges() const { return changes_; }
-  void clear() { changes_.clear(); }
+  void resetChanges() { changes_.clear(); }
 };
 
 TEST(RenderStateTest, Initialization) {
@@ -60,7 +64,7 @@ TEST(RenderStateTest, StateChange) {
   // Check the correct change function is invoked
 
   auto stateCache = std::make_unique<RenderStateCacheTest>();
-  stateCache->clear();
+  stateCache->resetChanges();
 
   RenderState state;
   state.DepthTest = !state.DepthTest;
@@ -68,8 +72,38 @@ TEST(RenderStateTest, StateChange) {
   stateCache->setRenderState(state);
 
   const std::vector<std::string>& changes = stateCache->getChanges();
-  EXPECT_EQ(changes.size(), 1);
+  ASSERT_EQ(changes.size(), 1);
   EXPECT_STREQ(changes[0].c_str(), "DepthTest");
+}
+
+TEST(RenderStateTest, TextureChange) {
+  auto stateCache = std::make_unique<RenderStateCacheTest>();
+
+  RenderState state;
+  state.TextureMap[0] = nullptr;
+  state.TextureMap[1] = nullptr;
+
+  stateCache->resetChanges();
+  stateCache->setRenderState(state);
+
+  {
+    const std::vector<std::string>& changes = stateCache->getChanges();
+    ASSERT_EQ(changes.size(), 2);
+    EXPECT_TRUE(std::find(changes.begin(), changes.end(), "Texture0") != changes.end());
+    EXPECT_TRUE(std::find(changes.begin(), changes.end(), "Texture1") != changes.end());
+  }
+
+  state.TextureMap[0] = nullptr;
+  state.TextureMap[3] = nullptr;
+
+  stateCache->resetChanges();
+  stateCache->setRenderState(state);
+
+  {
+    const std::vector<std::string>& changes = stateCache->getChanges();
+    ASSERT_EQ(changes.size(), 1);
+    EXPECT_STREQ(changes[0].c_str(), "Texture3");
+  }
 }
 
 } // anonymous namespace

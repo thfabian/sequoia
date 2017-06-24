@@ -1,3 +1,4 @@
+
 //===--------------------------------------------------------------------------------*- C++ -*-===//
 //                         _____                        _
 //                        / ____|                      (_)
@@ -13,35 +14,13 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_RENDER_RENDERFWD_H
-#define SEQUOIA_RENDER_RENDERFWD_H
+#ifndef SEQUOIA_RENDER_GL_GLFWD_H
+#define SEQUOIA_RENDER_GL_GLFWD_H
 
-namespace sequoia {
+#include <glbinding/gl/enum.h>
+#include <glbinding/gl/types.h>
 
-namespace render {
-
-class Camera;
-class Program;
-class DrawCommand;
-class DrawCommandList;
-struct RenderState;
-class RenderStateCache;
-class RenderSystem;
-class RenderTarget;
-class RenderWindow;
-class Shader;
-class Texture;
-struct TextureParameter;
-class VertexArrayObject;
-struct VertexLayout;
-struct Vertex2DLayout;
-struct Vertex3DLayout;
-class VertexVistor;
-class ViewFrustum;
-class Viewport;
-
-} // namespace render
-
-} // namespace sequoia
+using namespace gl;
 
 #endif
+

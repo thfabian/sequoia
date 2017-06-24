@@ -13,34 +13,21 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_RENDER_RENDERFWD_H
-#define SEQUOIA_RENDER_RENDERFWD_H
+#ifndef SEQUOIA_GAME_EXCEPTION_H
+#define SEQUOIA_GAME_EXCEPTION_H
+
+#include "sequoia/Core/Exception.h"
 
 namespace sequoia {
 
-namespace render {
+namespace game {
 
-class Camera;
-class Program;
-class DrawCommand;
-class DrawCommandList;
-struct RenderState;
-class RenderStateCache;
-class RenderSystem;
-class RenderTarget;
-class RenderWindow;
-class Shader;
-class Texture;
-struct TextureParameter;
-class VertexArrayObject;
-struct VertexLayout;
-struct Vertex2DLayout;
-struct Vertex3DLayout;
-class VertexVistor;
-class ViewFrustum;
-class Viewport;
+/// @class GameExceptin
+/// @brief Exception thrown on game related errors
+/// @ingroup game
+SEQUOIA_DECLARE_EXCPETION(GameException)
 
-} // namespace render
+} // namespace game
 
 } // namespace sequoia
 

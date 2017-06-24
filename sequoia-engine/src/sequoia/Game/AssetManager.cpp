@@ -14,12 +14,12 @@
 //===------------------------------------------------------------------------------------------===//
 
 #include "sequoia/Core/Assert.h"
-#include "sequoia/Core/Exception.h"
 #include "sequoia/Core/Logging.h"
 #include "sequoia/Core/Memory.h"
 #include "sequoia/Core/StringRef.h"
 #include "sequoia/Core/UtfString.h"
 #include "sequoia/Game/AssetManager.h"
+#include "sequoia/Game/Exception.h"
 #include <fstream>
 
 namespace sequoia {
@@ -68,8 +68,6 @@ AssetManager::AssetManager(const platform::String& path, const platform::String&
 }
 
 std::shared_ptr<File> AssetManager::load(const std::string& path) {
-  std::lock_guard<std::mutex> lock(mutex_);
-
   LOG(INFO) << "Loading asset \"" << path << "\" ...";
 
   auto it = pathLookupMap_.find(path);
@@ -95,6 +93,20 @@ std::shared_ptr<File> AssetManager::load(const std::string& path) {
   return assets_[id]->File;
 }
 
+std::shared_ptr<Image> AssetManager::loadImage(const std::shared_ptr<File>& file) {
+  std::shared_ptr<Image> image = nullptr;
+
+  auto it = imageCache_.find(file);
+  if(it == imageCache_.end()) {
+    image = Image::load(file);
+    imageCache_.emplace(file, image);
+  } else {
+    image = it->second;
+  }
+
+  return image;
+}
+
 const platform::Path& AssetManager::getAssetPath() const { return assetPath_; }
 
 const std::string& AssetManager::getPath(std::size_t id) const {
@@ -112,7 +124,7 @@ void AssetManager::loadFromDisk(std::unique_ptr<AssetManager::Asset>& asset) {
   std::ifstream file(fullPath.c_str());
 
   if(!file.is_open())
-    SEQUOIA_THROW(core::Exception, "cannot load asset source: '%s'", asset->Path.c_str());
+    SEQUOIA_THROW(GameException, "cannot load asset source: '%s'", asset->Path.c_str());
 
   // Allocate memory
   file.seekg(0, std::ios_base::end);

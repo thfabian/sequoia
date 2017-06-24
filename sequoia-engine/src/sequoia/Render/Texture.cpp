@@ -94,7 +94,7 @@ bool TextureParameter::operator==(const TextureParameter& other) const noexcept 
   return Kind == other.Kind &&                                           //
          Usage == other.Usage &&                                         //
          MinFilter == other.MinFilter &&                                 //
-         MaxFilter == other.MaxFilter &&                                 //
+         MagFilter == other.MagFilter &&                                 //
          UseMipmap == other.UseMipmap &&                                 //
          InterpolateBetweenMipmaps == other.InterpolateBetweenMipmaps && //
          Dim1EdgeSampling == other.Dim1EdgeSampling &&                   //
@@ -108,7 +108,7 @@ std::string TextureParameter::toString() const {
       "  Kind = %s,\n"
       "  Usage = %s,\n"
       "  MinFilter = %s,\n"
-      "  MaxFilter = %s,\n"
+      "  MagFilter = %s,\n"
       "  UseMipmap = %s,\n"
       "  InterpolateBetweenMipmaps = %s,\n"
       "  Dim1EdgeSampling = %s,\n"
@@ -116,7 +116,7 @@ std::string TextureParameter::toString() const {
       "  Dim3EdgeSampling = %s\n"
       "]",
       TextureKindToString(Kind), UsageKindToString(Usage), FilterKindToString(MinFilter),
-      FilterKindToString(MaxFilter), UseMipmap ? "true" : "false",
+      FilterKindToString(MagFilter), UseMipmap ? "true" : "false",
       InterpolateBetweenMipmaps ? "true" : "false", EdgeSamplingKindToString(Dim1EdgeSampling),
       EdgeSamplingKindToString(Dim2EdgeSampling), EdgeSamplingKindToString(Dim3EdgeSampling));
 }
@@ -130,7 +130,7 @@ namespace std {
 std::size_t hash<sequoia::render::TextureParameter>::
 operator()(const sequoia::render::TextureParameter& param) const {
   std::size_t seed = 0;
-  sequoia::core::hashCombine(seed, param.Kind, param.Usage, param.MinFilter, param.MaxFilter,
+  sequoia::core::hashCombine(seed, param.Kind, param.Usage, param.MinFilter, param.MagFilter,
                              param.UseMipmap, param.InterpolateBetweenMipmaps,
                              param.Dim1EdgeSampling, param.Dim2EdgeSampling,
                              param.Dim3EdgeSampling);

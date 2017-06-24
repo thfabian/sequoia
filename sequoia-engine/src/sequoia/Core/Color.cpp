@@ -14,11 +14,24 @@
 //===------------------------------------------------------------------------------------------===//
 
 #include "sequoia/Core/Color.h"
-#include <iostream>
+#include <ostream>
 
 namespace sequoia {
 
 namespace core {
+
+std::ostream& operator<<(std::ostream& os, ColorFormat format) {
+  switch(format) {
+  case ColorFormat::G:
+    return (os << "G");
+  case ColorFormat::GA:
+    return (os << "GA");
+  case ColorFormat::RGB:
+    return (os << "RGB");
+  case ColorFormat::RGBA:
+    return (os << "RGBA");
+  }
+}
 
 namespace {
 

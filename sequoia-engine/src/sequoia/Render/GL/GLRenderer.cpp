@@ -26,6 +26,7 @@
 #include "sequoia/Render/GL/GLRenderer.h"
 #include "sequoia/Render/GL/GLShaderManager.h"
 #include "sequoia/Render/GL/GLStateCacheManager.h"
+#include "sequoia/Render/GL/GLTextureManager.h"
 #include "sequoia/Render/RenderSystem.h"
 #include <glbinding/Binding.h>
 #include <glbinding/ContextInfo.h>
@@ -127,6 +128,7 @@ GLRenderer::GLRenderer(GLRenderWindow* window) : window_(window) {
   stateCacheManager_ = std::make_unique<GLStateCacheManager>();
   shaderManager_ = std::make_unique<GLShaderManager>();
   programManager_ = std::make_unique<GLProgramManager>();
+  textureManager_ = std::make_unique<GLTextureManager>(this);  
 
   LOG(INFO) << "Done creating OpenGL renderer " << this;
 }
@@ -143,6 +145,10 @@ GLRenderer::~GLRenderer() {
 
   programManager_.reset();
   shaderManager_.reset();
+  textureManager_.reset();
+  
+  stateCacheManager_.reset();
+  
   glbinding::Binding::releaseCurrentContext();
 
   LOG(INFO) << "Done terminating OpenGL renderer " << this << " ... ";
@@ -181,14 +187,16 @@ GLShaderManager* GLRenderer::getShaderManager() { return shaderManager_.get(); }
 
 GLProgramManager* GLRenderer::getProgramManager() { return programManager_.get(); }
 
+GLTextureManager* GLRenderer::getTextureManager() { return textureManager_.get(); }
+
 GLStateCacheManager* GLRenderer::getStateCacheManager() { return stateCacheManager_.get(); }
 
 void GLRenderer::loadDefaultShaders(const std::shared_ptr<File>& defaultVertexShaderFile,
                                     const std::shared_ptr<File>& defaultFragmentShaderFile) {
   auto& rsys = RenderSystem::getSingleton();
 
-  defaultVertexShader_ = rsys.loadShader(window_, Shader::ST_Vertex, defaultVertexShaderFile);
-  defaultFragmentShader_ = rsys.loadShader(window_, Shader::ST_Fragment, defaultFragmentShaderFile);
+  defaultVertexShader_ = rsys.createShader(window_, Shader::ST_Vertex, defaultVertexShaderFile);
+  defaultFragmentShader_ = rsys.createShader(window_, Shader::ST_Fragment, defaultFragmentShaderFile);
   defaultProgram_ = rsys.createProgram(window_, {defaultVertexShader_, defaultFragmentShader_});
 }
 

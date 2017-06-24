@@ -33,7 +33,7 @@ class SEQUOIA_API GLVertexArrayObject final : public VertexArrayObject {
   /// Are the buffers allocated?
   bool allocated_;
 
-  /// Assocaited Renderer
+  /// Associated Renderer
   GLRenderer* renderer_;
 
 public:

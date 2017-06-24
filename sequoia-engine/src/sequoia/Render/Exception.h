@@ -24,7 +24,7 @@ namespace render {
 
 /// @class RenderSystemException
 /// @brief Exception thrown on render related errors
-/// @ingroup driver
+/// @ingroup render
 SEQUOIA_DECLARE_EXCPETION(RenderSystemException)
 
 } // namespace render

@@ -15,6 +15,7 @@
 
 #include "sequoia/Core/Casting.h"
 #include "sequoia/Render/Exception.h"
+#include "sequoia/Render/GL/GL.h"
 #include "sequoia/Render/GL/GLProgramManager.h"
 #include "sequoia/Render/GL/GLRenderSystem.h"
 #include "sequoia/Render/GL/GLRenderer.h"
@@ -37,12 +38,12 @@ TEST_F(GLProgramTest, LinkingSuccess) {
   RenderSystem& rsys = RenderSystem::getSingleton();
 
   std::shared_ptr<Shader> vertexShader =
-      rsys.loadShader(getWindow(), Shader::ST_Vertex,
-                      env.getFile("sequoia/Render/GL/TestGLProgramManager/VertexLinkSuccess.vert"));
+      rsys.createShader(getWindow(), Shader::ST_Vertex,
+                        env.getFile("sequoia/Render/GL/TestGLProgram/VertexLinkSuccess.vert"));
 
-  std::shared_ptr<Shader> fragmentShader = rsys.loadShader(
-      getWindow(), Shader::ST_Fragment,
-      env.getFile("sequoia/Render/GL/TestGLProgramManager/FragmentLinkSuccess.frag"));
+  std::shared_ptr<Shader> fragmentShader =
+      rsys.createShader(getWindow(), Shader::ST_Fragment,
+                        env.getFile("sequoia/Render/GL/TestGLProgram/FragmentLinkSuccess.frag"));
 
   std::shared_ptr<Program> program =
       rsys.createProgram(getWindow(), {vertexShader, fragmentShader});
@@ -70,9 +71,9 @@ TEST_F(GLProgramTest, UniformScalars) {
   Environment& env = Environment::getSingleton();
   RenderSystem& rsys = RenderSystem::getSingleton();
 
-  std::shared_ptr<Shader> vertexShader = rsys.loadShader(
-      getWindow(), Shader::ST_Vertex,
-      env.getFile("sequoia/Render/GL/TestGLProgramManager/VertexUniformScalars.vert"));
+  std::shared_ptr<Shader> vertexShader =
+      rsys.createShader(getWindow(), Shader::ST_Vertex,
+                        env.getFile("sequoia/Render/GL/TestGLProgram/VertexUniformScalars.vert"));
 
   std::shared_ptr<Program> program = rsys.createProgram(getWindow(), {vertexShader});
   GLProgram* glprogram = dyn_cast<GLProgram>(program.get());
@@ -92,9 +93,9 @@ TEST_F(GLProgramTest, UniformVectors) {
   Environment& env = Environment::getSingleton();
   RenderSystem& rsys = RenderSystem::getSingleton();
 
-  std::shared_ptr<Shader> vertexShader = rsys.loadShader(
-      getWindow(), Shader::ST_Vertex,
-      env.getFile("sequoia/Render/GL/TestGLProgramManager/VertexUniformVectors.vert"));
+  std::shared_ptr<Shader> vertexShader =
+      rsys.createShader(getWindow(), Shader::ST_Vertex,
+                        env.getFile("sequoia/Render/GL/TestGLProgram/VertexUniformVectors.vert"));
 
   std::shared_ptr<Program> program = rsys.createProgram(getWindow(), {vertexShader});
   GLProgram* glprogram = dyn_cast<GLProgram>(program.get());
@@ -118,9 +119,9 @@ TEST_F(GLProgramTest, UniformMatrices) {
   Environment& env = Environment::getSingleton();
   RenderSystem& rsys = RenderSystem::getSingleton();
 
-  std::shared_ptr<Shader> vertexShader = rsys.loadShader(
-      getWindow(), Shader::ST_Vertex,
-      env.getFile("sequoia/Render/GL/TestGLProgramManager/VertexUniformMatrices.vert"));
+  std::shared_ptr<Shader> vertexShader =
+      rsys.createShader(getWindow(), Shader::ST_Vertex,
+                        env.getFile("sequoia/Render/GL/TestGLProgram/VertexUniformMatrices.vert"));
 
   std::shared_ptr<Program> program = rsys.createProgram(getWindow(), {vertexShader});
   GLProgram* glprogram = dyn_cast<GLProgram>(program.get());
@@ -143,9 +144,9 @@ TEST_F(GLProgramTest, VertexAttributesAll) {
   Environment& env = Environment::getSingleton();
   RenderSystem& rsys = RenderSystem::getSingleton();
 
-  std::shared_ptr<Shader> vertexShader = rsys.loadShader(
-      getWindow(), Shader::ST_Vertex,
-      env.getFile("sequoia/Render/GL/TestGLProgramManager/VertexAttributesAll.vert"));
+  std::shared_ptr<Shader> vertexShader =
+      rsys.createShader(getWindow(), Shader::ST_Vertex,
+                        env.getFile("sequoia/Render/GL/TestGLProgram/VertexAttributesAll.vert"));
 
   std::shared_ptr<Program> program = rsys.createProgram(getWindow(), {vertexShader});
   GLProgram* glprogram = dyn_cast<GLProgram>(program.get());
@@ -162,9 +163,9 @@ TEST_F(GLProgramTest, VertexAttributesFail) {
   Environment& env = Environment::getSingleton();
   RenderSystem& rsys = RenderSystem::getSingleton();
 
-  std::shared_ptr<Shader> vertexShader = rsys.loadShader(
-      getWindow(), Shader::ST_Vertex,
-      env.getFile("sequoia/Render/GL/TestGLProgramManager/VertexAttributesFail.vert"));
+  std::shared_ptr<Shader> vertexShader =
+      rsys.createShader(getWindow(), Shader::ST_Vertex,
+                        env.getFile("sequoia/Render/GL/TestGLProgram/VertexAttributesFail.vert"));
 
   EXPECT_THROW((rsys.createProgram(getWindow(), {vertexShader})), RenderSystemException);
 #endif

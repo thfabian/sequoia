@@ -17,11 +17,10 @@
 #include "sequoia/Render/GL/GL.h"
 #include "sequoia/Render/GL/GLProgram.h"
 #include "sequoia/Render/GL/GLStateCacheManager.h"
+#include "sequoia/Render/GL/GLTexture.h"
 #include "sequoia/Render/GL/GLVertexArrayObject.h"
 #include "sequoia/Render/GL/GLVertexAttribute.h"
 #include "sequoia/Render/VertexData.h"
-
-#include <iostream>
 
 namespace sequoia {
 
@@ -66,11 +65,18 @@ public:
     if(getRenderState().Program != program)
       ProgramChanged(program);
   }
-
+  
   /// @brief Bind the given `VBO`
   void bindVertexArrayObject(VertexArrayObject* vao) {
     if(getRenderState().VertexArrayObject != vao)
       VertexArrayObjectChanged(vao);
+  }
+    
+  /// @brief Bind the `texture` to `textureUnit`
+  void bindTexture(int textureUnit, Texture* texture) {
+    if(!getRenderState().TextureMap.count(textureUnit) ||
+       getRenderState().TextureMap.find(textureUnit)->second != texture)
+      TextureChanged(textureUnit, texture);
   }
 
   /// @brief Update the uniform variables of a program if necessary
@@ -98,7 +104,6 @@ public:
       }
 
       if(updateNeeded) {
-        // std::cout << name << "\n" << variable.toString() << std::endl;
         glProgram->setUniformVariable(name, variable);
         oldUniformVariable[name] = variable;
       }
@@ -161,6 +166,13 @@ protected:
     if(vao)
       dyn_cast<GLVertexArrayObject>(vao)->bind();
   }
+  
+  virtual void TextureChanged(int textureUnit, Texture* texture) override {
+    if(texture) {
+      glActiveTexture(GL_TEXTURE0 + textureUnit);
+      dyn_cast<GLTexture>(texture)->bind();
+    }
+  }
 };
 
 GLStateCacheManager::GLStateCacheManager() { stateCache_ = std::make_unique<GLRenderStateCache>(); }
@@ -194,6 +206,10 @@ void GLStateCacheManager::bindProgram(Program* program) { stateCache_->bindProgr
 
 void GLStateCacheManager::bindVertexArrayObject(VertexArrayObject* vao) {
   stateCache_->bindVertexArrayObject(vao);
+}
+
+void GLStateCacheManager::bindTexture(int textureUnit, Texture* texture) {
+  stateCache_->bindTexture(textureUnit, texture);
 }
 
 void GLStateCacheManager::startRendering() { stateCache_->resetUniformVariables(); }

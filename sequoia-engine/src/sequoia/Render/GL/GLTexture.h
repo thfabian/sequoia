@@ -17,11 +17,14 @@
 #define SEQUOIA_RENDER_GL_GLTEXTURE_H
 
 #include "sequoia/Core/HashCombine.h"
+#include "sequoia/Render/GL/GLFwd.h"
 #include "sequoia/Render/Texture.h"
 
 namespace sequoia {
 
 namespace render {
+
+class GLRenderer;
 
 /// @brief Status of an OpenGL program
 /// @ingroup gl
@@ -31,7 +34,7 @@ enum class GLTextureStatus {
   Loaded,  ///< Texture was successfully uploaded to the device
 };
 
-class GLTexture final : public Texture {
+class SEQUOIA_API GLTexture final : public Texture {
   friend class GLTextureManager;
 
   /// Status of the texture
@@ -40,14 +43,21 @@ class GLTexture final : public Texture {
   /// OpenGL texture index
   unsigned int id_;
 
+  /// OpenGL texture target
+  GLenum target_;
+
   /// Image used as basis of the texture
   std::shared_ptr<Image> image_;
 
   /// Parameters of the texture
   std::shared_ptr<TextureParameter> param_;
 
+  /// Associated Renderer
+  GLRenderer* renderer_;
+
 public:
-  GLTexture(std::shared_ptr<Image> image, const std::shared_ptr<TextureParameter>& param);
+  GLTexture(std::shared_ptr<Image> image, const std::shared_ptr<TextureParameter>& param,
+            GLRenderer* renderer);
   ~GLTexture();
 
   /// @copydoc Texture::getImage
@@ -56,6 +66,22 @@ public:
   /// @copydoc Texture::getParameter
   const std::shared_ptr<TextureParameter>& getParameter() const override;
 
+  /// @brief Check if the program is valid i.e can be installed into the render pipeline
+  bool isValid() const;
+
+  /// @brief Get the unique identifer of the texture
+  ///
+  /// Note that IDs might be reused after a texture has been destroyed.
+  unsigned int getID() const;
+
+  /// @brief Get the status of the texture
+  GLTextureStatus getStatus() const;
+
+  /// @brief Bind the texture to the current render pipline
+  ///
+  /// Do not call this function directly, use `GLRenderer::bindTexture` instead.
+  void bind();
+
   /// @copydoc Texture::getLog
   std::string getLog() const override;
 
@@ -63,6 +89,8 @@ public:
   std::string toString() const override;
 
   /// @brief Texture description (Image + TextureParameter)
+  ///
+  /// This is used for efficient hashing of textures.
   class Desc {
     std::shared_ptr<Image> image_;
     std::shared_ptr<TextureParameter> param_;
@@ -71,14 +99,20 @@ public:
     Desc(const std::shared_ptr<Image>& image, const std::shared_ptr<TextureParameter>& param)
         : image_(image), param_(param) {}
 
+    Desc(const Desc&) = default;
+    Desc(Desc&&) = default;
+
     const std::shared_ptr<Image>& getImage() const { return image_; }
     const std::shared_ptr<TextureParameter>& getParam() const { return param_; }
 
     inline bool operator==(const Desc& other) const noexcept {
-      return image_ == other.image_ && param_ == other.param_;
+      return *image_ == *other.image_ && *param_ == *other.param_;
     }
     inline bool operator!=(const Desc& other) const noexcept { return !(*this == other); }
   };
+
+  /// @brief Destroy the program
+  friend SEQUOIA_API void destroyGLTexture(GLTexture* texture) noexcept;
 
   SEQUOIA_GL_OBJECT(Texture)
 };

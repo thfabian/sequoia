@@ -16,9 +16,8 @@
 #ifndef SEQUOIA_RENDER_GL_GLPROGRAMMANAGER_H
 #define SEQUOIA_RENDER_GL_GLPROGRAMMANAGER_H
 
-#include "sequoia/Core/Assert.h"
-#include "sequoia/Core/NonCopyable.h"
 #include "sequoia/Core/Export.h"
+#include "sequoia/Core/NonCopyable.h"
 #include "sequoia/Render/GL/GLProgram.h"
 #include <memory>
 #include <unordered_map>
@@ -28,12 +27,12 @@ namespace sequoia {
 
 namespace render {
 
-class GLShaderManager;
 class GLShader;
 
 /// @brief Create and compile OpenGL GPU programs
 /// @ingroup gl
 class SEQUOIA_API GLProgramManager : public NonCopyable {
+  
   /// Record of all the registered programs (use count of 1 implies the program is *not* in use)
   std::vector<std::shared_ptr<GLProgram>> programList_;
 
@@ -58,7 +57,7 @@ public:
   void make(const std::shared_ptr<GLProgram>& program, GLProgramStatus requestedStatus);
 
   /// @brief Convert the shader to `GLProgramStatus::Linked`
-  /// @see GLShaderLoader::make
+  /// @see GLProgramManager::make
   void makeValid(const std::shared_ptr<GLProgram>& program) {
     make(program, GLProgramStatus::Linked);
   }

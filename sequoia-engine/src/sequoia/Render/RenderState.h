@@ -19,6 +19,7 @@
 #include "sequoia/Core/Export.h"
 #include <cstdint>
 #include <string>
+#include <unordered_map>
 
 namespace sequoia {
 
@@ -26,6 +27,7 @@ namespace render {
 
 class Program;
 class VertexArrayObject;
+class Texture;
 
 /// @brief State of the render pipline
 ///
@@ -77,6 +79,9 @@ struct SEQUOIA_API RenderState {
   /// VertexArrayObject used to retrieve the vertex and index buffer objects
   render::VertexArrayObject* VertexArrayObject;
 
+  /// Textures to bound to the specific texture units (map of texture-unit to texture)
+  std::unordered_map<int, Texture*> TextureMap;
+
   /// @brief Convert to string
   std::string toString() const;
 };
@@ -104,6 +109,9 @@ protected:
 
   /// @brief VertexArrayObject changed
   virtual void VertexArrayObjectChanged(VertexArrayObject* vao) = 0;
+
+  /// @brief Texture at `index` changed
+  virtual void TextureChanged(int textureUnit, Texture* texture) = 0;
 
 public:
   virtual ~RenderStateCache();

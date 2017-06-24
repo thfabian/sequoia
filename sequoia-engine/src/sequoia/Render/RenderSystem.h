@@ -16,15 +16,17 @@
 #ifndef SEQUOIA_RENDER_RENDERSYSTEM_H
 #define SEQUOIA_RENDER_RENDERSYSTEM_H
 
+#include "sequoia/Core/Export.h"
+#include "sequoia/Core/Image.h"
 #include "sequoia/Core/NonCopyable.h"
 #include "sequoia/Core/Platform.h"
 #include "sequoia/Core/Singleton.h"
-#include "sequoia/Core/Export.h"
 #include "sequoia/Render/Input.h"
 #include "sequoia/Render/RenderFwd.h"
 #include "sequoia/Render/RenderSystemObject.h"
 #include "sequoia/Render/RenderWindow.h"
 #include "sequoia/Render/Shader.h"
+#include "sequoia/Render/Texture.h"
 #include "sequoia/Render/VertexArrayObject.h"
 #include <memory>
 #include <set>
@@ -71,13 +73,18 @@ public:
   /// @brief Create a new VertexArrayObject for `target`
   virtual std::unique_ptr<VertexArrayObject> createVertexArrayObject(RenderTarget* target) = 0;
 
-  /// @brief Load a shader from source for `target`
-  virtual std::shared_ptr<Shader> loadShader(RenderTarget* target, Shader::ShaderType type,
-                                             const std::shared_ptr<File>& file) = 0;
+  /// @brief Create a shader from source for `target`
+  virtual std::shared_ptr<Shader> createShader(RenderTarget* target, Shader::ShaderType type,
+                                               const std::shared_ptr<File>& file) = 0;
 
   /// @brief Create a GPU program from the given `shaders` for `target`
   virtual std::shared_ptr<Program>
   createProgram(RenderTarget* target, const std::set<std::shared_ptr<Shader>>& shaders) = 0;
+
+  /// @brief Create a texture of `image` (using texture parameters `param`) for `target`
+  virtual std::shared_ptr<Texture>
+  createTexture(RenderTarget* target, const std::shared_ptr<Image>& image,
+                const TextureParameter& param = TextureParameter()) = 0;
 
   /// @brief Add the keyboard `listener` to `target`
   virtual void addKeyboardListener(RenderTarget* target, KeyboardListener* listener) = 0;

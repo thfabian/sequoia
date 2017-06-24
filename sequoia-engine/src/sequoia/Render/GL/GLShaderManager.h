@@ -37,9 +37,6 @@ class SEQUOIA_API GLShaderManager : public NonCopyable {
   /// Record of all the registered shaders (use count of 1 implies the shader is *not* in use)
   std::vector<std::shared_ptr<GLShader>> shaderList_;
 
-  /// Lookup map for shader ID
-  std::unordered_map<unsigned int, std::size_t> idLookupMap_;
-
   /// Lookup map for files
   std::unordered_map<std::shared_ptr<File>, std::size_t> fileLookupMap_;
 
@@ -47,7 +44,7 @@ public:
   /// @brief Destroy all remaining shaders
   ~GLShaderManager();
 
-  /// @brief Create the shader from source and compile it
+  /// @brief Create a shader from source and compile it
   ///
   /// @param type             Type of the shader
   /// @param file             File of the shader source
@@ -61,13 +58,10 @@ public:
   void make(const std::shared_ptr<GLShader>& shader, GLShaderStatus requestedStatus);
 
   /// @brief Convert the shader to `GLProgramStatus::Linked`
-  /// @see GLShaderLoader::make
+  /// @see GLProgramManager::make
   void makeValid(const std::shared_ptr<GLShader>& shader) {
     make(shader, GLShaderStatus::Compiled);
   }
-
-  /// @brief Get the shader by OpenGL shader `id`
-  const std::shared_ptr<GLShader>& get(unsigned int id) const;
 };
 
 } // namespace render

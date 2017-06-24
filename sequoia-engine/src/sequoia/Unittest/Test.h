@@ -37,7 +37,7 @@ SEQUOIA_API std::pair<bool, std::string> compareHelper(const float* expected, co
 
 } // namespace internal
 
-/// @brief Test if vec3 `expected` is near `actual`
+/// @brief Test if vec `expected` is near `actual`
 ///
 /// This effectivly tests `abs(expected - actual) < absErr` for each element.
 ///

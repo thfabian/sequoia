@@ -13,9 +13,10 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Render/GL/GLShaderManager.h"
 #include "sequoia/Core/Logging.h"
 #include "sequoia/Render/Exception.h"
+#include "sequoia/Render/GL/GL.h"
+#include "sequoia/Render/GL/GLShaderManager.h"
 #include <boost/lexical_cast.hpp>
 #include <fstream>
 #include <sstream>
@@ -66,15 +67,9 @@ void GLShaderManager::make(const std::shared_ptr<GLShader>& shader,
     return;
 
   if(shader->status_ == GLShaderStatus::InMemory) {
-    // 0 means it has not yet been registered
-    if(shader->id_ != 0)
-      idLookupMap_.erase(shader->id_);
-
     shader->id_ = glCreateShader(GLShader::getGLShaderType(shader->type_));
     if(shader->id_ == 0)
       SEQUOIA_THROW(RenderSystemException, "cannot create shader: '%s'", shader->file_->getPath());
-
-    idLookupMap_.emplace(shader->id_, fileLookupMap_[shader->file_]);
 
     LOG(DEBUG) << "Created shader (ID=" << shader->id_ << ")";
     shader->status_ = GLShaderStatus::Created;
@@ -120,13 +115,6 @@ void GLShaderManager::make(const std::shared_ptr<GLShader>& shader,
     LOG(DEBUG) << "Successfully compiled shader (ID=" << shader->id_ << ")";
     shader->status_ = GLShaderStatus::Compiled;
   }
-}
-
-const std::shared_ptr<GLShader>& GLShaderManager::get(unsigned int id) const {
-  auto it = idLookupMap_.find(id);
-  SEQUOIA_ASSERT_MSG(it != idLookupMap_.end(),
-                     "invalid shader id or shader has not yet been created");
-  return shaderList_[it->second];
 }
 
 std::shared_ptr<GLShader> GLShaderManager::create(GLShader::ShaderType type,

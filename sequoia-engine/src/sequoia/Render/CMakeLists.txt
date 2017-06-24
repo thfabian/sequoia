@@ -56,6 +56,7 @@ sequoia_add_objects(
           Viewport.cpp
           
           GL/GL.h
+          GL/GLFwd.h          
           GL/GLInputSystem.h
           GL/GLInputSystem.cpp
           GL/GLProgram.h

@@ -13,17 +13,18 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Render/GL/GL.h"
 #include "sequoia/Core/Casting.h"
 #include "sequoia/Core/ErrorHandler.h"
 #include "sequoia/Core/Logging.h"
 #include "sequoia/Render/Exception.h"
+#include "sequoia/Render/GL/GL.h"
 #include "sequoia/Render/GL/GLInputSystem.h"
 #include "sequoia/Render/GL/GLProgramManager.h"
 #include "sequoia/Render/GL/GLRenderSystem.h"
 #include "sequoia/Render/GL/GLRenderWindow.h"
 #include "sequoia/Render/GL/GLRenderer.h"
 #include "sequoia/Render/GL/GLShaderManager.h"
+#include "sequoia/Render/GL/GLTextureManager.h"
 #include "sequoia/Render/GL/GLVertexArrayObject.h"
 
 namespace sequoia {
@@ -99,8 +100,8 @@ std::unique_ptr<VertexArrayObject> GLRenderSystem::createVertexArrayObject(Rende
   return std::make_unique<GLVertexArrayObject>(getRenderer(target));
 }
 
-std::shared_ptr<Shader> GLRenderSystem::loadShader(RenderTarget* target, Shader::ShaderType type,
-                                                   const std::shared_ptr<File>& file) {
+std::shared_ptr<Shader> GLRenderSystem::createShader(RenderTarget* target, Shader::ShaderType type,
+                                                     const std::shared_ptr<File>& file) {
   return getRenderer(target)->getShaderManager()->create(type, file);
 }
 
@@ -108,6 +109,13 @@ std::shared_ptr<Program>
 GLRenderSystem::createProgram(RenderTarget* target,
                               const std::set<std::shared_ptr<Shader>>& shaders) {
   return getRenderer(target)->getProgramManager()->create(shaders);
+}
+
+std::shared_ptr<Texture> GLRenderSystem::createTexture(RenderTarget* target,
+                                                       const std::shared_ptr<Image>& image,
+                                                       const TextureParameter& param) {
+  return getRenderer(target)->getTextureManager()->create(
+      image, std::make_shared<TextureParameter>(param));
 }
 
 void GLRenderSystem::addKeyboardListener(RenderTarget* target, KeyboardListener* listener) {

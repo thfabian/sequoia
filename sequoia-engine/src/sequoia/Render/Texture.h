@@ -97,7 +97,7 @@ struct SEQUOIA_API TextureParameter {
     /// this flag will ignore all other texture usages
     UK_Rendertarget = 16
   };
-  
+
   /// @brief Type of texture
   TextureKind Kind = TK_2D;
 
@@ -112,7 +112,7 @@ struct SEQUOIA_API TextureParameter {
   /// @brief Filter used when magnifying the texture
   ///
   /// Magnification means that the area of the fragment in texture space is smaller than a texel.
-  FilterKind MaxFilter = FK_Linear;
+  FilterKind MagFilter = FK_Linear;
 
   /// Use mipmap for minification?
   bool UseMipmap = true;
@@ -144,9 +144,11 @@ struct SEQUOIA_API TextureParameter {
   bool operator==(const TextureParameter& other) const noexcept;
   bool operator!=(const TextureParameter& other) const noexcept { return !(other == *this); }
   /// @}
-  
+
   /// @brief Set the Usage
-  inline void setUsage(std::int8_t usageBits) noexcept { Usage = static_cast<UsageKind>(usageBits); }
+  inline void setUsage(std::int8_t usageBits) noexcept {
+    Usage = static_cast<UsageKind>(usageBits);
+  }
 
   /// @brief Convert to string
   std::string toString() const;

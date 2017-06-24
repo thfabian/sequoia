@@ -71,7 +71,7 @@ public:
                                                      const Exception& exception);
   SEQUOIA_API_EXPORT friend std::wostream& operator<<(std::wostream& stream,
                                                       const Exception& exception);
-  /// @}
+  /// @}driver
 protected:
   UtfString message_; ///< Explanatory string describing the general cause of the current error
   int line_;          ///< Line the exception was thrown

@@ -89,6 +89,10 @@ private:
 
   /// Map of the uniform variables send to the associated program
   std::unordered_map<std::string, UniformVariable> variables_;
+
+  // TODO: keep a list of "global" uniform variables from the scene and keep those in the
+  // drawCommandList
+  // std::vector<std::string>
 };
 
 } // namespace render

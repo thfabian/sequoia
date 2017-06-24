@@ -13,12 +13,13 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
+#include "sequoia/Core/Casting.h"
 #include "sequoia/Core/Exception.h"
 #include "sequoia/Core/Format.h"
+#include "sequoia/Core/HashCombine.h"
 #include "sequoia/Core/Image.h"
 #include "sequoia/Core/StringSwitch.h"
 #include "sequoia/Core/Unreachable.h"
-#include "sequoia/Core/HashCombine.h"
 
 #ifndef NDEBUG
 #define STBI_FAILURE_USERMSG
@@ -38,22 +39,23 @@ namespace core {
 Image::~Image() {}
 
 std::shared_ptr<Image> Image::load(const std::shared_ptr<File>& file, Image::ImageFormat format) {
-  if(format == Image::IK_Unknown)
+  if(format == Image::IF_Unknown)
     format = core::StringSwitch<Image::ImageFormat>(file->getExtension())
-                 .Case(".png", Image::IK_PNG)
-                 .Cases(".jpg", ".jpeg", ".jpe", Image::IK_JPEG)
-                 .Cases(".bmp", ".dib", Image::IK_BMP)
-                 .Default(Image::IK_Unknown);
+                 .Case(".png", Image::IF_PNG)
+                 .Cases(".jpg", ".jpeg", ".jpe", Image::IF_JPEG)
+                 .Cases(".bmp", ".dib", Image::IF_BMP)
+                 .Default(Image::IF_Unknown);
 
   switch(format) {
-  case Image::IK_PNG:
+  case Image::IF_PNG:
     return std::make_shared<PNGImage>(file);
-  case Image::IK_JPEG:
+  case Image::IF_JPEG:
     return std::make_shared<JPEGImage>(file);
-  case Image::IK_BMP:
+  case Image::IF_BMP:
     return std::make_shared<BMPImage>(file);
   default:
-    sequoia_unreachable("invalid image format");
+    SEQUOIA_THROW(Exception, "invalid image format of file: \"%s\"", file->getPath());
+    return nullptr;
   }
 }
 
@@ -61,11 +63,29 @@ Image::Image(Image::ImageFormat format) : format_(format) {}
 
 UncompressedImage::UncompressedImage(ImageFormat format, const std::shared_ptr<File>& file)
     : Image(format), file_(file) {
+
+  int numChannels = 0;
   pixelData_ = stbi_load_from_memory(file_->getData(), file_->getNumBytes(), &width_, &height_,
-                                     &numChannels_, 0);
+                                     &numChannels, 0);
+
   if(!pixelData_)
     SEQUOIA_THROW(core::Exception, "failed to load image \"%s\": %s", file_->getPath(),
                   stbi_failure_reason());
+
+  switch(numChannels) {
+  case 1:
+    colorFormat_ = ColorFormat::G;
+    break;
+  case 2:
+    colorFormat_ = ColorFormat::GA;
+    break;
+  case 3:
+    colorFormat_ = ColorFormat::RGB;
+    break;
+  case 4:
+    colorFormat_ = ColorFormat::RGBA;
+    break;
+  }
 }
 
 UncompressedImage::~UncompressedImage() {
@@ -76,25 +96,40 @@ UncompressedImage::~UncompressedImage() {
 std::string UncompressedImage::toString() const {
   return core::format("%s[\n"
                       "  file = %s\n"
-                      "  pixelData = %s\n"
+                      "  pixelData = %#016x\n"
                       "  width = %i,\n"
                       "  height = %i,\n"
+                      "  colorFormat = %s,\n"
                       "  numChannels = %i\n"
                       "]",
-                      getName(), file_->getPath(), pixelData_, width_, height_, numChannels_);
+                      getName(), file_->getPath(), (std::size_t)pixelData_, width_, height_,
+                      colorFormat_, getNumChannels());
+}
+
+bool UncompressedImage::equals(const Image* other) const noexcept {
+  if(!Image::equals(other))
+    return false;
+
+  const UncompressedImage* thisImage = dyn_cast<UncompressedImage>(this);
+  const UncompressedImage* otherImage = dyn_cast<UncompressedImage>(other);
+
+  return thisImage->pixelData_ == otherImage->pixelData_ &&
+         thisImage->width_ == otherImage->width_ && thisImage->height_ == otherImage->height_ &&
+         thisImage->colorFormat_ == otherImage->colorFormat_ &&
+         *(thisImage->file_) == *(otherImage->file_);
 }
 
 std::size_t UncompressedImage::hash() const noexcept {
   std::size_t seed = 0;
-  core::hashCombine(seed, file_->hash(), pixelData_, width_, height_, numChannels_);
+  core::hashCombine(seed, file_->hash(), pixelData_, width_, height_, colorFormat_);
   return seed;
 }
 
-PNGImage::PNGImage(const std::shared_ptr<File>& file) : UncompressedImage(Image::IK_PNG, file) {}
+PNGImage::PNGImage(const std::shared_ptr<File>& file) : UncompressedImage(Image::IF_PNG, file) {}
 
-JPEGImage::JPEGImage(const std::shared_ptr<File>& file) : UncompressedImage(Image::IK_JPEG, file) {}
+JPEGImage::JPEGImage(const std::shared_ptr<File>& file) : UncompressedImage(Image::IF_JPEG, file) {}
 
-BMPImage::BMPImage(const std::shared_ptr<File>& file) : UncompressedImage(Image::IK_BMP, file) {}
+BMPImage::BMPImage(const std::shared_ptr<File>& file) : UncompressedImage(Image::IF_BMP, file) {}
 
 } // namespace core
 

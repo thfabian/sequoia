@@ -18,7 +18,9 @@
 #include "sequoia/Core/Unreachable.h"
 #include "sequoia/Render/Program.h"
 #include "sequoia/Render/RenderState.h"
+#include "sequoia/Render/Texture.h"
 #include "sequoia/Render/VertexArrayObject.h"
+#include <unordered_set>
 
 namespace sequoia {
 
@@ -82,7 +84,17 @@ std::string RenderState::toString() const {
   ss << "  Program = " << (Program ? core::indent(Program->toString()) : "null") << ",\n";
   ss << "  VertexArrayObject = "
      << (VertexArrayObject ? core::indent(VertexArrayObject->toString()) : "null") << "\n";
-
+  ss << "  TextureMap = "
+     << (!TextureMap.empty() ? core::toStringRange(TextureMap,
+                                                   [](const auto& texturePair) {
+                                                     std::stringstream s;
+                                                     s << "unit = " << texturePair.first << "\n";
+                                                     s << "texture = "
+                                                       << texturePair.second->toString();
+                                                     return s.str();
+                                                   })
+                             : "null")
+     << "\n";
   ss << "]";
   return ss.str();
 }
@@ -113,6 +125,13 @@ void RenderStateCache::setRenderState(const RenderState& state) noexcept {
     VertexArrayObjectChanged(state.VertexArrayObject);
     state_.VertexArrayObject = state.VertexArrayObject;
   }
+
+  for(const std::pair<int, Texture*>& texPair : state.TextureMap)
+    if(!state_.TextureMap.count(texPair.first) ||
+       state_.TextureMap[texPair.first] != texPair.second)
+      TextureChanged(texPair.first, texPair.second);
+
+  state_.TextureMap = state.TextureMap;
 }
 
 const RenderState& RenderStateCache::getRenderState() const { return state_; }

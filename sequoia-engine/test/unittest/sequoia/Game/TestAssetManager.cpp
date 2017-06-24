@@ -31,18 +31,27 @@ TEST(AssetManagerTest, LoadFromDisk) {
   AssetManager manager(env.getRessourcePath().native(), PLATFORM_STR(""));
 
   // Load ASCII file
-  auto file = manager.load("sequoia/Game/TestAssetManager/test.txt");
+  auto file = manager.load("sequoia/Game/TestAssetManager/Test.txt");
 
   std::ifstream ifs(
       platform::toAnsiString(env.getRessourcePath() /
-                             platform::asPath("sequoia/Game/TestAssetManager/test.txt"))
+                             platform::asPath("sequoia/Game/TestAssetManager/Test.txt"))
           .c_str());
   std::stringstream ss;
   ss << ifs.rdbuf();
 
   EXPECT_STREQ(file->getDataAsString().c_str(), ss.str().c_str());
   EXPECT_STREQ(file->getExtension().str().c_str(), ".txt");
-  EXPECT_STREQ(file->getFilename().str().c_str(), "test.txt");
+  EXPECT_STREQ(file->getFilename().str().c_str(), "Test.txt");
+}
+
+TEST(AssetManagerTest, LoadImage) {
+  auto& env = Environment::getSingleton();
+  AssetManager manager(env.getRessourcePath().native(), PLATFORM_STR(""));
+  
+  auto image = manager.loadImage("sequoia/Game/TestAssetManager/Test.png");
+  auto imageCopy = manager.loadImage("sequoia/Game/TestAssetManager/Test.png");
+  EXPECT_EQ(image, imageCopy);
 }
 
 } // anonymous namespace

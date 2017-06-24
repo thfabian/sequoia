@@ -27,6 +27,7 @@ namespace sequoia {
 namespace render {
 
 class GLRenderStateCache;
+class Texture;
 
 /// @brief Manager of the OpenGL state-machine
 ///
@@ -50,6 +51,9 @@ public:
 
   /// @brief Bind the given vertex array object `vao`
   void bindVertexArrayObject(VertexArrayObject* vao);
+  
+  /// @brief Bind the `texture` to `textureUnit`
+  void bindTexture(int textureUnit, Texture* texture);
 
   /// @brief Start rendering (resets some internal variables)
   void startRendering();

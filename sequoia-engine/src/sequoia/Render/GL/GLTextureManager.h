@@ -16,7 +16,6 @@
 #ifndef SEQUOIA_RENDER_GL_TEXTUREMANAGER_H
 #define SEQUOIA_RENDER_GL_TEXTUREMANAGER_H
 
-#include "sequoia/Core/HashCombine.h"
 #include "sequoia/Render/GL/GLTexture.h"
 #include <memory>
 #include <unordered_map>
@@ -26,7 +25,7 @@ namespace sequoia {
 
 namespace render {
 
-/// @brief Manage OpenGL Textures by creating and loading them from source
+/// @brief Manage OpenGL Textures by creating and loading them from an image
 ///
 /// A TextureManager is attached to a specific OpenGL context.
 ///
@@ -39,12 +38,41 @@ class SEQUOIA_API GLTextureManager : public NonCopyable {
   /// Lookup map for shader ID
   std::unordered_map<unsigned int, std::size_t> idLookupMap_;
 
-  /// Lookup map for files
+  /// Lookup map for texture description (Parameter + Image)
   std::unordered_map<GLTexture::Desc, std::size_t> descLookupMap_;
+  
+  /// Associated Renderer
+  GLRenderer* renderer_;
 
 public:
+  GLTextureManager(GLRenderer* renderer);
+  
   /// @brief Destroy all remaining textures
   ~GLTextureManager();
+
+  /// @brief Create a textrue from the `image` and `param`
+  ///
+  /// @param image            Image used as a basis of the texture
+  /// @param param            Parameter used for initialization
+  /// @param requestedStatus  Requested target status
+  /// @throws RenderSystemException
+  std::shared_ptr<GLTexture> create(const std::shared_ptr<Image>& image,
+                                    const std::shared_ptr<TextureParameter>& param,
+                                    GLTextureStatus requestedStatus = GLTextureStatus::Loaded);
+
+  /// @brief Convert the texture to `status`
+  /// @throws RenderSystemException
+  void make(const std::shared_ptr<GLTexture>& texture, GLTextureStatus requestedStatus);
+
+  /// @brief Convert the texture to `GLProgramStatus::Loaded` which makes it usable in the render
+  /// pipeline
+  /// @see GLTextureManager::make
+  void makeValid(const std::shared_ptr<GLTexture>& texture) {
+    make(texture, GLTextureStatus::Loaded);
+  }
+
+  /// @brief Get the texture by OpenGL shader `id`
+  const std::shared_ptr<GLTexture>& get(unsigned int id) const;
 };
 
 } // namespace render
