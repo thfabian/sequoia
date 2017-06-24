@@ -13,9 +13,9 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
+#include "sequoia/Render/UniformVariable.h"
 #include "sequoia/Core/Format.h"
 #include "sequoia/Core/Unreachable.h"
-#include "sequoia/Render/UniformVariable.h"
 #include <ostream>
 #include <sstream>
 

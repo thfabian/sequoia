@@ -13,13 +13,13 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
+#include "sequoia/Game/Game.h"
 #include "sequoia/Core/ErrorHandler.h"
 #include "sequoia/Core/Logging.h"
 #include "sequoia/Core/Options.h"
 #include "sequoia/Core/Platform.h"
 #include "sequoia/Core/StringSwitch.h"
 #include "sequoia/Game/AssetManager.h"
-#include "sequoia/Game/Game.h"
 #include "sequoia/Game/Keymap.h"
 #include "sequoia/Game/MeshManager.h"
 #include "sequoia/Game/Scene.h"
@@ -137,7 +137,7 @@ void Game::init(bool hideWindow) {
 
 void Game::cleanup() {
   LOG(INFO) << "Terminating " << name_ << " ...";
-  
+
   // Free all the scenes
   sceneList_.clear();
 

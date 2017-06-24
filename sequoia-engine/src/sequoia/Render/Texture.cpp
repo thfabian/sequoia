@@ -13,11 +13,11 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
+#include "sequoia/Render/Texture.h"
 #include "sequoia/Core/Format.h"
 #include "sequoia/Core/HashCombine.h"
 #include "sequoia/Core/StringUtil.h"
 #include "sequoia/Core/Unreachable.h"
-#include "sequoia/Render/Texture.h"
 #include <vector>
 
 namespace sequoia {

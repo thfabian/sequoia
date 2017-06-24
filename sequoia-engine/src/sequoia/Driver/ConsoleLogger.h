@@ -16,9 +16,9 @@
 #ifndef SEQUOIA_DRIVER_CONSOLELOGGER_H
 #define SEQUOIA_DRIVER_CONSOLELOGGER_H
 
+#include "sequoia/Core/Export.h"
 #include "sequoia/Core/Logging.h"
 #include "sequoia/Core/Singleton.h"
-#include "sequoia/Core/Export.h"
 #include <iosfwd>
 #include <memory>
 #include <string>
@@ -29,8 +29,7 @@ namespace driver {
 
 /// @brief Console/File Logger
 /// @ingroup driver
-class SEQUOIA_API ConsoleLogger : public core::LoggerListener,
-                                         public Singleton<ConsoleLogger> {
+class SEQUOIA_API ConsoleLogger : public core::LoggerListener, public Singleton<ConsoleLogger> {
   /// std::cout or alias of `file_`
   std::ostream* stream_;
 

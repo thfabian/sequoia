@@ -13,10 +13,10 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
+#include "sequoia/Render/Input.h"
 #include "sequoia/Core/Format.h"
 #include "sequoia/Core/StringUtil.h"
 #include "sequoia/Core/Unreachable.h"
-#include "sequoia/Render/Input.h"
 #include <ostream>
 
 namespace sequoia {
@@ -49,7 +49,7 @@ static std::string modToString(int mods) {
 std::ostream& operator<<(std::ostream& os, KeyboardKey key) noexcept {
   if(key == Key_Invalid)
     return (os << "Invalid");
-  
+
   if(key == Key_Space)
     return (os << "Space");
 

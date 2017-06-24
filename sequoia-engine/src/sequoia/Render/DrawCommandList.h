@@ -18,8 +18,8 @@
 
 #include "sequoia/Core/AlignedADT.h"
 #include "sequoia/Core/ArrayRef.h"
-#include "sequoia/Render/DrawCommand.h"
 #include "sequoia/Core/Export.h"
+#include "sequoia/Render/DrawCommand.h"
 #include <string>
 #include <vector>
 

@@ -40,13 +40,13 @@ class SEQUOIA_API GLTextureManager : public NonCopyable {
 
   /// Lookup map for texture description (Parameter + Image)
   std::unordered_map<GLTexture::Desc, std::size_t> descLookupMap_;
-  
+
   /// Associated Renderer
   GLRenderer* renderer_;
 
 public:
   GLTextureManager(GLRenderer* renderer);
-  
+
   /// @brief Destroy all remaining textures
   ~GLTextureManager();
 

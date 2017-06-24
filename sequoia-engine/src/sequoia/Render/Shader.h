@@ -16,9 +16,9 @@
 #ifndef SEQUOIA_RENDER_SHADER_H
 #define SEQUOIA_RENDER_SHADER_H
 
+#include "sequoia/Core/Export.h"
 #include "sequoia/Core/File.h"
 #include "sequoia/Core/NonCopyable.h"
-#include "sequoia/Core/Export.h"
 #include "sequoia/Render/RenderSystemObject.h"
 #include <memory>
 
@@ -34,8 +34,8 @@ namespace render {
 /// @see RenderSystem::loadShader
 /// @ingroup render
 class SEQUOIA_API Shader : public RenderSystemObject,
-                                  public NonCopyable,
-                                  public std::enable_shared_from_this<Shader> {
+                           public NonCopyable,
+                           public std::enable_shared_from_this<Shader> {
 public:
   /// @brief Enumerates the types of shaders which can run on the GPU
   enum ShaderType {

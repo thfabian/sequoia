@@ -51,7 +51,7 @@ public:
 
   /// @brief Bind the given vertex array object `vao`
   void bindVertexArrayObject(VertexArrayObject* vao);
-  
+
   /// @brief Bind the `texture` to `textureUnit`
   void bindTexture(int textureUnit, Texture* texture);
 

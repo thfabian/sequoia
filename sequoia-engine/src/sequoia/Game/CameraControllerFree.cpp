@@ -13,8 +13,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Core/Format.h"
 #include "sequoia/Game/CameraControllerFree.h"
+#include "sequoia/Core/Format.h"
 #include "sequoia/Game/Game.h"
 
 namespace sequoia {
@@ -56,7 +56,7 @@ void CameraControllerFree::removeCamera() {
   Game::getSingleton().removeListener(static_cast<KeyListener*>(this));
 }
 
-void CameraControllerFree::update(const UpdateEvent& event) {  
+void CameraControllerFree::update(const UpdateEvent& event) {
   if(!hasCamera())
     return;
 

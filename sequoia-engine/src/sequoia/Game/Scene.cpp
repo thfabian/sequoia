@@ -13,6 +13,7 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
+#include "sequoia/Game/Scene.h"
 #include "sequoia/Core/Casting.h"
 #include "sequoia/Core/Format.h"
 #include "sequoia/Core/Logging.h"
@@ -20,7 +21,6 @@
 #include "sequoia/Game/Drawable.h"
 #include "sequoia/Game/Game.h"
 #include "sequoia/Game/MeshManager.h"
-#include "sequoia/Game/Scene.h"
 #include "sequoia/Game/SceneGraph.h"
 #include "sequoia/Render/Camera.h"
 #include "sequoia/Render/DrawCommandList.h"
@@ -60,7 +60,7 @@ Scene::Scene() : activeCamera_(nullptr) {
       sceneGraph_->insert(cube);
     }
   }
-  
+
   auto controller = SceneNode::create<CameraControllerFree>("Camera");
   controller->setCamera(activeCamera_);
   sceneGraph_->insert(controller);
@@ -79,7 +79,7 @@ void Scene::updateDrawCommandList(render::DrawCommandList* list) {
       }
     }
   });
-  
+
   // Copy DrawCommands
   list->insert(drawCommandList_);
 }

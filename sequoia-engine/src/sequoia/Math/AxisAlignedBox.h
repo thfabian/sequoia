@@ -17,8 +17,8 @@
 #define SEQUOIA_MATH_AXISALIGNEDBOX_H
 
 #include "sequoia/Core/Assert.h"
-#include "sequoia/Core/Unreachable.h"
 #include "sequoia/Core/Export.h"
+#include "sequoia/Core/Unreachable.h"
 #include "sequoia/Math/Math.h"
 #include <iosfwd>
 #include <string>

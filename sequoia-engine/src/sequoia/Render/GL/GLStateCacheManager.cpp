@@ -13,8 +13,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Core/Casting.h"
 #include "sequoia/Render/GL/GL.h"
+#include "sequoia/Core/Casting.h"
 #include "sequoia/Render/GL/GLProgram.h"
 #include "sequoia/Render/GL/GLStateCacheManager.h"
 #include "sequoia/Render/GL/GLTexture.h"
@@ -65,13 +65,13 @@ public:
     if(getRenderState().Program != program)
       ProgramChanged(program);
   }
-  
+
   /// @brief Bind the given `VBO`
   void bindVertexArrayObject(VertexArrayObject* vao) {
     if(getRenderState().VertexArrayObject != vao)
       VertexArrayObjectChanged(vao);
   }
-    
+
   /// @brief Bind the `texture` to `textureUnit`
   void bindTexture(int textureUnit, Texture* texture) {
     if(!getRenderState().TextureMap.count(textureUnit) ||
@@ -166,7 +166,7 @@ protected:
     if(vao)
       dyn_cast<GLVertexArrayObject>(vao)->bind();
   }
-  
+
   virtual void TextureChanged(int textureUnit, Texture* texture) override {
     if(texture) {
       glActiveTexture(GL_TEXTURE0 + textureUnit);

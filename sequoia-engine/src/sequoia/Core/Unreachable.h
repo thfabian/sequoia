@@ -30,9 +30,9 @@ namespace core {
 ///
 /// Use the sequoia_unreachable macro (that adds location info), instead of calling this function
 /// directly.
-SEQUOIA_API SEQUOIA_ATTRIBUTE_NORETURN void
-sequoia_unreachable_internal(const char* msg = nullptr, const char* file = nullptr,
-                             unsigned line = 0);
+SEQUOIA_API SEQUOIA_ATTRIBUTE_NORETURN void sequoia_unreachable_internal(const char* msg = nullptr,
+                                                                         const char* file = nullptr,
+                                                                         unsigned line = 0);
 
 /// @macro sequoia_unreachable
 /// @brief Marks that the current location is not supposed to be reachable

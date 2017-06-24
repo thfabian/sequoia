@@ -61,7 +61,7 @@ class SEQUOIA_API Game : public Singleton<Game>,
 
   /// Name of the game
   std::string name_;
-  
+
 public:
   Game(std::string name = "Game");
 

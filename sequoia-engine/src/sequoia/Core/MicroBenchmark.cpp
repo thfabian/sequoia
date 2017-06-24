@@ -13,9 +13,9 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
+#include "sequoia/Core/MicroBenchmark.h"
 #include "sequoia/Core/Exception.h"
 #include "sequoia/Core/Format.h"
-#include "sequoia/Core/MicroBenchmark.h"
 #include "sequoia/Core/Platform.h"
 #include "sequoia/Core/StringSwitch.h"
 #include <algorithm>

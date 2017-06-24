@@ -13,9 +13,9 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
+#include "sequoia/Render/Camera.h"
 #include "sequoia/Core/Format.h"
 #include "sequoia/Math/CoordinateSystem.h"
-#include "sequoia/Render/Camera.h"
 
 namespace sequoia {
 

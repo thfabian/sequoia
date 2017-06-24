@@ -13,12 +13,12 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
+#include "sequoia/Game/AssetManager.h"
 #include "sequoia/Core/Assert.h"
 #include "sequoia/Core/Logging.h"
 #include "sequoia/Core/Memory.h"
 #include "sequoia/Core/StringRef.h"
 #include "sequoia/Core/UtfString.h"
-#include "sequoia/Game/AssetManager.h"
 #include "sequoia/Game/Exception.h"
 #include <fstream>
 

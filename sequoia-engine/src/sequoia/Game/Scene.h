@@ -16,8 +16,8 @@
 #ifndef SEQUOIA_GAME_SCENE_H
 #define SEQUOIA_GAME_SCENE_H
 
-#include "sequoia/Core/NonCopyable.h"
 #include "sequoia/Core/Export.h"
+#include "sequoia/Core/NonCopyable.h"
 #include "sequoia/Render/RenderFwd.h"
 #include <memory>
 #include <vector>

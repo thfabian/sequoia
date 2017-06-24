@@ -13,8 +13,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Core/Logging.h"
 #include "sequoia/Game/MeshManager.h"
+#include "sequoia/Core/Logging.h"
 #include "sequoia/Render/RenderSystem.h"
 
 namespace sequoia {
@@ -101,18 +101,18 @@ std::shared_ptr<Mesh> MeshManager::createCube(const std::string& name, bool modi
     std::shared_ptr<render::VertexData> data(
         new render::VertexData(render::Vertex3D::getLayout(), render::VertexData::DM_Triangles,
                                numVertices, numIndices, false));
-    
+
     // Set vertex data
     render::Vertex3D* vertex = (render::Vertex3D*)data->getVerticesPtr();
     for(std::size_t i = 0; i < numVertices; ++i) {
       // Position
-      for(int j = 0; j < 3; ++j) 
+      for(int j = 0; j < 3; ++j)
         vertex[i].Position[j] = CubeVertexData[i * CubeVertexDataStride + j];
-        
+
       // Normal
       for(int j = 0; j < 3; ++j)
         vertex[i].Normal[j] = CubeVertexData[i * CubeVertexDataStride + 3 + j];
-            
+
       // Color
       static_assert(std::is_integral<render::Vertex3D::ColorType>::value,
                     "color should be integral");
@@ -121,20 +121,19 @@ std::shared_ptr<Mesh> MeshManager::createCube(const std::string& name, bool modi
       for(int j = 0; j < 3; ++j)
         vertex[i].Color[j] = maxRGBValue * CubeVertexData[i * CubeVertexDataStride + 6 + j];
       vertex[i].Color[3] = maxRGBValue;
-      
+
       // TexCoord
       for(int j = 0; j < 2; ++j)
         vertex[i].TexCoord[j] = CubeVertexData[i * CubeVertexDataStride + 9 + j];
     }
-    
 
     // Set bounding box
     data->setAxisAlignedBox(math::AxisAlignedBox(math::vec3(-1, -1, -1), math::vec3(1, 1, 1)));
 
     // Set indices
     std::memcpy(data->getIndicesPtr(), CubeIndices, numIndices * sizeof(render::VertexIndexType));
-    
-    //data->dump();
+
+    // data->dump();
 
     // Set the VAO
     data->setVertexArrayObject(

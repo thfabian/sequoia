@@ -16,9 +16,9 @@
 #ifndef SEQUOIA_UNITTEST_GL_GLRENDERTEST_H
 #define SEQUOIA_UNITTEST_GL_GLRENDERTEST_H
 
+#include "sequoia/Core/Export.h"
 #include "sequoia/Core/NonCopyable.h"
 #include "sequoia/Render/GL/GLRenderWindow.h"
-#include "sequoia/Core/Export.h"
 #include <gtest/gtest.h>
 
 namespace sequoia {

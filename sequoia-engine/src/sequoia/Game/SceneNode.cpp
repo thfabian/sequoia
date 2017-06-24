@@ -13,11 +13,11 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
+#include "sequoia/Game/SceneNode.h"
 #include "sequoia/Core/Format.h"
 #include "sequoia/Core/Logging.h"
 #include "sequoia/Core/StringRef.h"
 #include "sequoia/Core/StringUtil.h"
-#include "sequoia/Game/SceneNode.h"
 #include "sequoia/Math/CoordinateSystem.h"
 
 namespace sequoia {

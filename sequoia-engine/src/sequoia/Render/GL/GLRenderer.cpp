@@ -13,6 +13,7 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
+#include "sequoia/Render/GL/GL.h"
 #include "sequoia/Core/Casting.h"
 #include "sequoia/Core/Logging.h"
 #include "sequoia/Core/Options.h"
@@ -20,7 +21,6 @@
 #include "sequoia/Math/CoordinateSystem.h"
 #include "sequoia/Render/Camera.h"
 #include "sequoia/Render/DrawCommandList.h"
-#include "sequoia/Render/GL/GL.h"
 #include "sequoia/Render/GL/GLProgramManager.h"
 #include "sequoia/Render/GL/GLRenderWindow.h"
 #include "sequoia/Render/GL/GLRenderer.h"
@@ -128,7 +128,7 @@ GLRenderer::GLRenderer(GLRenderWindow* window) : window_(window) {
   stateCacheManager_ = std::make_unique<GLStateCacheManager>();
   shaderManager_ = std::make_unique<GLShaderManager>();
   programManager_ = std::make_unique<GLProgramManager>();
-  textureManager_ = std::make_unique<GLTextureManager>(this);  
+  textureManager_ = std::make_unique<GLTextureManager>(this);
 
   LOG(INFO) << "Done creating OpenGL renderer " << this;
 }
@@ -146,9 +146,9 @@ GLRenderer::~GLRenderer() {
   programManager_.reset();
   shaderManager_.reset();
   textureManager_.reset();
-  
+
   stateCacheManager_.reset();
-  
+
   glbinding::Binding::releaseCurrentContext();
 
   LOG(INFO) << "Done terminating OpenGL renderer " << this << " ... ";
@@ -177,7 +177,7 @@ void GLRenderer::render() {
     // Compute the full model-view-projection matrix
     UniformVariable u_ModelViewProjection = matViewProj * drawCommand->getModelMatrix();
     program->setUniformVariable("u_ModelViewProjection", u_ModelViewProjection);
-    
+
     // Update the OpenGL state-machine and draw the command
     stateCacheManager_->draw(drawCommand);
   }
@@ -196,7 +196,8 @@ void GLRenderer::loadDefaultShaders(const std::shared_ptr<File>& defaultVertexSh
   auto& rsys = RenderSystem::getSingleton();
 
   defaultVertexShader_ = rsys.createShader(window_, Shader::ST_Vertex, defaultVertexShaderFile);
-  defaultFragmentShader_ = rsys.createShader(window_, Shader::ST_Fragment, defaultFragmentShaderFile);
+  defaultFragmentShader_ =
+      rsys.createShader(window_, Shader::ST_Fragment, defaultFragmentShaderFile);
   defaultProgram_ = rsys.createProgram(window_, {defaultVertexShader_, defaultFragmentShader_});
 }
 

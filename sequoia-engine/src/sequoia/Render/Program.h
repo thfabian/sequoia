@@ -16,8 +16,8 @@
 #ifndef SEQUOIA_RENDER_PROGRAM_H
 #define SEQUOIA_RENDER_PROGRAM_H
 
-#include "sequoia/Core/NonCopyable.h"
 #include "sequoia/Core/Export.h"
+#include "sequoia/Core/NonCopyable.h"
 #include "sequoia/Render/RenderSystemObject.h"
 #include <memory>
 #include <set>
@@ -37,8 +37,8 @@ class Shader;
 /// @see RenderSystem::createPogram
 /// @ingroup render
 class SEQUOIA_API Program : public RenderSystemObject,
-                                   public NonCopyable,
-                                   public std::enable_shared_from_this<Program> {
+                            public NonCopyable,
+                            public std::enable_shared_from_this<Program> {
 public:
   Program(RenderSystemKind kind);
   virtual ~Program();

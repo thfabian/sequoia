@@ -13,8 +13,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Core/Format.h"
 #include "sequoia/Game/SceneGraph.h"
+#include "sequoia/Core/Format.h"
 #include "sequoia/Game/SceneNode.h"
 #include <algorithm>
 #include <iostream>
