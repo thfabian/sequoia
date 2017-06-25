@@ -110,8 +110,8 @@ protected:
   /// @brief VertexArrayObject changed
   virtual void VertexArrayObjectChanged(VertexArrayObject* vao) = 0;
 
-  /// @brief Texture at `index` changed
-  virtual void TextureChanged(int textureUnit, Texture* texture) = 0;
+  /// @brief Texture of `textureUnit` was enabled or disabled
+  virtual void TextureChanged(int textureUnit, Texture* texture, bool enable) = 0;
 
 public:
   virtual ~RenderStateCache();

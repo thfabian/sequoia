@@ -65,8 +65,6 @@ void GLTexture::bind() {
 
 void GLTexture::unbind() { glBindTexture(target_, 0); }
 
-std::string GLTexture::getLog() const { return std::string(); }
-
 std::string GLTexture::toString() const {
   return core::format("GLTexture[\n"
                       "  id = %i,\n"

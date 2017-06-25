@@ -174,9 +174,6 @@ public:
   /// @brief Get the texture parameters
   virtual const std::shared_ptr<TextureParameter>& getParameter() const = 0;
 
-  /// @brief Get a log of the shader
-  virtual std::string getLog() const = 0;
-
   /// @brief Convert to string
   virtual std::string toString() const = 0;
 };

@@ -107,32 +107,58 @@ void RenderStateCache::initState() noexcept {
 #undef RENDER_STATE
 }
 
-void RenderStateCache::setRenderState(const RenderState& state) noexcept {
+void RenderStateCache::setRenderState(const RenderState& newState) noexcept {
 #define RENDER_STATE(Type, Name, BitfieldWidth, DefaultValue)                                      \
-  if(state_.Name != state.Name) {                                                                  \
-    Name##Changed(state.Name);                                                                     \
-    state_.Name = state.Name;                                                                      \
+  if(state_.Name != newState.Name) {                                                                  \
+    Name##Changed(newState.Name);                                                                     \
+    state_.Name = newState.Name;                                                                      \
   }
 #include "sequoia/Render/RenderState.inc"
 #undef RENDER_STATE
 
   // The program has be changed first as the textures depend on the currently bound program
-  if(state_.Program != state.Program) {
-    ProgramChanged(state.Program);
-    state_.Program = state.Program;
+  if(state_.Program != newState.Program) {
+    ProgramChanged(newState.Program);
+    state_.Program = newState.Program;
   }
 
-  if(state_.VertexArrayObject != state.VertexArrayObject) {
-    VertexArrayObjectChanged(state.VertexArrayObject);
-    state_.VertexArrayObject = state.VertexArrayObject;
+  if(state_.VertexArrayObject != newState.VertexArrayObject) {
+    VertexArrayObjectChanged(newState.VertexArrayObject);
+    state_.VertexArrayObject = newState.VertexArrayObject;
   }
 
-  for(const std::pair<int, Texture*>& texPair : state.TextureMap)
-    if(!state_.TextureMap.count(texPair.first) ||
-       state_.TextureMap[texPair.first] != texPair.second)
-      TextureChanged(texPair.first, texPair.second);
+  if(state_.TextureMap != newState.TextureMap) {
 
-  state_.TextureMap = state.TextureMap;
+    // There are 4 possible scenarios for each texture unit/texture pair
+    //
+    //  1. Texture unit is bound in state_ and newState and they share the same texture -> nothing
+    //  2. Texture unit is bound in state_ and newState and their texture differs -> set new texture
+    //  3. Texture unit is not bound in state_ but requested in newState -> enable unit/set texture
+    //  4. Texture unit is bound in state_ but not in newState -> disable texture unit
+    //
+    for(const std::pair<int, Texture*>& texPair : newState.TextureMap) {
+      int textureUnit = texPair.first;
+      Texture* texture = texPair.second;
+
+      auto it = state_.TextureMap.find(textureUnit);
+      if(it == state_.TextureMap.end()) {
+        // Handle case 3
+        TextureChanged(textureUnit, texture, true);
+      } else {
+        if(texture != it->second)
+          // Handle case 2
+          TextureChanged(textureUnit, texture, true);
+      }
+    }
+
+    for(const std::pair<int, Texture*>& texPair : state_.TextureMap) {
+      if(!newState.TextureMap.count(texPair.first))
+        // Handle case 4
+        TextureChanged(texPair.first, texPair.second, false);
+    }
+
+    state_.TextureMap = newState.TextureMap;
+  }
 }
 
 const RenderState& RenderStateCache::getRenderState() const { return state_; }

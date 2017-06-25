@@ -84,9 +84,6 @@ public:
   /// @brief Unbind texture
   void unbind();
 
-  /// @copydoc Texture::getLog
-  std::string getLog() const override;
-
   /// @copydoc Texture::toString
   std::string toString() const override;
 

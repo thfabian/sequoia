@@ -79,7 +79,7 @@ public:
   void bindTexture(int textureUnit, Texture* texture) {
     if(!getRenderState().TextureMap.count(textureUnit) ||
        getRenderState().TextureMap.find(textureUnit)->second != texture)
-      TextureChanged(textureUnit, texture);
+      TextureChanged(textureUnit, texture, true);
   }
 
   /// @brief Unbind any texture from `textureUnit`
@@ -194,18 +194,23 @@ protected:
       dyn_cast<GLVertexArrayObject>(vao)->bind();
   }
 
-  virtual void TextureChanged(int textureUnit, Texture* texture) override {
+  virtual void TextureChanged(int textureUnit, Texture* texture, bool enable) override {
     if(texture) {
       // Bind texture
       setActivTextureUnit(textureUnit);
-      dyn_cast<GLTexture>(texture)->bind();
-
-      // Bind assoicated sampler if we already have a program
-      Program* program = getRenderState().Program;
-      if(program) {
-        GLProgram* glProgram = dyn_cast<GLProgram>(program);
-        const std::string& name = glProgram->getTextureSampler(textureUnit);
-        setUniformVariable(glProgram, name, UniformVariable(textureUnit));
+  
+      if(enable) {
+        dyn_cast<GLTexture>(texture)->bind();
+  
+        // Bind assoicated sampler if we already have a program
+        Program* program = getRenderState().Program;
+        if(program) {
+          GLProgram* glProgram = dyn_cast<GLProgram>(program);
+          const std::string& name = glProgram->getTextureSampler(textureUnit);
+          setUniformVariable(glProgram, name, UniformVariable(textureUnit));
+        }
+      } else {
+        dyn_cast<GLTexture>(texture)->unbind();
       }
     }
   }
