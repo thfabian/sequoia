@@ -55,6 +55,9 @@ public:
   /// @brief Bind the `texture` to `textureUnit`
   void bindTexture(int textureUnit, Texture* texture);
 
+  /// @brief Unbind the any texture from `textureUnit`
+  void unbindTexture(int textureUnit);
+
   /// @brief Start rendering (resets some internal variables)
   void startRendering();
 };

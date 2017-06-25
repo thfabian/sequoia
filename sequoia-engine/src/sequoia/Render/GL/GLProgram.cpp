@@ -16,6 +16,7 @@
 #include "sequoia/Core/Casting.h"
 #include "sequoia/Core/Format.h"
 #include "sequoia/Core/Logging.h"
+#include "sequoia/Core/STLExtras.h"
 #include "sequoia/Core/StringUtil.h"
 #include "sequoia/Core/Unreachable.h"
 #include "sequoia/Render/Exception.h"
@@ -41,6 +42,8 @@ static const char* statusToString(GLProgramStatus status) {
     sequoia_unreachable("invalid GLProgramStatus");
   }
 }
+
+const std::string GLProgram::EmptyString;
 
 GLProgram::GLProgram(const std::set<std::shared_ptr<Shader>>& shaders, GLProgramManager* manager)
     : Program(RK_OpenGL), status_(GLProgramStatus::Invalid), id_(0), allUniformVariablesSet_(false),
@@ -81,13 +84,15 @@ void GLProgram::bind() {
   if(!isValid())
     manager_->makeValid(dyn_pointer_cast<GLProgram>(shared_from_this()));
 
-  if(!allUniformVariablesSet_)
-    checkUniformVariables();
-
   glUseProgram(id_);
 }
 
+void GLProgram::unbind() { glUseProgram(0); }
+
 bool GLProgram::checkUniformVariables() {
+  if(allUniformVariablesSet_)
+    return true;
+
   allUniformVariablesSet_ = true;
   for(const auto& nameInfoPair : uniformInfoMap_) {
     if(!nameInfoPair.second.ValueSet) {
@@ -104,9 +109,9 @@ bool GLProgram::isTextureSampler(const std::string& name) const {
   return (it != uniformInfoMap_.end() ? it->second.TextureUnit != -1 : false);
 }
 
-std::string GLProgram::getTextureSampler(int textureUnit) const {
+const std::string& GLProgram::getTextureSampler(int textureUnit) const {
   auto it = textureSamplers_.find(textureUnit);
-  return (it != textureSamplers_.end() ? it->second : std::string());
+  return (it != textureSamplers_.end() ? it->second : GLProgram::EmptyString);
 }
 
 std::string GLProgram::getLog() const {
@@ -179,6 +184,7 @@ void GLProgram::reportWarningForInvalidUniformVariable(const std::string& name) 
 
 namespace {
 
+// Generic "address of" computation
 template <class T, bool IsFundamental>
 struct ComputeReturnType {
   using type = const T*;
@@ -208,7 +214,26 @@ inline typename ComputeReturnType<T, IsFundamental>::type addressOf(const T& val
   return AddressOf<T, IsFundamental>::apply(value);
 }
 
-#define SEQUOIA_SET_UNIFORM_VARIABLE_IMPL(TYPE, GL_TYPE, FUNC)                                     \
+template <class T>
+struct GLTypeCompat {};
+
+/// @brief Create a setter implementation for a uniform variable of `TYPE`
+///
+/// @param TYPE    C++ type of the uniform variable
+/// @param FUNC    OpenGL function invoked to set the uniform variable
+/// @param ...     GLenum of types which are compatible with `TYPE` (e.g `int` can be used to set
+///                `GL_INT` as well as `GL_SAMPLER_2D`.
+///
+#define SEQUOIA_SET_UNIFORM_VARIABLE_IMPL(TYPE, FUNC, ...)                                         \
+  template <>                                                                                      \
+  struct GLTypeCompat<TYPE> {                                                                      \
+    static constexpr bool isCompatible(GLenum type) noexcept {                                     \
+      constexpr auto glTypeTuple = std::make_tuple(__VA_ARGS__);                                   \
+      return core::tuple_has_value(glTypeTuple, type);                                             \
+    }                                                                                              \
+    static constexpr const char* getTypeName() { return #TYPE; }                                   \
+  };                                                                                               \
+                                                                                                   \
   bool setUniformVariableImpl(GLProgram* program, const std::string& name, const TYPE& value) {    \
     SEQUOIA_ASSERT(program->getStatus() == GLProgramStatus::Linked);                               \
     auto it = program->getUniformVariables().find(name);                                           \
@@ -217,11 +242,10 @@ inline typename ComputeReturnType<T, IsFundamental>::type addressOf(const T& val
       return false;                                                                                \
     }                                                                                              \
     GLProgram::GLUniformInfo& info = it->second;                                                   \
-    if(info.Type != GL_TYPE)                                                                       \
-      SEQUOIA_THROW(                                                                               \
-          RenderSystemException,                                                                   \
-          "invalid type '%s' of uniform variable '%s' in program (ID=%i), expected '%s'", GL_TYPE, \
-          name, program->getID(), info.Type);                                                      \
+    if(!GLTypeCompat<TYPE>::isCompatible(info.Type))                                               \
+      SEQUOIA_THROW(RenderSystemException, "failed to set uniform variable '%s' in program "       \
+                                           "(ID=%i), cannot convert type '%s' to '%s'",            \
+                    name, program->getID(), GLTypeCompat<TYPE>::getTypeName(), info.Type);         \
     if(info.Size != 1)                                                                             \
       SEQUOIA_THROW(                                                                               \
           RenderSystemException,                                                                   \
@@ -232,37 +256,37 @@ inline typename ComputeReturnType<T, IsFundamental>::type addressOf(const T& val
     return true;                                                                                   \
   }
 
-SEQUOIA_SET_UNIFORM_VARIABLE_IMPL(int, GL_INT, glProgramUniform1iv)
-SEQUOIA_SET_UNIFORM_VARIABLE_IMPL(float, GL_FLOAT, glProgramUniform1fv)
-
-SEQUOIA_SET_UNIFORM_VARIABLE_IMPL(math::fvec2, GL_FLOAT_VEC2, glProgramUniform2fv)
-SEQUOIA_SET_UNIFORM_VARIABLE_IMPL(math::fvec3, GL_FLOAT_VEC3, glProgramUniform3fv)
-SEQUOIA_SET_UNIFORM_VARIABLE_IMPL(math::fvec4, GL_FLOAT_VEC4, glProgramUniform4fv)
-
-SEQUOIA_SET_UNIFORM_VARIABLE_IMPL(bool, GL_BOOL, ([](GLuint program, GLint location, GLsizei count,
-                                                     const bool* value) {
+SEQUOIA_SET_UNIFORM_VARIABLE_IMPL(int, glProgramUniform1iv, GL_INT, GL_SAMPLER_2D)
+SEQUOIA_SET_UNIFORM_VARIABLE_IMPL(float, glProgramUniform1fv, GL_FLOAT)
+SEQUOIA_SET_UNIFORM_VARIABLE_IMPL(bool, ([](GLuint program, GLint location, GLsizei count,
+                                            const bool* value) {
                                     GLboolean valuePtr = *value;
                                     glProgramUniform1bv(program, location, count, &valuePtr);
-                                  }))
+                                  }),
+                                  GL_BOOL)
 
-SEQUOIA_SET_UNIFORM_VARIABLE_IMPL(math::fmat2, GL_FLOAT_MAT2,
-                                  ([](GLuint program, GLint location, GLsizei count,
-                                      const GLfloat* value) {
+SEQUOIA_SET_UNIFORM_VARIABLE_IMPL(math::vec2, glProgramUniform2fv, GL_FLOAT_VEC2)
+SEQUOIA_SET_UNIFORM_VARIABLE_IMPL(math::vec3, glProgramUniform3fv, GL_FLOAT_VEC3)
+SEQUOIA_SET_UNIFORM_VARIABLE_IMPL(math::vec4, glProgramUniform4fv, GL_FLOAT_VEC4)
+
+SEQUOIA_SET_UNIFORM_VARIABLE_IMPL(math::mat2, ([](GLuint program, GLint location, GLsizei count,
+                                                  const GLfloat* value) {
                                     glProgramUniformMatrix2fv(program, location, count, false,
                                                               value);
-                                  }))
-SEQUOIA_SET_UNIFORM_VARIABLE_IMPL(math::fmat3, GL_FLOAT_MAT3,
-                                  ([](GLuint program, GLint location, GLsizei count,
-                                      const GLfloat* value) {
+                                  }),
+                                  GL_FLOAT_MAT2)
+SEQUOIA_SET_UNIFORM_VARIABLE_IMPL(math::mat3, ([](GLuint program, GLint location, GLsizei count,
+                                                  const GLfloat* value) {
                                     glProgramUniformMatrix3fv(program, location, count, false,
                                                               value);
-                                  }))
-SEQUOIA_SET_UNIFORM_VARIABLE_IMPL(math::fmat4, GL_FLOAT_MAT4,
-                                  ([](GLuint program, GLint location, GLsizei count,
-                                      const GLfloat* value) {
+                                  }),
+                                  GL_FLOAT_MAT3)
+SEQUOIA_SET_UNIFORM_VARIABLE_IMPL(math::mat4, ([](GLuint program, GLint location, GLsizei count,
+                                                  const GLfloat* value) {
                                     glProgramUniformMatrix4fv(program, location, count, false,
                                                               value);
-                                  }))
+                                  }),
+                                  GL_FLOAT_MAT4)
 
 #undef SEQUOIA_SET_UNIFORM_VARIABLE_IMPL
 

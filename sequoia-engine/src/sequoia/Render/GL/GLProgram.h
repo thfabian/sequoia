@@ -74,6 +74,9 @@ public:
   /// @brief Bind the program to the current render pipline
   /// @note Do not call this function directly, use `GLRenderer::bindProgram` instead
   void bind();
+  
+  /// @brief Unbind program
+  void unbind();
 
   /// @brief Add the `shader` to the program
   ///
@@ -104,7 +107,7 @@ public:
 
   /// @brief Get the name of the texture sampler associated with `textureUnit` (empty string if no
   /// sampler is found)
-  std::string getTextureSampler(int textureUnit) const;
+  const std::string& getTextureSampler(int textureUnit) const;
 
   /// @brief Get the manager
   GLProgramManager* getManager() const;
@@ -124,6 +127,9 @@ public:
   /// @brief Issue a warning about setting a non-existing variable
   void reportWarningForInvalidUniformVariable(const std::string& name);
 
+  /// @brief Empty string
+  static const std::string EmptyString;
+  
   SEQUOIA_GL_OBJECT(Program)
 
 private:

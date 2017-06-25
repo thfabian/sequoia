@@ -24,7 +24,7 @@ namespace {
 
 TEST(ColorTest, ColorG) {
   static_assert(ColorG::NumChannels == 1, "");
-  static_assert(ColorG::Format == core::ColorFormat::G, "");
+  static_assert(ColorG::Format == core::ColorFormat::R, "");
 
   ColorG color1(12);
   EXPECT_EQ(color1[0], 12);
@@ -47,7 +47,7 @@ TEST(ColorTest, ColorG) {
 
 TEST(ColorTest, ColorGA) {
   static_assert(ColorGA::NumChannels == 2, "");
-  static_assert(ColorGA::Format == core::ColorFormat::GA, "");
+  static_assert(ColorGA::Format == core::ColorFormat::RG, "");
 
   ColorGA color1(12, 13);
   EXPECT_EQ(color1[0], 12);

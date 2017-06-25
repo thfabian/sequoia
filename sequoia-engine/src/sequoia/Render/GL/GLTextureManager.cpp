@@ -42,13 +42,13 @@ static GLenum getGLTarget(TextureParameter::TextureKind kind) {
 
 static GLenum getGLColorFormat(core::ColorFormat format) {
   switch(format) {
-  case core::ColorFormat::G:
-    return GL_R;
+  case core::ColorFormat::R:
+    return GL_RED;
   case core::ColorFormat::RGB:
     return GL_RGB;
   case core::ColorFormat::RGBA:
     return GL_RGBA;
-  case core::ColorFormat::GA:
+  case core::ColorFormat::RG:
     SEQUOIA_ASSERT_MSG(0, "ColorFormat::GA not supported");
   default:
     sequoia_unreachable("invalid format");
@@ -104,7 +104,8 @@ void GLTextureManager::make(const std::shared_ptr<GLTexture>& texture,
       SEQUOIA_THROW(RenderSystemException, "cannot create texture: '%s'",
                     texture->getImage()->getFile()->getPath());
 
-    LOG(DEBUG) << "Created texture (ID=" << texture->id_ << ")";
+    LOG(DEBUG) << "Created texture (ID=" << texture->id_ << ") from image \""
+               << texture->getImage()->getFile()->getPath() << "\"";
     texture->status_ = GLTextureStatus::Created;
   }
 
@@ -120,11 +121,17 @@ void GLTextureManager::make(const std::shared_ptr<GLTexture>& texture,
     // TODO: Is it safe to always bind to unit 0 here?
     renderer_->getStateCacheManager()->bindTexture(0, texture.get());
 
+    // Warn if image is larger than 1024x1024
+    if(image.getWidth() > 1024 || image.getHeight() > 1024)
+      LOG(WARNING) << "Image \"" << texture->getImage()->getFile()->getPath()
+                   << "\" of texture (ID=" << texture->id_ << ") may be too large " << image.getWidth()
+                   << "x" << image.getHeight();
+    
     // Copy image
     switch(texture->param_->Kind) {
     case TextureParameter::TK_2D:
-      glTexImage2D(texture->target_, 0, getGLColorFormat(image.getColorFormat()), image.getWidth(),
-                   image.getHeight(), 0, GL_RGBA, GL_UNSIGNED_BYTE, image.getPixelData());
+      glTexImage2D(texture->target_, 0, GL_RGBA, image.getWidth(), image.getHeight(), 0,
+                  getGLColorFormat(image.getColorFormat()), GL_UNSIGNED_BYTE, image.getPixelData());
       break;
     case TextureParameter::TK_1D:
     case TextureParameter::TK_3D:
@@ -156,6 +163,11 @@ void GLTextureManager::make(const std::shared_ptr<GLTexture>& texture,
     }
 
     texture->status_ = GLTextureStatus::Loaded;
+    
+    // Unbind the texture. This is necessary to make sure when we bind it during rendering we also 
+    // set the sampler of the program.
+    renderer_->getStateCacheManager()->unbindTexture(0);    
+    
     LOG(DEBUG) << "Successfully uploaded texture (ID=" << texture->id_ << ")";
   }
 }

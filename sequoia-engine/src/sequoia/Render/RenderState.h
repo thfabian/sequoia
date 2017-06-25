@@ -79,7 +79,7 @@ struct SEQUOIA_API RenderState {
   /// VertexArrayObject used to retrieve the vertex and index buffer objects
   render::VertexArrayObject* VertexArrayObject;
 
-  /// Textures to bound to the specific texture units (map of texture-unit to texture)
+  /// Textures bound to the specific texture units (map of texture-unit to texture)
   std::unordered_map<int, Texture*> TextureMap;
 
   /// @brief Convert to string
@@ -127,6 +127,7 @@ public:
 
   /// @brief Get the currently active RenderState
   const RenderState& getRenderState() const;
+  RenderState& getRenderState();
 
   /// @brief Convert to string
   std::string toString() const;

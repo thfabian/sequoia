@@ -63,6 +63,8 @@ void GLTexture::bind() {
   glBindTexture(target_, id_);
 }
 
+void GLTexture::unbind() { glBindTexture(target_, 0); }
+
 std::string GLTexture::getLog() const { return std::string(); }
 
 std::string GLTexture::toString() const {

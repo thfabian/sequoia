@@ -18,6 +18,7 @@
 
 #include "sequoia/Core/Compiler.h"
 #include <algorithm>
+#include <array>
 #include <functional>
 #include <tuple>
 #include <type_traits>
@@ -124,6 +125,14 @@ using function_first_argument_t =
 template <class T, std::size_t N>
 constexpr inline size_t array_lengthof(T (&)[N]) {
   return N;
+}
+
+/// @brief Make `std::array`
+template <typename... T>
+constexpr auto make_array(T&&... values)
+    -> std::array<typename std::decay<typename std::common_type<T...>::type>::type, sizeof...(T)> {
+  return std::array<typename std::decay<typename std::common_type<T...>::type>::type, sizeof...(T)>{
+      std::forward<T>(values)...};
 }
 
 //===------------------------------------------------------------------------------------------===//
@@ -272,6 +281,25 @@ struct tuple_has_type<T, std::tuple<U, Ts...>> : tuple_has_type<T, std::tuple<Ts
 template <typename T, typename... Ts>
 struct tuple_has_type<T, std::tuple<T, Ts...>> : std::true_type {};
 /// @}
+
+template <typename Tuple, typename T>
+constexpr bool tuple_has_value_impl(Tuple const&, T&&, std::index_sequence<>) {
+  return false;
+}
+
+template <typename Tuple, typename T, size_t first, size_t... is>
+constexpr bool tuple_has_value_impl(Tuple const& t, T&& value, std::index_sequence<first, is...>) {
+  return (std::get<first>(t) == value) ||
+         tuple_has_value_impl(t, value, std::index_sequence<is...>{});
+}
+
+/// @brief Check if `value` is in the tuple
+///
+/// Requires `value` to be equality comparable with all values in the tuple.
+template <typename... Elements, typename T, size_t... is>
+constexpr bool tuple_has_value(std::tuple<Elements...> const& t, T&& value) {
+  return tuple_has_value_impl(t, value, std::index_sequence_for<Elements...>{});
+}
 
 } // namespace core
 

@@ -13,9 +13,9 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Game/Drawable.h"
 #include "sequoia/Core/Assert.h"
 #include "sequoia/Core/Format.h"
+#include "sequoia/Game/Drawable.h"
 #include "sequoia/Game/Game.h"
 #include "sequoia/Game/Mesh.h"
 #include "sequoia/Game/SceneNode.h"
@@ -43,12 +43,16 @@ void Drawable::setMesh(const std::shared_ptr<Mesh>& mesh) {
   drawCommand_->setVertexArrayObject(mesh_->getVertexArrayObject());
 }
 
+void Drawable::setTexture(int textureUnit, render::Texture* texture) noexcept {
+  drawCommand_->setTexture(textureUnit, texture);
+}
+
 render::RenderState& Drawable::getRenderState() { return drawCommand_->getRenderState(); }
 const render::RenderState& Drawable::getRenderState() const {
   return drawCommand_->getRenderState();
 }
 
-void Drawable::setProgram(render::Program* program) { drawCommand_->setProgram(program); }
+void Drawable::setProgram(render::Program* program) noexcept { drawCommand_->setProgram(program); }
 
 render::DrawCommand* Drawable::prepareDrawCommand() {
   SEQUOIA_ASSERT(active_);

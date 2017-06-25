@@ -28,9 +28,14 @@ namespace sequoia {
 namespace render {
 
 /// @brief Instructions on how to render the VertexArrayObject
+///
+/// This class should not be directly used but rather constructed via
+/// @ref sequoia::game::Drawable::prepareDrawCommand "Drawable::prepareDrawCommand".
+///
 /// @ingroup render
 class SEQUOIA_API DrawCommand {
 public:
+  /// @brief Initializ empty DrawCommand
   DrawCommand(const RenderState& state = RenderState(),
               const math::mat4& modelMat = math::mat4(1.0f))
       : state_(state), modelMatrix_(modelMat) {}
@@ -55,6 +60,18 @@ public:
   /// @brief Get/Set the model matrix
   const math::mat4& getModelMatrix() const noexcept { return modelMatrix_; }
   void setModelMatrix(const math::mat4& modelMatrix) noexcept { modelMatrix_ = modelMatrix; }
+
+  /// @brief Bind `texture` to `textureUnit`
+  ///
+  /// This binds the sampler, associated with `textureUnit`, to the specified `texture`. Note if a
+  /// texture has already been bound to the specific `textureUnit`, the texture is replaced with the
+  /// newly provided one.
+  ///
+  /// @param textureUnit    ID of the texture unit starting from 0.
+  /// @param texture        Texture to bind
+  void setTexture(int textureUnit, Texture* texture) noexcept {
+    state_.TextureMap[textureUnit] = texture;
+  }
 
   /// @brief Get the uniform variable `name`
   UniformVariable& getUniformVariable(const std::string& name) noexcept {
@@ -92,7 +109,7 @@ private:
 
   // TODO: keep a list of "global" uniform variables from the scene and keep those in the
   // drawCommandList
-  // std::vector<std::string>
+  // std::vector<int> // only store the id
 };
 
 } // namespace render

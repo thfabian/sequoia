@@ -22,7 +22,6 @@
 #include "sequoia/Game/Mesh.h"
 #include "sequoia/Render/RenderFwd.h"
 #include "sequoia/Render/VertexArrayObject.h"
-#include <unordered_map>
 #include <vector>
 
 namespace sequoia {

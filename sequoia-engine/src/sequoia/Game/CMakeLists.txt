@@ -26,6 +26,7 @@ sequoia_add_objects(
           Exception.h
           Game.h
           Game.cpp
+          GameFwd.h
           Mesh.h
           Mesh.cpp
           MeshManager.h

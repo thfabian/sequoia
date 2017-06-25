@@ -36,8 +36,8 @@ namespace core {
 ///
 /// @ingroup core
 enum class ColorFormat : std::uint8_t {
-  G = SEQUOIA_COLOR_SET_NUM_CHANNELS(1) + 0,    ///< grey
-  GA = SEQUOIA_COLOR_SET_NUM_CHANNELS(2) + 1,   ///< grey, alpha
+  R = SEQUOIA_COLOR_SET_NUM_CHANNELS(1) + 0,    ///< grey
+  RG = SEQUOIA_COLOR_SET_NUM_CHANNELS(2) + 1,   ///< grey, alpha
   RGB = SEQUOIA_COLOR_SET_NUM_CHANNELS(3) + 2,  ///< red, green, blue
   RGBA = SEQUOIA_COLOR_SET_NUM_CHANNELS(4) + 3, ///< red, green, blue, alpha
 };
@@ -171,7 +171,7 @@ struct IsColor<ColorRGB> : std::true_type {};
 /// @brief GA Color (grey, alpha)
 /// @see sequoia::core::Color
 /// @ingroup core
-using ColorGA = core::Color<core::ColorFormat::GA>;
+using ColorGA = core::Color<core::ColorFormat::RG>;
 SEQUOIA_API extern std::ostream& operator<<(std::ostream& os, const ColorGA& color);
 
 template <>
@@ -180,7 +180,7 @@ struct IsColor<ColorGA> : std::true_type {};
 /// @brief G Color (grey)
 /// @see sequoia::core::Color
 /// @ingroup core
-using ColorG = core::Color<core::ColorFormat::G>;
+using ColorG = core::Color<core::ColorFormat::R>;
 SEQUOIA_API extern std::ostream& operator<<(std::ostream& os, const ColorG& color);
 
 template <>

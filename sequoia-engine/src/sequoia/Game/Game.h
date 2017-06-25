@@ -17,8 +17,10 @@
 #define SEQUOIA_GAME_GAME_H
 
 #include "sequoia/Core/Export.h"
+#include "sequoia/Core/Image.h"
 #include "sequoia/Core/Listenable.h"
 #include "sequoia/Core/Singleton.h"
+#include "sequoia/Game/GameFwd.h"
 #include "sequoia/Render/Input.h"
 #include "sequoia/Render/RenderFwd.h"
 #include <memory>
@@ -26,11 +28,6 @@
 namespace sequoia {
 
 namespace game {
-
-class MeshManager;
-class AssetManager;
-class Scene;
-class Keymap;
 
 /// @brief Main class holding all game and rendering related objects and running the main-loop
 /// @ingroup game
@@ -43,8 +40,8 @@ class SEQUOIA_API Game : public Singleton<Game>,
   std::unique_ptr<render::RenderSystem> renderSystem_;
 
   /// Manager
-  std::unique_ptr<MeshManager> meshManager_;
   std::unique_ptr<AssetManager> assetManager_;
+  std::unique_ptr<MeshManager> meshManager_;
 
   /// Reference to the main window
   render::RenderWindow* mainWindow_;
@@ -81,17 +78,24 @@ public:
   /// @brief Set the quit key (use `nullptr` to disable the quit key)
   void setQuitKey(const std::shared_ptr<Keymap>& key);
 
-  /// @brief Get the mesh manager
-  MeshManager* getMeshManager() const;
-
   /// @brief Get the asset manager
   AssetManager* getAssetManager() const;
+
+  /// @brief Get the mesh manager
+  MeshManager* getMeshManager() const;
 
   /// @brief Get the main RenderWindow
   render::RenderWindow* getMainWindow() const;
 
   /// @brief Get the main RenderTarget
   render::RenderTarget* getMainRenderTarget() const;
+
+  /// @brief Create a texture from the `image` using default parameters
+  render::Texture* createTexture(const std::shared_ptr<Image>& image);
+
+  /// @brief Create a texture from the `image` and `param`
+  render::Texture* createTexture(const std::shared_ptr<Image>& image,
+                                 const render::TextureParameter& param);
 
   /// @brief Get the default vertex shader
   const std::shared_ptr<render::Shader>& getDefaultVertexShader() const;

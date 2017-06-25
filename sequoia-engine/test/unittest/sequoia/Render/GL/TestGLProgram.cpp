@@ -108,7 +108,7 @@ TEST_F(GLProgramTest, UniformVectors) {
   math::vec3 u_fvec3;
   EXPECT_TRUE(glprogram->setUniformVariable("u_fvec3", u_fvec3));
   EXPECT_THROW(glprogram->setUniformVariable("u_fvec2", u_fvec3), render::RenderSystemException);
-
+  
   math::vec4 u_fvec4;
   EXPECT_TRUE(glprogram->setUniformVariable("u_fvec4", u_fvec4));
 

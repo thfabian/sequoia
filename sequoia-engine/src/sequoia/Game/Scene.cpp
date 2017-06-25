@@ -13,18 +13,21 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Game/Scene.h"
 #include "sequoia/Core/Casting.h"
 #include "sequoia/Core/Format.h"
 #include "sequoia/Core/Logging.h"
+#include "sequoia/Game/AssetManager.h"
 #include "sequoia/Game/CameraControllerFree.h"
 #include "sequoia/Game/Drawable.h"
 #include "sequoia/Game/Game.h"
 #include "sequoia/Game/MeshManager.h"
+#include "sequoia/Game/Scene.h"
 #include "sequoia/Game/SceneGraph.h"
 #include "sequoia/Render/Camera.h"
 #include "sequoia/Render/DrawCommandList.h"
 #include "sequoia/Render/RenderWindow.h"
+
+#include "sequoia/Render/Texture.h"
 
 namespace sequoia {
 
@@ -47,16 +50,22 @@ Scene::Scene() : activeCamera_(nullptr) {
 
   std::shared_ptr<SceneNode> cubeOrigin = SceneNode::create("TestCubeOrigin");
   cubeOrigin->addCapability<Drawable>(cubeMesh);
+//  cubeOrigin->get<Drawable>()->setTexture(
+//      0, game.createTexture(game.getAssetManager()->loadImage("sequoia/texture/UVTest512x512.png")));
+  cubeOrigin->get<Drawable>()->setTexture(
+      0, game.createTexture(game.getAssetManager()->loadImage("sequoia/texture/Gaben.png")));
   sceneGraph_->insert(cubeOrigin);
 
   float dx = 3.0f;
-  int N = 100;
+  int N = 10;
   for(int i = 0; i < N; ++i) {
     for(int j = 0; j < N; ++j) {
       auto cube = SceneNode::create(core::format("TestCube_%i_%i", i, j));
       cube->addCapability<Drawable>(cubeMesh, game.getDefaultProgram());
-      cube->translate(math::vec3((i - N / 2) * dx, 0, (j - N / 2) * dx));
+      cube->translate(math::vec3((i - N / 2.0f) * dx, 0, (j - N / 2.0f) * dx));
       cube->setScale(float(i) / N);
+      cube->get<Drawable>()->setTexture(
+          0, game.createTexture(game.getAssetManager()->loadImage("sequoia/texture/Gaben.png")));
       sceneGraph_->insert(cube);
     }
   }

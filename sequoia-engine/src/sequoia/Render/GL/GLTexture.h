@@ -78,9 +78,11 @@ public:
   GLTextureStatus getStatus() const;
 
   /// @brief Bind the texture to the current render pipline
-  ///
-  /// Do not call this function directly, use `GLRenderer::bindTexture` instead.
+  /// @note Do not call this function directly, use `GLRenderer::bindTexture` instead.
   void bind();
+  
+  /// @brief Unbind texture
+  void unbind();
 
   /// @copydoc Texture::getLog
   std::string getLog() const override;

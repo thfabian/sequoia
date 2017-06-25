@@ -13,8 +13,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Render/GL/GL.h"
 #include "sequoia/Core/Casting.h"
+#include "sequoia/Render/GL/GL.h"
 #include "sequoia/Render/GL/GLProgram.h"
 #include "sequoia/Render/GL/GLStateCacheManager.h"
 #include "sequoia/Render/GL/GLTexture.h"
@@ -38,7 +38,7 @@ static GLenum getGLDrawMode(VertexData::DrawModeKind mode) {
   }
 }
 
-/// @brief Get the `GLenum` of the index type
+/// @brief Get the enum of the index type
 template <class T>
 struct GetIndexType {};
 
@@ -57,8 +57,11 @@ class GLRenderStateCache : public RenderStateCache {
   std::unordered_map<unsigned int, std::unordered_map<std::string, UniformVariable>>
       programUniformMap_;
 
+  /// Currently active texture unit
+  int activeTextureUnit_;
+
 public:
-  GLRenderStateCache() : RenderStateCache() { initState(); }
+  GLRenderStateCache() : RenderStateCache(), activeTextureUnit_(-1) { initState(); }
 
   /// @brief Bind the `program`
   void bindProgram(Program* program) {
@@ -79,34 +82,50 @@ public:
       TextureChanged(textureUnit, texture);
   }
 
-  /// @brief Update the uniform variables of a program if necessary
+  /// @brief Unbind any texture from `textureUnit`
+  void unbindTexture(int textureUnit) {
+    auto it = getRenderState().TextureMap.find(textureUnit);
+
+    if(it != getRenderState().TextureMap.end()) {
+      setActivTextureUnit(textureUnit);
+      dyn_cast<GLTexture>(it->second)->unbind();
+      getRenderState().TextureMap.erase(it);
+    }
+  }
+
+  /// @brief Update the uniform variables of `program` if necessary
   void
   setUniformVariables(Program* program,
                       const std::unordered_map<std::string, UniformVariable>& newUniformVariables) {
     GLProgram* glProgram = dyn_cast<GLProgram>(program);
 
-    // We only update the variable if we *have* to!
+    // Only update the variables if they differ
+    for(const auto& nameVariablePair : newUniformVariables) {
+      setUniformVariable(glProgram, nameVariablePair.first, nameVariablePair.second);
+    }
+  }
+
+  /// @brief Update the uniform variable of `glProgram` if necessary
+  inline void setUniformVariable(GLProgram* glProgram, const std::string& name,
+                                 const UniformVariable& variable) {
+
     std::unordered_map<std::string, UniformVariable>& oldUniformVariable =
         programUniformMap_[glProgram->getID()];
 
-    // Program has already been processed, only update the variables if they differ
-    for(const auto& nameVariablePair : newUniformVariables) {
-      const std::string& name = nameVariablePair.first;
-      const UniformVariable& variable = nameVariablePair.second;
-
-      auto it = oldUniformVariable.find(name);
-      bool updateNeeded = false;
-      if(it == oldUniformVariable.end()) {
+    auto it = oldUniformVariable.find(name);
+    bool updateNeeded = false;
+    if(it == oldUniformVariable.end()) {
+      // Variable does not exist -> update
+      updateNeeded = true;
+    } else {
+      if(it->second != variable)
+        // Variable exists but with different value -> update
         updateNeeded = true;
-      } else {
-        if(it->second != variable)
-          updateNeeded = true;
-      }
+    }
 
-      if(updateNeeded) {
-        glProgram->setUniformVariable(name, variable);
-        oldUniformVariable[name] = variable;
-      }
+    if(updateNeeded) {
+      glProgram->setUniformVariable(name, variable);
+      oldUniformVariable[name] = variable;
     }
   }
 
@@ -120,6 +139,14 @@ protected:
       glEnable(cap);
     else
       glDisable(cap);
+  }
+
+  /// @brief Set the active texture unit
+  inline void setActivTextureUnit(int textureUnit) noexcept {
+    if(activeTextureUnit_ != textureUnit) {
+      glActiveTexture(GL_TEXTURE0 + textureUnit);
+      activeTextureUnit_ = textureUnit;
+    }
   }
 
   virtual void DepthTestChanged(bool DepthTest) override {
@@ -169,8 +196,17 @@ protected:
 
   virtual void TextureChanged(int textureUnit, Texture* texture) override {
     if(texture) {
-      glActiveTexture(GL_TEXTURE0 + textureUnit);
+      // Bind texture
+      setActivTextureUnit(textureUnit);
       dyn_cast<GLTexture>(texture)->bind();
+
+      // Bind assoicated sampler if we already have a program
+      Program* program = getRenderState().Program;
+      if(program) {
+        GLProgram* glProgram = dyn_cast<GLProgram>(program);
+        const std::string& name = glProgram->getTextureSampler(textureUnit);
+        setUniformVariable(glProgram, name, UniformVariable(textureUnit));
+      }
     }
   }
 };
@@ -179,17 +215,19 @@ GLStateCacheManager::GLStateCacheManager() { stateCache_ = std::make_unique<GLRe
 
 void GLStateCacheManager::draw(DrawCommand* command) {
 
-  // Set the uniform variables if necessary
+  // Set the uniform variables of the program
   if(!command->getUniformVariables().empty())
     stateCache_->setUniformVariables(command->getProgram(), command->getUniformVariables());
 
-  // Update the render-state
+  // Update the render-state (including setting the VAO, program and textures)
   stateCache_->setRenderState(command->getRenderState());
   const RenderState& state = getRenderState();
 
+  // Check that all uniform variables are set correctly
+  dyn_cast<GLProgram>(state.Program)->checkUniformVariables();
+
   // Draw the VAO
   GLVertexArrayObject* vao = dyn_cast<GLVertexArrayObject>(state.VertexArrayObject);
-
   if(vao->hasIndices()) {
     glDrawElements(getGLDrawMode(vao->getVertexData()->getDrawMode()), vao->getNumIndices(),
                    GetIndexType<VertexIndexType>::value, (void*)0);
@@ -210,6 +248,10 @@ void GLStateCacheManager::bindVertexArrayObject(VertexArrayObject* vao) {
 
 void GLStateCacheManager::bindTexture(int textureUnit, Texture* texture) {
   stateCache_->bindTexture(textureUnit, texture);
+}
+
+void GLStateCacheManager::unbindTexture(int textureUnit) {
+  stateCache_->unbindTexture(textureUnit);
 }
 
 void GLStateCacheManager::startRendering() { stateCache_->resetUniformVariables(); }

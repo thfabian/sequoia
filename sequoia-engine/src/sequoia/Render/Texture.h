@@ -17,8 +17,8 @@
 #define SEQUOIA_RENDER_TEXTURE_H
 
 #include "sequoia/Core/Export.h"
-#include "sequoia/Core/Image.h"
 #include "sequoia/Core/HashCombine.h"
+#include "sequoia/Core/Image.h"
 #include "sequoia/Core/NonCopyable.h"
 #include "sequoia/Render/RenderSystemObject.h"
 #include <functional>
@@ -156,6 +156,8 @@ struct SEQUOIA_API TextureParameter {
 };
 
 /// @brief Texture object
+///
+/// Note that once the texture is assembled, the texture is immutable.
 ///
 /// @see RenderSystem::loadTexture
 /// @ingroup render

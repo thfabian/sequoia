@@ -13,11 +13,11 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Render/RenderState.h"
 #include "sequoia/Core/Format.h"
 #include "sequoia/Core/StringUtil.h"
 #include "sequoia/Core/Unreachable.h"
 #include "sequoia/Render/Program.h"
+#include "sequoia/Render/RenderState.h"
 #include "sequoia/Render/Texture.h"
 #include "sequoia/Render/VertexArrayObject.h"
 #include <unordered_set>
@@ -116,6 +116,7 @@ void RenderStateCache::setRenderState(const RenderState& state) noexcept {
 #include "sequoia/Render/RenderState.inc"
 #undef RENDER_STATE
 
+  // The program has be changed first as the textures depend on the currently bound program
   if(state_.Program != state.Program) {
     ProgramChanged(state.Program);
     state_.Program = state.Program;
@@ -136,12 +137,15 @@ void RenderStateCache::setRenderState(const RenderState& state) noexcept {
 
 const RenderState& RenderStateCache::getRenderState() const { return state_; }
 
+RenderState& RenderStateCache::getRenderState() { return state_; }
+
 std::string RenderStateCache::toString() const {
   return core::format("RenderStateCache["
                       "  state = %s\n"
                       "]",
                       core::indent(state_.toString()));
 }
+
 
 } // namespace render
 

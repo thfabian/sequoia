@@ -32,6 +32,8 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb/stb_image.h>
 
+#include <iostream>
+
 namespace sequoia {
 
 namespace core {
@@ -76,10 +78,10 @@ UncompressedImage::UncompressedImage(ImageFormat format, const std::shared_ptr<F
 
   switch(numChannels) {
   case 1:
-    colorFormat_ = ColorFormat::G;
+    colorFormat_ = ColorFormat::R;
     break;
   case 2:
-    colorFormat_ = ColorFormat::GA;
+    colorFormat_ = ColorFormat::RG;
     break;
   case 3:
     colorFormat_ = ColorFormat::RGB;

@@ -13,9 +13,9 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Render/GL/GL.h"
 #include "sequoia/Core/Logging.h"
 #include "sequoia/Render/Exception.h"
+#include "sequoia/Render/GL/GL.h"
 #include "sequoia/Render/GL/GLShaderManager.h"
 #include <boost/lexical_cast.hpp>
 #include <fstream>
@@ -71,7 +71,8 @@ void GLShaderManager::make(const std::shared_ptr<GLShader>& shader,
     if(shader->id_ == 0)
       SEQUOIA_THROW(RenderSystemException, "cannot create shader: '%s'", shader->file_->getPath());
 
-    LOG(DEBUG) << "Created shader (ID=" << shader->id_ << ")";
+    LOG(DEBUG) << "Created shader (ID=" << shader->id_ << ") from source \""
+               << shader->file_->getPath() << "\"";
     shader->status_ = GLShaderStatus::Created;
   }
 

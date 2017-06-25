@@ -23,9 +23,9 @@ namespace core {
 
 std::ostream& operator<<(std::ostream& os, ColorFormat format) {
   switch(format) {
-  case ColorFormat::G:
+  case ColorFormat::R:
     return (os << "G");
-  case ColorFormat::GA:
+  case ColorFormat::RG:
     return (os << "GA");
   case ColorFormat::RGB:
     return (os << "RGB");

@@ -40,9 +40,6 @@ class SEQUOIA_API Drawable final : public SceneNodeCapability {
   /// Mesh of the node
   std::shared_ptr<Mesh> mesh_;
 
-  /// Map of sampler and related textures
-  std::unordered_map<std::string, std::shared_ptr<render::Texture>> samplerTextureMap_;
-
 public:
   using Base = SceneNodeCapability;
 
@@ -69,6 +66,9 @@ public:
   /// @brief Check if the node has a Mesh attached
   bool hasMesh() const { return mesh_ != nullptr; }
 
+  /// @copydoc sequoia::render::DrawCommand::setTexture
+  void setTexture(int textureUnit, render::Texture* texture) noexcept;
+
   /// @brief Get the DrawCommand of the node
   const std::shared_ptr<render::DrawCommand>& getDrawCommand() const { return drawCommand_; }
 
@@ -77,7 +77,7 @@ public:
   const render::RenderState& getRenderState() const;
 
   /// @brief Set the Program used in the render-pipeline when invoking the `DrawCommand`
-  void setProgram(render::Program* program);
+  void setProgram(render::Program* program) noexcept;
 
   /// @brief Set a uniform variable
   template <class T>
@@ -93,7 +93,7 @@ public:
 
   /// @brief Prepare the DrawCommand for rendering
   ///
-  /// @note This copies the model-matrix and the render-state to an internal queue and the values
+  /// @note This copies the model-matrix and the render-state to an internal queue. The values
   /// can be modified freely afterwards without corrupting the rendering.
   render::DrawCommand* prepareDrawCommand();
 
