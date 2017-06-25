@@ -44,10 +44,12 @@ class SEQUOIA_API GLProgram final : public Program {
 public:
   /// @brief Represent uniform variables in shaders
   struct GLUniformInfo {
-    GLenum Type;    ///< Type of the unifrom variable
-    GLint Size;     ///< Size of the uniform variable
-    GLint Location; ///< Location of the uniform variable
-    bool ValueSet;  ///< Check if the value of the uniform variable has been set
+    GLenum Type;     ///< Type of the unifrom variable
+    GLint Size;      ///< Size of the uniform variable
+    GLint Location;  ///< Location of the uniform variable
+    bool ValueSet;   ///< Check if the value of the uniform variable has been set
+    int TextureUnit; ///< If this uniform corresponds to a texture sampler the associated texture
+                     ///  unit is stored (-1 otherwise)
   };
 
   /// @brief Create the program (this tries to make every shader valid)
@@ -97,6 +99,13 @@ public:
   /// @brief Check if all uniform variables have been set
   bool checkUniformVariables();
 
+  /// @brief Check if `name` is a uniform variable corresponding to a texture sampler
+  bool isTextureSampler(const std::string& name) const;
+
+  /// @brief Get the name of the texture sampler associated with `textureUnit` (empty string if no
+  /// sampler is found)
+  std::string getTextureSampler(int textureUnit) const;
+
   /// @brief Get the manager
   GLProgramManager* getManager() const;
 
@@ -128,6 +137,9 @@ private:
 
   /// Map of uniform variables referenced in this program
   std::unordered_map<std::string, GLUniformInfo> uniformInfoMap_;
+
+  /// Set of uniform variables which correspond to texture samplers
+  std::unordered_map<int, std::string> textureSamplers_;
 
   /// Cache if all uniform variables have been set
   bool allUniformVariablesSet_;

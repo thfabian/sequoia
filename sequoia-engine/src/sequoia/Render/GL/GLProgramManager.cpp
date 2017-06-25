@@ -13,12 +13,12 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Render/GL/GL.h"
 #include "sequoia/Core/Assert.h"
 #include "sequoia/Core/Casting.h"
 #include "sequoia/Core/Logging.h"
 #include "sequoia/Core/StringRef.h"
 #include "sequoia/Render/Exception.h"
+#include "sequoia/Render/GL/GL.h"
 #include "sequoia/Render/GL/GLProgramManager.h"
 #include "sequoia/Render/GL/GLShaderManager.h"
 #include "sequoia/Render/GL/GLVertexAttribute.h"
@@ -105,6 +105,7 @@ void GLProgramManager::getUniforms(const std::shared_ptr<GLProgram>& program) co
   SEQUOIA_ASSERT(program->status_ == GLProgramStatus::Linked);
 
   program->uniformInfoMap_.clear();
+  program->textureSamplers_.clear();
   program->allUniformVariablesSet_ = false;
   program->reportedWarningForInvalidUniformVariable_.clear();
 
@@ -121,14 +122,41 @@ void GLProgramManager::getUniforms(const std::shared_ptr<GLProgram>& program) co
     GLint size, length;
     glGetActiveUniform(program->id_, index, activeUniformMaxLength, &length, &size, &type,
                        name.get());
+
     GLint location = glGetUniformLocation(program->id_, name.get());
 
+    // Does the variable correspond to a texture sampler?
+    int textureUnit = -1;
+    StringRef nameRef(name.get());
+    if(nameRef.startswith("tex")) {
+      // extract 0 from `tex0_XXX`
+      std::string textureUnitStr = nameRef.substr(3, nameRef.find_first_of('_', 3)).str();
+
+      try {
+        textureUnit = std::stoi(textureUnitStr.c_str());
+      } catch(std::invalid_argument& e) {
+        LOG(WARNING) << "Failed to extract texture unit from uniform variable \"" << name.get()
+                     << "\": " << e.what();
+        textureUnit = -1;
+      }
+    }
+
     LOG(DEBUG) << "Active uniform variable: name=" << name.get() << ", type=" << type
+               << (textureUnit != -1 ? core::format(", textureUnit=%i", textureUnit) : "")
                << ", location=" << location;
 
-    if(location != -1)
-      program->uniformInfoMap_.emplace(name.get(),
-                                       GLProgram::GLUniformInfo{type, size, location, false});
+    if(location != -1) {
+      program->uniformInfoMap_.emplace(
+          name.get(), GLProgram::GLUniformInfo{type, size, location, false, textureUnit});
+
+      if(textureUnit != -1) {
+        auto ret = program->textureSamplers_.emplace(textureUnit, name.get());
+        if(!ret.second)
+          LOG(WARNING) << "Texture sampler \"" << name.get()
+                       << "\" mapped to already existing texture unit '" << textureUnit
+                       << "' which is mapped to \"" << ret.first->second << "\"";
+      }
+    }
   }
 
   LOG(DEBUG) << "Successfully got uniform variables of program (ID=" << program->id_ << ")";

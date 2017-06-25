@@ -171,4 +171,23 @@ TEST_F(GLProgramTest, VertexAttributesFail) {
 #endif
 }
 
+TEST_F(GLProgramTest, TextureSamplers) {
+  Environment& env = Environment::getSingleton();
+  RenderSystem& rsys = RenderSystem::getSingleton();
+
+  std::shared_ptr<Shader> fragmentShader =
+      rsys.createShader(getWindow(), Shader::ST_Fragment,
+                        env.getFile("sequoia/Render/GL/TestGLProgram/TextureSamplers.frag"));
+
+  std::shared_ptr<Program> program = rsys.createProgram(getWindow(), {fragmentShader});
+  GLProgram* glprogram = dyn_cast<GLProgram>(program.get());
+
+  EXPECT_TRUE(glprogram->isTextureSampler("tex0_SamplerFor2DTexture"));
+  EXPECT_TRUE(glprogram->isTextureSampler("tex5_SamplerFor2DTexture"));
+
+  EXPECT_STREQ(glprogram->getTextureSampler(0).c_str(), "tex0_SamplerFor2DTexture");
+  EXPECT_STREQ(glprogram->getTextureSampler(5).c_str(), "tex5_SamplerFor2DTexture");
+  EXPECT_TRUE(glprogram->getTextureSampler(1).empty());
+}
+
 } // anonymous namespace

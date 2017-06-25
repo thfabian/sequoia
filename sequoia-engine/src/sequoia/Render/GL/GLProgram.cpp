@@ -13,13 +13,13 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Render/GL/GL.h"
 #include "sequoia/Core/Casting.h"
 #include "sequoia/Core/Format.h"
 #include "sequoia/Core/Logging.h"
 #include "sequoia/Core/StringUtil.h"
 #include "sequoia/Core/Unreachable.h"
 #include "sequoia/Render/Exception.h"
+#include "sequoia/Render/GL/GL.h"
 #include "sequoia/Render/GL/GLProgram.h"
 #include "sequoia/Render/GL/GLProgramManager.h"
 #include "sequoia/Render/GL/GLShader.h"
@@ -99,6 +99,16 @@ bool GLProgram::checkUniformVariables() {
   return allUniformVariablesSet_;
 }
 
+bool GLProgram::isTextureSampler(const std::string& name) const {
+  auto it = uniformInfoMap_.find(name);
+  return (it != uniformInfoMap_.end() ? it->second.TextureUnit != -1 : false);
+}
+
+std::string GLProgram::getTextureSampler(int textureUnit) const {
+  auto it = textureSamplers_.find(textureUnit);
+  return (it != textureSamplers_.end() ? it->second : std::string());
+}
+
 std::string GLProgram::getLog() const {
   if(status_ == GLProgramStatus::Invalid)
     return "invalid";
@@ -131,6 +141,7 @@ std::string GLProgram::toString() const {
       "  status = %s,\n"
       "  id = %s,\n"
       "  uniformInfoMap = %s,\n"
+      "  textureSamplers = %s,\n"
       "  shaders = %s\n"
       "]",
       statusToString(status_), id_,
@@ -140,6 +151,15 @@ std::string GLProgram::toString() const {
                                                std::stringstream ss;
                                                ss << "name = " << pair.first
                                                   << ", type = " << pair.second.Type;
+                                               return ss.str();
+                                             }))
+          : "null",
+      !textureSamplers_.empty()
+          ? core::indent(core::toStringRange(textureSamplers_,
+                                             [](const auto& pair) {
+                                               std::stringstream ss;
+                                               ss << "name = " << pair.second
+                                                  << ", textureUnit = " << pair.first;
                                                return ss.str();
                                              }))
           : "null",
