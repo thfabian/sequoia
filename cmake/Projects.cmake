@@ -16,6 +16,20 @@
 unset(projects)
 
 #
+# zlib
+#
+list(APPEND projects zlib)
+set(zlib_url "https://github.com/thfabian/zlib/archive/v1.2.11.tar.gz")
+set(zlib_md5 "0095d2d2d1f3442ce1318336637b695f")
+
+#
+# libpng
+#
+list(APPEND projects libpng)
+set(png_url "https://github.com/thfabian/libpng/archive/v1.6.29.tar.gz")
+set(png_md5 "ee5f1849b09a90da598776d1e2d37494")
+
+#
 # backward
 #
 list(APPEND projects backward)

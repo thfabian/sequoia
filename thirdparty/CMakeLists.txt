@@ -13,6 +13,8 @@
 ##
 ##===------------------------------------------------------------------------------------------===##
 
+option(USE_SYSTEM_ZLIB "Should we use the system zlib?" OFF)
+option(USE_SYSTEM_PNG "Should we use the system png?" OFF)
 option(USE_SYSTEM_BACKWARD "Should we use the system backward?" OFF)
 option(USE_SYSTEM_BOOST "Should we use the system Boost?" OFF)
 option(USE_SYSTEM_GLBINDING "Should we use the system glbinding?" OFF)
@@ -21,6 +23,30 @@ option(USE_SYSTEM_GLM "Should we use the system glm?" OFF)
 option(USE_SYSTEM_GTEST "Should we use the system GTest?" OFF)
 option(USE_SYSTEM_STB "Should we use the system stb?" OFF)
 option(USE_SYSTEM_TBB "Should we use the system TBB?" OFF)
+
+#
+# ZLIB (search first as PNG depends on it)
+#
+if(USE_SYSTEM_ZLIB)
+  find_package(ZLIB REQUIRED)
+  if(DEFINED ZLIB_ROOT)
+    list(APPEND Sequoia_THIRDPARTYLIBS_ARGS "-DZLIB_ROOT:PATH=${ZLIB_ROOT}")
+  endif()
+else()
+  include(External_zlib)
+endif()
+
+#
+# PNG
+#
+if(USE_SYSTEM_LIBPNG)
+  find_package(LIBPNG REQUIRED)
+  if(DEFINED LIBPNG_ROOT)
+    list(APPEND Sequoia_THIRDPARTYLIBS_ARGS "-DLIBPNG_ROOT:PATH=${LIBPNG_ROOT}")
+  endif()
+else()
+  include(External_libpng)
+endif()
 
 #
 # backward

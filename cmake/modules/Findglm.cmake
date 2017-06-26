@@ -102,8 +102,6 @@ find_package_handle_standard_args(
   VERSION_VAR GLM_VERSION
 )
 
-mark_as_advanced(GLM_INCLUDE_DIRS)
-
 if(NOT(GLM_FOUND) AND glm_FIND_REQUIRED EQUAL 1)
   message(FATAL_ERROR "Could NOT find GLM. (Try setting GLM_ROOT in the env)")
 endif()
