@@ -15,15 +15,14 @@
 
 option(NO_SYSTEM_LIBS "By default, do not use system libraries" OFF)
 
-include(External_gtest)
-include(External_stb)
-include(External_backward)
-
 # ZLIB
 sequoia_find_package(
   PACKAGE ZLIB 
   FORWARD_VARS ZLIB_ROOT
 )
+
+# backward
+sequoia_build_package(backward)
 
 # Boost
 sequoia_find_package(
@@ -52,6 +51,12 @@ sequoia_find_package(
   PACKAGE_ARGS ${glm_version}
   FORWARD_VARS GLM_ROOT
 )
+
+# gtest
+sequoia_build_package(gtest)
+
+# stb
+sequoia_build_package(stb)
 
 # TBB
 sequoia_find_package(

@@ -126,6 +126,39 @@ macro(sequoia_add_target_clean_all)
                   "${CMAKE_SOURCE_DIR}/cmake/scripts/CleanAll.cmake")
 endmacro()
 
+## sequoia_gen_package_info_str
+## ----------------------------
+##
+##    PACKAGE_NAME:STRING=<>      - Name of the package
+##    USE_SYSTEM:BOOL=<>          - Do we use the system version of the package?
+macro(sequoia_gen_package_info_str PACKAGE_NAME USE_SYSTEM)
+  string(LENGTH ${PACKAGE_NAME} package_name_length)
+  math(EXPR indent_length "20 - ${package_name_length}")
+
+  set(full_indent "                    ") 
+  string(SUBSTRING ${full_indent} "0" "${indent_length}" indent)
+
+  if(${USE_SYSTEM})
+    set(SEQUOIA_PACKAGE_INFO "${PACKAGE_NAME}${indent}: found;${SEQUOIA_PACKAGE_INFO}")
+  else()
+    set(SEQUOIA_PACKAGE_INFO "${SEQUOIA_PACKAGE_INFO};${PACKAGE_NAME}${indent}: building")
+  endif()
+endmacro()
+
+## sequoia_build_package
+## ---------------------
+##
+## Build the package using the file ``External_${PACKAGE}``. This is equivalent to 
+## ``include(External_${PACKAGE})`` but also set the appropriate report variables. 
+##
+##    PACKAGE:STRING=<>           - Name of the package
+##
+macro(sequoia_build_package PACKAGE)
+  set(external_file External_${PACKAGE})
+  sequoia_gen_package_info_str(${PACKAGE} FALSE)
+  include(${external_file})
+endmacro()
+
 ## sequoia_find_package
 ## --------------------
 ##
@@ -137,11 +170,11 @@ endmacro()
 ## the system version is going to be used. Note that ``USE_SYSTEM_${PACKAGE}`` does not honor the 
 ## user setting if the package cannot be found.
 ##
-##    PACKAGE:STRING=<>        - Name of the package (has to be the same name as used in 
-##                               ``find_package``).
-##    PACKAGE_ARGS:LIST=<>     - Arguments passed to ``find_package``
-##    FORWARD_VARS:LIST=<>     - List of arguments which are appended to the 
-##                               ``Sequoia_THIRDPARTYLIBS_ARGS``
+##    PACKAGE:STRING=<>           - Name of the package (has to be the same name as used in 
+##                                  ``find_package``).
+##    PACKAGE_ARGS:LIST=<>        - Arguments passed to ``find_package``
+##    FORWARD_VARS:LIST=<>        - List of arguments which are appended to the 
+##                                  ``Sequoia_THIRDPARTYLIBS_ARGS``
 macro(sequoia_find_package)
   set(options)
   set(one_value_args PACKAGE)
@@ -192,18 +225,6 @@ macro(sequoia_find_package)
     endif()
   endif()
 
-  # Create a pretty string for the summary i.e inform the user which packages are built and which 
-  # are used from the system
-  string(LENGTH ${ARG_PACKAGE} package_name_length)
-  math(EXPR indent_length "20 - ${package_name_length}")
-
-  set(full_indent "                    ") 
-  string(SUBSTRING ${full_indent} "0" "${indent_length}" indent)
-
-  if(use_system)
-    set(SEQUOIA_PACKAGE_INFO "${ARG_PACKAGE}${indent}: found;${SEQUOIA_PACKAGE_INFO}")
-  else()
-    set(SEQUOIA_PACKAGE_INFO "${SEQUOIA_PACKAGE_INFO};${ARG_PACKAGE}${indent}: building")
-  endif()
+  sequoia_gen_package_info_str(${ARG_PACKAGE} ${use_system})
 endmacro()
 
