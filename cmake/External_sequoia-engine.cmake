@@ -62,3 +62,4 @@ else()
   file(WRITE ${_build}/rerun-cmake.sh 
        "#!bin/bash\n${CMAKE_COMMAND} ${CMAKE_SOURCE_DIR}/sequoia-engine ${script_args}\n")
 endif()
+
