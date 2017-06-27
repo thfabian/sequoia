@@ -31,6 +31,9 @@ sequoia_find_package(
   FORWARD_VARS BOOST_ROOT Boost_LIBRARY_DIRS Boost_INCLUDE_DIRS
 )
 
+# FreeImage
+sequoia_build_package(FreeImage)
+
 # glbinding
 sequoia_find_package(
   PACKAGE glbinding 
@@ -38,7 +41,7 @@ sequoia_find_package(
   FORWARD_VARS GLBINDING_ROOT
 )
 
-# glbinding
+# GLFW
 sequoia_find_package(
   PACKAGE GLFW 
   PACKAGE_ARGS ${glfw_version}

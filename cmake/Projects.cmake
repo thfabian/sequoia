@@ -42,6 +42,14 @@ set(boost_md5 "28f58b9a33469388302110562bdf6188")
 set(boost_components thread date_time system atomic chrono filesystem program_options)
 
 #
+# FreeImage
+#
+list(APPEND projects freeimage)
+set(freeimage_version "3.15.3")
+set(freeimage_url "https://github.com/thfabian/FreeImage/archive/v${3.15.3}-0.tar.gz")
+set(freeimage_md5 "c9f73c9924c6f7974d35e48323118439")
+
+#
 # glbinding
 #
 list(APPEND projects glbinding)

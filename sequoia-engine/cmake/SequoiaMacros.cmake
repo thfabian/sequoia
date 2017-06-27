@@ -245,6 +245,9 @@ macro(sequoia_set_cxx_flags)
       sequoia_check_and_set_cxx_flag("-fomit-frame-pointer" HAVE_GCC_OMIT_FRAME_POINTER)
     endif()
 
+    # Pthread
+    sequoia_check_and_set_cxx_flag("-pthread" HAVE_GCC_PTHREAD)
+
     # Warnings
     sequoia_check_and_set_cxx_flag("-Wall" HAVE_GCC_WALL)
     sequoia_check_and_set_cxx_flag("-Werror=return-type" HAVE_GCC_ERROR_RETURN_TYPE)

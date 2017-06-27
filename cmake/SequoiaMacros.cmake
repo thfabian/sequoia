@@ -129,8 +129,11 @@ endmacro()
 ## sequoia_gen_package_info_str
 ## ----------------------------
 ##
+## Append a package info string to ``SEQUOIA_PACKAGE_INFO`` for ``PACKAGE``.
+##
 ##    PACKAGE_NAME:STRING=<>      - Name of the package
 ##    USE_SYSTEM:BOOL=<>          - Do we use the system version of the package?
+##
 macro(sequoia_gen_package_info_str PACKAGE_NAME USE_SYSTEM)
   string(LENGTH ${PACKAGE_NAME} package_name_length)
   math(EXPR indent_length "20 - ${package_name_length}")
