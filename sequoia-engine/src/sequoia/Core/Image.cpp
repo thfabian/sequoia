@@ -20,6 +20,9 @@
 #include "sequoia/Core/HashCombine.h"
 #include "sequoia/Core/StringSwitch.h"
 #include "sequoia/Core/Unreachable.h"
+#include <FreeImage/FreeImage.h>
+#include <mutex>
+#include <memory>
 
 #ifndef NDEBUG
 #define STBI_FAILURE_USERMSG
@@ -37,6 +40,20 @@
 namespace sequoia {
 
 namespace core {
+
+
+namespace {
+
+struct FreeImageContext {
+  FreeImageContext() { FreeImage_Initialise(); }
+  ~FreeImageContext() { FreeImage_DeInitialise(); }
+};
+
+std::unique_ptr<FreeImageContext> freeImageContext = nullptr;
+std::once_flag freeImageContextInitFlag;
+
+} // anonymous namespace
+
 
 Image::~Image() {}
 

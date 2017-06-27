@@ -13,12 +13,13 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Render/Vertex.h"
 #include "sequoia/Core/Format.h"
 #include "sequoia/Core/StringUtil.h"
 #include "sequoia/Core/Unreachable.h"
 #include "sequoia/Math/Math.h"
+#include "sequoia/Render/Vertex.h"
 #include "sequoia/Render/VertexVisitor.h"
+#include <memory>
 #include <mutex>
 #include <sstream>
 #include <type_traits>
@@ -53,12 +54,6 @@ constexpr VertexLayout::Type getType() {
   return GetTypeImpl<typename GetPrimitveType<T>::type>::value;
 }
 
-static Vertex2DLayout* vertex2DLayout = new Vertex2DLayout;
-static std::once_flag vertex2DInitFlag;
-
-static Vertex3DLayout* vertex3DLayout = new Vertex3DLayout;
-static std::once_flag vertex3DInitFlag;
-
 static const char* typeToString(VertexLayout::Type type) {
   switch(type) {
   case VertexLayout::Invalid:
@@ -71,6 +66,12 @@ static const char* typeToString(VertexLayout::Type type) {
     sequoia_unreachable("invalid type");
   }
 }
+
+std::unique_ptr<Vertex2DLayout> vertex2DLayout = nullptr;
+std::once_flag vertex2DInitFlag;
+
+std::unique_ptr<Vertex3DLayout> vertex3DLayout = nullptr;
+std::once_flag vertex3DInitFlag;
 
 } // anonymous namespace
 
@@ -106,23 +107,25 @@ std::string VertexLayout::toString() const {
 
 const VertexLayout* Vertex2D::getLayout() noexcept {
   std::call_once(vertex2DInitFlag, [] {
+    vertex2DLayout = std::make_unique<Vertex2DLayout>();
     vertex2DLayout->SizeOf = sizeof(Vertex2D);
     SEQUOIA_SET_LAYOUT(vertex2DLayout, Vertex2D, Position, false);
     SEQUOIA_SET_LAYOUT(vertex2DLayout, Vertex2D, TexCoord, false);
     SEQUOIA_SET_LAYOUT(vertex2DLayout, Vertex2D, Color, true);
   });
-  return vertex2DLayout;
+  return vertex2DLayout.get();
 }
 
 const VertexLayout* Vertex3D::getLayout() noexcept {
   std::call_once(vertex3DInitFlag, [] {
+    vertex3DLayout = std::make_unique<Vertex3DLayout>();
     vertex3DLayout->SizeOf = sizeof(Vertex3D);
     SEQUOIA_SET_LAYOUT(vertex3DLayout, Vertex3D, Position, false);
     SEQUOIA_SET_LAYOUT(vertex3DLayout, Vertex3D, Normal, false);
     SEQUOIA_SET_LAYOUT(vertex3DLayout, Vertex3D, TexCoord, false);
     SEQUOIA_SET_LAYOUT(vertex3DLayout, Vertex3D, Color, true);
   });
-  return vertex3DLayout;
+  return vertex3DLayout.get();
 }
 #undef SEQUOIA_SET_LAYOUT
 

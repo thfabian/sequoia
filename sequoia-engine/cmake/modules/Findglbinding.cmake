@@ -33,8 +33,7 @@
 # Hints
 # ^^^^^
 #
-# Set ``GLBINDING_ROOT`` to a directory that contains a GLBINDING installation, or directly set 
-# ``GLBINDING_INCLUDE_DIRS``.
+# Set ``GLBINDING_ROOT`` to a directory that contains a GLBINDING installation
 
 include(FindPackageHandleStandardArgs)
 
@@ -116,7 +115,7 @@ endif()
 #   Report result 
 #====--------------------------------------------------------------------------------------------===
 
-set(required_vars GLBINDING_ROOT GLBINDING_INCLUDE_DIRS GLBINDING_LIBRARIES)
+set(required_vars GLBINDING_LIBRARIES GLBINDING_INCLUDE_DIRS)
 if(WIN32)
   list(APPEND GLBINDING_BINARY)
 endif()
@@ -137,4 +136,3 @@ mark_as_advanced(
 if(NOT(GLBINDING_FOUND) AND glbinding_FIND_REQUIRED EQUAL 1)
   message(FATAL_ERROR "Could NOT find GLBINDING. (Try setting GLBINDING_ROOT in the env)")
 endif()
-

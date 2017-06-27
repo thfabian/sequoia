@@ -4,7 +4,7 @@
 ##                       | (___   ___  __ _ _   _  ___  _  __ _ 
 ##                        \___ \ / _ \/ _` | | | |/ _ \| |/ _` |
 ##                        ____) |  __/ (_| | |_| | (_) | | (_| |
-##                       |_____/ \___|\__, |\__,_|\___/|_|\__,_| - Game Engine
+##                       |_____/ \___|\__, |\__,_|\___/|_|\__,_| - Game Engine (2016-2017)
 ##                                       | |                    
 ##                                       |_| 
 ##
@@ -29,13 +29,11 @@
 #   GLBINDING_FOUND               - System has the glbinding.
 #   GLBINDING_INCLUDE_DIRS        - The location of glbinding headers
 #   GLBINDING_LIBRARIES           - The location of glbinding library
-#   GLBINDING_VERSION             - Version of glbinding
 #
 # Hints
 # ^^^^^
 #
-# Set ``GLBINDING_ROOT`` to a directory that contains a GLBINDING installation, or directly set 
-# ``GLBINDING_INCLUDE_DIRS``.
+# Set ``GLBINDING_ROOT`` to a directory that contains a GLBINDING installation
 
 include(FindPackageHandleStandardArgs)
 
@@ -104,24 +102,37 @@ if(NOT(GLBINDING_LIBRARIES))
 endif()
 
 #===---------------------------------------------------------------------------------------------===
+#   Find glbinding DLL
+#====--------------------------------------------------------------------------------------------===
+if(WIN32 AND NOT(GLBINDING_BINARY))
+  set(old_suffix "${CMAKE_FIND_LIBRARY_SUFFIXES}")
+  set(CMAKE_FIND_LIBRARY_SUFFIXES ".dll")
+  find_library(GLBINDING_BINARY NAMES glbinding HINTS ${GLBINDING_ROOT})
+  set(CMAKE_FIND_LIBRARY_SUFFIXES "${old_suffix}")
+endif()
+
+#===---------------------------------------------------------------------------------------------===
 #   Report result 
 #====--------------------------------------------------------------------------------------------===
+
+set(required_vars GLBINDING_LIBRARIES GLBINDING_INCLUDE_DIRS)
+if(WIN32)
+  list(APPEND GLBINDING_BINARY)
+endif()
+
 find_package_handle_standard_args(
   glbinding
   FAIL_MESSAGE "Could NOT find glbinding. (Try setting GLBINDING_ROOT in the env)"
-  REQUIRED_VARS  
-    GLBINDING_ROOT
-    GLBINDING_INCLUDE_DIRS
-    GLBINDING_LIBRARIES
+  REQUIRED_VARS ${required_vars}
   VERSION_VAR GLBINDING_VERSION
 )
 
 mark_as_advanced(
   GLBINDING_INCLUDE_DIRS
   GLBINDING_LIBRARIES
+  GLBINDING_BINARY
 )
 
 if(NOT(GLBINDING_FOUND) AND glbinding_FIND_REQUIRED EQUAL 1)
   message(FATAL_ERROR "Could NOT find GLBINDING. (Try setting GLBINDING_ROOT in the env)")
 endif()
-

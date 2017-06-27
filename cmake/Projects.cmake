@@ -45,9 +45,8 @@ set(boost_components thread date_time system atomic chrono filesystem program_op
 # FreeImage
 #
 list(APPEND projects freeimage)
-set(freeimage_version "3.15.3")
-set(freeimage_url "https://github.com/thfabian/FreeImage/archive/v${3.15.3}-0.tar.gz")
-set(freeimage_md5 "c9f73c9924c6f7974d35e48323118439")
+set(freeimage_url "https://github.com/thfabian/FreeImage/archive/v3.15.3-1.tar.gz")
+set(freeimage_md5 "dfae80cc671daa1df39164cfd2ad7bc7")
 
 #
 # glbinding
