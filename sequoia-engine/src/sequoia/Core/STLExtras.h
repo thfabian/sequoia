@@ -296,7 +296,7 @@ constexpr bool tuple_has_value_impl(Tuple const& t, T&& value, std::index_sequen
 /// @brief Check if `value` is in the tuple
 ///
 /// Requires `value` to be equality comparable with all values in the tuple.
-template <typename... Elements, typename T, size_t... is>
+template <typename... Elements, typename T>
 constexpr bool tuple_has_value(std::tuple<Elements...> const& t, T&& value) {
   return tuple_has_value_impl(t, value, std::index_sequence_for<Elements...>{});
 }

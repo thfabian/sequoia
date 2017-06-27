@@ -48,7 +48,6 @@ sequoia_set_cxx_flags()
 # Custom tragets
 sequoia_add_target_clean_all()
 sequoia_add_target_clang_format(${CMAKE_SOURCE_DIR}/src)
-sequoia_add_target_update_license()
 
 # Output findings
 sequoia_report_result(
