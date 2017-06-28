@@ -21,11 +21,12 @@
 #include "sequoia/Core/Logging.h"
 #include "sequoia/Core/StringSwitch.h"
 #include "sequoia/Core/Unreachable.h"
-#include <FreeImage/FreeImage.h>
 #include <memory>
 #include <mutex>
 
-#include <iostream>
+// We use the static library of FreeImage
+#define FREEIMAGE_LIB
+#include <FreeImage/FreeImage.h>
 
 namespace sequoia {
 
@@ -55,11 +56,11 @@ std::once_flag freeImageContextInitFlag;
 
 static FREE_IMAGE_FORMAT GetFreeImageType(Image::ImageFormat format) {
   switch(format) {
-  case sequoia::core::Image::IF_PNG:
+  case Image::IF_PNG:
     return FIF_PNG;
-  case sequoia::core::Image::IF_JPEG:
+  case Image::IF_JPEG:
     return FIF_JPEG;
-  case sequoia::core::Image::IF_BMP:
+  case Image::IF_BMP:
     return FIF_BMP;
   default:
     return FIF_UNKNOWN;
