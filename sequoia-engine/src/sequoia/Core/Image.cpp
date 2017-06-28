@@ -13,27 +13,17 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Core/Image.h"
 #include "sequoia/Core/Casting.h"
 #include "sequoia/Core/Exception.h"
 #include "sequoia/Core/Format.h"
 #include "sequoia/Core/HashCombine.h"
+#include "sequoia/Core/Image.h"
+#include "sequoia/Core/Logging.h"
 #include "sequoia/Core/StringSwitch.h"
 #include "sequoia/Core/Unreachable.h"
 #include <FreeImage/FreeImage.h>
-#include <mutex>
 #include <memory>
-
-#ifndef NDEBUG
-#define STBI_FAILURE_USERMSG
-#endif
-
-#define STBI_SUPPORT_ZLIB
-#define STBI_ONLY_PNG
-#define STBI_ONLY_JPEG
-#define STBI_ONLY_BMP
-#define STB_IMAGE_IMPLEMENTATION
-#include <stb/stb_image.h>
+#include <mutex>
 
 #include <iostream>
 
@@ -41,38 +31,59 @@ namespace sequoia {
 
 namespace core {
 
-
 namespace {
 
+/// @brief Context of the FreeImage library
 struct FreeImageContext {
-  FreeImageContext() { FreeImage_Initialise(); }
+  FreeImageContext() {
+    FreeImage_Initialise();
+    FreeImage_SetOutputMessage(FreeImageContext::ErrorHandler);
+    LOG(INFO) << "Using FreeImage: " << FreeImage_GetVersion();
+  }
+
   ~FreeImageContext() { FreeImage_DeInitialise(); }
+
+  /// @brief Translate FreeImage error into an exception
+  static void ErrorHandler(FREE_IMAGE_FORMAT format, const char* message) {
+    SEQUOIA_THROW(core::Exception, "failed to load image: format=%s : %s",
+                  format != FIF_UNKNOWN ? FreeImage_GetFormatFromFIF(format) : "unknown", message);
+  }
 };
 
 std::unique_ptr<FreeImageContext> freeImageContext = nullptr;
 std::once_flag freeImageContextInitFlag;
 
-} // anonymous namespace
+static FREE_IMAGE_FORMAT GetFreeImageType(Image::ImageFormat format) {
+  switch(format) {
+  case sequoia::core::Image::IF_PNG:
+    return FIF_PNG;
+  case sequoia::core::Image::IF_JPEG:
+    return FIF_JPEG;
+  case sequoia::core::Image::IF_BMP:
+    return FIF_BMP;
+  default:
+    return FIF_UNKNOWN;
+  }
+}
 
+} // anonymous namespace
 
 Image::~Image() {}
 
-std::shared_ptr<Image> Image::load(const std::shared_ptr<File>& file, Image::ImageFormat format) {
-  if(format == Image::IF_Unknown)
-    format = core::StringSwitch<Image::ImageFormat>(file->getExtension())
-                 .Case(".png", Image::IF_PNG)
-                 .Cases(".jpg", ".jpeg", ".jpe", Image::IF_JPEG)
-                 .Cases(".bmp", ".dib", Image::IF_BMP)
-                 .Default(Image::IF_Unknown);
+std::shared_ptr<Image> Image::load(const std::shared_ptr<File>& file) {
+  std::call_once(freeImageContextInitFlag,
+                 []() { freeImageContext = std::make_unique<FreeImageContext>(); });
 
-
-  switch(format) {
-  case Image::IF_PNG:
+  switch(file->getType()) {
+  case FileType::Png:
     return std::make_shared<PNGImage>(file);
-  case Image::IF_JPEG:
+    break;
+  case FileType::Jpeg:
     return std::make_shared<JPEGImage>(file);
-  case Image::IF_BMP:
+    break;
+  case FileType::Bmp:
     return std::make_shared<BMPImage>(file);
+    break;
   default:
     SEQUOIA_THROW(Exception, "invalid image format of file: \"%s\"", file->getPath());
     return nullptr;
@@ -82,36 +93,62 @@ std::shared_ptr<Image> Image::load(const std::shared_ptr<File>& file, Image::Ima
 Image::Image(Image::ImageFormat format) : format_(format) {}
 
 UncompressedImage::UncompressedImage(ImageFormat format, const std::shared_ptr<File>& file)
-    : Image(format), file_(file) {
+    : Image(format), file_(file), bitMap_(nullptr), bitMapConverted_(nullptr), converted_(false),
+      memory_(nullptr) {
 
-  // TODO: STB is not reentrant ... we need to use different library for image loading
-  //       Probably best to use the native libraries (libpng, libjpeg, ...) or DevIL
-  int numChannels = 0;
-  pixelData_ = stbi_load_from_memory(file_->getData(), file_->getNumBytes(), &width_, &height_,
-                                     &numChannels, 0);
-  if(!pixelData_)
-    SEQUOIA_THROW(core::Exception, "failed to load image \"%s\": %s", file_->getPath(),
-                  stbi_failure_reason());
+  FREE_IMAGE_FORMAT FIFormat = GetFreeImageType(getFormat());
+  SEQUOIA_ASSERT_MSG(FIFormat != FIF_UNKNOWN, "invalid image format");
+  SEQUOIA_ASSERT_MSG(FreeImage_FIFSupportsReading(FIFormat),
+                     "format cannot be read (plugin not loaded)");
 
-  switch(numChannels) {
-  case 1:
-    colorFormat_ = ColorFormat::R;
-    break;
-  case 2:
-    colorFormat_ = ColorFormat::RG;
-    break;
-  case 3:
-    colorFormat_ = ColorFormat::RGB;
-    break;
-  case 4:
-    colorFormat_ = ColorFormat::RGBA;
-    break;
+  // Attach the binary data to a memory stream. Note that a memory buffer wrapped by FreeImage is
+  // read-only so const cast is safe here.
+  memory_ = FreeImage_OpenMemory(const_cast<Byte*>(file_->getData()), file_->getNumBytes());
+
+  // Load an image from the memory stream
+  bitMap_ = FreeImage_LoadFromMemory(FIFormat, memory_, 0);
+
+  // Get bitmap informations
+  width_ = FreeImage_GetWidth(bitMap_);
+  height_ = FreeImage_GetHeight(bitMap_);
+
+  // Check if the image is stored in RGB or RGBA
+  bool colorOrderIsRGB = FREEIMAGE_COLORORDER == FREEIMAGE_COLORORDER_RGB;
+  int bitsPerPixel = FreeImage_GetBPP(bitMap_);
+  
+  // Convert our image to 24 or 32 bits (8 bits per channel, Red/Green/Blue/Alpha)
+  if(bitsPerPixel < 24) {
+    bitMapConverted_ = FreeImage_ConvertTo24Bits(bitMap_);
+    colorFormat_ = colorOrderIsRGB ? ColorFormat::RGB : ColorFormat::BGR;
+    converted_ = true;
+  } else if(bitsPerPixel == 24) {
+    bitMapConverted_ = bitMap_;
+    colorFormat_ = colorOrderIsRGB ? ColorFormat::RGB : ColorFormat::BGR;
+  } else if(bitsPerPixel == 32) {
+    bitMapConverted_ = bitMap_;
+    colorFormat_ = colorOrderIsRGB ? ColorFormat::RGBA : ColorFormat::BGRA;
   }
+
+  FREE_IMAGE_TYPE imageType = FreeImage_GetImageType(bitMapConverted_);
+  FREE_IMAGE_COLOR_TYPE colorType = FreeImage_GetColorType(bitMapConverted_);
+
+  SEQUOIA_ASSERT_MSG(colorType == FIC_RGB || colorType == FIC_RGBALPHA, "unsupported color type");
+  SEQUOIA_ASSERT_MSG(imageType == FIT_BITMAP, "unsupported image type");
+
+  // Get pixel data
+  pixelData_ = FreeImage_GetBits(bitMapConverted_);
+  SEQUOIA_ASSERT(pixelData_);
 }
 
 UncompressedImage::~UncompressedImage() {
-  if(pixelData_)
-    stbi_image_free(pixelData_);
+  if(bitMap_)
+    FreeImage_Unload(bitMap_);
+
+  if(converted_ && bitMapConverted_)
+    FreeImage_Unload(bitMapConverted_);
+
+  if(memory_)
+    FreeImage_CloseMemory(memory_);
 }
 
 std::string UncompressedImage::toString() const {

@@ -23,48 +23,32 @@ namespace core {
 
 std::ostream& operator<<(std::ostream& os, ColorFormat format) {
   switch(format) {
-  case ColorFormat::R:
-    return (os << "G");
-  case ColorFormat::RG:
-    return (os << "GA");
   case ColorFormat::RGB:
     return (os << "RGB");
+  case ColorFormat::BGR:
+    return (os << "BGR");
   case ColorFormat::RGBA:
     return (os << "RGBA");
+  case ColorFormat::BGRA:
+    return (os << "BGRA");
   default:
     sequoia_unreachable("invalid format");
   }
 }
 
-namespace {
-
-template <class ColorT>
-std::ostream& toStream(std::ostream& os, const ColorT& color) {
+std::ostream& operator<<(std::ostream& os, const Color& color) {
   os << "[ ";
-  for(int i = 0; i < color.getNumChannels(); ++i)
-    os << int(color[i]) << (i != (color.getNumChannels() - 1) ? ", " : "");
-  os << " ]";
+  os << static_cast<int>(color[0]) << ", ";
+  os << static_cast<int>(color[1]) << ", ";
+  os << static_cast<int>(color[2]);
+
+  if(color.getNumChannels() > 3)
+    os << ", " << static_cast<int>(color[3]);
+
+  os << " ] (" << color.getFormat() << ")";
   return os;
 }
 
-} // anonymous namespace
-
 } // namespace core
-
-std::ostream& operator<<(std::ostream& os, const ColorRGBA& color) {
-  return core::toStream(os, color);
-}
-
-std::ostream& operator<<(std::ostream& os, const ColorRGB& color) {
-  return core::toStream(os, color);
-}
-
-std::ostream& operator<<(std::ostream& os, const ColorGA& color) {
-  return core::toStream(os, color);
-}
-
-std::ostream& operator<<(std::ostream& os, const ColorG& color) {
-  return core::toStream(os, color);
-}
 
 } // namespace sequoia

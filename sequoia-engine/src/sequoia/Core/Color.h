@@ -16,6 +16,7 @@
 #ifndef SEQUOIA_CORE_COLOR_H
 #define SEQUOIA_CORE_COLOR_H
 
+#include "sequoia/Core/Assert.h"
 #include "sequoia/Core/Byte.h"
 #include "sequoia/Core/Export.h"
 #include <cstdint>
@@ -36,58 +37,54 @@ namespace core {
 ///
 /// @ingroup core
 enum class ColorFormat : std::uint8_t {
-  R = SEQUOIA_COLOR_SET_NUM_CHANNELS(1) + 0,    ///< grey
-  RG = SEQUOIA_COLOR_SET_NUM_CHANNELS(2) + 1,   ///< grey, alpha
-  RGB = SEQUOIA_COLOR_SET_NUM_CHANNELS(3) + 2,  ///< red, green, blue
+  RGB = SEQUOIA_COLOR_SET_NUM_CHANNELS(3) + 1,  ///< red, green, blue
+  BGR = SEQUOIA_COLOR_SET_NUM_CHANNELS(3) + 2,  ///< blue, green, red
   RGBA = SEQUOIA_COLOR_SET_NUM_CHANNELS(4) + 3, ///< red, green, blue, alpha
+  BGRA = SEQUOIA_COLOR_SET_NUM_CHANNELS(4) + 4, ///< blue, green, red, alpha
 };
 
 SEQUOIA_API extern std::ostream& operator<<(std::ostream& os, ColorFormat format);
 
 #undef SEQUOIA_COLOR_SET_NUM_CHANNELS
 
-/// @brief Representation of a 32-bit Color in given format
+/// @brief Read-only access to a color
+///
+/// This class is mostly for convenience and should not be used in performance critical parts.
+///
 /// @ingroup core
-template <ColorFormat CFormat>
-struct Color {
-  // 32 bit
-  union {
-    struct {
-      Byte x, y, z, w;
-    };
-    struct {
-      Byte r, g, b, a;
-    };
-    Byte data[4];
-  };
+class Color {
+  Byte data_[4];             ///< 32-bit data
+  const ColorFormat format_; ///< Format of the color (also stores the number of used channels)
 
-  /// @brief Color format
-  static constexpr ColorFormat Format = CFormat;
-
-  /// @brief Number of Channels
-  static constexpr int NumChannels = SEQUOIA_COLOR_GET_NUM_CHANNELS(Format);
-
+public:
   /// @brief Construct from pixel data (copies `NumChannels` Bytes starting at `data`)
-  Color(const Byte* data) {
-    for(int i = 0; i < NumChannels; ++i)
-      this->data[i] = data[i];
-    for(int i = NumChannels; i < 4; ++i)
-      this->data[i] = 0;
+  Color(ColorFormat format, const Byte* data) : format_(format) {
+    for(int i = 0; i < getNumChannels(); ++i)
+      this->data_[i] = data[i];
+    for(int i = getNumChannels(); i < 4; ++i)
+      this->data_[i] = 0;
   }
-
-  Color(Byte* data) : Color(static_cast<const Byte*>(data)) {}
+  Color(ColorFormat format, Byte* data) : Color(format, static_cast<const Byte*>(data)) {}
 
   /// @brief Construct from Byte array (copies `NumChannels` Bytes from `data`)
   template <int N>
-  Color(Byte (&data)[N]) : Color(static_cast<Byte*>(data)) {}
+  Color(ColorFormat format, Byte (&data)[N]) : Color(format, static_cast<Byte*>(data)) {}
 
   template <int N>
-  Color(const Byte (&data)[N]) : Color(static_cast<const Byte*>(data)) {}
+  Color(ColorFormat format, const Byte (&data)[N])
+      : Color(format, static_cast<const Byte*>(data)) {}
 
   /// @brief Construct with integral constants
   template <class... Args>
-  Color(Args&&... args) {
+  Color(ColorFormat format, Args&&... args) : format_(format) {
     setChannel(std::forward<Args>(args)...);
+  }
+
+  /// @brief Set the channels
+  template <class... Args>
+  inline void setChannel(Args&&... args) {
+    SEQUOIA_ASSERT_MSG(sizeof...(args) <= getNumChannels(), "too many colors provided");
+    setChannelImpl<0>(std::forward<Args>(args)...);
   }
 
   /// @brief Copy constructor
@@ -103,88 +100,109 @@ struct Color {
   Color& operator=(Color&&) = default;
 
   /// @brief Get the number of used channels
-  constexpr int getNumChannels() const { return NumChannels; }
+  inline std::uint8_t getNumChannels() const noexcept {
+    return SEQUOIA_COLOR_GET_NUM_CHANNELS(format_);
+  }
+
+  /// @brief Get format
+  inline ColorFormat getFormat() const noexcept { return format_; }
 
   /// @brief Get the value of the `N-th` channel (or 0 if the channel is unused)
-  inline Byte& operator[](int N) { return data[N]; }
-  inline const Byte& operator[](int N) const { return data[N]; }
+  inline Byte& operator[](int N) { return data_[N]; }
+  inline const Byte& operator[](int N) const { return data_[N]; }
 
-  /// @name Comparison
-  /// @{
-  template <ColorFormat OtherCFormat>
-  bool operator==(const Color<OtherCFormat>& other) const noexcept {
-    for(int i = 0; i < 4; ++i)
-      if(data[i] != other.data[i])
-        return false;
-    return true;
+  /// @name Check if `this` is equal to `other`
+  ///
+  /// This checks if red, green, blue and alpha are equal ignoring the format.
+  bool operator==(const Color& other) const noexcept {
+    return r() == other.r() && g() == other.g() && b() == other.b() && a() == other.a();
+  }
+  
+  /// @name Check if `this` is not equal to `other`
+  ///
+  /// This checks if red, green, blue and alpha are equal ignoring the format.
+  bool operator!=(const Color& other) const noexcept { return !(*this == other); }
+
+  /// @brief Get red value
+  Byte r() const noexcept {
+    switch(format_) {
+    case ColorFormat::RGB:
+    case ColorFormat::RGBA:
+      return data_[0];
+    case ColorFormat::BGR:
+    case ColorFormat::BGRA:
+      return data_[2];
+    };
   }
 
-  template <ColorFormat OtherCFormat>
-  bool operator!=(const Color<OtherCFormat>& other) const noexcept {
-    return !(*this == other);
-  }
-  /// @}
+  /// @brief Get green value
+  Byte g() const noexcept { return data_[1]; }
 
-  template <class... Args>
-  inline void setChannel(Args&&... args) {
-    static_assert(sizeof...(args) <= NumChannels, "too many colors provided");
-    setChannelImpl<0>(std::forward<Args>(args)...);
+  /// @brief Get blue value
+  Byte b() const noexcept {
+    switch(format_) {
+    case ColorFormat::RGB:
+    case ColorFormat::RGBA:
+      return data_[2];
+    case ColorFormat::BGR:
+    case ColorFormat::BGRA:
+      return data_[0];
+    };
   }
 
+  /// @brief Get alpha value
+  Byte a() const noexcept { return data_[3]; }
+
+private:
   template <int Idx, class T, class... Args>
   inline void setChannelImpl(T&& arg, Args&&... args) {
-    data[Idx] = arg;
+    data_[Idx] = arg;
     setChannelImpl<Idx + 1>(args...);
   }
 
   template <int Idx, class T>
   inline void setChannelImpl(T&& arg) {
-    data[Idx] = arg;
+    data_[Idx] = arg;
     for(int i = Idx + 1; i < 4; ++i)
-      data[i] = 0;
+      data_[i] = 0;
   }
 };
 
+SEQUOIA_API extern std::ostream& operator<<(std::ostream& os, const Color& color);
+
+/// @brief Make a color of the given format
+template <ColorFormat Format, typename... Args>
+Color makeColor(Args&&... args) {
+  return Color(Format, std::forward<Args>(args)...);
+}
+
+/// @brief Make a 24-bit RGB color
+template <typename... Args>
+Color makeColorRGB(Args&&... args) {
+  return makeColor<ColorFormat::RGB>(std::forward<Args>(args)...);
+}
+
+/// @brief Make a 24-bit BGR color
+template <typename... Args>
+Color makeColorBGR(Args&&... args) {
+  return makeColor<ColorFormat::BGR>(std::forward<Args>(args)...);
+}
+
+/// @brief Make a 32-bit RGBA color
+template <typename... Args>
+Color makeColorRGBA(Args&&... args) {
+  return makeColor<ColorFormat::RGBA>(std::forward<Args>(args)...);
+}
+
+/// @brief Make a 32-bit BGRA color
+template <typename... Args>
+Color makeColorBGRA(Args&&... args) {
+  return makeColor<ColorFormat::BGRA>(std::forward<Args>(args)...);
+}
+
 } // namespace core
 
-template <class T>
-struct IsColor : std::false_type {};
-
-/// @brief RGBA Color (red, green, blue, alpha)
-/// @see sequoia::core::Color
-/// @ingroup core
-using ColorRGBA = core::Color<core::ColorFormat::RGBA>;
-SEQUOIA_API extern std::ostream& operator<<(std::ostream& os, const ColorRGBA& color);
-
-template <>
-struct IsColor<ColorRGBA> : std::true_type {};
-
-/// @brief RGB Color (red, green, blue)
-/// @see sequoia::core::Color
-/// @ingroup core
-using ColorRGB = core::Color<core::ColorFormat::RGB>;
-SEQUOIA_API extern std::ostream& operator<<(std::ostream& os, const ColorRGB& color);
-
-template <>
-struct IsColor<ColorRGB> : std::true_type {};
-
-/// @brief GA Color (grey, alpha)
-/// @see sequoia::core::Color
-/// @ingroup core
-using ColorGA = core::Color<core::ColorFormat::RG>;
-SEQUOIA_API extern std::ostream& operator<<(std::ostream& os, const ColorGA& color);
-
-template <>
-struct IsColor<ColorGA> : std::true_type {};
-
-/// @brief G Color (grey)
-/// @see sequoia::core::Color
-/// @ingroup core
-using ColorG = core::Color<core::ColorFormat::R>;
-SEQUOIA_API extern std::ostream& operator<<(std::ostream& os, const ColorG& color);
-
-template <>
-struct IsColor<ColorG> : std::true_type {};
+using Color = core::Color;
 
 } // namespace sequoia
 

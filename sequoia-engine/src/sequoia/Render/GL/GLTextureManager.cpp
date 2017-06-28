@@ -42,14 +42,14 @@ static GLenum getGLTarget(TextureParameter::TextureKind kind) {
 
 static GLenum getGLColorFormat(core::ColorFormat format) {
   switch(format) {
-  case core::ColorFormat::R:
-    return GL_RED;
   case core::ColorFormat::RGB:
     return GL_RGB;
+  case core::ColorFormat::BGR:
+    return GL_BGR;
   case core::ColorFormat::RGBA:
     return GL_RGBA;
-  case core::ColorFormat::RG:
-    SEQUOIA_ASSERT_MSG(0, "ColorFormat::GA not supported");
+  case core::ColorFormat::BGRA:
+    return GL_BGRA;
   default:
     sequoia_unreachable("invalid format");
   }

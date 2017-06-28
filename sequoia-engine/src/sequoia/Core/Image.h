@@ -20,6 +20,9 @@
 #include "sequoia/Core/Export.h"
 #include "sequoia/Core/File.h"
 
+struct FIBITMAP;
+struct FIMEMORY;
+
 namespace sequoia {
 
 namespace core {
@@ -40,15 +43,14 @@ public:
     IF_UncompressedImageLast
   };
 
-  /// @brief Load image from file using the given format
+  /// @brief Load image from file
+  ///
+  /// The format of the image is deduced from `File::getType()`.
   ///
   /// @param file     File to load the image from
-  /// @param format   Initialize image of the given format (If `IK_Unknow` is provided, the format
-  ///                 is deduced from from the file extension)
-  ///
   /// @throws Exception   Failed to load image
-  static std::shared_ptr<Image> load(const std::shared_ptr<File>& file,
-                                     ImageFormat format = IF_Unknown);
+  /// @threadsafe This function is thread-safe
+  static std::shared_ptr<Image> load(const std::shared_ptr<File>& file);
 
   Image(ImageFormat format);
   virtual ~Image();
@@ -61,14 +63,10 @@ public:
   /// format.
   virtual const unsigned char* getPixelData() const = 0;
 
-  /// @brief Get read-only access to the pixel at position `(i, j)` with color of type `T`
+  /// @brief Get a copy of the pixel at position `(i, j)`
   ///
   /// @note This function should be merely used for debugging purposes.
-  template <class T>
-  inline T at(int i, int j) const noexcept {
-    static_assert(IsColor<T>::value, "not a Color");
-    return T(getPixelData() + getNumChannels() * (i * getWidth() + j));
-  }
+  virtual Color at(int i, int j) const noexcept = 0;
 
   /// @brief Get the width of the image in pixels
   virtual int getWidth() const noexcept = 0;
@@ -114,7 +112,7 @@ class SEQUOIA_API UncompressedImage : public Image {
 protected:
   /// File of the image
   std::shared_ptr<File> file_;
-
+  
   /// Pixel data
   unsigned char* pixelData_;
 
@@ -126,6 +124,14 @@ protected:
 
   /// Format of the color (also encodes the number of used channels in the upper bits)
   ColorFormat colorFormat_;
+  
+  /// FreeImage bit map
+  FIBITMAP* bitMap_;  
+  FIBITMAP* bitMapConverted_;  
+  bool converted_;
+  
+  /// FreeImage memory stream
+  FIMEMORY* memory_;
 
 public:
   UncompressedImage(ImageFormat format, const std::shared_ptr<File>& file);
@@ -143,6 +149,11 @@ public:
   /// @copydoc Image::getNumChannels
   virtual int getNumChannels() const noexcept override final {
     return SEQUOIA_COLOR_GET_NUM_CHANNELS(colorFormat_);
+  }
+  
+  /// @copydoc Image::at
+  virtual Color at(int i, int j) const noexcept override final {
+    return Color(colorFormat_, pixelData_ + getNumChannels() * (i * width_ + j));
   }
 
   /// @copydoc Image::getFile
