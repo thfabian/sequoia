@@ -81,29 +81,29 @@ TEST(ImageTest, JPEGImage) {
 }
 
 TEST(ImageTest, BMPImage) {
-//  Environment& env = Environment::getSingleton();
-//  auto file = env.getFile("sequoia/Core/TestImage/Test.bmp");
+  Environment& env = Environment::getSingleton();
+  auto file = env.getFile("sequoia/Core/TestImage/Test.bmp");
 
-//  EXPECT_EQ(file->getNumBytes(), 714);
+  EXPECT_EQ(file->getNumBytes(), 714);
 
-//  std::shared_ptr<Image> image = Image::load(file);
-//  EXPECT_EQ(image->getHeight(), 32);
-//  EXPECT_EQ(image->getWidth(), 32);
-//  EXPECT_EQ(image->getNumChannels(), 3);
-//  EXPECT_EQ(image->getColorFormat(), core::ColorFormat::BGR);
+  std::shared_ptr<Image> image = Image::load(file);
+  EXPECT_EQ(image->getHeight(), 32);
+  EXPECT_EQ(image->getWidth(), 32);
+  EXPECT_EQ(image->getNumChannels(), 3);
+  EXPECT_EQ(image->getColorFormat(), core::ColorFormat::BGR);
 
-//  // Bottom left is red
-//  EXPECT_EQ(image->at(0, 0), core::makeColorRGB(255, 0, 0));
+  // Bottom left is red
+  EXPECT_EQ(image->at(0, 0), core::makeColorRGB(255, 0, 0));
 
-//  // Bottom right is blue
-//  EXPECT_EQ(image->at(0, image->getWidth() - 1), core::makeColorRGB(0, 0, 255));
+  // Bottom right is blue
+  EXPECT_EQ(image->at(0, image->getWidth() - 1), core::makeColorRGB(0, 0, 255));
 
-//  // Top left is blue
-//  EXPECT_EQ(image->at(image->getHeight() - 1, 0), core::makeColorRGB(0, 0, 255));
+  // Top left is blue
+  EXPECT_EQ(image->at(image->getHeight() - 1, 0), core::makeColorRGB(0, 0, 255));
 
-//  // Top right is green
-//  EXPECT_EQ(image->at(image->getHeight() - 1, image->getWidth() - 1),
-//            core::makeColorRGB(0, 255, 0));
+  // Top right is green
+  EXPECT_EQ(image->at(image->getHeight() - 1, image->getWidth() - 1),
+            core::makeColorRGB(0, 255, 0));
 }
 
 TEST(ImageTest, InvalidImage) {
@@ -119,8 +119,8 @@ TEST(ImageTest, Comparison) {
   std::shared_ptr<Image> image2 = image1;
   EXPECT_EQ(*image1, *image2);
 
-//  std::shared_ptr<Image> image3 = Image::load(env.getFile("sequoia/Core/TestImage/Test.bmp"));
-//  EXPECT_NE(*image1, *image3);
+  std::shared_ptr<Image> image3 = Image::load(env.getFile("sequoia/Core/TestImage/Test.bmp"));
+  EXPECT_NE(*image1, *image3);
 }
 
 } // anonymous namespace
