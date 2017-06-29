@@ -15,53 +15,68 @@
 
 option(NO_SYSTEM_LIBS "By default, do not use system libraries" OFF)
 
+#
 # ZLIB
+#
 sequoia_find_package(
   PACKAGE ZLIB 
   FORWARD_VARS ZLIB_ROOT
 )
 
+#
 # backward
+#
 sequoia_build_package(backward)
 
+#
 # Boost
+#
 sequoia_find_package(
-  PACKAGE Boost 
+  PACKAGE Boost
   PACKAGE_ARGS ${boost_min_version} COMPONENTS ${boost_components}
   FORWARD_VARS BOOST_ROOT Boost_LIBRARY_DIRS Boost_INCLUDE_DIRS
 )
 
+#
 # FreeImage
+#
 sequoia_build_package(FreeImage)
 
+#
 # glbinding
+#
 sequoia_find_package(
   PACKAGE glbinding 
   PACKAGE_ARGS ${glbinding_version}
   FORWARD_VARS GLBINDING_ROOT
 )
 
+#
 # GLFW
+#
 sequoia_find_package(
   PACKAGE GLFW 
   PACKAGE_ARGS ${glfw_version}
   FORWARD_VARS GLFW_ROOT
 )
 
+#
 # glm
+#
 sequoia_find_package(
   PACKAGE glm 
   PACKAGE_ARGS ${glm_version}
   FORWARD_VARS GLM_ROOT
 )
 
+#
 # gtest
+#
 sequoia_build_package(gtest)
 
-# stb
-sequoia_build_package(stb)
-
+#
 # TBB
+#
 sequoia_find_package(
   PACKAGE TBB 
   FORWARD_VARS TBB_ROOT_DIR

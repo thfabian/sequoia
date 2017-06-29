@@ -82,14 +82,6 @@ set(gtest_url "https://github.com/google/googletest/archive/release-${gtest_vers
 set(gtest_md5 "4ff6353b2560df0afecfbda3b2763847")
 
 #
-# stb
-#
-list(APPEND projects stb)
-set(stb_version "2.29")
-set(stb_url "https://github.com/thfabian/stb/archive/v${stb_version}.tar.gz")
-set(stb_md5 "93231816ac22f3f074e067925debe97a")
-
-#
 # TBB
 #
 list(APPEND projects tbb)

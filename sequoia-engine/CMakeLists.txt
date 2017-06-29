@@ -73,7 +73,6 @@ include(Addglm)
 include(AddGTest)
 include(AddOpenGL)
 include(AddPython3)
-include(Addstb)
 include(AddTBB)
 
 if(SEQUOIA_TESTING)
@@ -106,7 +105,6 @@ sequoia_report_result(
   "${SEQUOIA_GLM_INFO_STR}"
   "${SEQUOIA_OPENGL_INFO_STR}"
   "${SEQUOIA_PYTHON3_INFO_STR}"
-  "${SEQUOIA_STB_INFO_STR}"
   "${SEQUOIA_TBB_INFO_STR}"
   "${SEQUOIA_GTEST_INFO_STR}"
 )
