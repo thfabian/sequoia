@@ -26,11 +26,12 @@
 //  - Extension       = List of of extensions, separated by '|'
 //
  
-FILE_TYPE(Text, false, ".txt")
-FILE_TYPE(Shader, false, ".frag|.vert|.geom|.tess")
+FILE_TYPE(Bmp, true, ".bmp|.dib")
+FILE_TYPE(DDS, true, ".dds")
+FILE_TYPE(Jpeg, true, ".jpg|.jpeg|.jpe")
 FILE_TYPE(Lua, false, ".lua")
 FILE_TYPE(Png, true, ".png")
-FILE_TYPE(Jpeg, true, ".jpg|.jpeg|.jpe")
-FILE_TYPE(Bmp, true, ".bmp|.dib")
+FILE_TYPE(Shader, false, ".frag|.vert|.geom|.tess")
+FILE_TYPE(Text, false, ".txt")
 
 // clang-format on

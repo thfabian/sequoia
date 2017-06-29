@@ -17,6 +17,7 @@ sequoia_include_guard()
 
 include(CheckCXXCompilerFlag)
 include(CheckCXXSourceRuns)
+include(CMakeParseArguments)
 
 ## sequoia_check_in_source_build
 ## -----------------------------
@@ -33,29 +34,84 @@ Please delete them.")
   endif()
 endmacro()
 
+## sequoia_gen_package_info_str
+## ----------------------------
+##
+## Append a package info string to ``SEQUOIA_PACKAGE_INFO`` for ``PACKAGE``.
+##
+##    PACKAGE:STRING=<>           - Name of the package
+##    VERSION_STR:STRING=<>       - Version string of the package or empty
+##    FOUND:BOOL=<>               - Was the package found?
+##
+macro(sequoia_gen_package_info_str PACKAGE VERSION_STR FOUND)
+  string(LENGTH ${PACKAGE} package_name_length)
+  math(EXPR indent_length "20 - ${package_name_length}")
+
+  set(full_indent "                    ") 
+  string(SUBSTRING ${full_indent} "0" "${indent_length}" indent)
+
+  set(info "found")
+  if(NOT(${FOUND}))
+    set(info "NOT found")
+  endif()
+
+  if(NOT("${VERSION_STR}" STREQUAL ""))
+    set(info "${info} (${VERSION_STR})")
+  endif()
+  
+  if(NOT(DEFINED SEQUOIA_PACKAGE_INFO))
+    set(SEQUOIA_PACKAGE_INFO CACHE BOOL "Information about the found packages" FORCE)
+  endif()
+  list(APPEND SEQUOIA_PACKAGE_INFO "${PACKAGE}${indent}: ${info}")
+endmacro()
+
 ## sequoia_export_package_variable
 ## -------------------------------
 ##
 ## Export the variables:
 ##  SEQUOIA_${PACKAGE}_FOUND      : Package was found
-##  SEQUOIA_${PACKAGE}_INFO_STR   : Information about the package (e.g version string)
 ##  SEQUOIA_${PACKAGE}_LIBRARIES  : Libraries of the package to link against
 ##
-## with ${PACKAGE} being converted to uppercase with:
+## with ``PACKAGE`` being converted to uppercase from the ``PACKAGE`` argument. In addition, an 
+## information string will be appended to ``SEQUOIA_PACKAGE_INFO``.
 ##
-##    PACKAGE:STRING=<>    - Name of the package
-##    FOUND:BOOL=<>        - Package was found
-##    INFO_STR:STRING=<>   - Information about the package (e.g version string)
-##    ARGN                 - List of libraries to link against
+##    PACKAGE:STRING=<>        - Name of the package
+##    FOUND:BOOL=<>            - Package was found
+##    VERSION_STR:STRING=<>    - Version string if available [optional]
+##    LIBRARIES:STRING=<>      - List of libraries required for linking [optional]
 ##
-macro(sequoia_export_package_variable PACKAGE FOUND INFO_STR)
-  string(TOUPPER ${PACKAGE} package)
-  set("SEQUOIA_${package}_FOUND" ${FOUND} CACHE BOOL "${PACKAGE} found" FORCE)
-  set("SEQUOIA_${package}_INFO_STR" ${INFO_STR} CACHE STRING "Info of package: ${PACKAGE}" FORCE)
-  set("SEQUOIA_${package}_LIBRARIES" ${ARGN} CACHE STRING "Libraries of package: ${PACKAGE}" FORCE)
-  mark_as_advanced("SEQUOIA_${package}_FOUND" 
-                   "SEQUOIA_${package}_INFO_STR" 
-                   "SEQUOIA_${package}_LIBRARIES")
+macro(sequoia_export_package)
+  # Prase arguments
+  set(options)
+  set(one_value_args PACKAGE FOUND VERSION_STR)
+  set(multi_value_args LIBRARIES)
+  cmake_parse_arguments(ARG "${options}" "${one_value_args}" "${multi_value_args}" ${ARGN})
+  
+  if(NOT("${ARG_UNPARSED_ARGUMENTS}" STREQUAL ""))
+    message(FATAL_ERROR "invalid argument ${ARG_UNPARSED_ARGUMENTS}")
+  endif()
+
+  if(NOT(DEFINED ARG_PACKAGE))
+    message(FATAL_ERROR "sequoia_export_package: PACKAGE variable required")
+  endif()
+
+  if(NOT(DEFINED ARG_FOUND))
+    message(FATAL_ERROR "sequoia_export_package: FOUND variable required")
+  endif()
+
+  string(TOUPPER ${ARG_PACKAGE} package)
+
+  # Export variables
+  set("SEQUOIA_${package}_FOUND" ${ARG_FOUND} CACHE BOOL "${ARG_PACKAGE} found" FORCE)
+  mark_as_advanced("SEQUOIA_${package}_FOUND")
+
+  if(DEFINED ARG_LIBRARIES)  
+    set("SEQUOIA_${package}_LIBRARIES" ${ARG_LIBRARIES} CACHE 
+        STRING "Libraries of package: ${ARG_PACKAGE}" FORCE)
+    mark_as_advanced("SEQUOIA_${package}_LIBRARIES")
+  endif()
+
+  sequoia_gen_package_info_str(${ARG_PACKAGE} "${ARG_VERSION_STR}" ${ARG_FOUND})
 endmacro()
 
 ## sequoia_check_and_set_cxx_flag

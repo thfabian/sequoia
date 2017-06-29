@@ -28,7 +28,7 @@ add_definitions(-DBOOST_ALL_NO_LIB)
 
 # FindBoost
 set(SEQUOIA_BOOST_COMPONENTS filesystem system program_options)
-find_package(Boost 1.54 COMPONENTS ${SEQUOIA_BOOST_COMPONENTS} REQUIRED)
+find_package(Boost 1.58 COMPONENTS ${SEQUOIA_BOOST_COMPONENTS} REQUIRED)
 
 # Add include directories
 include_directories(SYSTEM ${Boost_INCLUDE_DIRS})
@@ -54,9 +54,9 @@ if(WIN32)
   endforeach()
 endif()
 
-sequoia_export_package_variable(
-  Boost 
-  ${Boost_FOUND} 
-  "Boost: ${Boost_MAJOR_VERSION}.${Boost_MINOR_VERSION}.${Boost_SUBMINOR_VERSION}" 
-  ${Boost_LIBRARIES}
+sequoia_export_package(
+  PACKAGE Boost
+  FOUND ${Boost_FOUND} 
+  VERSION_STR "${Boost_MAJOR_VERSION}.${Boost_MINOR_VERSION}.${Boost_SUBMINOR_VERSION}" 
+  LIBRARIES ${Boost_LIBRARIES}
 )

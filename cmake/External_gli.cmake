@@ -4,7 +4,7 @@
 ##                       | (___   ___  __ _ _   _  ___  _  __ _ 
 ##                        \___ \ / _ \/ _` | | | |/ _ \| |/ _` |
 ##                        ____) |  __/ (_| | |_| | (_) | | (_| |
-##                       |_____/ \___|\__, |\__,_|\___/|_|\__,_| - Game Engine (2016-2017)
+##                       |_____/ \___|\__, |\__,_|\___/|_|\__,_| - Game Engine
 ##                                       | |                    
 ##                                       |_| 
 ##
@@ -13,10 +13,21 @@
 ##
 ##===------------------------------------------------------------------------------------------===##
 
-find_package(PythonInterp 3.5 REQUIRED)
-
-sequoia_export_package(
-  PACKAGE Python3
-  FOUND ${PYTHONINTERP_FOUND} 
-  VERSION_STR "${PYTHON_VERSION_STRING}"
+ExternalProject_Add(
+  gli
+  DOWNLOAD_DIR ${download_dir}
+  URL ${gli_url}
+  URL_MD5 ${gli_md5}
+  BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}/gli"
+  INSTALL_DIR "${Sequoia_INSTALL_PREFIX}/gli"
+  PATCH_COMMAND ""
+  CONFIGURE_COMMAND ""
+  BUILD_COMMAND ""
+  INSTALL_COMMAND ${CMAKE_COMMAND} -E make_directory <INSTALL_DIR>/gli && 
+                  ${CMAKE_COMMAND} -E copy_directory <SOURCE_DIR>/gli/ <INSTALL_DIR>/gli/
 )
+
+ExternalProject_Get_Property(gli install_dir)
+set(GLI_ROOT "${install_dir}" CACHE INTERNAL "")
+
+list(APPEND Sequoia_THIRDPARTYLIBS_ARGS "-DGLI_ROOT:PATH=${GLI_ROOT}")

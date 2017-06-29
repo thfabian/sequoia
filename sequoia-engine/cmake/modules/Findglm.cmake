@@ -4,7 +4,7 @@
 ##                       | (___   ___  __ _ _   _  ___  _  __ _ 
 ##                        \___ \ / _ \/ _` | | | |/ _ \| |/ _` |
 ##                        ____) |  __/ (_| | |_| | (_) | | (_| |
-##                       |_____/ \___|\__, |\__,_|\___/|_|\__,_| - Game Engine (2016-2017)
+##                       |_____/ \___|\__, |\__,_|\___/|_|\__,_| - Game Engine
 ##                                       | |                    
 ##                                       |_| 
 ##
@@ -101,8 +101,6 @@ find_package_handle_standard_args(
     GLM_INCLUDE_DIRS
   VERSION_VAR GLM_VERSION
 )
-
-mark_as_advanced(GLM_INCLUDE_DIRS)
 
 if(NOT(GLM_FOUND) AND glm_FIND_REQUIRED EQUAL 1)
   message(FATAL_ERROR "Could NOT find GLM. (Try setting GLM_ROOT in the env)")

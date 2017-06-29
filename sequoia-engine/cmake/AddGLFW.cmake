@@ -23,9 +23,9 @@ if(WIN32)
   endforeach()
 endif()
 
-sequoia_export_package_variable(
-  glfw 
-  ${GLFW_FOUND} 
-  "GLFW: ${GLFW_VERSION}" 
-  ${GLFW_LIBRARIES}
+sequoia_export_package(
+  PACKAGE glfw
+  FOUND ${GLFW_FOUND} 
+  VERSION_STR "${GLFW_VERSION}" 
+  LIBRARIES ${GLFW_LIBRARIES}
 )

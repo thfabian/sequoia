@@ -20,9 +20,8 @@ if(NOT(WIN32))
   add_definitions(-DGLM_FORCE_CXX14)
 endif()
 
-sequoia_export_package_variable(
-  glm
-  ${GLM_FOUND} 
-  "glm: ${GLM_VERSION}" 
+sequoia_export_package(
+  PACKAGE glm
+  FOUND ${GLM_FOUND} 
+  VERSION_STR "${GLM_VERSION}" 
 )
-

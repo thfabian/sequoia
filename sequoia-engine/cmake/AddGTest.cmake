@@ -37,9 +37,8 @@ if(WIN32)
   endforeach()
 endif()
 
-sequoia_export_package_variable(
-  gtest 
-  ${GTEST_FOUND} 
-  "GTest: Found" 
-  ${GTEST_LIBRARIES}
+sequoia_export_package(
+  PACKAGE GTest
+  FOUND ${GTEST_FOUND} 
+  LIBRARIES ${GTEST_LIBRARIES}
 )

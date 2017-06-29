@@ -27,10 +27,9 @@ elseif(BACKWARD_HAS_BFD)
   add_definitions(-DSEQUOIA_BACKWARD_HAS_BFD=1)
 endif()
 
-sequoia_export_package_variable(
-  Backward 
-  ${BACKWARD_FOUND} 
-  "backward: Found" 
-  ${BACKWARD_LIBRARIES}
+sequoia_export_package(
+  PACKAGE Backward 
+  FOUND ${BACKWARD_FOUND} 
+  LIBRARIES ${BACKWARD_LIBRARIES}
 )
 

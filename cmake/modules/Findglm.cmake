@@ -75,7 +75,7 @@ if(NOT(GLM_INCLUDE_DIRS))
 endif()
 
 #===---------------------------------------------------------------------------------------------===
-#   Read version from glm/system/Version.h
+#   Read version from glm/detail/setup.hpp
 #====--------------------------------------------------------------------------------------------===
 if(GLM_INCLUDE_DIRS AND NOT(GLM_VERSION))
   file(READ ${GLM_INCLUDE_DIRS}/glm/detail/setup.hpp _CONFIG_FILE)

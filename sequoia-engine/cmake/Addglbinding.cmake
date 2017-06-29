@@ -23,9 +23,9 @@ if(WIN32)
   endforeach()
 endif()
 
-sequoia_export_package_variable(
-  glbinding 
-  ${GLBINDING_FOUND} 
-  "glbinding: ${GLBINDING_VERSION}" 
-  ${GLBINDING_LIBRARIES}
+sequoia_export_package(
+  PACKAGE glbinding
+  FOUND ${GLBINDING_FOUND} 
+  VERSION_STR "${GLBINDING_VERSION}" 
+  LIBRARIES ${GLBINDING_LIBRARIES}
 )

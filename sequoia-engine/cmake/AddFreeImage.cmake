@@ -16,9 +16,9 @@
 find_package(FreeImage REQUIRED)
 include_directories(SYSTEM ${FREEIMAGE_INCLUDE_DIRS})
 
-sequoia_export_package_variable(
-  FreeImage 
-  ${FREEIMAGE_FOUND} 
-  "FreeImage: ${FREEIMAGE_VERSION}" 
-  ${FREEIMAGE_LIBRARIES}
+sequoia_export_package(
+  PACKAGE FreeImage
+  FOUND ${FREEIMAGE_FOUND} 
+  VERSION_STR "${FREEIMAGE_VERSION}" 
+  LIBRARIES ${FREEIMAGE_LIBRARIES}
 )

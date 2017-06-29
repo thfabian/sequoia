@@ -61,6 +61,15 @@ sequoia_find_package(
 )
 
 #
+# gli
+#
+sequoia_find_package(
+  PACKAGE gli 
+  PACKAGE_ARGS ${gli_version}
+  FORWARD_VARS GLI_ROOT
+)
+
+#
 # glm
 #
 sequoia_find_package(

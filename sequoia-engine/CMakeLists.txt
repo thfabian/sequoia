@@ -69,6 +69,7 @@ include(Addccache)
 include(AddFreeImage)
 include(Addglbinding)
 include(AddGLFW)
+include(Addgli)
 include(Addglm)
 include(AddGTest)
 include(AddOpenGL)
@@ -91,23 +92,8 @@ set(SEQUOIA_EXTERNAL_LIBRARIES
   ${SEQUOIA_GTEST_LIBRARIES}
 )
 
-# Output findings
-sequoia_report_result(
-  "External libraries summary" 
-  "${SEQUOIA_THREADS_INFO_STR}"
-  "${SEQUOIA_BOOST_INFO_STR}"
-  "${SEQUOIA_BACKWARD_INFO_STR}"
-  "${SEQUOIA_CPPCHECK_INFO_STR}"
-  "${SEQUOIA_CCACHE_INFO_STR}"
-  "${SEQUOIA_FREEIMAGE_INFO_STR}"
-  "${SEQUOIA_GLBINDING_INFO_STR}"
-  "${SEQUOIA_GLFW_INFO_STR}"
-  "${SEQUOIA_GLM_INFO_STR}"
-  "${SEQUOIA_OPENGL_INFO_STR}"
-  "${SEQUOIA_PYTHON3_INFO_STR}"
-  "${SEQUOIA_TBB_INFO_STR}"
-  "${SEQUOIA_GTEST_INFO_STR}"
-)
+# Output summary of the packages
+sequoia_report_result("External libraries summary" ${SEQUOIA_PACKAGE_INFO})
   
 ##===------------------------------------ Sequoia libraries -----------------------------------===##
 include_directories(${CMAKE_SOURCE_DIR}/src)

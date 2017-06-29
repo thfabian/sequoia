@@ -65,6 +65,15 @@ set(glfw_url "https://github.com/glfw/glfw/archive/${glfw_version}.tar.gz")
 set(glfw_md5 "91b8250b6edcc26c9f5205555070a504")
 
 #
+# gli
+#
+list(APPEND projects gli)
+set(gli_version "0.8")
+set(gli_download_version "0.8.2.0")
+set(gli_url "https://github.com/g-truc/gli/archive/${gli_download_version}.tar.gz")
+set(gli_md5 "163bf765271cb036b2408ce2171b9e37")
+
+#
 # glm
 #
 list(APPEND projects glm)

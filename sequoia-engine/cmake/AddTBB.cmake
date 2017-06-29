@@ -72,9 +72,10 @@ if(WIN32)
   endforeach()
 endif()
 
-sequoia_export_package_variable(
-  TBB 
-  ${TBB_FOUND} 
-  "TBB: ${TBB_VERSION}"
-  ${tbb_libs}
+sequoia_export_package(
+  PACKAGE TBB
+  FOUND ${TBB_FOUND} 
+  VERSION_STR "${TBB_VERSION}"
+  LIBRARIES ${tbb_libs}
 )
+

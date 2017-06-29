@@ -13,10 +13,12 @@
 ##
 ##===------------------------------------------------------------------------------------------===##
 
-find_package(PythonInterp 3.5 REQUIRED)
+find_package(gli REQUIRED)
+include_directories(SYSTEM ${GLI_INCLUDE_DIRS})
 
 sequoia_export_package(
-  PACKAGE Python3
-  FOUND ${PYTHONINTERP_FOUND} 
-  VERSION_STR "${PYTHON_VERSION_STRING}"
+  PACKAGE gli
+  FOUND ${GLI_FOUND} 
+  VERSION_STR "${GLI_VERSION}" 
 )
+

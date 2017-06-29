@@ -15,13 +15,13 @@
 
 find_package(Cppcheck)
 
+sequoia_export_package(
+  PACKAGE Cppcheck
+  FOUND ${CPPCHECK_FOUND} 
+)
+
 if(CPPCHECK_FOUND)
   set(SEQUOIA_HAS_CPPCHECK 1)
-  sequoia_export_package_variable(
-    Cppcheck 
-    ${CPPCHECK_FOUND} 
-    "Cppcheck: Found" 
-  )
 else()
   set(SEQUOIA_HAS_CPPCHECK 0)
 endif()
