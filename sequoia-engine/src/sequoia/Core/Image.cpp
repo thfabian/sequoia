@@ -18,7 +18,6 @@
 #include "sequoia/Core/Format.h"
 #include "sequoia/Core/HashCombine.h"
 #include "sequoia/Core/Image.h"
-#include "sequoia/Core/Logging.h"
 #include "sequoia/Core/StringSwitch.h"
 #include "sequoia/Core/Unreachable.h"
 #include <memory>
@@ -39,7 +38,6 @@ struct FreeImageContext {
   FreeImageContext() {
     FreeImage_Initialise();
     FreeImage_SetOutputMessage(FreeImageContext::ErrorHandler);
-    LOG(INFO) << "Using FreeImage: " << FreeImage_GetVersion();
   }
 
   ~FreeImageContext() { FreeImage_DeInitialise(); }
@@ -105,14 +103,14 @@ UncompressedImage::UncompressedImage(ImageFormat format, const std::shared_ptr<F
   // read-only so const cast is safe here.
   memory_ = FreeImage_OpenMemory(const_cast<Byte*>(file_->getData()), file_->getNumBytes());
 
-  // Load an image from the memory stream
+  // Load the image from the memory stream
   bitMap_ = FreeImage_LoadFromMemory(FIFormat, memory_, 0);
 
-  // Check if the image is stored in RGB or RGBA
-  int bitsPerPixel = FreeImage_GetBPP(bitMap_);
+  // Check if the image is stored in RGB or BGR
   bool colorOrderIsRGB = FREEIMAGE_COLORORDER == FREEIMAGE_COLORORDER_RGB;
 
   // Assert our image is 24 or 32 bits (8 bits per channel, Red/Green/Blue/Alpha)
+  int bitsPerPixel = FreeImage_GetBPP(bitMap_);
   if(bitsPerPixel < 24) {
     bitMapCopy_ = FreeImage_ConvertTo24Bits(bitMap_);
     std::swap(bitMapCopy_, bitMap_);

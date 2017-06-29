@@ -50,10 +50,8 @@ Scene::Scene() : activeCamera_(nullptr) {
 
   std::shared_ptr<SceneNode> cubeOrigin = SceneNode::create("TestCubeOrigin");
   cubeOrigin->addCapability<Drawable>(cubeMesh);
-//  cubeOrigin->get<Drawable>()->setTexture(
-//      0, game.createTexture(game.getAssetManager()->loadImage("sequoia/texture/UVTest512x512.png")));
   cubeOrigin->get<Drawable>()->setTexture(
-      0, game.createTexture(game.getAssetManager()->loadImage("sequoia/texture/Gaben.png")));
+      0, game.createTexture(game.getAssetManager()->loadImage("sequoia/texture/UVTest512x512.png")));
   sceneGraph_->insert(cubeOrigin);
 
   float dx = 3.0f;
