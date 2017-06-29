@@ -35,54 +35,52 @@ TEST(ImageTest, PNGImage) {
   EXPECT_EQ(image->getNumChannels(), 3);
   EXPECT_EQ(image->getColorFormat(), core::ColorFormat::BGR);
 
-//  // Top left is blue
-//  EXPECT_EQ(image->at<ColorRGB>(0, 0), ColorRGB(0, 0, 255));
-  
-  //EXPECT_EQ(image->at<ColorRGB>(0, image->getWidth() - 1), ColorRGB(0, 255, 0));
+  // Bottom left is red
+  EXPECT_EQ(image->at(0, 0), core::makeColorRGB(255, 0, 0));
 
-//  // Bottom left is red
-//  EXPECT_EQ(image->at<ColorRGB>(image->getHeight() - 1, 0), ColorRGB(255, 0, 0));
+  // Bottom right is blue
+  EXPECT_EQ(image->at(0, image->getWidth() - 1), core::makeColorRGB(0, 0, 255));
 
-//  // Bottom right is red
-//  EXPECT_EQ(image->at<ColorRGB>(image->getHeight() - 1, image->getWidth() - 1),
-//            ColorRGB(0, 0, 255));
+  // Top left is blue
+  EXPECT_EQ(image->at(image->getHeight() - 1, 0), core::makeColorRGB(0, 0, 255));
 
-//  // (0, 8) is yellow
-//  EXPECT_EQ(image->at<ColorRGB>(0, 8), ColorRGB(255, 255, 0));
+  // Top right is green
+  EXPECT_EQ(image->at(image->getHeight() - 1, image->getWidth() - 1),
+            core::makeColorRGB(0, 255, 0));
 }
 
-//TEST(ImageTest, JPEGImage) {
-//  Environment& env = Environment::getSingleton();
-//  auto file = env.getFile("sequoia/Core/TestImage/Test.jpg");
+TEST(ImageTest, JPEGImage) {
+  Environment& env = Environment::getSingleton();
+  auto file = env.getFile("sequoia/Core/TestImage/Test.jpg");
 
-//  EXPECT_EQ(file->getNumBytes(), 905);
+  EXPECT_EQ(file->getNumBytes(), 905);
 
-//  std::shared_ptr<Image> image = Image::load(file);
-//  EXPECT_EQ(image->getHeight(), 32);
-//  EXPECT_EQ(image->getWidth(), 32);
-//  EXPECT_EQ(image->getNumChannels(), 3);
-//  EXPECT_EQ(image->getColorFormat(), core::ColorFormat::RGB);
+  std::shared_ptr<Image> image = Image::load(file);
+  EXPECT_EQ(image->getHeight(), 32);
+  EXPECT_EQ(image->getWidth(), 32);
+  EXPECT_EQ(image->getNumChannels(), 3);
+  EXPECT_EQ(image->getColorFormat(), core::ColorFormat::BGR);
 
-//  // JPEG is a lossy format so we don't get the exact colors
+  // JPEG is a lossy format so we don't get the exact colors
 
-//  // Top left is blue
-//  EXPECT_EQ(image->at<ColorRGB>(0, 0), ColorRGB(0, 3, 254));
+  // Bottom left is red
+  EXPECT_EQ(image->at(0, 0), core::makeColorRGB(255, 2, 0));
 
-//  // Top right is green
-//  EXPECT_EQ(image->at<ColorRGB>(0, image->getWidth() - 1), ColorRGB(2, 250, 4));
+  // Bottom right is blue
+  EXPECT_EQ(image->at(0, image->getWidth() - 1), core::makeColorRGB(0, 6, 255));
 
-//  // Bottom left is red
-//  EXPECT_EQ(image->at<ColorRGB>(image->getHeight() - 1, 0), ColorRGB(252, 0, 0));
+  // Top left is blue
+  EXPECT_EQ(image->at(image->getHeight() - 1, 0), core::makeColorRGB(0, 4, 255));
 
-//  // Bottom right is red
-//  EXPECT_EQ(image->at<ColorRGB>(image->getHeight() - 1, image->getWidth() - 1),
-//            ColorRGB(0, 3, 254));
+  // Top right is green
+  EXPECT_EQ(image->at(image->getHeight() - 1, image->getWidth() - 1),
+            core::makeColorRGB(4, 254, 6));
 
-//  // (0, 8) is yellow
-//  EXPECT_EQ(image->at<ColorRGB>(0, 8), ColorRGB(255, 231, 41));
-//}
+  // (0, 5) is yellow
+  EXPECT_EQ(image->at(0, 4), core::makeColorRGB(255, 250, 11));
+}
 
-//TEST(ImageTest, BMPImage) {
+TEST(ImageTest, BMPImage) {
 //  Environment& env = Environment::getSingleton();
 //  auto file = env.getFile("sequoia/Core/TestImage/Test.bmp");
 
@@ -91,42 +89,38 @@ TEST(ImageTest, PNGImage) {
 //  std::shared_ptr<Image> image = Image::load(file);
 //  EXPECT_EQ(image->getHeight(), 32);
 //  EXPECT_EQ(image->getWidth(), 32);
-//  EXPECT_EQ(image->getNumChannels(), 4);
-//  EXPECT_EQ(image->getColorFormat(), core::ColorFormat::RGBA);
-
-//  // Top left is blue
-//  EXPECT_EQ(image->at<ColorRGB>(0, 0), ColorRGB(0, 0, 255));
-
-//  // Top right is green
-//  EXPECT_EQ(image->at<ColorRGB>(0, image->getWidth() - 1), ColorRGB(0, 255, 0));
+//  EXPECT_EQ(image->getNumChannels(), 3);
+//  EXPECT_EQ(image->getColorFormat(), core::ColorFormat::BGR);
 
 //  // Bottom left is red
-//  EXPECT_EQ(image->at<ColorRGB>(image->getHeight() - 1, 0), ColorRGB(255, 0, 0));
+//  EXPECT_EQ(image->at(0, 0), core::makeColorRGB(255, 0, 0));
 
-//  // Bottom right is red
-//  EXPECT_EQ(image->at<ColorRGB>(image->getHeight() - 1, image->getWidth() - 1),
-//            ColorRGB(0, 0, 255));
+//  // Bottom right is blue
+//  EXPECT_EQ(image->at(0, image->getWidth() - 1), core::makeColorRGB(0, 0, 255));
 
-//  // (0, 8) is yellow
-//  EXPECT_EQ(image->at<ColorRGB>(0, 8), ColorRGB(255, 255, 0));
-//}
+//  // Top left is blue
+//  EXPECT_EQ(image->at(image->getHeight() - 1, 0), core::makeColorRGB(0, 0, 255));
 
-//TEST(ImageTest, InvalidImage) {
-//  Environment& env = Environment::getSingleton();
-//  auto file = env.getFile("sequoia/Core/TestImage/Test.txt");
-//  EXPECT_THROW(Image::load(file), core::Exception);
-//}
+//  // Top right is green
+//  EXPECT_EQ(image->at(image->getHeight() - 1, image->getWidth() - 1),
+//            core::makeColorRGB(0, 255, 0));
+}
 
-//TEST(ImageTest, Comparison) {
-//  Environment& env = Environment::getSingleton();
+TEST(ImageTest, InvalidImage) {
+  Environment& env = Environment::getSingleton();
+  auto file = env.getFile("sequoia/Core/TestImage/Test.txt");
+  EXPECT_THROW(Image::load(file), core::Exception);
+}
 
-//  std::shared_ptr<Image> image1 = Image::load(env.getFile("sequoia/Core/TestImage/Test.bmp"));
-//  std::shared_ptr<Image> image2 = image1;
+TEST(ImageTest, Comparison) {
+  Environment& env = Environment::getSingleton();
 
-//  EXPECT_EQ(*image1, *image2);
+  std::shared_ptr<Image> image1 = Image::load(env.getFile("sequoia/Core/TestImage/Test.png"));
+  std::shared_ptr<Image> image2 = image1;
+  EXPECT_EQ(*image1, *image2);
 
-//  std::shared_ptr<Image> image3 = Image::load(env.getFile("sequoia/Core/TestImage/Test.png"));
+//  std::shared_ptr<Image> image3 = Image::load(env.getFile("sequoia/Core/TestImage/Test.bmp"));
 //  EXPECT_NE(*image1, *image3);
-//}
+}
 
 } // anonymous namespace

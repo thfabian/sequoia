@@ -117,7 +117,7 @@ public:
   bool operator==(const Color& other) const noexcept {
     return r() == other.r() && g() == other.g() && b() == other.b() && a() == other.a();
   }
-  
+
   /// @name Check if `this` is not equal to `other`
   ///
   /// This checks if red, green, blue and alpha are equal ignoring the format.

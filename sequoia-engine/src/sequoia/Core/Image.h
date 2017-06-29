@@ -65,6 +65,10 @@ public:
 
   /// @brief Get a copy of the pixel at position `(i, j)`
   ///
+  /// The image is stored in `row-major` order where `(0, 0)` is the bottome left corner. Hence,
+  /// `(0, image.getWidth() - 1)` is the bottom right corner and `(image.getHeight() - 1, 0)` is
+  /// the top left corner.
+  ///
   /// @note This function should be merely used for debugging purposes.
   virtual Color at(int i, int j) const noexcept = 0;
 
@@ -115,20 +119,18 @@ protected:
   
   /// Pixel data
   unsigned char* pixelData_;
-
+  
   /// Image width in pixels (x)
   int width_;
-
+  
   /// Image height in pixels (y)
   int height_;
-
+  
   /// Format of the color (also encodes the number of used channels in the upper bits)
   ColorFormat colorFormat_;
   
   /// FreeImage bit map
-  FIBITMAP* bitMap_;  
-  FIBITMAP* bitMapConverted_;  
-  bool converted_;
+  FIBITMAP *bitMap_, *bitMapCopy_;
   
   /// FreeImage memory stream
   FIMEMORY* memory_;
@@ -150,7 +152,7 @@ public:
   virtual int getNumChannels() const noexcept override final {
     return SEQUOIA_COLOR_GET_NUM_CHANNELS(colorFormat_);
   }
-  
+
   /// @copydoc Image::at
   virtual Color at(int i, int j) const noexcept override final {
     return Color(colorFormat_, pixelData_ + getNumChannels() * (i * width_ + j));

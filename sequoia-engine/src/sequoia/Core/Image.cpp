@@ -94,8 +94,7 @@ std::shared_ptr<Image> Image::load(const std::shared_ptr<File>& file) {
 Image::Image(Image::ImageFormat format) : format_(format) {}
 
 UncompressedImage::UncompressedImage(ImageFormat format, const std::shared_ptr<File>& file)
-    : Image(format), file_(file), bitMap_(nullptr), bitMapConverted_(nullptr), converted_(false),
-      memory_(nullptr) {
+    : Image(format), file_(file), bitMap_(nullptr), bitMapCopy_(nullptr), memory_(nullptr) {
 
   FREE_IMAGE_FORMAT FIFormat = GetFreeImageType(getFormat());
   SEQUOIA_ASSERT_MSG(FIFormat != FIF_UNKNOWN, "invalid image format");
@@ -109,35 +108,35 @@ UncompressedImage::UncompressedImage(ImageFormat format, const std::shared_ptr<F
   // Load an image from the memory stream
   bitMap_ = FreeImage_LoadFromMemory(FIFormat, memory_, 0);
 
+  // Check if the image is stored in RGB or RGBA
+  int bitsPerPixel = FreeImage_GetBPP(bitMap_);
+  bool colorOrderIsRGB = FREEIMAGE_COLORORDER == FREEIMAGE_COLORORDER_RGB;
+
+  // Assert our image is 24 or 32 bits (8 bits per channel, Red/Green/Blue/Alpha)
+  if(bitsPerPixel < 24) {
+    bitMapCopy_ = FreeImage_ConvertTo24Bits(bitMap_);
+    std::swap(bitMapCopy_, bitMap_);
+    colorFormat_ = colorOrderIsRGB ? ColorFormat::RGB : ColorFormat::BGR;
+
+  } else if(bitsPerPixel == 24) {
+    colorFormat_ = colorOrderIsRGB ? ColorFormat::RGB : ColorFormat::BGR;
+
+  } else if(bitsPerPixel == 32) {
+    colorFormat_ = colorOrderIsRGB ? ColorFormat::RGBA : ColorFormat::BGRA;
+  }
+
   // Get bitmap informations
   width_ = FreeImage_GetWidth(bitMap_);
   height_ = FreeImage_GetHeight(bitMap_);
 
-  // Check if the image is stored in RGB or RGBA
-  bool colorOrderIsRGB = FREEIMAGE_COLORORDER == FREEIMAGE_COLORORDER_RGB;
-  int bitsPerPixel = FreeImage_GetBPP(bitMap_);
-  
-  // Convert our image to 24 or 32 bits (8 bits per channel, Red/Green/Blue/Alpha)
-  if(bitsPerPixel < 24) {
-    bitMapConverted_ = FreeImage_ConvertTo24Bits(bitMap_);
-    colorFormat_ = colorOrderIsRGB ? ColorFormat::RGB : ColorFormat::BGR;
-    converted_ = true;
-  } else if(bitsPerPixel == 24) {
-    bitMapConverted_ = bitMap_;
-    colorFormat_ = colorOrderIsRGB ? ColorFormat::RGB : ColorFormat::BGR;
-  } else if(bitsPerPixel == 32) {
-    bitMapConverted_ = bitMap_;
-    colorFormat_ = colorOrderIsRGB ? ColorFormat::RGBA : ColorFormat::BGRA;
-  }
-
-  FREE_IMAGE_TYPE imageType = FreeImage_GetImageType(bitMapConverted_);
-  FREE_IMAGE_COLOR_TYPE colorType = FreeImage_GetColorType(bitMapConverted_);
+  FREE_IMAGE_TYPE imageType = FreeImage_GetImageType(bitMap_);
+  FREE_IMAGE_COLOR_TYPE colorType = FreeImage_GetColorType(bitMap_);
 
   SEQUOIA_ASSERT_MSG(colorType == FIC_RGB || colorType == FIC_RGBALPHA, "unsupported color type");
   SEQUOIA_ASSERT_MSG(imageType == FIT_BITMAP, "unsupported image type");
 
   // Get pixel data
-  pixelData_ = FreeImage_GetBits(bitMapConverted_);
+  pixelData_ = FreeImage_GetBits(bitMap_);
   SEQUOIA_ASSERT(pixelData_);
 }
 
@@ -145,8 +144,8 @@ UncompressedImage::~UncompressedImage() {
   if(bitMap_)
     FreeImage_Unload(bitMap_);
 
-  if(converted_ && bitMapConverted_)
-    FreeImage_Unload(bitMapConverted_);
+  if(bitMapCopy_)
+    FreeImage_Unload(bitMapCopy_);
 
   if(memory_)
     FreeImage_CloseMemory(memory_);
