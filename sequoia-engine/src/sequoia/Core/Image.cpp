@@ -20,11 +20,11 @@
 #include "sequoia/Core/Image.h"
 #include "sequoia/Core/StringSwitch.h"
 #include "sequoia/Core/Unreachable.h"
+#include <gli/gli.hpp>
 #include <memory>
 #include <mutex>
 
-// We use the static library of FreeImage
-#define FREEIMAGE_LIB
+#define FREEIMAGE_LIB // We use the static library of FreeImage
 #include <FreeImage/FreeImage.h>
 
 namespace sequoia {
@@ -83,6 +83,9 @@ std::shared_ptr<Image> Image::load(const std::shared_ptr<File>& file) {
   case FileType::Bmp:
     return std::make_shared<BMPImage>(file);
     break;
+  case FileType::DDS:
+    return std::make_shared<DDSImage>(file);
+    break;
   default:
     SEQUOIA_THROW(Exception, "invalid image format of file: \"%s\"", file->getPath());
     return nullptr;
@@ -91,7 +94,7 @@ std::shared_ptr<Image> Image::load(const std::shared_ptr<File>& file) {
 
 Image::Image(Image::ImageFormat format) : format_(format) {}
 
-UncompressedImage::UncompressedImage(ImageFormat format, const std::shared_ptr<File>& file)
+RegularImage::RegularImage(ImageFormat format, const std::shared_ptr<File>& file)
     : Image(format), file_(file), bitMap_(nullptr), bitMapCopy_(nullptr), memory_(nullptr) {
 
   FREE_IMAGE_FORMAT FIFormat = GetFreeImageType(getFormat());
@@ -138,7 +141,7 @@ UncompressedImage::UncompressedImage(ImageFormat format, const std::shared_ptr<F
   SEQUOIA_ASSERT(pixelData_);
 }
 
-UncompressedImage::~UncompressedImage() {
+RegularImage::~RegularImage() {
   if(bitMap_)
     FreeImage_Unload(bitMap_);
 
@@ -149,7 +152,7 @@ UncompressedImage::~UncompressedImage() {
     FreeImage_CloseMemory(memory_);
 }
 
-std::string UncompressedImage::toString() const {
+std::string RegularImage::toString() const {
   return core::format("%s[\n"
                       "  file = %s\n"
                       "  pixelData = %#016x\n"
@@ -162,12 +165,12 @@ std::string UncompressedImage::toString() const {
                       colorFormat_, getNumChannels());
 }
 
-bool UncompressedImage::equals(const Image* other) const noexcept {
+bool RegularImage::equals(const Image* other) const noexcept {
   if(!Image::equals(other))
     return false;
 
-  const UncompressedImage* thisImage = dyn_cast<UncompressedImage>(this);
-  const UncompressedImage* otherImage = dyn_cast<UncompressedImage>(other);
+  const RegularImage* thisImage = dyn_cast<RegularImage>(this);
+  const RegularImage* otherImage = dyn_cast<RegularImage>(other);
 
   return thisImage->pixelData_ == otherImage->pixelData_ &&
          thisImage->width_ == otherImage->width_ && thisImage->height_ == otherImage->height_ &&
@@ -175,17 +178,84 @@ bool UncompressedImage::equals(const Image* other) const noexcept {
          *(thisImage->file_) == *(otherImage->file_);
 }
 
-std::size_t UncompressedImage::hash() const noexcept {
+std::size_t RegularImage::hash() const noexcept {
   std::size_t seed = 0;
   core::hashCombine(seed, file_->hash(), pixelData_, width_, height_, colorFormat_);
   return seed;
 }
 
-PNGImage::PNGImage(const std::shared_ptr<File>& file) : UncompressedImage(Image::IF_PNG, file) {}
+PNGImage::PNGImage(const std::shared_ptr<File>& file) : RegularImage(Image::IF_PNG, file) {}
 
-JPEGImage::JPEGImage(const std::shared_ptr<File>& file) : UncompressedImage(Image::IF_JPEG, file) {}
+JPEGImage::JPEGImage(const std::shared_ptr<File>& file) : RegularImage(Image::IF_JPEG, file) {}
 
-BMPImage::BMPImage(const std::shared_ptr<File>& file) : UncompressedImage(Image::IF_BMP, file) {}
+BMPImage::BMPImage(const std::shared_ptr<File>& file) : RegularImage(Image::IF_BMP, file) {}
+
+TextureImage::TextureImage(Image::ImageFormat format, const std::shared_ptr<File>& file)
+    : Image(format), file_(file) {
+  SEQUOIA_ASSERT_MSG(format == IF_DDS, "only DDS can be loaded as texture image (yet)");
+
+  // gli::load dispatches to the correct decoder
+  texture_ = std::make_unique<gli::texture>(
+      gli::load(reinterpret_cast<char const*>(file_->getData()), file_->getNumBytes()));
+
+  if(texture_->empty())
+    SEQUOIA_THROW(core::Exception, "failed to load texture image of file: %s", file_->getPath());
+}
+
+TextureImage::~TextureImage() {}
+
+const unsigned char* TextureImage::getPixelData() const {
+  return reinterpret_cast<unsigned char const*>(texture_->data());
+}
+
+int TextureImage::getWidth() const noexcept { return texture_->extent()[0]; }
+int TextureImage::getHeight() const noexcept { return texture_->extent()[1]; }
+
+int TextureImage::getNumChannels() const noexcept {
+  sequoia_unreachable("TextureImage::getNumChannels() is unavailable");
+  return 0;
+}
+
+ColorFormat TextureImage::getColorFormat() const noexcept {
+  sequoia_unreachable("TextureImage::getColorFormat() is unavailable");
+  return ColorFormat::RGB;
+}
+
+Color TextureImage::at(int i, int j) const noexcept {
+  sequoia_unreachable("TextureImage::at() is unavailable");
+  return Color(ColorFormat::RGB, 0);
+}
+
+std::size_t TextureImage::hash() const noexcept {
+  std::size_t seed = 0;
+  core::hashCombine(seed, file_->hash(), std::hash<std::unique_ptr<gli::texture>>()(texture_));
+  return seed;
+}
+
+std::string TextureImage::toString() const {
+  return core::format("%s[\n"
+                      "  file = %s\n"
+                      "  pixelData = %#016x\n"
+                      "  width = %i,\n"
+                      "  height = %i,\n"
+                      "  levels = %i\n"
+                      "]",
+                      getName(), file_->getPath(), (std::size_t)getPixelData(), getWidth(),
+                      getHeight(), texture_->levels());
+}
+
+bool TextureImage::equals(const Image* other) const noexcept {
+  if(!Image::equals(other))
+    return false;
+
+  const TextureImage* thisImage = dyn_cast<TextureImage>(this);
+  const TextureImage* otherImage = dyn_cast<TextureImage>(other);
+
+  return *(thisImage->texture_) == *(otherImage->texture_) &&
+         *(thisImage->file_) == *(otherImage->file_);
+}
+
+DDSImage::DDSImage(const std::shared_ptr<File>& file) : TextureImage(Image::IF_DDS, file) {}
 
 } // namespace core
 

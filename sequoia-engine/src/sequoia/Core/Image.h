@@ -23,6 +23,10 @@
 struct FIBITMAP;
 struct FIMEMORY;
 
+namespace gli {
+class texture;
+}
+
 namespace sequoia {
 
 namespace core {
@@ -36,11 +40,14 @@ public:
   /// @brief RTTI discriminator
   enum ImageFormat {
     IF_Unknown = 0,
-    IF_UncompressedImage,
+    IF_RegularImage,
     IF_PNG,  ///< PNGImage
     IF_JPEG, ///< JPEGImage
     IF_BMP,  ///< BMPImage
-    IF_UncompressedImageLast
+    IF_RegularImageLast,
+    IF_TextureImage,
+    IF_DDS, ///< DDSImage
+    IF_TextureImageLast
   };
 
   /// @brief Load image from file
@@ -110,34 +117,34 @@ private:
   ImageFormat format_;
 };
 
-/// @brief Uncompressed image formats (PNG, JPEG, BMP)
+/// @brief Regular image formats such as PNG, JPEG, BMP etc.
 /// @ingroup core
-class SEQUOIA_API UncompressedImage : public Image {
+class SEQUOIA_API RegularImage : public Image {
 protected:
   /// File of the image
   std::shared_ptr<File> file_;
-  
+
   /// Pixel data
   unsigned char* pixelData_;
-  
+
   /// Image width in pixels (x)
   int width_;
-  
+
   /// Image height in pixels (y)
   int height_;
-  
+
   /// Format of the color (also encodes the number of used channels in the upper bits)
   ColorFormat colorFormat_;
-  
+
   /// FreeImage bit map
   FIBITMAP *bitMap_, *bitMapCopy_;
-  
+
   /// FreeImage memory stream
   FIMEMORY* memory_;
 
 public:
-  UncompressedImage(ImageFormat format, const std::shared_ptr<File>& file);
-  virtual ~UncompressedImage();
+  RegularImage(ImageFormat format, const std::shared_ptr<File>& file);
+  virtual ~RegularImage();
 
   /// @copydoc Image::getPixelData
   virtual const unsigned char* getPixelData() const override final { return pixelData_; }
@@ -174,8 +181,8 @@ public:
   virtual bool equals(const Image* other) const noexcept override;
 
   static bool classof(const Image* image) {
-    return image->getFormat() >= Image::IF_UncompressedImage &&
-           image->getFormat() < Image::IF_UncompressedImageLast;
+    return image->getFormat() >= Image::IF_RegularImage &&
+           image->getFormat() < Image::IF_RegularImageLast;
   }
 
 protected:
@@ -184,7 +191,7 @@ protected:
 
 /// @brief Portable Network Graphics (PNG) image
 /// @ingroup core
-class SEQUOIA_API PNGImage final : public UncompressedImage {
+class SEQUOIA_API PNGImage final : public RegularImage {
 public:
   PNGImage(const std::shared_ptr<File>& file);
   static bool classof(const Image* image) { return image->getFormat() == Image::IF_PNG; }
@@ -195,7 +202,7 @@ protected:
 
 /// @brief Joint Photographic Experts Group (JPEG) image
 /// @ingroup core
-class SEQUOIA_API JPEGImage final : public UncompressedImage {
+class SEQUOIA_API JPEGImage final : public RegularImage {
 public:
   JPEGImage(const std::shared_ptr<File>& file);
   static bool classof(const Image* image) { return image->getFormat() == Image::IF_JPEG; }
@@ -206,13 +213,81 @@ protected:
 
 /// @brief Windows Bitmap (BMP) image
 /// @ingroup core
-class SEQUOIA_API BMPImage final : public UncompressedImage {
+class SEQUOIA_API BMPImage final : public RegularImage {
 public:
   BMPImage(const std::shared_ptr<File>& file);
   static bool classof(const Image* image) { return image->getFormat() == Image::IF_BMP; }
 
 protected:
   virtual const char* getName() const override { return "BMPImage"; };
+};
+
+/// @brief Texture image formats suchs as DDS
+/// @ingroup core
+class SEQUOIA_API TextureImage : public Image {
+protected:
+  /// File of the image
+  std::shared_ptr<File> file_;
+
+  /// Texture
+  std::unique_ptr<gli::texture> texture_;
+
+public:
+  TextureImage(ImageFormat format, const std::shared_ptr<File>& file);
+  virtual ~TextureImage();
+
+  /// @copydoc Image::getPixelData
+  virtual const unsigned char* getPixelData() const override final;
+
+  /// @copydoc Returns width of the base layer
+  virtual int getWidth() const noexcept override final;
+
+  /// @copydoc Returns height of the base layer
+  virtual int getHeight() const noexcept override final;
+
+  /// @copydoc Image::getNumChannels
+  virtual int getNumChannels() const noexcept override final;
+
+  /// @copydoc Image::at
+  virtual Color at(int i, int j) const noexcept override final;
+
+  /// @copydoc Image::getFile
+  virtual const std::shared_ptr<File>& getFile() const override final { return file_; }
+
+  /// @copydoc Image::getColorFormat
+  virtual ColorFormat getColorFormat() const noexcept override final;
+
+  /// @copydoc Image::getHash
+  virtual std::size_t hash() const noexcept override final;
+
+  /// @copydoc Image::toString
+  virtual std::string toString() const override final;
+
+  /// @copydoc Image::equals
+  virtual bool equals(const Image* other) const noexcept override;
+  
+  /// @brief Get the texture
+  const std::unique_ptr<gli::texture>& getTexture() const { return texture_; }
+  std::unique_ptr<gli::texture>& getTexture() { return texture_; }
+
+  static bool classof(const Image* image) {
+    return image->getFormat() >= Image::IF_TextureImage &&
+           image->getFormat() < Image::IF_TextureImageLast;
+  }
+
+protected:
+  virtual const char* getName() const = 0;
+};
+
+/// @brief DirectDraw Surface (DDS) image
+/// @ingroup core
+class SEQUOIA_API DDSImage final : public TextureImage {
+public:
+  DDSImage(const std::shared_ptr<File>& file);
+  static bool classof(const Image* image) { return image->getFormat() == Image::IF_DDS; }
+
+protected:
+  virtual const char* getName() const override { return "DDSImage"; };
 };
 
 } // namespace core

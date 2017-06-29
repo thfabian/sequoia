@@ -83,7 +83,6 @@ public:
   /// @brief Set the channels
   template <class... Args>
   inline void setChannel(Args&&... args) {
-    SEQUOIA_ASSERT_MSG(sizeof...(args) <= getNumChannels(), "too many colors provided");
     setChannelImpl<0>(std::forward<Args>(args)...);
   }
 

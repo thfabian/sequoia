@@ -15,6 +15,7 @@
 
 #include "sequoia/Core/Exception.h"
 #include "sequoia/Core/Image.h"
+#include "sequoia/Core/Casting.h"
 #include "sequoia/Unittest/Environment.h"
 #include <gtest/gtest.h>
 
@@ -104,6 +105,20 @@ TEST(ImageTest, BMPImage) {
   // Top right is green
   EXPECT_EQ(image->at(image->getHeight() - 1, image->getWidth() - 1),
             core::makeColorRGB(0, 255, 0));
+}
+
+TEST(ImageTest, DDSImage) {
+  Environment& env = Environment::getSingleton();
+  auto file = env.getFile("sequoia/Core/TestImage/Test.dds");
+  std::shared_ptr<Image> image = Image::load(file);
+  
+  EXPECT_EQ(image->getHeight(), 32);
+  EXPECT_EQ(image->getWidth(), 32);
+  
+//  const core::DDSImage* ddsImage = dyn_cast<core::DDSImage>(image.get());
+//  EXPECT_EQ(image->get(), 6);
+
+  //  std::cout << image->toString() << std::endl;
 }
 
 TEST(ImageTest, InvalidImage) {
