@@ -118,7 +118,7 @@ struct SEQUOIA_API TextureParameter {
   /// Use mipmap for minification?
   bool UseMipmap = true;
 
-  /// Interpolate between two mipmap levels (requires `UseMipmap == true`)
+  /// Interpolate between two mipmap levels
   bool InterpolateBetweenMipmaps = true;
 
   /// Edge sampling used for the first dimension

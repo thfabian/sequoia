@@ -72,5 +72,14 @@ TEST_F(GLTextureTest, LoadTexture2D) {
   GLTexture* glnewTexture = dyn_cast<GLTexture>(newTexture.get());
   EXPECT_NE(gltexture->getID(), glnewTexture->getID());
 }
+
+TEST_F(GLTextureTest, LoadTexture2DCompressed) {
+  Environment& env = Environment::getSingleton();
+  RenderSystem& rsys = RenderSystem::getSingleton();
+
+  auto image = Image::load(env.getFile("sequoia/Render/GL/TestGLTexture/Test.dds"));
+  std::shared_ptr<Texture> texture = rsys.createTexture(getWindow(), image);
+  
+}
   
 } // anonymous namespace
