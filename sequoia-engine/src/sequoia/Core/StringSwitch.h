@@ -95,7 +95,7 @@ public:
     }
     return *this;
   }
-  
+
   template <unsigned N>
   inline StringSwitch& Cases(const char (&S)[N], const T& Value) {
     return Case(S, Value);

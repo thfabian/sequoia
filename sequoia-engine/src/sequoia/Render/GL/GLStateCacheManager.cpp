@@ -13,8 +13,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Core/Casting.h"
 #include "sequoia/Render/GL/GL.h"
+#include "sequoia/Core/Casting.h"
 #include "sequoia/Render/GL/GLProgram.h"
 #include "sequoia/Render/GL/GLStateCacheManager.h"
 #include "sequoia/Render/GL/GLTexture.h"
@@ -198,10 +198,10 @@ protected:
     if(texture) {
       // Bind texture
       setActivTextureUnit(textureUnit);
-  
+
       if(enable) {
         dyn_cast<GLTexture>(texture)->bind();
-  
+
         // Bind assoicated sampler if we already have a program
         Program* program = getRenderState().Program;
         if(program) {

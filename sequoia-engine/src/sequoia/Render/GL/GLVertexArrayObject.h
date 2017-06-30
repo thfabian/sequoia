@@ -43,7 +43,7 @@ public:
   /// @brief Bind the VAO
   /// @note Do not call this function directly, use `GLRenderer::bindVertexArrayObject` instead
   void bind();
-  
+
   /// @brief Unbind VAO
   void unbind();
 

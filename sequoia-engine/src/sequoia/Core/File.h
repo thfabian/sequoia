@@ -19,10 +19,10 @@
 #include "sequoia/Core/Byte.h"
 #include "sequoia/Core/Export.h"
 #include "sequoia/Core/StringRef.h"
+#include <array>
 #include <functional>
 #include <memory>
 #include <string>
-#include <array>
 
 namespace sequoia {
 

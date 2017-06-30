@@ -13,11 +13,11 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
+#include "sequoia/Render/RenderState.h"
 #include "sequoia/Core/Format.h"
 #include "sequoia/Core/StringUtil.h"
 #include "sequoia/Core/Unreachable.h"
 #include "sequoia/Render/Program.h"
-#include "sequoia/Render/RenderState.h"
 #include "sequoia/Render/Texture.h"
 #include "sequoia/Render/VertexArrayObject.h"
 #include <unordered_set>
@@ -109,9 +109,9 @@ void RenderStateCache::initState() noexcept {
 
 void RenderStateCache::setRenderState(const RenderState& newState) noexcept {
 #define RENDER_STATE(Type, Name, BitfieldWidth, DefaultValue)                                      \
-  if(state_.Name != newState.Name) {                                                                  \
-    Name##Changed(newState.Name);                                                                     \
-    state_.Name = newState.Name;                                                                      \
+  if(state_.Name != newState.Name) {                                                               \
+    Name##Changed(newState.Name);                                                                  \
+    state_.Name = newState.Name;                                                                   \
   }
 #include "sequoia/Render/RenderState.inc"
 #undef RENDER_STATE
@@ -171,7 +171,6 @@ std::string RenderStateCache::toString() const {
                       "]",
                       core::indent(state_.toString()));
 }
-
 
 } // namespace render
 

@@ -13,12 +13,12 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
+#include "sequoia/Game/AssetManager.h"
 #include "sequoia/Core/Assert.h"
 #include "sequoia/Core/Logging.h"
 #include "sequoia/Core/Memory.h"
 #include "sequoia/Core/StringRef.h"
 #include "sequoia/Core/UtfString.h"
-#include "sequoia/Game/AssetManager.h"
 #include "sequoia/Game/Exception.h"
 #include <fstream>
 
@@ -70,13 +70,12 @@ AssetManager::AssetManager(const platform::String& path, const platform::String&
 }
 
 std::shared_ptr<File> AssetManager::load(const std::string& path, FileType type) {
-  if(type == FileType::Unknown) 
+  if(type == FileType::Unknown)
     type = File::TypeFromExtension(path);
-  
+
   if(type == FileType::Unknown)
     LOG(WARNING) << "Cannot deduce extension for '" << path << "'";
-  
-  
+
   auto it = pathLookupMap_.find(path);
   std::size_t id = std::size_t(-1);
 
@@ -128,7 +127,7 @@ const AssetManager::Asset& AssetManager::getAsset(std::size_t id) const {
 
 void AssetManager::loadFromDisk(std::unique_ptr<AssetManager::Asset>& asset) {
   std::string fullPath = platform::toAnsiString(assetPath_ / platform::asPath(asset->Path));
-  
+
   std::ios_base::openmode mode = std::ios_base::in;
   if(asset->File->isBinary())
     mode |= std::ios_base::binary;
@@ -145,8 +144,8 @@ void AssetManager::loadFromDisk(std::unique_ptr<AssetManager::Asset>& asset) {
 
   // Read ASCII file
   file.read(reinterpret_cast<char*>(asset->Data.data()), asset->Data.size());
-  
-  LOG(INFO) << "Successfully loaded asset \"" << asset->Path << "\"";  
+
+  LOG(INFO) << "Successfully loaded asset \"" << asset->Path << "\"";
 }
 
 } // namespace game

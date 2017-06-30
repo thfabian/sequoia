@@ -80,7 +80,7 @@ public:
   /// @brief Bind the texture to the current render pipline
   /// @note Do not call this function directly, use `GLRenderer::bindTexture` instead.
   void bind();
-  
+
   /// @brief Unbind texture
   void unbind();
 

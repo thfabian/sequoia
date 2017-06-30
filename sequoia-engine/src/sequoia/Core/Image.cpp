@@ -13,11 +13,11 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
+#include "sequoia/Core/Image.h"
 #include "sequoia/Core/Casting.h"
 #include "sequoia/Core/Exception.h"
 #include "sequoia/Core/Format.h"
 #include "sequoia/Core/HashCombine.h"
-#include "sequoia/Core/Image.h"
 #include "sequoia/Core/StringSwitch.h"
 #include "sequoia/Core/Unreachable.h"
 #include <gli/gli.hpp>

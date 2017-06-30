@@ -74,7 +74,7 @@ public:
   /// @brief Bind the program to the current render pipline
   /// @note Do not call this function directly, use `GLRenderer::bindProgram` instead
   void bind();
-  
+
   /// @brief Unbind program
   void unbind();
 
@@ -129,7 +129,7 @@ public:
 
   /// @brief Empty string
   static const std::string EmptyString;
-  
+
   SEQUOIA_GL_OBJECT(Program)
 
 private:

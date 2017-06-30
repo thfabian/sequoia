@@ -13,11 +13,11 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
+#include "sequoia/Render/GL/GL.h"
 #include "sequoia/Core/Logging.h"
 #include "sequoia/Core/Options.h"
 #include "sequoia/Core/Unreachable.h"
 #include "sequoia/Render/Exception.h"
-#include "sequoia/Render/GL/GL.h"
 #include "sequoia/Render/GL/GLInputSystem.h"
 #include "sequoia/Render/GL/GLRenderSystem.h"
 #include "sequoia/Render/GL/GLRenderWindow.h"
@@ -167,7 +167,7 @@ void GLRenderWindow::init() {
   glfwSetCursorEnterCallback(window_, GLRenderWindow::mouseEnterCallbackDispatch);
 
   renderSystem_->addListener<InputEventListener>(static_cast<InputEventListener*>(this));
-  
+
   LOG(INFO) << "Done registering IO callbacks";
 }
 

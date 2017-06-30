@@ -35,10 +35,10 @@ public:
 
   RenderTarget(RenderTargetKind kind);
   virtual ~RenderTarget() {}
-  
+
   /// @brief Tells the target to update it's contents
   virtual void update() = 0;
-  
+
   /// @brief Get kind of RenderTarget (used by RTTI dyn_cast<> et al.)
   RenderTargetKind getKind() const { return kind_; }
 
