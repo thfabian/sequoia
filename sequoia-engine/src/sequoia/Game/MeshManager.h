@@ -29,12 +29,9 @@ namespace sequoia {
 
 namespace game {
 
-/// @brief Handle creation of meshes of a specifc `RenderTarget`
+/// @brief Handle creation and allocation of meshes
 /// @ingroup game
 class SEQUOIA_API MeshManager : public NonCopyable {
-
-  /// Target used to create device buffers
-  render::RenderTarget* target_;
 
   /// Record of all the loaded meshes (use count of 1 implies the mesh is *not* in use)
   std::vector<std::shared_ptr<render::VertexData>> vertexDataList_;
@@ -44,9 +41,6 @@ class SEQUOIA_API MeshManager : public NonCopyable {
 
 public:
   using BufferUsageKind = render::VertexArrayObject::BufferUsageKind;
-
-  /// @brief Crate mesh-manager for a specific `RenderTarget`
-  MeshManager(render::RenderTarget* target);
 
   /// @brief Load mesh from disk
   ///

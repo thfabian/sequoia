@@ -49,21 +49,21 @@ void Game::run() {
   // Start main-loop
   while(!mainWindow_->isClosed() && !shouldClose_) {
 
-    // Query I/O events
-    renderSystem_->pollEvents();
-
     // Set the draw commands
     drawCommandList->clear();
     scene_->updateDrawCommandList(drawCommandList);
 
+    // Start rendering to the main-window
+    renderSystem_->renderOneFrame(mainWindow_);
+
     // Compute next time-step
     scene_->update();
 
-    // Start rendering all tender targets
-    renderSystem_->renderOneFrame();
-
     // Update screen
-    renderSystem_->swapBuffers();
+    mainWindow_->swapBuffers();
+
+    // Query I/O events
+    renderSystem_->pollEvents();
   }
 
   LOG(INFO) << "Done with main-loop";
@@ -95,7 +95,7 @@ void Game::init(bool hideWindow) {
                           .Default(WindowModeKind::WK_Window);
     hint.HideWindow = hideWindow;
 
-    mainWindow_ = renderSystem_->createWindow(hint);
+    mainWindow_ = renderSystem_->createMainWindow(hint);
 
     // Set the viewport of the mainwindow
     auto viewport = std::make_shared<render::Viewport>(mainWindow_, 0, 0, mainWindow_->getWidth(),
@@ -107,17 +107,16 @@ void Game::init(bool hideWindow) {
     quitKey_ = Keymap::makeDefault(render::Key_Q, render::Mod_Ctrl);
 
     // Register the game as a keyboard and mouse listener
-    renderSystem_->addKeyboardListener(mainWindow_, this);
-    renderSystem_->addMouseListener(mainWindow_, this);
+    renderSystem_->addKeyboardListener(this);
+    renderSystem_->addMouseListener(this);
 
     // Initialize the object managers
     assetManager_ =
         std::make_unique<AssetManager>(PLATFORM_STR(SEQUOIA_RESSOURCEPATH), PLATFORM_STR("assets"));
-    meshManager_ = std::make_unique<MeshManager>(mainWindow_);
+    meshManager_ = std::make_unique<MeshManager>();
 
     // Create default shaders and program
-    renderSystem_->loadDefaultShaders(mainWindow_,
-                                      assetManager_->load("sequoia/shader/Default.vert"),
+    renderSystem_->loadDefaultShaders(assetManager_->load("sequoia/shader/Default.vert"),
                                       assetManager_->load("sequoia/shader/Default.frag"));
 
     // Initialize the startup scene
@@ -175,29 +174,25 @@ MeshManager* Game::getMeshManager() const { return meshManager_.get(); }
 
 render::RenderWindow* Game::getMainWindow() const { return mainWindow_; }
 
-render::RenderTarget* Game::getMainRenderTarget() const {
-  return static_cast<render::RenderTarget*>(mainWindow_);
-}
-
 render::Texture* Game::createTexture(const std::shared_ptr<Image>& image) {
   return createTexture(image, render::TextureParameter());
 }
 
 render::Texture* Game::createTexture(const std::shared_ptr<Image>& image,
                                      const render::TextureParameter& param) {
-  return renderSystem_->createTexture(mainWindow_, image, param).get();
+  return renderSystem_->createTexture(image, param).get();
 }
 
 const std::shared_ptr<render::Shader>& Game::getDefaultVertexShader() const {
-  return renderSystem_->getDefaultVertexShader(mainWindow_);
+  return renderSystem_->getDefaultVertexShader();
 }
 
 const std::shared_ptr<render::Shader>& Game::getDefaultFragmentShader() const {
-  return renderSystem_->getDefaultFragmentShader(mainWindow_);
+  return renderSystem_->getDefaultFragmentShader();
 }
 
 const std::shared_ptr<render::Program>& Game::getDefaultProgram() const {
-  return renderSystem_->getDefaultProgram(mainWindow_);
+  return renderSystem_->getDefaultProgram();
 }
 
 Scene* Game::getScene() const { return scene_; }

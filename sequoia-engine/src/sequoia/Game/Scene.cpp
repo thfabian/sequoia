@@ -76,7 +76,7 @@ Scene::Scene() : activeCamera_(nullptr) {
   controller->setCamera(activeCamera_);
   sceneGraph_->insert(controller);
 
-  game.getMainWindow()->setCursorMode(render::RenderTarget::CK_Disabled);
+  game.getMainWindow()->setCursorMode(render::RenderWindow::CK_Disabled);
 }
 
 void Scene::updateDrawCommandList(render::DrawCommandList* list) {

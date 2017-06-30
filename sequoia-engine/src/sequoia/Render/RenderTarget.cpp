@@ -13,24 +13,18 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Render/RenderTarget.h"
 #include "sequoia/Core/Assert.h"
 #include "sequoia/Render/Camera.h"
 #include "sequoia/Render/DrawCommandList.h"
+#include "sequoia/Render/RenderTarget.h"
 
 namespace sequoia {
 
 namespace render {
 
-RenderTarget::RenderTarget(RenderTargetKind kind) : kind_(kind), active_(true), viewport_(nullptr) {
+RenderTarget::RenderTarget(RenderTargetKind kind) : kind_(kind), viewport_(nullptr) {
   list_ = std::make_shared<render::DrawCommandListDefault>();
 }
-
-bool RenderTarget::isActive() const { return active_; }
-
-void RenderTarget::setActive(bool active) { active_ = active; }
-
-bool RenderTarget::hasViewport() const { return viewport_ != nullptr; }
 
 Viewport* RenderTarget::getViewport() {
   SEQUOIA_ASSERT(viewport_);
@@ -41,14 +35,6 @@ const Viewport* RenderTarget::getViewport() const {
   SEQUOIA_ASSERT(viewport_);
   return viewport_.get();
 }
-
-void RenderTarget::setViewport(const std::shared_ptr<Viewport>& viewport) { viewport_ = viewport; }
-
-void RenderTarget::setDrawCommandList(const std::shared_ptr<DrawCommandList>& list) {
-  list_ = list;
-}
-
-const std::shared_ptr<DrawCommandList>& RenderTarget::getDrawCommandList() { return list_; }
 
 } // namespace render
 

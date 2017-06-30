@@ -34,7 +34,7 @@ TEST_F(MeshManagerTest, Cube) {
   EXPECT_EQ(mesh->getVertexData()->getNumVertices(), 24);
   EXPECT_FALSE(mesh->isModifiable());
   EXPECT_TRUE(mesh->getAxisAlignedBox() ==
-              math::AxisAlignedBox(math::vec3(-1, -1, -1), math::vec3(1, 1, 1)));
+              math::AxisAlignedBox(math::vec3(-0.5, -0.5, -0.5), math::vec3(0.5, 0.5, 0.5)));
 }
 
 TEST_F(MeshManagerTest, FreeUnusedMeshes) {

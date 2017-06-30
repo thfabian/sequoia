@@ -195,10 +195,9 @@ void GLRenderer::loadDefaultShaders(const std::shared_ptr<File>& defaultVertexSh
                                     const std::shared_ptr<File>& defaultFragmentShaderFile) {
   auto& rsys = RenderSystem::getSingleton();
 
-  defaultVertexShader_ = rsys.createShader(window_, Shader::ST_Vertex, defaultVertexShaderFile);
-  defaultFragmentShader_ =
-      rsys.createShader(window_, Shader::ST_Fragment, defaultFragmentShaderFile);
-  defaultProgram_ = rsys.createProgram(window_, {defaultVertexShader_, defaultFragmentShader_});
+  defaultVertexShader_ = rsys.createShader(Shader::ST_Vertex, defaultVertexShaderFile);
+  defaultFragmentShader_ = rsys.createShader(Shader::ST_Fragment, defaultFragmentShaderFile);
+  defaultProgram_ = rsys.createProgram({defaultVertexShader_, defaultFragmentShader_});
 }
 
 const std::shared_ptr<Shader>& GLRenderer::getDefaultVertexShader() const {

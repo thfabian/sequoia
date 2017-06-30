@@ -26,15 +26,14 @@ TEST(GLRenderWindowTest, Construction) {
   hints.WindowMode = RenderWindow::WindowHint::WK_Window;
   hints.Width = 1280;
   hints.Height = 960;
-  RenderWindow* window = RenderSystem::getSingleton().createWindow(hints);
+  RenderWindow* window = RenderSystem::getSingleton().createMainWindow(hints);
 
-  EXPECT_TRUE(window->isActive());
   EXPECT_FALSE(window->isFullscreen());
   EXPECT_FALSE(window->isHidden());
   EXPECT_EQ(window->getWidth(), 1280);
   EXPECT_EQ(window->getHeight(), 960);
 
-  RenderSystem::getSingleton().destroyTarget(window);
+  RenderSystem::getSingleton().destroyMainWindow();
 }
 
 } // anonymous namespace

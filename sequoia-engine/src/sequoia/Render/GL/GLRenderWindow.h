@@ -38,13 +38,14 @@ class SEQUOIA_API GLRenderWindow final : public RenderWindow, public InputEventL
   GLRenderSystem* renderSystem_;
   GLFWwindow* window_;
 
-  /// Short-hard or window geometry
+  /// Short-hard for window geometry
   int windowWidth_;
   int windowHeight_;
 
   /// Mode of the cursor
   CursorModeKind mode_;
 
+  /// OpenGL
   std::unique_ptr<GLRenderer> renderer_;
   std::unique_ptr<GLInputSystem> inputSystem_;
 

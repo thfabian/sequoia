@@ -54,73 +54,72 @@ public:
   /// @brief Terminate the render-system
   virtual ~RenderSystem();
 
-  /// @brief Create a new RenderWindow
+  /// @brief Create the main-window (if a main-window is already active, the old one will be
+  /// destroyed first)
   /// @returns the created window
-  virtual RenderWindow* createWindow(const RenderWindow::WindowHint& hints) = 0;
+  virtual RenderWindow* createMainWindow(const RenderWindow::WindowHint& hints) = 0;
 
-  /// @brief Manually destroy the RenderTarget
-  virtual void destroyTarget(RenderTarget* target) = 0;
+  /// @brief Destroys the currently active main-window
+  virtual void destroyMainWindow() noexcept = 0;
+
+  /// @brief Get the main-window
+  virtual RenderWindow* getMainWindow() const = 0;
 
   /// @brief Processes events that are in the event queue
   virtual void pollEvents() = 0;
 
-  /// @brief Render one frame into the target of each active registered RenderTarget
-  virtual void renderOneFrame() = 0;
-
-  /// @brief Swap the buffers and display the next frame for each active registered RenderTarget
-  virtual void swapBuffers() = 0;
+  /// @brief Render one frame into `target`
+  virtual void renderOneFrame(RenderTarget* target) = 0;
 
   /// @brief Create a new VertexArrayObject for `target`
-  virtual std::unique_ptr<VertexArrayObject> createVertexArrayObject(RenderTarget* target) = 0;
+  virtual std::unique_ptr<VertexArrayObject> createVertexArrayObject() = 0;
 
   /// @brief Create a shader from source for `target`
-  virtual std::shared_ptr<Shader> createShader(RenderTarget* target, Shader::ShaderType type,
+  virtual std::shared_ptr<Shader> createShader(Shader::ShaderType type,
                                                const std::shared_ptr<File>& file) = 0;
 
   /// @brief Create a GPU program from the given `shaders` for `target`
   virtual std::shared_ptr<Program>
-  createProgram(RenderTarget* target, const std::set<std::shared_ptr<Shader>>& shaders) = 0;
+  createProgram(const std::set<std::shared_ptr<Shader>>& shaders) = 0;
 
-  /// @brief Create a texture of `image` (using texture parameters `param`) for `target`
+  /// @brief Create a texture of `image` (using texture parameters `param`)
   virtual std::shared_ptr<Texture>
-  createTexture(RenderTarget* target, const std::shared_ptr<Image>& image,
+  createTexture(const std::shared_ptr<Image>& image,
                 const TextureParameter& param = TextureParameter()) = 0;
 
-  /// @brief Add the keyboard `listener` to `target`
-  virtual void addKeyboardListener(RenderTarget* target, KeyboardListener* listener) = 0;
+  /// @brief Add the keyboard `listener`
+  virtual void addKeyboardListener(KeyboardListener* listener) = 0;
 
-  /// @brief Remove the keyboard `listener` of `target`
-  virtual void removeKeyboardListener(RenderTarget* target, KeyboardListener* listener) = 0;
+  /// @brief Remove the keyboard `listener`
+  virtual void removeKeyboardListener(KeyboardListener* listener) = 0;
 
-  /// @brief Add the mouse `listener` to `target`
-  virtual void addMouseListener(RenderTarget* target, MouseListener* listener) = 0;
+  /// @brief Add the mouse `listener`
+  virtual void addMouseListener(MouseListener* listener) = 0;
 
-  /// @brief Remove the mouse `listener` of `target`
-  virtual void removeMouseListener(RenderTarget* target, MouseListener* listener) = 0;
+  /// @brief Remove the mouse `listener`
+  virtual void removeMouseListener(MouseListener* listener) = 0;
 
-  /// @brief Set if we run in debug-mode (needs to be set before creating windows/targets to take
-  /// full effect)
+  /// @brief Load the default vertex and fragment shaders and link them into a program
+  ///
+  /// @param defaultVertexShaderFile    File containing the default vertex shader
+  /// @param defaultFragmentShaderFile  File containing the default fragment shader
+  virtual void loadDefaultShaders(const std::shared_ptr<File>& defaultVertexShaderFile,
+                                  const std::shared_ptr<File>& defaultFragmentShaderFile) = 0;
+
+  /// @brief Get the default vertex shader
+  virtual const std::shared_ptr<Shader>& getDefaultVertexShader() const = 0;
+
+  /// @brief Get the default fragment shader
+  virtual const std::shared_ptr<Shader>& getDefaultFragmentShader() const = 0;
+
+  /// @brief Get the default fragment shader
+  virtual const std::shared_ptr<Program>& getDefaultProgram() const = 0;
+
+  /// @brief Set if we run in debug-mode
   void setDebugMode(bool debugMode);
 
   /// @brief Check if we run in debug-mode
   bool debugMode() const;
-
-  /// @brief Load the default vertex and fragment shaders and link them into a program of `target`
-  ///
-  /// @param defaultVertexShaderFile    File containing the default vertex shader
-  /// @param defaultFragmentShaderFile  File containing the default fragment shader
-  virtual void loadDefaultShaders(RenderTarget* target,
-                                  const std::shared_ptr<File>& defaultVertexShaderFile,
-                                  const std::shared_ptr<File>& defaultFragmentShaderFile) = 0;
-
-  /// @brief Get the default vertex shader of `target`
-  virtual const std::shared_ptr<Shader>& getDefaultVertexShader(RenderTarget* target) const = 0;
-
-  /// @brief Get the default fragment shader of `target`
-  virtual const std::shared_ptr<Shader>& getDefaultFragmentShader(RenderTarget* target) const = 0;
-
-  /// @brief Get the default fragment shader of `target`
-  virtual const std::shared_ptr<Program>& getDefaultProgram(RenderTarget* target) const = 0;
 
 protected:
   RenderSystem(RenderSystemKind kind);

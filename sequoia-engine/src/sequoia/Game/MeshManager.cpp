@@ -21,8 +21,6 @@ namespace sequoia {
 
 namespace game {
 
-MeshManager::MeshManager(render::RenderTarget* target) : target_(target) {}
-
 std::shared_ptr<Mesh> MeshManager::load(const std::string& name, const std::shared_ptr<File>& file,
                                         bool modifiable, BufferUsageKind usage) {
   return nullptr;
@@ -141,8 +139,8 @@ std::shared_ptr<Mesh> MeshManager::createCube(const std::string& name, bool modi
     std::memcpy(data->getIndicesPtr(), CubeIndices, numIndices * sizeof(render::VertexIndexType));
 
     // Set the VAO
-    data->setVertexArrayObject(
-        render::RenderSystem::getSingleton().createVertexArrayObject(target_), usage);
+    data->setVertexArrayObject(render::RenderSystem::getSingleton().createVertexArrayObject(),
+                               usage);
     data->getVertexArrayObject()->writeVertexData(0, numVertices);
     data->getVertexArrayObject()->writeIndexData(0, numIndices);
 

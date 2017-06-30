@@ -37,7 +37,7 @@ TEST_F(GLShaderTest, LoadingSuccess) {
   RenderSystem& rsys = RenderSystem::getSingleton();
 
   std::shared_ptr<Shader> shader =
-      rsys.createShader(getWindow(), Shader::ST_Vertex,
+      rsys.createShader(Shader::ST_Vertex,
                         env.getFile("sequoia/Render/GL/TestGLShader/VertexCompileSuccess.vert"));
 
   // Create from source
@@ -51,7 +51,7 @@ TEST_F(GLShaderTest, LoadingSuccess) {
 
   // Use already existing shader
   std::shared_ptr<Shader> newShader =
-      rsys.createShader(getWindow(), Shader::ST_Vertex,
+      rsys.createShader(Shader::ST_Vertex,
                         env.getFile("sequoia/Render/GL/TestGLShader/VertexCompileSuccess.vert"));
 
   GLShader* glnewshader = dyn_cast<GLShader>(newShader.get());
@@ -64,14 +64,13 @@ TEST_F(GLShaderTest, LoadingFail) {
   RenderSystem& rsys = RenderSystem::getSingleton();
 
   // Shader does not exists
-  EXPECT_THROW(rsys.createShader(
-                   getWindow(), Shader::ST_Vertex,
+  EXPECT_THROW(rsys.createShader(Shader::ST_Vertex,
                    env.getFile("sequoia/Render/GL/TestGLShader/VertexCompileFail-NonExising.vert")),
                Exception);
 
   // Shader is invalid
   EXPECT_THROW(
-      rsys.createShader(getWindow(), Shader::ST_Vertex,
+      rsys.createShader(Shader::ST_Vertex,
                         env.getFile("sequoia/Render/GL/TestGLShader/VertexCompileFail.vert")),
       RenderSystemException);
 }
@@ -80,7 +79,8 @@ TEST_F(GLShaderTest, LoadingPartial) {
   Environment& env = Environment::getSingleton();
 
   GLShaderManager* manager = dyn_cast<GLRenderSystem>(RenderSystem::getSingletonPtr())
-                                 ->getRenderer(getWindow())
+                                 ->getMainGLWindow()
+                                 ->getRenderer()
                                  ->getShaderManager();
 
   std::shared_ptr<GLShader> shader = manager->create(

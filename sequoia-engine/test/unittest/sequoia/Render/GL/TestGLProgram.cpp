@@ -37,16 +37,13 @@ TEST_F(GLProgramTest, LinkingSuccess) {
   Environment& env = Environment::getSingleton();
   RenderSystem& rsys = RenderSystem::getSingleton();
 
-  std::shared_ptr<Shader> vertexShader =
-      rsys.createShader(getWindow(), Shader::ST_Vertex,
-                        env.getFile("sequoia/Render/GL/TestGLProgram/VertexLinkSuccess.vert"));
+  std::shared_ptr<Shader> vertexShader = rsys.createShader(
+      Shader::ST_Vertex, env.getFile("sequoia/Render/GL/TestGLProgram/VertexLinkSuccess.vert"));
 
-  std::shared_ptr<Shader> fragmentShader =
-      rsys.createShader(getWindow(), Shader::ST_Fragment,
-                        env.getFile("sequoia/Render/GL/TestGLProgram/FragmentLinkSuccess.frag"));
+  std::shared_ptr<Shader> fragmentShader = rsys.createShader(
+      Shader::ST_Fragment, env.getFile("sequoia/Render/GL/TestGLProgram/FragmentLinkSuccess.frag"));
 
-  std::shared_ptr<Program> program =
-      rsys.createProgram(getWindow(), {vertexShader, fragmentShader});
+  std::shared_ptr<Program> program = rsys.createProgram({vertexShader, fragmentShader});
   GLProgram* glprogram = dyn_cast<GLProgram>(program.get());
 
   EXPECT_TRUE(glprogram->isValid());
@@ -71,11 +68,10 @@ TEST_F(GLProgramTest, UniformScalars) {
   Environment& env = Environment::getSingleton();
   RenderSystem& rsys = RenderSystem::getSingleton();
 
-  std::shared_ptr<Shader> vertexShader =
-      rsys.createShader(getWindow(), Shader::ST_Vertex,
-                        env.getFile("sequoia/Render/GL/TestGLProgram/VertexUniformScalars.vert"));
+  std::shared_ptr<Shader> vertexShader = rsys.createShader(
+      Shader::ST_Vertex, env.getFile("sequoia/Render/GL/TestGLProgram/VertexUniformScalars.vert"));
 
-  std::shared_ptr<Program> program = rsys.createProgram(getWindow(), {vertexShader});
+  std::shared_ptr<Program> program = rsys.createProgram({vertexShader});
   GLProgram* glprogram = dyn_cast<GLProgram>(program.get());
 
   EXPECT_EQ(glprogram->getUniformVariables().size(), 2);
@@ -93,11 +89,10 @@ TEST_F(GLProgramTest, UniformVectors) {
   Environment& env = Environment::getSingleton();
   RenderSystem& rsys = RenderSystem::getSingleton();
 
-  std::shared_ptr<Shader> vertexShader =
-      rsys.createShader(getWindow(), Shader::ST_Vertex,
-                        env.getFile("sequoia/Render/GL/TestGLProgram/VertexUniformVectors.vert"));
+  std::shared_ptr<Shader> vertexShader = rsys.createShader(
+      Shader::ST_Vertex, env.getFile("sequoia/Render/GL/TestGLProgram/VertexUniformVectors.vert"));
 
-  std::shared_ptr<Program> program = rsys.createProgram(getWindow(), {vertexShader});
+  std::shared_ptr<Program> program = rsys.createProgram({vertexShader});
   GLProgram* glprogram = dyn_cast<GLProgram>(program.get());
 
   EXPECT_EQ(glprogram->getUniformVariables().size(), 3);
@@ -108,7 +103,7 @@ TEST_F(GLProgramTest, UniformVectors) {
   math::vec3 u_fvec3;
   EXPECT_TRUE(glprogram->setUniformVariable("u_fvec3", u_fvec3));
   EXPECT_THROW(glprogram->setUniformVariable("u_fvec2", u_fvec3), render::RenderSystemException);
-  
+
   math::vec4 u_fvec4;
   EXPECT_TRUE(glprogram->setUniformVariable("u_fvec4", u_fvec4));
 
@@ -119,11 +114,10 @@ TEST_F(GLProgramTest, UniformMatrices) {
   Environment& env = Environment::getSingleton();
   RenderSystem& rsys = RenderSystem::getSingleton();
 
-  std::shared_ptr<Shader> vertexShader =
-      rsys.createShader(getWindow(), Shader::ST_Vertex,
-                        env.getFile("sequoia/Render/GL/TestGLProgram/VertexUniformMatrices.vert"));
+  std::shared_ptr<Shader> vertexShader = rsys.createShader(
+      Shader::ST_Vertex, env.getFile("sequoia/Render/GL/TestGLProgram/VertexUniformMatrices.vert"));
 
-  std::shared_ptr<Program> program = rsys.createProgram(getWindow(), {vertexShader});
+  std::shared_ptr<Program> program = rsys.createProgram({vertexShader});
   GLProgram* glprogram = dyn_cast<GLProgram>(program.get());
 
   EXPECT_EQ(glprogram->getUniformVariables().size(), 3);
@@ -144,11 +138,10 @@ TEST_F(GLProgramTest, VertexAttributesAll) {
   Environment& env = Environment::getSingleton();
   RenderSystem& rsys = RenderSystem::getSingleton();
 
-  std::shared_ptr<Shader> vertexShader =
-      rsys.createShader(getWindow(), Shader::ST_Vertex,
-                        env.getFile("sequoia/Render/GL/TestGLProgram/VertexAttributesAll.vert"));
+  std::shared_ptr<Shader> vertexShader = rsys.createShader(
+      Shader::ST_Vertex, env.getFile("sequoia/Render/GL/TestGLProgram/VertexAttributesAll.vert"));
 
-  std::shared_ptr<Program> program = rsys.createProgram(getWindow(), {vertexShader});
+  std::shared_ptr<Program> program = rsys.createProgram({vertexShader});
   GLProgram* glprogram = dyn_cast<GLProgram>(program.get());
 
   // Check the locations
@@ -163,11 +156,10 @@ TEST_F(GLProgramTest, VertexAttributesFail) {
   Environment& env = Environment::getSingleton();
   RenderSystem& rsys = RenderSystem::getSingleton();
 
-  std::shared_ptr<Shader> vertexShader =
-      rsys.createShader(getWindow(), Shader::ST_Vertex,
-                        env.getFile("sequoia/Render/GL/TestGLProgram/VertexAttributesFail.vert"));
+  std::shared_ptr<Shader> vertexShader = rsys.createShader(
+      Shader::ST_Vertex, env.getFile("sequoia/Render/GL/TestGLProgram/VertexAttributesFail.vert"));
 
-  EXPECT_THROW((rsys.createProgram(getWindow(), {vertexShader})), RenderSystemException);
+  EXPECT_THROW((rsys.createProgram({vertexShader})), RenderSystemException);
 #endif
 }
 
@@ -175,11 +167,10 @@ TEST_F(GLProgramTest, TextureSamplers) {
   Environment& env = Environment::getSingleton();
   RenderSystem& rsys = RenderSystem::getSingleton();
 
-  std::shared_ptr<Shader> fragmentShader =
-      rsys.createShader(getWindow(), Shader::ST_Fragment,
-                        env.getFile("sequoia/Render/GL/TestGLProgram/TextureSamplers.frag"));
+  std::shared_ptr<Shader> fragmentShader = rsys.createShader(
+      Shader::ST_Fragment, env.getFile("sequoia/Render/GL/TestGLProgram/TextureSamplers.frag"));
 
-  std::shared_ptr<Program> program = rsys.createProgram(getWindow(), {fragmentShader});
+  std::shared_ptr<Program> program = rsys.createProgram({fragmentShader});
   GLProgram* glprogram = dyn_cast<GLProgram>(program.get());
 
   EXPECT_TRUE(glprogram->isTextureSampler("tex0_SamplerFor2DTexture"));

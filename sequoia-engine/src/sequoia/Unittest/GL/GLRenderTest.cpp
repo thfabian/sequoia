@@ -13,11 +13,11 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Unittest/GL/GLRenderTest.h"
 #include "sequoia/Core/Logging.h"
 #include "sequoia/Render/GL/GLRenderWindow.h"
 #include "sequoia/Render/RenderSystem.h"
 #include "sequoia/Render/Viewport.h"
+#include "sequoia/Unittest/GL/GLRenderTest.h"
 
 namespace sequoia {
 
@@ -29,7 +29,7 @@ void GLRenderTest::SetUp() {
   render::RenderWindow::WindowHint hints;
   hints.HideWindow = true;
   hints.WindowMode = render::RenderWindow::WindowHint::WK_Window;
-  window_ = (render::GLRenderWindow*)render::RenderSystem::getSingleton().createWindow(hints);
+  window_ = (render::GLRenderWindow*)render::RenderSystem::getSingleton().createMainWindow(hints);
 
   // Initialize Viewport
   auto viewport =
@@ -40,7 +40,7 @@ void GLRenderTest::SetUp() {
   window_->init();
 }
 
-void GLRenderTest::TearDown() { render::RenderSystem::getSingleton().destroyTarget(window_); }
+void GLRenderTest::TearDown() { render::RenderSystem::getSingleton().destroyMainWindow(); }
 
 } // namespace unittest
 

@@ -13,11 +13,11 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Render/GL/GL.h"
 #include "sequoia/Core/Casting.h"
 #include "sequoia/Core/ErrorHandler.h"
 #include "sequoia/Core/Logging.h"
 #include "sequoia/Render/Exception.h"
+#include "sequoia/Render/GL/GL.h"
 #include "sequoia/Render/GL/GLInputSystem.h"
 #include "sequoia/Render/GL/GLProgramManager.h"
 #include "sequoia/Render/GL/GLRenderSystem.h"
@@ -40,7 +40,7 @@ static void GLFWErrorCallbackHard(int error, const char* description) {
   SEQUOIA_THROW(RenderSystemException, description);
 }
 
-GLRenderSystem::GLRenderSystem() : RenderSystem(RK_OpenGL) {
+GLRenderSystem::GLRenderSystem() : RenderSystem(RK_OpenGL), mainWindow_(nullptr) {
   LOG(INFO) << "Initializing OpenGL RenderSystem ...";
   glfwSetErrorCallback(GLFWErrorCallbackHard);
 
@@ -53,23 +53,25 @@ GLRenderSystem::GLRenderSystem() : RenderSystem(RK_OpenGL) {
 
 GLRenderSystem::~GLRenderSystem() {
   LOG(INFO) << "Terminating OpenGL RenderSystem ...";
-  renderTargets_.clear();
+  destroyMainWindow();
   glfwTerminate();
   LOG(INFO) << "Done terminating OpenGL RenderSystem";
 }
 
-RenderWindow* GLRenderSystem::createWindow(const RenderWindow::WindowHint& hints) {
-  renderTargets_.emplace_back(std::make_shared<GLRenderWindow>(this, hints));
-  return static_cast<RenderWindow*>(renderTargets_.back().get());
+RenderWindow* GLRenderSystem::createMainWindow(const RenderWindow::WindowHint& hints) {
+  mainWindow_ = std::make_shared<GLRenderWindow>(this, hints);
+  return mainWindow_.get();
 }
 
-void GLRenderSystem::destroyTarget(RenderTarget* target) {
-  rendererMap_.erase(target);
-  for(auto it = renderTargets_.begin(); it != renderTargets_.end();)
-    if(it->get() == target)
-      it = renderTargets_.erase(it);
-    else
-      ++it;
+RenderWindow* GLRenderSystem::getMainWindow() const { return getMainGLWindow(); }
+
+GLRenderWindow* GLRenderSystem::getMainGLWindow() const { return mainWindow_.get(); }
+
+void GLRenderSystem::destroyMainWindow() noexcept {
+  if(mainWindow_) {
+    mainWindow_.reset();
+    mainWindow_ = nullptr;
+  }
 }
 
 void GLRenderSystem::pollEvents() {
@@ -82,95 +84,62 @@ void GLRenderSystem::pollEvents() {
     listener->inputEventStop();
 }
 
-void GLRenderSystem::renderOneFrame() {
-  std::for_each(renderTargets_.begin(), renderTargets_.end(), [](const auto& target) {
-    if(target->isActive())
-      target->update();
-  });
+void GLRenderSystem::renderOneFrame(RenderTarget* target) { 
+  target->update(); 
 }
 
-void GLRenderSystem::swapBuffers() {
-  std::for_each(renderTargets_.begin(), renderTargets_.end(), [](const auto& target) {
-    if(target->isActive())
-      target->swapBuffers();
-  });
+std::unique_ptr<VertexArrayObject> GLRenderSystem::createVertexArrayObject() {
+  return std::make_unique<GLVertexArrayObject>(mainWindow_->getRenderer());
 }
 
-std::unique_ptr<VertexArrayObject> GLRenderSystem::createVertexArrayObject(RenderTarget* target) {
-  return std::make_unique<GLVertexArrayObject>(getRenderer(target));
-}
-
-std::shared_ptr<Shader> GLRenderSystem::createShader(RenderTarget* target, Shader::ShaderType type,
+std::shared_ptr<Shader> GLRenderSystem::createShader(Shader::ShaderType type,
                                                      const std::shared_ptr<File>& file) {
-  return getRenderer(target)->getShaderManager()->create(type, file);
+  return mainWindow_->getRenderer()->getShaderManager()->create(type, file);
 }
 
 std::shared_ptr<Program>
-GLRenderSystem::createProgram(RenderTarget* target,
-                              const std::set<std::shared_ptr<Shader>>& shaders) {
-  return getRenderer(target)->getProgramManager()->create(shaders);
+GLRenderSystem::createProgram(const std::set<std::shared_ptr<Shader>>& shaders) {
+  return mainWindow_->getRenderer()->getProgramManager()->create(shaders);
 }
 
-std::shared_ptr<Texture> GLRenderSystem::createTexture(RenderTarget* target,
-                                                       const std::shared_ptr<Image>& image,
+std::shared_ptr<Texture> GLRenderSystem::createTexture(const std::shared_ptr<Image>& image,
                                                        const TextureParameter& param) {
-  return getRenderer(target)->getTextureManager()->create(
+  return mainWindow_->getRenderer()->getTextureManager()->create(
       image, std::make_shared<TextureParameter>(param));
 }
 
-void GLRenderSystem::addKeyboardListener(RenderTarget* target, KeyboardListener* listener) {
-  getInputSystem(target)->addListener(listener);
+void GLRenderSystem::addKeyboardListener(KeyboardListener* listener) {
+  mainWindow_->getInputSystem()->addListener(listener);
 }
 
-void GLRenderSystem::removeKeyboardListener(RenderTarget* target, KeyboardListener* listener) {
-  getInputSystem(target)->removeListener(listener);
+void GLRenderSystem::removeKeyboardListener(KeyboardListener* listener) {
+  mainWindow_->getInputSystem()->removeListener(listener);
 }
 
-void GLRenderSystem::addMouseListener(RenderTarget* target, MouseListener* listener) {
-  getInputSystem(target)->addListener(listener);
+void GLRenderSystem::addMouseListener(MouseListener* listener) {
+  mainWindow_->getInputSystem()->addListener(listener);
 }
 
-void GLRenderSystem::removeMouseListener(RenderTarget* target, MouseListener* listener) {
-  getInputSystem(target)->removeListener(listener);
+void GLRenderSystem::removeMouseListener(MouseListener* listener) {
+  mainWindow_->getInputSystem()->removeListener(listener);
 }
 
-void GLRenderSystem::registerInputSystem(RenderTarget* target, GLInputSystem* inputSystem) {
-  inputSystemMap_[target] = inputSystem;
-}
-
-GLInputSystem* GLRenderSystem::getInputSystem(RenderTarget* target) const noexcept {
-  auto it = inputSystemMap_.find(target);
-  SEQUOIA_ASSERT_MSG(it != inputSystemMap_.end(), "target has no GLInputSystem registered");
-  return it->second;
-}
-
-void GLRenderSystem::registerRenderer(RenderTarget* target, GLRenderer* renderer) {
-  rendererMap_[target] = renderer;
-}
-
-GLRenderer* GLRenderSystem::getRenderer(RenderTarget* target) const noexcept {
-  auto it = rendererMap_.find(target);
-  SEQUOIA_ASSERT_MSG(it != rendererMap_.end(), "target has no GLRenderer registered");
-  return it->second;
-}
-
-void GLRenderSystem::loadDefaultShaders(RenderTarget* target,
-                                        const std::shared_ptr<File>& defaultVertexShaderFile,
+void GLRenderSystem::loadDefaultShaders(const std::shared_ptr<File>& defaultVertexShaderFile,
                                         const std::shared_ptr<File>& defaultFragmentShaderFile) {
-  getRenderer(target)->loadDefaultShaders(defaultVertexShaderFile, defaultFragmentShaderFile);
+  mainWindow_->getRenderer()->loadDefaultShaders(defaultVertexShaderFile,
+                                                 defaultFragmentShaderFile);
 }
 
-const std::shared_ptr<Shader>& GLRenderSystem::getDefaultVertexShader(RenderTarget* target) const {
-  return getRenderer(target)->getDefaultVertexShader();
+const std::shared_ptr<Shader>& GLRenderSystem::getDefaultVertexShader() const {
+  return mainWindow_->getRenderer()->getDefaultVertexShader();
 }
 
-const std::shared_ptr<Shader>&
-GLRenderSystem::getDefaultFragmentShader(RenderTarget* target) const {
-  return getRenderer(target)->getDefaultFragmentShader();
+const std::shared_ptr<Shader>& GLRenderSystem::getDefaultFragmentShader() const {
+  return mainWindow_->getRenderer()->getDefaultFragmentShader();
 }
 
-const std::shared_ptr<Program>& GLRenderSystem::getDefaultProgram(RenderTarget* target) const {
-  return getRenderer(target)->getDefaultProgram();
+const std::shared_ptr<Program>& GLRenderSystem::getDefaultProgram() const {
+  return mainWindow_->getRenderer()->getDefaultProgram();
 }
 
 } // namespace render

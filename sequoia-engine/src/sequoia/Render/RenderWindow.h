@@ -49,9 +49,24 @@ public:
     bool HideWindow = false;
   };
 
-  RenderWindow(RenderTargetKind kind) : RenderTarget(kind) {}
+  /// @brief Set the mode of the cursor
+  enum CursorModeKind {
+    CK_Disabled, ///< This will hide the cursor and lock it to the specified window. It should be
+                 ///  constantly re-centered
+    CK_Hidden,   ///< Cursor becomes hidden when it is over a window
+    CK_Normal    ///< Keep the cursor provided by the operating system
+  };
 
+  RenderWindow(RenderTargetKind kind) : RenderTarget(kind) {}
   virtual ~RenderWindow() {}
+
+  /// @brief Initialize the window
+  ///
+  /// This may include context creation and binding.
+  virtual void init() = 0;
+
+  /// @brief Swaps the frame buffers to display the next frame
+  virtual void swapBuffers() = 0;
 
   /// @brief Check if window is hidden
   virtual bool isHidden() = 0;
@@ -68,14 +83,11 @@ public:
   /// @brief Get the current height of the window
   virtual int getHeight() const = 0;
 
-  /// @copydoc RenderTarget::init
-  virtual void init() override = 0;
+  /// @brief Set the mode of the cursor
+  virtual void setCursorMode(CursorModeKind mode) = 0;
 
-  /// @copydoc RenderTarget::swapBuffers
-  virtual void swapBuffers() override = 0;
-
-  /// @copydoc RenderTarget::update
-  virtual void update() override = 0;
+  /// @brief Center the cursor in the middle of the window
+  virtual void centerCursor() = 0;
 
   static bool classof(const RenderTarget* target) {
     return target->getKind() >= RK_RenderWindow && target->getKind() < RK_RenderWindowLast;

@@ -36,7 +36,7 @@ TEST_F(GLTextureTest, LoadTexture2D) {
   RenderSystem& rsys = RenderSystem::getSingleton();
 
   auto image = Image::load(env.getFile("sequoia/Render/GL/TestGLTexture/Test.png"));
-  std::shared_ptr<Texture> texture = rsys.createTexture(getWindow(), image);
+  std::shared_ptr<Texture> texture = rsys.createTexture(image);
 
   GLTexture* gltexture = dyn_cast<GLTexture>(texture.get());
   EXPECT_TRUE(gltexture->isValid());
@@ -60,7 +60,7 @@ TEST_F(GLTextureTest, LoadTexture2D) {
   EXPECT_EQ(id, gltexture->getID());
 
   // Reload texture with the same parameters -> should return the same texture
-  std::shared_ptr<Texture> sameTexture = rsys.createTexture(getWindow(), image);
+  std::shared_ptr<Texture> sameTexture = rsys.createTexture(image);
 
   GLTexture* glsameTexture = dyn_cast<GLTexture>(sameTexture.get());
   EXPECT_EQ(gltexture->getID(), glsameTexture->getID());
@@ -68,7 +68,7 @@ TEST_F(GLTextureTest, LoadTexture2D) {
   // Reload texture with the different parameters -> should return a new texture
   TextureParameter param;
   param.UseMipmap = false;
-  std::shared_ptr<Texture> newTexture = rsys.createTexture(getWindow(), image, param);
+  std::shared_ptr<Texture> newTexture = rsys.createTexture(image, param);
 
   GLTexture* glnewTexture = dyn_cast<GLTexture>(newTexture.get());
   EXPECT_NE(gltexture->getID(), glnewTexture->getID());
@@ -79,7 +79,7 @@ TEST_F(GLTextureTest, LoadTexture2DCompressed) {
   RenderSystem& rsys = RenderSystem::getSingleton();
 
   auto image = Image::load(env.getFile("sequoia/Render/GL/TestGLTexture/Test.dds"));
-  std::shared_ptr<Texture> texture = rsys.createTexture(getWindow(), image);
+  std::shared_ptr<Texture> texture = rsys.createTexture(image);
 
   GLTexture* gltexture = dyn_cast<GLTexture>(texture.get());
   const gli::texture& gliTexture = *dyn_cast<TextureImage>(image.get())->getTexture();

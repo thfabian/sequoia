@@ -27,14 +27,14 @@ namespace render {
 
 class GLRenderer;
 class GLInputSystem;
+class GLRenderWindow;
 
 /// @brief OpenGL render-system
 /// @ingroup gl
 class SEQUOIA_API GLRenderSystem final : public RenderSystem {
-  std::vector<std::shared_ptr<RenderTarget>> renderTargets_;
 
-  std::unordered_map<RenderTarget*, GLRenderer*> rendererMap_;
-  std::unordered_map<RenderTarget*, GLInputSystem*> inputSystemMap_;
+  /// Main-window of the render system (also holds the OpenGL context)
+  std::shared_ptr<GLRenderWindow> mainWindow_;
 
 public:
   /// @brief Initialize GLFW
@@ -45,78 +45,63 @@ public:
   virtual ~GLRenderSystem();
 
   /// @copydoc RenderSystem::createWindow
-  virtual RenderWindow* createWindow(const RenderWindow::WindowHint& hints) override;
+  virtual RenderWindow* createMainWindow(const RenderWindow::WindowHint& hints) override;
 
-  /// @copydoc RenderSystem::destroyTarget
-  virtual void destroyTarget(RenderTarget* target) override;
+  /// @copydoc RenderSystem::destroyMainWindow
+  virtual void destroyMainWindow() noexcept override;
+
+  /// @copydoc RenderSystem::getMainWindow
+  virtual RenderWindow* getMainWindow() const override;
+
+  /// @brief Get the main-window
+  GLRenderWindow* getMainGLWindow() const;
 
   /// @copydoc RenderSystem::pollEvents
   virtual void pollEvents() override;
 
   /// @copydoc RenderSystem::renderOneFrame
-  virtual void renderOneFrame() override;
+  virtual void renderOneFrame(RenderTarget* target) override;
 
-  /// @copydoc RenderSystem::swapBuffers
-  virtual void swapBuffers() override;
-
-  /// @brief Create a new VBO
-  virtual std::unique_ptr<VertexArrayObject> createVertexArrayObject(RenderTarget* target) override;
+  /// @copydoc RenderSystem::createVertexArrayObject
+  virtual std::unique_ptr<VertexArrayObject> createVertexArrayObject() override;
 
   /// @brief Load the shader from source if it has not already been loaded
-  virtual std::shared_ptr<Shader> createShader(RenderTarget* target, Shader::ShaderType type,
+  virtual std::shared_ptr<Shader> createShader(Shader::ShaderType type,
                                                const std::shared_ptr<File>& path) override;
 
   /// @brief Link the shaders into a program if a program of the given shaders does not yet exist
   virtual std::shared_ptr<Program>
-  createProgram(RenderTarget* target, const std::set<std::shared_ptr<Shader>>& shaders) override;
+  createProgram(const std::set<std::shared_ptr<Shader>>& shaders) override;
 
-  /// @brief Create a texture of the given image
+  /// @copydoc RenderSystem::createTexture
   virtual std::shared_ptr<Texture>
-  createTexture(RenderTarget* target, const std::shared_ptr<Image>& image,
+  createTexture(const std::shared_ptr<Image>& image,
                 const TextureParameter& param = TextureParameter()) override;
 
-  /// @brief Add the keyboard `listener` to `target`
-  virtual void addKeyboardListener(RenderTarget* target, KeyboardListener* listener) override;
+  /// @copydoc RenderSystem::addKeyboardListener
+  virtual void addKeyboardListener(KeyboardListener* listener) override;
 
-  /// @brief Remove the keyboard `listener` of `target`
-  virtual void removeKeyboardListener(RenderTarget* target, KeyboardListener* listener) override;
+  /// @copydoc RenderSystem::removeKeyboardListener
+  virtual void removeKeyboardListener(KeyboardListener* listener) override;
 
-  /// @brief Add the mouse `listener` to `target`
-  virtual void addMouseListener(RenderTarget* target, MouseListener* listener) override;
+  /// @copydoc RenderSystem::addMouseListener
+  virtual void addMouseListener(MouseListener* listener) override;
 
-  /// @brief Remove the mouse `listener` of `target`
-  virtual void removeMouseListener(RenderTarget* target, MouseListener* listener) override;
+  /// @copydoc RenderSystem::removeMouseListener
+  virtual void removeMouseListener(MouseListener* listener) override;
 
-  /// @brief Load the default vertex and fragment shaders and link them into a program of `target`
-  ///
-  /// @param defaultVertexShaderFile    File containing the default vertex shader
-  /// @param defaultFragmentShaderFile  File containing the default fragment shader
-  virtual void loadDefaultShaders(RenderTarget* target,
-                                  const std::shared_ptr<File>& defaultVertexShaderFile,
+  /// @copydoc RenderSystem::loadDefaultShaders
+  virtual void loadDefaultShaders(const std::shared_ptr<File>& defaultVertexShaderFile,
                                   const std::shared_ptr<File>& defaultFragmentShaderFile) override;
 
-  /// @brief Get the default vertex shader of `target`
-  virtual const std::shared_ptr<Shader>&
-  getDefaultVertexShader(RenderTarget* target) const override;
+  /// @copydoc RenderSystem::getDefaultVertexShader
+  virtual const std::shared_ptr<Shader>& getDefaultVertexShader() const override;
 
-  /// @brief Get the default fragment shader of `target`
-  virtual const std::shared_ptr<Shader>&
-  getDefaultFragmentShader(RenderTarget* target) const override;
+  /// @copydoc RenderSystem::getDefaultFragmentShader
+  virtual const std::shared_ptr<Shader>& getDefaultFragmentShader() const override;
 
-  /// @brief Get the default fragment shader of `target`
-  virtual const std::shared_ptr<Program>& getDefaultProgram(RenderTarget* target) const override;
-
-  /// @brief Register the InputSystem of the `target`
-  void registerInputSystem(RenderTarget* target, GLInputSystem* inputSystem);
-
-  /// @brief Get the renderer of `target`
-  GLInputSystem* getInputSystem(RenderTarget* target) const noexcept;
-
-  /// @brief Register the Renderer of the `target`
-  void registerRenderer(RenderTarget* target, GLRenderer* renderer);
-
-  /// @brief Get the renderer of `target`
-  GLRenderer* getRenderer(RenderTarget* target) const noexcept;
+  /// @copydoc RenderSystem::getDefaultProgram
+  virtual const std::shared_ptr<Program>& getDefaultProgram() const override;
 
   SEQUOIA_GL_OBJECT(RenderSystem)
 };

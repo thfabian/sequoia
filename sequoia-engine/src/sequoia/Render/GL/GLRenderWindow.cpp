@@ -13,11 +13,11 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Render/GL/GL.h"
 #include "sequoia/Core/Logging.h"
 #include "sequoia/Core/Options.h"
 #include "sequoia/Core/Unreachable.h"
 #include "sequoia/Render/Exception.h"
+#include "sequoia/Render/GL/GL.h"
 #include "sequoia/Render/GL/GLInputSystem.h"
 #include "sequoia/Render/GL/GLRenderSystem.h"
 #include "sequoia/Render/GL/GLRenderWindow.h"
@@ -155,12 +155,10 @@ void GLRenderWindow::init() {
   SEQUOIA_ASSERT_MSG(hasViewport(), "RenderTarget::init() called with no Viewport set");
 
   renderer_ = std::make_unique<GLRenderer>(this);
-  renderSystem_->registerRenderer(this, renderer_.get());
 
   LOG(INFO) << "Registering IO callbacks ...";
 
   inputSystem_ = std::make_unique<GLInputSystem>(this, true);
-  renderSystem_->registerInputSystem(this, inputSystem_.get());
 
   glfwSetInputMode(window_, GLFW_STICKY_KEYS, 1);
   glfwSetKeyCallback(window_, GLRenderWindow::keyCallbackDispatch);
@@ -169,7 +167,7 @@ void GLRenderWindow::init() {
   glfwSetCursorEnterCallback(window_, GLRenderWindow::mouseEnterCallbackDispatch);
 
   renderSystem_->addListener<InputEventListener>(static_cast<InputEventListener*>(this));
-
+  
   LOG(INFO) << "Done registering IO callbacks";
 }
 
@@ -221,7 +219,7 @@ void GLRenderWindow::mousePositionCallbackDispatch(GLFWwindow* window, double xp
 void GLRenderWindow::mouseEnterCallbackDispatch(GLFWwindow* window, int entered) {
   if(entered) {
     GLRenderWindow* glWindow = GLRenderWindow::StaticWindowMap[window];
-    if(glWindow->getCursorMode() == RenderTarget::CursorModeKind::CK_Disabled)
+    if(glWindow->getCursorMode() == GLRenderWindow::CursorModeKind::CK_Disabled)
       glWindow->getInputSystem()->centerCursor();
   }
 }
@@ -241,7 +239,7 @@ void GLRenderWindow::swapBuffers() { glfwSwapBuffers(window_); }
 
 void GLRenderWindow::update() { renderer_->render(); }
 
-void GLRenderWindow::setCursorMode(RenderTarget::CursorModeKind mode) {
+void GLRenderWindow::setCursorMode(GLRenderWindow::CursorModeKind mode) {
   mode_ = mode;
   switch(mode_) {
   case CK_Disabled:
@@ -260,7 +258,7 @@ void GLRenderWindow::centerCursor() { getInputSystem()->centerCursor(); }
 
 GLFWwindow* GLRenderWindow::getGLFWwindow() { return window_; }
 
-RenderTarget::CursorModeKind GLRenderWindow::getCursorMode() { return mode_; }
+GLRenderWindow::CursorModeKind GLRenderWindow::getCursorMode() { return mode_; }
 
 GLRenderer* GLRenderWindow::getRenderer() { return renderer_.get(); }
 
