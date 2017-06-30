@@ -24,6 +24,17 @@ namespace sequoia {
 
 namespace game {
 
+bool MeshParameter::operator==(const MeshParameter& other) const noexcept {
+  return TexCoordInvertV == other.TexCoordInvertV;
+}
+
+std::string MeshParameter::toString() const {
+  return core::format("MeshParameter[\n"
+                      "  TexCoordInvertV = %s\n"
+                      "]",
+                      TexCoordInvertV ? "true" : "false");
+}
+
 Mesh::Mesh(const std::string& name, const std::shared_ptr<render::VertexData>& data,
            bool isModifiable)
     : isModifiable_(isModifiable), data_(data), name_(name) {}

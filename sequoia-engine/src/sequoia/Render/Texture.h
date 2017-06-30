@@ -130,7 +130,7 @@ struct SEQUOIA_API TextureParameter {
   /// Edge sampling used for the first dimension
   EdgeSamplingKind Dim3EdgeSampling = EK_Repeat;
 
-  /// @name Construts
+  /// @name Constructor
   /// @{
   TextureParameter() = default;
   TextureParameter(const TextureParameter&) = default;

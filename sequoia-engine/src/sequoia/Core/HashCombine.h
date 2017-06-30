@@ -30,8 +30,8 @@ namespace core {
 /// @code
 ///   int a = 5;
 ///   int b = 2;
-///   std::size_t hash = 0; // Hash of a and b
-///   core::hash_combine(hash, a, b);
+///   std::size_t hash = 0;
+///   core::hash_combine(hash, a, b); // Use boost::hash to compute the individual hashes
 /// @endcode
 /// @ingroup support
 /// @{

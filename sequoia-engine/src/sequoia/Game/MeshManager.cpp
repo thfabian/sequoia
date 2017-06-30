@@ -13,17 +13,15 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Game/MeshManager.h"
 #include "sequoia/Core/Logging.h"
+#include "sequoia/Game/MeshManager.h"
 #include "sequoia/Render/RenderSystem.h"
 
 namespace sequoia {
 
 namespace game {
 
-MeshManager::MeshManager(render::RenderTarget* target) : target_(target) {
-  staticCubeMeshDataIdx_ = -1;
-}
+MeshManager::MeshManager(render::RenderTarget* target) : target_(target) {}
 
 std::shared_ptr<Mesh> MeshManager::load(const std::string& name, const std::shared_ptr<File>& file,
                                         bool modifiable, BufferUsageKind usage) {
@@ -49,35 +47,35 @@ namespace {
 //  v2------v3
 //
 static int CubeVertexDataStride = 11;
-static float CubeVertexData[] = {   1, 1, 1,   0, 0, 1,   0, 0, 0,   1, 1,      // v0 (front)
-                                   -1, 1, 1,   0, 0, 1,   0, 0, 0,   0, 1,      // v1
-                                   -1,-1, 1,   0, 0, 1,   0, 0, 0,   0, 0,      // v2
-                                    1,-1, 1,   0, 0, 1,   0, 0, 0,   1, 0,      // v3
+static float CubeVertexData[] = {   0.5, 0.5, 0.5,   0, 0, 1,   0, 0, 0,   1, 1,      // v0 (front)
+                                   -0.5, 0.5, 0.5,   0, 0, 1,   0, 0, 0,   0, 1,      // v1
+                                   -0.5,-0.5, 0.5,   0, 0, 1,   0, 0, 0,   0, 0,      // v2
+                                    0.5,-0.5, 0.5,   0, 0, 1,   0, 0, 0,   1, 0,      // v3
             
-                                    1, 1, 1,   1, 0, 0,   0, 0, 0,   0, 1,      // v0 (right)
-                                    1,-1, 1,   1, 0, 0,   0, 0, 0,   0, 0,      // v3
-                                    1,-1,-1,   1, 0, 0,   0, 0, 0,   1, 0,      // v4
-                                    1, 1,-1,   1, 0, 0,   0, 0, 0,   1, 1,      // v5
+                                    0.5, 0.5, 0.5,   1, 0, 0,   0, 0, 0,   0, 1,      // v0 (right)
+                                    0.5,-0.5, 0.5,   1, 0, 0,   0, 0, 0,   0, 0,      // v3
+                                    0.5,-0.5,-0.5,   1, 0, 0,   0, 0, 0,   1, 0,      // v4
+                                    0.5, 0.5,-0.5,   1, 0, 0,   0, 0, 0,   1, 1,      // v5
             
-                                    1, 1, 1,   0, 1, 0,   0, 0, 0,   1, 0,      // v0 (top)
-                                    1, 1,-1,   0, 1, 0,   0, 0, 0,   1, 1,      // v5
-                                   -1, 1,-1,   0, 1, 0,   0, 0, 0,   0, 1,      // v6
-                                   -1, 1, 1,   0, 1, 0,   0, 0, 0,   0, 0,      // v1
+                                    0.5, 0.5, 0.5,   0, 1, 0,   0, 0, 0,   1, 0,      // v0 (top)
+                                    0.5, 0.5,-0.5,   0, 1, 0,   0, 0, 0,   1, 1,      // v5
+                                   -0.5, 0.5,-0.5,   0, 1, 0,   0, 0, 0,   0, 1,      // v6
+                                   -0.5, 0.5, 0.5,   0, 1, 0,   0, 0, 0,   0, 0,      // v1
             
-                                   -1, 1, 1,  -1, 0, 0,   0, 0, 0,   1, 1,      // v1 (left)
-                                   -1, 1,-1,  -1, 0, 0,   0, 0, 0,   0, 1,      // v6
-                                   -1,-1,-1,  -1, 0, 0,   0, 0, 0,   0, 0,      // v7
-                                   -1,-1, 1,  -1, 0, 0,   0, 0, 0,   1, 0,      // v2
+                                   -0.5, 0.5, 0.5,  -1, 0, 0,   0, 0, 0,   1, 1,      // v1 (left)
+                                   -0.5, 0.5,-0.5,  -1, 0, 0,   0, 0, 0,   0, 1,      // v6
+                                   -0.5,-0.5,-0.5,  -1, 0, 0,   0, 0, 0,   0, 0,      // v7
+                                   -0.5,-0.5, 0.5,  -1, 0, 0,   0, 0, 0,   1, 0,      // v2
             
-                                   -1,-1,-1,   0,-1, 0,   0, 0, 0,   0, 0,      // v7 (bottom)
-                                    1,-1,-1,   0,-1, 0,   0, 0, 0,   1, 0,      // v4
-                                    1,-1, 1,   0,-1, 0,   0, 0, 0,   1, 1,      // v3
-                                   -1,-1, 1,   0,-1, 0,   0, 0, 0,   0, 1,      // v2
+                                   -0.5,-0.5,-0.5,   0,-1, 0,   0, 0, 0,   0, 0,      // v7 (bottom)
+                                    0.5,-0.5,-0.5,   0,-1, 0,   0, 0, 0,   1, 0,      // v4
+                                    0.5,-0.5, 0.5,   0,-1, 0,   0, 0, 0,   1, 1,      // v3
+                                   -0.5,-0.5, 0.5,   0,-1, 0,   0, 0, 0,   0, 1,      // v2
             
-                                    1,-1,-1,   0, 0,-1,   0, 0, 0,   0, 0,      // v4 (back)
-                                   -1,-1,-1,   0, 0,-1,   0, 0, 0,   1, 0,      // v7
-                                   -1, 1,-1,   0, 0,-1,   0, 0, 0,   1, 1,      // v6
-                                    1, 1,-1,   0, 0,-1,   0, 0, 0,   0, 1  };   // v5
+                                    0.5,-0.5,-0.5,   0, 0,-1,   0, 0, 0,   0, 0,      // v4 (back)
+                                   -0.5,-0.5,-0.5,   0, 0,-1,   0, 0, 0,   1, 0,      // v7
+                                   -0.5, 0.5,-0.5,   0, 0,-1,   0, 0, 0,   1, 1,      // v6
+                                    0.5, 0.5,-0.5,   0, 0,-1,   0, 0, 0,   0, 1  };   // v5
 
 static unsigned int CubeIndices[]  = {   0, 1, 2,   2, 3, 0,                    // front
                                          4, 5, 6,   6, 7, 4,                    // right
@@ -91,10 +89,15 @@ static unsigned int CubeIndices[]  = {   0, 1, 2,   2, 3, 0,                    
 } // anonymous namespace
 
 std::shared_ptr<Mesh> MeshManager::createCube(const std::string& name, bool modifiable,
-                                              BufferUsageKind usage) {
-  LOG(INFO) << "Creating cube mesh \"" << name << "\" ...";
+                                              const MeshParameter& param, BufferUsageKind usage) {
+  LOG(DEBUG) << "Creating cube mesh \"" << name << "\" ...";
 
-  if(staticCubeMeshDataIdx_ == -1) {
+  auto it = cubeMeshLookupMap_.find(param);
+  std::size_t index = 0;
+
+  if(it != cubeMeshLookupMap_.end())
+    index = it->second;
+  else {
     std::size_t numVertices = 24;
     std::size_t numIndices = 36;
 
@@ -123,17 +126,19 @@ std::shared_ptr<Mesh> MeshManager::createCube(const std::string& name, bool modi
       vertex[i].Color[3] = maxRGBValue;
 
       // TexCoord
-      for(int j = 0; j < 2; ++j)
-        vertex[i].TexCoord[j] = CubeVertexData[i * CubeVertexDataStride + 9 + j];
+      vertex[i].TexCoord[0] = CubeVertexData[i * CubeVertexDataStride + 9];
+      if(param.TexCoordInvertV)
+        vertex[i].TexCoord[1] = 1.0f - CubeVertexData[i * CubeVertexDataStride + 10];
+      else
+        vertex[i].TexCoord[1] = CubeVertexData[i * CubeVertexDataStride + 10];
     }
 
     // Set bounding box
-    data->setAxisAlignedBox(math::AxisAlignedBox(math::vec3(-1, -1, -1), math::vec3(1, 1, 1)));
+    data->setAxisAlignedBox(
+        math::AxisAlignedBox(math::vec3(-0.5, -0.5, -0.5), math::vec3(0.5, 0.5, 0.5)));
 
     // Set indices
     std::memcpy(data->getIndicesPtr(), CubeIndices, numIndices * sizeof(render::VertexIndexType));
-
-    // data->dump();
 
     // Set the VAO
     data->setVertexArrayObject(
@@ -142,12 +147,14 @@ std::shared_ptr<Mesh> MeshManager::createCube(const std::string& name, bool modi
     data->getVertexArrayObject()->writeIndexData(0, numIndices);
 
     vertexDataList_.emplace_back(data);
-    staticCubeMeshDataIdx_ = vertexDataList_.size() - 1;
+
+    index = vertexDataList_.size() - 1;
+    cubeMeshLookupMap_.emplace(param, index);
   }
 
-  const std::shared_ptr<render::VertexData>& data = vertexDataList_[staticCubeMeshDataIdx_];
+  const std::shared_ptr<render::VertexData>& data = vertexDataList_[index];
 
-  LOG(INFO) << "Successfully created cube mesh \"" << name << "\"";
+  LOG(DEBUG) << "Successfully created cube mesh \"" << name << "\"";
   return std::make_shared<Mesh>(name, data, modifiable);
 }
 

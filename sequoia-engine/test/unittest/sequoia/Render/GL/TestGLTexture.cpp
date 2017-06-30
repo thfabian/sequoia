@@ -20,6 +20,7 @@
 #include "sequoia/Render/GL/GLTextureManager.h"
 #include "sequoia/Unittest/Environment.h"
 #include "sequoia/Unittest/GL/GLRenderTest.h"
+#include <gli/gli.hpp>
 #include <gtest/gtest.h>
 
 using namespace sequoia;
@@ -79,7 +80,33 @@ TEST_F(GLTextureTest, LoadTexture2DCompressed) {
 
   auto image = Image::load(env.getFile("sequoia/Render/GL/TestGLTexture/Test.dds"));
   std::shared_ptr<Texture> texture = rsys.createTexture(getWindow(), image);
-  
+
+  GLTexture* gltexture = dyn_cast<GLTexture>(texture.get());
+  const gli::texture& gliTexture = *dyn_cast<TextureImage>(image.get())->getTexture();
+
+  // Base level
+  {
+    GLint width, height;
+    glGetTextureLevelParameteriv(gltexture->getID(), 0, GL_TEXTURE_WIDTH, &width);
+    glGetTextureLevelParameteriv(gltexture->getID(), 0, GL_TEXTURE_HEIGHT, &height);
+
+    EXPECT_EQ(width, gliTexture.extent().x);
+    EXPECT_EQ(height, gliTexture.extent().y);
+
+    GLint compressed;
+    glGetTextureLevelParameteriv(gltexture->getID(), 0, GL_TEXTURE_COMPRESSED, &compressed);
+    EXPECT_EQ(compressed, gli::is_compressed(gliTexture.format()));
+  }
+
+  // First level of detail (i.e first mip-map level)
+  {
+    GLint width, height;
+    glGetTextureLevelParameteriv(gltexture->getID(), 1, GL_TEXTURE_WIDTH, &width);
+    glGetTextureLevelParameteriv(gltexture->getID(), 1, GL_TEXTURE_HEIGHT, &height);
+
+    EXPECT_EQ(width, gliTexture.extent(1).x);
+    EXPECT_EQ(height, gliTexture.extent(1).y);
+  }
 }
-  
+
 } // anonymous namespace

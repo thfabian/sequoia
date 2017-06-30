@@ -80,7 +80,7 @@ public:
   /// @brief Initialize the camera
   ///
   /// By default the camera is located at `(0, 0, 10)` and stares down at `(0, 0, 0)`.
-  Camera(const math::vec3& eye = math::vec3(0, 10, 10),
+  Camera(const math::vec3& eye = math::vec3(0, 0, 10),
          const math::vec3& center = math::vec3(0, 0, 0),
          const math::vec3& up = math::vec3(0, 1, 0));
 

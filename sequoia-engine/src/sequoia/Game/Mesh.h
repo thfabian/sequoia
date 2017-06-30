@@ -17,6 +17,7 @@
 #define SEQUOIA_GAME_MESH_H
 
 #include "sequoia/Core/Export.h"
+#include "sequoia/Core/HashCombine.h"
 #include "sequoia/Core/NonCopyable.h"
 #include "sequoia/Render/VertexData.h"
 #include <memory>
@@ -27,11 +28,40 @@ namespace game {
 
 class MeshManager;
 
+/// @brief Parameters used to construct the Texture
+/// @ingroup game
+struct SEQUOIA_API MeshParameter {
+
+  /// Invert the v-component of the `uv` texture coordinates i.e `v = 1.0 - v`
+  bool TexCoordInvertV = false;
+
+  /// @name Constructor
+  /// @{
+  MeshParameter() = default;
+  MeshParameter(const MeshParameter&) = default;
+  MeshParameter(MeshParameter&&) = default;
+
+  MeshParameter& operator=(const MeshParameter&) = default;
+  MeshParameter& operator=(MeshParameter&&) = default;
+  /// @}
+
+  /// @name Comparison
+  /// @{
+  bool operator==(const MeshParameter& other) const noexcept;
+  bool operator!=(const MeshParameter& other) const noexcept { return !(other == *this); }
+  /// @}
+
+  /// @brief Convert to string
+  std::string toString() const;
+};
+
 /// @brief Ressource holding the 3D mesh
 /// @ingroup game
 class SEQUOIA_API Mesh : public NonCopyable {
 public:
   friend class MeshManager;
+
+  /// @brief Parameter of the Mesh
 
   /// @brief Create empty mesh
   Mesh(const std::string& name, const std::shared_ptr<render::VertexData>& data, bool isModifiable);
@@ -99,5 +129,25 @@ private:
 } // namespace game
 
 } // namespace sequoia
+
+namespace std {
+
+template <>
+struct hash<sequoia::game::MeshParameter> {
+  std::size_t operator()(const sequoia::game::MeshParameter& param) const {
+    std::size_t seed = 0;
+    sequoia::core::hashCombine(seed, param.TexCoordInvertV);
+    return seed;
+  }
+};
+
+template <>
+struct hash<std::shared_ptr<sequoia::game::MeshParameter>> {
+  std::size_t operator()(const std::shared_ptr<sequoia::game::MeshParameter>& param) const {
+    return hash<sequoia::game::MeshParameter>()(*param);
+  }
+};
+
+} // namespace std
 
 #endif
