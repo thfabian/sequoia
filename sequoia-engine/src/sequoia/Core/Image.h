@@ -31,7 +31,7 @@ namespace sequoia {
 
 namespace core {
 
-/// @brief Hardware-independent image representation that allows direct access to the pixel data
+/// @brief Image interface
 ///
 /// @note To load images use Image::load
 /// @ingroup core
@@ -59,40 +59,11 @@ public:
   /// @threadsafe This function is thread-safe
   static std::shared_ptr<Image> load(const std::shared_ptr<File>& file);
 
-  Image(ImageFormat format);
+  Image(ImageFormat format, const std::shared_ptr<File>& file);
   virtual ~Image();
 
-  /// @brief Get the pixel data
-  ///
-  /// The pixel data consists of `width` scanlines of `height` pixels, with each pixel consisting
-  /// of `numChannels` interleaved 8-bit components; the first pixel pointed to is top-left-most in
-  /// the image. There is no padding between image scanlines or between pixels, regardless of
-  /// format.
-  virtual const unsigned char* getPixelData() const = 0;
-
-  /// @brief Get a copy of the pixel at position `(i, j)`
-  ///
-  /// The image is stored in `row-major` order where `(0, 0)` is the bottome left corner. Hence,
-  /// `(0, image.getWidth() - 1)` is the bottom right corner and `(image.getHeight() - 1, 0)` is
-  /// the top left corner.
-  ///
-  /// @note This function should be merely used for debugging purposes.
-  virtual Color at(int i, int j) const noexcept = 0;
-
-  /// @brief Get the width of the image in pixels
-  virtual int getWidth() const noexcept = 0;
-
-  /// @brief Get the height of the image in pixels
-  virtual int getHeight() const noexcept = 0;
-
-  /// @brief Get number of interleaved 8-bit components of each pixel
-  virtual int getNumChannels() const noexcept = 0;
-
-  /// @brief Get the color format
-  virtual ColorFormat getColorFormat() const noexcept = 0;
-
   /// @brief Get the file of the image
-  virtual const std::shared_ptr<File>& getFile() const = 0;
+  const std::shared_ptr<File>& getFile() const { return file_; };
 
   /// @brief Get a unique hash of the image
   virtual std::size_t hash() const noexcept = 0;
@@ -112,18 +83,18 @@ public:
   /// @brief Convert to string
   virtual std::string toString() const = 0;
 
-private:
+protected:
   /// Loaded image format
   ImageFormat format_;
+
+  /// File of the image
+  std::shared_ptr<File> file_;
 };
 
-/// @brief Regular image formats such as PNG, JPEG, BMP etc.
+/// @brief Hardware-independent image representation that allows direct access to the pixel data
 /// @ingroup core
 class SEQUOIA_API RegularImage : public Image {
 protected:
-  /// File of the image
-  std::shared_ptr<File> file_;
-
   /// Pixel data
   unsigned char* pixelData_;
 
@@ -146,30 +117,36 @@ public:
   RegularImage(ImageFormat format, const std::shared_ptr<File>& file);
   virtual ~RegularImage();
 
-  /// @copydoc Image::getPixelData
-  virtual const unsigned char* getPixelData() const override final { return pixelData_; }
+  /// @brief Get the pixel data
+  ///
+  /// The pixel data consists of `width` scanlines of `height` pixels, with each pixel consisting
+  /// of `numChannels` interleaved 8-bit components; the first pixel pointed to is top-left-most in
+  /// the image. There is no padding between image scanlines or between pixels, regardless of
+  /// format.
+  const unsigned char* getPixelData() const { return pixelData_; }
 
-  /// @copydoc Image::getWidth
-  virtual int getWidth() const noexcept override final { return width_; }
+  /// @brief Get the width of the image in pixels
+  inline int getWidth() const { return width_; }
 
-  /// @copydoc Image::getHeight
-  virtual int getHeight() const noexcept override final { return height_; }
+  /// @brief Get the height of the image in pixels
+  inline int getHeight() const { return height_; }
 
-  /// @copydoc Image::getNumChannels
-  virtual int getNumChannels() const noexcept override final {
-    return SEQUOIA_COLOR_GET_NUM_CHANNELS(colorFormat_);
-  }
+  /// @brief Get number of interleaved 8-bit components of each pixel
+  inline int getNumChannels() const { return SEQUOIA_COLOR_GET_NUM_CHANNELS(colorFormat_); }
 
-  /// @copydoc Image::at
-  virtual Color at(int i, int j) const noexcept override final {
+  /// @brief Get a copy of the pixel at position `(i, j)`
+  ///
+  /// The image is stored in `row-major` order where `(0, 0)` is the bottome left corner. Hence,
+  /// `(0, image.getWidth() - 1)` is the bottom right corner and `(image.getHeight() - 1, 0)` is
+  /// the top left corner.
+  ///
+  /// @note This function should be merely used for debugging purposes.
+  inline Color at(int i, int j) const {
     return Color(colorFormat_, pixelData_ + getNumChannels() * (i * width_ + j));
   }
 
-  /// @copydoc Image::getFile
-  virtual const std::shared_ptr<File>& getFile() const override final { return file_; }
-
-  /// @copydoc Image::getColorFormat
-  virtual ColorFormat getColorFormat() const noexcept override final { return colorFormat_; }
+  /// @brief Get the color format
+  inline ColorFormat getColorFormat() const { return colorFormat_; }
 
   /// @copydoc Image::getHash
   virtual std::size_t hash() const noexcept override final;
@@ -226,36 +203,12 @@ protected:
 /// @ingroup core
 class SEQUOIA_API TextureImage : public Image {
 protected:
-  /// File of the image
-  std::shared_ptr<File> file_;
-
   /// Texture
   std::unique_ptr<gli::texture> texture_;
 
 public:
   TextureImage(ImageFormat format, const std::shared_ptr<File>& file);
   virtual ~TextureImage();
-
-  /// @copydoc Image::getPixelData
-  virtual const unsigned char* getPixelData() const override final;
-
-  /// @copydoc Returns width of the base layer
-  virtual int getWidth() const noexcept override final;
-
-  /// @copydoc Returns height of the base layer
-  virtual int getHeight() const noexcept override final;
-
-  /// @copydoc Image::getNumChannels
-  virtual int getNumChannels() const noexcept override final;
-
-  /// @copydoc Image::at
-  virtual Color at(int i, int j) const noexcept override final;
-
-  /// @copydoc Image::getFile
-  virtual const std::shared_ptr<File>& getFile() const override final { return file_; }
-
-  /// @copydoc Image::getColorFormat
-  virtual ColorFormat getColorFormat() const noexcept override final;
 
   /// @copydoc Image::getHash
   virtual std::size_t hash() const noexcept override final;
@@ -265,7 +218,7 @@ public:
 
   /// @copydoc Image::equals
   virtual bool equals(const Image* other) const noexcept override;
-  
+
   /// @brief Get the texture
   const std::unique_ptr<gli::texture>& getTexture() const { return texture_; }
   std::unique_ptr<gli::texture>& getTexture() { return texture_; }
@@ -293,6 +246,8 @@ protected:
 } // namespace core
 
 using Image = core::Image;
+using RegularImage = core::RegularImage;
+using TextureImage = core::TextureImage;
 
 } // namespace sequoia
 

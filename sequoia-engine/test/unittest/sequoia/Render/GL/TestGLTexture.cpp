@@ -72,5 +72,5 @@ TEST_F(GLTextureTest, LoadTexture2D) {
   GLTexture* glnewTexture = dyn_cast<GLTexture>(newTexture.get());
   EXPECT_NE(gltexture->getID(), glnewTexture->getID());
 }
-
+  
 } // anonymous namespace

@@ -13,10 +13,11 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
+#include "sequoia/Core/Casting.h"
 #include "sequoia/Core/Exception.h"
 #include "sequoia/Core/Image.h"
-#include "sequoia/Core/Casting.h"
 #include "sequoia/Unittest/Environment.h"
+#include <gli/gli.hpp>
 #include <gtest/gtest.h>
 
 using namespace sequoia;
@@ -30,7 +31,12 @@ TEST(ImageTest, PNGImage) {
 
   EXPECT_EQ(file->getNumBytes(), 193);
 
-  std::shared_ptr<Image> image = Image::load(file);
+  std::shared_ptr<Image> loadedImage = Image::load(file);
+  ASSERT_TRUE(isa<RegularImage>(loadedImage.get()));
+  EXPECT_TRUE(isa<core::PNGImage>(loadedImage.get()));
+
+  const RegularImage* image = dyn_cast<RegularImage>(loadedImage.get());
+
   EXPECT_EQ(image->getHeight(), 32);
   EXPECT_EQ(image->getWidth(), 32);
   EXPECT_EQ(image->getNumChannels(), 3);
@@ -56,7 +62,12 @@ TEST(ImageTest, JPEGImage) {
 
   EXPECT_EQ(file->getNumBytes(), 905);
 
-  std::shared_ptr<Image> image = Image::load(file);
+  std::shared_ptr<Image> loadedImage = Image::load(file);
+  ASSERT_TRUE(isa<RegularImage>(loadedImage.get()));
+  EXPECT_TRUE(isa<core::JPEGImage>(loadedImage.get()));
+
+  const RegularImage* image = dyn_cast<RegularImage>(loadedImage.get());
+
   EXPECT_EQ(image->getHeight(), 32);
   EXPECT_EQ(image->getWidth(), 32);
   EXPECT_EQ(image->getNumChannels(), 3);
@@ -87,7 +98,12 @@ TEST(ImageTest, BMPImage) {
 
   EXPECT_EQ(file->getNumBytes(), 714);
 
-  std::shared_ptr<Image> image = Image::load(file);
+  std::shared_ptr<Image> loadedImage = Image::load(file);
+  ASSERT_TRUE(isa<RegularImage>(loadedImage.get()));
+  EXPECT_TRUE(isa<core::BMPImage>(loadedImage.get()));
+
+  const RegularImage* image = dyn_cast<RegularImage>(loadedImage.get());
+
   EXPECT_EQ(image->getHeight(), 32);
   EXPECT_EQ(image->getWidth(), 32);
   EXPECT_EQ(image->getNumChannels(), 3);
@@ -110,15 +126,36 @@ TEST(ImageTest, BMPImage) {
 TEST(ImageTest, DDSImage) {
   Environment& env = Environment::getSingleton();
   auto file = env.getFile("sequoia/Core/TestImage/Test.dds");
-  std::shared_ptr<Image> image = Image::load(file);
-  
-  EXPECT_EQ(image->getHeight(), 32);
-  EXPECT_EQ(image->getWidth(), 32);
-  
-//  const core::DDSImage* ddsImage = dyn_cast<core::DDSImage>(image.get());
-//  EXPECT_EQ(image->get(), 6);
 
-  //  std::cout << image->toString() << std::endl;
+  std::shared_ptr<Image> loadedImage = Image::load(file);
+  ASSERT_TRUE(isa<TextureImage>(loadedImage.get()));
+  EXPECT_TRUE(isa<core::DDSImage>(loadedImage.get()));
+
+  const TextureImage* image = dyn_cast<TextureImage>(loadedImage.get());
+
+  const gli::texture& texture = *image->getTexture();
+  EXPECT_TRUE(gli::is_compressed(texture.format()));
+
+  // Check mip-map levels
+  ASSERT_EQ(texture.levels(), 6);
+
+  EXPECT_EQ(texture.extent(0).x, 32);
+  EXPECT_EQ(texture.extent(0).y, 32);
+
+  EXPECT_EQ(texture.extent(1).x, 16);
+  EXPECT_EQ(texture.extent(1).y, 16);
+
+  EXPECT_EQ(texture.extent(2).x, 8);
+  EXPECT_EQ(texture.extent(2).y, 8);
+
+  EXPECT_EQ(texture.extent(3).x, 4);
+  EXPECT_EQ(texture.extent(3).y, 4);
+
+  EXPECT_EQ(texture.extent(4).x, 2);
+  EXPECT_EQ(texture.extent(4).y, 2);
+
+  EXPECT_EQ(texture.extent(5).x, 1);
+  EXPECT_EQ(texture.extent(5).y, 1);
 }
 
 TEST(ImageTest, InvalidImage) {
@@ -136,6 +173,10 @@ TEST(ImageTest, Comparison) {
 
   std::shared_ptr<Image> image3 = Image::load(env.getFile("sequoia/Core/TestImage/Test.bmp"));
   EXPECT_NE(*image1, *image3);
+
+  std::shared_ptr<Image> image4 = Image::load(env.getFile("sequoia/Core/TestImage/Test.dds"));
+  std::shared_ptr<Image> image5 = image4;
+  EXPECT_EQ(*image4, *image5);
 }
 
 } // anonymous namespace

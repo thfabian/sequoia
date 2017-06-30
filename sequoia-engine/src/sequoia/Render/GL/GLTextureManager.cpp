@@ -13,10 +13,11 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Render/GL/GL.h"
+#include "sequoia/Core/Casting.h"
 #include "sequoia/Core/Logging.h"
 #include "sequoia/Core/Unreachable.h"
 #include "sequoia/Render/Exception.h"
+#include "sequoia/Render/GL/GL.h"
 #include "sequoia/Render/GL/GLRenderer.h"
 #include "sequoia/Render/GL/GLStateCacheManager.h"
 #include "sequoia/Render/GL/GLTextureManager.h"
@@ -115,24 +116,22 @@ void GLTextureManager::make(const std::shared_ptr<GLTexture>& texture,
   if(texture->status_ == GLTextureStatus::Created) {
     LOG(DEBUG) << "Loading texture (ID=" << texture->id_ << ") ...";
 
-    Image& image = *texture->getImage();
     TextureParameter& param = *texture->getParameter();
 
     // TODO: Is it safe to always bind to unit 0 here?
     renderer_->getStateCacheManager()->bindTexture(0, texture.get());
 
-    // Warn if image is larger than 1024x1024
-    if(image.getWidth() > 1024 || image.getHeight() > 1024)
-      LOG(WARNING) << "Image \"" << texture->getImage()->getFile()->getPath()
-                   << "\" of texture (ID=" << texture->id_ << ") may be too large " << image.getWidth()
-                   << "x" << image.getHeight();
-    
     // Copy image
     switch(texture->param_->Kind) {
-    case TextureParameter::TK_2D:
-      glTexImage2D(texture->target_, 0, GL_RGBA, image.getWidth(), image.getHeight(), 0,
-                  getGLColorFormat(image.getColorFormat()), GL_UNSIGNED_BYTE, image.getPixelData());
+    case TextureParameter::TK_2D: {
+      if(RegularImage* image = dyn_cast<RegularImage>(texture->getImage().get())) {
+        glTexImage2D(texture->target_, 0, GL_RGBA, image->getWidth(), image->getHeight(), 0,
+                     getGLColorFormat(image->getColorFormat()), GL_UNSIGNED_BYTE,
+                     image->getPixelData());
+      } else {
+      }
       break;
+    }
     case TextureParameter::TK_1D:
     case TextureParameter::TK_3D:
     case TextureParameter::TK_CubeMap:

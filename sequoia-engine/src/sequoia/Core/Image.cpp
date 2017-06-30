@@ -92,10 +92,11 @@ std::shared_ptr<Image> Image::load(const std::shared_ptr<File>& file) {
   }
 }
 
-Image::Image(Image::ImageFormat format) : format_(format) {}
+Image::Image(Image::ImageFormat format, const std::shared_ptr<File>& file)
+    : format_(format), file_(file) {}
 
 RegularImage::RegularImage(ImageFormat format, const std::shared_ptr<File>& file)
-    : Image(format), file_(file), bitMap_(nullptr), bitMapCopy_(nullptr), memory_(nullptr) {
+    : Image(format, file), bitMap_(nullptr), bitMapCopy_(nullptr), memory_(nullptr) {
 
   FREE_IMAGE_FORMAT FIFormat = GetFreeImageType(getFormat());
   SEQUOIA_ASSERT_MSG(FIFormat != FIF_UNKNOWN, "invalid image format");
@@ -191,7 +192,7 @@ JPEGImage::JPEGImage(const std::shared_ptr<File>& file) : RegularImage(Image::IF
 BMPImage::BMPImage(const std::shared_ptr<File>& file) : RegularImage(Image::IF_BMP, file) {}
 
 TextureImage::TextureImage(Image::ImageFormat format, const std::shared_ptr<File>& file)
-    : Image(format), file_(file) {
+    : Image(format, file) {
   SEQUOIA_ASSERT_MSG(format == IF_DDS, "only DDS can be loaded as texture image (yet)");
 
   // gli::load dispatches to the correct decoder
@@ -204,28 +205,6 @@ TextureImage::TextureImage(Image::ImageFormat format, const std::shared_ptr<File
 
 TextureImage::~TextureImage() {}
 
-const unsigned char* TextureImage::getPixelData() const {
-  return reinterpret_cast<unsigned char const*>(texture_->data());
-}
-
-int TextureImage::getWidth() const noexcept { return texture_->extent()[0]; }
-int TextureImage::getHeight() const noexcept { return texture_->extent()[1]; }
-
-int TextureImage::getNumChannels() const noexcept {
-  sequoia_unreachable("TextureImage::getNumChannels() is unavailable");
-  return 0;
-}
-
-ColorFormat TextureImage::getColorFormat() const noexcept {
-  sequoia_unreachable("TextureImage::getColorFormat() is unavailable");
-  return ColorFormat::RGB;
-}
-
-Color TextureImage::at(int i, int j) const noexcept {
-  sequoia_unreachable("TextureImage::at() is unavailable");
-  return Color(ColorFormat::RGB, 0);
-}
-
 std::size_t TextureImage::hash() const noexcept {
   std::size_t seed = 0;
   core::hashCombine(seed, file_->hash(), std::hash<std::unique_ptr<gli::texture>>()(texture_));
@@ -234,14 +213,13 @@ std::size_t TextureImage::hash() const noexcept {
 
 std::string TextureImage::toString() const {
   return core::format("%s[\n"
-                      "  file = %s\n"
-                      "  pixelData = %#016x\n"
+                      "  file = %s,\n"
                       "  width = %i,\n"
                       "  height = %i,\n"
                       "  levels = %i\n"
                       "]",
-                      getName(), file_->getPath(), (std::size_t)getPixelData(), getWidth(),
-                      getHeight(), texture_->levels());
+                      getName(), file_->getPath(), texture_->extent()[0], texture_->extent()[1],
+                      texture_->levels());
 }
 
 bool TextureImage::equals(const Image* other) const noexcept {
