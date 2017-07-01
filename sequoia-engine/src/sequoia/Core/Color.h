@@ -131,7 +131,9 @@ public:
     case ColorFormat::BGR:
     case ColorFormat::BGRA:
       return data_[2];
-    };
+    default:
+      return 0;
+    }
   }
 
   /// @brief Get green value
@@ -146,7 +148,9 @@ public:
     case ColorFormat::BGR:
     case ColorFormat::BGRA:
       return data_[0];
-    };
+    default:
+      return 0;
+    }
   }
 
   /// @brief Get alpha value
