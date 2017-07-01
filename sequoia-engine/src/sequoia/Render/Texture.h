@@ -21,7 +21,6 @@
 #include "sequoia/Core/Image.h"
 #include "sequoia/Core/NonCopyable.h"
 #include "sequoia/Render/RenderSystemObject.h"
-#include <functional>
 
 namespace sequoia {
 

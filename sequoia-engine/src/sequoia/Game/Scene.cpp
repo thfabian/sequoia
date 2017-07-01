@@ -13,7 +13,6 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Game/Scene.h"
 #include "sequoia/Core/Casting.h"
 #include "sequoia/Core/Format.h"
 #include "sequoia/Core/Logging.h"
@@ -22,6 +21,7 @@
 #include "sequoia/Game/Drawable.h"
 #include "sequoia/Game/Game.h"
 #include "sequoia/Game/MeshManager.h"
+#include "sequoia/Game/Scene.h"
 #include "sequoia/Game/SceneGraph.h"
 #include "sequoia/Render/Camera.h"
 #include "sequoia/Render/DrawCommandList.h"
@@ -35,16 +35,52 @@ namespace game {
 
 Scene::Scene() : activeCamera_(nullptr) {
   drawCommandList_.reserve(render::DrawCommandList::DefaultSize);
+}
 
+void Scene::updateDrawCommandList(render::DrawCommandList* list) {
+  drawCommandList_.clear();
+
+  // Extract all DrawCommands
+  sceneGraph_->apply([this](SceneNode* node) {
+    if(Drawable* draw = node->get<Drawable>()) {
+      if(draw->isActive()) {
+        drawCommandList_.emplace_back(draw->prepareDrawCommand());
+      }
+    }
+  });
+
+  // Copy DrawCommands
+  list->insert(drawCommandList_);
+}
+
+void Scene::setActiveCamera(const std::shared_ptr<render::Camera>& camera) {
+  activeCamera_ = camera;
+
+  for(auto listener : getListeners<SceneListener>())
+    listener->sceneListenerActiveCameraChanged(this);
+}
+
+const std::shared_ptr<render::Camera>& Scene::getActiveCamera() const { return activeCamera_; }
+
+SceneGraph* Scene::getSceneGraph() const { return sceneGraph_.get(); }
+
+void Scene::update() {}
+
+void Scene::updateImpl() {
+  // Inform the nodes to progress to the next time-step
+  SceneNode::UpdateEvent event{0.1f};
+  sceneGraph_->update(event);
+
+  // Update the scene
+  update();
+}
+
+void Scene::makeDummyScene() {
   Game& game = Game::getSingleton();
   sceneGraph_ = std::make_shared<SceneGraph>();
 
-  //
-  // Test Scene
-  //
-
   // Create the camera
-  activeCamera_ = std::make_shared<render::Camera>(math::vec3(0, 5, 5));
+  setActiveCamera(std::make_shared<render::Camera>(math::vec3(0, 5, 5)));
 
   std::shared_ptr<SceneNode> cubeOrigin = SceneNode::create("TestCubeOrigin");
 
@@ -77,36 +113,6 @@ Scene::Scene() : activeCamera_(nullptr) {
   sceneGraph_->insert(controller);
 
   game.getMainWindow()->setCursorMode(render::RenderWindow::CK_Disabled);
-}
-
-void Scene::updateDrawCommandList(render::DrawCommandList* list) {
-  drawCommandList_.clear();
-
-  // Extract all DrawCommands
-  sceneGraph_->apply([this](SceneNode* node) {
-    if(Drawable* draw = node->get<Drawable>()) {
-      if(draw->isActive()) {
-        drawCommandList_.emplace_back(draw->prepareDrawCommand());
-      }
-    }
-  });
-
-  // Copy DrawCommands
-  list->insert(drawCommandList_);
-}
-
-void Scene::setActiveCamera(const std::shared_ptr<render::Camera>& camera) {
-  activeCamera_ = camera;
-}
-
-const std::shared_ptr<render::Camera>& Scene::getActiveCamera() const { return activeCamera_; }
-
-SceneGraph* Scene::getSceneGraph() const { return sceneGraph_.get(); }
-
-void Scene::update() {
-  // Inform the nodes to progress to the next time-step
-  SceneNode::UpdateEvent event{0.1f};
-  sceneGraph_->update(event);
 }
 
 } // namespace game

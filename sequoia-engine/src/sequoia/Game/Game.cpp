@@ -13,13 +13,13 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Game/Game.h"
 #include "sequoia/Core/ErrorHandler.h"
 #include "sequoia/Core/Logging.h"
 #include "sequoia/Core/Options.h"
 #include "sequoia/Core/Platform.h"
 #include "sequoia/Core/StringSwitch.h"
 #include "sequoia/Game/AssetManager.h"
+#include "sequoia/Game/Game.h"
 #include "sequoia/Game/Keymap.h"
 #include "sequoia/Game/MeshManager.h"
 #include "sequoia/Game/Scene.h"
@@ -33,11 +33,17 @@ namespace sequoia {
 
 SEQUOIA_DECLARE_SINGLETON(game::Game);
 
+namespace {
+
+/// @brief Listen to changes of the camera of the current scene
+class CameraChangeListener {};
+}
+
 namespace game {
 
 Game::Game(std::string name)
     : renderSystem_(nullptr), assetManager_(nullptr), meshManager_(nullptr), mainWindow_(nullptr),
-      quitKey_(nullptr), shouldClose_(false), scene_(nullptr), name_(name) {}
+      quitKey_(nullptr), shouldClose_(false), activeScene_(nullptr), name_(name) {}
 
 Game::~Game() { cleanup(); }
 
@@ -51,13 +57,13 @@ void Game::run() {
 
     // Set the draw commands
     drawCommandList->clear();
-    scene_->updateDrawCommandList(drawCommandList);
+    activeScene_->updateDrawCommandList(drawCommandList);
 
     // Start rendering to the main-window
     renderSystem_->renderOneFrame(mainWindow_);
 
     // Compute next time-step
-    scene_->update();
+    activeScene_->updateImpl();
 
     // Update screen
     mainWindow_->swapBuffers();
@@ -104,7 +110,6 @@ void Game::init(bool hideWindow) {
 
     // Initialize the main-window
     mainWindow_->init();
-    quitKey_ = Keymap::makeDefault(render::Key_Q, render::Mod_Ctrl);
 
     // Register the game as a keyboard and mouse listener
     renderSystem_->addKeyboardListener(this);
@@ -119,15 +124,12 @@ void Game::init(bool hideWindow) {
     renderSystem_->loadDefaultShaders(assetManager_->load("sequoia/shader/Default.vert"),
                                       assetManager_->load("sequoia/shader/Default.frag"));
 
-    // Initialize the startup scene
-    sceneList_.emplace_back(std::make_shared<Scene>());
-    scene_ = sceneList_.back().get();
+    // -- tmp --
+    setScene("TestScene", std::make_shared<Scene>(), true);
+    getActiveScene()->makeDummyScene();
+    quitKey_ = Keymap::makeDefault(render::Key_Q, render::Mod_Ctrl);
 
-    // TODO: This is not optimal. The Viewport should automatically be informed if the camera of
-    // the scene changes
-    mainWindow_->getViewport()->setCamera(scene_->getActiveCamera().get());
-
-  } catch(render::RenderSystemException& e) {
+  } catch(core::Exception& e) {
     ErrorHandler::getSingleton().fatal(e.what());
   }
 
@@ -138,7 +140,7 @@ void Game::cleanup() {
   LOG(INFO) << "Terminating " << name_ << " ...";
 
   // Free all the scenes
-  sceneList_.clear();
+  sceneMap_.clear();
 
   // Free managers
   meshManager_.reset();
@@ -195,7 +197,38 @@ const std::shared_ptr<render::Program>& Game::getDefaultProgram() const {
   return renderSystem_->getDefaultProgram();
 }
 
-Scene* Game::getScene() const { return scene_; }
+Scene* Game::getActiveScene() const { return activeScene_; }
+
+void Game::setScene(const std::string& name, const std::shared_ptr<Scene>& scene, bool makeActive) {
+  LOG(INFO) << "Inserting new scene \"" << name << "\" into game ";
+  sceneMap_.emplace(name, scene);
+  if(makeActive)
+    makeSceneActive(name);
+}
+
+Scene* Game::getScene(const std::string& name) const {
+  auto it = sceneMap_.find(name);
+  SEQUOIA_ASSERT_MSG(it != sceneMap_.end(), "requested Scene does not exist");
+  return it->second.get();
+}
+
+void Game::removeScene(const std::string& name) {
+  LOG(INFO) << "Removing scene \"" << name << "\" from game ";
+  sceneMap_.erase(name);
+}
+
+void Game::makeSceneActive(const std::string& name) {
+  if(activeScene_)
+    activeScene_->removeListener<SceneListener>(this);
+
+  activeScene_ = getScene(name);
+  activeScene_->addListener<SceneListener>(this);
+}
+
+void Game::sceneListenerActiveCameraChanged(Scene* scene) {
+  // Inform the view port of the main-window about the changed camera
+  mainWindow_->getViewport()->setCamera(scene->getActiveCamera().get());
+}
 
 } // namespace game
 

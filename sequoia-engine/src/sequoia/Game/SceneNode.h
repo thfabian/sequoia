@@ -180,6 +180,7 @@ public:
   /// @param angle  Angle in radians
   void roll(const math::Radian& angle, TransformSpace relativeTo = TS_Parent);
 
+  /// @}
   /// @name Capabilities
   /// @{
 

@@ -21,9 +21,11 @@
 #include "sequoia/Core/Listenable.h"
 #include "sequoia/Core/Singleton.h"
 #include "sequoia/Game/GameFwd.h"
+#include "sequoia/Game/Scene.h"
 #include "sequoia/Render/Input.h"
 #include "sequoia/Render/RenderFwd.h"
 #include <memory>
+#include <unordered_map>
 
 namespace sequoia {
 
@@ -31,10 +33,11 @@ namespace game {
 
 /// @brief Main class holding all game and rendering related objects and running the main-loop
 /// @ingroup game
-class SEQUOIA_API Game : public Singleton<Game>,
-                         public KeyListener,
-                         public MouseListener,
-                         public Listenable<KeyListener, MouseListener> {
+class SEQUOIA_API Game final : public Singleton<Game>,
+                               public KeyListener,
+                               public MouseListener,
+                               public SceneListener,
+                               public Listenable<KeyListener, MouseListener> {
 
   /// Active render-system
   std::unique_ptr<render::RenderSystem> renderSystem_;
@@ -46,15 +49,15 @@ class SEQUOIA_API Game : public Singleton<Game>,
   /// Reference to the main window
   render::RenderWindow* mainWindow_;
 
-  /// Keymap to quit the game
+  /// Shortcut key to quit the game
   std::shared_ptr<Keymap> quitKey_;
   bool shouldClose_;
 
   /// List of scenes
-  std::vector<std::shared_ptr<Scene>> sceneList_;
+  std::unordered_map<std::string, std::shared_ptr<Scene>> sceneMap_;
 
   /// Currently active scene
-  Scene* scene_;
+  Scene* activeScene_;
 
   /// Name of the game
   std::string name_;
@@ -106,8 +109,29 @@ public:
   /// @brief Get the default program
   const std::shared_ptr<render::Program>& getDefaultProgram() const;
 
-  /// @brief Get the main Scene
-  Scene* getScene() const;
+  /// @name Scene operations
+  /// @{
+
+  /// @brief Get the currently active scene
+  Scene* getActiveScene() const;
+
+  /// @brief Append a new scene `name`
+  void setScene(const std::string& name, const std::shared_ptr<Scene>& scene,
+                bool makeActive = true);
+
+  /// @brief Get the scene `name`
+  Scene* getScene(const std::string& name) const;
+
+  /// @brief Remove the scene `name`
+  void removeScene(const std::string& name);
+
+  /// @brief Make the scene `name` the currently active one
+  void makeSceneActive(const std::string& name);
+
+  /// @brief Listen to the currently active scene
+  void sceneListenerActiveCameraChanged(Scene* scene) override;
+
+  /// @}
 
   /// @brief Listener implementations
   /// @{

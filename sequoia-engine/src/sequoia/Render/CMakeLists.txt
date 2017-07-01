@@ -22,6 +22,8 @@ sequoia_add_objects(
           DrawCommandList.h
           DrawCommandList.cpp
           Exception.h
+          FrameBufferObject.h
+          FrameBufferObject.cpp
           Input.h
           Input.cpp
           Program.h
@@ -56,7 +58,9 @@ sequoia_add_objects(
           Viewport.cpp
           
           GL/GL.h
-          GL/GLFwd.h          
+          GL/GLFwd.h  
+          GL/GLFrameBufferObject.h
+          GL/GLFrameBufferObject.cpp        
           GL/GLInputSystem.h
           GL/GLInputSystem.cpp
           GL/GLProgram.h

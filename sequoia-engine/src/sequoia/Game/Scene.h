@@ -17,7 +17,9 @@
 #define SEQUOIA_GAME_SCENE_H
 
 #include "sequoia/Core/Export.h"
+#include "sequoia/Core/Listenable.h"
 #include "sequoia/Core/NonCopyable.h"
+#include "sequoia/Game/GameFwd.h"
 #include "sequoia/Render/RenderFwd.h"
 #include <memory>
 #include <vector>
@@ -26,27 +28,22 @@ namespace sequoia {
 
 namespace game {
 
-class SceneGraph;
-
-/// @brief State of a scene
+/// @brief Listen to changes in the state of the Scene
 /// @ingroup game
-class SEQUOIA_API Scene : public NonCopyable {
-
-  /// List of currently active DrawCommands of this scene
-  std::vector<render::DrawCommand*> drawCommandList_;
-
-  /// Graph of the scene
-  std::shared_ptr<SceneGraph> sceneGraph_;
-
-  /// Currently active camera
-  std::shared_ptr<render::Camera> activeCamera_;
-
+class SEQUOIA_API SceneListener {
 public:
+  /// @brief The active camera of the scene changed
+  virtual void sceneListenerActiveCameraChanged(Scene* scene) = 0;
+};
+
+/// @brief A scene contains all the necessary objects to progess the game forward in time
+/// @ingroup game
+class SEQUOIA_API Scene : public Listenable<SceneListener>, public NonCopyable {
+public:
+  friend class Game;
+
   /// @brief Create an empty scene
   Scene();
-
-  /// @brief Update the DrawCommandList with the current scene
-  void updateDrawCommandList(render::DrawCommandList* list);
 
   /// @brief Set the active Camera
   void setActiveCamera(const std::shared_ptr<render::Camera>& camera);
@@ -58,7 +55,32 @@ public:
   SceneGraph* getSceneGraph() const;
 
   /// @brief Update the scene and progress to the next time-step
+  ///
+  /// By default, this does nothing.
   virtual void update();
+
+  // TODO: remove me
+  /// @brief Create a dummy test scene
+  void makeDummyScene();
+
+private:
+  /// @brief Calls `update()` followed by an update notification to all SceneNodes in the SceneGraph
+  ///
+  /// This is called by the `Game` in the main-loop.
+  void updateImpl();
+
+  /// @brief Update the DrawCommandList with the current scene
+  void updateDrawCommandList(render::DrawCommandList* list);
+
+private:
+  /// List of currently active DrawCommands of this scene
+  std::vector<render::DrawCommand*> drawCommandList_;
+
+  /// Graph of the scene
+  std::shared_ptr<SceneGraph> sceneGraph_;
+
+  /// Currently active camera
+  std::shared_ptr<render::Camera> activeCamera_;
 };
 
 } // namespace game
