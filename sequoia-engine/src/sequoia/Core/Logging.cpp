@@ -40,9 +40,7 @@ std::string LoggerListener::getCurrentTime() {
 }
 
 std::string LoggerListener::getThreadID() {
-  std::ostringstream ss;
-  ss << std::hex << std::this_thread::get_id();
-  return ss.str();
+  return core::format("0x%x", std::this_thread::get_id());
 }
 
 internal::LoggerProxy::LoggerProxy(std::mutex* lock, LoggingLevel level, std::stringstream* ss,

@@ -95,7 +95,7 @@ TEST_F(GLTextureTest, LoadTexture2DCompressed) {
 
     GLint compressed;
     glGetTextureLevelParameteriv(gltexture->getID(), 0, GL_TEXTURE_COMPRESSED, &compressed);
-    EXPECT_EQ(compressed, gli::is_compressed(gliTexture.format()));
+    EXPECT_EQ((bool) compressed, gli::is_compressed(gliTexture.format()));
   }
 
   // First level of detail (i.e first mip-map level)
