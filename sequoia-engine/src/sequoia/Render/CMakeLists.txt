@@ -22,6 +22,7 @@ sequoia_add_objects(
           DrawCommandList.h
           DrawCommandList.cpp
           Exception.h
+          FrameListener.h
           FrameBufferObject.h
           FrameBufferObject.cpp
           Input.h

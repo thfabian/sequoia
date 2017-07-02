@@ -18,8 +18,9 @@
 
 #include "sequoia/Core/Export.h"
 #include "sequoia/Core/NonCopyable.h"
-#include "sequoia/Render/DrawCommand.h"
-#include "sequoia/Render/RenderState.h"
+#include "sequoia/Render/FrameListener.h"
+#include "sequoia/Render/RenderFwd.h"
+#include <memory>
 #include <unordered_map>
 
 namespace sequoia {
@@ -27,20 +28,21 @@ namespace sequoia {
 namespace render {
 
 class GLRenderStateCache;
-class Texture;
 
 /// @brief Manager of the OpenGL state-machine
 ///
 /// This keeps an in-memory copy of the OpenGL state-machine to avoid unnecessary state changes.
 ///
 /// @ingroup gl
-class SEQUOIA_API GLStateCacheManager : public NonCopyable {
+class SEQUOIA_API GLStateCacheManager : public FrameListener, public NonCopyable {
+
+  /// In-memory version of the OpenGL state
   std::shared_ptr<GLRenderStateCache> stateCache_;
 
 public:
   GLStateCacheManager();
 
-  /// @brief Draw the `command` and update hte RenderState *if* necessary
+  /// @brief Draw the `command` and update the RenderState *if* necessary
   void draw(DrawCommand* command);
 
   /// @brief Get the currently active RenderState
@@ -49,17 +51,29 @@ public:
   /// @brief Bind the `program`
   void bindProgram(Program* program);
 
+  /// @brief Unbind any programs
+  void unbindProgram();
+
   /// @brief Bind the given vertex array object `vao`
   void bindVertexArrayObject(VertexArrayObject* vao);
+
+  /// @brief Unbind any vertex array objects
+  void unbindVertexArrayObject();
+
+  /// @brief Bind the given frame buffer object `fbo`
+  void bindFrameBufferObject(FrameBufferObject* fbo);
+
+  /// @brief Unbind any frame buffer objects
+  void unbindFrameBufferObject();
 
   /// @brief Bind the `texture` to `textureUnit`
   void bindTexture(int textureUnit, Texture* texture);
 
-  /// @brief Unbind the any texture from `textureUnit`
+  /// @brief Unbind any texture from `textureUnit`
   void unbindTexture(int textureUnit);
 
-  /// @brief Start rendering (resets some internal variables)
-  void startRendering();
+  void frameListenerRenderingBegin(std::size_t frameID);
+  void frameListenerRenderingEnd(std::size_t frameID);
 };
 
 } // namespace render

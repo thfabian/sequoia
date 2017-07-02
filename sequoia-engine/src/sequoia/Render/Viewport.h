@@ -24,7 +24,7 @@ namespace sequoia {
 
 namespace render {
 
-/// @brief Viewport Listeners
+/// @brief Listen to Viewport events
 /// @ingroup render
 class SEQUOIA_API ViewportListener {
 public:

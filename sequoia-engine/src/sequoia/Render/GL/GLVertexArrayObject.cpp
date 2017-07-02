@@ -21,6 +21,7 @@
 #include "sequoia/Render/GL/GLStateCacheManager.h"
 #include "sequoia/Render/GL/GLVertexArrayObject.h"
 #include "sequoia/Render/GL/GLVertexAttribute.h"
+#include "sequoia/Render/GL/GLRenderSystem.h"
 #include "sequoia/Render/VertexData.h"
 
 namespace sequoia {
@@ -36,7 +37,7 @@ static GLenum getGLType(VertexLayout::Type type) {
   case VertexLayout::UnsignedByte:
     return GL_UNSIGNED_BYTE;
   default:
-    sequoia_unreachable("invlid Type");
+    sequoia_unreachable("invlid type");
     return GL_INVALID_ENUM;
   }
 }
@@ -63,9 +64,8 @@ GLVertexArrayObject::~GLVertexArrayObject() {
     freeVertexDataDevice();
 }
 
-GLVertexArrayObject::GLVertexArrayObject(GLRenderer* renderer)
-    : VertexArrayObject(RenderSystemKind::RK_OpenGL), vaoID_(0), eboID_(0), vboID_(0),
-      renderer_(renderer) {}
+GLVertexArrayObject::GLVertexArrayObject()
+    : VertexArrayObject(RenderSystemKind::RK_OpenGL), vaoID_(0), eboID_(0), vboID_(0) {}
 
 void GLVertexArrayObject::bind() {
   glBindVertexArray(vaoID_);
@@ -88,7 +88,7 @@ unsigned int GLVertexArrayObject::getVAOID() const { return vaoID_; }
 void GLVertexArrayObject::writeVertexData(std::size_t offset, std::size_t length) {
 
   // Bind program
-  renderer_->getStateCacheManager()->bindVertexArrayObject(this);
+  getGLRenderSystem().getStateCacheManager()->bindVertexArrayObject(this);
 
   // TODO: Discardable data should use glBufferData(GL_ARRAY_BUFFER, ..., NULL, ...) first
 
@@ -107,7 +107,7 @@ void GLVertexArrayObject::writeIndexData(std::size_t offset, std::size_t length)
     return;
 
   // Bind program
-  renderer_->getStateCacheManager()->bindVertexArrayObject(this);
+  getGLRenderSystem().getStateCacheManager()->bindVertexArrayObject(this);
 
   // TODO: Discardable data should use glBufferData(GL_ARRAY_BUFFER, ..., NULL, ...) first
 
@@ -132,7 +132,7 @@ void GLVertexArrayObject::attachVertexDataDevice() {
     glGenBuffers(1, &eboID_);
 
   // Bind program
-  renderer_->getStateCacheManager()->bindVertexArrayObject(this);
+  getGLRenderSystem().getStateCacheManager()->bindVertexArrayObject(this);
 
   const VertexLayout* layout = data_->getLayout();
 

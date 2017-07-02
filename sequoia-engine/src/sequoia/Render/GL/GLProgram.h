@@ -76,7 +76,7 @@ public:
   void bind();
 
   /// @brief Unbind program
-  void unbind();
+  static void unbind();
 
   /// @brief Add the `shader` to the program
   ///

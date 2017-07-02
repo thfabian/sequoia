@@ -33,7 +33,6 @@ TEST(ImageTest, PNGImage) {
 
   std::shared_ptr<Image> loadedImage = Image::load(file);
   ASSERT_TRUE(isa<RegularImage>(loadedImage.get()));
-  EXPECT_TRUE(isa<core::PNGImage>(loadedImage.get()));
 
   const RegularImage* image = dyn_cast<RegularImage>(loadedImage.get());
 
@@ -64,7 +63,6 @@ TEST(ImageTest, JPEGImage) {
 
   std::shared_ptr<Image> loadedImage = Image::load(file);
   ASSERT_TRUE(isa<RegularImage>(loadedImage.get()));
-  EXPECT_TRUE(isa<core::JPEGImage>(loadedImage.get()));
 
   const RegularImage* image = dyn_cast<RegularImage>(loadedImage.get());
 
@@ -100,7 +98,6 @@ TEST(ImageTest, BMPImage) {
 
   std::shared_ptr<Image> loadedImage = Image::load(file);
   ASSERT_TRUE(isa<RegularImage>(loadedImage.get()));
-  EXPECT_TRUE(isa<core::BMPImage>(loadedImage.get()));
 
   const RegularImage* image = dyn_cast<RegularImage>(loadedImage.get());
 
@@ -129,7 +126,6 @@ TEST(ImageTest, DDSImage) {
 
   std::shared_ptr<Image> loadedImage = Image::load(file);
   ASSERT_TRUE(isa<TextureImage>(loadedImage.get()));
-  EXPECT_TRUE(isa<core::DDSImage>(loadedImage.get()));
 
   const TextureImage* image = dyn_cast<TextureImage>(loadedImage.get());
 

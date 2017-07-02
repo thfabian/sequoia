@@ -82,6 +82,7 @@ TEST_F(GLTextureTest, LoadTexture2DCompressed) {
   std::shared_ptr<Texture> texture = rsys.createTexture(image);
 
   GLTexture* gltexture = dyn_cast<GLTexture>(texture.get());
+  ASSERT_TRUE(isa<TextureImage>(image.get()));
   const gli::texture& gliTexture = *dyn_cast<TextureImage>(image.get())->getTexture();
 
   // Base level
@@ -95,7 +96,7 @@ TEST_F(GLTextureTest, LoadTexture2DCompressed) {
 
     GLint compressed;
     glGetTextureLevelParameteriv(gltexture->getID(), 0, GL_TEXTURE_COMPRESSED, &compressed);
-    EXPECT_EQ((bool) compressed, gli::is_compressed(gliTexture.format()));
+    EXPECT_EQ((bool)compressed, gli::is_compressed(gliTexture.format()));
   }
 
   // First level of detail (i.e first mip-map level)

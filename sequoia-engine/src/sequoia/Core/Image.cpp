@@ -13,11 +13,11 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Core/Image.h"
 #include "sequoia/Core/Casting.h"
 #include "sequoia/Core/Exception.h"
 #include "sequoia/Core/Format.h"
 #include "sequoia/Core/HashCombine.h"
+#include "sequoia/Core/Image.h"
 #include "sequoia/Core/StringSwitch.h"
 #include "sequoia/Core/Unreachable.h"
 #include <gli/gli.hpp>
@@ -75,17 +75,13 @@ std::shared_ptr<Image> Image::load(const std::shared_ptr<File>& file) {
 
   switch(file->getType()) {
   case FileType::Png:
-    return std::make_shared<PNGImage>(file);
-    break;
+    return std::make_shared<RegularImage>(IF_PNG, file);
   case FileType::Jpeg:
-    return std::make_shared<JPEGImage>(file);
-    break;
+    return std::make_shared<RegularImage>(IF_JPEG, file);
   case FileType::Bmp:
-    return std::make_shared<BMPImage>(file);
-    break;
+    return std::make_shared<RegularImage>(IF_BMP, file);
   case FileType::DDS:
-    return std::make_shared<DDSImage>(file);
-    break;
+    return std::make_shared<TextureImage>(IF_DDS, file);
   default:
     SEQUOIA_THROW(Exception, "invalid image format of file: \"%s\"", file->getPath());
     return nullptr;
@@ -154,7 +150,7 @@ RegularImage::~RegularImage() {
 }
 
 std::string RegularImage::toString() const {
-  return core::format("%s[\n"
+  return core::format("RegularImage[\n"
                       "  file = %s\n"
                       "  pixelData = %#016x\n"
                       "  width = %i,\n"
@@ -162,8 +158,8 @@ std::string RegularImage::toString() const {
                       "  colorFormat = %s,\n"
                       "  numChannels = %i\n"
                       "]",
-                      getName(), file_->getPath(), (std::size_t)pixelData_, width_, height_,
-                      colorFormat_, getNumChannels());
+                      file_->getPath(), (std::size_t)pixelData_, width_, height_, colorFormat_,
+                      getNumChannels());
 }
 
 bool RegularImage::equals(const Image* other) const noexcept {
@@ -184,12 +180,6 @@ std::size_t RegularImage::hash() const noexcept {
   core::hashCombine(seed, file_->hash(), pixelData_, width_, height_, colorFormat_);
   return seed;
 }
-
-PNGImage::PNGImage(const std::shared_ptr<File>& file) : RegularImage(Image::IF_PNG, file) {}
-
-JPEGImage::JPEGImage(const std::shared_ptr<File>& file) : RegularImage(Image::IF_JPEG, file) {}
-
-BMPImage::BMPImage(const std::shared_ptr<File>& file) : RegularImage(Image::IF_BMP, file) {}
 
 TextureImage::TextureImage(Image::ImageFormat format, const std::shared_ptr<File>& file)
     : Image(format, file) {
@@ -212,13 +202,13 @@ std::size_t TextureImage::hash() const noexcept {
 }
 
 std::string TextureImage::toString() const {
-  return core::format("%s[\n"
+  return core::format("TextureImage[\n"
                       "  file = %s,\n"
                       "  width = %i,\n"
                       "  height = %i,\n"
                       "  levels = %i\n"
                       "]",
-                      getName(), file_->getPath(), texture_->extent()[0], texture_->extent()[1],
+                      file_->getPath(), texture_->extent()[0], texture_->extent()[1],
                       texture_->levels());
 }
 
@@ -232,8 +222,6 @@ bool TextureImage::equals(const Image* other) const noexcept {
   return *(thisImage->texture_) == *(otherImage->texture_) &&
          *(thisImage->file_) == *(otherImage->file_);
 }
-
-DDSImage::DDSImage(const std::shared_ptr<File>& file) : TextureImage(Image::IF_DDS, file) {}
 
 } // namespace core
 

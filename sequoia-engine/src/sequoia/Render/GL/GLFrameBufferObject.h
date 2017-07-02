@@ -28,44 +28,40 @@ class GLTexture;
 /// @ingroup gl
 class SEQUOIA_API GLFrameBufferObject final : public FrameBufferObject {
 
-  /// OpenGL FBO index
-  unsigned int id_;
+  /// OpenGL indices
+  unsigned int fboID_, rboDepthID_;
 
-  /// Texture target
-  GLTexture* texture_;
+  /// Parameter used for initialization
+  FrameBufferObjectParameter param_;
 
+  /// Texture used for rendering
+  std::shared_ptr<GLTexture> texture_;
+  
 public:
-  GLFrameBufferObject();
+  GLFrameBufferObject(const FrameBufferObjectParameter& param);
   virtual ~GLFrameBufferObject();
-
-  /// @brief Check if FBO has been iniailized correctly
-  bool isInitialized() const { return id_ != 0; }
-
-  /// @brief Attach a texture
-  void attachTexture(GLTexture* texture);
-
-  /// @brief Check if a texture was attached
-  bool hasTexture() const { return texture_ != nullptr; }
 
   /// @brief Get the unique identifer of the program
   ///
   /// Note that IDs might be reused after a program has been destroyed.
   unsigned int getID() const;
 
+  /// @brief Get the parameter used for initialization
+  const FrameBufferObjectParameter& getParam() const;
+
   /// @brief Bind the frame buffer object to the current render pipline
   ///
   /// This forces all subsequent render draw calls to render into this FBO.
+  /// @note Do not call this function directly, use `GLRenderer::bindFrameBufferObject` instead
   void bind();
 
   /// @brief Unbind the frame buffer object
-  void unbind();
+  static void unbind();
 
   /// @brief Convert to string
   virtual std::string toString() const override;
 
-private:
-  /// @brief Initialize the FBO
-  void init();
+  SEQUOIA_GL_OBJECT(FrameBufferObject)
 };
 
 } // namespace render

@@ -28,6 +28,7 @@ namespace render {
 class GLRenderer;
 class GLInputSystem;
 class GLRenderWindow;
+class GLStateCacheManager;
 
 /// @brief OpenGL render-system
 /// @ingroup gl
@@ -103,8 +104,21 @@ public:
   /// @copydoc RenderSystem::getDefaultProgram
   virtual const std::shared_ptr<Program>& getDefaultProgram() const override;
 
+  /// @brief Get the Renderer of the main-window
+  GLRenderer* getRenderer();
+
+  /// @brief Get the state cache manager of the main-window
+  GLStateCacheManager* getStateCacheManager();
+
   SEQUOIA_GL_OBJECT(RenderSystem)
 };
+
+/// @brief Get a reference to the currently active `GLRenderSystem`
+/// @ingroup gl
+/// @{
+SEQUOIA_API extern GLRenderSystem& getGLRenderSystem() noexcept;
+SEQUOIA_API extern GLRenderSystem* getGLRenderSystemPtr() noexcept;
+/// @}
 
 } // namespace render
 

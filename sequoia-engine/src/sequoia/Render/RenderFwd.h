@@ -24,6 +24,7 @@ class Camera;
 class Program;
 class DrawCommand;
 class DrawCommandList;
+class FrameBufferObject;
 struct RenderState;
 class RenderStateCache;
 class RenderSystem;

@@ -85,7 +85,7 @@ static std::string functionCallToString(const glbinding::FunctionCall& call) {
   return ss.str();
 }
 
-GLRenderer::GLRenderer(GLRenderWindow* window) : window_(window) {
+GLRenderer::GLRenderer(GLRenderWindow* window) : window_(window), frames_(0) {
   LOG(INFO) << "Creating OpenGL renderer " << this << " ...";
 
   // Bind the context to the current thread
@@ -122,10 +122,11 @@ GLRenderer::GLRenderer(GLRenderWindow* window) : window_(window) {
     glfwSwapInterval(1);
 
   // Register as Viewport listener
-  window_->getViewport()->addListener(static_cast<ViewportListener*>(this));
+  window_->getViewport()->addListener<ViewportListener>(this);
 
   // Initialize OpenGL related managers
   stateCacheManager_ = std::make_unique<GLStateCacheManager>();
+  addListener<FrameListener>(stateCacheManager_.get());
   shaderManager_ = std::make_unique<GLShaderManager>();
   programManager_ = std::make_unique<GLProgramManager>();
   textureManager_ = std::make_unique<GLTextureManager>(this);
@@ -155,6 +156,10 @@ GLRenderer::~GLRenderer() {
 }
 
 void GLRenderer::render() {
+  frames_++;
+  for(FrameListener* listener : getListeners<FrameListener>())
+    listener->frameListenerRenderingBegin(frames_);
+
   Viewport* viewport = window_->getViewport();
   Camera* camera = viewport->getCamera();
   DrawCommandList* drawCommandList = window_->getDrawCommandList().get();
@@ -164,9 +169,6 @@ void GLRenderer::render() {
 
   // Clear the screen
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-  // Start rendering
-  stateCacheManager_->startRendering();
 
   DrawCommand* drawCommand = nullptr;
   for(drawCommand = drawCommandList->start(); drawCommand != nullptr;
@@ -181,6 +183,9 @@ void GLRenderer::render() {
     // Update the OpenGL state-machine and draw the command
     stateCacheManager_->draw(drawCommand);
   }
+
+  for(FrameListener* listener : getListeners<FrameListener>())
+    listener->frameListenerRenderingEnd(frames_);
 }
 
 GLShaderManager* GLRenderer::getShaderManager() { return shaderManager_.get(); }

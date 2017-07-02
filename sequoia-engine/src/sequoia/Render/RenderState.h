@@ -17,6 +17,7 @@
 #define SEQUOIA_RENDER_RENDERSTATE_H
 
 #include "sequoia/Core/Export.h"
+#include "sequoia/Render/RenderFwd.h"
 #include <cstdint>
 #include <string>
 #include <unordered_map>
@@ -24,10 +25,6 @@
 namespace sequoia {
 
 namespace render {
-
-class Program;
-class VertexArrayObject;
-class Texture;
 
 /// @brief State of the render pipline
 ///

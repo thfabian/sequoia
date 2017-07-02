@@ -35,7 +35,6 @@ class GLInputSystem;
 /// @brief OpenGL render window
 /// @ingroup gl
 class SEQUOIA_API GLRenderWindow final : public RenderWindow, public InputEventListener {
-  GLRenderSystem* renderSystem_;
   GLFWwindow* window_;
 
   /// Short-hard for window geometry
@@ -55,7 +54,7 @@ public:
   /// This involves OpenGL context creation of the window.
   ///
   /// @throw RenderSystemInitException    Window creation failed
-  GLRenderWindow(GLRenderSystem* renderSystem, const RenderWindow::WindowHint& windowHints);
+  GLRenderWindow(const RenderWindow::WindowHint& windowHints);
 
   /// @brief Release window and OpenGL context
   ~GLRenderWindow();

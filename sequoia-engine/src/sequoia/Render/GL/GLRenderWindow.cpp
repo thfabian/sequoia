@@ -30,9 +30,8 @@ namespace render {
 
 std::unordered_map<GLFWwindow*, GLRenderWindow*> GLRenderWindow::StaticWindowMap;
 
-GLRenderWindow::GLRenderWindow(GLRenderSystem* renderSystem,
-                               const RenderWindow::WindowHint& windowHints)
-    : RenderWindow(RK_GLRenderWindow), renderSystem_(renderSystem), window_(nullptr),
+GLRenderWindow::GLRenderWindow(const RenderWindow::WindowHint& windowHints)
+    : RenderWindow(RK_GLRenderWindow), window_(nullptr),
       windowWidth_(-1), windowHeight_(-1), mode_(CursorModeKind::CK_Normal), renderer_(nullptr),
       inputSystem_(nullptr) {
   Options& opt = Options::getSingleton();
@@ -155,9 +154,11 @@ void GLRenderWindow::init() {
   SEQUOIA_ASSERT_MSG(hasViewport(), "RenderTarget::init() called with no Viewport set");
 
   renderer_ = std::make_unique<GLRenderer>(this);
+  
+  // Register the renderSystem as a frame listener
+  renderer_->addListener<FrameListener>(getGLRenderSystemPtr());  
 
   LOG(INFO) << "Registering IO callbacks ...";
-
   inputSystem_ = std::make_unique<GLInputSystem>(this, true);
 
   glfwSetInputMode(window_, GLFW_STICKY_KEYS, 1);
@@ -166,7 +167,8 @@ void GLRenderWindow::init() {
   glfwSetCursorPosCallback(window_, GLRenderWindow::mousePositionCallbackDispatch);
   glfwSetCursorEnterCallback(window_, GLRenderWindow::mouseEnterCallbackDispatch);
 
-  renderSystem_->addListener<InputEventListener>(static_cast<InputEventListener*>(this));
+  // Register the window as an input event listener  
+  getGLRenderSystem().addListener<InputEventListener>(this);
 
   LOG(INFO) << "Done registering IO callbacks";
 }

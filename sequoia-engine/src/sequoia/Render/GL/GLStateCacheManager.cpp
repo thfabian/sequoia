@@ -13,13 +13,16 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Render/GL/GL.h"
 #include "sequoia/Core/Casting.h"
+#include "sequoia/Render/DrawCommand.h"
+#include "sequoia/Render/GL/GL.h"
+#include "sequoia/Render/GL/GLFrameBufferObject.h"
 #include "sequoia/Render/GL/GLProgram.h"
 #include "sequoia/Render/GL/GLStateCacheManager.h"
 #include "sequoia/Render/GL/GLTexture.h"
 #include "sequoia/Render/GL/GLVertexArrayObject.h"
 #include "sequoia/Render/GL/GLVertexAttribute.h"
+#include "sequoia/Render/RenderState.h"
 #include "sequoia/Render/VertexData.h"
 
 namespace sequoia {
@@ -51,7 +54,7 @@ struct GetIndexType<unsigned int> {
 
 /// @brief OpenGL implementation of the RenderStateCache
 /// @ingroup gl
-class GLRenderStateCache : public RenderStateCache {
+class GLRenderStateCache final : public RenderStateCache {
 
   /// Keep track of the values of the uniform variables of the Programs
   std::unordered_map<unsigned int, std::unordered_map<std::string, UniformVariable>>
@@ -69,11 +72,26 @@ public:
       ProgramChanged(program);
   }
 
+  /// @brief Unbind any program
+  void unbindProgram() { GLProgram::unbind(); }
+
   /// @brief Bind the given `VBO`
   void bindVertexArrayObject(VertexArrayObject* vao) {
     if(getRenderState().VertexArrayObject != vao)
       VertexArrayObjectChanged(vao);
   }
+
+  /// @brief Unbind any VBO
+  void unbindVertexArrayObject() { GLVertexArrayObject::unbind(); }
+
+  /// @brief Bind the given `FBO`
+  void bindFrameBufferObject(FrameBufferObject* fbo) {
+    if(fbo)
+      dyn_cast<GLFrameBufferObject>(fbo)->bind();
+  }
+  
+  /// @brief Unbind any FBO
+  void unbindFrameBufferObject() { GLFrameBufferObject::unbind(); }
 
   /// @brief Bind the `texture` to `textureUnit`
   void bindTexture(int textureUnit, Texture* texture) {
@@ -224,7 +242,7 @@ void GLStateCacheManager::draw(DrawCommand* command) {
   if(!command->getUniformVariables().empty())
     stateCache_->setUniformVariables(command->getProgram(), command->getUniformVariables());
 
-  // Update the render-state (including setting the VAO, program and textures)
+  // Update the render-state (including setting the VAO, programtextures, FBO etc..)
   stateCache_->setRenderState(command->getRenderState());
   const RenderState& state = getRenderState();
 
@@ -247,9 +265,19 @@ const RenderState& GLStateCacheManager::getRenderState() const {
 
 void GLStateCacheManager::bindProgram(Program* program) { stateCache_->bindProgram(program); }
 
+void GLStateCacheManager::unbindProgram() { stateCache_->unbindProgram(); }
+
 void GLStateCacheManager::bindVertexArrayObject(VertexArrayObject* vao) {
   stateCache_->bindVertexArrayObject(vao);
 }
+
+void GLStateCacheManager::unbindVertexArrayObject() { stateCache_->unbindVertexArrayObject(); }
+
+void GLStateCacheManager::bindFrameBufferObject(FrameBufferObject* fbo) {
+  stateCache_->bindFrameBufferObject(fbo);
+}
+
+void GLStateCacheManager::unbindFrameBufferObject() { stateCache_->unbindFrameBufferObject(); }
 
 void GLStateCacheManager::bindTexture(int textureUnit, Texture* texture) {
   stateCache_->bindTexture(textureUnit, texture);
@@ -259,7 +287,11 @@ void GLStateCacheManager::unbindTexture(int textureUnit) {
   stateCache_->unbindTexture(textureUnit);
 }
 
-void GLStateCacheManager::startRendering() { stateCache_->resetUniformVariables(); }
+void GLStateCacheManager::frameListenerRenderingBegin(std::size_t frameID) {
+  stateCache_->resetUniformVariables();
+}
+
+void GLStateCacheManager::frameListenerRenderingEnd(std::size_t frameID) {}
 
 } // namespace render
 

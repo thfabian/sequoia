@@ -18,16 +18,17 @@
 
 #include "sequoia/Core/Export.h"
 #include "sequoia/Core/Image.h"
+#include "sequoia/Core/Listenable.h"
 #include "sequoia/Core/NonCopyable.h"
 #include "sequoia/Core/Platform.h"
 #include "sequoia/Core/Singleton.h"
+#include "sequoia/Render/FrameListener.h"
 #include "sequoia/Render/Input.h"
 #include "sequoia/Render/RenderFwd.h"
 #include "sequoia/Render/RenderSystemObject.h"
 #include "sequoia/Render/RenderWindow.h"
 #include "sequoia/Render/Shader.h"
 #include "sequoia/Render/Texture.h"
-#include "sequoia/Render/VertexArrayObject.h"
 #include <memory>
 #include <set>
 #include <string>
@@ -44,7 +45,8 @@ namespace render {
 ///
 /// @ingroup render
 class SEQUOIA_API RenderSystem : public Singleton<RenderSystem>,
-                                 public Listenable<InputEventListener>,
+                                 public FrameListener,
+                                 public Listenable<InputEventListener, FrameListener>,
                                  public RenderSystemObject {
 public:
   /// @brief Create the RenderSystem of the given `kind`
@@ -120,6 +122,9 @@ public:
 
   /// @brief Check if we run in debug-mode
   bool debugMode() const;
+
+  void frameListenerRenderingBegin(std::size_t frameID) override;
+  void frameListenerRenderingEnd(std::size_t frameID) override;
 
 protected:
   RenderSystem(RenderSystemKind kind);

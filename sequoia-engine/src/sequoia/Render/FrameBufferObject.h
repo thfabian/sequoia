@@ -18,6 +18,7 @@
 
 #include "sequoia/Core/Export.h"
 #include "sequoia/Core/NonCopyable.h"
+#include "sequoia/Render/RenderFwd.h"
 #include "sequoia/Render/RenderSystemObject.h"
 #include <memory>
 #include <string>
@@ -25,6 +26,33 @@
 namespace sequoia {
 
 namespace render {
+
+/// @brief Parameters used to construct the FrameBufferObject
+/// @ingroup render
+struct SEQUOIA_API FrameBufferObjectParameter {
+  FrameBufferObjectParameter(int width, int height) : Width(width), Height(height) {}
+  FrameBufferObjectParameter(const FrameBufferObjectParameter&) = default;
+  FrameBufferObjectParameter(FrameBufferObjectParameter&&) = default;
+
+  enum ModeKind {
+    MK_RenderToTexture = 0, ///< Render the color buffer to a texture
+  };
+
+  /// Width of the frame buffer
+  int Width;
+
+  /// Height of the frame buffer
+  int Height;
+
+  /// Mode of the frame buffer
+  ModeKind Mode = MK_RenderToTexture;
+
+  /// Used multi-sampling
+  int MSAA = 0;
+
+  /// @brief Convert to string
+  std::string toString() const;
+};
 
 /// @brief Framebuffer objects allow to render to a user-defined location, and thus render without
 /// disturbing the main screen.

@@ -33,19 +33,16 @@ class SEQUOIA_API GLVertexArrayObject final : public VertexArrayObject {
   /// Are the buffers allocated?
   bool allocated_;
 
-  /// Associated Renderer
-  GLRenderer* renderer_;
-
 public:
   virtual ~GLVertexArrayObject();
-  GLVertexArrayObject(GLRenderer* renderer);
+  GLVertexArrayObject();
 
   /// @brief Bind the VAO
   /// @note Do not call this function directly, use `GLRenderer::bindVertexArrayObject` instead
   void bind();
 
   /// @brief Unbind VAO
-  void unbind();
+  static void unbind();
 
   /// @brief Get the VAO ID
   unsigned int getVAOID() const;

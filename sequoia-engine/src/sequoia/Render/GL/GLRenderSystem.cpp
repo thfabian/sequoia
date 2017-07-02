@@ -13,11 +13,11 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Render/GL/GL.h"
 #include "sequoia/Core/Casting.h"
 #include "sequoia/Core/ErrorHandler.h"
 #include "sequoia/Core/Logging.h"
 #include "sequoia/Render/Exception.h"
+#include "sequoia/Render/GL/GL.h"
 #include "sequoia/Render/GL/GLInputSystem.h"
 #include "sequoia/Render/GL/GLProgramManager.h"
 #include "sequoia/Render/GL/GLRenderSystem.h"
@@ -59,7 +59,7 @@ GLRenderSystem::~GLRenderSystem() {
 }
 
 RenderWindow* GLRenderSystem::createMainWindow(const RenderWindow::WindowHint& hints) {
-  mainWindow_ = std::make_shared<GLRenderWindow>(this, hints);
+  mainWindow_ = std::make_shared<GLRenderWindow>(hints);
   return mainWindow_.get();
 }
 
@@ -87,7 +87,7 @@ void GLRenderSystem::pollEvents() {
 void GLRenderSystem::renderOneFrame(RenderTarget* target) { target->update(); }
 
 std::unique_ptr<VertexArrayObject> GLRenderSystem::createVertexArrayObject() {
-  return std::make_unique<GLVertexArrayObject>(mainWindow_->getRenderer());
+  return std::make_unique<GLVertexArrayObject>();
 }
 
 std::shared_ptr<Shader> GLRenderSystem::createShader(Shader::ShaderType type,
@@ -138,6 +138,18 @@ const std::shared_ptr<Shader>& GLRenderSystem::getDefaultFragmentShader() const 
 
 const std::shared_ptr<Program>& GLRenderSystem::getDefaultProgram() const {
   return mainWindow_->getRenderer()->getDefaultProgram();
+}
+
+GLRenderer* GLRenderSystem::getRenderer() { return mainWindow_->getRenderer(); }
+
+GLStateCacheManager* GLRenderSystem::getStateCacheManager() {
+  return getRenderer()->getStateCacheManager();
+}
+
+GLRenderSystem& getGLRenderSystem() noexcept { return *getGLRenderSystemPtr(); }
+
+GLRenderSystem* getGLRenderSystemPtr() noexcept {
+  return dyn_cast<GLRenderSystem>(RenderSystem::getSingletonPtr());
 }
 
 } // namespace render

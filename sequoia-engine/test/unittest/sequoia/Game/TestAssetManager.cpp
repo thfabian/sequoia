@@ -30,7 +30,6 @@ TEST(AssetManagerTest, LoadFromDisk) {
   auto& env = Environment::getSingleton();
   AssetManager manager(env.getRessourcePath().native(), PLATFORM_STR(""));
 
-  // Load ASCII file
   auto file = manager.load("sequoia/Game/TestAssetManager/Test.txt");
 
   std::ifstream ifs(
@@ -51,7 +50,7 @@ TEST(AssetManagerTest, LoadImage) {
   
   auto image = manager.loadImage("sequoia/Game/TestAssetManager/Test.png");
   auto imageCopy = manager.loadImage("sequoia/Game/TestAssetManager/Test.png");
-  EXPECT_EQ(image, imageCopy);
+  EXPECT_EQ(*image, *imageCopy);
 }
 
 } // anonymous namespace

@@ -133,12 +133,9 @@ public:
 
   /// @}
 
-  /// @brief Listener implementations
-  /// @{
   void mouseButtonEvent(const render::MouseButtonEvent& event) override;
   void mousePositionEvent(const render::MousePositionEvent& event) override;
   void keyboardEvent(const render::KeyboardEvent& event) override;
-  /// @}
 };
 
 } // namespace game

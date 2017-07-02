@@ -13,11 +13,12 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Render/GL/GL.h"
 #include "sequoia/Core/Casting.h"
 #include "sequoia/Core/Logging.h"
 #include "sequoia/Core/Unreachable.h"
 #include "sequoia/Render/Exception.h"
+#include "sequoia/Render/GL/GL.h"
+#include "sequoia/Render/GL/GLRenderSystem.h"
 #include "sequoia/Render/GL/GLRenderer.h"
 #include "sequoia/Render/GL/GLStateCacheManager.h"
 #include "sequoia/Render/GL/GLTextureManager.h"
@@ -229,7 +230,7 @@ void GLTextureManager::make(const std::shared_ptr<GLTexture>& texture,
     TextureParameter& param = *texture->getParameter();
 
     // Bind texture to unit 0 (doesn't really matter which unit we bind it to)
-    renderer_->getStateCacheManager()->bindTexture(0, texture.get());
+    getGLRenderSystem().getStateCacheManager()->bindTexture(0, texture.get());
 
     bool isTexturedImage = isa<TextureImage>(texture->getImage().get());
 
@@ -268,7 +269,7 @@ void GLTextureManager::make(const std::shared_ptr<GLTexture>& texture,
 
     // Unbind the texture. This is necessary to make sure when we bind it during rendering we also
     // set the sampler of the program.
-    renderer_->getStateCacheManager()->unbindTexture(0);
+    getGLRenderSystem().getStateCacheManager()->unbindTexture(0);
 
     LOG(DEBUG) << "Successfully uploaded texture (ID=" << texture->id_ << ")";
   }

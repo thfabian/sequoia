@@ -41,7 +41,7 @@ protected:
     changes_.emplace_back("Texture" + std::to_string(textureUnit) + "_" +
                           (enable ? "enabled" : "disabled"));
   }
-
+  
 public:
   RenderStateCacheTest() : RenderStateCache() { initState(); }
   const std::vector<std::string>& getChanges() const { return changes_; }

@@ -13,13 +13,14 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Render/RenderState.h"
 #include "sequoia/Core/Format.h"
 #include "sequoia/Core/StringUtil.h"
 #include "sequoia/Core/Unreachable.h"
 #include "sequoia/Render/Program.h"
+#include "sequoia/Render/RenderState.h"
 #include "sequoia/Render/Texture.h"
 #include "sequoia/Render/VertexArrayObject.h"
+#include "sequoia/Render/FrameBufferObject.h"
 #include <unordered_set>
 
 namespace sequoia {
@@ -83,7 +84,7 @@ std::string RenderState::toString() const {
 
   ss << "  Program = " << (Program ? core::indent(Program->toString()) : "null") << ",\n";
   ss << "  VertexArrayObject = "
-     << (VertexArrayObject ? core::indent(VertexArrayObject->toString()) : "null") << "\n";
+     << (VertexArrayObject ? core::indent(VertexArrayObject->toString()) : "null") << ",\n";
   ss << "  TextureMap = "
      << (!TextureMap.empty() ? core::toStringRange(TextureMap,
                                                    [](const auto& texturePair) {
@@ -116,7 +117,7 @@ void RenderStateCache::setRenderState(const RenderState& newState) noexcept {
 #include "sequoia/Render/RenderState.inc"
 #undef RENDER_STATE
 
-  // The program has be changed first as the textures depend on the currently bound program
+  // The program has to be changed first as the textures depend on the currently bound program
   if(state_.Program != newState.Program) {
     ProgramChanged(newState.Program);
     state_.Program = newState.Program;

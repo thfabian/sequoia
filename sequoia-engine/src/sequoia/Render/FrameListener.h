@@ -13,37 +13,29 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Core/Format.h"
-#include "sequoia/Core/Unreachable.h"
-#include "sequoia/Render/FrameBufferObject.h"
+#ifndef SEQUOIA_RENDER_FRAMELISTENER_H
+#define SEQUOIA_RENDER_FRAMELISTENER_H
+
+#include "sequoia/Core/Export.h"
+#include <cstddef>
 
 namespace sequoia {
 
 namespace render {
 
-static const char* modeKindToString(FrameBufferObjectParameter::ModeKind mode) {
-  switch(mode) {
-  case FrameBufferObjectParameter::MK_RenderToTexture:
-    return "RenderToTexture";
-  default:
-    sequoia_unreachable("invalid mode");
-  }
-}
+/// @brief Listen to frame events
+/// @ingroup render
+class SEQUOIA_API FrameListener {
+public:
+  /// @brief Begin of the rendering of the frame identified by `frameID`
+  virtual void frameListenerRenderingBegin(std::size_t frameID) = 0;
 
-std::string FrameBufferObjectParameter::toString() const {
-  return core::format("FrameBufferObjectParameter[\n"
-                      "  Width = %s,\n"
-                      "  Height = %s,\n"
-                      "  Mode = %s,\n"
-                      "  MSAA = %s\n"
-                      "]",
-                      Width, Height, modeKindToString(Mode), MSAA);
-}
-
-FrameBufferObject::~FrameBufferObject() {}
-
-FrameBufferObject::FrameBufferObject(RenderSystemKind kind) : RenderSystemObject(kind) {}
+  /// @brief End of the rendering of the previous frame identified by `frameID`
+  virtual void frameListenerRenderingEnd(std::size_t frameID) = 0;
+};
 
 } // namespace render
 
 } // namespace sequoia
+
+#endif

@@ -20,6 +20,8 @@
 #include "sequoia/Core/File.h"
 #include "sequoia/Core/NonCopyable.h"
 #include "sequoia/Math/Math.h"
+#include "sequoia/Render/FrameListener.h"
+#include "sequoia/Render/RenderFwd.h"
 #include "sequoia/Render/Viewport.h"
 #include <memory>
 
@@ -27,8 +29,6 @@ namespace sequoia {
 
 namespace render {
 
-class Shader;
-class Program;
 class GLRenderWindow;
 class GLShaderManager;
 class GLProgramManager;
@@ -41,9 +41,15 @@ class GLStateCacheManager;
 /// tabs on the OpenGL state machine and is it the only one who is allowed to perform OpenGL API
 /// calls
 /// @ingroup gl
-class SEQUOIA_API GLRenderer : public ViewportListener, public NonCopyable {
+class SEQUOIA_API GLRenderer : public ViewportListener,
+                               public Listenable<FrameListener>,
+                               public NonCopyable {
+  /// Reference to the main-window
   GLRenderWindow* window_;
 
+  /// Number of rendered frames (also serves as the frame id)
+  std::size_t frames_;
+  
   /// Default shaders
   std::shared_ptr<Shader> defaultVertexShader_;
   std::shared_ptr<Shader> defaultFragmentShader_;

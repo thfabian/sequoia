@@ -33,7 +33,7 @@ namespace core {
 
 /// @brief Image interface
 ///
-/// @note To load images use Image::load
+/// To load and save images use Image::load and Image::save, respectivly.
 /// @ingroup core
 class SEQUOIA_API Image {
 public:
@@ -161,47 +161,11 @@ public:
     return image->getFormat() >= Image::IF_RegularImage &&
            image->getFormat() < Image::IF_RegularImageLast;
   }
-
-protected:
-  virtual const char* getName() const = 0;
-};
-
-/// @brief Portable Network Graphics (PNG) image
-/// @ingroup core
-class SEQUOIA_API PNGImage final : public RegularImage {
-public:
-  PNGImage(const std::shared_ptr<File>& file);
-  static bool classof(const Image* image) { return image->getFormat() == Image::IF_PNG; }
-
-protected:
-  virtual const char* getName() const override { return "PNGImage"; };
-};
-
-/// @brief Joint Photographic Experts Group (JPEG) image
-/// @ingroup core
-class SEQUOIA_API JPEGImage final : public RegularImage {
-public:
-  JPEGImage(const std::shared_ptr<File>& file);
-  static bool classof(const Image* image) { return image->getFormat() == Image::IF_JPEG; }
-
-protected:
-  virtual const char* getName() const override { return "JPEGImage"; };
-};
-
-/// @brief Windows Bitmap (BMP) image
-/// @ingroup core
-class SEQUOIA_API BMPImage final : public RegularImage {
-public:
-  BMPImage(const std::shared_ptr<File>& file);
-  static bool classof(const Image* image) { return image->getFormat() == Image::IF_BMP; }
-
-protected:
-  virtual const char* getName() const override { return "BMPImage"; };
 };
 
 /// @brief Texture image formats suchs as DDS
 /// @ingroup core
-class SEQUOIA_API TextureImage : public Image {
+class SEQUOIA_API TextureImage final : public Image {
 protected:
   /// Texture
   std::unique_ptr<gli::texture> texture_;
@@ -211,10 +175,10 @@ public:
   virtual ~TextureImage();
 
   /// @copydoc Image::getHash
-  virtual std::size_t hash() const noexcept override final;
+  virtual std::size_t hash() const noexcept override;
 
   /// @copydoc Image::toString
-  virtual std::string toString() const override final;
+  virtual std::string toString() const override;
 
   /// @copydoc Image::equals
   virtual bool equals(const Image* other) const noexcept override;
@@ -227,20 +191,6 @@ public:
     return image->getFormat() >= Image::IF_TextureImage &&
            image->getFormat() < Image::IF_TextureImageLast;
   }
-
-protected:
-  virtual const char* getName() const = 0;
-};
-
-/// @brief DirectDraw Surface (DDS) image
-/// @ingroup core
-class SEQUOIA_API DDSImage final : public TextureImage {
-public:
-  DDSImage(const std::shared_ptr<File>& file);
-  static bool classof(const Image* image) { return image->getFormat() == Image::IF_DDS; }
-
-protected:
-  virtual const char* getName() const override { return "DDSImage"; };
 };
 
 } // namespace core

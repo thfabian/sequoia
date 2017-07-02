@@ -35,27 +35,9 @@ enum class GLTextureStatus {
 };
 
 class SEQUOIA_API GLTexture final : public Texture {
+public:
   friend class GLTextureManager;
 
-  /// Status of the texture
-  GLTextureStatus status_;
-
-  /// OpenGL texture index
-  unsigned int id_;
-
-  /// OpenGL texture target
-  GLenum target_;
-
-  /// Image used as basis of the texture
-  std::shared_ptr<Image> image_;
-
-  /// Parameters of the texture
-  std::shared_ptr<TextureParameter> param_;
-
-  /// Associated Renderer
-  GLRenderer* renderer_;
-
-public:
   GLTexture(std::shared_ptr<Image> image, const std::shared_ptr<TextureParameter>& param,
             GLRenderer* renderer);
   ~GLTexture();
@@ -73,6 +55,9 @@ public:
   ///
   /// Note that IDs might be reused after a texture has been destroyed.
   unsigned int getID() const;
+
+  /// @brief Get the target of the texture
+  GLenum getTarget() const;
 
   /// @brief Get the status of the texture
   GLTextureStatus getStatus() const;
@@ -114,6 +99,25 @@ public:
   friend SEQUOIA_API void destroyGLTexture(GLTexture* texture) noexcept;
 
   SEQUOIA_GL_OBJECT(Texture)
+
+private:
+  /// Status of the texture
+  GLTextureStatus status_;
+
+  /// OpenGL texture index
+  unsigned int id_;
+
+  /// OpenGL texture target
+  GLenum target_;
+
+  /// Image used as basis of the texture
+  std::shared_ptr<Image> image_;
+
+  /// Parameters of the texture
+  std::shared_ptr<TextureParameter> param_;
+
+  /// Associated Renderer
+  GLRenderer* renderer_;
 };
 
 } // render

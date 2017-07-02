@@ -42,6 +42,16 @@ void RenderSystem::setDebugMode(bool debugMode) { debugMode_ = debugMode; }
 
 bool RenderSystem::debugMode() const { return debugMode_; }
 
+void RenderSystem::frameListenerRenderingBegin(std::size_t frameID) {
+  for(FrameListener* listener : getListeners<FrameListener>())
+    listener->frameListenerRenderingBegin(frameID);
+}
+
+void RenderSystem::frameListenerRenderingEnd(std::size_t frameID) {
+  for(FrameListener* listener : getListeners<FrameListener>())
+    listener->frameListenerRenderingEnd(frameID);
+}
+
 } // namespace render
 
 } // namespace sequoia
