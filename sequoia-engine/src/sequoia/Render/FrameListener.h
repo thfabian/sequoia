@@ -23,15 +23,17 @@ namespace sequoia {
 
 namespace render {
 
+class RenderTarget;
+
 /// @brief Listen to frame events
 /// @ingroup render
 class SEQUOIA_API FrameListener {
 public:
-  /// @brief Begin of the rendering of the frame identified by `frameID`
-  virtual void frameListenerRenderingBegin(std::size_t frameID) = 0;
+  /// @brief Begin of the rendering a frame of `target`
+  virtual void frameListenerRenderingBegin(RenderTarget* target) = 0;
 
-  /// @brief End of the rendering of the previous frame identified by `frameID`
-  virtual void frameListenerRenderingEnd(std::size_t frameID) = 0;
+  /// @brief End of the rendering of the previous frame of `target`
+  virtual void frameListenerRenderingEnd(RenderTarget* target) = 0;
 };
 
 } // namespace render

@@ -239,8 +239,6 @@ int GLRenderWindow::getHeight() const { return windowHeight_; }
 
 void GLRenderWindow::swapBuffers() { glfwSwapBuffers(window_); }
 
-void GLRenderWindow::update() { renderer_->render(); }
-
 void GLRenderWindow::setCursorMode(GLRenderWindow::CursorModeKind mode) {
   mode_ = mode;
   switch(mode_) {

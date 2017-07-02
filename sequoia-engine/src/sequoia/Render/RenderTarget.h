@@ -17,14 +17,13 @@
 #define SEQUOIA_RENDER_RENDERTARGET_H
 
 #include "sequoia/Core/Export.h"
+#include "sequoia/Render/RenderFwd.h"
 #include "sequoia/Render/Viewport.h"
 #include <memory>
 
 namespace sequoia {
 
 namespace render {
-
-class DrawCommandList;
 
 /// @brief A canvas which can receive the results of a rendering operation
 /// @ingroup render
@@ -35,9 +34,6 @@ public:
 
   RenderTarget(RenderTargetKind kind);
   virtual ~RenderTarget() {}
-
-  /// @brief Tells the target to update it's contents
-  virtual void update() = 0;
 
   /// @brief Get kind of RenderTarget (used by RTTI dyn_cast<> et al.)
   RenderTargetKind getKind() const { return kind_; }
@@ -51,6 +47,16 @@ public:
 
   /// @brief Set the viewport and register it as a `RenderTargetListener`
   void setViewport(const std::shared_ptr<Viewport>& viewport) { viewport_ = viewport; }
+
+  /// @brief Get the FrameBufferobeject of the target (if any)
+  /// @see RenderSystem::renderOneFrame()
+  std::shared_ptr<FrameBufferObject>& getFrameBufferObject() { return fbo_; }
+
+  /// @brief Set the FrameBufferobeject of the target
+  void setFrameBufferObject(const std::shared_ptr<FrameBufferObject>& fbo) { fbo_ = fbo; }
+
+  /// @brief Check if a frame buffer has been attached to the RenderTarget
+  bool hasFrameBufferObject() const { return fbo_ != nullptr; }
 
   /// @brief Set the `DrawCommandList` which will be rendered
   void setDrawCommandList(const std::shared_ptr<DrawCommandList>& list) { list_ = list; }
@@ -67,6 +73,9 @@ private:
 
   /// List of draw commands
   std::shared_ptr<DrawCommandList> list_;
+
+  /// Attached FBO of the target (if any)
+  std::shared_ptr<FrameBufferObject> fbo_;
 };
 
 } // namespace render

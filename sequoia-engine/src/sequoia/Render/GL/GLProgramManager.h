@@ -67,8 +67,12 @@ public:
 
 private:
   void getUniforms(const std::shared_ptr<GLProgram>& program) const;
-  void setAttributes(const std::shared_ptr<GLProgram>& program) const;
-  bool checkAttributes(const std::shared_ptr<GLProgram>& program) const;
+
+  void setVertexAttributes(const std::shared_ptr<GLProgram>& program) const;
+  bool checkVertexAttributes(const std::shared_ptr<GLProgram>& program) const;
+
+  void setFragmentData(const std::shared_ptr<GLProgram>& program) const;
+  bool checkFragmentData(const std::shared_ptr<GLProgram>& program) const;
 };
 
 } // namespace render

@@ -13,16 +13,16 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Render/RenderTarget.h"
 #include "sequoia/Core/Assert.h"
 #include "sequoia/Render/Camera.h"
 #include "sequoia/Render/DrawCommandList.h"
+#include "sequoia/Render/RenderTarget.h"
 
 namespace sequoia {
 
 namespace render {
 
-RenderTarget::RenderTarget(RenderTargetKind kind) : kind_(kind), viewport_(nullptr) {
+RenderTarget::RenderTarget(RenderTargetKind kind) : kind_(kind), viewport_(nullptr), fbo_(nullptr) {
   list_ = std::make_shared<render::DrawCommandListDefault>();
 }
 

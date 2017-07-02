@@ -13,45 +13,44 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_RENDER_GL_GLVERTEXATTRIBUTE_H
-#define SEQUOIA_RENDER_GL_GLVERTEXATTRIBUTE_H
+#ifndef SEQUOIA_RENDER_GL_GLFRAGMENTDATA_H
+#define SEQUOIA_RENDER_GL_GLFRAGMENTDATA_H
 
 #include "sequoia/Core/Export.h"
+#include "sequoia/Render/GL/GLFwd.h"
 #include <functional>
 
 namespace sequoia {
 
 namespace render {
 
-/// @brief OpenGL vertex attributes
+/// @brief OpenGL fragement data
 ///
-/// This allows to associate the user-defined in variables of the vertex shader.
+/// This allows to associate the user-defined varying out variables of the fragment shader.
 /// @ingroup gl
-struct SEQUOIA_API GLVertexAttribute {
+struct SEQUOIA_API GLFragmentData {
 
-  /// @brief OpenGL ids of known vertex attributes
-  enum Attribute : unsigned int {
-    Position = 0,
-    Normal,
-    TexCoord,
-    Color,
-    Tangent,
-    Bitangent,
+  /// @brief OpenGL fragment data
+  enum Data : unsigned int {
+    Color = 0,
 
     NumAttributes
   };
 
-  /// @brief Get the name of `attribute`
-  static const char* name(unsigned int attribute);
+  /// @brief Get the attachment points from the fragment data
+  static GLenum getAttachment(unsigned int data);
 
-  /// @brief Get the enum of the vertex attribute `name`
-  /// @throws RenderSystemException   `name` is not a valid attribute
-  static Attribute attribute(const char* name);
+  /// @brief Get the name of `data`
+  static const char* name(unsigned int data);
 
-  /// @brief Check if `name` is a valid attribute
+  /// @brief Get the enum of the fragement data `name`
+  /// @throws RenderSystemException   `name` is not a valid attachment
+  static Data data(const char* name);
+
+  /// @brief Check if `name` is a valid fragment data
   static bool isValid(const char* name);
 
-  /// @brief Run `functor` for each attribute
+  /// @brief Run `functor` for each fragment data
   static void forEach(std::function<void(unsigned int, const char*)> functor);
 };
 

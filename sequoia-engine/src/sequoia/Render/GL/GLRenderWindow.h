@@ -56,7 +56,7 @@ public:
   /// @throw RenderSystemInitException    Window creation failed
   GLRenderWindow(const RenderWindow::WindowHint& windowHints);
 
-  /// @brief Release window and OpenGL context
+  /// @brief Release window and destroy OpenGL context
   ~GLRenderWindow();
 
   /// @copydoc RenderWindow::isHidden
@@ -80,9 +80,6 @@ public:
 
   /// @copydoc RenderTarget::swapBuffers
   virtual void swapBuffers() override;
-
-  /// @copydoc RenderTarget::update
-  virtual void update() override;
 
   /// @copydoc RenderTarget::setCursorMode
   virtual void setCursorMode(CursorModeKind mode) override;

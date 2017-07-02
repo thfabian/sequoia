@@ -42,14 +42,14 @@ void RenderSystem::setDebugMode(bool debugMode) { debugMode_ = debugMode; }
 
 bool RenderSystem::debugMode() const { return debugMode_; }
 
-void RenderSystem::frameListenerRenderingBegin(std::size_t frameID) {
+void RenderSystem::frameListenerRenderingBegin(RenderTarget* target) {
   for(FrameListener* listener : getListeners<FrameListener>())
-    listener->frameListenerRenderingBegin(frameID);
+    listener->frameListenerRenderingBegin(target);
 }
 
-void RenderSystem::frameListenerRenderingEnd(std::size_t frameID) {
+void RenderSystem::frameListenerRenderingEnd(RenderTarget* target) {
   for(FrameListener* listener : getListeners<FrameListener>())
-    listener->frameListenerRenderingEnd(frameID);
+    listener->frameListenerRenderingEnd(target);
 }
 
 } // namespace render

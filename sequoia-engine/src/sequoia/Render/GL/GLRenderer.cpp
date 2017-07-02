@@ -13,7 +13,6 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Render/GL/GL.h"
 #include "sequoia/Core/Casting.h"
 #include "sequoia/Core/Logging.h"
 #include "sequoia/Core/Options.h"
@@ -21,6 +20,7 @@
 #include "sequoia/Math/CoordinateSystem.h"
 #include "sequoia/Render/Camera.h"
 #include "sequoia/Render/DrawCommandList.h"
+#include "sequoia/Render/GL/GL.h"
 #include "sequoia/Render/GL/GLProgramManager.h"
 #include "sequoia/Render/GL/GLRenderWindow.h"
 #include "sequoia/Render/GL/GLRenderer.h"
@@ -30,9 +30,12 @@
 #include "sequoia/Render/RenderSystem.h"
 #include <glbinding/Binding.h>
 #include <glbinding/ContextInfo.h>
+#include <glbinding/Meta.h>
 #include <glbinding/Version.h>
 #include <glbinding/glbinding-version.h>
 #include <sstream>
+
+#include <iostream>
 
 namespace sequoia {
 
@@ -85,7 +88,7 @@ static std::string functionCallToString(const glbinding::FunctionCall& call) {
   return ss.str();
 }
 
-GLRenderer::GLRenderer(GLRenderWindow* window) : window_(window), frames_(0) {
+GLRenderer::GLRenderer(GLRenderWindow* window) : window_(window) {
   LOG(INFO) << "Creating OpenGL renderer " << this << " ...";
 
   // Bind the context to the current thread
@@ -155,15 +158,19 @@ GLRenderer::~GLRenderer() {
   LOG(INFO) << "Done terminating OpenGL renderer " << this << " ... ";
 }
 
-void GLRenderer::render() {
-  frames_++;
-  for(FrameListener* listener : getListeners<FrameListener>())
-    listener->frameListenerRenderingBegin(frames_);
+void GLRenderer::render(RenderTarget* target) {
+  // Bind the FrameBuffer of the target - if no FBO is attached, we render to the main-screen
+  if(target->hasFrameBufferObject())
+    stateCacheManager_->bindFrameBufferObject(target->getFrameBufferObject().get());
 
-  Viewport* viewport = window_->getViewport();
+  // Inform everyone that we start rendering a frame
+  for(FrameListener* listener : getListeners<FrameListener>())
+    listener->frameListenerRenderingBegin(target);
+
+  Viewport* viewport = target->getViewport();
   Camera* camera = viewport->getCamera();
-  DrawCommandList* drawCommandList = window_->getDrawCommandList().get();
-  
+  DrawCommandList* drawCommandList = target->getDrawCommandList().get();
+
   // Set the viewport
   stateCacheManager_->setViewport(viewport);
 
@@ -187,8 +194,13 @@ void GLRenderer::render() {
     stateCacheManager_->draw(drawCommand);
   }
 
+  // Inform everyone that we finished rendering the frame
   for(FrameListener* listener : getListeners<FrameListener>())
-    listener->frameListenerRenderingEnd(frames_);
+    listener->frameListenerRenderingEnd(target);
+
+  // Unbind the FBO
+  if(target->hasFrameBufferObject())
+    stateCacheManager_->unbindFrameBufferObject();
 }
 
 GLShaderManager* GLRenderer::getShaderManager() { return shaderManager_.get(); }
@@ -220,6 +232,16 @@ const std::shared_ptr<Program>& GLRenderer::getDefaultProgram() const { return d
 
 void GLRenderer::viewportGeometryChanged(Viewport* viewport) {
   stateCacheManager_->setViewport(viewport);
+}
+
+bool GLRenderer::isExtensionSupported(const std::string& extension) noexcept {
+  auto it = extensionCache_.find(extension);
+  if(it != extensionCache_.end())
+    return it->second;
+
+  bool supported = glbinding::ContextInfo::supported({glbinding::Meta::getExtension(extension)});
+  extensionCache_.emplace(extension, supported);
+  return supported;
 }
 
 } // namespace render

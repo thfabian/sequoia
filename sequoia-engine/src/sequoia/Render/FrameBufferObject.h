@@ -34,18 +34,11 @@ struct SEQUOIA_API FrameBufferObjectParameter {
   FrameBufferObjectParameter(const FrameBufferObjectParameter&) = default;
   FrameBufferObjectParameter(FrameBufferObjectParameter&&) = default;
 
-  enum ModeKind {
-    MK_RenderToTexture = 0, ///< Render the color buffer to a texture
-  };
-
   /// Width of the frame buffer
   int Width;
 
   /// Height of the frame buffer
   int Height;
-
-  /// Mode of the frame buffer
-  ModeKind Mode = MK_RenderToTexture;
 
   /// Used multi-sampling
   int MSAA = 0;

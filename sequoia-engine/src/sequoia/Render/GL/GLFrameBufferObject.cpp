@@ -58,51 +58,92 @@ static void checkFramebufferStatus(unsigned int id) {
 }
 
 GLFrameBufferObject::GLFrameBufferObject(const FrameBufferObjectParameter& param)
-    : FrameBufferObject(RK_OpenGL), fboID_(0), rboDepthID_(0), param_(param) {
+    : FrameBufferObject(RK_OpenGL), fboID_(0), rboDepthID_(0), rboColorID_(0), param_(param) {
   glGenFramebuffers(1, &fboID_);
-  getGLRenderSystem().getStateCacheManager()->bindFrameBufferObject(this);
 
-  switch(param_.Mode) {
-  case FrameBufferObjectParameter::MK_RenderToTexture: {
-    // Create texture
-    // ...
+  //  getGLRenderSystem().getStateCacheManager()->bindFrameBufferObject(this);
 
-    // Generate depth render buffer
-    glGenRenderbuffers(1, &rboDepthID_);
-    glBindRenderbuffer(GL_RENDERBUFFER, rboDepthID_);
-    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, param_.Width, param_.Height);
-    glBindRenderbuffer(GL_RENDERBUFFER, 0);
+  //  switch(param_.Mode) {
+  //  case FrameBufferObjectParameter::MK_RenderToTexture: {
+  //    // Create texture
+  //    // ...
 
-    // Attach the texture to FBO color attachement point
-    // TODO: correctly set the attachments via glBindFragDataLocation
-    //  --> out_Color etc.. use the same trick as with 
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture_->getID(),
-                           0);
+  //    // Generate depth render buffer
+  //    glGenRenderbuffers(1, &rboDepthID_);
+  //    glBindRenderbuffer(GL_RENDERBUFFER, rboDepthID_);
+  //    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, param_.Width, param_.Height);
+  //    glBindRenderbuffer(GL_RENDERBUFFER, 0);
 
-    // Attach the depth buffer to FBO depth attachement point
-    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, rboDepthID_);
+  //    // Attach the texture to FBO color attachement point
+  //    // TODO: correctly set the attachments via glBindFragDataLocation
+  //    //  --> out_Color etc.. use the same trick as with
+  //    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D,
+  //    texture_->getID(),
+  //                           0);
 
-    // glDrawBuffer ???
-    // https://www.khronos.org/opengl/wiki/Fragment_Shader#Outputs
-    // Has to be synced with the binding of frag locations
-    break;
-  }
-  default:
-    sequoia_unreachable("invalid mode");
-  }
+  //    // Attach the depth buffer to FBO depth attachement point
+  //    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER,
+  //    rboDepthID_);
 
-  checkFramebufferStatus(fboID_);
-  getGLRenderSystem().getStateCacheManager()->unbindFrameBufferObject();
+  //    // glDrawBuffer ???
+  //    // https://www.khronos.org/opengl/wiki/Fragment_Shader#Outputs
+  //    // Has to be synced with the binding of frag locations
+  //    break;
+  //  }
+  //  default:
+  //    sequoia_unreachable("invalid mode");
+  //  }
+
+  //  checkFramebufferStatus(fboID_);
+  //  getGLRenderSystem().getStateCacheManager()->unbindFrameBufferObject();
 }
 
 GLFrameBufferObject::~GLFrameBufferObject() {
   if(rboDepthID_ != 0)
     glDeleteRenderbuffers(1, &rboDepthID_);
 
+  if(rboColorID_ != 0)
+    glDeleteRenderbuffers(1, &rboColorID_);
+
   glDeleteFramebuffers(1, &fboID_);
 }
 
 unsigned int GLFrameBufferObject::getID() const { return fboID_; }
+
+const FrameBufferObjectParameter& GLFrameBufferObject::getParam() const { return param_; }
+
+void GLFrameBufferObject::attachTexture(GLFragmentData::Data attachmentPoint,
+                                        const std::shared_ptr<GLTexture>& texture) {
+  getGLRenderSystem().getStateCacheManager()->bindFrameBufferObject(this);
+
+  // Generate the depth-buffer
+  if(rboDepthID_ == 0) {
+    glGenRenderbuffers(1, &rboDepthID_);
+    glBindRenderbuffer(GL_RENDERBUFFER, rboDepthID_);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, param_.Width, param_.Height);
+    glBindRenderbuffer(GL_RENDERBUFFER, 0);
+
+    // Attach depth buffer
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, rboDepthID_);
+  }
+
+  // Attach the texture
+  SEQUOIA_ASSERT_MSG(texture->getTarget() != GL_TEXTURE_2D, "only 2D textures are supported (yet)");
+  glFramebufferTexture2D(GL_FRAMEBUFFER, GLFragmentData::getAttachment(attachmentPoint),
+                         texture->getTarget(), texture->getID(), 0);
+
+  // Update fragment data map
+  fragmentDataMap_.emplace(static_cast<unsigned int>(attachmentPoint), texture);
+
+  // Update the draw-buffers
+//  std::vector<GLenum> drawBuffers;
+//  std::transform(fragmentDataMap_.begin(), fragmentDataMap_.end(), std::back_inserter(drawBuffers),
+//                 [](const auto& pair) { return GLFragmentData::getAttachment(pair.first); });
+//  glDrawBuffers(drawBuffers.size(), drawBuffers.data());
+
+  checkFramebufferStatus(fboID_);
+  getGLRenderSystem().getStateCacheManager()->unbindFrameBufferObject();
+}
 
 void GLFrameBufferObject::bind() { glBindFramebuffer(GL_FRAMEBUFFER, fboID_); }
 
@@ -112,12 +153,13 @@ std::string GLFrameBufferObject::toString() const {
   return core::format("GLFrameBufferObject[\n"
                       "  fboID = %s,\n"
                       "  rboDepthID = %s,\n"
+                      "  rboColorID = %s,\n"
                       "  param = %s\n"
                       "]",
-                      fboID_, rboDepthID_, core::indent(param_.toString()));
+                      fboID_, rboDepthID_ == 0 ? "invalid" : std::to_string(rboDepthID_),
+                      rboColorID_ == 0 ? "invalid" : std::to_string(rboColorID_),
+                      core::indent(param_.toString()));
 }
-
-const FrameBufferObjectParameter& GLFrameBufferObject::getParam() const { return param_; }
 
 } // namespace render
 

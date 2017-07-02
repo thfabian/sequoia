@@ -24,6 +24,7 @@
 #include "sequoia/Render/RenderFwd.h"
 #include "sequoia/Render/Viewport.h"
 #include <memory>
+#include <unordered_map>
 
 namespace sequoia {
 
@@ -47,9 +48,6 @@ class SEQUOIA_API GLRenderer : public ViewportListener,
   /// Reference to the main-window
   GLRenderWindow* window_;
 
-  /// Number of rendered frames (also serves as the frame id)
-  std::size_t frames_;
-  
   /// Default shaders
   std::shared_ptr<Shader> defaultVertexShader_;
   std::shared_ptr<Shader> defaultFragmentShader_;
@@ -63,6 +61,9 @@ class SEQUOIA_API GLRenderer : public ViewportListener,
   std::unique_ptr<GLProgramManager> programManager_;
   std::unique_ptr<GLTextureManager> textureManager_;
 
+  /// Cache of exentions
+  std::unordered_map<std::string, bool> extensionCache_;
+
 public:
   /// @brief Initialize the OpenGL context and bind it to the calling thread
   ///
@@ -72,8 +73,8 @@ public:
   /// @brief Release the OpenGL context
   ~GLRenderer();
 
-  /// @brief Render the target
-  void render();
+  /// @brief Render `target`
+  void render(RenderTarget* target);
 
   /// @brief Get the shader manager
   GLShaderManager* getShaderManager();
@@ -105,6 +106,9 @@ public:
 
   /// @brief Adjust viewport
   virtual void viewportGeometryChanged(Viewport* viewport) override;
+
+  /// @brief Check if `extension` is supported
+  bool isExtensionSupported(const std::string& extension) noexcept;
 };
 
 } // namespace render

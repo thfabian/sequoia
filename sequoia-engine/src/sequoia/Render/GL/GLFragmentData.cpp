@@ -15,7 +15,7 @@
 
 #include "sequoia/Core/StringRef.h"
 #include "sequoia/Render/Exception.h"
-#include "sequoia/Render/GL/GLVertexAttribute.h"
+#include "sequoia/Render/GL/GLFragmentData.h"
 
 namespace sequoia {
 
@@ -23,35 +23,38 @@ namespace render {
 
 namespace {
 
-static const char* AttributeNames[GLVertexAttribute::NumAttributes] = {
-    "in_Position", "in_Normal", "in_TexCoord", "in_Color", "in_Tangent", "in_Bitangent"};
+static const char* DataNames[GLFragmentData::NumAttributes] = {"out_Color"};
+
+static GLenum AttachmentNames[GLFragmentData::NumAttributes] = {GL_COLOR_ATTACHMENT0};
 
 } // anonymous namespace
 
-const char* GLVertexAttribute::name(unsigned int attribute) { return AttributeNames[attribute]; }
+GLenum GLFragmentData::getAttachment(unsigned int data) { return AttachmentNames[data]; }
 
-GLVertexAttribute::Attribute GLVertexAttribute::attribute(const char* name) {
+const char* GLFragmentData::name(unsigned int data) { return DataNames[data]; }
+
+GLFragmentData::Data GLFragmentData::data(const char* name) {
   StringRef nameStr(name);
 
   for(unsigned int attr = 0; attr < NumAttributes; ++attr)
-    if(nameStr == AttributeNames[attr])
-      return (GLVertexAttribute::Attribute)attr;
+    if(nameStr == DataNames[attr])
+      return (GLFragmentData::Data)attr;
 
-  SEQUOIA_THROW(RenderSystemException, "invalid vertex attribute '%s' ", name);
+  SEQUOIA_THROW(RenderSystemException, "invalid fragment data '%s' ", name);
   return NumAttributes;
 }
 
-bool GLVertexAttribute::isValid(const char* name) {
+bool GLFragmentData::isValid(const char* name) {
   StringRef nameStr(name);
   for(unsigned int attr = 0; attr < NumAttributes; ++attr)
-    if(nameStr == AttributeNames[attr])
+    if(nameStr == DataNames[attr])
       return true;
   return false;
 }
 
-void GLVertexAttribute::forEach(std::function<void(unsigned int, const char*)> functor) {
+void GLFragmentData::forEach(std::function<void(unsigned int, const char*)> functor) {
   for(unsigned int attr = 0; attr < NumAttributes; ++attr)
-    functor(attr, AttributeNames[attr]);
+    functor(attr, DataNames[attr]);
 }
 
 } // namespace render

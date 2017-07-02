@@ -38,9 +38,18 @@ class SEQUOIA_API GLStateCacheManager : public FrameListener, public NonCopyable
 
   /// In-memory version of the OpenGL state
   std::shared_ptr<GLRenderStateCache> stateCache_;
-  
+
 public:
   GLStateCacheManager();
+
+  /// @brief Return the value of `param` of type `T`
+  ///
+  /// Type conversion is performed if `param` has a different type than the state variable value
+  /// being requested using standard C-type conversion.
+  template <class T>
+  T get(unsigned int param) const noexcept {
+    return getImpl(param, T());
+  }
 
   /// @brief Draw the `command` and update the RenderState *if* necessary
   void draw(DrawCommand* command);
@@ -75,9 +84,15 @@ public:
   /// @brief Set the viewport geometry
   void setViewport(int x, int y, int width, int height);
   void setViewport(Viewport* viewport);
-  
-  void frameListenerRenderingBegin(std::size_t frameID);
-  void frameListenerRenderingEnd(std::size_t frameID);
+
+  void frameListenerRenderingBegin(RenderTarget* target) override;
+  void frameListenerRenderingEnd(RenderTarget* target) override;
+
+protected:
+  bool getImpl(unsigned int param, bool) const noexcept;
+  int getImpl(unsigned int param, int) const noexcept;
+  float getImpl(unsigned int param, float) const noexcept;
+  double getImpl(unsigned int param, double) const noexcept;
 };
 
 } // namespace render

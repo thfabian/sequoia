@@ -71,6 +71,9 @@ public:
   virtual void pollEvents() = 0;
 
   /// @brief Render one frame into `target`
+  ///
+  /// If the `target` has a FrameBufferObject attached, the DrawCommands of `target` will be
+  /// renderer into the the FrameBufferObject instead of the main-screen.
   virtual void renderOneFrame(RenderTarget* target) = 0;
 
   /// @brief Create a new VertexArrayObject for `target`
@@ -123,8 +126,8 @@ public:
   /// @brief Check if we run in debug-mode
   bool debugMode() const;
 
-  void frameListenerRenderingBegin(std::size_t frameID) override;
-  void frameListenerRenderingEnd(std::size_t frameID) override;
+  void frameListenerRenderingBegin(RenderTarget* target) override;
+  void frameListenerRenderingEnd(RenderTarget* target) override;
 
 protected:
   RenderSystem(RenderSystemKind kind);

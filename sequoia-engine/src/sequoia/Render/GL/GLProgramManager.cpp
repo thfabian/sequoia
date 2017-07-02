@@ -13,13 +13,15 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Render/GL/GL.h"
 #include "sequoia/Core/Assert.h"
 #include "sequoia/Core/Casting.h"
 #include "sequoia/Core/Logging.h"
 #include "sequoia/Core/StringRef.h"
 #include "sequoia/Render/Exception.h"
+#include "sequoia/Render/GL/GL.h"
+#include "sequoia/Render/GL/GLFragmentData.h"
 #include "sequoia/Render/GL/GLProgramManager.h"
+#include "sequoia/Render/GL/GLRenderSystem.h"
 #include "sequoia/Render/GL/GLShaderManager.h"
 #include "sequoia/Render/GL/GLVertexAttribute.h"
 #include <algorithm>
@@ -76,8 +78,9 @@ void GLProgramManager::make(const std::shared_ptr<GLProgram>& program,
       glAttachShader(program->id_, glshader->getID());
     }
 
-    // Set location of the vertex attributes
-    setAttributes(program);
+    // Set location of the vertex attributes and fragment data
+    setVertexAttributes(program);
+    setFragmentData(program);
 
     // Link the program
     glLinkProgram(program->id_);
@@ -93,8 +96,9 @@ void GLProgramManager::make(const std::shared_ptr<GLProgram>& program,
     // Get the uniform variables
     getUniforms(program);
 
-    // Check all vertex attributes have been set
-    SEQUOIA_ASSERT(checkAttributes(program));
+    // Check all vertex attributes and fragment data
+    SEQUOIA_ASSERT(checkVertexAttributes(program));
+    SEQUOIA_ASSERT(checkFragmentData(program));
 
     LOG(DEBUG) << "Successfully linked program (ID=" << program->id_ << ")";
   }
@@ -162,7 +166,7 @@ void GLProgramManager::getUniforms(const std::shared_ptr<GLProgram>& program) co
   LOG(DEBUG) << "Successfully got uniform variables of program (ID=" << program->id_ << ")";
 }
 
-void GLProgramManager::setAttributes(const std::shared_ptr<GLProgram>& program) const {
+void GLProgramManager::setVertexAttributes(const std::shared_ptr<GLProgram>& program) const {
   LOG(DEBUG) << "Setting vertex attributes of program (ID=" << program->id_ << ")";
 
   GLVertexAttribute::forEach([&program](unsigned int index, const char* name) {
@@ -172,7 +176,7 @@ void GLProgramManager::setAttributes(const std::shared_ptr<GLProgram>& program) 
   LOG(DEBUG) << "Successfully set vertex attributes of program (ID=" << program->id_ << ")";
 }
 
-bool GLProgramManager::checkAttributes(const std::shared_ptr<GLProgram>& program) const {
+bool GLProgramManager::checkVertexAttributes(const std::shared_ptr<GLProgram>& program) const {
   LOG(DEBUG) << "Checking vertex attributes of program (ID=" << program->id_ << ")";
   SEQUOIA_ASSERT(program->status_ == GLProgramStatus::Linked);
 
@@ -200,6 +204,50 @@ bool GLProgramManager::checkAttributes(const std::shared_ptr<GLProgram>& program
   }
 
   LOG(DEBUG) << "Successfully checked vertex attributes of program (ID=" << program->id_ << ")";
+  return true;
+}
+
+void GLProgramManager::setFragmentData(const std::shared_ptr<GLProgram>& program) const {
+  LOG(DEBUG) << "Setting fragment data of program (ID=" << program->id_ << ")";
+
+  GLFragmentData::forEach([&program](unsigned int index, const char* name) {
+    glBindFragDataLocation(program->id_, index, name);
+  });
+
+  LOG(DEBUG) << "Successfully set fragment data of program (ID=" << program->id_ << ")";
+}
+
+bool GLProgramManager::checkFragmentData(const std::shared_ptr<GLProgram>& program) const {
+  if(getGLRenderSystem().isExtensionSupported("GL_ARB_program_interface_query")) {
+    LOG(DEBUG) << "Checking fragment data of program (ID=" << program->id_ << ")";
+    SEQUOIA_ASSERT(program->status_ == GLProgramStatus::Linked);
+
+    int numFragData = 0;
+    glGetProgramInterfaceiv(program->id_, GL_PROGRAM_OUTPUT, GL_ACTIVE_RESOURCES, &numFragData);
+    LOG(DEBUG) << "Program has " << numFragData << " ouput fragment data";
+
+    std::array<GLenum, 2> properties = {{GL_NAME_LENGTH, GL_LOCATION}};
+    std::array<GLint, 2> values;
+
+    for(unsigned int index = 0; index < numFragData; ++index) {
+      glGetProgramResourceiv(program->id_, GL_PROGRAM_OUTPUT, index, properties.size(),
+                             properties.data(), values.size(), nullptr, values.data());
+
+      std::vector<char> nameData(values[0]);
+      glGetProgramResourceName(program->id_, GL_PROGRAM_OUTPUT, index, nameData.size(), NULL,
+                               nameData.data());
+      std::string name(nameData.begin(), nameData.end() - 1);
+      GLint location = values[1];
+
+      LOG(DEBUG) << "Output fragment data: name=" << name << ", location=" << location;
+
+      // We only check variables which are explicitly tagged as `out_*`      
+      if(StringRef(name).startswith("out_") && !GLFragmentData::isValid(name.c_str()))
+        SEQUOIA_THROW(RenderSystemException, "invalid output fragment data '%s'", name);
+    }
+
+    LOG(DEBUG) << "Successfully checked fragment data of program (ID=" << program->id_ << ")";
+  }
   return true;
 }
 

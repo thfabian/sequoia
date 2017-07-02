@@ -64,15 +64,15 @@ class GLRenderStateCache final : public RenderStateCache {
   /// Currently active texture unit
   int activeTextureUnit_;
 
-  /// Viewport 
+  /// Viewport
   int x_, y_, width_, height_;
-  
+
 public:
   GLRenderStateCache()
       : RenderStateCache(), activeTextureUnit_(-1), x_(-1), y_(-1), width_(-1), height_(-1) {
     initState();
   }
-  
+
   /// @brief Set the viewport of the scene
   void setViewport(int x, int y, int width, int height) {
     if(x_ != x || y_ != y || width_ != width || height_ != height)
@@ -102,7 +102,7 @@ public:
     if(fbo)
       dyn_cast<GLFrameBufferObject>(fbo)->bind();
   }
-  
+
   /// @brief Unbind any FBO
   void unbindFrameBufferObject() { GLFrameBufferObject::unbind(); }
 
@@ -309,11 +309,35 @@ void GLStateCacheManager::setViewport(Viewport* viewport) {
                            viewport->getHeight());
 }
 
-void GLStateCacheManager::frameListenerRenderingBegin(std::size_t frameID) {
+void GLStateCacheManager::frameListenerRenderingBegin(RenderTarget* target) {
   stateCache_->resetUniformVariables();
 }
 
-void GLStateCacheManager::frameListenerRenderingEnd(std::size_t frameID) {}
+void GLStateCacheManager::frameListenerRenderingEnd(RenderTarget* target) {}
+
+bool GLStateCacheManager::getImpl(unsigned int param, bool) const noexcept {
+  GLboolean value;
+  glGetBooleanv((GLenum)param, &value);
+  return static_cast<bool>(value);
+}
+
+int GLStateCacheManager::getImpl(unsigned int param, int) const noexcept {
+  int value;
+  glGetIntegerv((GLenum)param, &value);
+  return value;
+}
+
+float GLStateCacheManager::getImpl(unsigned int param, float) const noexcept {
+  float value;
+  glGetFloatv((GLenum)param, &value);
+  return value;
+}
+
+double GLStateCacheManager::getImpl(unsigned int param, double) const noexcept {
+  double value;
+  glGetDoublev((GLenum)param, &value);
+  return value;
+}
 
 } // namespace render
 

@@ -36,7 +36,7 @@ class SEQUOIA_API GLRenderSystem final : public RenderSystem {
 
   /// Main-window of the render system (also holds the OpenGL context)
   std::shared_ptr<GLRenderWindow> mainWindow_;
-
+  
 public:
   /// @brief Initialize GLFW
   /// @throws RenderSystemInitException    Initialization of GLFW failed
@@ -106,9 +106,17 @@ public:
 
   /// @brief Get the Renderer of the main-window
   GLRenderer* getRenderer();
+  GLRenderer* getRenderer() const;  
+  
+  /// @brief Get the InputSystem of the main-window
+  GLInputSystem* getInputSystem();
+  GLInputSystem* getInputSystem() const;  
 
   /// @brief Get the state cache manager of the main-window
   GLStateCacheManager* getStateCacheManager();
+  
+  /// @brief Check if `extension` is supported
+  bool isExtensionSupported(const std::string& extension) noexcept;
 
   SEQUOIA_GL_OBJECT(RenderSystem)
 };
