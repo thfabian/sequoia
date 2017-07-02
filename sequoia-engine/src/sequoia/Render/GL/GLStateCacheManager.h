@@ -38,7 +38,7 @@ class SEQUOIA_API GLStateCacheManager : public FrameListener, public NonCopyable
 
   /// In-memory version of the OpenGL state
   std::shared_ptr<GLRenderStateCache> stateCache_;
-
+  
 public:
   GLStateCacheManager();
 
@@ -72,6 +72,10 @@ public:
   /// @brief Unbind any texture from `textureUnit`
   void unbindTexture(int textureUnit);
 
+  /// @brief Set the viewport geometry
+  void setViewport(int x, int y, int width, int height);
+  void setViewport(Viewport* viewport);
+  
   void frameListenerRenderingBegin(std::size_t frameID);
   void frameListenerRenderingEnd(std::size_t frameID);
 };

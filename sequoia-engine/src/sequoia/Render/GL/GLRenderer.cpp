@@ -163,6 +163,9 @@ void GLRenderer::render() {
   Viewport* viewport = window_->getViewport();
   Camera* camera = viewport->getCamera();
   DrawCommandList* drawCommandList = window_->getDrawCommandList().get();
+  
+  // Set the viewport
+  stateCacheManager_->setViewport(viewport);
 
   // Compute projection view matrix
   math::mat4 matViewProj = camera->getViewProjectionMatrix();
@@ -216,7 +219,7 @@ const std::shared_ptr<Shader>& GLRenderer::getDefaultFragmentShader() const {
 const std::shared_ptr<Program>& GLRenderer::getDefaultProgram() const { return defaultProgram_; }
 
 void GLRenderer::viewportGeometryChanged(Viewport* viewport) {
-  glViewport(viewport->getX(), viewport->getY(), viewport->getWidth(), viewport->getHeight());
+  stateCacheManager_->setViewport(viewport);
 }
 
 } // namespace render

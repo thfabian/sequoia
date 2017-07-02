@@ -24,6 +24,7 @@
 #include "sequoia/Render/GL/GLVertexAttribute.h"
 #include "sequoia/Render/RenderState.h"
 #include "sequoia/Render/VertexData.h"
+#include "sequoia/Render/Viewport.h"
 
 namespace sequoia {
 
@@ -63,8 +64,20 @@ class GLRenderStateCache final : public RenderStateCache {
   /// Currently active texture unit
   int activeTextureUnit_;
 
+  /// Viewport 
+  int x_, y_, width_, height_;
+  
 public:
-  GLRenderStateCache() : RenderStateCache(), activeTextureUnit_(-1) { initState(); }
+  GLRenderStateCache()
+      : RenderStateCache(), activeTextureUnit_(-1), x_(-1), y_(-1), width_(-1), height_(-1) {
+    initState();
+  }
+  
+  /// @brief Set the viewport of the scene
+  void setViewport(int x, int y, int width, int height) {
+    if(x_ != x || y_ != y || width_ != width || height_ != height)
+      glViewport(x, y, width, height);
+  }
 
   /// @brief Bind the `program`
   void bindProgram(Program* program) {
@@ -285,6 +298,15 @@ void GLStateCacheManager::bindTexture(int textureUnit, Texture* texture) {
 
 void GLStateCacheManager::unbindTexture(int textureUnit) {
   stateCache_->unbindTexture(textureUnit);
+}
+
+void GLStateCacheManager::setViewport(int x, int y, int width, int height) {
+  stateCache_->setViewport(x, y, width, height);
+}
+
+void GLStateCacheManager::setViewport(Viewport* viewport) {
+  stateCache_->setViewport(viewport->getX(), viewport->getY(), viewport->getWidth(),
+                           viewport->getHeight());
 }
 
 void GLStateCacheManager::frameListenerRenderingBegin(std::size_t frameID) {
