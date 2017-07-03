@@ -132,7 +132,7 @@ GLRenderer::GLRenderer(GLRenderWindow* window) : window_(window) {
   addListener<FrameListener>(stateCacheManager_.get());
   shaderManager_ = std::make_unique<GLShaderManager>();
   programManager_ = std::make_unique<GLProgramManager>();
-  textureManager_ = std::make_unique<GLTextureManager>(this);
+  textureManager_ = std::make_unique<GLTextureManager>();
 
   LOG(INFO) << "Done creating OpenGL renderer " << this;
 }

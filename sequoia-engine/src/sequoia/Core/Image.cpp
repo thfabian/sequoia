@@ -20,12 +20,10 @@
 #include "sequoia/Core/Image.h"
 #include "sequoia/Core/StringSwitch.h"
 #include "sequoia/Core/Unreachable.h"
+#include <FreeImage/FreeImage.h>
 #include <gli/gli.hpp>
 #include <memory>
 #include <mutex>
-
-#define FREEIMAGE_LIB // We use the static library of FreeImage
-#include <FreeImage/FreeImage.h>
 
 namespace sequoia {
 
@@ -222,6 +220,9 @@ bool TextureImage::equals(const Image* other) const noexcept {
   return *(thisImage->texture_) == *(otherImage->texture_) &&
          *(thisImage->file_) == *(otherImage->file_);
 }
+
+int TextureImage::getWidth() const noexcept { return texture_->extent()[0]; }
+int TextureImage::getHeight() const noexcept { return texture_->extent()[1]; }
 
 } // namespace core
 

@@ -77,6 +77,12 @@ public:
   bool operator!=(const Image& other) const noexcept { return !(*this == other); }
   /// @}
 
+  /// @brief Get the width of the image in pixels
+  virtual int getWidth() const noexcept = 0;
+
+  /// @brief Get the height of the image in pixels
+  virtual int getHeight() const noexcept = 0;
+
   /// @brief Compare for equality
   virtual bool equals(const Image* other) const noexcept { return format_ == other->format_; }
 
@@ -93,7 +99,7 @@ protected:
 
 /// @brief Hardware-independent image representation that allows direct access to the pixel data
 /// @ingroup core
-class SEQUOIA_API RegularImage : public Image {
+class SEQUOIA_API RegularImage final : public Image {
 protected:
   /// Pixel data
   unsigned char* pixelData_;
@@ -125,12 +131,6 @@ public:
   /// format.
   const unsigned char* getPixelData() const { return pixelData_; }
 
-  /// @brief Get the width of the image in pixels
-  inline int getWidth() const { return width_; }
-
-  /// @brief Get the height of the image in pixels
-  inline int getHeight() const { return height_; }
-
   /// @brief Get number of interleaved 8-bit components of each pixel
   inline int getNumChannels() const { return SEQUOIA_COLOR_GET_NUM_CHANNELS(colorFormat_); }
 
@@ -149,13 +149,19 @@ public:
   inline ColorFormat getColorFormat() const { return colorFormat_; }
 
   /// @copydoc Image::getHash
-  virtual std::size_t hash() const noexcept override final;
+  virtual std::size_t hash() const noexcept override;
 
   /// @copydoc Image::toString
-  virtual std::string toString() const override final;
+  virtual std::string toString() const override;
 
   /// @copydoc Image::equals
   virtual bool equals(const Image* other) const noexcept override;
+
+  /// @copydoc Image::getWidth
+  virtual int getWidth() const noexcept override { return width_; }
+
+  /// @copydoc Image::getHeight
+  virtual int getHeight() const noexcept override { return height_; }
 
   static bool classof(const Image* image) {
     return image->getFormat() >= Image::IF_RegularImage &&
@@ -182,6 +188,12 @@ public:
 
   /// @copydoc Image::equals
   virtual bool equals(const Image* other) const noexcept override;
+
+  /// @copydoc Image::getWidth
+  virtual int getWidth() const noexcept override;
+
+  /// @copydoc Image::getHeight
+  virtual int getHeight() const noexcept override;
 
   /// @brief Get the texture
   const std::unique_ptr<gli::texture>& getTexture() const { return texture_; }

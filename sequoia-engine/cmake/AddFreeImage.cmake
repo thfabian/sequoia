@@ -16,6 +16,9 @@
 find_package(FreeImage REQUIRED)
 include_directories(SYSTEM ${FREEIMAGE_INCLUDE_DIRS})
 
+# We use the static library of FreeImage
+add_definitions(-DFREEIMAGE_LIB)
+
 sequoia_export_package(
   PACKAGE FreeImage
   FOUND ${FREEIMAGE_FOUND} 

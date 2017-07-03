@@ -19,6 +19,7 @@
 #include "sequoia/Core/StringUtil.h"
 #include "sequoia/Core/Unreachable.h"
 #include "sequoia/Render/GL/GL.h"
+#include "sequoia/Render/GL/GLRenderSystem.h"
 #include "sequoia/Render/GL/GLRenderer.h"
 #include "sequoia/Render/GL/GLTexture.h"
 #include "sequoia/Render/GL/GLTextureManager.h"
@@ -40,10 +41,12 @@ static const char* statusToString(GLTextureStatus status) {
   }
 }
 
-GLTexture::GLTexture(std::shared_ptr<Image> image, const std::shared_ptr<TextureParameter>& param,
-                     GLRenderer* renderer)
+GLTexture::GLTexture(const std::shared_ptr<Image>& image, const std::shared_ptr<TextureParameter>& param)
     : Texture(RK_OpenGL), status_(GLTextureStatus::Invalid), id_(0), target_(GL_INVALID_ENUM),
-      image_(image), param_(param), renderer_(renderer) {}
+      param_(param), image_(image) {
+  width_ = image->getWidth();
+  height_ = image->getHeight();
+}
 
 GLTexture::~GLTexture() { destroyGLTexture(this); }
 
@@ -61,7 +64,8 @@ GLTextureStatus GLTexture::getStatus() const { return status_; }
 
 void GLTexture::bind() {
   if(!isValid())
-    renderer_->getTextureManager()->makeValid(dyn_pointer_cast<GLTexture>(shared_from_this()));
+    getGLRenderSystem().getRenderer()->getTextureManager()->makeValid(
+        dyn_pointer_cast<GLTexture>(shared_from_this()));
   glBindTexture(target_, id_);
 }
 
@@ -74,7 +78,8 @@ std::string GLTexture::toString() const {
                       "  image = %s,\n"
                       "  param = %s\n"
                       "]",
-                      id_, statusToString(status_), core::indent(image_->toString()),
+                      id_, statusToString(status_),
+                      image_ ? core::indent(image_->toString()) : "null",
                       core::indent(param_->toString()));
 }
 

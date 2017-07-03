@@ -35,9 +35,6 @@ class SEQUOIA_API GLTextureManager : public NonCopyable {
   /// Record of all the registered shaders (use count of 1 implies the shader is *not* in use)
   std::vector<std::shared_ptr<GLTexture>> textureList_;
 
-  /// Lookup map for shader ID
-  std::unordered_map<unsigned int, std::size_t> idLookupMap_;
-
   /// Lookup map for texture description (Parameter + Image)
   std::unordered_map<GLTexture::Desc, std::size_t> descLookupMap_;
 
@@ -45,8 +42,6 @@ class SEQUOIA_API GLTextureManager : public NonCopyable {
   GLRenderer* renderer_;
 
 public:
-  GLTextureManager(GLRenderer* renderer);
-
   /// @brief Destroy all remaining textures
   ~GLTextureManager();
 

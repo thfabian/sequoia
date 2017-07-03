@@ -38,8 +38,7 @@ class SEQUOIA_API GLTexture final : public Texture {
 public:
   friend class GLTextureManager;
 
-  GLTexture(std::shared_ptr<Image> image, const std::shared_ptr<TextureParameter>& param,
-            GLRenderer* renderer);
+  GLTexture(const std::shared_ptr<Image>& image, const std::shared_ptr<TextureParameter>& param);
   ~GLTexture();
 
   /// @copydoc Texture::getImage
@@ -99,7 +98,6 @@ public:
   friend SEQUOIA_API void destroyGLTexture(GLTexture* texture) noexcept;
 
   SEQUOIA_GL_OBJECT(Texture)
-
 private:
   /// Status of the texture
   GLTextureStatus status_;
@@ -110,14 +108,14 @@ private:
   /// OpenGL texture target
   GLenum target_;
 
-  /// Image used as basis of the texture
-  std::shared_ptr<Image> image_;
-
   /// Parameters of the texture
   std::shared_ptr<TextureParameter> param_;
 
-  /// Associated Renderer
-  GLRenderer* renderer_;
+  /// Texture size
+  unsigned int width_, height_;
+
+  /// Image used as basis of the texture (if any)
+  std::shared_ptr<Image> image_;
 };
 
 } // render

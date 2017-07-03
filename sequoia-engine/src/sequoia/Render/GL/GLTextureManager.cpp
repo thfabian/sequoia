@@ -193,8 +193,6 @@ static void copyTextureImage(GLenum target, const TextureImage* image) {
 
 } // anonymous namespace
 
-GLTextureManager::GLTextureManager(GLRenderer* renderer) : renderer_(renderer) {}
-
 GLTextureManager::~GLTextureManager() {}
 
 void GLTextureManager::make(const std::shared_ptr<GLTexture>& texture,
@@ -242,6 +240,9 @@ void GLTextureManager::make(const std::shared_ptr<GLTexture>& texture,
     else
       sequoia_unreachable("invalid image format");
 
+    if(!isTexturedImage)
+      glGenerateMipmap(texture->target_);
+
     // Set interpolation parameters
     glTexParameteri(texture->target_, GL_TEXTURE_WRAP_S,
                     getGLEdgeSampleKind(param.Dim1EdgeSampling));
@@ -258,9 +259,6 @@ void GLTextureManager::make(const std::shared_ptr<GLTexture>& texture,
         glTexParameteri(texture->target_, GL_TEXTURE_MIN_FILTER,
                         param.MinFilter == TextureParameter::FK_Linear ? GL_NEAREST_MIPMAP_LINEAR
                                                                        : GL_NEAREST_MIPMAP_NEAREST);
-      if(!isTexturedImage)
-        glGenerateMipmap(texture->target_);
-
     } else {
       glTexParameteri(texture->target_, GL_TEXTURE_MIN_FILTER, getGLFilterKind(param.MinFilter));
     }
@@ -285,7 +283,7 @@ std::shared_ptr<GLTexture> GLTextureManager::create(const std::shared_ptr<Image>
   if(it != descLookupMap_.end()) {
     texture = textureList_[it->second];
   } else {
-    textureList_.emplace_back(std::make_shared<GLTexture>(image, param, renderer_));
+    textureList_.emplace_back(std::make_shared<GLTexture>(image, param));
     descLookupMap_[desc] = textureList_.size() - 1;
     texture = textureList_.back();
   }
