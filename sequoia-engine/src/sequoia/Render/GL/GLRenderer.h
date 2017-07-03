@@ -38,9 +38,8 @@ class GLStateCacheManager;
 
 /// @brief OpenGL based renderer
 ///
-/// A rendered performs the actual rendering to the associated target. Further, the renderer keeps
-/// tabs on the OpenGL state machine and is it the only one who is allowed to perform OpenGL API
-/// calls
+/// A rendered performs the actual rendering of the provided target. Further, the renderer keeps
+/// tabs on the OpenGL state machine.
 /// @ingroup gl
 class SEQUOIA_API GLRenderer : public ViewportListener,
                                public Listenable<FrameListener>,

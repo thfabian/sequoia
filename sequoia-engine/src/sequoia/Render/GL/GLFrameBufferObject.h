@@ -43,7 +43,7 @@ class SEQUOIA_API GLFrameBufferObject final : public FrameBufferObject {
   /// Parameter used for initialization
   FrameBufferObjectParameter param_;
 
-  /// Textures bound to the correspond fragment data `GLFragmentData::Data`
+  /// Textures bound to the correspond output fragment data, see `GLFragmentData::Data`
   std::unordered_map<unsigned int, std::shared_ptr<GLTexture>> fragmentDataMap_;
 
 public:
@@ -58,7 +58,8 @@ public:
   /// @brief Get the parameter used for initialization
   const FrameBufferObjectParameter& getParam() const;
 
-  /// @brief Attach a `texture` to the frame-buffer which captures the given GLFragmentData
+  /// @brief Attach a `texture` to the frame-buffer which captures the output of the
+  /// `attachmentPoint`
   ///
   /// Note that the size of the texture needs to be consistent with the size of the framebuffer as
   /// supplied by the FrameBufferObjectParameter in the constructor.
@@ -78,6 +79,9 @@ public:
   virtual std::string toString() const override;
 
   SEQUOIA_GL_OBJECT(FrameBufferObject)
+
+private:
+  std::vector<GLenum> getDrawBuffers() const noexcept;
 };
 
 } // namespace render

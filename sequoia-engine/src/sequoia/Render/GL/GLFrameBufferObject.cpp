@@ -60,42 +60,6 @@ static void checkFramebufferStatus(unsigned int id) {
 GLFrameBufferObject::GLFrameBufferObject(const FrameBufferObjectParameter& param)
     : FrameBufferObject(RK_OpenGL), fboID_(0), rboDepthID_(0), rboColorID_(0), param_(param) {
   glGenFramebuffers(1, &fboID_);
-
-  //  getGLRenderSystem().getStateCacheManager()->bindFrameBufferObject(this);
-
-  //  switch(param_.Mode) {
-  //  case FrameBufferObjectParameter::MK_RenderToTexture: {
-  //    // Create texture
-  //    // ...
-
-  //    // Generate depth render buffer
-  //    glGenRenderbuffers(1, &rboDepthID_);
-  //    glBindRenderbuffer(GL_RENDERBUFFER, rboDepthID_);
-  //    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, param_.Width, param_.Height);
-  //    glBindRenderbuffer(GL_RENDERBUFFER, 0);
-
-  //    // Attach the texture to FBO color attachement point
-  //    // TODO: correctly set the attachments via glBindFragDataLocation
-  //    //  --> out_Color etc.. use the same trick as with
-  //    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D,
-  //    texture_->getID(),
-  //                           0);
-
-  //    // Attach the depth buffer to FBO depth attachement point
-  //    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER,
-  //    rboDepthID_);
-
-  //    // glDrawBuffer ???
-  //    // https://www.khronos.org/opengl/wiki/Fragment_Shader#Outputs
-  //    // Has to be synced with the binding of frag locations
-  //    break;
-  //  }
-  //  default:
-  //    sequoia_unreachable("invalid mode");
-  //  }
-
-  //  checkFramebufferStatus(fboID_);
-  //  getGLRenderSystem().getStateCacheManager()->unbindFrameBufferObject();
 }
 
 GLFrameBufferObject::~GLFrameBufferObject() {
@@ -127,6 +91,8 @@ void GLFrameBufferObject::attachTexture(GLFragmentData::Data attachmentPoint,
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, rboDepthID_);
   }
 
+  // TODO: Check for consistency of the texture
+
   // Attach the texture
   SEQUOIA_ASSERT_MSG(texture->getTarget() != GL_TEXTURE_2D, "only 2D textures are supported (yet)");
   glFramebufferTexture2D(GL_FRAMEBUFFER, GLFragmentData::getAttachment(attachmentPoint),
@@ -135,11 +101,10 @@ void GLFrameBufferObject::attachTexture(GLFragmentData::Data attachmentPoint,
   // Update fragment data map
   fragmentDataMap_.emplace(static_cast<unsigned int>(attachmentPoint), texture);
 
-  // Update the draw-buffers
-//  std::vector<GLenum> drawBuffers;
-//  std::transform(fragmentDataMap_.begin(), fragmentDataMap_.end(), std::back_inserter(drawBuffers),
-//                 [](const auto& pair) { return GLFragmentData::getAttachment(pair.first); });
-//  glDrawBuffers(drawBuffers.size(), drawBuffers.data());
+  // Update the draw-buffers (`drawBuffer[loc] = attachment` means the output fragment data at
+  // location `loc` is written to the render buffer associated with `attachment`)
+  std::vector<GLenum> drawBuffers = getDrawBuffers();
+  glDrawBuffers(drawBuffers.size(), drawBuffers.data());
 
   checkFramebufferStatus(fboID_);
   getGLRenderSystem().getStateCacheManager()->unbindFrameBufferObject();
@@ -150,15 +115,42 @@ void GLFrameBufferObject::bind() { glBindFramebuffer(GL_FRAMEBUFFER, fboID_); }
 void GLFrameBufferObject::unbind() { glBindFramebuffer(GL_FRAMEBUFFER, 0); }
 
 std::string GLFrameBufferObject::toString() const {
-  return core::format("GLFrameBufferObject[\n"
-                      "  fboID = %s,\n"
-                      "  rboDepthID = %s,\n"
-                      "  rboColorID = %s,\n"
-                      "  param = %s\n"
-                      "]",
-                      fboID_, rboDepthID_ == 0 ? "invalid" : std::to_string(rboDepthID_),
-                      rboColorID_ == 0 ? "invalid" : std::to_string(rboColorID_),
-                      core::indent(param_.toString()));
+  return core::format(
+      "GLFrameBufferObject[\n"
+      "  fboID = %s,\n"
+      "  rboDepthID = %s,\n"
+      "  rboColorID = %s,\n"
+      "  param = %s,\n"
+      "  fragmentDataMap = %s\n"
+      "]",
+      fboID_, rboDepthID_ == 0 ? "invalid" : std::to_string(rboDepthID_),
+      rboColorID_ == 0 ? "invalid" : std::to_string(rboColorID_), core::indent(param_.toString()),
+      !fragmentDataMap_.empty()
+          ? core::indent(core::toStringRange(fragmentDataMap_,
+                                             [](const auto& pair) {
+                                               std::stringstream ss;
+                                               ss << "[\n  fragment_data = " << pair.second << "\n"
+                                                  << "  texture = "
+                                                  << core::indent(pair.second->toString()) << "\n"
+                                                  << "]";
+                                               return ss.str();
+                                             }))
+          : "null");
+}
+
+std::vector<GLenum> GLFrameBufferObject::getDrawBuffers() const noexcept {
+  // The default of the draw buffer is `GL_NONE` so we only need to fill the buffer up to the
+  // highest `location` value
+  unsigned int maxLocation = std::accumulate(
+      fragmentDataMap_.begin(), fragmentDataMap_.end(), 0,
+      [](unsigned int maxLocation, const auto& pair) { return std::max(maxLocation, pair.first); });
+
+  std::vector<GLenum> drawBuffers(maxLocation + 1, GL_NONE);
+  std::for_each(fragmentDataMap_.begin(), fragmentDataMap_.end(), [&drawBuffers](const auto& pair) {
+    drawBuffers[pair.first] = GLFragmentData::getAttachment(pair.first);
+  });
+
+  return drawBuffers;
 }
 
 } // namespace render
