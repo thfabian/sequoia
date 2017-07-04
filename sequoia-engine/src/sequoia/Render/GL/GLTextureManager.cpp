@@ -86,12 +86,11 @@ static GLenum getGLFilterKind(TextureParameter::FilterKind filter) {
   }
 }
 
-/// @brief Create empty texture regular image to device
-static void createEmptyTexture(GLenum target, const RegularImage* image) {
+/// @brief Allocate an empty texture of size `width x height` of the given `internalFormat`
+static void allocateTexture(GLenum target, int width, int height, GLenum internalFormat) {
   switch(target) {
   case GL_TEXTURE_2D:
-    glTexImage2D(target, 0, GL_RGBA, image->getWidth(), image->getHeight(), 0,
-                 getGLColorFormat(image->getColorFormat()), GL_UNSIGNED_BYTE, 0);
+    glTexImage2D(target, 0, internalFormat, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
     break;
   case GL_TEXTURE_1D:
   case GL_TEXTURE_3D:
@@ -245,24 +244,20 @@ void GLTextureManager::make(const std::shared_ptr<GLTexture>& texture,
     // Bind texture to unit 0 (doesn't really matter which unit we bind it to)
     getGLRenderSystem().getStateCacheManager()->bindTexture(0, texture.get());
 
-    bool isTexturedImage = isa<TextureImage>(texture->getImage().get());
-
-    // Uploade image to device
-    if(param.LoadFromImage) {
-      if(RegularImage* image = dyn_cast<RegularImage>(texture->getImage().get()))
+    if(texture->hasImage()) {
+      // Uploade image to device
+      if(RegularImage* image = dyn_cast<RegularImage>(texture->getImage().get())) {
         copyRegularImage(texture->target_, image);
-      else if(TextureImage* image = dyn_cast<TextureImage>(texture->getImage().get()))
+        if(param.UseMipmap)
+          glGenerateMipmap(texture->target_);
+      } else if(TextureImage* image = dyn_cast<TextureImage>(texture->getImage().get()))
         copyTextureImage(texture->target_, image);
       else
         sequoia_unreachable("invalid image format");
     
-      if(!isTexturedImage)
-        glGenerateMipmap(texture->target_);
     } else {
-      SEQUOIA_ASSERT_MSG(isa<RegularImage>(texture->getImage().get()),
-                         "only RegularImages are supported");
-      RegularImage* image = dyn_cast<RegularImage>(texture->getImage().get());
-      createEmptyTexture(texture->target_, image);
+      // Allocate texture
+      allocateTexture(texture->target_, texture->width_, texture->height_, GL_RGBA);
     }
 
     // Set interpolation parameters
@@ -295,10 +290,12 @@ void GLTextureManager::make(const std::shared_ptr<GLTexture>& texture,
   }
 }
 
-void GLTextureManager::loadFromDevice(const std::shared_ptr<GLTexture>& texture) {
-  SEQUOIA_ASSERT_MSG(isa<RegularImage>(texture->getImage().get()), "not a regular image");
-  //RegularImage* image = dyn_cast<RegularImage>(texture->getImage().get());
-
+std::shared_ptr<Image>
+GLTextureManager::getTextureAsImage(const std::shared_ptr<GLTexture>& texture) {
+  if(texture->hasImage())
+    return texture->getImage();
+  
+  return nullptr;
 }
 
 std::shared_ptr<GLTexture> GLTextureManager::create(const std::shared_ptr<Image>& image,

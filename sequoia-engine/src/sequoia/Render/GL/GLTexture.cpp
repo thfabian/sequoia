@@ -44,7 +44,7 @@ static const char* statusToString(GLTextureStatus status) {
 GLTexture::GLTexture(const std::shared_ptr<Image>& image,
                      const std::shared_ptr<TextureParameter>& param)
     : Texture(RK_OpenGL), status_(GLTextureStatus::Invalid), id_(0), target_(GL_INVALID_ENUM),
-      param_(param), image_(image), pboID_(0) {
+      param_(param), image_(image) {
   width_ = image->getWidth();
   height_ = image->getHeight();
 }

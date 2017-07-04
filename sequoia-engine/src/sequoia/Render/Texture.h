@@ -103,9 +103,6 @@ struct SEQUOIA_API TextureParameter {
 
   /// Usage of the texture
   UsageKind Usage = UK_StaticWriteOnly;
-  
-  /// Load the inital texture from the provided image
-  bool LoadFromImage = true;
 
   /// @brief Filter used when minifying the texture
   ///

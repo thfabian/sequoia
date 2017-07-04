@@ -17,6 +17,7 @@ sequoia_add_test(
   NAME SequoiaCoreTest
   SOURCES TestAlignedADT.cpp
           TestArrayRef.cpp
+          TestDoubleBuffered.cpp
           TestColor.cpp
           TestImage.cpp
           TestFile.cpp

@@ -63,6 +63,9 @@ public:
   /// @brief Get the status of the texture
   GLTextureStatus getStatus() const;
 
+  /// @brief Check if the texture was loaded from an image
+  bool hasImage() const { return image_ != nullptr; }
+
   /// @brief Bind the texture to the current render pipline
   /// @note Do not call this function directly, use `GLRenderer::bindTexture` instead.
   void bind();
@@ -96,7 +99,7 @@ public:
     inline bool operator!=(const Desc& other) const noexcept { return !(*this == other); }
   };
 
-  /// @brief Destroy the program
+  /// @brief Destroy the texture
   friend SEQUOIA_API void destroyGLTexture(GLTexture* texture) noexcept;
 
   SEQUOIA_GL_OBJECT(Texture)
@@ -116,11 +119,8 @@ private:
   /// Texture size
   unsigned int width_, height_;
 
-  /// Image used as basis of the texture
+  /// Image used as basis of the texture (if any)
   std::shared_ptr<Image> image_;
-
-  /// Pixel buffer object (if any)
-  unsigned int pboID_;
 };
 
 } // render

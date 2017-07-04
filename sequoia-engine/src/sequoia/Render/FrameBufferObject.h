@@ -31,6 +31,7 @@ namespace render {
 /// @ingroup render
 struct SEQUOIA_API FrameBufferObjectParameter {
   FrameBufferObjectParameter(int width, int height) : Width(width), Height(height) {}
+  
   FrameBufferObjectParameter(const FrameBufferObjectParameter&) = default;
   FrameBufferObjectParameter(FrameBufferObjectParameter&&) = default;
 

@@ -46,7 +46,7 @@ sequoia_add_objects(
           Compiler.h
           Color.h
           Color.cpp
-          EnumState.h
+          DoubleBuffered.h          
           Export.h
           ErrorHandler.h
           ErrorHandler.cpp
@@ -66,7 +66,6 @@ sequoia_add_objects(
           MicroBenchmark.cpp
           NonCopyable.h
           Memory.h
-          MultiBuffered.h
           Options.h.in
           Options.inc.in
           Options.cpp
