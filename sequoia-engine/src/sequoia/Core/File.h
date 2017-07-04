@@ -73,12 +73,12 @@ public:
   virtual std::size_t hash() const noexcept = 0;
 
   /// @brief Check if `this` is equal to `other`
-  virtual bool equals(const File& other) const noexcept = 0;
+  virtual bool equals(const File* other) const noexcept = 0;
 
   /// @brief Comparison operator
   /// @{
-  bool operator==(const File& other) { return equals(other); }
-  bool operator!=(const File& other) { return !equals(other); }
+  bool operator==(const File& other) { return equals(&other); }
+  bool operator!=(const File& other) { return !equals(&other); }
   /// @}
 
   /// @brief Get the type of the file
@@ -103,11 +103,11 @@ private:
 /// @name Comparison operator for Files
 /// @ingroup core
 /// @{
-inline bool operator==(const File& a, const File& b) noexcept { return a.equals(b); }
+inline bool operator==(const File& a, const File& b) noexcept { return a.equals(&b); }
 inline bool operator==(const std::shared_ptr<File>& a, const std::shared_ptr<File>& b) noexcept {
   return (*a == *b);
 }
-inline bool operator!=(const File& a, const File& b) noexcept { return !a.equals(b); }
+inline bool operator!=(const File& a, const File& b) noexcept { return !a.equals(&b); }
 inline bool operator!=(const std::shared_ptr<File>& a, const std::shared_ptr<File>& b) noexcept {
   return (*a != *b);
 }

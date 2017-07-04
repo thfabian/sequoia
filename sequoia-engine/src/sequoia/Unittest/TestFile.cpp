@@ -66,8 +66,8 @@ const std::string& TestFile::getPath() const noexcept { return path_; }
 
 std::size_t TestFile::hash() const noexcept { return std::hash<std::string>()(getPath()); }
 
-bool TestFile::equals(const core::File& other) const noexcept {
-  return getPath() == other.getPath();
+bool TestFile::equals(const core::File* other) const noexcept {
+  return getPath() == other->getPath();
 }
 
 StringRef TestFile::getFilename() const noexcept {

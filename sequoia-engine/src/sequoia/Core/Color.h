@@ -43,9 +43,16 @@ enum class ColorFormat : std::uint8_t {
   BGRA = SEQUOIA_COLOR_SET_NUM_CHANNELS(4) + 4, ///< blue, green, red, alpha
 };
 
+/// @brief Get the number of channels from the given `format`
+/// @ingroup core
+inline int colorFormatGetNumChannels(ColorFormat format) noexcept {
+  return SEQUOIA_COLOR_GET_NUM_CHANNELS(format);
+}
+
 SEQUOIA_API extern std::ostream& operator<<(std::ostream& os, ColorFormat format);
 
 #undef SEQUOIA_COLOR_SET_NUM_CHANNELS
+#undef SEQUOIA_COLOR_GET_NUM_CHANNELS
 
 /// @brief Read-only access to a color
 ///
@@ -100,7 +107,7 @@ public:
 
   /// @brief Get the number of used channels
   inline std::uint8_t getNumChannels() const noexcept {
-    return SEQUOIA_COLOR_GET_NUM_CHANNELS(format_);
+    return colorFormatGetNumChannels(format_);
   }
 
   /// @brief Get format

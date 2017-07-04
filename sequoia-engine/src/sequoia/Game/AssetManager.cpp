@@ -41,8 +41,8 @@ const std::string& AssetFile::getPath() const noexcept { return manager_->getPat
 
 std::size_t AssetFile::hash() const noexcept { return std::hash<std::size_t>()(id_); }
 
-bool AssetFile::equals(const File& other) const noexcept {
-  return id_ == static_cast<const AssetFile*>(&other)->id_;
+bool AssetFile::equals(const File* other) const noexcept {
+  return id_ == static_cast<const AssetFile*>(other)->id_;
 }
 
 StringRef AssetFile::getFilename() const noexcept {

@@ -57,7 +57,7 @@ public:
   std::size_t hash() const noexcept override;
 
   /// @copydoc File::equals
-  bool equals(const File& other) const noexcept override;
+  bool equals(const File* other) const noexcept override;
 
   /// @copydoc File::getFilename
   StringRef getFilename() const noexcept override;

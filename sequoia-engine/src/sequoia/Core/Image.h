@@ -37,38 +37,29 @@ namespace core {
 /// @ingroup core
 class SEQUOIA_API Image {
 public:
+  /// @brief RTTI discriminator
+  enum ImageKind { IK_RegularImage, IK_TextureImage };
+
   /// @brief Load image from file
   ///
   /// The format of the image is deduced from `File::getType()`.
   ///
   /// @param file     File to load the image from
   /// @throws Exception   Failed to load image
+  ///
   /// @threadsafe This function is thread-safe
   static std::shared_ptr<Image> load(const std::shared_ptr<File>& file);
-  
-  /// @brief Create an empty image of size `width x height`
-  /// 
-  /// To access the pixel data, cast it to a RegularImage
-  /// @code{.cpp}
-  ///   auto image = dyn_pointer_cast<RegularImage>(Image::load(512, 512));
-  ///   image->at(32, 32); // Pixel at position (32, 32)
-  /// @endcode
-  static std::shared_ptr<Image> load(int width, int height);
 
-  /// @brief RTTI discriminator
-  enum ImageFormat {
-    IF_Unknown = 0,
-    IF_RegularImage,
-    IF_PNG,  ///< PNGImage
-    IF_JPEG, ///< JPEGImage
-    IF_BMP,  ///< BMPImage
-    IF_RegularImageLast,
-    IF_TextureImage,
-    IF_DDS, ///< DDSImage
-    IF_TextureImageLast
-  };
-  
-  Image(ImageFormat format, const std::shared_ptr<File>& file);
+  /// @brief Allocate an empty image of size `width x height`
+  ///
+  /// @param width    Height of the allocated image
+  /// @param height   Wdith of the allocated image
+  /// @param format   Color format of the allocated image
+  ///
+  /// @threadsafe This function is thread-safe
+  static std::shared_ptr<Image> allocate(int width, int height, ColorFormat format);
+
+  Image(ImageKind kind, const std::shared_ptr<File>& file);
   virtual ~Image();
 
   /// @brief Get the file of the image
@@ -76,12 +67,9 @@ public:
 
   /// @brief Check if image has a file
   bool hasFile() const { return file_ != nullptr; }
-  
+
   /// @brief Get a unique hash of the image
   virtual std::size_t hash() const noexcept = 0;
-
-  /// @brief Get the image format
-  ImageFormat getFormat() const { return format_; }
 
   /// @name Comparison
   /// @{
@@ -96,16 +84,18 @@ public:
   virtual int getHeight() const noexcept = 0;
 
   /// @brief Compare for equality
-  virtual bool equals(const Image* other) const noexcept { return format_ == other->format_; }
+  virtual bool equals(const Image* other) const noexcept { return kind_ == other->kind_; }
 
   /// @brief Convert to string
   virtual std::string toString() const = 0;
 
-protected:
-  /// Loaded image format
-  ImageFormat format_;
+  /// @brief Get the image kind
+  ImageKind getKind() const { return kind_; }
 
-  /// File of the image
+protected:
+  ImageKind kind_;
+
+  /// File of the image (if any)
   std::shared_ptr<File> file_;
 };
 
@@ -132,8 +122,13 @@ protected:
   FIMEMORY* memory_;
 
 public:
-  RegularImage(ImageFormat format, const std::shared_ptr<File>& file);
-  RegularImage(ImageFormat format, int width, int height);
+  /// @brief Load image from `file`
+  RegularImage(const std::shared_ptr<File>& file);
+
+  /// @brief Allocate image of size `width x height`
+  RegularImage(int width, int height, ColorFormat format);
+
+  /// @brief Deallocate image
   virtual ~RegularImage();
 
   /// @brief Get the pixel data
@@ -144,9 +139,9 @@ public:
   /// format.
   const unsigned char* getPixelData() const { return pixelData_; }
   unsigned char* getPixelData() { return pixelData_; }
-  
+
   /// @brief Get number of interleaved 8-bit components of each pixel
-  inline int getNumChannels() const { return SEQUOIA_COLOR_GET_NUM_CHANNELS(colorFormat_); }
+  inline int getNumChannels() const { return colorFormatGetNumChannels(colorFormat_); }
 
   /// @brief Get a copy of the pixel at position `(i, j)`
   ///
@@ -177,10 +172,7 @@ public:
   /// @copydoc Image::getHeight
   virtual int getHeight() const noexcept override { return height_; }
 
-  static bool classof(const Image* image) {
-    return image->getFormat() >= Image::IF_RegularImage &&
-           image->getFormat() < Image::IF_RegularImageLast;
-  }
+  static bool classof(const Image* image) { return image->getKind() == Image::IK_RegularImage; }
 };
 
 /// @brief Texture image formats suchs as DDS
@@ -191,7 +183,10 @@ protected:
   std::unique_ptr<gli::texture> texture_;
 
 public:
-  TextureImage(ImageFormat format, const std::shared_ptr<File>& file);
+  /// @brief Load image from `file`
+  TextureImage(const std::shared_ptr<File>& file);
+
+  /// @brief Deallocate image
   virtual ~TextureImage();
 
   /// @copydoc Image::getHash
@@ -213,10 +208,7 @@ public:
   const std::unique_ptr<gli::texture>& getTexture() const { return texture_; }
   std::unique_ptr<gli::texture>& getTexture() { return texture_; }
 
-  static bool classof(const Image* image) {
-    return image->getFormat() >= Image::IF_TextureImage &&
-           image->getFormat() < Image::IF_TextureImageLast;
-  }
+  static bool classof(const Image* image) { return image->getKind() == Image::IK_TextureImage; }
 };
 
 } // namespace core

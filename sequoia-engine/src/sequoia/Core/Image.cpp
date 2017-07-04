@@ -50,13 +50,13 @@ struct FreeImageContext {
 std::unique_ptr<FreeImageContext> freeImageContext = nullptr;
 std::once_flag freeImageContextInitFlag;
 
-static FREE_IMAGE_FORMAT GetFreeImageType(Image::ImageFormat format) {
-  switch(format) {
-  case Image::IF_PNG:
+static FREE_IMAGE_FORMAT GetFreeImageType(FileType type) {
+  switch(type) {
+  case FileType::Png:
     return FIF_PNG;
-  case Image::IF_JPEG:
+  case FileType::Jpeg:
     return FIF_JPEG;
-  case Image::IF_BMP:
+  case FileType::Bmp:
     return FIF_BMP;
   default:
     return FIF_UNKNOWN;
@@ -68,7 +68,7 @@ static FREE_IMAGE_FORMAT GetFreeImageType(Image::ImageFormat format) {
 Image::~Image() {}
 
 const std::shared_ptr<File>& Image::getFile() const {
-  SEQUOIA_ASSERT_MSG(hasFile(), "no file has been assigend to the image");
+  SEQUOIA_ASSERT_MSG(hasFile(), "no file has been assigned to the image");
   return file_;
 }
 
@@ -78,47 +78,45 @@ std::shared_ptr<Image> Image::load(const std::shared_ptr<File>& file) {
 
   switch(file->getType()) {
   case FileType::Png:
-    return std::make_shared<RegularImage>(IF_PNG, file);
   case FileType::Jpeg:
-    return std::make_shared<RegularImage>(IF_JPEG, file);
   case FileType::Bmp:
-    return std::make_shared<RegularImage>(IF_BMP, file);
+    return std::make_shared<RegularImage>(file);
   case FileType::DDS:
-    return std::make_shared<TextureImage>(IF_DDS, file);
+    return std::make_shared<TextureImage>(file);
   default:
     SEQUOIA_THROW(Exception, "invalid image format of file: \"%s\"", file->getPath());
     return nullptr;
   }
 }
 
-std::shared_ptr<Image> Image::load(int width, int height) {
+std::shared_ptr<Image> Image::allocate(int width, int height, ColorFormat format) {
   std::call_once(freeImageContextInitFlag,
                  []() { freeImageContext = std::make_unique<FreeImageContext>(); });
-  return std::make_shared<RegularImage>(IF_RegularImage, width, height);
+  return std::make_shared<RegularImage>(width, height, format);
 }
 
-Image::Image(Image::ImageFormat format, const std::shared_ptr<File>& file)
-    : format_(format), file_(file) {}
+Image::Image(Image::ImageKind kind, const std::shared_ptr<File>& file) : kind_(kind), file_(file) {}
 
-RegularImage::RegularImage(ImageFormat format, int width, int height)
-    : Image(format, nullptr), width_(width), height_(height), bitMap_(nullptr),
-      bitMapCopy_(nullptr), memory_(nullptr) {
+//===------------------------------------------------------------------------------------------===//
+//    RegularImage
+//===------------------------------------------------------------------------------------------===//
+
+RegularImage::RegularImage(int width, int height, ColorFormat format)
+    : Image(IK_RegularImage, nullptr), width_(width), height_(height), colorFormat_(format),
+      bitMap_(nullptr), bitMapCopy_(nullptr), memory_(nullptr) {
 
   // Allocate memory
-  bitMap_ = FreeImage_Allocate(width_, height_, 32);
-
-  bool colorOrderIsRGB = FREEIMAGE_COLORORDER == FREEIMAGE_COLORORDER_RGB;
-  colorFormat_ = colorOrderIsRGB ? ColorFormat::RGBA : ColorFormat::BGRA;
+  bitMap_ = FreeImage_Allocate(width_, height_, getNumChannels() * 8);
 
   // Get pixel data
   pixelData_ = FreeImage_GetBits(bitMap_);
   SEQUOIA_ASSERT(pixelData_);
 }
 
-RegularImage::RegularImage(ImageFormat format, const std::shared_ptr<File>& file)
-    : Image(format, file), bitMap_(nullptr), bitMapCopy_(nullptr), memory_(nullptr) {
+RegularImage::RegularImage(const std::shared_ptr<File>& file)
+    : Image(IK_RegularImage, file), bitMap_(nullptr), bitMapCopy_(nullptr), memory_(nullptr) {
 
-  FREE_IMAGE_FORMAT FIFormat = GetFreeImageType(getFormat());
+  FREE_IMAGE_FORMAT FIFormat = GetFreeImageType(file->getType());
   SEQUOIA_ASSERT_MSG(FIFormat != FIF_UNKNOWN, "invalid image format");
   SEQUOIA_ASSERT_MSG(FreeImage_FIFSupportsReading(FIFormat),
                      "format cannot be read (plugin not loaded)");
@@ -193,21 +191,29 @@ bool RegularImage::equals(const Image* other) const noexcept {
   const RegularImage* thisImage = dyn_cast<RegularImage>(this);
   const RegularImage* otherImage = dyn_cast<RegularImage>(other);
 
-  return thisImage->pixelData_ == otherImage->pixelData_ &&
-         thisImage->width_ == otherImage->width_ && thisImage->height_ == otherImage->height_ &&
-         thisImage->colorFormat_ == otherImage->colorFormat_ &&
-         *(thisImage->file_) == *(otherImage->file_);
+  return thisImage->pixelData_ == otherImage->pixelData_ &&     //
+         thisImage->width_ == otherImage->width_ &&             //
+         thisImage->height_ == otherImage->height_ &&           //
+         thisImage->colorFormat_ == otherImage->colorFormat_ && //
+         ((thisImage->hasFile() && otherImage->hasFile()) ? *thisImage->file_ == *otherImage->file_
+                                                          : thisImage->file_ == otherImage->file_);
 }
 
 std::size_t RegularImage::hash() const noexcept {
   std::size_t seed = 0;
-  core::hashCombine(seed, file_->hash(), pixelData_, width_, height_, colorFormat_);
+  if(hasFile())
+    core::hashCombine(seed, file_->hash());
+  core::hashCombine(seed, pixelData_, width_, height_, colorFormat_);
   return seed;
 }
 
-TextureImage::TextureImage(Image::ImageFormat format, const std::shared_ptr<File>& file)
-    : Image(format, file) {
-  SEQUOIA_ASSERT_MSG(format == IF_DDS, "only DDS can be loaded as texture image (yet)");
+//===------------------------------------------------------------------------------------------===//
+//    TextureImage
+//===------------------------------------------------------------------------------------------===//
+
+TextureImage::TextureImage(const std::shared_ptr<File>& file) : Image(IK_TextureImage, file) {
+  SEQUOIA_ASSERT_MSG(file_->getType() == FileType::DDS,
+                     "only DDS can be loaded as texture image (yet)");
 
   // gli::load dispatches to the correct decoder
   texture_ = std::make_unique<gli::texture>(

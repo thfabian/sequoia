@@ -66,6 +66,7 @@ sequoia_add_objects(
           MicroBenchmark.cpp
           NonCopyable.h
           Memory.h
+          MultiBuffered.h
           Options.h.in
           Options.inc.in
           Options.cpp
