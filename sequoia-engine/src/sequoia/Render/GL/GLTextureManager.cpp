@@ -86,6 +86,21 @@ static GLenum getGLFilterKind(TextureParameter::FilterKind filter) {
   }
 }
 
+/// @brief Create empty texture regular image to device
+static void createEmptyTexture(GLenum target, const RegularImage* image) {
+  switch(target) {
+  case GL_TEXTURE_2D:
+    glTexImage2D(target, 0, GL_RGBA, image->getWidth(), image->getHeight(), 0,
+                 getGLColorFormat(image->getColorFormat()), GL_UNSIGNED_BYTE, 0);
+    break;
+  case GL_TEXTURE_1D:
+  case GL_TEXTURE_3D:
+  case GL_TEXTURE_CUBE_MAP:
+  default:
+    sequoia_unreachable("not yet implemented");
+  }
+}
+
 /// @brief Upload regular image to device
 static void copyRegularImage(GLenum target, const RegularImage* image) {
   switch(target) {
@@ -232,16 +247,23 @@ void GLTextureManager::make(const std::shared_ptr<GLTexture>& texture,
 
     bool isTexturedImage = isa<TextureImage>(texture->getImage().get());
 
-    // Copy image
-    if(RegularImage* image = dyn_cast<RegularImage>(texture->getImage().get()))
-      copyRegularImage(texture->target_, image);
-    else if(TextureImage* image = dyn_cast<TextureImage>(texture->getImage().get()))
-      copyTextureImage(texture->target_, image);
-    else
-      sequoia_unreachable("invalid image format");
-
-    if(!isTexturedImage)
-      glGenerateMipmap(texture->target_);
+    // Uploade image to device
+    if(param.LoadFromImage) {
+      if(RegularImage* image = dyn_cast<RegularImage>(texture->getImage().get()))
+        copyRegularImage(texture->target_, image);
+      else if(TextureImage* image = dyn_cast<TextureImage>(texture->getImage().get()))
+        copyTextureImage(texture->target_, image);
+      else
+        sequoia_unreachable("invalid image format");
+    
+      if(!isTexturedImage)
+        glGenerateMipmap(texture->target_);
+    } else {
+      SEQUOIA_ASSERT_MSG(isa<RegularImage>(texture->getImage().get()),
+                         "only RegularImages are supported");
+      RegularImage* image = dyn_cast<RegularImage>(texture->getImage().get());
+      createEmptyTexture(texture->target_, image);
+    }
 
     // Set interpolation parameters
     glTexParameteri(texture->target_, GL_TEXTURE_WRAP_S,
@@ -271,6 +293,12 @@ void GLTextureManager::make(const std::shared_ptr<GLTexture>& texture,
 
     LOG(DEBUG) << "Successfully uploaded texture (ID=" << texture->id_ << ")";
   }
+}
+
+void GLTextureManager::loadFromDevice(const std::shared_ptr<GLTexture>& texture) {
+  SEQUOIA_ASSERT_MSG(isa<RegularImage>(texture->getImage().get()), "not a regular image");
+  //RegularImage* image = dyn_cast<RegularImage>(texture->getImage().get());
+
 }
 
 std::shared_ptr<GLTexture> GLTextureManager::create(const std::shared_ptr<Image>& image,

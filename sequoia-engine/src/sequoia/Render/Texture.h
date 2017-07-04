@@ -98,11 +98,14 @@ struct SEQUOIA_API TextureParameter {
     UK_Rendertarget = 16
   };
 
-  /// @brief Type of texture
+  /// Type of texture
   TextureKind Kind = TK_2D;
 
   /// Usage of the texture
   UsageKind Usage = UK_StaticWriteOnly;
+  
+  /// Load the inital texture from the provided image
+  bool LoadFromImage = true;
 
   /// @brief Filter used when minifying the texture
   ///

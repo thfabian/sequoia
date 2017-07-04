@@ -93,6 +93,7 @@ bool TextureParameter::operator==(const TextureParameter& other) const noexcept 
   return Kind == other.Kind &&                                           //
          Usage == other.Usage &&                                         //
          MinFilter == other.MinFilter &&                                 //
+         LoadFromImage == other.LoadFromImage &&                         //
          MagFilter == other.MagFilter &&                                 //
          UseMipmap == other.UseMipmap &&                                 //
          InterpolateBetweenMipmaps == other.InterpolateBetweenMipmaps && //
@@ -106,6 +107,7 @@ std::string TextureParameter::toString() const {
       "TextureParameter[\n"
       "  Kind = %s,\n"
       "  Usage = %s,\n"
+      "  LoadFromImage = %s,\n"
       "  MinFilter = %s,\n"
       "  MagFilter = %s,\n"
       "  UseMipmap = %s,\n"
@@ -114,8 +116,8 @@ std::string TextureParameter::toString() const {
       "  Dim2EdgeSampling = %s,\n"
       "  Dim3EdgeSampling = %s\n"
       "]",
-      TextureKindToString(Kind), UsageKindToString(Usage), FilterKindToString(MinFilter),
-      FilterKindToString(MagFilter), UseMipmap ? "true" : "false",
+      TextureKindToString(Kind), UsageKindToString(Usage), LoadFromImage ? "true" : "false",
+      FilterKindToString(MinFilter), FilterKindToString(MagFilter), UseMipmap ? "true" : "false",
       InterpolateBetweenMipmaps ? "true" : "false", EdgeSamplingKindToString(Dim1EdgeSampling),
       EdgeSamplingKindToString(Dim2EdgeSampling), EdgeSamplingKindToString(Dim3EdgeSampling));
 }

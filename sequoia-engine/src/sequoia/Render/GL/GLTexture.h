@@ -34,6 +34,8 @@ enum class GLTextureStatus {
   Loaded,  ///< Texture was successfully uploaded to the device
 };
 
+/// @brief OpenGL texture implementation
+/// @ingroup gl
 class SEQUOIA_API GLTexture final : public Texture {
 public:
   friend class GLTextureManager;
@@ -114,8 +116,11 @@ private:
   /// Texture size
   unsigned int width_, height_;
 
-  /// Image used as basis of the texture (if any)
+  /// Image used as basis of the texture
   std::shared_ptr<Image> image_;
+
+  /// Pixel buffer object (if any)
+  unsigned int pboID_;
 };
 
 } // render

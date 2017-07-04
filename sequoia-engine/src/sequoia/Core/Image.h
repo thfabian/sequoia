@@ -37,6 +37,24 @@ namespace core {
 /// @ingroup core
 class SEQUOIA_API Image {
 public:
+  /// @brief Load image from file
+  ///
+  /// The format of the image is deduced from `File::getType()`.
+  ///
+  /// @param file     File to load the image from
+  /// @throws Exception   Failed to load image
+  /// @threadsafe This function is thread-safe
+  static std::shared_ptr<Image> load(const std::shared_ptr<File>& file);
+  
+  /// @brief Create an empty image of size `width x height`
+  /// 
+  /// To access the pixel data, cast it to a RegularImage
+  /// @code{.cpp}
+  ///   auto image = dyn_pointer_cast<RegularImage>(Image::load(512, 512));
+  ///   image->at(32, 32); // Pixel at position (32, 32)
+  /// @endcode
+  static std::shared_ptr<Image> load(int width, int height);
+
   /// @brief RTTI discriminator
   enum ImageFormat {
     IF_Unknown = 0,
@@ -49,22 +67,16 @@ public:
     IF_DDS, ///< DDSImage
     IF_TextureImageLast
   };
-
-  /// @brief Load image from file
-  ///
-  /// The format of the image is deduced from `File::getType()`.
-  ///
-  /// @param file     File to load the image from
-  /// @throws Exception   Failed to load image
-  /// @threadsafe This function is thread-safe
-  static std::shared_ptr<Image> load(const std::shared_ptr<File>& file);
-
+  
   Image(ImageFormat format, const std::shared_ptr<File>& file);
   virtual ~Image();
 
   /// @brief Get the file of the image
-  const std::shared_ptr<File>& getFile() const { return file_; };
+  const std::shared_ptr<File>& getFile() const;
 
+  /// @brief Check if image has a file
+  bool hasFile() const { return file_ != nullptr; }
+  
   /// @brief Get a unique hash of the image
   virtual std::size_t hash() const noexcept = 0;
 
@@ -121,6 +133,7 @@ protected:
 
 public:
   RegularImage(ImageFormat format, const std::shared_ptr<File>& file);
+  RegularImage(ImageFormat format, int width, int height);
   virtual ~RegularImage();
 
   /// @brief Get the pixel data
@@ -130,7 +143,8 @@ public:
   /// the image. There is no padding between image scanlines or between pixels, regardless of
   /// format.
   const unsigned char* getPixelData() const { return pixelData_; }
-
+  unsigned char* getPixelData() { return pixelData_; }
+  
   /// @brief Get number of interleaved 8-bit components of each pixel
   inline int getNumChannels() const { return SEQUOIA_COLOR_GET_NUM_CHANNELS(colorFormat_); }
 

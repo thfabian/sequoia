@@ -67,6 +67,11 @@ static FREE_IMAGE_FORMAT GetFreeImageType(Image::ImageFormat format) {
 
 Image::~Image() {}
 
+const std::shared_ptr<File>& Image::getFile() const {
+  SEQUOIA_ASSERT_MSG(hasFile(), "no file has been assigend to the image");
+  return file_;
+}
+
 std::shared_ptr<Image> Image::load(const std::shared_ptr<File>& file) {
   std::call_once(freeImageContextInitFlag,
                  []() { freeImageContext = std::make_unique<FreeImageContext>(); });
@@ -86,8 +91,29 @@ std::shared_ptr<Image> Image::load(const std::shared_ptr<File>& file) {
   }
 }
 
+std::shared_ptr<Image> Image::load(int width, int height) {
+  std::call_once(freeImageContextInitFlag,
+                 []() { freeImageContext = std::make_unique<FreeImageContext>(); });
+  return std::make_shared<RegularImage>(IF_RegularImage, width, height);
+}
+
 Image::Image(Image::ImageFormat format, const std::shared_ptr<File>& file)
     : format_(format), file_(file) {}
+
+RegularImage::RegularImage(ImageFormat format, int width, int height)
+    : Image(format, nullptr), width_(width), height_(height), bitMap_(nullptr),
+      bitMapCopy_(nullptr), memory_(nullptr) {
+
+  // Allocate memory
+  bitMap_ = FreeImage_Allocate(width_, height_, 32);
+
+  bool colorOrderIsRGB = FREEIMAGE_COLORORDER == FREEIMAGE_COLORORDER_RGB;
+  colorFormat_ = colorOrderIsRGB ? ColorFormat::RGBA : ColorFormat::BGRA;
+
+  // Get pixel data
+  pixelData_ = FreeImage_GetBits(bitMap_);
+  SEQUOIA_ASSERT(pixelData_);
+}
 
 RegularImage::RegularImage(ImageFormat format, const std::shared_ptr<File>& file)
     : Image(format, file), bitMap_(nullptr), bitMapCopy_(nullptr), memory_(nullptr) {
@@ -156,8 +182,8 @@ std::string RegularImage::toString() const {
                       "  colorFormat = %s,\n"
                       "  numChannels = %i\n"
                       "]",
-                      file_->getPath(), (std::size_t)pixelData_, width_, height_, colorFormat_,
-                      getNumChannels());
+                      file_ ? file_->getPath() : "null", (std::size_t)pixelData_, width_, height_,
+                      colorFormat_, getNumChannels());
 }
 
 bool RegularImage::equals(const Image* other) const noexcept {

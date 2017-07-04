@@ -66,6 +66,9 @@ public:
     make(texture, GLTextureStatus::Loaded);
   }
 
+  /// @brief Copy the texture content to the textures image
+  void loadFromDevice(const std::shared_ptr<GLTexture>& texture);
+
   /// @brief Get the texture by OpenGL shader `id`
   const std::shared_ptr<GLTexture>& get(unsigned int id) const;
 };
