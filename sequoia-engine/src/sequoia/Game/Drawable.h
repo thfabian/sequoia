@@ -16,7 +16,9 @@
 #ifndef SEQUOIA_GAME_DRAWABLE_H
 #define SEQUOIA_GAME_DRAWABLE_H
 
+#include "sequoia/Core/DoubleBuffered.h"
 #include "sequoia/Game/SceneNodeCapability.h"
+#include "sequoia/Render/DrawCommand.h"
 #include "sequoia/Render/RenderFwd.h"
 #include "sequoia/Render/UniformVariable.h"
 #include <memory>
@@ -35,7 +37,7 @@ class SEQUOIA_API Drawable final : public SceneNodeCapability {
   bool active_;
 
   /// DrawCommand of the mesh
-  std::shared_ptr<render::DrawCommand> drawCommand_;
+  DoubleBuffered<render::DrawCommand> drawCommand_;
 
   /// Mesh of the node
   std::shared_ptr<Mesh> mesh_;
@@ -70,7 +72,8 @@ public:
   void setTexture(int textureUnit, render::Texture* texture) noexcept;
 
   /// @brief Get the DrawCommand of the node
-  const std::shared_ptr<render::DrawCommand>& getDrawCommand() const { return drawCommand_; }
+  const render::DrawCommand& getDrawCommand() const { return drawCommand_.get(); }
+  render::DrawCommand& getDrawCommand() { return drawCommand_.get(); }
 
   /// @brief Get the RenderState of the DrawCommand
   render::RenderState& getRenderState();

@@ -16,7 +16,6 @@
 #ifndef SEQUOIA_RENDER_DRAWCOMMANDLIST_H
 #define SEQUOIA_RENDER_DRAWCOMMANDLIST_H
 
-#include "sequoia/Core/AlignedADT.h"
 #include "sequoia/Core/ArrayRef.h"
 #include "sequoia/Core/Export.h"
 #include "sequoia/Render/DrawCommand.h"
@@ -36,21 +35,26 @@ namespace render {
 class SEQUOIA_API DrawCommandList {
 protected:
   /// List of commands
-  core::aligned_vector<DrawCommand> commands_;
+  std::vector<DrawCommand*> commands_;
 
 public:
   /// @brief Default size of a DrawCommandList
   static constexpr std::size_t DefaultSize = 1024;
 
+  /// @brief Initialize empty list
   DrawCommandList() { commands_.reserve(DefaultSize); }
 
-  /// @brief Copy `commands` into the list of DrawCommands (after this operation the `commands` can
-  /// be modified again)
+  /// @brief Insert `commands` into the list of DrawCommands
+  ///
+  /// Note that this does *not* perform a copy of the DrawCommands and the user is repsonsible the
+  /// `commands` are not modified during rendering.
+  ///
   /// @param commands   DrawCommands to insert
   void insert(ArrayRef<DrawCommand*> commands) noexcept {
     for(std::size_t i = 0; i < commands.size(); ++i)
-      commands_.push_back(*commands[i]);
+      commands_.push_back(commands[i]);
   }
+  void insert(DrawCommand* command) noexcept { commands_.push_back(command); }
 
   /// @brief Start iterating the draw commands
   /// @returns first draw command
@@ -69,7 +73,9 @@ public:
 
 /// @brief Default draw command list without any sorting
 /// @ingroup render
-class SEQUOIA_API DrawCommandListDefault : public DrawCommandList {
+class SEQUOIA_API DrawCommandListDefault final : public DrawCommandList {
+
+  /// Current index
   std::size_t index_;
 
 public:
@@ -77,12 +83,12 @@ public:
 
   /// @copydoc DrawCommandList::start
   virtual DrawCommand* start() noexcept override {
-    return commands_.empty() ? nullptr : &commands_[index_ = 0];
+    return commands_.empty() ? nullptr : commands_[(index_ = 0)];
   }
 
   /// @copydoc DrawCommandList::next
   virtual DrawCommand* next() noexcept override {
-    return (SEQUOIA_BUILTIN_UNLIKELY(++index_ == commands_.size()) ? nullptr : &commands_[index_]);
+    return (SEQUOIA_BUILTIN_UNLIKELY(++index_ == commands_.size()) ? nullptr : commands_[index_]);
   }
 
   /// @copydoc DrawCommandList::toString

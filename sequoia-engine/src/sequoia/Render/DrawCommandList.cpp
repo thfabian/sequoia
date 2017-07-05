@@ -13,8 +13,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Render/DrawCommandList.h"
 #include "sequoia/Core/StringUtil.h"
+#include "sequoia/Render/DrawCommandList.h"
 #include <sstream>
 
 namespace sequoia {
@@ -24,8 +24,8 @@ namespace render {
 std::string DrawCommandListDefault::toString() const noexcept {
   std::stringstream ss;
   ss << "DrawCommandListDefault[\n";
-  for(const DrawCommand& cmd : commands_)
-    ss << core::indent(cmd.toString()) << "\n";
+  for(const auto& cmd : commands_)
+    ss << core::indent(cmd->toString()) << "\n";
   ss << "]";
   return ss.str();
 }

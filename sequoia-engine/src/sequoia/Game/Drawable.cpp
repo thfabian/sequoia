@@ -13,9 +13,9 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Game/Drawable.h"
 #include "sequoia/Core/Assert.h"
 #include "sequoia/Core/Format.h"
+#include "sequoia/Game/Drawable.h"
 #include "sequoia/Game/Game.h"
 #include "sequoia/Game/Mesh.h"
 #include "sequoia/Game/SceneNode.h"
@@ -29,7 +29,7 @@ namespace game {
 Drawable::~Drawable() {}
 
 Drawable::Drawable(SceneNode* node, const std::shared_ptr<Mesh>& mesh, render::Program* program)
-    : Base(node), active_(true), drawCommand_(SceneNodeAlloc::create<render::DrawCommand>()) {
+    : Base(node), active_(true), drawCommand_() {
   setMesh(mesh);
   setProgram(program ? program : Game::getSingleton().getDefaultProgram().get());
 }
@@ -40,41 +40,47 @@ Drawable::Drawable(SceneNode* node, const std::shared_ptr<Mesh>& mesh,
 
 void Drawable::setMesh(const std::shared_ptr<Mesh>& mesh) {
   mesh_ = mesh;
-  drawCommand_->setVertexArrayObject(mesh_->getVertexArrayObject());
+  drawCommand_.get().setVertexArrayObject(mesh_->getVertexArrayObject());
 }
 
 void Drawable::setTexture(int textureUnit, render::Texture* texture) noexcept {
-  drawCommand_->setTexture(textureUnit, texture);
+  drawCommand_.get().setTexture(textureUnit, texture);
 }
 
-render::RenderState& Drawable::getRenderState() { return drawCommand_->getRenderState(); }
+render::RenderState& Drawable::getRenderState() { return drawCommand_.get().getRenderState(); }
 const render::RenderState& Drawable::getRenderState() const {
-  return drawCommand_->getRenderState();
+  return drawCommand_.get().getRenderState();
 }
 
-void Drawable::setProgram(render::Program* program) noexcept { drawCommand_->setProgram(program); }
+void Drawable::setProgram(render::Program* program) noexcept {
+  drawCommand_.get().setProgram(program);
+}
 
 render::DrawCommand* Drawable::prepareDrawCommand() {
   SEQUOIA_ASSERT(active_);
-  SEQUOIA_ASSERT_MSG(mesh_, "no Mesh set in DrawCommand");
-  SEQUOIA_ASSERT_MSG(drawCommand_->getVertexArrayObject(),
-                     "no VertexArrayObject set in DrawCommand");
-  SEQUOIA_ASSERT_MSG(drawCommand_->getProgram(), "no Program set in DrawCommand");
 
-  // Copy ModelMatrix to the draw command
-  drawCommand_->setModelMatrix(getNode()->getModelMatrix());
+  SEQUOIA_ASSERT_MSG(mesh_, "no Mesh set");
+  SEQUOIA_ASSERT_MSG(drawCommand_.get().getVertexArrayObject(), "no VertexArrayObject set");
+  SEQUOIA_ASSERT_MSG(drawCommand_.get().getProgram(), "no Program set");
 
-  return drawCommand_.get();
+  // Set the new model matrix ...
+  drawCommand_.get().setModelMatrix(getNode()->getModelMatrix());
+  render::DrawCommand* cmd = &drawCommand_.get();
+
+  // ... and swap the drawcommand. Note that his copies the current draw command `cmd` into the
+  // new one so that subsequent subsequent calls will not corrupt the render-state.
+  drawCommand_.swap();
+  return cmd;
 }
 
 void Drawable::update(const SceneNodeUpdateEvent& event) {}
 
 std::shared_ptr<SceneNodeCapability> Drawable::clone(SceneNode* node) const {
-  return SceneNodeAlloc::create<Drawable>(node, mesh_, drawCommand_->getProgram());
+  return SceneNodeAlloc::create<Drawable>(node, mesh_, drawCommand_.get().getProgram());
 }
 
 void Drawable::setUniformVariableImpl(const std::string& name, UniformVariable variable) {
-  drawCommand_->setUniformVariable(name, variable);
+  drawCommand_.get().setUniformVariable(name, variable);
 }
 
 std::string Drawable::toString() const {
@@ -82,7 +88,7 @@ std::string Drawable::toString() const {
                       "  drawCommand = %s,\n"
                       "  mesh = %s,\n"
                       "]",
-                      drawCommand_->toString(), mesh_ ? mesh_->toString() : "null");
+                      drawCommand_.get().toString(), mesh_ ? mesh_->toString() : "null");
 }
 
 } // namespace game

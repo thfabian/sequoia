@@ -36,9 +36,8 @@ namespace render {
 class SEQUOIA_API DrawCommand {
 public:
   /// @brief Initializ empty DrawCommand
-  DrawCommand(const RenderState& state = RenderState(),
-              const math::mat4& modelMat = math::mat4(1.0f))
-      : state_(state), modelMatrix_(modelMat) {}
+  DrawCommand(const RenderState& state = RenderState())
+      : state_(state), modelMatrix_(math::mat4(1.0f)) {}
 
   DrawCommand(const DrawCommand&) = default;
   DrawCommand(DrawCommand&&) = default;
@@ -73,7 +72,7 @@ public:
     state_.TextureMap[textureUnit] = texture;
   }
 
-  /// @brief Get the uniform variable `name`
+  /// @brief Get the uniform variable by `name`
   UniformVariable& getUniformVariable(const std::string& name) noexcept {
     return variables_.find(name)->second;
   }

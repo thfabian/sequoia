@@ -13,11 +13,11 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Game/SceneNode.h"
 #include "sequoia/Core/Format.h"
 #include "sequoia/Core/Logging.h"
 #include "sequoia/Core/StringRef.h"
 #include "sequoia/Core/StringUtil.h"
+#include "sequoia/Game/SceneNode.h"
 #include "sequoia/Math/CoordinateSystem.h"
 #include <numeric>
 
@@ -139,8 +139,7 @@ std::pair<std::string, std::string> SceneNode::toStringImpl() const {
 
 void SceneNode::computeModelMatrix() {
   // ModelMatrix = TranslationMatrix * RotatationMatrix * ScaleMatrix
-  modelMatrix_ = math::mat4(1.0f);
-  modelMatrix_ = math::translate(modelMatrix_, position_);
+  modelMatrix_ = math::translate(math::mat4(1.0f), position_);
   modelMatrix_ = modelMatrix_ * math::mat4_cast(orientation_);
   modelMatrix_ = math::scale(modelMatrix_, glm::vec3(scale_));
 
