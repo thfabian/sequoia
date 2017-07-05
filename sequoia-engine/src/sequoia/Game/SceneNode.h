@@ -49,7 +49,7 @@ public:
     return SceneNodeAlloc::create<T>(std::forward<Args>(args)...);
   }
 
-  /// @brief RTTI distincion
+  /// @brief RTTI discriminator
   enum SceneNodeKind {
     SK_SceneNode,
     SK_CameraController,

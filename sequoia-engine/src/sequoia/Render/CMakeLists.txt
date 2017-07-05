@@ -27,6 +27,8 @@ sequoia_add_objects(
           FrameListener.h
           FrameBufferObject.h
           FrameBufferObject.cpp
+          HostBuffer.h
+          HostBuffer.cpp
           Input.h
           Input.cpp
           Program.h
