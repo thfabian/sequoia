@@ -13,8 +13,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_RENDER_CAMERA
-#define SEQUOIA_RENDER_CAMERA
+#ifndef SEQUOIA_RENDER_CAMERA_H
+#define SEQUOIA_RENDER_CAMERA_H
 
 #include "sequoia/Core/Assert.h"
 #include "sequoia/Core/Export.h"

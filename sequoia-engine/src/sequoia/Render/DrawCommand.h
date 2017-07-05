@@ -30,7 +30,8 @@ namespace render {
 /// @brief Instructions on how to render the VertexArrayObject
 ///
 /// This class should not be directly used but rather constructed via
-/// @ref sequoia::game::Drawable::prepareDrawCommand "Drawable::prepareDrawCommand".
+/// @ref sequoia::game::Drawable::prepareDrawCommand "Drawable::prepareDrawCommand", otherwise the
+/// VertexArrayObjects might be in an invalid state.
 ///
 /// @ingroup render
 class SEQUOIA_API DrawCommand {
@@ -62,9 +63,9 @@ public:
 
   /// @brief Bind `texture` to `textureUnit`
   ///
-  /// This binds the sampler, associated with `textureUnit`, to the specified `texture`. Note if a
-  /// texture has already been bound to the specific `textureUnit`, the texture is replaced with the
-  /// newly provided one.
+  /// This binds the sampler, associated with `textureUnit`, to the specified `texture`. Note that
+  /// if a texture has already been bound to the specific `textureUnit`, the texture is replaced
+  /// with the newly provided one.
   ///
   /// @param textureUnit    ID of the texture unit starting from 0.
   /// @param texture        Texture to bind
@@ -107,7 +108,7 @@ private:
   std::unordered_map<std::string, UniformVariable> variables_;
 
   // TODO: keep a list of "global" uniform variables from the scene and keep those in the
-  // drawCommandList
+  // drawCommandList --> GlobalRenderState --> sharedVariables_
   // std::vector<int> // only store the id
 };
 

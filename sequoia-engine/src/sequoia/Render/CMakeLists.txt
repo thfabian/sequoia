@@ -15,7 +15,9 @@
 
 sequoia_add_objects(
   NAME SequoiaRender
-  SOURCES Camera.h
+  SOURCES Buffer.h
+          Buffer.cpp
+          Camera.h
           Camera.cpp
           DrawCommand.h
           DrawCommand.cpp

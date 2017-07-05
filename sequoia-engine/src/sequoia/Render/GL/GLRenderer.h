@@ -107,6 +107,8 @@ public:
   virtual void viewportGeometryChanged(Viewport* viewport) override;
 
   /// @brief Check if `extension` is supported
+  ///
+  /// @param extentsion     Name of the extension (e.g `GL_ARB_program_interface_query`)
   bool isExtensionSupported(const std::string& extension) noexcept;
 };
 
