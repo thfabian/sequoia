@@ -30,7 +30,7 @@ void Camera::lookAt(const math::vec3& eye, const math::vec3& center, const math:
   math::vec3 eyeToCenter = center - eye;
   eyeToCenterDistance_ = math::length(eyeToCenter);
 
-  // Note that by default the eye is located at the origin and the center is on the negatice Z-axis
+  // Note that by default the eye is located at the origin and the center is on the negative Z-axis
   // The upvector is (0, 1, 0).
   //
   //        up
@@ -40,7 +40,7 @@ void Camera::lookAt(const math::vec3& eye, const math::vec3& center, const math:
   //        eye              ===>                 0------> s
   //
   //  1. Compute the direction between eye and center => f
-  //  2. Compute the z-direction by `f x up` => s
+  //  2. Compute the x-direction by `f x up` => s
   //  3. Compute the up-direction by `s x f` => u
   //  4. Local axes are `(s, u, -f) == `(x, y, z)`
   //
