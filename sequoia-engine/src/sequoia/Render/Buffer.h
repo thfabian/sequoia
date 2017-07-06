@@ -26,12 +26,12 @@ namespace sequoia {
 
 namespace render {
 
-/// @brief Generic hardware buffer which can hold any area of memory: system memory RAM, Video RAM
-/// on the GPUetc.
+/// @brief Generic hardware buffer which can hold any area of memory: system RAM, Video RAM
+/// on the GPU etc.
 ///
 /// Buffers have the ability to be 'shadowed' in system memory (see HostBuffer) this is because the
 /// kinds of access allowed on hardware buffers which are store in video RAM is not always as
-/// flexible as that allowed for areas of system  memory.
+/// flexible as that allowed for areas of system memory.
 /// For example, it is often either impossible, or extremely undesirable from a performance
 /// standpoint to read from a hardware buffer; when writing to hardware buffers, you should also
 /// write every byte and do it sequentially. In situations where this is too restrictive,
