@@ -13,8 +13,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Core/Logging.h"
 #include "sequoia/Core/Format.h"
+#include "sequoia/Core/Logging.h"
 #include "sequoia/Core/StringSwitch.h"
 #include <chrono>
 #include <ctime>
@@ -43,12 +43,12 @@ std::string LoggerListener::getThreadID() {
   return core::format("0x%x", std::this_thread::get_id());
 }
 
-internal::LoggerProxy::LoggerProxy(std::mutex* lock, LoggingLevel level, std::stringstream* ss,
+internal::LoggerProxy::LoggerProxy(std::mutex* mutex, LoggingLevel level, std::stringstream* ss,
                                    const char* file, int line)
-    : lock_(lock), level_(level), ss_(ss), file_(file), line_(line), isNullLogger_(false) {}
+    : mutex_(mutex), level_(level), ss_(ss), file_(file), line_(line), isNullLogger_(false) {}
 
 internal::LoggerProxy::LoggerProxy()
-    : lock_(nullptr), level_(LoggingLevel::Info), ss_(nullptr), file_(nullptr), line_(0),
+    : mutex_(nullptr), level_(LoggingLevel::Info), ss_(nullptr), file_(nullptr), line_(0),
       isNullLogger_(true) {}
 
 internal::LoggerProxy::~LoggerProxy() {
@@ -56,7 +56,7 @@ internal::LoggerProxy::~LoggerProxy() {
     Logger::getSingleton().log(level_, ss_->str(), file_, line_);
     ss_->str("");
     ss_->clear();
-    lock_->unlock();
+    mutex_->unlock();
   }
 }
 
@@ -88,8 +88,8 @@ internal::LoggerProxy Logger::logError(const char* file, int line) noexcept {
 }
 
 internal::LoggerProxy Logger::logImpl(const char* file, int line, LoggingLevel level) noexcept {
-  lock_.lock();
-  return internal::LoggerProxy(&lock_, level, &ss_, file, line);
+  mutex_.lock();
+  return internal::LoggerProxy(&mutex_, level, &ss_, file, line);
 }
 
 void Logger::log(LoggingLevel level, const std::string& message, const char* file, int line) {

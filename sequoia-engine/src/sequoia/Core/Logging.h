@@ -13,8 +13,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_CORE_LOGGING
-#define SEQUOIA_CORE_LOGGING
+#ifndef SEQUOIA_CORE_LOGGING_H
+#define SEQUOIA_CORE_LOGGING_H
 
 #include "sequoia/Core/Export.h"
 #include "sequoia/Core/Listenable.h"
@@ -58,12 +58,12 @@ public:
 namespace internal {
 
 class SEQUOIA_API LoggerProxy {
-  std::mutex* lock_;
-  const LoggingLevel level_;
-  std::stringstream* ss_;
-  const char* file_;
-  const int line_;
-  const bool isNullLogger_;
+  std::mutex* mutex_;        ///< Access mutex
+  const LoggingLevel level_; ///< Logging level
+  std::stringstream* ss_;    ///< String stream to buffer the logging
+  const char* file_;         ///< File from which the logging was issued
+  const int line_;           ///< Line in `file` from which the logging was issued
+  const bool isNullLogger_;  ///< Is this a pass trough logging?
 
 public:
   LoggerProxy(const LoggerProxy&) = default;
@@ -118,9 +118,9 @@ public:
 /// @threadsafe
 /// @ingroup core
 class SEQUOIA_API Logger : public Singleton<Logger>, public Listenable<LoggerListener> {
-  const LoggingLevel level_;
-  std::stringstream ss_;
-  std::mutex lock_;
+  const LoggingLevel level_; ///< Level at which logging is performed
+  std::stringstream ss_;     ///< String stream used to buffer the logging
+  std::mutex mutex_;         ///< Mutex for serialized access
 
 public:
   /// @brief Initialize the Logger with a level at which logging will be performed
@@ -149,7 +149,7 @@ public:
   /// @brief Calls `LoggerListener::log` of all listeners
   void log(LoggingLevel level, const std::string& message, const char* file, int line);
 
-private:
+protected:
   internal::LoggerProxy logImpl(const char* file, int line, LoggingLevel level) noexcept;
 };
 

@@ -23,6 +23,7 @@ sequoia_add_test(
           TestFile.cpp
           TestMain.cpp
           TestMemory.cpp
+          TestMutex.cpp
           TestPlatform.cpp
           TestSingletonManager.cpp
           TestStringRef.cpp

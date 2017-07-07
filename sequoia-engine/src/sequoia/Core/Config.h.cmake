@@ -51,4 +51,7 @@
 // Ressource paths
 #define SEQUOIA_RESSOURCEPATH "${SEQUOIA_RESSOURCEPATH}"
 
+// Debug threads?
+#cmakedefine SEQUOIA_DEBUG_THREADS ${SEQUOIA_DEBUG_THREADS}
+
 #endif

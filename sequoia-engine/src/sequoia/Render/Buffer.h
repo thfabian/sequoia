@@ -126,7 +126,7 @@ public:
 
   /// @brief Lock the buffer
   ///
-  /// Note that locking in this context does **not** refer to mutual exclusion of the buffer object!
+  /// @note Locking in this context does **not** refer to mutual exclusion of the buffer object!
   /// It merely indicates to the buffer that it's being accessed.
   ///
   /// @param lockType   Strategy used to lock the buffer.

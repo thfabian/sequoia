@@ -62,10 +62,11 @@ sequoia_add_objects(
           Listenable.h
           Logging.h
           Logging.cpp
+          NonCopyable.h
           MicroBenchmark.h
           MicroBenchmark.cpp
-          NonCopyable.h
           Memory.h
+          Mutex.h
           Options.h.in
           Options.inc.in
           Options.cpp
