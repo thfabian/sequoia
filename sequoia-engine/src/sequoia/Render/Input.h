@@ -314,7 +314,7 @@ struct SEQUOIA_API MousePositionEvent {
   /// Offset in the X-position in screeen coordiantes since the last event
   int XOffset;
 
-  /// Offset in the X-position in screeen coordiantes since the last event
+  /// Offset in the Y-position in screeen coordiantes since the last event
   int YOffset;
 
   /// @brief Convert to string
@@ -332,7 +332,7 @@ public:
   virtual void mousePositionEvent(const MousePositionEvent& event) = 0;
 };
 
-/// @brief Listener of mouse events
+/// @brief Listener of input events
 /// @ingroup render
 class SEQUOIA_API InputEventListener {
 public:

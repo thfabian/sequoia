@@ -38,10 +38,10 @@ namespace render {
 /// passing the visitor to a `Mesh`.
 ///
 /// @b Example
-/// Consider the following example which set the first component of the position of all the vertices
+/// Consider the following example which sets the first component of the position of all the vertices
 /// in the vertex data to `0`.
 /// @code{.cpp}
-///   class VertexPrinter : public VertexVisitor {
+///   class VertexSetter : public VertexVisitor {
 ///     virtual void visit(Vertex3DLayout* layout) override {
 ///       Vertex3D* vertices = getDataPtr(layout);
 ///
