@@ -58,6 +58,9 @@ public:
 
   /// @brief Create the main-window (if a main-window is already active, the old one will be
   /// destroyed first)
+  ///
+  /// For the OpenGL RenderSystem this also creates the OpenGL context.
+  ///
   /// @returns the created window
   virtual RenderWindow* createMainWindow(const RenderWindow::WindowHint& hints) = 0;
 

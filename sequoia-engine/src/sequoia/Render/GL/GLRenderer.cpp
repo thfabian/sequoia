@@ -35,8 +35,6 @@
 #include <glbinding/glbinding-version.h>
 #include <sstream>
 
-#include <iostream>
-
 namespace sequoia {
 
 namespace render {

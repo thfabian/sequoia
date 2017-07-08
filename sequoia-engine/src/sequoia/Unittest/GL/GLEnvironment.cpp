@@ -13,8 +13,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Unittest/GL/GLEnvironment.h"
 #include "sequoia/Core/Options.h"
+#include "sequoia/Unittest/GL/GLEnvironment.h"
 
 namespace sequoia {
 

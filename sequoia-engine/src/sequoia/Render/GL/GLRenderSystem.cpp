@@ -40,7 +40,8 @@ static void GLFWErrorCallbackHard(int error, const char* description) {
   SEQUOIA_THROW(RenderSystemException, description);
 }
 
-GLRenderSystem::GLRenderSystem() : RenderSystem(RK_OpenGL), mainWindow_(nullptr) {
+GLRenderSystem::GLRenderSystem()
+    : RenderSystem(RK_OpenGL), mainWindow_(nullptr), renderer_(nullptr) {
   LOG(INFO) << "Initializing OpenGL RenderSystem ...";
   glfwSetErrorCallback(GLFWErrorCallbackHard);
 
@@ -59,7 +60,16 @@ GLRenderSystem::~GLRenderSystem() {
 }
 
 RenderWindow* GLRenderSystem::createMainWindow(const RenderWindow::WindowHint& hints) {
-  mainWindow_ = std::make_shared<GLRenderWindow>(hints);
+  // Reset everything
+  destroyMainWindow();
+
+  // Create main-window and OpenGL context
+  mainWindow_ = std::make_unique<GLRenderWindow>(hints);
+
+  // Initialize OpenGL renderer
+  renderer_ = std::make_unique<GLRenderer>(mainWindow_.get());
+  renderer_->addListener<FrameListener>(this);
+
   return mainWindow_.get();
 }
 
@@ -68,6 +78,12 @@ RenderWindow* GLRenderSystem::getMainWindow() const { return getMainGLWindow(); 
 GLRenderWindow* GLRenderSystem::getMainGLWindow() const { return mainWindow_.get(); }
 
 void GLRenderSystem::destroyMainWindow() noexcept {
+  // Order matters here!
+  if(renderer_) {
+    renderer_.reset();
+    renderer_ = nullptr;
+  }
+
   if(mainWindow_) {
     mainWindow_.reset();
     mainWindow_ = nullptr;
@@ -109,19 +125,19 @@ std::shared_ptr<Texture> GLRenderSystem::createTexture(const std::shared_ptr<Ima
 }
 
 void GLRenderSystem::addKeyboardListener(KeyboardListener* listener) {
-  getInputSystem()->addListener(listener);
+  mainWindow_->getInputSystem()->addListener(listener);
 }
 
 void GLRenderSystem::removeKeyboardListener(KeyboardListener* listener) {
-  getInputSystem()->removeListener(listener);
+  mainWindow_->getInputSystem()->removeListener(listener);
 }
 
 void GLRenderSystem::addMouseListener(MouseListener* listener) {
-  getInputSystem()->addListener(listener);
+  mainWindow_->getInputSystem()->addListener(listener);
 }
 
 void GLRenderSystem::removeMouseListener(MouseListener* listener) {
-  getInputSystem()->removeListener(listener);
+  mainWindow_->getInputSystem()->removeListener(listener);
 }
 
 void GLRenderSystem::loadDefaultShaders(const std::shared_ptr<File>& defaultVertexShaderFile,
@@ -141,13 +157,8 @@ const std::shared_ptr<Program>& GLRenderSystem::getDefaultProgram() const {
   return getRenderer()->getDefaultProgram();
 }
 
-GLRenderer* GLRenderSystem::getRenderer() { return mainWindow_->getRenderer(); }
-
-GLRenderer* GLRenderSystem::getRenderer() const { return mainWindow_->getRenderer(); }
-
-GLInputSystem* GLRenderSystem::getInputSystem() { return mainWindow_->getInputSystem(); }
-
-GLInputSystem* GLRenderSystem::getInputSystem() const { return mainWindow_->getInputSystem(); }
+GLRenderer* GLRenderSystem::getRenderer() { return renderer_.get(); }
+GLRenderer* GLRenderSystem::getRenderer() const { return renderer_.get(); }
 
 GLStateCacheManager* GLRenderSystem::getStateCacheManager() {
   return getRenderer()->getStateCacheManager();

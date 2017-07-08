@@ -13,11 +13,11 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Render/GL/GL.h"
 #include "sequoia/Core/Logging.h"
 #include "sequoia/Core/Options.h"
 #include "sequoia/Core/Unreachable.h"
 #include "sequoia/Render/Exception.h"
+#include "sequoia/Render/GL/GL.h"
 #include "sequoia/Render/GL/GLInputSystem.h"
 #include "sequoia/Render/GL/GLRenderSystem.h"
 #include "sequoia/Render/GL/GLRenderWindow.h"
@@ -31,9 +31,8 @@ namespace render {
 std::unordered_map<GLFWwindow*, GLRenderWindow*> GLRenderWindow::StaticWindowMap;
 
 GLRenderWindow::GLRenderWindow(const RenderWindow::WindowHint& windowHints)
-    : RenderWindow(RK_GLRenderWindow), window_(nullptr),
-      windowWidth_(-1), windowHeight_(-1), mode_(CursorModeKind::CK_Normal), renderer_(nullptr),
-      inputSystem_(nullptr) {
+    : RenderWindow(RK_GLRenderWindow), window_(nullptr), windowWidth_(-1), windowHeight_(-1),
+      mode_(CursorModeKind::CK_Normal), inputSystem_(nullptr) {
   Options& opt = Options::getSingleton();
 
   LOG(INFO) << "Initializing OpenGL window " << this << " ...";
@@ -147,16 +146,8 @@ GLRenderWindow::GLRenderWindow(const RenderWindow::WindowHint& windowHints)
   // Register window call-back
   glfwSetWindowSizeCallback(window_, GLRenderWindow::resizeCallbackDispatch);
 
-  LOG(INFO) << "Done initializing OpenGL window " << this;
-}
-
-void GLRenderWindow::init() {
-  SEQUOIA_ASSERT_MSG(hasViewport(), "RenderTarget::init() called with no Viewport set");
-
-  renderer_ = std::make_unique<GLRenderer>(this);
-  
-  // Register the renderSystem as a frame listener
-  renderer_->addListener<FrameListener>(getGLRenderSystemPtr());  
+  // Set a default view-port
+  setViewport(std::make_shared<Viewport>(this, 0, 0, getWidth(), getHeight()));
 
   LOG(INFO) << "Registering IO callbacks ...";
   inputSystem_ = std::make_unique<GLInputSystem>(this, true);
@@ -167,16 +158,17 @@ void GLRenderWindow::init() {
   glfwSetCursorPosCallback(window_, GLRenderWindow::mousePositionCallbackDispatch);
   glfwSetCursorEnterCallback(window_, GLRenderWindow::mouseEnterCallbackDispatch);
 
-  // Register the window as an input event listener  
+  // Register the window as an input event listener
   getGLRenderSystem().addListener<InputEventListener>(this);
 
   LOG(INFO) << "Done registering IO callbacks";
+
+  LOG(INFO) << "Done initializing OpenGL window " << this;
 }
 
 GLRenderWindow::~GLRenderWindow() {
   LOG(INFO) << "Terminating OpenGL window " << this << " ...";
 
-  renderer_.reset();
   inputSystem_.reset();
 
   StaticWindowMap.erase(window_);
@@ -259,8 +251,6 @@ void GLRenderWindow::centerCursor() { getInputSystem()->centerCursor(); }
 GLFWwindow* GLRenderWindow::getGLFWwindow() { return window_; }
 
 GLRenderWindow::CursorModeKind GLRenderWindow::getCursorMode() { return mode_; }
-
-GLRenderer* GLRenderWindow::getRenderer() { return renderer_.get(); }
 
 GLInputSystem* GLRenderWindow::getInputSystem() { return inputSystem_.get(); }
 

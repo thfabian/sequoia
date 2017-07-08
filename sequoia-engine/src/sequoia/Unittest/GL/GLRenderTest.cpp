@@ -31,14 +31,6 @@ void GLRenderTest::SetUp() {
   hints.HideWindow = true;
   hints.WindowMode = render::RenderWindow::WindowHint::WK_Window;
   window_ = (render::GLRenderWindow*)render::RenderSystem::getSingleton().createMainWindow(hints);
-
-  // Initialize Viewport
-  auto viewport =
-      std::make_shared<render::Viewport>(window_, 0, 0, window_->getWidth(), window_->getHeight());
-  window_->setViewport(viewport);
-
-  // Initialize OpenGL
-  window_->init();
 }
 
 void GLRenderTest::TearDown() { render::RenderSystem::getSingleton().destroyMainWindow(); }

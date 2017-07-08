@@ -35,8 +35,11 @@ class GLStateCacheManager;
 class SEQUOIA_API GLRenderSystem final : public RenderSystem {
 
   /// Main-window of the render system (also holds the OpenGL context)
-  std::shared_ptr<GLRenderWindow> mainWindow_;
-  
+  std::unique_ptr<GLRenderWindow> mainWindow_;
+
+  /// OpenGL renderer
+  std::unique_ptr<GLRenderer> renderer_;
+
 public:
   /// @brief Initialize GLFW
   /// @throws RenderSystemInitException    Initialization of GLFW failed
@@ -104,17 +107,13 @@ public:
   /// @copydoc RenderSystem::getDefaultProgram
   virtual const std::shared_ptr<Program>& getDefaultProgram() const override;
 
-  /// @brief Get the Renderer of the main-window
+  /// @brief Get the OpenGL renderer
   GLRenderer* getRenderer();
-  GLRenderer* getRenderer() const;  
-  
-  /// @brief Get the InputSystem of the main-window
-  GLInputSystem* getInputSystem();
-  GLInputSystem* getInputSystem() const;  
+  GLRenderer* getRenderer() const;
 
-  /// @brief Get the state cache manager of the main-window
+  /// @brief Get the state cache manager of the OpenGL renderer
   GLStateCacheManager* getStateCacheManager();
-  
+
   /// @brief Check if `extension` is supported
   bool isExtensionSupported(const std::string& extension) noexcept;
 

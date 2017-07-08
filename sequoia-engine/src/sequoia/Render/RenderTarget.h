@@ -32,7 +32,10 @@ public:
   /// @brief Discriminator for RTTI (dyn_cast<> et al.)
   enum RenderTargetKind { RK_RenderWindow, RK_GLRenderWindow, RK_RenderWindowLast };
 
+  /// @brief Initialize the target
   RenderTarget(RenderTargetKind kind);
+
+  /// @brief Virtual destructor
   virtual ~RenderTarget() {}
 
   /// @brief Get kind of RenderTarget (used by RTTI dyn_cast<> et al.)

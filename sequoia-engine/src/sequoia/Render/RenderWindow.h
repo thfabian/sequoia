@@ -57,13 +57,11 @@ public:
     CK_Normal    ///< Keep the cursor provided by the operating system
   };
 
-  RenderWindow(RenderTargetKind kind) : RenderTarget(kind) {}
-  virtual ~RenderWindow() {}
-
   /// @brief Initialize the window
-  ///
-  /// This may include context creation and binding.
-  virtual void init() = 0;
+  RenderWindow(RenderTargetKind kind) : RenderTarget(kind) {}
+
+  /// @brief Virtual destructor
+  virtual ~RenderWindow() {}
 
   /// @brief Swaps the frame buffers to display the next frame
   virtual void swapBuffers() = 0;

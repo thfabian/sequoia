@@ -28,8 +28,6 @@ namespace sequoia {
 
 namespace render {
 
-class GLRenderer;
-class GLRenderSystem;
 class GLInputSystem;
 
 /// @brief OpenGL render window
@@ -44,8 +42,7 @@ class SEQUOIA_API GLRenderWindow final : public RenderWindow, public InputEventL
   /// Mode of the cursor
   CursorModeKind mode_;
 
-  /// OpenGL
-  std::unique_ptr<GLRenderer> renderer_;
+  /// Input system handler
   std::unique_ptr<GLInputSystem> inputSystem_;
 
 public:
@@ -74,10 +71,6 @@ public:
   /// @copydoc RenderWindow::getHeight
   virtual int getHeight() const override;
 
-  /// @brief Initialize the OpenGL context by setting up the GLRenderer and initialize the
-  /// GLInputSystem
-  virtual void init() override;
-
   /// @copydoc RenderTarget::swapBuffers
   virtual void swapBuffers() override;
 
@@ -92,9 +85,6 @@ public:
 
   /// @brief Get the cursor mode
   CursorModeKind getCursorMode();
-
-  /// @brief Get the associated OpenGL context of this window
-  GLRenderer* getRenderer();
 
   /// @brief Get the associated OpenGL context of this window
   GLInputSystem* getInputSystem();
