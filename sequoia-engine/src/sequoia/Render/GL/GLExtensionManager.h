@@ -1,4 +1,3 @@
-
 //===--------------------------------------------------------------------------------*- C++ -*-===//
 //                         _____                        _
 //                        / ____|                      (_)
@@ -14,35 +13,36 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_RENDER_GL_GLFWD_H
-#define SEQUOIA_RENDER_GL_GLFWD_H
+#ifndef SEQUOIA_RENDER_GL_GLEXTENSIONMANAGER_H
+#define SEQUOIA_RENDER_GL_GLEXTENSIONMANAGER_H
 
-#include <glbinding/gl/enum.h>
-#include <glbinding/gl/extension.h>
-#include <glbinding/gl/types.h>
-
-using namespace gl;
+#include "sequoia/Core/Export.h"
+#include "sequoia/Core/Mutex.h"
+#include "sequoia/Core/NonCopyable.h"
+#include "sequoia/Render/GL/GLFwd.h"
+#include <unordered_map>
 
 namespace sequoia {
 
 namespace render {
 
-class GLExtensionManager;
-struct GLFragmentData;
-class GLFrameBufferObject;
-class GLInputSystem;
-class GLProgram;
-class GLProgramManager;
-class GLRenderer;
-class GLRenderSystem;
-class GLRenderWindow;
-class GLShader;
-class GLShaderManager;
-class GLStateCacheManager;
-class GLTexture;
-class GLTextureManager;
-class GLVertexArrayObject;
-struct GLVertexAttribute;
+/// @brief Manage OpenGL extensions
+/// @ingroup gl
+class SEQUOIA_API GLExtensionManager : public NonCopyable {
+
+  /// Access mutex
+  SpinMutex mutex_;
+
+  /// Cache of queried extensions
+  std::unordered_map<gl::GLextension, bool> extensionCache_;
+
+public:
+  /// @brief Check if `extension` is supported
+  ///
+  /// @returns `true` if extension is supported, `false` otherwise
+  /// @remark Thread-safe
+  bool isSupported(gl::GLextension extension) noexcept;
+};
 
 } // namespace render
 

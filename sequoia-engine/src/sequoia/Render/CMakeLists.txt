@@ -64,6 +64,8 @@ sequoia_add_objects(
           Viewport.cpp
           
           GL/GL.h
+          GL/GLExtensionManager.h
+          GL/GLExtensionManager.cpp
           GL/GLFragmentData.h
           GL/GLFragmentData.cpp
           GL/GLFwd.h  

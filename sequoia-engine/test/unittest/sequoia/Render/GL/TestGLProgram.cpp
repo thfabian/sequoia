@@ -57,11 +57,6 @@ TEST_F(GLProgramTest, LinkingSuccess) {
   GLint id;
   glGetIntegerv(GL_CURRENT_PROGRAM, &id);
   EXPECT_EQ(id, glprogram->getID());
-
-  // Remove shader
-  EXPECT_TRUE(glprogram->removeShader(fragmentShader));
-  EXPECT_FALSE(glprogram->isValid());
-  EXPECT_EQ(glprogram->getStatus(), GLProgramStatus::Created);
 }
 
 TEST_F(GLProgramTest, UniformScalars) {

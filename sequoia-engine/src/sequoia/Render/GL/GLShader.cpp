@@ -69,9 +69,7 @@ std::string GLShader::toString() const {
                       UtfString(file_->getPath()).toAnsiString());
 }
 
-void GLShader::makeValidImpl() {
-  getGLRenderSystem().getRenderer()->getShaderManager()->makeValid(this);
-}
+void GLShader::makeValidImpl() { getGLRenderer().getShaderManager()->makeValid(this); }
 
 void destroyGLShader(GLShader* shader) noexcept {
   if(!shader->isValid())

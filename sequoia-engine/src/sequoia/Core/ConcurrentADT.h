@@ -1,4 +1,3 @@
-
 //===--------------------------------------------------------------------------------*- C++ -*-===//
 //                         _____                        _
 //                        / ____|                      (_)
@@ -14,37 +13,28 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_RENDER_GL_GLFWD_H
-#define SEQUOIA_RENDER_GL_GLFWD_H
+#ifndef SEQUOIA_CORE_CONCURRENTADT_H
+#define SEQUOIA_CORE_CONCURRENTADT_H
 
-#include <glbinding/gl/enum.h>
-#include <glbinding/gl/extension.h>
-#include <glbinding/gl/types.h>
-
-using namespace gl;
+#include <tbb/concurrent_hash_map.h>
 
 namespace sequoia {
 
-namespace render {
+namespace core {
 
-class GLExtensionManager;
-struct GLFragmentData;
-class GLFrameBufferObject;
-class GLInputSystem;
-class GLProgram;
-class GLProgramManager;
-class GLRenderer;
-class GLRenderSystem;
-class GLRenderWindow;
-class GLShader;
-class GLShaderManager;
-class GLStateCacheManager;
-class GLTexture;
-class GLTextureManager;
-class GLVertexArrayObject;
-struct GLVertexAttribute;
+/// @addtogroup core
+/// @{
 
-} // namespace render
+/// @brief Concurrent (thread-safe) version of `std::unordered_map`
+template <typename Key, typename T>
+using concurrent_unordered_map = tbb::concurrent_hash_map<Key, T>;
+
+/// @}
+
+} // namespace core
+
+template <typename Key, typename T>
+using concurrent_unordered_map = core::concurrent_unordered_map<Key, T>;
 
 } // namespace sequoia
 

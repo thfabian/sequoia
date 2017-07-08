@@ -18,7 +18,7 @@
 
 #include "sequoia/Core/Export.h"
 #include "sequoia/Core/NonCopyable.h"
-#include "sequoia/Render/RenderSystemObject.h"
+#include "sequoia/Render/RenderRessource.h"
 #include <memory>
 #include <set>
 #include <string>
@@ -36,15 +36,10 @@ class Shader;
 ///
 /// @see RenderSystem::createPogram
 /// @ingroup render
-class SEQUOIA_API Program : public RenderSystemObject,
-                            public NonCopyable,
-                            public std::enable_shared_from_this<Program> {
+class SEQUOIA_API Program : public RenderRessource {
 public:
   Program(RenderSystemKind kind);
   virtual ~Program();
-
-  /// @brief Get a log of the program
-  virtual std::string getLog() const = 0;
 
   /// @brief Return the shaders which were linked into this program
   virtual const std::set<std::shared_ptr<Shader>>& getShaders() const = 0;

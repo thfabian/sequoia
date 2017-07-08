@@ -21,7 +21,7 @@ namespace render {
 
 Program::~Program() {}
 
-Program::Program(RenderSystemKind kind) : RenderSystemObject(kind) {}
+Program::Program(RenderSystemKind kind) : RenderRessource(kind) {}
 
 } // namespace render
 

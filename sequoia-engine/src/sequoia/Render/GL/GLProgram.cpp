@@ -13,7 +13,6 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Render/GL/GLProgram.h"
 #include "sequoia/Core/Casting.h"
 #include "sequoia/Core/Format.h"
 #include "sequoia/Core/Logging.h"
@@ -22,7 +21,9 @@
 #include "sequoia/Core/Unreachable.h"
 #include "sequoia/Render/Exception.h"
 #include "sequoia/Render/GL/GL.h"
+#include "sequoia/Render/GL/GLProgram.h"
 #include "sequoia/Render/GL/GLProgramManager.h"
+#include "sequoia/Render/GL/GLRenderer.h"
 #include "sequoia/Render/GL/GLShader.h"
 #include <sstream>
 
@@ -30,40 +31,14 @@ namespace sequoia {
 
 namespace render {
 
-static const char* statusToString(GLProgramStatus status) {
-  switch(status) {
-  case GLProgramStatus::Invalid:
-    return "Invalid";
-  case GLProgramStatus::Created:
-    return "Created";
-  case GLProgramStatus::Linked:
-    return "Linked";
-  default:
-    sequoia_unreachable("invalid GLProgramStatus");
-  }
-}
-
 const std::string GLProgram::EmptyString;
 
-GLProgram::GLProgram(const std::set<std::shared_ptr<Shader>>& shaders, GLProgramManager* manager)
-    : Program(RK_OpenGL), status_(GLProgramStatus::Invalid), id_(0), allUniformVariablesSet_(false),
-      shaders_(shaders), manager_(manager) {}
+GLProgram::GLProgram(const std::set<std::shared_ptr<Shader>>& shaders)
+    : Program(RK_OpenGL), id_(0), allUniformVariablesSet_(false), shaders_(shaders) {}
 
 GLProgram::~GLProgram() { destroyGLProgram(this); }
 
-bool GLProgram::isValid() const { return (status_ == GLProgramStatus::Linked); }
-
 const std::set<std::shared_ptr<Shader>>& GLProgram::getShaders() const { return shaders_; }
-
-void GLProgram::addShader(const std::shared_ptr<Shader>& shader) {
-  status_ = GLProgramStatus::Created;
-  shaders_.insert(shader);
-}
-
-bool GLProgram::removeShader(const std::shared_ptr<Shader>& shader) {
-  status_ = GLProgramStatus::Created;
-  return shaders_.erase(shader);
-}
 
 const std::unordered_map<std::string, GLProgram::GLUniformInfo>&
 GLProgram::getUniformVariables() const {
@@ -74,16 +49,10 @@ std::unordered_map<std::string, GLProgram::GLUniformInfo>& GLProgram::getUniform
   return uniformInfoMap_;
 }
 
-GLProgramManager* GLProgram::getManager() const { return manager_; }
-
 unsigned int GLProgram::getID() const { return id_; }
 
-GLProgramStatus GLProgram::getStatus() const { return status_; }
-
 void GLProgram::bind() {
-  if(!isValid())
-    manager_->makeValid(dyn_pointer_cast<GLProgram>(shared_from_this()));
-
+  SEQUOIA_ASSERT_MSG(isValid(), "binding invalid program");
   glUseProgram(id_);
 }
 
@@ -114,42 +83,16 @@ const std::string& GLProgram::getTextureSampler(int textureUnit) const {
   return (it != textureSamplers_.end() ? it->second : GLProgram::EmptyString);
 }
 
-std::string GLProgram::getLog() const {
-  if(status_ == GLProgramStatus::Invalid)
-    return "invalid";
-
-  std::stringstream ss;
-  ss << "Program Info Log (ID = " << id_ << ")\n";
-
-  int index = 0;
-  for(const std::shared_ptr<Shader>& shader : shaders_) {
-    ss << core::format("  %-40s : %s\n", "GL_ATTACHED_SHADER_" + std::to_string(index),
-                       "ID = " + std::to_string(dyn_cast<GLShader>(shader.get())->getID()) +
-                           ", type = " + Shader::shaderTypeToString(shader->getType()));
-    ++index;
-  }
-
-  int info = 0;
-  for(auto param :
-      {GL_PROGRAM_SEPARABLE, GL_PROGRAM_BINARY_RETRIEVABLE_HINT, GL_LINK_STATUS, GL_VALIDATE_STATUS,
-       GL_DELETE_STATUS, GL_ACTIVE_ATTRIBUTES, GL_ACTIVE_UNIFORMS, GL_ACTIVE_UNIFORM_BLOCKS,
-       GL_TRANSFORM_FEEDBACK_BUFFER_MODE, GL_TRANSFORM_FEEDBACK_VARYINGS}) {
-    glGetProgramiv(id_, param, &info);
-    ss << core::format("  %-40s : %d\n", param, info);
-  }
-  return ss.str();
-}
-
 std::string GLProgram::toString() const {
   return core::format(
       "GLProgram[\n"
-      "  status = %s,\n"
+      "  valid = %s,\n"
       "  id = %s,\n"
       "  uniformInfoMap = %s,\n"
       "  textureSamplers = %s,\n"
       "  shaders = %s\n"
       "]",
-      statusToString(status_), id_,
+      isValid() ? "true" : "false", id_,
       !uniformInfoMap_.empty()
           ? core::indent(core::toStringRange(uniformInfoMap_,
                                              [](const auto& pair) {
@@ -181,6 +124,8 @@ void GLProgram::reportWarningForInvalidUniformVariable(const std::string& name) 
     reportedWarningForInvalidUniformVariable_.emplace(name);
   }
 }
+
+void GLProgram::makeValidImpl() { getGLRenderer().getProgramManager()->makeValid(this); }
 
 namespace {
 
@@ -234,7 +179,6 @@ struct GLTypeCompat {};
   };                                                                                               \
                                                                                                    \
   bool setUniformVariableImpl(GLProgram* program, const std::string& name, const TYPE& value) {    \
-    SEQUOIA_ASSERT(program->getStatus() == GLProgramStatus::Linked);                               \
     auto it = program->getUniformVariables().find(name);                                           \
     if(it == program->getUniformVariables().end()) {                                               \
       program->reportWarningForInvalidUniformVariable(name);                                       \
@@ -292,6 +236,8 @@ SEQUOIA_SET_UNIFORM_VARIABLE_IMPL(math::mat4, ([](GLuint program, GLint location
 } // anonymous namespace
 
 bool GLProgram::setUniformVariable(const std::string& name, const UniformVariable& variable) {
+  SEQUOIA_ASSERT_MSG(isValid(), "setting uniform variable of invalid program");
+  
   switch(variable.getType()) {
 #define UNIFORM_VARIABLE_TYPE(Type, Name)                                                          \
   case UniformType::Name:                                                                          \
@@ -305,13 +251,12 @@ bool GLProgram::setUniformVariable(const std::string& name, const UniformVariabl
 }
 
 void destroyGLProgram(GLProgram* program) noexcept {
-  if(program->status_ == GLProgramStatus::Invalid)
+  if(!program->isValid())
     return;
 
   LOG(DEBUG) << "Deleting program (ID=" << program->id_ << ")";
   glDeleteProgram(program->id_);
   program->id_ = 0;
-  program->status_ = GLProgramStatus::Invalid;
 }
 
 } // namespace render

@@ -33,7 +33,7 @@ namespace render {
 ///
 /// @see RenderSystem::loadShader
 /// @ingroup render
-class SEQUOIA_API Shader : public RenderRessource, public std::enable_shared_from_this<Shader> {
+class SEQUOIA_API Shader : public RenderRessource {
 public:
   /// @brief Enumerates the types of shaders which can run on the GPU
   enum ShaderType {

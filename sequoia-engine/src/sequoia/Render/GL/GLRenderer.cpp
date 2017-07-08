@@ -21,7 +21,9 @@
 #include "sequoia/Render/Camera.h"
 #include "sequoia/Render/DrawCommandList.h"
 #include "sequoia/Render/GL/GL.h"
+#include "sequoia/Render/GL/GLExtensionManager.h"
 #include "sequoia/Render/GL/GLProgramManager.h"
+#include "sequoia/Render/GL/GLRenderSystem.h"
 #include "sequoia/Render/GL/GLRenderWindow.h"
 #include "sequoia/Render/GL/GLRenderer.h"
 #include "sequoia/Render/GL/GLShaderManager.h"
@@ -131,6 +133,7 @@ GLRenderer::GLRenderer(GLRenderWindow* window) : window_(window) {
   shaderManager_ = std::make_unique<GLShaderManager>();
   programManager_ = std::make_unique<GLProgramManager>();
   textureManager_ = std::make_unique<GLTextureManager>();
+  extensionManager_ = std::make_unique<GLExtensionManager>();
 
   LOG(INFO) << "Done creating OpenGL renderer " << this;
 }
@@ -232,15 +235,13 @@ void GLRenderer::viewportGeometryChanged(Viewport* viewport) {
   stateCacheManager_->setViewport(viewport);
 }
 
-bool GLRenderer::isExtensionSupported(const std::string& extension) noexcept {
-  auto it = extensionCache_.find(extension);
-  if(it != extensionCache_.end())
-    return it->second;
-
-  bool supported = glbinding::ContextInfo::supported({glbinding::Meta::getExtension(extension)});
-  extensionCache_.emplace(extension, supported);
-  return supported;
+bool GLRenderer::isExtensionSupported(GLextension extension) noexcept {
+  return extensionManager_->isSupported(extension);
 }
+
+GLRenderer& getGLRenderer() noexcept { return *getGLRenderSystem().getRenderer(); }
+
+GLRenderer* getGLRendererPtr() noexcept { return getGLRenderSystem().getRenderer(); }
 
 } // namespace render
 

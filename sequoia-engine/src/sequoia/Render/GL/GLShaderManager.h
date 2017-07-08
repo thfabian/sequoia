@@ -32,7 +32,6 @@ namespace render {
 /// @brief Manage OpenGL shaders by creating and loading them from source
 /// @ingroup gl
 class SEQUOIA_API GLShaderManager : public NonCopyable {
-
   /// Access mutex
   SpinMutex mutex_;
 
@@ -57,9 +56,6 @@ public:
   std::shared_ptr<GLShader> create(GLShader::ShaderType type, const std::shared_ptr<File>& file);
 
   /// @brief Make the shader valid
-  ///
-  /// Calling this function requires exclusive access to `shader`.
-  ///
   /// @throws RenderSystemExcption  Failed to initialize the shader
   void makeValid(GLShader* shader);
 };

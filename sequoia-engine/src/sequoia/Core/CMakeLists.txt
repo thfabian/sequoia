@@ -44,6 +44,7 @@ sequoia_add_objects(
           Byte.h
           Casting.h
           Compiler.h
+          ConcurrentADT.h
           Color.h
           Color.cpp
           DoubleBuffered.h          

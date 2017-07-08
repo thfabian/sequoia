@@ -115,7 +115,9 @@ std::shared_ptr<Shader> GLRenderSystem::createShader(Shader::ShaderType type,
 
 std::shared_ptr<Program>
 GLRenderSystem::createProgram(const std::set<std::shared_ptr<Shader>>& shaders) {
-  return getRenderer()->getProgramManager()->create(shaders);
+  std::shared_ptr<GLProgram> program = getRenderer()->getProgramManager()->create(shaders);
+  program->makeValid();
+  return program;
 }
 
 std::shared_ptr<Texture> GLRenderSystem::createTexture(const std::shared_ptr<Image>& image,
@@ -162,10 +164,6 @@ GLRenderer* GLRenderSystem::getRenderer() const { return renderer_.get(); }
 
 GLStateCacheManager* GLRenderSystem::getStateCacheManager() {
   return getRenderer()->getStateCacheManager();
-}
-
-bool GLRenderSystem::isExtensionSupported(const std::string& extension) noexcept {
-  return getRenderer()->isExtensionSupported(extension);
 }
 
 GLRenderSystem& getGLRenderSystem() noexcept { return *getGLRenderSystemPtr(); }

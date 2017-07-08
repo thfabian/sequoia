@@ -1,4 +1,3 @@
-
 //===--------------------------------------------------------------------------------*- C++ -*-===//
 //                         _____                        _
 //                        / ____|                      (_)
@@ -14,38 +13,25 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_RENDER_GL_GLFWD_H
-#define SEQUOIA_RENDER_GL_GLFWD_H
-
-#include <glbinding/gl/enum.h>
-#include <glbinding/gl/extension.h>
-#include <glbinding/gl/types.h>
-
-using namespace gl;
+#include "sequoia/Render/GL/GLExtensionManager.h"
+#include <glbinding/ContextInfo.h>
 
 namespace sequoia {
 
 namespace render {
 
-class GLExtensionManager;
-struct GLFragmentData;
-class GLFrameBufferObject;
-class GLInputSystem;
-class GLProgram;
-class GLProgramManager;
-class GLRenderer;
-class GLRenderSystem;
-class GLRenderWindow;
-class GLShader;
-class GLShaderManager;
-class GLStateCacheManager;
-class GLTexture;
-class GLTextureManager;
-class GLVertexArrayObject;
-struct GLVertexAttribute;
+bool GLExtensionManager::isSupported(gl::GLextension extension) noexcept {
+  SEQUOIA_LOCK_GUARD(mutex_);
 
-} // namespace render
+  auto it = extensionCache_.find(extension);
+  if(it != extensionCache_.end())
+    return it->second;
+
+  bool supported = glbinding::ContextInfo::supported({extension});
+  extensionCache_.emplace(extension, supported);
+  return supported;
+}
+
+} // render
 
 } // namespace sequoia
-
-#endif

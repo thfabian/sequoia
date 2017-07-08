@@ -114,9 +114,6 @@ public:
   /// @brief Get the state cache manager of the OpenGL renderer
   GLStateCacheManager* getStateCacheManager();
 
-  /// @brief Check if `extension` is supported
-  bool isExtensionSupported(const std::string& extension) noexcept;
-
   SEQUOIA_GL_OBJECT(RenderSystem)
 };
 

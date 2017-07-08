@@ -22,6 +22,7 @@
 #include "sequoia/Render/GL/GLFragmentData.h"
 #include "sequoia/Render/GL/GLProgramManager.h"
 #include "sequoia/Render/GL/GLRenderSystem.h"
+#include "sequoia/Render/GL/GLRenderer.h"
 #include "sequoia/Render/GL/GLShaderManager.h"
 #include "sequoia/Render/GL/GLVertexAttribute.h"
 #include <algorithm>
@@ -31,6 +32,75 @@ namespace sequoia {
 
 namespace render {
 
+GLProgramManager::~GLProgramManager() {}
+
+void GLProgramManager::makeValid(GLProgram* program) {
+  SEQUOIA_ASSERT_MSG(!program->isValid(), "program already initialized");
+
+  program->id_ = glCreateProgram();
+
+  if(program->id_ == 0)
+    SEQUOIA_THROW(RenderSystemException, "failed to create program");
+
+  LOG(DEBUG) << "Created program (ID=" << program->id_ << ")";
+
+  LOG(DEBUG) << "Linking program (ID=" << program->id_ << ") ...";
+
+  for(const std::shared_ptr<Shader>& shader : program->getShaders()) {
+    auto glshader = dyn_pointer_cast<GLShader>(shader);
+
+    // TODO: if at some point we have multiple ressource threads, we need to wait here
+    SEQUOIA_ASSERT_MSG(glshader->isValid(), "shader not valid");
+
+    LOG(DEBUG) << "Attaching shader (ID=" << glshader->getID()
+               << ") to program (ID=" << program->id_ << ")";
+    glAttachShader(program->id_, glshader->getID());
+  }
+
+  // Set location of the vertex attributes and fragment data
+  setVertexAttributes(program);
+  setFragmentData(program);
+
+  // Link the program
+  glLinkProgram(program->id_);
+  if(glGetError() != GL_NO_ERROR)
+    SEQUOIA_THROW(RenderSystemException, "failed to link program");
+
+  for(const auto& shader : program->getShaders()) {
+    GLShader* glshader = dyn_cast<GLShader>(shader.get());
+    glDetachShader(program->id_, glshader->getID());
+  }
+
+  // Get the uniform variables
+  getUniforms(program);
+
+  // Check all vertex attributes and fragment data
+  SEQUOIA_ASSERT(checkVertexAttributes(program));
+  SEQUOIA_ASSERT(checkFragmentData(program));
+
+  LOG(DEBUG) << "Successfully linked program (ID=" << program->id_ << ")";
+}
+
+std::shared_ptr<GLProgram>
+GLProgramManager::create(const std::set<std::shared_ptr<Shader>>& shaders) {
+  SEQUOIA_LOCK_GUARD(mutex_);
+
+  std::shared_ptr<GLProgram> program = nullptr;
+
+  std::size_t hash = GLProgramManager::hash(shaders);
+  auto it = shaderSetLookupMap_.find(hash);
+
+  if(it != shaderSetLookupMap_.end())
+    program = programList_[it->second];
+  else {
+    programList_.emplace_back(std::make_shared<GLProgram>(shaders));
+    shaderSetLookupMap_[hash] = programList_.size() - 1;
+    program = programList_.back();
+  }
+
+  return program;
+}
+
 std::size_t GLProgramManager::hash(const std::set<std::shared_ptr<Shader>>& shaders) noexcept {
   std::size_t seed = 0;
   std::for_each(shaders.begin(), shaders.end(), [&seed](const std::shared_ptr<Shader>& shader) {
@@ -39,74 +109,8 @@ std::size_t GLProgramManager::hash(const std::set<std::shared_ptr<Shader>>& shad
   return seed;
 }
 
-GLProgramManager::~GLProgramManager() {}
-
-void GLProgramManager::make(const std::shared_ptr<GLProgram>& program,
-                            GLProgramStatus requestedStatus) {
-  if(program->status_ == GLProgramStatus::Linked && requestedStatus != GLProgramStatus::Invalid)
-    return;
-
-  if(requestedStatus == GLProgramStatus::Invalid) {
-    destroyGLProgram(program.get());
-    return;
-  }
-
-  if(program->status_ == GLProgramStatus::Invalid) {
-    program->id_ = glCreateProgram();
-
-    if(program->id_ == 0)
-      SEQUOIA_THROW(RenderSystemException, "failed to create program");
-
-    LOG(DEBUG) << "Created program (ID=" << program->id_ << ")";
-    program->status_ = GLProgramStatus::Created;
-  }
-
-  if(requestedStatus == GLProgramStatus::Created)
-    return;
-
-  if(program->status_ == GLProgramStatus::Created) {
-    LOG(DEBUG) << "Linking program (ID=" << program->id_ << ") ...";
-
-    for(const std::shared_ptr<Shader>& shader : program->getShaders()) {
-      auto glshader = dyn_pointer_cast<GLShader>(shader);
-
-      // Make sure shader is valid
-      //glshader->getManager()->makeValid(glshader);
-
-      LOG(DEBUG) << "Attaching shader (ID=" << glshader->getID()
-                 << ") to program (ID=" << program->id_ << ")";
-      glAttachShader(program->id_, glshader->getID());
-    }
-
-    // Set location of the vertex attributes and fragment data
-    setVertexAttributes(program);
-    setFragmentData(program);
-
-    // Link the program
-    glLinkProgram(program->id_);
-    if(glGetError() != GL_NO_ERROR)
-      SEQUOIA_THROW(RenderSystemException, "failed to link program");
-    program->status_ = GLProgramStatus::Linked;
-
-    for(const auto& shader : program->getShaders()) {
-      GLShader* glshader = dyn_cast<GLShader>(shader.get());
-      glDetachShader(program->id_, glshader->getID());
-    }
-
-    // Get the uniform variables
-    getUniforms(program);
-
-    // Check all vertex attributes and fragment data
-    SEQUOIA_ASSERT(checkVertexAttributes(program));
-    SEQUOIA_ASSERT(checkFragmentData(program));
-
-    LOG(DEBUG) << "Successfully linked program (ID=" << program->id_ << ")";
-  }
-}
-
-void GLProgramManager::getUniforms(const std::shared_ptr<GLProgram>& program) const {
+void GLProgramManager::getUniforms(GLProgram* program) const {
   LOG(DEBUG) << "Getting uniform variables of program (ID=" << program->id_ << ")";
-  SEQUOIA_ASSERT(program->status_ == GLProgramStatus::Linked);
 
   program->uniformInfoMap_.clear();
   program->textureSamplers_.clear();
@@ -166,7 +170,7 @@ void GLProgramManager::getUniforms(const std::shared_ptr<GLProgram>& program) co
   LOG(DEBUG) << "Successfully got uniform variables of program (ID=" << program->id_ << ")";
 }
 
-void GLProgramManager::setVertexAttributes(const std::shared_ptr<GLProgram>& program) const {
+void GLProgramManager::setVertexAttributes(GLProgram* program) const {
   LOG(DEBUG) << "Setting vertex attributes of program (ID=" << program->id_ << ")";
 
   GLVertexAttribute::forEach([&program](unsigned int index, const char* name) {
@@ -176,9 +180,8 @@ void GLProgramManager::setVertexAttributes(const std::shared_ptr<GLProgram>& pro
   LOG(DEBUG) << "Successfully set vertex attributes of program (ID=" << program->id_ << ")";
 }
 
-bool GLProgramManager::checkVertexAttributes(const std::shared_ptr<GLProgram>& program) const {
+bool GLProgramManager::checkVertexAttributes(GLProgram* program) const {
   LOG(DEBUG) << "Checking vertex attributes of program (ID=" << program->id_ << ")";
-  SEQUOIA_ASSERT(program->status_ == GLProgramStatus::Linked);
 
   int numActiveAttrs = 0;
   glGetProgramiv(program->id_, GL_ACTIVE_ATTRIBUTES, &numActiveAttrs);
@@ -207,7 +210,7 @@ bool GLProgramManager::checkVertexAttributes(const std::shared_ptr<GLProgram>& p
   return true;
 }
 
-void GLProgramManager::setFragmentData(const std::shared_ptr<GLProgram>& program) const {
+void GLProgramManager::setFragmentData(GLProgram* program) const {
   LOG(DEBUG) << "Setting fragment data of program (ID=" << program->id_ << ")";
 
   GLFragmentData::forEach([&program](unsigned int index, const char* name) {
@@ -217,10 +220,9 @@ void GLProgramManager::setFragmentData(const std::shared_ptr<GLProgram>& program
   LOG(DEBUG) << "Successfully set fragment data of program (ID=" << program->id_ << ")";
 }
 
-bool GLProgramManager::checkFragmentData(const std::shared_ptr<GLProgram>& program) const {
-  if(getGLRenderSystem().isExtensionSupported("GL_ARB_program_interface_query")) {
+bool GLProgramManager::checkFragmentData(GLProgram* program) const {
+  if(getGLRenderer().isExtensionSupported(GLextension::GL_ARB_program_interface_query)) {
     LOG(DEBUG) << "Checking fragment data of program (ID=" << program->id_ << ")";
-    SEQUOIA_ASSERT(program->status_ == GLProgramStatus::Linked);
 
     int numFragData = 0;
     glGetProgramInterfaceiv(program->id_, GL_PROGRAM_OUTPUT, GL_ACTIVE_RESOURCES, &numFragData);
@@ -241,7 +243,7 @@ bool GLProgramManager::checkFragmentData(const std::shared_ptr<GLProgram>& progr
 
       LOG(DEBUG) << "Output fragment data: name=" << name << ", location=" << location;
 
-      // We only check variables which are explicitly tagged as `out_*`      
+      // We only check variables which are explicitly tagged as `out_*`
       if(StringRef(name).startswith("out_") && !GLFragmentData::isValid(name.c_str()))
         SEQUOIA_THROW(RenderSystemException, "invalid output fragment data '%s'", name);
     }
@@ -249,26 +251,6 @@ bool GLProgramManager::checkFragmentData(const std::shared_ptr<GLProgram>& progr
     LOG(DEBUG) << "Successfully checked fragment data of program (ID=" << program->id_ << ")";
   }
   return true;
-}
-
-std::shared_ptr<GLProgram>
-GLProgramManager::create(const std::set<std::shared_ptr<Shader>>& shaders,
-                         GLProgramStatus requestedStatus) {
-  std::shared_ptr<GLProgram> program = nullptr;
-
-  std::size_t hash = GLProgramManager::hash(shaders);
-  auto it = shaderSetLookupMap_.find(hash);
-
-  if(it != shaderSetLookupMap_.end())
-    program = programList_[it->second];
-  else {
-    programList_.emplace_back(std::make_shared<GLProgram>(shaders, this));
-    shaderSetLookupMap_[hash] = programList_.size() - 1;
-    program = programList_.back();
-  }
-
-  make(program, requestedStatus);
-  return program;
 }
 
 } // namespace render

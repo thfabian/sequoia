@@ -19,8 +19,8 @@
 #include "sequoia/Core/Export.h"
 #include "sequoia/Core/File.h"
 #include "sequoia/Core/NonCopyable.h"
-#include "sequoia/Math/Math.h"
 #include "sequoia/Render/FrameListener.h"
+#include "sequoia/Render/GL/GLFwd.h"
 #include "sequoia/Render/RenderFwd.h"
 #include "sequoia/Render/Viewport.h"
 #include <memory>
@@ -29,12 +29,6 @@
 namespace sequoia {
 
 namespace render {
-
-class GLRenderWindow;
-class GLShaderManager;
-class GLProgramManager;
-class GLTextureManager;
-class GLStateCacheManager;
 
 /// @brief OpenGL based renderer
 ///
@@ -59,6 +53,7 @@ class SEQUOIA_API GLRenderer : public ViewportListener,
   std::unique_ptr<GLShaderManager> shaderManager_;
   std::unique_ptr<GLProgramManager> programManager_;
   std::unique_ptr<GLTextureManager> textureManager_;
+  std::unique_ptr<GLExtensionManager> extensionManager_;
 
   /// Cache of exentions
   std::unordered_map<std::string, bool> extensionCache_;
@@ -103,14 +98,20 @@ public:
   /// @brief Get the default fragment shader
   const std::shared_ptr<Program>& getDefaultProgram() const;
 
+  /// @brief Check if `extension` is supported
+  /// @see GLExtensionManager::supported
+  bool isExtensionSupported(gl::GLextension extension) noexcept;
+
   /// @brief Adjust viewport
   virtual void viewportGeometryChanged(Viewport* viewport) override;
-
-  /// @brief Check if `extension` is supported
-  ///
-  /// @param extentsion     Name of the extension (e.g `GL_ARB_program_interface_query`)
-  bool isExtensionSupported(const std::string& extension) noexcept;
 };
+
+/// @brief Get a reference to the currently active `GLRenderer`
+/// @ingroup gl
+/// @{
+SEQUOIA_API extern GLRenderer& getGLRenderer() noexcept;
+SEQUOIA_API extern GLRenderer* getGLRendererPtr() noexcept;
+/// @}
 
 } // namespace render
 

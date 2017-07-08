@@ -17,6 +17,7 @@
 #define SEQUOIA_RENDER_GL_GLPROGRAMMANAGER_H
 
 #include "sequoia/Core/Export.h"
+#include "sequoia/Core/Mutex.h"
 #include "sequoia/Core/NonCopyable.h"
 #include "sequoia/Render/GL/GLProgram.h"
 #include <memory>
@@ -27,52 +28,55 @@ namespace sequoia {
 
 namespace render {
 
-class GLShader;
-
 /// @brief Create and compile OpenGL GPU programs
 /// @ingroup gl
 class SEQUOIA_API GLProgramManager : public NonCopyable {
+  /// Access mutex
+  SpinMutex mutex_;
 
   /// Record of all the registered programs (use count of 1 implies the program is *not* in use)
   std::vector<std::shared_ptr<GLProgram>> programList_;
 
-  /// Lookup map for Programs
+  /// Lookup map for programs (hash of the shader set to index in programList)
   std::unordered_map<std::size_t, std::size_t> shaderSetLookupMap_;
 
 public:
   /// @brief Destroy all remaining programs
   ~GLProgramManager();
 
-  /// @brief Create the shader from source and compile it
+  /// @brief Create an *empty* program using `shaders`
   ///
-  /// @param type             Type of the shader
-  /// @param path             Path to the shader source
-  /// @param requestedStatus  Requested target status
-  /// @throws RenderSystemException
-  std::shared_ptr<GLProgram> create(const std::set<std::shared_ptr<Shader>>& shaders,
-                                    GLProgramStatus requestedStatus = GLProgramStatus::Linked);
+  /// The `shaders` do not need to be valid at this point.
+  ///
+  /// @param shaders       Shaders linked into the program
+  /// @returns Newly created program which is *not* valid, call `shader->makeValid()` to convert it
+  ///          into a valid state
+  ///
+  /// @remark Thread-safe
+  std::shared_ptr<GLProgram> create(const std::set<std::shared_ptr<Shader>>& shaders);
 
-  /// @brief Convert the `program` to `status`
-  /// @throws RenderSystemException
-  void make(const std::shared_ptr<GLProgram>& program, GLProgramStatus requestedStatus);
-
-  /// @brief Convert the shader to `GLProgramStatus::Linked`
-  /// @see GLProgramManager::make
-  void makeValid(const std::shared_ptr<GLProgram>& program) {
-    make(program, GLProgramStatus::Linked);
-  }
+  /// @brief Make the program valid
+  /// @throws RenderSystemExcption  Failed to initialize the program
+  void makeValid(GLProgram* program);
 
   /// @brief Compute hash of the set of shaders
   static std::size_t hash(const std::set<std::shared_ptr<Shader>>& shaders) noexcept;
 
 private:
-  void getUniforms(const std::shared_ptr<GLProgram>& program) const;
+  /// @brief Query the uniform variables of the program
+  void getUniforms(GLProgram* program) const;
 
-  void setVertexAttributes(const std::shared_ptr<GLProgram>& program) const;
-  bool checkVertexAttributes(const std::shared_ptr<GLProgram>& program) const;
+  /// @brief Set the `location` of all the known vertex attributes (called pre-link)
+  void setVertexAttributes(GLProgram* program) const;
 
-  void setFragmentData(const std::shared_ptr<GLProgram>& program) const;
-  bool checkFragmentData(const std::shared_ptr<GLProgram>& program) const;
+  /// @brief Check all the active attributes (called post-link)
+  bool checkVertexAttributes(GLProgram* program) const;
+
+  /// @brief Set the `location` of all the known fragment data (called pre-link)
+  void setFragmentData(GLProgram* program) const;
+
+  /// @brief Check all the active fragment data (called post-link)
+  bool checkFragmentData(GLProgram* program) const;
 };
 
 } // namespace render

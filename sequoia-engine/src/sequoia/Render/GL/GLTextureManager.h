@@ -4,7 +4,7 @@
 //                       | (___   ___  __ _ _   _  ___  _  __ _
 //                        \___ \ / _ \/ _` | | | |/ _ \| |/ _` |
 //                        ____) |  __/ (_| | |_| | (_) | | (_| |
-//                       |_____/ \___|\__, |\__,_|\___/|_|\__,_| - Game Engine
+//                       |_____/ \___|\__, |\__,_|\___/|_|\__,_| - Game Engine (2016-2017)
 //                                       | |
 //                                       |_|
 //
@@ -13,8 +13,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_RENDER_GL_TEXTUREMANAGER_H
-#define SEQUOIA_RENDER_GL_TEXTUREMANAGER_H
+#ifndef SEQUOIA_RENDER_GL_GLTEXTUREMANAGER_H
+#define SEQUOIA_RENDER_GL_GLTEXTUREMANAGER_H
 
 #include "sequoia/Render/GL/GLTexture.h"
 #include <memory>
@@ -27,7 +27,7 @@ namespace render {
 
 /// @brief Manage OpenGL Textures by creating, allocating and loading theme
 ///
-/// A TextureManager is attached to a specific OpenGL context. Note that texture are not necessarly
+/// A TextureManager is attached to a specific OpenGL context. Note that texture are not necessarily
 /// tied to images and have lots of other areas applications.
 ///
 /// @ingroup gl
