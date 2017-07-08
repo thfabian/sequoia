@@ -23,51 +23,26 @@ namespace sequoia {
 
 namespace render {
 
-class GLShaderManager;
-
-/// @brief Status of an OpenGL shader
-/// @ingroup gl
-enum class GLShaderStatus {
-  OnDisk = 0, ///< Shader has not been loaded from disk and path to shader may not exist
-  InMemory,   ///< Shader was successfully loaded into memory
-  Created,    ///< Shader has been registered within OpenGL and thus a unique ID has been assigned
-  Compiled    ///< Shader has been successfully compiled and is ready for usage in programs
-};
-
-/// @brief OpenGL shader
+/// @brief OpenGL shader implementation
 /// @ingroup gl
 class SEQUOIA_API GLShader final : public Shader {
   friend class GLShaderManager;
 
-  /// Status of the shader
-  GLShaderStatus status_;
-
   /// OpenGL shader index
   unsigned int id_;
 
-  /// Reference to the manager
-  GLShaderManager* manager_;
-
-  /// Source code of the shader
+  /// Copy of the (optimized) source code of the shader
   std::string code_;
 
   /// File the shader was loaded from
   std::shared_ptr<File> file_;
 
 public:
-  /// @brief Get OpenGL shader type
-  static GLenum getGLShaderType(ShaderType type);
-
-  /// @brief Create the shader object by setting to path to its supposed location on disk
-  ///
-  /// Shaders should only be created via the factory method GLShaderManager::create.
-  GLShader(ShaderType type, const std::shared_ptr<File>& file, GLShaderManager* manager);
+  /// @brief Create an empty shader object
+  GLShader(ShaderType type, const std::shared_ptr<File>& file);
 
   /// @brief Destroy the shader
   ~GLShader();
-
-  /// @brief Check if the shader is valid i.e can be linked into a GPUProgram
-  bool isValid() const;
 
   /// @brief Get the identifer of the shader
   ///
@@ -80,23 +55,20 @@ public:
   /// @copydoc Shader::getSourceCode
   std::string getSourceCode() const override;
 
-  /// @copydoc Shader::getLog
-  std::string getLog() const override;
-
   /// @copydoc Shader::toString
   std::string toString() const override;
-
-  /// @brief Get the status of the Shader
-  GLShaderStatus getStatus() const;
-
-  /// @brief Get the manager
-  GLShaderManager* getManager() const;
 
   /// @brief Destroy the shader by deregistering it from OpenGL (i.e it's status will be changed to
   /// `InMemory`)
   friend SEQUOIA_API void destroyGLShader(GLShader* shader) noexcept;
 
+  /// @brief Get OpenGL shader type
+  static GLenum getGLShaderType(ShaderType type);
+
   SEQUOIA_GL_OBJECT(Shader)
+
+protected:
+  void makeValidImpl() override;
 };
 
 } // namespace render

@@ -75,43 +75,4 @@ TEST_F(GLShaderTest, LoadingFail) {
       RenderSystemException);
 }
 
-TEST_F(GLShaderTest, LoadingPartial) {
-  Environment& env = Environment::getSingleton();
-
-  GLShaderManager* manager = dyn_cast<GLRenderSystem>(RenderSystem::getSingletonPtr())
-                                 ->getMainGLWindow()
-                                 ->getRenderer()
-                                 ->getShaderManager();
-
-  std::shared_ptr<GLShader> shader = manager->create(
-      Shader::ST_Vertex, env.getFile("sequoia/Render/GL/TestGLShader/VertexCompileSuccess.vert"),
-      GLShaderStatus::OnDisk);
-
-  // OnDisk
-  EXPECT_EQ(shader->getStatus(), GLShaderStatus::OnDisk);
-  EXPECT_FALSE(shader->isValid());
-  EXPECT_EQ(shader->getID(), 0);
-
-  // InMemory
-  manager->make(shader, GLShaderStatus::InMemory);
-  EXPECT_EQ(shader->getStatus(), GLShaderStatus::InMemory);
-  EXPECT_FALSE(shader->isValid());
-  EXPECT_EQ(shader->getID(), 0);
-  EXPECT_FALSE(shader->getSourceCode().empty());
-
-  // Created
-  manager->make(shader, GLShaderStatus::Created);
-  EXPECT_EQ(shader->getStatus(), GLShaderStatus::Created);
-  EXPECT_FALSE(shader->isValid());
-  EXPECT_NE(shader->getID(), 0);
-  EXPECT_FALSE(shader->getSourceCode().empty());
-
-  // Compiled
-  manager->makeValid(shader);
-  EXPECT_EQ(shader->getStatus(), GLShaderStatus::Compiled);
-  EXPECT_TRUE(shader->isValid());
-  EXPECT_NE(shader->getID(), 0);
-  EXPECT_FALSE(shader->getSourceCode().empty());
-}
-
 } // anonymous namespace

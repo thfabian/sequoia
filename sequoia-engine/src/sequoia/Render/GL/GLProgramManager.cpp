@@ -71,7 +71,7 @@ void GLProgramManager::make(const std::shared_ptr<GLProgram>& program,
       auto glshader = dyn_pointer_cast<GLShader>(shader);
 
       // Make sure shader is valid
-      glshader->getManager()->makeValid(glshader);
+      //glshader->getManager()->makeValid(glshader);
 
       LOG(DEBUG) << "Attaching shader (ID=" << glshader->getID()
                  << ") to program (ID=" << program->id_ << ")";

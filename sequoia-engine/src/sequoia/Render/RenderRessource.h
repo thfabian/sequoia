@@ -39,7 +39,9 @@ class SEQUOIA_API RenderRessource : public RenderSystemObject, public NonCopyabl
   Mutex mutex_;
 
 public:
-  RenderRessource() : valid_(false) {}
+  RenderRessource(RenderSystemKind renderSystemKind)
+      : RenderSystemObject(renderSystemKind), valid_(false) {}
+  virtual ~RenderRessource() {}
 
   /// @brief Check if the ressource is valid
   ///
@@ -51,8 +53,8 @@ public:
 
   /// @brief Make the ressource valid
   ///
-  /// This converts the ressource into a valid state s.t `isValid() == true`. This function should
-  /// generally only be called by render-system threads.
+  /// This converts the ressource into a valid state s.t `isValid() == true`. You should not call
+  /// this function by yourself.
   ///
   /// @remark Thread-safe
   inline void makeValid() {
@@ -61,7 +63,8 @@ public:
 
     SEQUOIA_LOCK(mutex_);
 
-    // Prevent the ressource from being initialized multiple times
+    // Prevent the ressource from being initialized multiple times (captures the thread blocking at
+    // the mutex)
     if(isValid())
       return;
 
@@ -76,3 +79,9 @@ protected:
   /// @brief Make the ressource ready
   virtual void makeValidImpl() = 0;
 };
+
+} // namespace render
+
+} // namespace sequoia
+
+#endif

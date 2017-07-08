@@ -19,7 +19,7 @@
 #include "sequoia/Core/Export.h"
 #include "sequoia/Core/File.h"
 #include "sequoia/Core/NonCopyable.h"
-#include "sequoia/Render/RenderSystemObject.h"
+#include "sequoia/Render/RenderRessource.h"
 #include <memory>
 
 namespace sequoia {
@@ -33,9 +33,7 @@ namespace render {
 ///
 /// @see RenderSystem::loadShader
 /// @ingroup render
-class SEQUOIA_API Shader : public RenderSystemObject,
-                           public NonCopyable,
-                           public std::enable_shared_from_this<Shader> {
+class SEQUOIA_API Shader : public RenderRessource, public std::enable_shared_from_this<Shader> {
 public:
   /// @brief Enumerates the types of shaders which can run on the GPU
   enum ShaderType {
@@ -51,7 +49,10 @@ public:
   virtual ~Shader();
 
   /// @brief Get the type of the shader
-  ShaderType getType() const;
+  ShaderType getType() const { return type_; }
+
+  /// @brief Shader type to string
+  static const char* shaderTypeToString(ShaderType type);
 
   /// @brief Get the source file of the shader
   virtual const std::shared_ptr<File>& getFile() const = 0;
@@ -59,16 +60,14 @@ public:
   /// @brief Get the source code of the shader
   virtual std::string getSourceCode() const = 0;
 
-  /// @brief Get a log of the shader
-  virtual std::string getLog() const = 0;
-
-  /// @brief Shader type to string
-  static const char* shaderTypeToString(ShaderType type);
-
   /// @brief Convert to string
   virtual std::string toString() const = 0;
 
 protected:
+  virtual void makeValidImpl() override = 0;
+
+private:
+  /// Type of the shader
   ShaderType type_;
 };
 

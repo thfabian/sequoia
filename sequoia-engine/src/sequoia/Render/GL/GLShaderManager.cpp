@@ -13,9 +13,10 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Render/GL/GL.h"
 #include "sequoia/Core/Logging.h"
 #include "sequoia/Render/Exception.h"
+#include "sequoia/Render/GL/GL.h"
+#include "sequoia/Render/GL/GLShader.h"
 #include "sequoia/Render/GL/GLShaderManager.h"
 #include <boost/lexical_cast.hpp>
 #include <fstream>
@@ -43,84 +44,64 @@ static std::string getRow(const std::string& source, int rowIdx) {
 
 GLShaderManager::~GLShaderManager() {}
 
-void GLShaderManager::make(const std::shared_ptr<GLShader>& shader,
-                           GLShaderStatus requestedStatus) {
-  if(shader->status_ == GLShaderStatus::Compiled)
-    return;
+void GLShaderManager::makeValid(GLShader* shader) {
+  SEQUOIA_ASSERT_MSG(!shader->isValid(), "shader already initialized");
 
-  if(requestedStatus == GLShaderStatus::OnDisk) {
-    destroyGLShader(shader.get());
-    return;
-  }
+  LOG(DEBUG) << "Loading shader from disk \"" << shader->file_->getPath() << "\"";
 
-  if(shader->status_ == GLShaderStatus::OnDisk) {
-    LOG(DEBUG) << "Loading shader from disk \"" << shader->file_->getPath() << "\"";
+  // Get the shader source
+  shader->code_ = shader->file_->getDataAsString();
+  if(shader->code_.empty())
+    SEQUOIA_THROW(RenderSystemException, "empty shader source: '%s'", shader->file_->getPath());
 
-    shader->code_ = shader->file_->getDataAsString();
-    shader->status_ = GLShaderStatus::InMemory;
+  // Register the shader within OpenGL
+  shader->id_ = glCreateShader(GLShader::getGLShaderType(shader->getType()));
+  if(shader->id_ == 0)
+    SEQUOIA_THROW(RenderSystemException, "cannot create shader: '%s'", shader->file_->getPath());
 
-    if(shader->code_.empty())
-      SEQUOIA_THROW(RenderSystemException, "empty shader source: '%s'", shader->file_->getPath());
-  }
+  LOG(DEBUG) << "Created shader (ID=" << shader->id_ << ") from source \""
+             << shader->file_->getPath() << "\"";
 
-  if(requestedStatus == GLShaderStatus::InMemory)
-    return;
+  LOG(DEBUG) << "Compiling shader (ID=" << shader->id_ << ") ...";
 
-  if(shader->status_ == GLShaderStatus::InMemory) {
-    shader->id_ = glCreateShader(GLShader::getGLShaderType(shader->type_));
-    if(shader->id_ == 0)
-      SEQUOIA_THROW(RenderSystemException, "cannot create shader: '%s'", shader->file_->getPath());
+  // Compile shader
+  const char* code = shader->code_.c_str();
+  glShaderSource(shader->id_, 1, &code, nullptr);
+  glCompileShader(shader->id_);
 
-    LOG(DEBUG) << "Created shader (ID=" << shader->id_ << ") from source \""
-               << shader->file_->getPath() << "\"";
-    shader->status_ = GLShaderStatus::Created;
-  }
+  // Check compilation
+  int compileStatus;
+  glGetShaderiv(shader->id_, GL_COMPILE_STATUS, &compileStatus);
+  if(!compileStatus) {
+    int infoLogLength;
+    glGetShaderiv(shader->id_, GL_INFO_LOG_LENGTH, &infoLogLength);
 
-  if(requestedStatus == GLShaderStatus::Created)
-    return;
+    std::vector<char> errorMessage(infoLogLength + 1);
+    glGetShaderInfoLog(shader->id_, infoLogLength, NULL, &errorMessage[0]);
 
-  if(shader->status_ == GLShaderStatus::Created) {
-    LOG(DEBUG) << "Compiling shader (ID=" << shader->id_ << ") ...";
+    std::string msg(errorMessage.data(), errorMessage.size());
 
-    const char* code = shader->code_.c_str();
-    glShaderSource(shader->id_, 1, &code, nullptr);
-    glCompileShader(shader->id_);
+    // Extract 'Y(X)' where 'X' is the line number and 'Y' is the column number
+    int lbrace = msg.find_first_of('('), rbrace = msg.find_first_of(')');
+    try {
+      int row = boost::lexical_cast<int>(msg.substr(lbrace + 1, rbrace - lbrace - 1));
+      std::string line = getRow(shader->code_, row);
 
-    // Check compilation
-    int compileStatus;
-    glGetShaderiv(shader->id_, GL_COMPILE_STATUS, &compileStatus);
-    if(!compileStatus) {
-      int infoLogLength;
-      glGetShaderiv(shader->id_, GL_INFO_LOG_LENGTH, &infoLogLength);
+      if(!line.empty())
+        msg += "\n" + line + "\n";
 
-      std::vector<char> errorMessage(infoLogLength + 1);
-      glGetShaderInfoLog(shader->id_, infoLogLength, NULL, &errorMessage[0]);
-
-      std::string msg(errorMessage.data(), errorMessage.size());
-
-      // Extract 'Y(X)' where 'X' is the line number and 'Y' is the column number
-      int lbrace = msg.find_first_of('('), rbrace = msg.find_first_of(')');
-      try {
-        int row = boost::lexical_cast<int>(msg.substr(lbrace + 1, rbrace - lbrace - 1));
-        std::string line = getRow(shader->code_, row);
-
-        if(!line.empty())
-          msg += "\n" + line + "\n";
-
-      } catch(const boost::bad_lexical_cast&) {
-      }
-
-      SEQUOIA_THROW(RenderSystemException, "failed to compile shader: %s", msg);
+    } catch(const boost::bad_lexical_cast&) {
     }
 
-    LOG(DEBUG) << "Successfully compiled shader (ID=" << shader->id_ << ")";
-    shader->status_ = GLShaderStatus::Compiled;
+    SEQUOIA_THROW(RenderSystemException, "failed to compile shader: %s", msg);
   }
+
+  LOG(DEBUG) << "Successfully compiled shader (ID=" << shader->id_ << ")";
 }
 
 std::shared_ptr<GLShader> GLShaderManager::create(GLShader::ShaderType type,
-                                                  const std::shared_ptr<File>& file,
-                                                  GLShaderStatus requestedStatus) {
+                                                  const std::shared_ptr<File>& file) {
+  SEQUOIA_LOCK_GUARD(mutex_);
 
   std::shared_ptr<GLShader> shader = nullptr;
   auto it = fileLookupMap_.find(file);
@@ -128,12 +109,11 @@ std::shared_ptr<GLShader> GLShaderManager::create(GLShader::ShaderType type,
   if(it != fileLookupMap_.end()) {
     shader = shaderList_[it->second];
   } else {
-    shaderList_.emplace_back(std::make_shared<GLShader>(type, file, this));
+    shaderList_.emplace_back(std::make_shared<GLShader>(type, file));
     fileLookupMap_[file] = shaderList_.size() - 1;
     shader = shaderList_.back();
   }
 
-  make(shader, requestedStatus);
   return shader;
 }
 

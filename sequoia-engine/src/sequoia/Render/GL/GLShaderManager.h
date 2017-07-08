@@ -18,8 +18,10 @@
 
 #include "sequoia/Core/Assert.h"
 #include "sequoia/Core/Export.h"
+#include "sequoia/Core/Mutex.h"
 #include "sequoia/Core/NonCopyable.h"
 #include "sequoia/Render/GL/GLShader.h"
+#include <memory>
 #include <unordered_map>
 #include <vector>
 
@@ -28,11 +30,11 @@ namespace sequoia {
 namespace render {
 
 /// @brief Manage OpenGL shaders by creating and loading them from source
-///
-/// A ShaderManager is attached to a specific OpenGL context.
-///
 /// @ingroup gl
 class SEQUOIA_API GLShaderManager : public NonCopyable {
+
+  /// Access mutex
+  SpinMutex mutex_;
 
   /// Record of all the registered shaders (use count of 1 implies the shader is *not* in use)
   std::vector<std::shared_ptr<GLShader>> shaderList_;
@@ -44,24 +46,22 @@ public:
   /// @brief Destroy all remaining shaders
   ~GLShaderManager();
 
-  /// @brief Create a shader from source and compile it
+  /// @brief Create an *empty* shader from source and compile it
   ///
-  /// @param type             Type of the shader
-  /// @param file             File of the shader source
-  /// @param requestedStatus  Requested target status
-  /// @throws RenderSystemException
-  std::shared_ptr<GLShader> create(GLShader::ShaderType type, const std::shared_ptr<File>& file,
-                                   GLShaderStatus requestedStatus = GLShaderStatus::Compiled);
+  /// @param type       Type of the shader
+  /// @param file       File of the shader source
+  /// @returns Newly created shader which is *not* valid, call `shader->makeValid()` to convert it
+  ///          into a valid state
+  ///
+  /// @remark Thread-safe
+  std::shared_ptr<GLShader> create(GLShader::ShaderType type, const std::shared_ptr<File>& file);
 
-  /// @brief Convert the shader to `status`
-  /// @throws RenderSystemException
-  void make(const std::shared_ptr<GLShader>& shader, GLShaderStatus requestedStatus);
-
-  /// @brief Convert the shader to `GLProgramStatus::Linked`
-  /// @see GLProgramManager::make
-  void makeValid(const std::shared_ptr<GLShader>& shader) {
-    make(shader, GLShaderStatus::Compiled);
-  }
+  /// @brief Make the shader valid
+  ///
+  /// Calling this function requires exclusive access to `shader`.
+  ///
+  /// @throws RenderSystemExcption  Failed to initialize the shader
+  void makeValid(GLShader* shader);
 };
 
 } // namespace render

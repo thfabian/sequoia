@@ -13,8 +13,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Render/Shader.h"
 #include "sequoia/Core/Unreachable.h"
+#include "sequoia/Render/Shader.h"
 
 namespace sequoia {
 
@@ -23,9 +23,7 @@ namespace render {
 Shader::~Shader() {}
 
 Shader::Shader(RenderSystemKind kind, Shader::ShaderType type)
-    : RenderSystemObject(kind), type_(type) {}
-
-Shader::ShaderType Shader::getType() const { return type_; }
+    : RenderRessource(kind), type_(type) {}
 
 const char* Shader::shaderTypeToString(Shader::ShaderType type) {
   switch(type) {
