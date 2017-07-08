@@ -23,6 +23,7 @@
 #include "sequoia/Render/GL/GLRenderSystem.h"
 #include "sequoia/Render/GL/GLStateCacheManager.h"
 #include "sequoia/Render/GL/GLTexture.h"
+#include <numeric>
 
 namespace sequoia {
 
