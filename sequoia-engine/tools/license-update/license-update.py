@@ -37,12 +37,13 @@ license_template = """{0}==={1}-*- {2} -*-==={0}
 from argparse import ArgumentParser
 from sys import exit, stderr, argv
 from os import fsencode, listdir, path, walk
+import io
 
 def update_license(file, comment, lang):
     print("Updating " + file + " ...")
     
     new_data = None
-    with open(file, 'r') as f:
+    with io.open(file, 'r') as f:
         read_data = f.read()
         
         first_line = '{0}==={1}-*- {2} -*-==={0}'.format(comment, (82 - len(lang)) * '-', lang)
@@ -57,7 +58,7 @@ def update_license(file, comment, lang):
         new_data = read_data.replace(replacement_str, 
                                      license_template.format(comment, (82 - len(lang)) * '-', lang))
                                      
-    with open(file, 'w') as f:
+    with io.open(file, 'w', newline='\n') as f:
         f.write(new_data)
         
 def main():
