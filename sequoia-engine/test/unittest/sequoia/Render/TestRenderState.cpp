@@ -27,21 +27,29 @@ class RenderStateCacheTest : public RenderStateCache {
 
 protected:
 #define RENDER_STATE(Type, Name, BitfieldWidth, DefaultValue)                                      \
-  virtual void Name##Changed(Type value) override { changes_.emplace_back(#Name); }
+  virtual bool Name##Changed(Type value) override {                                                \
+    changes_.emplace_back(#Name);                                                                  \
+    return true;                                                                                   \
+  }
 #include "sequoia/Render/RenderState.inc"
 #undef RENDER_STATE
 
-  void ProgramChanged(Program* program) override { changes_.emplace_back("Program"); }
-
-  void VertexArrayObjectChanged(VertexArrayObject* vao) override {
-    changes_.emplace_back("VertexArrayObject");
+  bool ProgramChanged(Program* program) override {
+    changes_.emplace_back("Program");
+    return true;
   }
 
-  void TextureChanged(int textureUnit, Texture* texture, bool enable) override {
+  bool VertexArrayObjectChanged(VertexArrayObject* vao) override {
+    changes_.emplace_back("VertexArrayObject");
+    return true;
+  }
+
+  bool TextureChanged(int textureUnit, Texture* texture, bool enable) override {
     changes_.emplace_back("Texture" + std::to_string(textureUnit) + "_" +
                           (enable ? "enabled" : "disabled"));
+    return true;
   }
-  
+
 public:
   RenderStateCacheTest() : RenderStateCache() { initState(); }
   const std::vector<std::string>& getChanges() const { return changes_; }

@@ -19,6 +19,7 @@
 #include "sequoia/Core/Export.h"
 #include "sequoia/Core/NonCopyable.h"
 #include "sequoia/Render/FrameListener.h"
+#include "sequoia/Render/GL/GLFwd.h"
 #include "sequoia/Render/RenderFwd.h"
 #include <memory>
 #include <unordered_map>
@@ -47,12 +48,13 @@ public:
   /// Type conversion is performed if `param` has a different type than the state variable value
   /// being requested using standard C-type conversion.
   template <class T>
-  T get(unsigned int param) const noexcept {
+  T get(GLenum param) const noexcept {
     return getImpl(param, T());
   }
 
   /// @brief Draw the `command` and update the RenderState *if* necessary
-  void draw(DrawCommand* command);
+  /// @returns `true` if the command was successfully drawn, `false` otherwise
+  bool draw(DrawCommand* command);
 
   /// @brief Get the currently active RenderState
   const RenderState& getRenderState() const;
@@ -89,10 +91,10 @@ public:
   void frameListenerRenderingEnd(RenderTarget* target) override;
 
 protected:
-  bool getImpl(unsigned int param, bool) const noexcept;
-  int getImpl(unsigned int param, int) const noexcept;
-  float getImpl(unsigned int param, float) const noexcept;
-  double getImpl(unsigned int param, double) const noexcept;
+  bool getImpl(GLenum param, bool) const noexcept;
+  int getImpl(GLenum param, int) const noexcept;
+  float getImpl(GLenum param, float) const noexcept;
+  double getImpl(GLenum param, double) const noexcept;
 };
 
 } // namespace render

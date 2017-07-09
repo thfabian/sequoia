@@ -108,23 +108,26 @@ void RenderStateCache::initState() noexcept {
 #undef RENDER_STATE
 }
 
-void RenderStateCache::setRenderState(const RenderState& newState) noexcept {
+bool RenderStateCache::setRenderState(const RenderState& newState) noexcept {
+  // The program has to be changed first as the textures depend on the currently bound program
+  if(state_.Program != newState.Program) {
+    if(!ProgramChanged(newState.Program))
+      return false;
+    state_.Program = newState.Program;
+  }
+
 #define RENDER_STATE(Type, Name, BitfieldWidth, DefaultValue)                                      \
   if(state_.Name != newState.Name) {                                                               \
-    Name##Changed(newState.Name);                                                                  \
+    if(!Name##Changed(newState.Name))                                                              \
+      return false;                                                                                \
     state_.Name = newState.Name;                                                                   \
   }
 #include "sequoia/Render/RenderState.inc"
 #undef RENDER_STATE
 
-  // The program has to be changed first as the textures depend on the currently bound program
-  if(state_.Program != newState.Program) {
-    ProgramChanged(newState.Program);
-    state_.Program = newState.Program;
-  }
-
   if(state_.VertexArrayObject != newState.VertexArrayObject) {
-    VertexArrayObjectChanged(newState.VertexArrayObject);
+    if(!VertexArrayObjectChanged(newState.VertexArrayObject))
+      return false;
     state_.VertexArrayObject = newState.VertexArrayObject;
   }
 
@@ -144,22 +147,28 @@ void RenderStateCache::setRenderState(const RenderState& newState) noexcept {
       auto it = state_.TextureMap.find(textureUnit);
       if(it == state_.TextureMap.end()) {
         // Handle case 3
-        TextureChanged(textureUnit, texture, true);
+        if(!TextureChanged(textureUnit, texture, true))
+          return false;
       } else {
         if(texture != it->second)
           // Handle case 2
-          TextureChanged(textureUnit, texture, true);
+          if(!TextureChanged(textureUnit, texture, true))
+            return false;
       }
     }
 
     for(const std::pair<int, Texture*>& texPair : state_.TextureMap) {
       if(!newState.TextureMap.count(texPair.first))
         // Handle case 4
-        TextureChanged(texPair.first, texPair.second, false);
+        if(!TextureChanged(texPair.first, texPair.second, false))
+          return false;
     }
 
     state_.TextureMap = newState.TextureMap;
   }
+
+  // Everything ok!
+  return true;
 }
 
 const RenderState& RenderStateCache::getRenderState() const { return state_; }

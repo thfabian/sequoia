@@ -97,18 +97,21 @@ protected:
 
 protected:
 #define RENDER_STATE(Type, Name, BitfieldWidth, DefaultValue)                                      \
-  virtual void Name##Changed(Type value) = 0;
+  virtual bool Name##Changed(Type value) = 0;
 #include "sequoia/Render/RenderState.inc"
 #undef RENDER_STATE
 
   /// @brief GPU program changed
-  virtual void ProgramChanged(Program* program) = 0;
+  /// @returns `true` if the new program was successfully updated, `false` otherwise
+  virtual bool ProgramChanged(Program* program) = 0;
 
   /// @brief VertexArrayObject changed
-  virtual void VertexArrayObjectChanged(VertexArrayObject* vao) = 0;
+  /// @returns `true` if the new VertexArrayObject was successfully updated, `false` otherwise
+  virtual bool VertexArrayObjectChanged(VertexArrayObject* vao) = 0;
 
   /// @brief Texture of `textureUnit` was enabled or disabled
-  virtual void TextureChanged(int textureUnit, Texture* texture, bool enable) = 0;
+  /// @returns `true` if the new texture was successfully updated, `false` otherwise
+  virtual bool TextureChanged(int textureUnit, Texture* texture, bool enable) = 0;
 
 public:
   virtual ~RenderStateCache();
@@ -120,7 +123,8 @@ public:
   /// state change
   ///
   /// @param state    New RenderState
-  void setRenderState(const RenderState& state) noexcept;
+  /// @returns `true` if the RenderState was successfully updated, `false` otherwise
+  bool setRenderState(const RenderState& state) noexcept;
 
   /// @brief Get the currently active RenderState
   const RenderState& getRenderState() const;

@@ -181,18 +181,24 @@ void GLRenderer::render(RenderTarget* target) {
   // Clear the screen
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+  auto draw = [&matViewProj, this](DrawCommand* command) -> bool {
+    GLProgram* program = dyn_cast<GLProgram>(command->getProgram());
+    if(!program->isValid())
+      return false;
+  
+    // Compute the full model-view-projection matrix
+    UniformVariable u_ModelViewProjection = matViewProj * command->getModelMatrix();
+    program->setUniformVariable("u_ModelViewProjection", u_ModelViewProjection);
+  
+    // Update the OpenGL state-machine and draw the command
+    return stateCacheManager_->draw(command);
+  };
+  
+  // Draw the commands
   DrawCommand* drawCommand = nullptr;
   for(drawCommand = drawCommandList->start(); drawCommand != nullptr;
       drawCommand = drawCommandList->next()) {
-
-    GLProgram* program = dyn_cast<GLProgram>(drawCommand->getProgram());
-
-    // Compute the full model-view-projection matrix
-    UniformVariable u_ModelViewProjection = matViewProj * drawCommand->getModelMatrix();
-    program->setUniformVariable("u_ModelViewProjection", u_ModelViewProjection);
-
-    // Update the OpenGL state-machine and draw the command
-    stateCacheManager_->draw(drawCommand);
+    draw(drawCommand);
   }
 
   // Inform everyone that we finished rendering the frame

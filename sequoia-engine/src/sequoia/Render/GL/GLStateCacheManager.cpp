@@ -85,7 +85,7 @@ public:
       ProgramChanged(program);
   }
 
-  /// @brief Unbind any program
+  /// @brief Unbind any `program`
   void unbindProgram() { GLProgram::unbind(); }
 
   /// @brief Bind the given `VBO`
@@ -94,7 +94,7 @@ public:
       VertexArrayObjectChanged(vao);
   }
 
-  /// @brief Unbind any VBO
+  /// @brief Unbind any `VBO`
   void unbindVertexArrayObject() { GLVertexArrayObject::unbind(); }
 
   /// @brief Bind the given `FBO`
@@ -103,7 +103,7 @@ public:
       dyn_cast<GLFrameBufferObject>(fbo)->bind();
   }
 
-  /// @brief Unbind any FBO
+  /// @brief Unbind any `FBO`
   void unbindFrameBufferObject() { GLFrameBufferObject::unbind(); }
 
   /// @brief Bind the `texture` to `textureUnit`
@@ -113,7 +113,7 @@ public:
       TextureChanged(textureUnit, texture, true);
   }
 
-  /// @brief Unbind any texture from `textureUnit`
+  /// @brief Unbind any `texture` from `textureUnit`
   void unbindTexture(int textureUnit) {
     auto it = getRenderState().TextureMap.find(textureUnit);
 
@@ -180,11 +180,12 @@ protected:
     }
   }
 
-  virtual void DepthTestChanged(bool DepthTest) override {
+  virtual bool DepthTestChanged(bool DepthTest) override {
     setCapability(DepthTest, GL_DEPTH_TEST);
+    return true;
   }
 
-  virtual void DepthFuncChanged(RenderState::DepthFuncKind DepthFunc) override {
+  virtual bool DepthFuncChanged(RenderState::DepthFuncKind DepthFunc) override {
     switch(DepthFunc) {
     case RenderState::DepthFuncKind::DF_Never:
       glDepthFunc(GL_NEVER);
@@ -213,19 +214,24 @@ protected:
     default:
       sequoia_unreachable("invalid DepthFuncKind");
     }
+    return true;
   }
 
-  virtual void ProgramChanged(Program* program) override {
+  virtual bool ProgramChanged(Program* program) override {
     if(program)
       dyn_cast<GLProgram>(program)->bind();
+
+    return true;
   }
 
-  virtual void VertexArrayObjectChanged(VertexArrayObject* vao) override {
+  virtual bool VertexArrayObjectChanged(VertexArrayObject* vao) override {
     if(vao)
       dyn_cast<GLVertexArrayObject>(vao)->bind();
+
+    return true;
   }
 
-  virtual void TextureChanged(int textureUnit, Texture* texture, bool enable) override {
+  virtual bool TextureChanged(int textureUnit, Texture* texture, bool enable) override {
     if(texture) {
       // Bind texture
       setActivTextureUnit(textureUnit);
@@ -244,19 +250,25 @@ protected:
         dyn_cast<GLTexture>(texture)->unbind();
       }
     }
+
+    return true;
   }
 };
 
 GLStateCacheManager::GLStateCacheManager() { stateCache_ = std::make_unique<GLRenderStateCache>(); }
 
-void GLStateCacheManager::draw(DrawCommand* command) {
+bool GLStateCacheManager::draw(DrawCommand* command) {
+  if(!command->getProgram()->isValid())
+    return false;
 
   // Set the uniform variables of the program
   if(!command->getUniformVariables().empty())
     stateCache_->setUniformVariables(command->getProgram(), command->getUniformVariables());
 
-  // Update the render-state (including setting the VAO, programtextures, FBO etc..)
-  stateCache_->setRenderState(command->getRenderState());
+  // Update the render-state (including setting the VAO, program, textures etc..)
+  if(!stateCache_->setRenderState(command->getRenderState()))
+    return false;
+
   const RenderState& state = getRenderState();
 
   // Check that all uniform variables are set correctly
@@ -270,6 +282,8 @@ void GLStateCacheManager::draw(DrawCommand* command) {
   } else {
     glDrawArrays(getGLDrawMode(vao->getVertexData()->getDrawMode()), 0, vao->getNumVertices());
   }
+
+  return true;
 }
 
 const RenderState& GLStateCacheManager::getRenderState() const {
@@ -315,27 +329,27 @@ void GLStateCacheManager::frameListenerRenderingBegin(RenderTarget* target) {
 
 void GLStateCacheManager::frameListenerRenderingEnd(RenderTarget* target) {}
 
-bool GLStateCacheManager::getImpl(unsigned int param, bool) const noexcept {
+bool GLStateCacheManager::getImpl(GLenum param, bool) const noexcept {
   GLboolean value;
-  glGetBooleanv((GLenum)param, &value);
+  glGetBooleanv(param, &value);
   return static_cast<bool>(value);
 }
 
-int GLStateCacheManager::getImpl(unsigned int param, int) const noexcept {
+int GLStateCacheManager::getImpl(GLenum param, int) const noexcept {
   int value;
-  glGetIntegerv((GLenum)param, &value);
+  glGetIntegerv(param, &value);
   return value;
 }
 
-float GLStateCacheManager::getImpl(unsigned int param, float) const noexcept {
+float GLStateCacheManager::getImpl(GLenum param, float) const noexcept {
   float value;
-  glGetFloatv((GLenum)param, &value);
+  glGetFloatv(param, &value);
   return value;
 }
 
-double GLStateCacheManager::getImpl(unsigned int param, double) const noexcept {
+double GLStateCacheManager::getImpl(GLenum param, double) const noexcept {
   double value;
-  glGetDoublev((GLenum)param, &value);
+  glGetDoublev(param, &value);
   return value;
 }
 
