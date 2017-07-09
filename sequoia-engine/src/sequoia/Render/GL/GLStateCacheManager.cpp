@@ -218,39 +218,53 @@ protected:
   }
 
   virtual bool ProgramChanged(Program* program) override {
-    if(program)
-      dyn_cast<GLProgram>(program)->bind();
-
+    SEQUOIA_ASSERT(program);
+  
+    GLProgram* glprogram = dyn_cast<GLProgram>(program);
+    if(!glprogram->isValid())
+      return false;
+  
+    glprogram->bind();
     return true;
   }
-
+  
   virtual bool VertexArrayObjectChanged(VertexArrayObject* vao) override {
-    if(vao)
-      dyn_cast<GLVertexArrayObject>(vao)->bind();
-
+    SEQUOIA_ASSERT(vao);
+  
+    GLVertexArrayObject* glvao = dyn_cast<GLVertexArrayObject>(vao);
+  
+    glvao->bind();
     return true;
   }
-
+  
   virtual bool TextureChanged(int textureUnit, Texture* texture, bool enable) override {
-    if(texture) {
-      // Bind texture
-      setActivTextureUnit(textureUnit);
-
-      if(enable) {
-        dyn_cast<GLTexture>(texture)->bind();
-
-        // Bind assoicated sampler if we already have a program
-        Program* program = getRenderState().Program;
-        if(program) {
-          GLProgram* glProgram = dyn_cast<GLProgram>(program);
-          const std::string& name = glProgram->getTextureSampler(textureUnit);
-          setUniformVariable(glProgram, name, UniformVariable(textureUnit));
-        }
-      } else {
-        dyn_cast<GLTexture>(texture)->unbind();
+    SEQUOIA_ASSERT(texture);
+  
+    GLTexture* gltexture = dyn_cast<GLTexture>(texture);
+  
+    // Bind texture
+    setActivTextureUnit(textureUnit);
+  
+    if(enable) {
+      
+      //TODO: Uncomment as soon as we have implemented texture loading correctly
+      
+      //if(!gltexture->isValid())
+      //  return false;
+  
+      gltexture->bind();
+  
+      // Bind assoicated sampler if we already have a program
+      Program* program = getRenderState().Program;
+      if(program) {
+        GLProgram* glProgram = dyn_cast<GLProgram>(program);
+        const std::string& name = glProgram->getTextureSampler(textureUnit);
+        setUniformVariable(glProgram, name, UniformVariable(textureUnit));
       }
+    } else {
+      dyn_cast<GLTexture>(texture)->unbind();
     }
-
+  
     return true;
   }
 };
