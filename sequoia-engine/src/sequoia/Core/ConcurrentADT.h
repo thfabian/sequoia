@@ -16,7 +16,8 @@
 #ifndef SEQUOIA_CORE_CONCURRENTADT_H
 #define SEQUOIA_CORE_CONCURRENTADT_H
 
-#include <tbb/concurrent_hash_map.h>
+#include <tbb/concurrent_unordered_map.h>
+#include <tbb/concurrent_vector.h>
 
 namespace sequoia {
 
@@ -25,9 +26,13 @@ namespace core {
 /// @addtogroup core
 /// @{
 
-/// @brief Concurrent (thread-safe) version of `std::unordered_map`
+/// @brief Concurrent (thread-safe) version of a `std::unordered_map`
 template <typename Key, typename T>
-using concurrent_unordered_map = tbb::concurrent_hash_map<Key, T>;
+using concurrent_unordered_map = tbb::concurrent_unordered_map<Key, T>;
+
+/// @brief Concurrent (thread-safe) version of a `std::vector`
+template <typename T>
+using concurrent_vector = tbb::concurrent_vector<T>;
 
 /// @}
 
@@ -35,6 +40,9 @@ using concurrent_unordered_map = tbb::concurrent_hash_map<Key, T>;
 
 template <typename Key, typename T>
 using concurrent_unordered_map = core::concurrent_unordered_map<Key, T>;
+
+template <typename T>
+using concurrent_vector = core::concurrent_vector<T>;
 
 } // namespace sequoia
 

@@ -47,6 +47,9 @@ public:
       : message_(format(fmt, std::forward<Args>(args)...)), line_(line), path_(path) {}
   /// @}
 
+  /// @brief Copy constructor
+  Exception(const Exception&) = default;
+  
   /// @brief Virtual destructor
   virtual ~Exception() noexcept;
 
@@ -92,6 +95,7 @@ protected:
     Type(int line, const char* path, const wchar_t* fmt, Args&&... args)                           \
         : BaseType(line, path, fmt, std::forward<Args>(args)...) {}                                \
     virtual ~Type() noexcept {}                                                                    \
+    Type(const Type&) = default;                                                                   \
   };
 
 /// @brief Declare a an exception `Type` deriving from `core::sequoia::Exception`
