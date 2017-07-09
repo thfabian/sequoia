@@ -122,8 +122,10 @@ GLRenderSystem::createProgram(const std::set<std::shared_ptr<Shader>>& shaders) 
 
 std::shared_ptr<Texture> GLRenderSystem::createTexture(const std::shared_ptr<Image>& image,
                                                        const TextureParameter& param) {
-  return getRenderer()->getTextureManager()->create(image,
-                                                    std::make_shared<TextureParameter>(param));
+  std::shared_ptr<GLTexture> texture =
+      getRenderer()->getTextureManager()->create(image, std::make_shared<TextureParameter>(param));
+  texture->makeValid();
+  return texture;
 }
 
 void GLRenderSystem::addKeyboardListener(KeyboardListener* listener) {

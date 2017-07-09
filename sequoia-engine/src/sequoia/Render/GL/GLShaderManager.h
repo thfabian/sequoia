@@ -47,10 +47,10 @@ public:
 
   /// @brief Create an *empty* shader from source and compile it
   ///
-  /// @param type       Type of the shader
-  /// @param file       File of the shader source
-  /// @returns Newly created shader which is *not* valid, call `shader->makeValid()` to convert it
-  ///          into a valid state
+  /// @param type   Type of the shader
+  /// @param file   File of the shader source
+  /// @returns Newly created shader which is *not* valid, call `Shader::makeValid()` to convert 
+  ///          it into a valid state
   ///
   /// @remark Thread-safe
   std::shared_ptr<GLShader> create(GLShader::ShaderType type, const std::shared_ptr<File>& file);

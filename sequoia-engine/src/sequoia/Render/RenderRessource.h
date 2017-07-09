@@ -28,6 +28,9 @@ namespace render {
 
 /// @brief Ressource used by the RenderSystem such as Textures, Shaders and Programs
 ///
+/// @note All render ressources have a single invariant: *Once a Ressource is made valid, it remains
+/// valid throughout the lifetime of any object which references it*.
+///
 /// @ingroup render
 class SEQUOIA_API RenderRessource : public RenderSystemObject, public NonCopyable {
 
@@ -63,7 +66,7 @@ public:
 
     SEQUOIA_LOCK(mutex_);
 
-    // Prevent the ressource from being initialized multiple times (captures the thread blocking at
+    // Prevent the ressource from being initialized multiple times (captures the threads blocking at
     // the mutex)
     if(isValid())
       return;

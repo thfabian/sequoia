@@ -18,7 +18,6 @@
 #include "sequoia/Core/Unreachable.h"
 #include "sequoia/Render/Exception.h"
 #include "sequoia/Render/GL/GL.h"
-#include "sequoia/Render/GL/GLRenderSystem.h"
 #include "sequoia/Render/GL/GLRenderer.h"
 #include "sequoia/Render/GL/GLStateCacheManager.h"
 #include "sequoia/Render/GL/GLTextureManager.h"
@@ -209,112 +208,90 @@ static void copyTextureImage(GLenum target, const TextureImage* image) {
 
 GLTextureManager::~GLTextureManager() {}
 
-void GLTextureManager::make(const std::shared_ptr<GLTexture>& texture,
-                            GLTextureStatus requestedStatus) {
+void GLTextureManager::makeValid(GLTexture* texture) {
+  glGenTextures(1, &texture->id_);
+  texture->target_ = getGLTarget(texture->param_->Kind);
 
-  if(texture->status_ == GLTextureStatus::Created && requestedStatus != GLTextureStatus::Invalid)
-    return;
+  if(texture->id_ == 0)
+    SEQUOIA_THROW(RenderSystemException, "cannot create texture: '%s'",
+                  texture->getImage()->getFile()->getPath());
 
-  if(requestedStatus == GLTextureStatus::Invalid) {
-    destroyGLTexture(texture.get());
-    return;
+  LOG(DEBUG) << "Created texture (ID=" << texture->id_ << ") from image \""
+             << texture->getImage()->getFile()->getPath() << "\"";
+
+  LOG(DEBUG) << "Loading texture (ID=" << texture->id_ << ") ...";
+
+  TextureParameter& param = *texture->getParameter();
+
+  // TODO: this needs to be the StateCache manager of the RessourceThread
+
+  // Bind texture to unit 0 (doesn't really matter which unit we bind it to)
+  getGLRenderer().getStateCacheManager()->bindTexture(0, texture, true);
+
+  if(texture->hasImage()) {
+    // Uploade image to device
+    if(RegularImage* image = dyn_cast<RegularImage>(texture->getImage().get())) {
+      copyRegularImage(texture->target_, image);
+      if(param.UseMipmap)
+        glGenerateMipmap(texture->target_);
+    } else if(TextureImage* image = dyn_cast<TextureImage>(texture->getImage().get()))
+      copyTextureImage(texture->target_, image);
+    else
+      sequoia_unreachable("invalid image format");
+
+  } else {
+    // Allocate texture
+    allocateTexture(texture->target_, texture->width_, texture->height_, GL_RGBA);
   }
 
-  if(texture->status_ == GLTextureStatus::Invalid) {
-    glGenTextures(1, &texture->id_);
-    texture->target_ = getGLTarget(texture->param_->Kind);
+  // Set interpolation parameters
+  glTexParameteri(texture->target_, GL_TEXTURE_WRAP_S, getGLEdgeSampleKind(param.Dim1EdgeSampling));
+  glTexParameteri(texture->target_, GL_TEXTURE_WRAP_T, getGLEdgeSampleKind(param.Dim2EdgeSampling));
+  glTexParameteri(texture->target_, GL_TEXTURE_MAG_FILTER, getGLFilterKind(param.MagFilter));
 
-    if(texture->id_ == 0)
-      SEQUOIA_THROW(RenderSystemException, "cannot create texture: '%s'",
-                    texture->getImage()->getFile()->getPath());
-
-    LOG(DEBUG) << "Created texture (ID=" << texture->id_ << ") from image \""
-               << texture->getImage()->getFile()->getPath() << "\"";
-    texture->status_ = GLTextureStatus::Created;
+  if(param.UseMipmap) {
+    if(param.InterpolateBetweenMipmaps)
+      glTexParameteri(texture->target_, GL_TEXTURE_MIN_FILTER,
+                      param.MinFilter == TextureParameter::FK_Linear ? GL_LINEAR_MIPMAP_LINEAR
+                                                                     : GL_LINEAR_MIPMAP_NEAREST);
+    else
+      glTexParameteri(texture->target_, GL_TEXTURE_MIN_FILTER,
+                      param.MinFilter == TextureParameter::FK_Linear ? GL_NEAREST_MIPMAP_LINEAR
+                                                                     : GL_NEAREST_MIPMAP_NEAREST);
+  } else {
+    glTexParameteri(texture->target_, GL_TEXTURE_MIN_FILTER, getGLFilterKind(param.MinFilter));
   }
 
-  if(requestedStatus == GLTextureStatus::Created)
-    return;
+  // TODO : this needs to be the StateCache manager of the RessourceThread
 
-  if(texture->status_ == GLTextureStatus::Created) {
-    LOG(DEBUG) << "Loading texture (ID=" << texture->id_ << ") ...";
+  // Unbind the texture. This is necessary to make sure when we bind it during rendering we also
+  // set the sampler of the program.
+  getGLRenderer().getStateCacheManager()->unbindTexture(0);
 
-    TextureParameter& param = *texture->getParameter();
-
-    // Bind texture to unit 0 (doesn't really matter which unit we bind it to)
-    getGLRenderSystem().getStateCacheManager()->bindTexture(0, texture.get());
-
-    if(texture->hasImage()) {
-      // Uploade image to device
-      if(RegularImage* image = dyn_cast<RegularImage>(texture->getImage().get())) {
-        copyRegularImage(texture->target_, image);
-        if(param.UseMipmap)
-          glGenerateMipmap(texture->target_);
-      } else if(TextureImage* image = dyn_cast<TextureImage>(texture->getImage().get()))
-        copyTextureImage(texture->target_, image);
-      else
-        sequoia_unreachable("invalid image format");
-    
-    } else {
-      // Allocate texture
-      allocateTexture(texture->target_, texture->width_, texture->height_, GL_RGBA);
-    }
-
-    // Set interpolation parameters
-    glTexParameteri(texture->target_, GL_TEXTURE_WRAP_S,
-                    getGLEdgeSampleKind(param.Dim1EdgeSampling));
-    glTexParameteri(texture->target_, GL_TEXTURE_WRAP_T,
-                    getGLEdgeSampleKind(param.Dim2EdgeSampling));
-    glTexParameteri(texture->target_, GL_TEXTURE_MAG_FILTER, getGLFilterKind(param.MagFilter));
-
-    if(param.UseMipmap) {
-      if(param.InterpolateBetweenMipmaps)
-        glTexParameteri(texture->target_, GL_TEXTURE_MIN_FILTER,
-                        param.MinFilter == TextureParameter::FK_Linear ? GL_LINEAR_MIPMAP_LINEAR
-                                                                       : GL_LINEAR_MIPMAP_NEAREST);
-      else
-        glTexParameteri(texture->target_, GL_TEXTURE_MIN_FILTER,
-                        param.MinFilter == TextureParameter::FK_Linear ? GL_NEAREST_MIPMAP_LINEAR
-                                                                       : GL_NEAREST_MIPMAP_NEAREST);
-    } else {
-      glTexParameteri(texture->target_, GL_TEXTURE_MIN_FILTER, getGLFilterKind(param.MinFilter));
-    }
-
-    texture->status_ = GLTextureStatus::Loaded;
-
-    // Unbind the texture. This is necessary to make sure when we bind it during rendering we also
-    // set the sampler of the program.
-    getGLRenderSystem().getStateCacheManager()->unbindTexture(0);
-
-    LOG(DEBUG) << "Successfully uploaded texture (ID=" << texture->id_ << ")";
-  }
+  LOG(DEBUG) << "Successfully uploaded texture (ID=" << texture->id_ << ")";
 }
 
-std::shared_ptr<Image>
-GLTextureManager::getTextureAsImage(const std::shared_ptr<GLTexture>& texture) {
+std::shared_ptr<Image> GLTextureManager::getTextureAsImage(GLTexture* texture) {
   if(texture->hasImage())
     return texture->getImage();
-  
+
   return nullptr;
 }
 
-std::shared_ptr<GLTexture> GLTextureManager::create(const std::shared_ptr<Image>& image,
-                                                    const std::shared_ptr<TextureParameter>& param,
-                                                    GLTextureStatus requestedStatus) {
-  std::shared_ptr<GLTexture> texture = nullptr;
+std::shared_ptr<GLTexture>
+GLTextureManager::create(const std::shared_ptr<Image>& image,
+                         const std::shared_ptr<TextureParameter>& param) {
+  SEQUOIA_LOCK_GUARD(mutex_);
+
   GLTexture::Desc desc(image, param);
   auto it = descLookupMap_.find(desc);
 
-  if(it != descLookupMap_.end()) {
-    texture = textureList_[it->second];
-  } else {
-    textureList_.emplace_back(std::make_shared<GLTexture>(image, param));
-    descLookupMap_[desc] = textureList_.size() - 1;
-    texture = textureList_.back();
-  }
+  if(it != descLookupMap_.end())
+    return textureList_[it->second];
 
-  make(texture, requestedStatus);
-  return texture;
+  textureList_.emplace_back(std::make_shared<GLTexture>(image, param));
+  descLookupMap_[desc] = textureList_.size() - 1;
+  return textureList_.back();
 }
 
 } // render

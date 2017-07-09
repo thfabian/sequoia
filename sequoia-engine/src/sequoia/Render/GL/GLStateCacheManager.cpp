@@ -107,10 +107,18 @@ public:
   void unbindFrameBufferObject() { GLFrameBufferObject::unbind(); }
 
   /// @brief Bind the `texture` to `textureUnit`
-  void bindTexture(int textureUnit, Texture* texture) {
-    if(!getRenderState().TextureMap.count(textureUnit) ||
-       getRenderState().TextureMap.find(textureUnit)->second != texture)
-      TextureChanged(textureUnit, texture, true);
+  void bindTexture(int textureUnit, Texture* texture, bool force) {
+    if(!force) {
+      // Only bind the texture if it is not already bound
+      if(!getRenderState().TextureMap.count(textureUnit) ||
+         getRenderState().TextureMap.find(textureUnit)->second != texture)
+        TextureChanged(textureUnit, texture, true);
+    } else {
+      // Force the binding
+      setActiveTextureUnit(textureUnit);
+      getRenderState().TextureMap[textureUnit] = texture;
+      dyn_cast<GLTexture>(texture)->bind();
+    }
   }
 
   /// @brief Unbind any `texture` from `textureUnit`
@@ -118,7 +126,7 @@ public:
     auto it = getRenderState().TextureMap.find(textureUnit);
 
     if(it != getRenderState().TextureMap.end()) {
-      setActivTextureUnit(textureUnit);
+      setActiveTextureUnit(textureUnit);
       dyn_cast<GLTexture>(it->second)->unbind();
       getRenderState().TextureMap.erase(it);
     }
@@ -173,7 +181,7 @@ protected:
   }
 
   /// @brief Set the active texture unit
-  inline void setActivTextureUnit(int textureUnit) noexcept {
+  inline void setActiveTextureUnit(int textureUnit) noexcept {
     if(activeTextureUnit_ != textureUnit) {
       glActiveTexture(GL_TEXTURE0 + textureUnit);
       activeTextureUnit_ = textureUnit;
@@ -219,41 +227,38 @@ protected:
 
   virtual bool ProgramChanged(Program* program) override {
     SEQUOIA_ASSERT(program);
-  
+
     GLProgram* glprogram = dyn_cast<GLProgram>(program);
     if(!glprogram->isValid())
       return false;
-  
+
     glprogram->bind();
     return true;
   }
-  
+
   virtual bool VertexArrayObjectChanged(VertexArrayObject* vao) override {
     SEQUOIA_ASSERT(vao);
-  
+
     GLVertexArrayObject* glvao = dyn_cast<GLVertexArrayObject>(vao);
-  
+
     glvao->bind();
     return true;
   }
-  
+
   virtual bool TextureChanged(int textureUnit, Texture* texture, bool enable) override {
     SEQUOIA_ASSERT(texture);
-  
+
     GLTexture* gltexture = dyn_cast<GLTexture>(texture);
-  
+
     // Bind texture
-    setActivTextureUnit(textureUnit);
-  
+    setActiveTextureUnit(textureUnit);
+
     if(enable) {
-      
-      //TODO: Uncomment as soon as we have implemented texture loading correctly
-      
-      //if(!gltexture->isValid())
-      //  return false;
-  
+      if(!gltexture->isValid())
+        return false;
+
       gltexture->bind();
-  
+
       // Bind assoicated sampler if we already have a program
       Program* program = getRenderState().Program;
       if(program) {
@@ -264,7 +269,7 @@ protected:
     } else {
       dyn_cast<GLTexture>(texture)->unbind();
     }
-  
+
     return true;
   }
 };
@@ -320,8 +325,8 @@ void GLStateCacheManager::bindFrameBufferObject(FrameBufferObject* fbo) {
 
 void GLStateCacheManager::unbindFrameBufferObject() { stateCache_->unbindFrameBufferObject(); }
 
-void GLStateCacheManager::bindTexture(int textureUnit, Texture* texture) {
-  stateCache_->bindTexture(textureUnit, texture);
+void GLStateCacheManager::bindTexture(int textureUnit, Texture* texture, bool force) {
+  stateCache_->bindTexture(textureUnit, texture, force);
 }
 
 void GLStateCacheManager::unbindTexture(int textureUnit) {

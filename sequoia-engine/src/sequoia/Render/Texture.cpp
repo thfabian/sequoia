@@ -85,7 +85,7 @@ std::string UsageKindToString(TextureParameter::UsageKind kind) noexcept {
 
 } // anonymous namespace
 
-Texture::Texture(RenderSystemKind kind) : RenderSystemObject(kind) {}
+Texture::Texture(RenderSystemKind kind) : RenderRessource(kind) {}
 
 Texture::~Texture() {}
 

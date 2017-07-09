@@ -34,6 +34,9 @@ class Shader;
 /// A GPU program consist of multiple shaders which are linked together in a program which can be
 /// used during the rendering stage to control various aspects of the rendering pipeline.
 ///
+/// Note that once a program is fully assembled (i.e `isValid() == true`), the program is 
+/// immutable, hence no shaders can be added or removed.
+/// 
 /// @see RenderSystem::createPogram
 /// @ingroup render
 class SEQUOIA_API Program : public RenderRessource {

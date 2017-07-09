@@ -31,6 +31,9 @@ namespace render {
 /// The shaders are managed by the RenderSystem which takes care of linking them into a program and
 /// uploading them to the GPU.
 ///
+/// Note that once a shader is fully assembled (i.e `isValid() == true`), the shader is
+/// immutable.
+///
 /// @see RenderSystem::loadShader
 /// @ingroup render
 class SEQUOIA_API Shader : public RenderRessource {

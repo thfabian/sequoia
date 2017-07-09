@@ -48,9 +48,9 @@ public:
   ///
   /// The `shaders` do not need to be valid at this point.
   ///
-  /// @param shaders       Shaders linked into the program
-  /// @returns Newly created program which is *not* valid, call `shader->makeValid()` to convert it
-  ///          into a valid state
+  /// @param shaders   Shaders linked into the program
+  /// @returns Newly created program which is *not* valid, call Program::makeValid() to convert
+  ///          it into a valid state
   ///
   /// @remark Thread-safe
   std::shared_ptr<GLProgram> create(const std::set<std::shared_ptr<Shader>>& shaders);

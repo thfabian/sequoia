@@ -103,18 +103,14 @@ std::shared_ptr<GLShader> GLShaderManager::create(GLShader::ShaderType type,
                                                   const std::shared_ptr<File>& file) {
   SEQUOIA_LOCK_GUARD(mutex_);
 
-  std::shared_ptr<GLShader> shader = nullptr;
   auto it = fileLookupMap_.find(file);
 
-  if(it != fileLookupMap_.end()) {
-    shader = shaderList_[it->second];
-  } else {
-    shaderList_.emplace_back(std::make_shared<GLShader>(type, file));
-    fileLookupMap_[file] = shaderList_.size() - 1;
-    shader = shaderList_.back();
-  }
+  if(it != fileLookupMap_.end())
+    return shaderList_[it->second];
 
-  return shader;
+  shaderList_.emplace_back(std::make_shared<GLShader>(type, file));
+  fileLookupMap_[file] = shaderList_.size() - 1;
+  return shaderList_.back();
 }
 
 } // namespace render

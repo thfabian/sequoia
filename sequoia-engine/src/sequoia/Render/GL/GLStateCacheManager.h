@@ -78,7 +78,7 @@ public:
   void unbindFrameBufferObject();
 
   /// @brief Bind the `texture` to `textureUnit`
-  void bindTexture(int textureUnit, Texture* texture);
+  void bindTexture(int textureUnit, Texture* texture, bool force = false);
 
   /// @brief Unbind any texture from `textureUnit`
   void unbindTexture(int textureUnit);

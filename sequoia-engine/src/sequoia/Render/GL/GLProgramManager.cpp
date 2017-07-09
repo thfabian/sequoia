@@ -85,20 +85,15 @@ std::shared_ptr<GLProgram>
 GLProgramManager::create(const std::set<std::shared_ptr<Shader>>& shaders) {
   SEQUOIA_LOCK_GUARD(mutex_);
 
-  std::shared_ptr<GLProgram> program = nullptr;
-
   std::size_t hash = GLProgramManager::hash(shaders);
   auto it = shaderSetLookupMap_.find(hash);
 
   if(it != shaderSetLookupMap_.end())
-    program = programList_[it->second];
-  else {
-    programList_.emplace_back(std::make_shared<GLProgram>(shaders));
-    shaderSetLookupMap_[hash] = programList_.size() - 1;
-    program = programList_.back();
-  }
-
-  return program;
+    return programList_[it->second];
+  
+  programList_.emplace_back(std::make_shared<GLProgram>(shaders));
+  shaderSetLookupMap_[hash] = programList_.size() - 1;
+  return programList_.back();
 }
 
 std::size_t GLProgramManager::hash(const std::set<std::shared_ptr<Shader>>& shaders) noexcept {

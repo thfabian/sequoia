@@ -25,54 +25,43 @@ namespace sequoia {
 
 namespace render {
 
-/// @brief Manage OpenGL Textures by creating, allocating and loading theme
+/// @brief Manage OpenGL textures by creating, allocating and loading them
 ///
-/// A TextureManager is attached to a specific OpenGL context. Note that texture are not necessarily
-/// tied to images and have lots of other areas applications.
+/// Note that texture are not necessarily tied to images and have lots of other areas applications.
 ///
 /// @ingroup gl
 class SEQUOIA_API GLTextureManager : public NonCopyable {
+  /// Access mutex
+  SpinMutex mutex_;
 
-  /// Record of all the registered shaders (use count of 1 implies the shader is *not* in use)
+  /// Record of all the registered textures (use count of 1 implies the texture is *not* in use)
   std::vector<std::shared_ptr<GLTexture>> textureList_;
 
   /// Lookup map for texture which were loaded from an image (using the hash of the texture
   /// description i.e Parameter + Image)
   std::unordered_map<GLTexture::Desc, std::size_t> descLookupMap_;
 
-  /// Associated Renderer
-  GLRenderer* renderer_;
-
 public:
   /// @brief Destroy all remaining textures
   ~GLTextureManager();
 
-  /// @brief Create a textrue from `image` and `param`
+  /// @brief Create an *empty* textrue from `image` and `param`
   ///
-  /// @param image            Image used as a basis of the texture
-  /// @param param            Parameter used for initialization
-  /// @param requestedStatus  Requested target status
-  /// @throws RenderSystemException
+  /// @param image  Image used as a basis of the texture
+  /// @param param  Parameter used for initialization
+  /// @returns Newly created texture which is *not* valid, call GLTexture::makeValid() to convert 
+  ///          it into a valid state
+  ///
+  /// @remark Thread-safe
   std::shared_ptr<GLTexture> create(const std::shared_ptr<Image>& image,
-                                    const std::shared_ptr<TextureParameter>& param,
-                                    GLTextureStatus requestedStatus = GLTextureStatus::Loaded);
+                                    const std::shared_ptr<TextureParameter>& param);
 
-  /// @brief Convert the texture to `status`
-  /// @throws RenderSystemException
-  void make(const std::shared_ptr<GLTexture>& texture, GLTextureStatus requestedStatus);
-
-  /// @brief Convert the texture to `GLProgramStatus::Loaded` which makes it usable in the render
-  /// pipeline
-  /// @see GLTextureManager::make
-  void makeValid(const std::shared_ptr<GLTexture>& texture) {
-    make(texture, GLTextureStatus::Loaded);
-  }
+  /// @brief Make the texture valid
+  /// @throws RenderSystemExcption  Failed to initialize the texture
+  void makeValid(GLTexture* texture);
 
   /// @brief Get a copy of the `texture` as an `image`
-  std::shared_ptr<Image> getTextureAsImage(const std::shared_ptr<GLTexture>& texture);
-
-  /// @brief Get the texture by OpenGL shader `id`
-  const std::shared_ptr<GLTexture>& get(unsigned int id) const;
+  std::shared_ptr<Image> getTextureAsImage(GLTexture* texture);
 };
 
 } // namespace render

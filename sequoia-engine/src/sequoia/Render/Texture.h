@@ -20,7 +20,7 @@
 #include "sequoia/Core/HashCombine.h"
 #include "sequoia/Core/Image.h"
 #include "sequoia/Core/NonCopyable.h"
-#include "sequoia/Render/RenderSystemObject.h"
+#include "sequoia/Render/RenderRessource.h"
 
 namespace sequoia {
 
@@ -156,19 +156,20 @@ struct SEQUOIA_API TextureParameter {
 
 /// @brief Texture object
 ///
-/// Note that once the texture is assembled, the texture is immutable.
+/// Note that once a texture is fully assembled (i.e `isValid() == true`), the texture is immutable.
 ///
 /// @see RenderSystem::loadTexture
 /// @ingroup render
-class SEQUOIA_API Texture : public RenderSystemObject,
-                            public NonCopyable,
-                            public std::enable_shared_from_this<Texture> {
+class SEQUOIA_API Texture : public RenderRessource {
 public:
   Texture(RenderSystemKind kind);
   virtual ~Texture();
 
-  /// @brief Get the underlying image of the Texture
+  /// @brief Get the underlying image of the Texture (if any)
   virtual const std::shared_ptr<Image>& getImage() const = 0;
+
+  /// @brief Check if the texture was constructed from an Image
+  virtual bool hasImage() const = 0;
 
   /// @brief Get the texture parameters
   virtual const std::shared_ptr<TextureParameter>& getParameter() const = 0;
