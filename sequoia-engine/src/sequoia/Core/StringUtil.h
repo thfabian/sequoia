@@ -114,11 +114,11 @@ public:
 /// @{
 template <class Range>
 inline std::string toStringRange(Range&& range) {
-  return RangeToString(",\n", "{\n  ", "\n}")(std::move(range));
+  return RangeToString(",\n", "{\n  ", "\n}")(std::forward<Range>(range));
 }
 template <class Range, class StrinfigyFunctor>
 inline std::string toStringRange(Range&& range, StrinfigyFunctor&& stringify) {
-  return RangeToString(",\n  ", "{\n  ", "\n}")(std::move(range), std::move(stringify));
+  return RangeToString(",\n  ", "{\n  ", "\n}")(std::forward<Range>(range), std::move(stringify));
 }
 /// @}
 
