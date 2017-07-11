@@ -271,13 +271,6 @@ void GLTextureManager::makeValid(GLTexture* texture) {
   LOG(DEBUG) << "Successfully uploaded texture (ID=" << texture->id_ << ")";
 }
 
-std::shared_ptr<Image> GLTextureManager::getTextureAsImage(GLTexture* texture) {
-  if(texture->hasImage())
-    return texture->getImage();
-
-  return nullptr;
-}
-
 std::shared_ptr<GLTexture>
 GLTextureManager::create(const std::shared_ptr<Image>& image,
                          const std::shared_ptr<TextureParameter>& param) {
@@ -292,6 +285,24 @@ GLTextureManager::create(const std::shared_ptr<Image>& image,
   textureList_.emplace_back(std::make_shared<GLTexture>(image, param));
   descLookupMap_[desc] = textureList_.size() - 1;
   return textureList_.back();
+}
+
+void GLTextureManager::remove(const std::shared_ptr<GLTexture>& texture) noexcept {
+  SEQUOIA_LOCK_GUARD(mutex_);
+  textureList_.erase(std::remove(textureList_.begin(), textureList_.end(), texture),
+                     textureList_.end());
+
+  if(texture->hasImage()) {
+    GLTexture::Desc desc(texture->getImage(), texture->getParameter());
+    descLookupMap_.erase(desc);
+  }
+}
+
+std::shared_ptr<Image> GLTextureManager::getTextureAsImage(GLTexture* texture) {
+  if(texture->hasImage())
+    return texture->getImage();
+
+  return nullptr;
 }
 
 } // render

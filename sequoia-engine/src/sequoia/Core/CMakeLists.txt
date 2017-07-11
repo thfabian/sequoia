@@ -43,10 +43,11 @@ sequoia_add_objects(
           Assert.cpp
           Byte.h
           Casting.h
-          Compiler.h
-          ConcurrentADT.h
           Color.h
           Color.cpp
+          Compiler.h
+          ConcurrentADT.h
+          ConditionVariable.h
           DoubleBuffered.h          
           Export.h
           ErrorHandler.h
@@ -85,7 +86,7 @@ sequoia_add_objects(
           StringUtil.cpp
           STLExtras.h
           Terminal.h
-          Terminal.cpp        
+          Terminal.cpp  
           Unreachable.h
           Unreachable.cpp         
           Utf.h

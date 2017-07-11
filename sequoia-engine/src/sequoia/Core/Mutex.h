@@ -17,8 +17,11 @@
 #define SEQUOIA_CORE_MUTEX_H
 
 #include "sequoia/Core/Compiler.h"
+#include <condition_variable>
+#include <mutex>
 #include <tbb/mutex.h>
 #include <tbb/spin_mutex.h>
+#include <type_traits>
 
 #ifdef SEQUOIA_DEBUG_THREADS
 #include "sequoia/Core/Logging.h"
@@ -29,6 +32,10 @@ namespace sequoia {
 namespace core {
 
 /// @brief Class that models Mutex Concept using a spin lock
+///
+/// This should be the default lock as it is very lightweight (1 Byte) and  extremely fast under low
+/// contention.
+///
 /// @ingroup core
 using SpinMutex = tbb::spin_mutex;
 
@@ -95,7 +102,7 @@ SEQUOIA_INLINE bool tryLock(MutexType& mutex, const char* file, int line) noexce
 /// for owning a mutex for the duration of a scoped block
 ///
 /// When a LockGuard object is created, it attempts to take ownership of the mutex it is given.
-/// When control leaves the scope in which the lock_guard object was created, the LockGuard is
+/// When control leaves the scope in which the LockGuard object was created, the LockGuard is
 /// destructed and the mutex is released.
 ///
 /// The LockGuard class is non-copyable.
@@ -141,11 +148,29 @@ public:
 
 #ifdef SEQUOIA_DEBUG_THREADS
 #define SEQUOIA_LOCK_GUARD_IMPL(mutex, file, line)                                                 \
-  sequoia::core::LockGuard<std::decay<decltype(mutex)>::type> _LockGuard_##__LINE__(mutex, file,   \
-                                                                                    line)
+  sequoia::core::LockGuard<std::decay<decltype(mutex)>::type> sequoia_LockGuard_##__LINE__(        \
+      mutex, file, line)
 #else
 #define SEQUOIA_LOCK_GUARD_IMPL(mutex, file, line)                                                 \
-  sequoia::core::LockGuard<std::decay<decltype(mutex)>::type> _LockGuard_##__LINE__(mutex)
+  sequoia::core::LockGuard<std::decay<decltype(mutex)>::type> sequoia_LockGuard_##__LINE__(mutex)
+#endif
+
+/// @brief Lock the `mutex` using `std::unqiue_lock`
+///
+/// @param lock     Object of type `std::uniuqe_lock`
+/// @param mutex    Mutex used to construct the `std::unique_lock`
+///
+/// @ingroup core
+#define SEQUOIA_UNIQUE_LOCK(lock, mutex) SEQUOIA_UNIQUE_LOCK_IMPL(lock, mutex, __FILE__, __LINE__)
+
+#ifdef SEQUOIA_DEBUG_THREADS
+#define SEQUOIA_UNIQUE_LOCK_IMPL(lock, mutex, __FILE__, __LINE__)                                  \
+  LOG(DEBUG) << "UNIQUE_LOCK: Constructing unique lock: " << file << ":" << line << " ...";        \
+  std::unique_lock<std::decay<decltype(mutex)>::type> lock(mutex);                                 \
+  LOG(DEBUG) << "UNIQUE_LOCK: Successfully constructed unique lock: " << file << ":" << line
+#else
+#define SEQUOIA_UNIQUE_LOCK_IMPL(lock, mutex, __FILE__, __LINE__)                                  \
+  std::unique_lock<std::decay<decltype(mutex)>::type> lock(mutex)
 #endif
 
 } // namespace core

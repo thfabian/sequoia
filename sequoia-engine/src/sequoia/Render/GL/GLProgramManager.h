@@ -46,7 +46,7 @@ public:
 
   /// @brief Create an *empty* program using `shaders`
   ///
-  /// The `shaders` do not need to be valid at this point.
+  /// The `shaders` need to be valid at this point.
   ///
   /// @param shaders   Shaders linked into the program
   /// @returns Newly created program which is *not* valid, call Program::makeValid() to convert
@@ -58,6 +58,9 @@ public:
   /// @brief Make the program valid
   /// @throws RenderSystemExcption  Failed to initialize the program
   void makeValid(GLProgram* program);
+
+  /// @brief Remove the `program` (do nothing if the program does not exist)
+  void remove(const std::shared_ptr<GLProgram>& program) noexcept;
 
   /// @brief Compute hash of the set of shaders
   static std::size_t hash(const std::set<std::shared_ptr<Shader>>& shaders) noexcept;

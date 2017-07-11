@@ -16,6 +16,7 @@
 #include "sequoia/Core/Casting.h"
 #include "sequoia/Core/ErrorHandler.h"
 #include "sequoia/Core/Logging.h"
+#include "sequoia/Core/Unreachable.h"
 #include "sequoia/Render/Exception.h"
 #include "sequoia/Render/GL/GL.h"
 #include "sequoia/Render/GL/GLInputSystem.h"
@@ -31,6 +32,8 @@ namespace sequoia {
 
 namespace render {
 
+namespace {
+
 static void GLFWErrorCallbackSoft(int error, const char* description) {
   LOG(ERROR) << "GLFW error: " << description;
 }
@@ -39,6 +42,35 @@ static void GLFWErrorCallbackHard(int error, const char* description) {
   GLFWErrorCallbackSoft(error, description);
   SEQUOIA_THROW(RenderSystemException, description);
 }
+
+/// @brief Create the ressource of type `T` (where `T` is one of (GLShader, GLTexture or GLProgram)
+/// using `manager`
+///
+/// @param manager  Manager used to create the ressource
+/// @param args     Arguments passed to `manger->create(...)`
+/// @returns ressource whith `ressource->isValid() == true` or the exception caught during
+///          construction of the ressource will be rethrown
+template <class T, class ManagerType, class... Args>
+std::shared_ptr<T> createRessource(ManagerType* manager, Args&&... args) {
+  std::shared_ptr<T> ressource = manager->create(std::forward<Args>(args)...);
+
+  if(ressource->isValid())
+    return ressource;
+
+  // Convert the ressource into a valid state
+  ressource->makeValid();
+
+  if(ressource->hasException()) {
+    // Remove the ressource from the manager and rethrow the exception
+    manager->remove(ressource);
+    ressource->rethrowException();
+    sequoia_unreachable("captured exception not rethrown");
+  }
+
+  return ressource;
+}
+
+} // anonymous namespace
 
 GLRenderSystem::GLRenderSystem()
     : RenderSystem(RK_OpenGL), mainWindow_(nullptr), renderer_(nullptr) {
@@ -108,24 +140,18 @@ std::unique_ptr<VertexArrayObject> GLRenderSystem::createVertexArrayObject() {
 
 std::shared_ptr<Shader> GLRenderSystem::createShader(Shader::ShaderType type,
                                                      const std::shared_ptr<File>& file) {
-  std::shared_ptr<GLShader> shader = getRenderer()->getShaderManager()->create(type, file);
-  shader->makeValid();
-  return shader;
+  return createRessource<GLShader>(getRenderer()->getShaderManager(), type, file);
 }
 
 std::shared_ptr<Program>
 GLRenderSystem::createProgram(const std::set<std::shared_ptr<Shader>>& shaders) {
-  std::shared_ptr<GLProgram> program = getRenderer()->getProgramManager()->create(shaders);
-  program->makeValid();
-  return program;
+  return createRessource<GLProgram>(getRenderer()->getProgramManager(), shaders);
 }
 
 std::shared_ptr<Texture> GLRenderSystem::createTexture(const std::shared_ptr<Image>& image,
                                                        const TextureParameter& param) {
-  std::shared_ptr<GLTexture> texture =
-      getRenderer()->getTextureManager()->create(image, std::make_shared<TextureParameter>(param));
-  texture->makeValid();
-  return texture;
+  return createRessource<GLTexture>(getRenderer()->getTextureManager(), image,
+                                    std::make_shared<TextureParameter>(param));
 }
 
 void GLRenderSystem::addKeyboardListener(KeyboardListener* listener) {

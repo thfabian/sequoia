@@ -49,7 +49,7 @@ public:
   ///
   /// @param type   Type of the shader
   /// @param file   File of the shader source
-  /// @returns Newly created shader which is *not* valid, call `Shader::makeValid()` to convert 
+  /// @returns Newly created shader which is *not* valid, call `Shader::makeValid()` to convert
   ///          it into a valid state
   ///
   /// @remark Thread-safe
@@ -58,6 +58,9 @@ public:
   /// @brief Make the shader valid
   /// @throws RenderSystemExcption  Failed to initialize the shader
   void makeValid(GLShader* shader);
+
+  /// @brief Remove the `shader` (do nothing if shader does not exist)
+  void remove(const std::shared_ptr<GLShader>& shader) noexcept;
 };
 
 } // namespace render
