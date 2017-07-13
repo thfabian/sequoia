@@ -16,6 +16,7 @@
 #ifndef SEQUOIA_CORE_CONCURRENTADT_H
 #define SEQUOIA_CORE_CONCURRENTADT_H
 
+#include <tbb/concurrent_queue.h>
 #include <tbb/concurrent_unordered_map.h>
 #include <tbb/concurrent_vector.h>
 
@@ -34,6 +35,10 @@ using concurrent_unordered_map = tbb::concurrent_unordered_map<Key, T>;
 template <typename T>
 using concurrent_vector = tbb::concurrent_vector<T>;
 
+/// @brief Concurrent (thread-safe) version of a queue
+template <typename T>
+using concurrent_queue = tbb::concurrent_queue<T>;
+
 /// @}
 
 } // namespace core
@@ -43,6 +48,9 @@ using concurrent_unordered_map = core::concurrent_unordered_map<Key, T>;
 
 template <typename T>
 using concurrent_vector = core::concurrent_vector<T>;
+
+template <typename T>
+using concurrent_queue = core::concurrent_queue<T>;
 
 } // namespace sequoia
 

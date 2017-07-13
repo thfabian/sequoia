@@ -13,14 +13,50 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
+#include "sequoia/Core/Logging.h"
+#include "sequoia/Core/Logging.h"
 #include "sequoia/Render/RenderServer.h"
 
 namespace sequoia {
 
 namespace render {
 
-RenderServer::RenderServer(RenderSystemKind renderSystemKind)
-    : RenderSystemObject(renderSystemKind) {}
+RenderServer::RenderServer() { ressourceCtx_.Join = false; }
+
+RenderServer::~RenderServer() {
+  ressourceCtx_.Mutex.lock();
+  ressourceCtx_.Join = true;
+  ressourceCtx_.TasksAvailable.notify_all();
+  ressourceCtx_.Mutex.unlock();
+
+  ressourceCtx_.Thread.join();
+}
+
+void RenderServer::initRessourceThread(std::function<void()> initFunction) {
+  LOG(INFO) << "Initializing ressource thread " << core::LoggerListener::getThreadID() << " ... ";
+
+  ressourceCtx_.Thread = std::thread([this, &initFunction]() {
+    // Initialize the thread
+    initFunction();
+
+    std::shared_ptr<Task> curTask = nullptr;
+    while(!ressourceCtx_.Join) {
+
+      // Run as many tasks as possible
+      while(ressourceCtx_.Queue.try_pop(curTask)) {
+        curTask->run();
+        curTask.reset();
+      }
+
+      // Go to sleep if no more tasks are available
+      std::unique_lock<std::mutex> lock(ressourceCtx_.Mutex);
+      ressourceCtx_.TasksAvailable.wait(
+          lock, [this]() -> bool { return !ressourceCtx_.Queue.empty() || ressourceCtx_.Join; });
+    }
+  });
+
+  LOG(INFO) << "Successfully initialized ressource thread " << core::LoggerListener::getThreadID();
+}
 
 } // namespace render
 

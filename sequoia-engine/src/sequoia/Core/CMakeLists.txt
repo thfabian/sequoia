@@ -47,7 +47,6 @@ sequoia_add_objects(
           Color.cpp
           Compiler.h
           ConcurrentADT.h
-          ConditionVariable.h
           DoubleBuffered.h          
           Export.h
           ErrorHandler.h
@@ -69,6 +68,7 @@ sequoia_add_objects(
           MicroBenchmark.cpp
           Memory.h
           Mutex.h
+          Optional.h
           Options.h.in
           Options.inc.in
           Options.cpp
