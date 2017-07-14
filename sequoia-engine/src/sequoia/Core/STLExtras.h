@@ -71,28 +71,6 @@ public:
 };
 /// @}
 
-template <typename Func>
-struct function_traits;
-
-/// @brief Various compile time information of a the function `Func`
-///
-/// Note that this does **not** work with lambda functions. See `function_first_argument_t` and
-/// `function_return_t`.
-/// @ingroup core
-template <typename ReturnType, typename... Args>
-struct function_traits<std::function<ReturnType(Args...)>> {
-  /// @brief Number of arguments passed to the function
-  static constexpr std::size_t num_args = sizeof...(Args);
-
-  /// @brief Return type of the function
-  using return_t = ReturnType;
-
-  /// @brief Type of the `i-th` argument
-  template <std::size_t i>
-  using arg_t = typename std::tuple_element<i, std::tuple<Args...>>::type;
-};
-/// @}
-
 namespace internal {
 
 template <class T, typename... Args>

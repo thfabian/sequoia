@@ -57,6 +57,7 @@ sequoia_add_objects(
           File.cpp
           FileType.inc
           Format.h
+          Future.h
           HashCombine.h
           Image.h
           Image.cpp         
@@ -85,6 +86,7 @@ sequoia_add_objects(
           StringUtil.h
           StringUtil.cpp
           STLExtras.h
+          Task.h
           Terminal.h
           Terminal.cpp  
           Unreachable.h
