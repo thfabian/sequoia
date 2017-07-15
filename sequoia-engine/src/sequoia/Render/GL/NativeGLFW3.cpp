@@ -323,6 +323,8 @@ glfw3NativeInputSystem::~glfw3NativeInputSystem() {
   glfw3NativeInputSystem::InputSystemInstance = nullptr;
 }
 
+void glfw3NativeInputSystem::pollEvents() { glfwPollEvents(); }
+
 void glfw3NativeInputSystem::centerCursor() {
   int xPos = window_->getWidth() / 2;
   int yPos = window_->getHeight() / 2;
@@ -351,13 +353,13 @@ void glfw3NativeInputSystem::setCursorPosition(int xPos, int yPos) {
 }
 
 void glfw3NativeInputSystem::keyCallback(int key, int action, int mods) noexcept {
-  KeyboardEvent event{window_.get(), (KeyboardKey)key, (KeyAction)action, mods};
+  KeyboardEvent event{(KeyboardKey)key, (KeyAction)action, mods};
   for(KeyboardListener* listener : getListeners<KeyboardListener>())
     listener->keyboardEvent(event);
 }
 
 void glfw3NativeInputSystem::mouseButtonCallback(int button, int action, int mods) noexcept {
-  MouseButtonEvent event{window_.get(), (MouseButton)button, (KeyAction)action, mods};
+  MouseButtonEvent event{(MouseButton)button, (KeyAction)action, mods};
   for(MouseListener* listener : getListeners<MouseListener>())
     listener->mouseButtonEvent(event);
 }
@@ -368,7 +370,7 @@ void glfw3NativeInputSystem::mousePositionCallback(int xPos, int yPos) noexcept 
     return;
   }
 
-  MousePositionEvent event{window_.get(), xPos, yPos, xPos - prevPosX_, yPos - prevPosY_};
+  MousePositionEvent event{xPos, yPos, xPos - prevPosX_, yPos - prevPosY_};
   for(MouseListener* listener : getListeners<MouseListener>())
     listener->mousePositionEvent(event);
 

@@ -34,13 +34,13 @@ GLInputSystem::GLInputSystem(GLRenderWindow* window, bool centerCursor)
 }
 
 void GLInputSystem::keyCallback(int key, int action, int mods) noexcept {
-  KeyboardEvent event{window_, (KeyboardKey)key, (KeyAction)action, mods};
+  KeyboardEvent event{(KeyboardKey)key, (KeyAction)action, mods};
   for(KeyboardListener* listener : getListeners<KeyboardListener>())
     listener->keyboardEvent(event);
 }
 
 void GLInputSystem::mouseButtonCallback(int button, int action, int mods) noexcept {
-  MouseButtonEvent event{window_, (MouseButton)button, (KeyAction)action, mods};
+  MouseButtonEvent event{(MouseButton)button, (KeyAction)action, mods};
   for(MouseListener* listener : getListeners<MouseListener>())
     listener->mouseButtonEvent(event);
 }
@@ -51,7 +51,7 @@ void GLInputSystem::mousePositionCallback(int xPos, int yPos) noexcept {
     return;
   }
 
-  MousePositionEvent event{window_, xPos, yPos, xPos - prevPosX_, yPos - prevPosY_};
+  MousePositionEvent event{xPos, yPos, xPos - prevPosX_, yPos - prevPosY_};
   for(MouseListener* listener : getListeners<MouseListener>())
     listener->mousePositionEvent(event);
   prevPosX_ = xPos;

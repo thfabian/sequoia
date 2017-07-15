@@ -138,7 +138,7 @@ public:
   virtual void setCursorPosition(int xpos, int ypos) = 0;
 
   /// @brief Get the associated window
-  virtual NativeGLContext* getWindow() const = 0;
+  virtual NativeWindow* getWindow() const = 0;
 };
 
 } // render

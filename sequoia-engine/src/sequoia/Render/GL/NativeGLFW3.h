@@ -58,7 +58,7 @@ public:
   /// @brief Get the parent context (if any)
   std::shared_ptr<NativeGLContext> getParent() const { return parent_; }
 
-  /// @brief Get the window
+  /// @brief Get the glfw3 window
   inline GLFWwindow* getGLFWwindow() const { return window_; }
 
   /// @brief Get the context given the `GLFWwindow`
@@ -119,7 +119,7 @@ public:
   /// @brief Get the assocaited context
   NativeGLContext* getContext() const override { return context_.get(); }
 
-  /// @brief Get the window
+  /// @brief Get the glfw3 window
   inline GLFWwindow* getGLFWwindow() const { return context_->getGLFWwindow(); }
 
   /// @brief Get the context given the `GLFWwindow`
@@ -172,10 +172,10 @@ public:
   /// @copydoc NativeInputSystem::setCursorPosition
   void setCursorPosition(int xpos, int ypos) override;
 
-  /// @brief Get the associated window
-  NativeGLContext* getWindow() const override { return window_.get(); }
+  /// @copydoc NativeInputSystem::getWindow
+  virtual NativeWindow* getWindow() const override { return window_.get(); }
 
-  /// @brief Get the window
+  /// @brief Get the glfw3 window
   inline GLFWwindow* getGLFWwindow() const { return window_->getGLFWwindow(); }
 
   /// @name glfw callbacks

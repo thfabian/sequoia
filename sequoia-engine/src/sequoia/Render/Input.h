@@ -213,9 +213,6 @@ enum KeyAction : int { Action_Released = 0, Action_Pressed = 1, Action_Repeat = 
 /// @ingroup render
 struct SEQUOIA_API KeyboardEvent {
 
-  /// The RenderTarget that recieved the event
-  RenderTarget* Target;
-
   /// The keyboard key that was pressed or released
   KeyboardKey Key;
 
@@ -252,9 +249,6 @@ public:
 /// @brief Mouse button event
 /// @ingroup render
 struct SEQUOIA_API MouseButtonEvent {
-
-  /// The RenderTarget that recieved the event
-  RenderTarget* Target;
 
   /// The mouse button that was pressed or released.
   MouseButton Button;
@@ -301,9 +295,6 @@ struct SEQUOIA_API MouseButtonEvent {
 ///
 /// @ingroup render
 struct SEQUOIA_API MousePositionEvent {
-
-  /// The RenderTarget that recieved the event
-  RenderTarget* Target;
 
   /// X-position measured in screen coordinates but relative to the top-left corner
   int XPos;
