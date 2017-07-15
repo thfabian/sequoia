@@ -41,8 +41,6 @@ class SEQUOIA_API GLRenderSystem final : public RenderSystem {
   std::unique_ptr<GLRenderer> renderer_;
 
 public:
-  /// @brief Initialize GLFW
-  /// @throws RenderSystemInitException    Initialization of GLFW failed
   GLRenderSystem();
 
   /// @brief Terminates GLFW

@@ -164,6 +164,17 @@ GLRenderWindow::GLRenderWindow(const RenderWindow::WindowHint& windowHints)
   LOG(INFO) << "Done registering IO callbacks";
 
   LOG(INFO) << "Done initializing OpenGL window " << this;
+  
+  
+  
+  
+  
+  // --- TODO --- 
+  
+  
+  //  // Set a default view-port
+  //  setViewport(std::make_shared<Viewport>(this, 0, 0, getWidth(), getHeight()));
+  
 }
 
 GLRenderWindow::~GLRenderWindow() {

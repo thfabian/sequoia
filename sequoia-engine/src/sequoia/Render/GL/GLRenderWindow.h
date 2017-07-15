@@ -71,13 +71,13 @@ public:
   /// @copydoc RenderWindow::getHeight
   virtual int getHeight() const override;
 
-  /// @copydoc RenderTarget::swapBuffers
+  /// @copydoc RenderWindow::swapBuffers
   virtual void swapBuffers() override;
 
-  /// @copydoc RenderTarget::setCursorMode
+  /// @copydoc RenderWindow::setCursorMode
   virtual void setCursorMode(CursorModeKind mode) override;
 
-  /// @copydoc RenderTarget::centerCursor
+  /// @copydoc RenderWindow::centerCursor
   virtual void centerCursor() override;
 
   /// @brief Get the window

@@ -126,6 +126,7 @@ void GLRenderSystem::pollEvents() {
   for(auto* listener : getListeners<InputEventListener>())
     listener->inputEventStart();
 
+  // TODO: Replace
   glfwPollEvents();
 
   for(auto* listener : getListeners<InputEventListener>())
