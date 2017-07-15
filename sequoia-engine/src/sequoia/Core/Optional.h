@@ -13,16 +13,36 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Core/Mutex.h"
-#include <gtest/gtest.h>
+#ifndef SEQUOIA_CORE_OPTIONAL_H
+#define SEQUOIA_CORE_OPTIONAL_H
 
-using namespace sequoia;
+#include "sequoia/Core/Compiler.h"
 
-namespace {
+#if SEQUOIA_HAS_CXX1Z && __has_include(<optional>)
+#define SEQUOIA_USE_STD_OPTIONAL
+#include <optional>
+#else
+#include <boost/optional.hpp>
+#endif
 
-TEST(MutexTest, LockGuard) {
-  SpinMutex mutex;
-  SEQUOIA_LOCK_GUARD(mutex);
-}
+namespace sequoia {
 
-} // anonymous namespace
+namespace core {
+
+/// @typedef optional
+/// @brief Wrapper for representing 'optional' (or 'nullable') objects who may not (yet) contain a
+/// valid value
+/// @ingroup core
+#ifdef SEQUOIA_USE_STD_OPTIONAL
+template <class T>
+using optional = std::optional<T>;
+#else
+template <class T>
+using optional = boost::optional<T>;
+#endif
+
+} // namespace core
+
+} // namespace sequoia
+
+#endif

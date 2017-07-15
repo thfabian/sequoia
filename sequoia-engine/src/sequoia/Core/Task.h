@@ -4,7 +4,7 @@
 //                       | (___   ___  __ _ _   _  ___  _  __ _
 //                        \___ \ / _ \/ _` | | | |/ _ \| |/ _` |
 //                        ____) |  __/ (_| | |_| | (_) | | (_| |
-//                       |_____/ \___|\__, |\__,_|\___/|_|\__,_| - Game Engine (2016-2017)
+//                       |_____/ \___|\__, |\__,_|\___/|_|\__,_| - Game Engine
 //                                       | |
 //                                       |_|
 //
@@ -13,16 +13,30 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Core/Mutex.h"
-#include <gtest/gtest.h>
+#ifndef SEQUOIA_CORE_TASK_H
+#define SEQUOIA_CORE_TASK_H
 
-using namespace sequoia;
+#include "sequoia/Core/NonCopyable.h"
 
-namespace {
+namespace sequoia {
 
-TEST(MutexTest, LockGuard) {
-  SpinMutex mutex;
-  SEQUOIA_LOCK_GUARD(mutex);
-}
+namespace core {
 
-} // anonymous namespace
+/// @brief Common interface tasks
+/// @ingroup core
+class Task : public NonCopyable {
+public:
+  /// @brief Deallocate the task
+  virtual ~Task() {}
+
+  /// @brief Run the task
+  virtual void run() = 0;
+};
+
+} // namespace core
+
+using Task = core::Task;
+
+} // namespace sequoia
+
+#endif

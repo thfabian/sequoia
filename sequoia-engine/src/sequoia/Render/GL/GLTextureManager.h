@@ -59,6 +59,9 @@ public:
   /// @brief Make the texture valid
   /// @throws RenderSystemExcption  Failed to initialize the texture
   void makeValid(GLTexture* texture);
+  
+  /// @brief Remove the `texture` (do nothing if the texute does not exist)
+  void remove(const std::shared_ptr<GLTexture>& texture) noexcept;
 
   /// @brief Get a copy of the `texture` as an `image`
   std::shared_ptr<Image> getTextureAsImage(GLTexture* texture);

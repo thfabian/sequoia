@@ -13,16 +13,42 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Core/Mutex.h"
-#include <gtest/gtest.h>
+#include "sequoia/Render/RenderRessource.h"
 
-using namespace sequoia;
+namespace sequoia {
 
-namespace {
+namespace render {
 
-TEST(MutexTest, LockGuard) {
-  SpinMutex mutex;
-  SEQUOIA_LOCK_GUARD(mutex);
+void RenderRessource::makeValid() {
+  if(isValid())
+    return;
+
+  SEQUOIA_LOCK_GUARD(mutex_);
+
+  // Prevent the ressource from being initialized multiple times or repeat the error if it already
+  // failed
+  if(isValid() || hasException())
+    return;
+
+  // Initialize the ressource and store the exceptions
+  try {
+    makeValidImpl();
+  } catch(...) {
+    exception_ = std::current_exception();
+    return;
+  }
+
+  valid_.store(true);
 }
 
-} // anonymous namespace
+void RenderRessource::rethrowException() {
+  SEQUOIA_LOCK_GUARD(mutex_);
+  if(exception_)
+    std::rethrow_exception(exception_);
+}
+
+
+
+} // namespace render
+
+} // namespace sequoia

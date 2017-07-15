@@ -113,6 +113,12 @@ std::shared_ptr<GLShader> GLShaderManager::create(GLShader::ShaderType type,
   return shaderList_.back();
 }
 
+void GLShaderManager::remove(const std::shared_ptr<GLShader>& shader) noexcept {
+  SEQUOIA_LOCK_GUARD(mutex_);
+  shaderList_.erase(std::remove(shaderList_.begin(), shaderList_.end(), shader), shaderList_.end());
+  fileLookupMap_.erase(shader->getFile());
+}
+
 } // namespace render
 
 } // namespace sequoia

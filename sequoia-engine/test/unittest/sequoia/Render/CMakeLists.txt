@@ -21,6 +21,7 @@ sequoia_add_test(
           TestHostBuffer.cpp
           TestMain.cpp
           TestInput.cpp
+          TestRenderServer.cpp
           TestRenderState.cpp
           TestTexture.cpp
           TestUniformVariable.cpp

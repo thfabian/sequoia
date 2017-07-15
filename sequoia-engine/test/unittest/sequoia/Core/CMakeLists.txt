@@ -17,16 +17,18 @@ sequoia_add_test(
   NAME SequoiaCoreTest
   SOURCES TestAlignedADT.cpp
           TestArrayRef.cpp
-          TestDoubleBuffered.cpp
           TestColor.cpp
+          TestDoubleBuffered.cpp
           TestImage.cpp
           TestFile.cpp
+          TestFuture.cpp
           TestMain.cpp
           TestMemory.cpp
           TestMutex.cpp
           TestPlatform.cpp
           TestSingletonManager.cpp
           TestStringRef.cpp
+          TestSTLExtra.cpp
           TestVersion.cpp
   DEPENDS Sequoia
           ${SEQUOIA_EXTERNAL_LIBRARIES}

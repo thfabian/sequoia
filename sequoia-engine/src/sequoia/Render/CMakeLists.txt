@@ -35,6 +35,9 @@ sequoia_add_objects(
           Program.cpp
           RenderFwd.h
           RenderRessource.h
+          RenderRessource.cpp
+          RenderServer.h
+          RenderServer.cpp
           RenderState.h
           RenderState.cpp
           RenderState.inc

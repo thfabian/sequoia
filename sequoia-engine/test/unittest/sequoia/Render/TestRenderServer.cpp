@@ -13,16 +13,27 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Core/Mutex.h"
+#include "sequoia/Render/RenderServer.h"
 #include <gtest/gtest.h>
 
+#include <chrono>
+
 using namespace sequoia;
+using namespace sequoia::render;
 
 namespace {
 
-TEST(MutexTest, LockGuard) {
-  SpinMutex mutex;
-  SEQUOIA_LOCK_GUARD(mutex);
+TEST(RenderServerTest, SpawnRessourceTask) {
+  RenderServer s;
+  s.initRessourceThread([]() {});
+  Future<int> f = s.spawnRessourceTask([]() {
+    using namespace std::literals::chrono_literals;
+    std::cout << "1" << std::endl;
+    std::this_thread::sleep_for(1ms);
+    std::cout << "2" << std::endl;
+    return 1;
+  });
+  std::cout << f.get() << std::endl;
 }
 
 } // anonymous namespace

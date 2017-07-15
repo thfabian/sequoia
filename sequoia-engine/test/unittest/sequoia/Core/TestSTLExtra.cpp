@@ -13,16 +13,21 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Core/Mutex.h"
+#include "sequoia/Core/STLExtras.h"
 #include <gtest/gtest.h>
 
 using namespace sequoia;
 
 namespace {
 
-TEST(MutexTest, LockGuard) {
-  SpinMutex mutex;
-  SEQUOIA_LOCK_GUARD(mutex);
+TEST(STLExtraTest, functional) {
+  auto foo1 = [](float, int) -> void {};
+  auto foo2 = []() -> double { return double(5.0); };
+
+  static_assert(std::is_same<void, core::function_return_t<decltype(foo1), float, int>>::value, "");
+  static_assert(std::is_same<double, core::function_return_t<decltype(foo2)>>::value, "");
+
+  static_assert(std::is_same<float, core::function_first_argument_t<decltype(foo1)>>::value, "");
 }
 
 } // anonymous namespace

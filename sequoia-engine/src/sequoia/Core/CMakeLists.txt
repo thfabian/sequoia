@@ -43,10 +43,10 @@ sequoia_add_objects(
           Assert.cpp
           Byte.h
           Casting.h
-          Compiler.h
-          ConcurrentADT.h
           Color.h
           Color.cpp
+          Compiler.h
+          ConcurrentADT.h
           DoubleBuffered.h          
           Export.h
           ErrorHandler.h
@@ -57,6 +57,7 @@ sequoia_add_objects(
           File.cpp
           FileType.inc
           Format.h
+          Future.h
           HashCombine.h
           Image.h
           Image.cpp         
@@ -68,6 +69,7 @@ sequoia_add_objects(
           MicroBenchmark.cpp
           Memory.h
           Mutex.h
+          Optional.h
           Options.h.in
           Options.inc.in
           Options.cpp
@@ -84,8 +86,9 @@ sequoia_add_objects(
           StringUtil.h
           StringUtil.cpp
           STLExtras.h
+          Task.h
           Terminal.h
-          Terminal.cpp        
+          Terminal.cpp  
           Unreachable.h
           Unreachable.cpp         
           Utf.h
