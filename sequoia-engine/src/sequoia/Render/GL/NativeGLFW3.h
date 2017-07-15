@@ -64,7 +64,9 @@ public:
   /// @brief Get the context given the `GLFWwindow`
   static glfw3NativeGLContext* getNativeGLContext(GLFWwindow* window);
 
-  static bool classof(const NativeGLContext* context) { return context->getKind() == NK_GLFW3; }
+  static bool classof(const NativeGLContext* context) {
+    return context->getKind() == NativeWindowSystemKind::NK_GLFW3;
+  }
 };
 
 /// @brief glfw3 based OpenGL window
@@ -77,8 +79,13 @@ class glfw3NativeWindow final : public NativeWindow {
   /// Static map of all GLFWwindows to their respective NativeWindows
   static std::unordered_map<GLFWwindow*, glfw3NativeWindow*> WindowMap;
 
+  /// Cache window geometry
+  int width_, height_;
+
+  /// Is the window focused?
+  bool focused_;
+
 public:
-  /// @brief Initialize window with `context`
   glfw3NativeWindow(const std::shared_ptr<NativeGLContext>& context);
   ~glfw3NativeWindow();
 
@@ -94,20 +101,96 @@ public:
   /// @copydoc NativeWindow::isFullscreen
   bool isFullscreen() const override;
 
+  /// @copydoc NativeWindow::isFocused
+  bool isFocused() const override;
+
   /// @copydoc NativeWindow::getWidth
   int getWidth() const override;
 
   /// @copydoc NativeWindow::getHeight
   int getHeight() const override;
 
+  /// @brief Resize the window to `width` x `height`
+  void setGeometry(int width, int height);
+
+  /// @brief Set the focus of the window
+  void setFocus(bool focus);
+
   /// @brief Get the assocaited context
   NativeGLContext* getContext() const override { return context_.get(); }
-  
+
+  /// @brief Get the window
+  inline GLFWwindow* getGLFWwindow() const { return context_->getGLFWwindow(); }
+
   /// @brief Get the context given the `GLFWwindow`
   static glfw3NativeWindow* getNativeWindow(GLFWwindow* window);
 
   static bool classof(const NativeWindow* window) {
-    return window->getContext()->getKind() == NK_GLFW3;
+    return window->getContext()->getKind() == NativeWindowSystemKind::NK_GLFW3;
+  }
+};
+
+/// @brief glfw3 based input system
+///
+/// Note that there can be only one `glfw3NativeInputSystem` active at the time.
+///
+/// @ingroup gl
+class glfw3NativeInputSystem final : public NativeInputSystem {
+
+  /// Associated context
+  std::shared_ptr<glfw3NativeWindow> window_;
+
+  /// Previous mouse positions
+  int prevPosX_, prevPosY_;
+
+  /// Ignore the next mouse position event (by default the first mouse event is dropped as on Linux
+  /// this sometimes has some wired coordiantes especially if launched on a secondary monitor)
+  bool ignoreNextMousePosEvent_;
+
+  /// Mode of the cursor
+  RenderWindow::CursorModeKind cursorMode_;
+
+  /// Singleton instance
+  static glfw3NativeInputSystem* InputSystemInstance;
+
+public:
+  glfw3NativeInputSystem(const std::shared_ptr<NativeWindow>& window, bool centerCursor);
+  ~glfw3NativeInputSystem();
+
+  /// @copydoc NativeInputSystem::pollEvents
+  void pollEvents() override;
+
+  /// @copydoc NativeInputSystem::centerCursor
+  void centerCursor() override;
+
+  /// @copydoc NativeInputSystem::setCursorMode
+  void setCursorMode(RenderWindow::CursorModeKind mode) override;
+
+  /// @copydoc NativeInputSystem::getCursorMode
+  RenderWindow::CursorModeKind getCursorMode() override { return cursorMode_; }
+
+  /// @copydoc NativeInputSystem::setCursorPosition
+  void setCursorPosition(int xpos, int ypos) override;
+
+  /// @brief Get the associated window
+  NativeGLContext* getWindow() const override { return window_.get(); }
+
+  /// @brief Get the window
+  inline GLFWwindow* getGLFWwindow() const { return window_->getGLFWwindow(); }
+
+  /// @name glfw callbacks
+  /// @{
+  void keyCallback(int key, int action, int mods) noexcept;
+  void mouseButtonCallback(int button, int action, int mods) noexcept;
+  void mousePositionCallback(int xpos, int ypos) noexcept;
+  /// @}
+
+  inline static glfw3NativeInputSystem* getInstance() {
+    return glfw3NativeInputSystem::InputSystemInstance;
+  }
+
+  static bool classof(const NativeWindow* window) {
+    return window->getContext()->getKind() == NativeWindowSystemKind::NK_GLFW3;
   }
 };
 

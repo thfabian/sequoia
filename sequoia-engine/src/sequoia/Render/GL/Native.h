@@ -20,22 +20,27 @@
 #include "sequoia/Core/Listenable.h"
 #include "sequoia/Render/Input.h"
 #include "sequoia/Render/RenderWindow.h"
+#include <memory>
 
 namespace sequoia {
 
 namespace render {
 
+class NativeWindow;
+class NativeGLContext;
+class NativeInputSystem;
+
+/// @brief RTTI discriminator
+enum NativeWindowSystemKind {
+  NK_GLFW3 ///< glfw3 based window-system
+};
+
 /// @brief Native OpenGL context
 /// @ingroup gl
 class SEQUOIA_API NativeGLContext {
 public:
-  /// @brief RTTI discriminator
-  enum NativeKind {
-    NK_GLFW3 ///< glfw3 based window-system
-  };
-
   /// @brief Create context (to initialize the context, call `NativeContext::init()`)
-  NativeGLContext(NativeKind kind) : kind_(kind) {}
+  NativeGLContext(NativeWindowSystemKind kind) : kind_(kind) {}
 
   /// @brief Virtual destructor
   virtual ~NativeGLContext() {}
@@ -57,15 +62,10 @@ public:
   virtual void init(const std::shared_ptr<NativeGLContext>& context) = 0;
 
   /// @brief Get the kind of system
-  NativeKind getKind() const { return kind_; }
-
-  /// @brief Create a native context
-  ///
-  /// @note To initialize the context, call `NativeContext::init()`
-  static std::shared_ptr<NativeGLContext> create(NativeKind kind);
+  NativeWindowSystemKind getKind() const { return kind_; }
 
 private:
-  NativeKind kind_;
+  NativeWindowSystemKind kind_;
 };
 
 /// @brief Listen to changes of the window (resized, focused gained etc.)
@@ -73,15 +73,16 @@ private:
 class SEQUOIA_API NativeWindowListener {
 public:
   /// @brief Window has been resized
-  void nativeWindowResize(NativeWindow* window) = 0;
+  virtual void nativeWindowGeometryChanged(NativeWindow* window) = 0;
+
+  /// @brief Window has taken focus
+  virtual void nativeWindowFocusChanged(NativeWindow* window) = 0;
 };
 
 /// @brief Native window
 /// @ingroup gl
 class SEQUOIA_API NativeWindow : public Listenable<NativeWindowListener> {
 public:
-  NativeWindow(const std::shared_ptr<NativeGLContext>& context);
-
   /// @brief Virtual destructor
   virtual ~NativeWindow() {}
 
@@ -97,22 +98,27 @@ public:
   /// @brief Check if window is in fullscreen mode
   virtual bool isFullscreen() const = 0;
 
+  /// @brief Check if window is in focus
+  virtual bool isFocused() const = 0;
+
   /// @brief Get the current width of the window
   virtual int getWidth() const = 0;
 
   /// @brief Get the current height of the window
   virtual int getHeight() const = 0;
 
-  /// @brief Get the assocaited context
-  NativeGLContext* getContext() const = 0;
+  /// @brief Get the associated context
+  virtual NativeGLContext* getContext() const = 0;
 };
 
 /// @brief Native input system
+///
+/// An input system is attached to a specific window. Usually only one input system can be
+/// registered at the time.
+///
 /// @ingroup gl
 class SEQUOIA_API NativeInputSystem : public Listenable<KeyboardListener, MouseListener> {
 public:
-  NativeInputSystem(const std::shared_ptr<NativeGLContext>& context);
-
   /// @brief Virtual destructor
   virtual ~NativeInputSystem() {}
 
@@ -125,8 +131,14 @@ public:
   /// @brief Set the mode of the cursor
   virtual void setCursorMode(RenderWindow::CursorModeKind mode) = 0;
 
+  /// @brief Get the mode of the cursor
+  virtual RenderWindow::CursorModeKind getCursorMode() = 0;
+
   /// @brief Set mouse position to `(xpos, ypos)`
   virtual void setCursorPosition(int xpos, int ypos) = 0;
+
+  /// @brief Get the associated window
+  virtual NativeGLContext* getWindow() const = 0;
 };
 
 } // render
