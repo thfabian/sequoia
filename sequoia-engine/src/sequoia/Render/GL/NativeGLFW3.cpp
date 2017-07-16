@@ -20,6 +20,8 @@
 #include "sequoia/Render/Exception.h"
 #include "sequoia/Render/GL/NativeGLFW3.h"
 #include "sequoia/Render/RenderSystem.h"
+
+#define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
 
 namespace sequoia {
@@ -31,7 +33,7 @@ namespace render {
 //===------------------------------------------------------------------------------------------===//
 
 static void CallbackErrorSoft(int error, const char* description) {
-  LOG(ERROR) << "glfw3: error: " << description;
+  LOG(ERROR) << "glfw3 error: " << description;
 }
 
 static void CallbackErrorHard(int error, const char* description) {
@@ -41,10 +43,8 @@ static void CallbackErrorHard(int error, const char* description) {
 
 int glfw3NativeGLContext::NumContexts = 0;
 
-std::unordered_map<GLFWwindow*, glfw3NativeGLContext*> glfw3NativeGLContext::ContextMap;
-
 glfw3NativeGLContext::glfw3NativeGLContext()
-    : NativeGLContext(NK_GLFW3), window_(nullptr), parent_(nullptr) {
+    : NativeGLContext(NativeWindowSystemKind::NK_GLFW3), window_(nullptr), parent_(nullptr) {
   if(glfw3NativeGLContext::NumContexts == 0) {
     LOG(INFO) << "Initializing glfw3 ... ";
     glfwSetErrorCallback(CallbackErrorHard);
@@ -61,11 +61,12 @@ glfw3NativeGLContext::~glfw3NativeGLContext() {
   glfw3NativeGLContext::NumContexts--;
 
   if(window_) {
+    LOG(INFO) << "Destroying glfw3 OpenGL context " << this;
     glfwDestroyWindow(window_);
-    glfw3NativeGLContext::ContextMap.erase(window_);
   }
 
   if(glfw3NativeGLContext::NumContexts == 0) {
+    LOG(INFO) << "Terminating glfw3";
     glfwTerminate();
   }
 }
@@ -174,33 +175,33 @@ void glfw3NativeGLContext::init(const RenderWindow::WindowHint& windowHints) {
     }
   }
 
-  // Register the context
-  glfw3NativeGLContext::ContextMap.emplace(window_, this);
-
-  LOG(INFO) << "Successfully initialized glfw3 OpenGL context " << this << " ...";
+  LOG(INFO) << "Successfully initialized glfw3 OpenGL context " << this;
 }
 
 void glfw3NativeGLContext::init(const std::shared_ptr<NativeGLContext>& context) {}
 
-glfw3NativeGLContext* glfw3NativeGLContext::getNativeGLContext(GLFWwindow* window) {
-  return ContextMap[window];
-}
+void glfw3NativeGLContext::enableVSync() { glfwSwapInterval(1); }
+
+void glfw3NativeGLContext::makeCurrent() { glfwMakeContextCurrent(window_); }
 
 //===------------------------------------------------------------------------------------------===//
 //    Window
 //===------------------------------------------------------------------------------------------===//
 
 static void CallbackResized(GLFWwindow* window, int width, int height) {
-  glfw3NativeWindow::getNativeWindow(window)->setGeometry(width, height);
+  glfw3NativeWindow::getInstance()->setGeometry(width, height);
 }
 
 static void CallbackFocused(GLFWwindow* window, int focus) {
-  glfw3NativeWindow::getNativeWindow(window)->setFocus(focus);
+  glfw3NativeWindow::getInstance()->setFocus(focus);
 }
 
-std::unordered_map<GLFWwindow*, glfw3NativeWindow*> glfw3NativeWindow::WindowMap;
+glfw3NativeWindow* glfw3NativeWindow::Instance = nullptr;
 
 glfw3NativeWindow::glfw3NativeWindow(const std::shared_ptr<NativeGLContext>& context) {
+  SEQUOIA_ASSERT_MSG(!glfw3NativeWindow::Instance, "glfw3 window already initialized");
+  glfw3NativeWindow::Instance = this;
+
   SEQUOIA_ASSERT_MSG(isa<glfw3NativeGLContext>(context.get()), "expected 'glfw3NativeGLContext'");
   context_ = dyn_pointer_cast<glfw3NativeGLContext>(context);
 
@@ -215,9 +216,6 @@ glfw3NativeWindow::glfw3NativeWindow(const std::shared_ptr<NativeGLContext>& con
   // Query focus status
   focused_ = glfwGetWindowAttrib(getGLFWwindow(), GLFW_FOCUSED);
 
-  // Register the window
-  glfw3NativeWindow::WindowMap.emplace(getGLFWwindow(), this);
-
   // Register window call-back
   glfwSetWindowSizeCallback(context_->getGLFWwindow(), CallbackResized);
   glfwSetWindowFocusCallback(context_->getGLFWwindow(), CallbackFocused);
@@ -225,7 +223,10 @@ glfw3NativeWindow::glfw3NativeWindow(const std::shared_ptr<NativeGLContext>& con
   LOG(INFO) << "Successfully initialized glfw3 window " << this;
 }
 
-glfw3NativeWindow::~glfw3NativeWindow() { glfw3NativeWindow::WindowMap.erase(getGLFWwindow()); }
+glfw3NativeWindow::~glfw3NativeWindow() {
+  LOG(INFO) << "Destroying glfw3 window " << this;
+  glfw3NativeWindow::Instance = nullptr;
+}
 
 void glfw3NativeWindow::swapBuffers() { glfwSwapBuffers(getGLFWwindow()); }
 
@@ -256,10 +257,6 @@ void glfw3NativeWindow::setFocus(bool focus) {
     listener->nativeWindowFocusChanged(this);
 }
 
-glfw3NativeWindow* glfw3NativeWindow::getNativeWindow(GLFWwindow* window) {
-  return glfw3NativeWindow::WindowMap[window];
-}
-
 //===------------------------------------------------------------------------------------------===//
 //    InputSystem
 //===------------------------------------------------------------------------------------------===//
@@ -284,19 +281,20 @@ static void CallbackCursorEnter(GLFWwindow* window, int entered) {
   }
 }
 
-glfw3NativeInputSystem* glfw3NativeInputSystem::InputSystemInstance = nullptr;
+glfw3NativeInputSystem* glfw3NativeInputSystem::Instance = nullptr;
 
 glfw3NativeInputSystem::glfw3NativeInputSystem(const std::shared_ptr<NativeWindow>& window,
                                                bool centerCursor)
-    : prevPosX_(0), prevPosY_(0), ignoreNextMousePosEvent_(true) {
+    : prevPosX_(0), prevPosY_(0), ignoreNextMousePosEvent_(true),
+      cursorMode_(RenderWindow::CursorModeKind::CK_Normal) {
 
-  SEQUOIA_ASSERT_MSG(!glfw3NativeInputSystem::InputSystemInstance,
-                     "glfw3 input system already initialized");
+  SEQUOIA_ASSERT_MSG(!glfw3NativeInputSystem::Instance, "glfw3 input system already initialized");
+  glfw3NativeInputSystem::Instance = this;
 
   SEQUOIA_ASSERT_MSG(isa<glfw3NativeWindow>(window.get()), "expected 'glfw3NativeWindow'");
   window_ = dyn_pointer_cast<glfw3NativeWindow>(window);
 
-  LOG(INFO) << "Registering glfw3 input system " << this << " ...";
+  LOG(INFO) << "Initializing glfw3 input system " << this << " ...";
 
   SEQUOIA_ASSERT_MSG(getGLFWwindow(), "invalid context - not initialized?");
 
@@ -314,13 +312,12 @@ glfw3NativeInputSystem::glfw3NativeInputSystem(const std::shared_ptr<NativeWindo
   glfwSetCursorPosCallback(getGLFWwindow(), CallbackCursorPos);
   glfwSetCursorEnterCallback(getGLFWwindow(), CallbackCursorEnter);
 
-  glfw3NativeInputSystem::InputSystemInstance = this;
-
-  LOG(INFO) << "Successfully initialized glfw3 input system " << this << " ...";
+  LOG(INFO) << "Successfully initialized glfw3 input system " << this;
 }
 
 glfw3NativeInputSystem::~glfw3NativeInputSystem() {
-  glfw3NativeInputSystem::InputSystemInstance = nullptr;
+  LOG(INFO) << "Destroying glfw3 input system " << this;
+  glfw3NativeInputSystem::Instance = nullptr;
 }
 
 void glfw3NativeInputSystem::pollEvents() { glfwPollEvents(); }

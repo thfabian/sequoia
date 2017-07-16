@@ -39,9 +39,6 @@ class glfw3NativeGLContext final : public NativeGLContext {
   /// terminate it)
   static int NumContexts;
 
-  /// Static map of all GLFWwindows to their respective NativeGLContext
-  static std::unordered_map<GLFWwindow*, glfw3NativeGLContext*> ContextMap;
-
 public:
   /// @brief Initialize glfw3
   glfw3NativeGLContext();
@@ -54,15 +51,18 @@ public:
 
   /// @brief Create a new context using `context` as a parent context
   void init(const std::shared_ptr<NativeGLContext>& context) override;
+  
+  /// @brief Makes the context current for the calling thread
+  virtual void makeCurrent() override;
+
+  /// @copydoc NativeGLContext::enableVSync
+  virtual void enableVSync() override;
 
   /// @brief Get the parent context (if any)
   std::shared_ptr<NativeGLContext> getParent() const { return parent_; }
 
   /// @brief Get the glfw3 window
   inline GLFWwindow* getGLFWwindow() const { return window_; }
-
-  /// @brief Get the context given the `GLFWwindow`
-  static glfw3NativeGLContext* getNativeGLContext(GLFWwindow* window);
 
   static bool classof(const NativeGLContext* context) {
     return context->getKind() == NativeWindowSystemKind::NK_GLFW3;
@@ -76,15 +76,15 @@ class glfw3NativeWindow final : public NativeWindow {
   /// Associated context
   std::shared_ptr<glfw3NativeGLContext> context_;
 
-  /// Static map of all GLFWwindows to their respective NativeWindows
-  static std::unordered_map<GLFWwindow*, glfw3NativeWindow*> WindowMap;
-
   /// Cache window geometry
   int width_, height_;
 
   /// Is the window focused?
   bool focused_;
-
+  
+  /// Singleton instance
+  static glfw3NativeWindow* Instance;
+  
 public:
   glfw3NativeWindow(const std::shared_ptr<NativeGLContext>& context);
   ~glfw3NativeWindow();
@@ -122,8 +122,7 @@ public:
   /// @brief Get the glfw3 window
   inline GLFWwindow* getGLFWwindow() const { return context_->getGLFWwindow(); }
 
-  /// @brief Get the context given the `GLFWwindow`
-  static glfw3NativeWindow* getNativeWindow(GLFWwindow* window);
+  inline static glfw3NativeWindow* getInstance() { return glfw3NativeWindow::Instance; }
 
   static bool classof(const NativeWindow* window) {
     return window->getContext()->getKind() == NativeWindowSystemKind::NK_GLFW3;
@@ -151,7 +150,7 @@ class glfw3NativeInputSystem final : public NativeInputSystem {
   RenderWindow::CursorModeKind cursorMode_;
 
   /// Singleton instance
-  static glfw3NativeInputSystem* InputSystemInstance;
+  static glfw3NativeInputSystem* Instance;
 
 public:
   glfw3NativeInputSystem(const std::shared_ptr<NativeWindow>& window, bool centerCursor);
@@ -186,7 +185,7 @@ public:
   /// @}
 
   inline static glfw3NativeInputSystem* getInstance() {
-    return glfw3NativeInputSystem::InputSystemInstance;
+    return glfw3NativeInputSystem::Instance;
   }
 
   static bool classof(const NativeWindow* window) {

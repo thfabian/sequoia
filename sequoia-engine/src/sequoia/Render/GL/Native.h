@@ -30,8 +30,8 @@ class NativeWindow;
 class NativeGLContext;
 class NativeInputSystem;
 
-/// @brief RTTI discriminator
-enum NativeWindowSystemKind {
+/// @brief Kind of window-system
+enum class NativeWindowSystemKind {
   NK_GLFW3 ///< glfw3 based window-system
 };
 
@@ -61,8 +61,20 @@ public:
   /// and programs.
   virtual void init(const std::shared_ptr<NativeGLContext>& context) = 0;
 
+  /// @brief Makes the context current for the calling thread
+  virtual void makeCurrent() = 0;
+
+  /// @brief Enable vertical synchronization i.e wait for atleast one screen update before the
+  /// buffers are swapped
+  virtual void enableVSync() = 0;
+
   /// @brief Get the kind of system
   NativeWindowSystemKind getKind() const { return kind_; }
+
+  /// @brief Create a new OpenGL context using the given window-system `kind`
+  ///
+  /// @note To initialize the context, call `NativeGLContext::init()`
+  static std::shared_ptr<NativeGLContext> create(NativeWindowSystemKind kind);
 
 private:
   NativeWindowSystemKind kind_;
@@ -109,6 +121,9 @@ public:
 
   /// @brief Get the associated context
   virtual NativeGLContext* getContext() const = 0;
+
+  /// @brief Create a new native window using `context`
+  static std::shared_ptr<NativeWindow> create(const std::shared_ptr<NativeGLContext>& context);
 };
 
 /// @brief Native input system
@@ -139,6 +154,10 @@ public:
 
   /// @brief Get the associated window
   virtual NativeWindow* getWindow() const = 0;
+
+  /// @brief Attach an input system to the `window`
+  static std::shared_ptr<NativeInputSystem> create(const std::shared_ptr<NativeWindow>& window,
+                                                   bool centerCursor);
 };
 
 } // render

@@ -19,7 +19,6 @@
 #include "sequoia/Core/Unreachable.h"
 #include "sequoia/Render/Exception.h"
 #include "sequoia/Render/GL/GL.h"
-#include "sequoia/Render/GL/GLInputSystem.h"
 #include "sequoia/Render/GL/GLProgramManager.h"
 #include "sequoia/Render/GL/GLRenderSystem.h"
 #include "sequoia/Render/GL/GLRenderWindow.h"
@@ -27,21 +26,13 @@
 #include "sequoia/Render/GL/GLShaderManager.h"
 #include "sequoia/Render/GL/GLTextureManager.h"
 #include "sequoia/Render/GL/GLVertexArrayObject.h"
+#include "sequoia/Render/GL/Native.h"
 
 namespace sequoia {
 
 namespace render {
 
 namespace {
-
-static void GLFWErrorCallbackSoft(int error, const char* description) {
-  LOG(ERROR) << "GLFW error: " << description;
-}
-
-static void GLFWErrorCallbackHard(int error, const char* description) {
-  GLFWErrorCallbackSoft(error, description);
-  SEQUOIA_THROW(RenderSystemException, description);
-}
 
 /// @brief Create the ressource of type `T` (where `T` is one of (GLShader, GLTexture or GLProgram)
 /// using `manager`
@@ -73,21 +64,13 @@ std::shared_ptr<T> createRessource(ManagerType* manager, Args&&... args) {
 } // anonymous namespace
 
 GLRenderSystem::GLRenderSystem()
-    : RenderSystem(RK_OpenGL), mainWindow_(nullptr), renderer_(nullptr) {
+    : RenderSystem(RK_OpenGL), mainContext_(nullptr), mainWindow_(nullptr), renderer_(nullptr) {
   LOG(INFO) << "Initializing OpenGL RenderSystem ...";
-  glfwSetErrorCallback(GLFWErrorCallbackHard);
-
-  glfwInit();
-  LOG(INFO) << "GLFW: " << glfwGetVersionString();
-
-  glfwSetErrorCallback(GLFWErrorCallbackSoft);
-  LOG(INFO) << "Done initializing OpenGL RenderSystem";
 }
 
 GLRenderSystem::~GLRenderSystem() {
   LOG(INFO) << "Terminating OpenGL RenderSystem ...";
   destroyMainWindow();
-  glfwTerminate();
   LOG(INFO) << "Done terminating OpenGL RenderSystem";
 }
 
@@ -95,8 +78,12 @@ RenderWindow* GLRenderSystem::createMainWindow(const RenderWindow::WindowHint& h
   // Reset everything
   destroyMainWindow();
 
+  // Initialize the main OpenGL context
+  mainContext_ = NativeGLContext::create(NativeWindowSystemKind::NK_GLFW3);
+  mainContext_->init(hints);
+
   // Create main-window and OpenGL context
-  mainWindow_ = std::make_unique<GLRenderWindow>(hints);
+  mainWindow_ = std::make_unique<GLRenderWindow>(mainContext_);
 
   // Initialize OpenGL renderer
   renderer_ = std::make_unique<GLRenderer>(mainWindow_.get());
@@ -120,14 +107,18 @@ void GLRenderSystem::destroyMainWindow() noexcept {
     mainWindow_.reset();
     mainWindow_ = nullptr;
   }
+
+  if(mainContext_) {
+    mainContext_.reset();
+    mainContext_ = nullptr;
+  }
 }
 
 void GLRenderSystem::pollEvents() {
   for(auto* listener : getListeners<InputEventListener>())
     listener->inputEventStart();
 
-  // TODO: Replace
-  glfwPollEvents();
+  mainWindow_->getInputSystem()->pollEvents();
 
   for(auto* listener : getListeners<InputEventListener>())
     listener->inputEventStop();
