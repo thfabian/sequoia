@@ -26,23 +26,24 @@ namespace sequoia {
 namespace render {
 
 class GLRenderer;
-class GLInputSystem;
 class GLRenderWindow;
 class GLStateCacheManager;
+class NativeGLContext;
 
 /// @brief OpenGL render-system
 /// @ingroup gl
 class SEQUOIA_API GLRenderSystem final : public RenderSystem {
 
-  /// Main-window of the render system (also holds the OpenGL context)
+  /// Main OpenGL context
+  std::shared_ptr<NativeGLContext> mainContext_;
+
+  /// Main-window of the render system
   std::unique_ptr<GLRenderWindow> mainWindow_;
 
   /// OpenGL renderer
   std::unique_ptr<GLRenderer> renderer_;
 
 public:
-  /// @brief Initialize GLFW
-  /// @throws RenderSystemInitException    Initialization of GLFW failed
   GLRenderSystem();
 
   /// @brief Terminates GLFW

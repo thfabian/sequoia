@@ -16,42 +16,29 @@
 #ifndef SEQUOIA_RENDER_GL_GLRENDERWINDOW_H
 #define SEQUOIA_RENDER_GL_GLRENDERWINDOW_H
 
+#include "sequoia/Render/GL/Native.h"
 #include "sequoia/Render/Input.h"
 #include "sequoia/Render/RenderWindow.h"
-#include <string>
-#include <unordered_map>
-#include <vector>
-
-struct GLFWwindow;
 
 namespace sequoia {
 
 namespace render {
 
-class GLInputSystem;
-
 /// @brief OpenGL render window
 /// @ingroup gl
-class SEQUOIA_API GLRenderWindow final : public RenderWindow, public InputEventListener {
-  GLFWwindow* window_;
+class SEQUOIA_API GLRenderWindow final : public RenderWindow,
+                                         public InputEventListener,
+                                         public NativeWindowListener {
 
-  /// Short-hard for window geometry
-  int windowWidth_;
-  int windowHeight_;
+  /// Native window handle
+  std::shared_ptr<NativeWindow> nativeWindow_;
 
-  /// Mode of the cursor
-  CursorModeKind mode_;
-
-  /// Input system handler
-  std::unique_ptr<GLInputSystem> inputSystem_;
+  /// Native input system handle
+  std::shared_ptr<NativeInputSystem> nativeInputSystem_;
 
 public:
-  /// @brief Initialize window
-  ///
-  /// This involves OpenGL context creation of the window.
-  ///
-  /// @throw RenderSystemInitException    Window creation failed
-  GLRenderWindow(const RenderWindow::WindowHint& windowHints);
+  /// @brief Initialize window with given OpenGL context
+  GLRenderWindow(std::shared_ptr<NativeGLContext> context);
 
   /// @brief Release window and destroy OpenGL context
   ~GLRenderWindow();
@@ -71,35 +58,17 @@ public:
   /// @copydoc RenderWindow::getHeight
   virtual int getHeight() const override;
 
-  /// @copydoc RenderTarget::swapBuffers
+  /// @copydoc RenderWindow::swapBuffers
   virtual void swapBuffers() override;
 
-  /// @copydoc RenderTarget::setCursorMode
+  /// @copydoc RenderWindow::setCursorMode
   virtual void setCursorMode(CursorModeKind mode) override;
 
-  /// @copydoc RenderTarget::centerCursor
+  /// @copydoc RenderWindow::centerCursor
   virtual void centerCursor() override;
 
-  /// @brief Get the window
-  GLFWwindow* getGLFWwindow();
-
-  /// @brief Get the cursor mode
-  CursorModeKind getCursorMode();
-
   /// @brief Get the associated OpenGL context of this window
-  GLInputSystem* getInputSystem();
-
-  /// @brief Called upon resizing the window
-  void resizeCallback(int width, int height);
-
-  /// @brief GLFW callbacks
-  /// @{
-  static void resizeCallbackDispatch(GLFWwindow* window, int width, int height);
-  static void keyCallbackDispatch(GLFWwindow* window, int key, int scancode, int action, int mods);
-  static void mouseButtonCallbackDispatch(GLFWwindow* window, int button, int action, int mods);
-  static void mousePositionCallbackDispatch(GLFWwindow* window, double xpos, double ypos);
-  static void mouseEnterCallbackDispatch(GLFWwindow* window, int entered);
-  /// @}
+  NativeInputSystem* getInputSystem();
 
   /// @copydoc InputEventListener::inputEventStart
   virtual void inputEventStart() override;
@@ -107,8 +76,14 @@ public:
   /// @copydoc InputEventListener::inputEventStop
   virtual void inputEventStop() override;
 
-  /// @brief Static map of all GLFWwindows to their respective GLRenderWindows
-  static std::unordered_map<GLFWwindow*, GLRenderWindow*> StaticWindowMap;
+  /// @copydoc InputEventListener::nativeWindowGeometryChanged
+  virtual void nativeWindowGeometryChanged(NativeWindow* window) override;
+
+  /// @copydoc InputEventListener::nativeWindowFocusChanged
+  virtual void nativeWindowFocusChanged(NativeWindow* window) override;
+
+  /// @brief Get the associated OpenGL context
+  NativeGLContext* getContext() const;
 
   static bool classof(const RenderTarget* target) { return target->getKind() == RK_GLRenderWindow; }
 };

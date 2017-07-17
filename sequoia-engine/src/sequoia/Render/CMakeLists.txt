@@ -73,9 +73,7 @@ sequoia_add_objects(
           GL/GLFragmentData.cpp
           GL/GLFwd.h  
           GL/GLFrameBufferObject.h
-          GL/GLFrameBufferObject.cpp        
-          GL/GLInputSystem.h
-          GL/GLInputSystem.cpp
+          GL/GLFrameBufferObject.cpp
           GL/GLProgram.h
           GL/GLProgram.cpp
           GL/GLProgramManager.h
@@ -100,5 +98,10 @@ sequoia_add_objects(
           GL/GLVertexArrayObject.cpp
           GL/GLVertexAttribute.h
           GL/GLVertexAttribute.cpp
+          GL/Native.h
+          GL/Native.cpp          
+          GL/NativeGLFW3.h
+          GL/NativeGLFW3.cpp
+
   DEPENDS SequoiaCore
 )

@@ -29,6 +29,7 @@
 #include "sequoia/Render/GL/GLShaderManager.h"
 #include "sequoia/Render/GL/GLStateCacheManager.h"
 #include "sequoia/Render/GL/GLTextureManager.h"
+#include "sequoia/Render/GL/Native.h"
 #include "sequoia/Render/RenderSystem.h"
 #include <glbinding/Binding.h>
 #include <glbinding/ContextInfo.h>
@@ -92,9 +93,9 @@ GLRenderer::GLRenderer(GLRenderWindow* window) : window_(window) {
   LOG(INFO) << "Creating OpenGL renderer " << this << " ...";
 
   // Bind the context to the current thread
-  glfwMakeContextCurrent(window_->getGLFWwindow());
+  window_->getContext()->makeCurrent();
 
-  // Load function lazily
+  // Load functions lazily
   glbinding::Binding::initialize(false);
 
   // Set debugging callbacks
@@ -122,7 +123,7 @@ GLRenderer::GLRenderer(GLRenderWindow* window) : window_(window) {
 
   // Enable VSync?
   if(Options::getSingleton().Render.VSync)
-    glfwSwapInterval(1);
+    window_->getContext()->enableVSync();
 
   // Register as Viewport listener
   window_->getViewport()->addListener<ViewportListener>(this);
@@ -135,13 +136,13 @@ GLRenderer::GLRenderer(GLRenderWindow* window) : window_(window) {
   textureManager_ = std::make_unique<GLTextureManager>();
   extensionManager_ = std::make_unique<GLExtensionManager>();
 
-  LOG(INFO) << "Done creating OpenGL renderer " << this;
+  LOG(INFO) << "Successfully created OpenGL renderer " << this;
 }
 
 GLRenderer::~GLRenderer() {
   LOG(INFO) << "Terminating OpenGL renderer " << this << " ... ";
 
-  glfwMakeContextCurrent(window_->getGLFWwindow());
+  window_->getContext()->makeCurrent();
 
   // Destroy all remaining shaders, programs, textures and buffers
   defaultVertexShader_.reset();
@@ -185,15 +186,15 @@ void GLRenderer::render(RenderTarget* target) {
     GLProgram* program = dyn_cast<GLProgram>(command->getProgram());
     if(!program->isValid())
       return false;
-  
+
     // Compute the full model-view-projection matrix
     UniformVariable u_ModelViewProjection = matViewProj * command->getModelMatrix();
     program->setUniformVariable("u_ModelViewProjection", u_ModelViewProjection);
-  
+
     // Update the OpenGL state-machine and draw the command
     return stateCacheManager_->draw(command);
   };
-  
+
   // Draw the commands
   DrawCommand* drawCommand = nullptr;
   for(drawCommand = drawCommandList->start(); drawCommand != nullptr;

@@ -18,8 +18,8 @@
 
 #include "sequoia/Core/Export.h"
 #include "sequoia/Core/Listenable.h"
+#include "sequoia/Core/Mutex.h"
 #include "sequoia/Core/Singleton.h"
-#include <mutex>
 #include <sstream>
 #include <string>
 #include <vector>
@@ -58,7 +58,7 @@ public:
 namespace internal {
 
 class SEQUOIA_API LoggerProxy {
-  std::mutex* mutex_;        ///< Access mutex
+  SpinMutex* mutex_;         ///< Access mutex
   const LoggingLevel level_; ///< Logging level
   std::stringstream* ss_;    ///< String stream to buffer the logging
   const char* file_;         ///< File from which the logging was issued
@@ -69,7 +69,7 @@ public:
   LoggerProxy(const LoggerProxy&) = default;
   LoggerProxy(LoggerProxy&&) = default;
 
-  LoggerProxy(std::mutex* lock, LoggingLevel level, std::stringstream* ss, const char* file,
+  LoggerProxy(SpinMutex* lock, LoggingLevel level, std::stringstream* ss, const char* file,
               int line);
   LoggerProxy();
   ~LoggerProxy();
@@ -120,7 +120,7 @@ public:
 class SEQUOIA_API Logger : public Singleton<Logger>, public Listenable<LoggerListener> {
   const LoggingLevel level_; ///< Level at which logging is performed
   std::stringstream ss_;     ///< String stream used to buffer the logging
-  std::mutex mutex_;         ///< Mutex for serialized access
+  SpinMutex mutex_;          ///< Mutex for serialized access
 
 public:
   /// @brief Initialize the Logger with a level at which logging will be performed
