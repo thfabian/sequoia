@@ -13,12 +13,38 @@
 ##
 ##===------------------------------------------------------------------------------------------===##
 
-find_package(glbinding REQUIRED)
-include_directories(SYSTEM ${GLBINDING_INCLUDE_DIRS})
+#.rst:
+# Findccache
+# ----------
+#
+# This script locates ccache. This script makes use of the standard find_package arguments 
+# ``REQUIRED`` and ``QUIET``. CCACHE_FOUND will report if ccache has been found.
+#
+# Result Variables
+# ^^^^^^^^^^^^^^^^
+#
+# Defines the following variables:
+#
+#   CCACHE_FOUND           - System has ccache
+#   CCACHE_EXECUTABLE      - The location ccache
+#
+# Hints
+# ^^^^^
+#
+# You can directly set ``CCACHE_EXECUTABLE`` if the script has trouble finding ccache.
 
-sequoia_export_package(
-  PACKAGE glbinding
-  FOUND ${GLBINDING_FOUND} 
-  VERSION_STR "${GLBINDING_VERSION}" 
-  LIBRARIES ${GLBINDING_LIBRARIES}
+include(FindPackageHandleStandardArgs)
+
+if(NOT DEFINED CCACHE_EXECUTABLE)
+  find_program(CCACHE_EXECUTABLE NAMES ccache)
+endif()
+
+find_package_handle_standard_args(ccache 
+  FOUND_VAR 
+    CCACHE_FOUND 
+  REQUIRED_VARS 
+    CCACHE_EXECUTABLE
 )
+
+mark_as_advanced(CCACHE_EXECUTABLE)
+

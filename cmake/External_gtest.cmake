@@ -34,8 +34,10 @@ ExternalProject_Add(
     "<SOURCE_DIR>/CMakeLists.txt"
   CMAKE_ARGS
     -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
+    -DCMAKE_CONFIGURATION_TYPES:STRING=${CMAKE_CONFIGURATION_TYPES}
     -DBUILD_SHARED_LIBS:BOOL=${BUILD_SHARED_LIBS}
     -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
+    # Build with MD (dynamic runtime) on Windows
     -Dgtest_force_shared_crt:BOOL=ON
 )
 

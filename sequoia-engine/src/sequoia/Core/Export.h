@@ -73,7 +73,7 @@ namespace unittest {}
 #if defined(SEQUOIA_SHARED_LIBRARIES)
 #define SEQUOIA_API SEQUOIA_API_EXPORT
 #else
-#define SEQUOIA_API SEQUOIA_API_IMPORT
+#define SEQUOIA_API
 #endif
 
 #endif

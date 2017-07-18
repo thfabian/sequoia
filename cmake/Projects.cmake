@@ -35,10 +35,10 @@ set(backward_md5 "b89051fb35fd2eacf5ab9c7bced5faf6")
 #
 list(APPEND projects boost)
 set(boost_min_version 1.58.0)
-set(_v 60)
+set(_v 63)
 set(boost_download_version 1.${_v}.0)
 set(boost_url "http://sourceforge.net/projects/boost/files/boost/1.${_v}.0/boost_1_${_v}_0.tar.gz/download")
-set(boost_md5 "28f58b9a33469388302110562bdf6188")
+set(boost_md5 "7b493c08bc9557bbde7e29091f28b605")
 set(boost_components thread date_time system atomic chrono filesystem program_options)
 
 #

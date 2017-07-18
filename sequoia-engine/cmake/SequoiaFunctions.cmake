@@ -186,8 +186,6 @@ endfunction()
 ## ----------------------
 ##
 ## Create an executable.
-## All header files (".h") in the directory of the source files are treated as dependencies of the
-## library.
 ##    
 ##    NAME:STRING=<>             - Name of the test.
 ##    SOURCES:STRING=<>          - List of source files.

@@ -16,7 +16,7 @@
 include(CMakeDependentOption)
 
 ##===---------------------------------- Building ----------------------------------------------===##
-option(BUILD_SHARED_LIBS "Build shared libraries" ON)
+option(BUILD_SHARED_LIBS "Build shared libraries" OFF)
 CMAKE_DEPENDENT_OPTION(SEQUOIA_ENABLE_RPATH 
                        "Enable rpath support on Linux and Mac" ON "BUILD_SHARED_LIBS" OFF)
 
@@ -30,7 +30,6 @@ endif()
 option(SEQUOIA_ASSERTS "Enable asserts" ${BUILD_IS_NOT_RELEASE})
 option(SEQUOIA_OPTIMIZE "Enable all optimizations" ${BUILD_IS_RELEASE})
 option(SEQUOIA_USE_CCACHE "Use compile cache if available" ON)
-option(SEQUOIA_DEBUG_THREADS "Enable thread debugging" OFF)
 
 ##===---------------------------------- Testing -----------------------------------------------===##
 option(SEQUOIA_TESTING "Enable testing" ON)

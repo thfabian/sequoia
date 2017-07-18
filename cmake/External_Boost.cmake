@@ -53,6 +53,7 @@ if(use_bat)
     message(FATAL_ERROR "Only Microsoft Visual C 14.0 is supported (Visual Studio 2015)")
   endif()
   
+  # Always build all runtimes (MD and MT)
   list(APPEND boost_with_args "--build-type=complete" "--layout=tagged" "toolset=${_toolset}")
 
   set(boost_cmds

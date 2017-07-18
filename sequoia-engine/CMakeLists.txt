@@ -57,6 +57,7 @@ sequoia_report_result(
   "Architecture: ${SEQUOIA_ARCHITECTURE_STRING}"
   "Compiler: ${SEQUOIA_COMPILER_STRING}"
   "Build type: ${CMAKE_BUILD_TYPE}"
+  "Build shared: ${BUILD_SHARED_LIBS}"
 )
 
 ##===---------------------------------- Add external libraries --------------------------------===##
@@ -71,7 +72,6 @@ include(Addglbinding)
 include(AddGLFW)
 include(Addgli)
 include(Addglm)
-include(AddGTest)
 include(AddOpenGL)
 include(AddPython3)
 include(AddTBB)

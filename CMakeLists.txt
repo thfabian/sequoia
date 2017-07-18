@@ -18,6 +18,10 @@ if(NOT CMAKE_BUILD_TYPE)
       "Choose the type of build, options are: Debug Release RelWithDebInfo MinSizeRel." FORCE)
 endif()
 
+if(DEFINED CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
+  set(CMAKE_CONFIGURATION_TYPES ${CMAKE_BUILD_TYPE})
+endif()
+
 project(Sequoia C CXX)
 cmake_minimum_required(VERSION 3.3)
 
@@ -37,7 +41,7 @@ sequoia_set_default_download_dir()
 sequoia_add_target_clean_all()
 
 # Set default CMake arguments
-option(BUILD_SHARED_LIBS "Build shared libraries" ON)
+option(BUILD_SHARED_LIBS "Build shared libraries" OFF)
 
 set(Sequoia_INSTALL_PREFIX "${Sequoia_BINARY_DIR}/prefix")
 set(Sequoia_DEFAULT_ARGS
@@ -45,6 +49,7 @@ set(Sequoia_DEFAULT_ARGS
   "-DCMAKE_PREFIX_PATH:PATH=${Sequoia_INSTALL_PREFIX};${CMAKE_PREFIX_PATH}"
   "-DCMAKE_INSTALL_PREFIX:PATH=${Sequoia_INSTALL_PREFIX}"
   "-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}"
+  "-DCMAKE_CONFIGURATION_TYPES:STRING=${CMAKE_CONFIGURATION_TYPES}"
   "-DCMAKE_CXX_COMPILER:PATH=${CMAKE_CXX_COMPILER}"
   "-DCMAKE_C_COMPILER:PATH=${CMAKE_C_COMPILER}"
 )

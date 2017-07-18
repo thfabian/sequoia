@@ -13,79 +13,65 @@
 ##
 ##===------------------------------------------------------------------------------------------===##
 
-option(NO_SYSTEM_LIBS "By default, do not use system libraries" OFF)
+if(WIN32)
+  set(NO_SYSTEM_LIBS_DEFAULT ON)
+else()
+  set(NO_SYSTEM_LIBS_DEFAULT OFF)
+endif()
 
-#
-# ZLIB
-#
+option(NO_SYSTEM_LIBS "By default, do not use system libraries" ${NO_SYSTEM_LIBS_DEFAULT})
+
+# zlib
 sequoia_find_package(
   PACKAGE ZLIB 
   FORWARD_VARS ZLIB_ROOT
 )
 
-#
 # backward
-#
 sequoia_build_package(backward)
 
-#
 # Boost
-#
 sequoia_find_package(
   PACKAGE Boost
   PACKAGE_ARGS ${boost_min_version} COMPONENTS ${boost_components}
   FORWARD_VARS BOOST_ROOT Boost_LIBRARY_DIRS Boost_INCLUDE_DIRS
 )
 
-#
 # FreeImage
-#
 sequoia_build_package(FreeImage)
 
-#
 # glbinding
-#
 sequoia_find_package(
   PACKAGE glbinding 
   PACKAGE_ARGS ${glbinding_version}
   FORWARD_VARS GLBINDING_ROOT
 )
 
-#
-# GLFW
-#
+# glfw3
 sequoia_find_package(
   PACKAGE GLFW 
   PACKAGE_ARGS ${glfw_version}
   FORWARD_VARS GLFW_ROOT
 )
 
-#
 # gli
-#
 sequoia_find_package(
   PACKAGE gli 
   PACKAGE_ARGS ${gli_version}
   FORWARD_VARS GLI_ROOT
 )
 
-#
 # glm
-#
 sequoia_find_package(
   PACKAGE glm 
   PACKAGE_ARGS ${glm_version}
   FORWARD_VARS GLM_ROOT
 )
 
-#
 # gtest
-#
 sequoia_build_package(gtest)
 
-#
-# TBB
-#
+# tbb
 sequoia_find_package(
   PACKAGE TBB 
   FORWARD_VARS TBB_ROOT_DIR
