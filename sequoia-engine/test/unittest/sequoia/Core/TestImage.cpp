@@ -30,12 +30,6 @@ TEST(ImageTest, PNGImage) {
   Environment& env = Environment::getSingleton();
   auto file = env.getFile("sequoia/Core/TestImage/Test.png");
 
-//    cv::Mat im = cv::imdecode(cv::Mat(1, file->getNumBytes(), CV_8UC1, (void*)file->getData()),
-//                              CV_LOAD_IMAGE_UNCHANGED);
-//    cv::namedWindow("k");
-//    cv::imshow("k",im);
-//    cv::waitKey(0);
-
   EXPECT_EQ(file->getNumBytes(), 193);
 
   std::shared_ptr<Image> loadedImage = Image::load(file);

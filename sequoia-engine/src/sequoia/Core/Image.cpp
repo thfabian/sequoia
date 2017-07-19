@@ -18,6 +18,7 @@
 #include "sequoia/Core/Format.h"
 #include "sequoia/Core/HashCombine.h"
 #include "sequoia/Core/Image.h"
+#include "sequoia/Core/Logging.h"
 #include "sequoia/Core/StringSwitch.h"
 #include "sequoia/Core/Unreachable.h"
 #include <gli/gli.hpp>
@@ -63,8 +64,6 @@ RegularImage::RegularImage(const std::shared_ptr<File>& file) : Image(IK_Regular
   try {
     image_ = std::make_unique<cv::Mat>(cv::imdecode(
         cv::Mat(1, file->getNumBytes(), CV_8UC1, (void*)file->getData()), CV_LOAD_IMAGE_UNCHANGED));
-    //cv::flip(*image_, *image_, 0);
-
   } catch(cv::Exception& e) {
     SEQUOIA_THROW(core::Exception, "failed to load image from file: %s: %s", file_->getPath(),
                   e.what());
@@ -84,9 +83,6 @@ RegularImage::RegularImage(const std::shared_ptr<File>& file) : Image(IK_Regular
   default:
     sequoia_unreachable("invalid color format");
   }
-
-  // Assert that there are no gaps between rows
-  SEQUOIA_ASSERT_MSG(image_->isContinuous(), "image is non-continous");
 }
 
 RegularImage::~RegularImage() {}
@@ -106,6 +102,18 @@ int RegularImage::getHeight() const noexcept { return image_->rows; }
 const cv::Mat& RegularImage::getMat() const { return *image_; }
 
 cv::Mat& RegularImage::getMat() { return *image_; }
+
+void RegularImage::show() const {
+  const char* winName = hasFile() ? getFile()->getPath().c_str() : "unknown";
+
+  try {
+    cv::namedWindow(winName);
+    cv::imshow(winName, *image_);
+    cv::waitKey(0);
+  } catch(cv::Exception& e) {
+    LOG(ERROR) << "Failed to to show image \"" << winName << "\": " << e.what();
+  }
+}
 
 std::string RegularImage::toString() const {
   return core::format("RegularImage[\n"

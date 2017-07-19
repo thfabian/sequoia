@@ -169,6 +169,14 @@ public:
   /// @brief Get the OpenCV matrix of the image
   const cv::Mat& getMat() const;
   cv::Mat& getMat();
+  
+  /// @brief Show the image in an external window
+  ///
+  /// This opens an external window and **blocks** until the window is closed or *any* key is 
+  /// pressed.
+  ///
+  /// @note This might fail if OpenCV was compiled without GUI support.
+  void show() const;
 
   static bool classof(const Image* image) { return image->getKind() == Image::IK_RegularImage; }
 };

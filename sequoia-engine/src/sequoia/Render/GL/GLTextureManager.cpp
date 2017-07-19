@@ -24,8 +24,6 @@
 #include <gli/gli.hpp>
 #include <opencv2/opencv.hpp>
 
-#include <iostream>
-
 namespace sequoia {
 
 namespace render {
@@ -246,9 +244,10 @@ void GLTextureManager::makeValid(GLTexture* texture) {
   TextureParameter& param = *texture->getParameter();
 
   // TODO: this needs to be the StateCache manager of the RessourceThread
+  GLStateCacheManager* manager = getGLRenderer().getStateCacheManager();
 
   // Bind texture to unit 0 (doesn't really matter which unit we bind it to)
-  getGLRenderer().getStateCacheManager()->bindTexture(0, texture, true);
+  manager->bindTexture(0, texture, true);
 
   if(texture->hasImage()) {
     // Uploade image to device
@@ -284,11 +283,9 @@ void GLTextureManager::makeValid(GLTexture* texture) {
     glTexParameteri(texture->target_, GL_TEXTURE_MIN_FILTER, getGLFilterKind(param.MinFilter));
   }
 
-  // TODO : this needs to be the StateCache manager of the RessourceThread
-
   // Unbind the texture. This is necessary to make sure when we bind it during rendering we also
   // set the sampler of the program.
-  getGLRenderer().getStateCacheManager()->unbindTexture(0);
+  manager->unbindTexture(0);
 
   LOG(DEBUG) << "Successfully uploaded texture (ID=" << texture->id_ << ")";
 }
