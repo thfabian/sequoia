@@ -20,11 +20,12 @@
 #include "sequoia/Core/Export.h"
 #include "sequoia/Core/File.h"
 
-struct FIBITMAP;
-struct FIMEMORY;
-
 namespace gli {
 class texture;
+}
+
+namespace cv {
+class Mat;
 }
 
 namespace sequoia {
@@ -103,24 +104,12 @@ protected:
 /// @ingroup core
 class SEQUOIA_API RegularImage final : public Image {
 protected:
-  /// Pixel data
-  unsigned char* pixelData_;
+  /// Image data
+  std::unique_ptr<cv::Mat> image_;
 
-  /// Image width in pixels (x)
-  int width_;
-
-  /// Image height in pixels (y)
-  int height_;
-
-  /// Format of the color (also encodes the number of used channels in the upper bits)
+  /// Format of the color
   ColorFormat colorFormat_;
-
-  /// FreeImage bit map
-  FIBITMAP *bitMap_, *bitMapCopy_;
-
-  /// FreeImage memory stream
-  FIMEMORY* memory_;
-
+  
 public:
   /// @brief Load image from `file`
   RegularImage(const std::shared_ptr<File>& file);
@@ -137,22 +126,27 @@ public:
   /// of `numChannels` interleaved 8-bit components; the first pixel pointed to is top-left-most in
   /// the image. There is no padding between image scanlines or between pixels, regardless of
   /// format.
-  const unsigned char* getPixelData() const { return pixelData_; }
-  unsigned char* getPixelData() { return pixelData_; }
+  const Byte* getPixelData() const;
+  Byte* getPixelData();
 
   /// @brief Get number of interleaved 8-bit components of each pixel
   inline int getNumChannels() const { return colorFormatGetNumChannels(colorFormat_); }
 
   /// @brief Get a copy of the pixel at position `(i, j)`
   ///
-  /// The image is stored in `row-major` order where `(0, 0)` is the bottome left corner. Hence,
-  /// `(0, image.getWidth() - 1)` is the bottom right corner and `(image.getHeight() - 1, 0)` is
-  /// the top left corner.
+  /// OpenCV stores the image as BGR(A) where `(0, 0)` is the top-left corner `(getHeight() - 1, 0)` 
+  /// is the bottom left corner and `(0, getWidth() - 1)` is the top right corner, respectively.
+  /// 
+  /// @verbatim
+  ///                (0, 0)          (0, getWidth() - 1)                          +-------> x (u)
+  ///                       +-----+                                               |
+  ///                       |     |                                               |
+  ///                       +-----+                                         (v)   y
+  ///  (getHeight() - 1, 0)          (getHeight() - 1, getWidth() - 1)               image(y, x)
+  /// @endverbatim
   ///
   /// @note This function should be merely used for debugging purposes.
-  inline Color at(int i, int j) const {
-    return Color(colorFormat_, pixelData_ + getNumChannels() * (i * width_ + j));
-  }
+  Color at(int i, int j) const;
 
   /// @brief Get the color format
   inline ColorFormat getColorFormat() const { return colorFormat_; }
@@ -167,10 +161,10 @@ public:
   virtual bool equals(const Image* other) const noexcept override;
 
   /// @copydoc Image::getWidth
-  virtual int getWidth() const noexcept override { return width_; }
+  virtual int getWidth() const noexcept override;
 
   /// @copydoc Image::getHeight
-  virtual int getHeight() const noexcept override { return height_; }
+  virtual int getHeight() const noexcept override;
 
   static bool classof(const Image* image) { return image->getKind() == Image::IK_RegularImage; }
 };
@@ -179,8 +173,8 @@ public:
 /// @ingroup core
 class SEQUOIA_API TextureImage final : public Image {
 protected:
-  /// Texture
-  std::unique_ptr<gli::texture> texture_;
+  /// Image data  
+  std::unique_ptr<gli::texture> image_;
 
 public:
   /// @brief Load image from `file`
@@ -205,8 +199,8 @@ public:
   virtual int getHeight() const noexcept override;
 
   /// @brief Get the texture
-  const std::unique_ptr<gli::texture>& getTexture() const { return texture_; }
-  std::unique_ptr<gli::texture>& getTexture() { return texture_; }
+  const std::unique_ptr<gli::texture>& getTexture() const { return image_; }
+  std::unique_ptr<gli::texture>& getTexture() { return image_; }
 
   static bool classof(const Image* image) { return image->getKind() == Image::IK_TextureImage; }
 };

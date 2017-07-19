@@ -69,7 +69,6 @@ include(AddBackward)
 include(AddBoost)
 include(AddCppcheck)
 include(Addccache)
-include(AddFreeImage)
 include(Addglbinding)
 include(AddGLFW)
 include(Addgli)
@@ -86,7 +85,6 @@ endif()
 set(SEQUOIA_EXTERNAL_LIBRARIES
   ${SEQUOIA_BACKWARD_LIBRARIES}
   ${SEQUOIA_BOOST_LIBRARIES}
-  ${SEQUOIA_FREEIMAGE_LIBRARIES}
   ${SEQUOIA_GLFW_LIBRARIES}
   ${SEQUOIA_GLBINDING_LIBRARIES}
   ${SEQUOIA_OPENCV_LIBRARIES}

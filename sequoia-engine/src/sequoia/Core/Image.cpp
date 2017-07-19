@@ -21,52 +21,12 @@
 #include "sequoia/Core/StringSwitch.h"
 #include "sequoia/Core/Unreachable.h"
 #include <gli/gli.hpp>
-#include <opencv2/opencv.hpp>
 #include <memory>
-#include <mutex>
-
-#include <FreeImage/FreeImage.h>
-
+#include <opencv2/opencv.hpp>
 
 namespace sequoia {
 
 namespace core {
-
-namespace {
-
-/// @brief Context of the FreeImage library
-struct FreeImageContext {
-  FreeImageContext() {
-    FreeImage_Initialise();
-    FreeImage_SetOutputMessage(FreeImageContext::ErrorHandler);
-  }
-
-  ~FreeImageContext() { FreeImage_DeInitialise(); }
-
-  /// @brief Translate FreeImage error into an exception
-  static void ErrorHandler(FREE_IMAGE_FORMAT format, const char* message) {
-    SEQUOIA_THROW(core::Exception, "failed to load image: format=%s : %s",
-                  format != FIF_UNKNOWN ? FreeImage_GetFormatFromFIF(format) : "unknown", message);
-  }
-};
-
-std::unique_ptr<FreeImageContext> freeImageContext = nullptr;
-std::once_flag freeImageContextInitFlag;
-
-static FREE_IMAGE_FORMAT GetFreeImageType(FileType type) {
-  switch(type) {
-  case FileType::Png:
-    return FIF_PNG;
-  case FileType::Jpeg:
-    return FIF_JPEG;
-  case FileType::Bmp:
-    return FIF_BMP;
-  default:
-    return FIF_UNKNOWN;
-  }
-}
-
-} // anonymous namespace
 
 Image::~Image() {}
 
@@ -76,9 +36,6 @@ const std::shared_ptr<File>& Image::getFile() const {
 }
 
 std::shared_ptr<Image> Image::load(const std::shared_ptr<File>& file) {
-  std::call_once(freeImageContextInitFlag,
-                 []() { freeImageContext = std::make_unique<FreeImageContext>(); });
-
   switch(file->getType()) {
   case FileType::Png:
   case FileType::Jpeg:
@@ -92,12 +49,6 @@ std::shared_ptr<Image> Image::load(const std::shared_ptr<File>& file) {
   }
 }
 
-std::shared_ptr<Image> Image::allocate(int width, int height, ColorFormat format) {
-  std::call_once(freeImageContextInitFlag,
-                 []() { freeImageContext = std::make_unique<FreeImageContext>(); });
-  return std::make_shared<RegularImage>(width, height, format);
-}
-
 Image::Image(Image::ImageKind kind, const std::shared_ptr<File>& file) : kind_(kind), file_(file) {}
 
 //===------------------------------------------------------------------------------------------===//
@@ -105,74 +56,68 @@ Image::Image(Image::ImageKind kind, const std::shared_ptr<File>& file) : kind_(k
 //===------------------------------------------------------------------------------------------===//
 
 RegularImage::RegularImage(int width, int height, ColorFormat format)
-    : Image(IK_RegularImage, nullptr), width_(width), height_(height), colorFormat_(format),
-      bitMap_(nullptr), bitMapCopy_(nullptr), memory_(nullptr) {
-
-  // Allocate memory
-  bitMap_ = FreeImage_Allocate(width_, height_, getNumChannels() * 8);
-
-  // Get pixel data
-  pixelData_ = FreeImage_GetBits(bitMap_);
-  SEQUOIA_ASSERT(pixelData_);
-}
+    : Image(IK_RegularImage, nullptr) {}
 
 RegularImage::RegularImage(const std::shared_ptr<File>& file)
-    : Image(IK_RegularImage, file), bitMap_(nullptr), bitMapCopy_(nullptr), memory_(nullptr) {
+    : Image(IK_RegularImage, file) {
 
-  FREE_IMAGE_FORMAT FIFormat = GetFreeImageType(file->getType());
-  SEQUOIA_ASSERT_MSG(FIFormat != FIF_UNKNOWN, "invalid image format");
-  SEQUOIA_ASSERT_MSG(FreeImage_FIFSupportsReading(FIFormat),
-                     "format cannot be read (plugin not loaded)");
+//  FREE_IMAGE_FORMAT FIFormat = GetFreeImageType(file->getType());
+//  SEQUOIA_ASSERT_MSG(FIFormat != FIF_UNKNOWN, "invalid image format");
+//  SEQUOIA_ASSERT_MSG(FreeImage_FIFSupportsReading(FIFormat),
+//                     "format cannot be read (plugin not loaded)");
 
-  // Attach the binary data to a memory stream. Note that a memory buffer wrapped by FreeImage is
-  // read-only so const cast is safe here.
-  memory_ = FreeImage_OpenMemory(const_cast<Byte*>(file_->getData()), file_->getNumBytes());
+//  // Attach the binary data to a memory stream. Note that a memory buffer wrapped by FreeImage is
+//  // read-only so const cast is safe here.
+//  memory_ = FreeImage_OpenMemory(const_cast<Byte*>(file_->getData()), file_->getNumBytes());
 
-  // Load the image from the memory stream
-  bitMap_ = FreeImage_LoadFromMemory(FIFormat, memory_, 0);
+//  // Load the image from the memory stream
+//  bitMap_ = FreeImage_LoadFromMemory(FIFormat, memory_, 0);
 
-  // Check if the image is stored in RGB or BGR
-  bool colorOrderIsRGB = FREEIMAGE_COLORORDER == FREEIMAGE_COLORORDER_RGB;
+//  // Check if the image is stored in RGB or BGR
+//  bool colorOrderIsRGB = FREEIMAGE_COLORORDER == FREEIMAGE_COLORORDER_RGB;
 
-  // Assert our image is 24 or 32 bits (8 bits per channel, Red/Green/Blue/Alpha)
-  int bitsPerPixel = FreeImage_GetBPP(bitMap_);
-  if(bitsPerPixel < 24) {
-    bitMapCopy_ = FreeImage_ConvertTo24Bits(bitMap_);
-    std::swap(bitMapCopy_, bitMap_);
-    colorFormat_ = colorOrderIsRGB ? ColorFormat::RGB : ColorFormat::BGR;
+//  // Assert our image is 24 or 32 bits (8 bits per channel, Red/Green/Blue/Alpha)
+//  int bitsPerPixel = FreeImage_GetBPP(bitMap_);
+//  if(bitsPerPixel < 24) {
+//    bitMapCopy_ = FreeImage_ConvertTo24Bits(bitMap_);
+//    std::swap(bitMapCopy_, bitMap_);
+//    colorFormat_ = colorOrderIsRGB ? ColorFormat::RGB : ColorFormat::BGR;
 
-  } else if(bitsPerPixel == 24) {
-    colorFormat_ = colorOrderIsRGB ? ColorFormat::RGB : ColorFormat::BGR;
+//  } else if(bitsPerPixel == 24) {
+//    colorFormat_ = colorOrderIsRGB ? ColorFormat::RGB : ColorFormat::BGR;
 
-  } else if(bitsPerPixel == 32) {
-    colorFormat_ = colorOrderIsRGB ? ColorFormat::RGBA : ColorFormat::BGRA;
-  }
+//  } else if(bitsPerPixel == 32) {
+//    colorFormat_ = colorOrderIsRGB ? ColorFormat::RGBA : ColorFormat::BGRA;
+//  }
 
-  // Get bitmap informations
-  width_ = FreeImage_GetWidth(bitMap_);
-  height_ = FreeImage_GetHeight(bitMap_);
+//  // Get bitmap informations
+//  width_ = FreeImage_GetWidth(bitMap_);
+//  height_ = FreeImage_GetHeight(bitMap_);
 
-  FREE_IMAGE_TYPE imageType = FreeImage_GetImageType(bitMap_);
-  FREE_IMAGE_COLOR_TYPE colorType = FreeImage_GetColorType(bitMap_);
+//  FREE_IMAGE_TYPE imageType = FreeImage_GetImageType(bitMap_);
+//  FREE_IMAGE_COLOR_TYPE colorType = FreeImage_GetColorType(bitMap_);
 
-  SEQUOIA_ASSERT_MSG(colorType == FIC_RGB || colorType == FIC_RGBALPHA, "unsupported color type");
-  SEQUOIA_ASSERT_MSG(imageType == FIT_BITMAP, "unsupported image type");
+//  SEQUOIA_ASSERT_MSG(colorType == FIC_RGB || colorType == FIC_RGBALPHA, "unsupported color type");
+//  SEQUOIA_ASSERT_MSG(imageType == FIT_BITMAP, "unsupported image type");
 
-  // Get pixel data
-  pixelData_ = FreeImage_GetBits(bitMap_);
-  SEQUOIA_ASSERT(pixelData_);
+//  // Get pixel data
+//  pixelData_ = FreeImage_GetBits(bitMap_);
+//  SEQUOIA_ASSERT(pixelData_);
 }
 
-RegularImage::~RegularImage() {
-  if(bitMap_)
-    FreeImage_Unload(bitMap_);
+RegularImage::~RegularImage() {}
 
-  if(bitMapCopy_)
-    FreeImage_Unload(bitMapCopy_);
+const Byte* RegularImage::getPixelData() const { return image_->ptr(); }
 
-  if(memory_)
-    FreeImage_CloseMemory(memory_);
+Byte* RegularImage::getPixelData() { return image_->ptr(); }
+
+Color RegularImage::at(int i, int j) const {
+  return Color(colorFormat_, image_->ptr() + image_->channels() * (i * image_->rows + j));
 }
+
+int RegularImage::getWidth() const noexcept { return image_->rows; }
+
+int RegularImage::getHeight() const noexcept { return image_->cols; }
 
 std::string RegularImage::toString() const {
   return core::format("RegularImage[\n"
@@ -180,11 +125,10 @@ std::string RegularImage::toString() const {
                       "  pixelData = %#016x\n"
                       "  width = %i,\n"
                       "  height = %i,\n"
-                      "  colorFormat = %s,\n"
                       "  numChannels = %i\n"
                       "]",
-                      file_ ? file_->getPath() : "null", (std::size_t)pixelData_, width_, height_,
-                      colorFormat_, getNumChannels());
+                      file_ ? file_->getPath() : "null", (std::size_t)getPixelData(), getWidth(),
+                      getHeight(), getNumChannels());
 }
 
 bool RegularImage::equals(const Image* other) const noexcept {
@@ -194,10 +138,7 @@ bool RegularImage::equals(const Image* other) const noexcept {
   const RegularImage* thisImage = dyn_cast<RegularImage>(this);
   const RegularImage* otherImage = dyn_cast<RegularImage>(other);
 
-  return thisImage->pixelData_ == otherImage->pixelData_ &&     //
-         thisImage->width_ == otherImage->width_ &&             //
-         thisImage->height_ == otherImage->height_ &&           //
-         thisImage->colorFormat_ == otherImage->colorFormat_ && //
+  return thisImage->getPixelData() == thisImage->getPixelData() &&
          ((thisImage->hasFile() && otherImage->hasFile()) ? *thisImage->file_ == *otherImage->file_
                                                           : thisImage->file_ == otherImage->file_);
 }
@@ -206,7 +147,7 @@ std::size_t RegularImage::hash() const noexcept {
   std::size_t seed = 0;
   if(hasFile())
     core::hashCombine(seed, file_->hash());
-  core::hashCombine(seed, pixelData_, width_, height_, colorFormat_);
+  core::hashCombine(seed, getPixelData());
   return seed;
 }
 
@@ -219,10 +160,10 @@ TextureImage::TextureImage(const std::shared_ptr<File>& file) : Image(IK_Texture
                      "only DDS can be loaded as texture image (yet)");
 
   // gli::load dispatches to the correct decoder
-  texture_ = std::make_unique<gli::texture>(
+  image_ = std::make_unique<gli::texture>(
       gli::load(reinterpret_cast<char const*>(file_->getData()), file_->getNumBytes()));
 
-  if(texture_->empty())
+  if(image_->empty())
     SEQUOIA_THROW(core::Exception, "failed to load texture image of file: %s", file_->getPath());
 }
 
@@ -230,7 +171,7 @@ TextureImage::~TextureImage() {}
 
 std::size_t TextureImage::hash() const noexcept {
   std::size_t seed = 0;
-  core::hashCombine(seed, file_->hash(), std::hash<std::unique_ptr<gli::texture>>()(texture_));
+  core::hashCombine(seed, file_->hash(), std::hash<std::unique_ptr<gli::texture>>()(image_));
   return seed;
 }
 
@@ -241,8 +182,8 @@ std::string TextureImage::toString() const {
                       "  height = %i,\n"
                       "  levels = %i\n"
                       "]",
-                      file_->getPath(), texture_->extent()[0], texture_->extent()[1],
-                      texture_->levels());
+                      file_->getPath(), image_->extent()[0], image_->extent()[1],
+                      image_->levels());
 }
 
 bool TextureImage::equals(const Image* other) const noexcept {
@@ -252,12 +193,12 @@ bool TextureImage::equals(const Image* other) const noexcept {
   const TextureImage* thisImage = dyn_cast<TextureImage>(this);
   const TextureImage* otherImage = dyn_cast<TextureImage>(other);
 
-  return *(thisImage->texture_) == *(otherImage->texture_) &&
+  return *(thisImage->image_) == *(otherImage->image_) &&
          *(thisImage->file_) == *(otherImage->file_);
 }
 
-int TextureImage::getWidth() const noexcept { return texture_->extent()[0]; }
-int TextureImage::getHeight() const noexcept { return texture_->extent()[1]; }
+int TextureImage::getWidth() const noexcept { return image_->extent()[0]; }
+int TextureImage::getHeight() const noexcept { return image_->extent()[1]; }
 
 } // namespace core
 
