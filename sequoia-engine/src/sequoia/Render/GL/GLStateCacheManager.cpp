@@ -66,7 +66,10 @@ class GLRenderStateCache final : public RenderStateCache {
 
   /// Viewport
   int x_, y_, width_, height_;
-
+  
+  /// Current set pixel format 
+  GLPixelFormat pixelFormat_;
+  
 public:
   GLRenderStateCache()
       : RenderStateCache(), activeTextureUnit_(-1), x_(-1), y_(-1), width_(-1), height_(-1) {
@@ -170,6 +173,20 @@ public:
 
   /// @brief Reset the uniform variables
   void resetUniformVariables() { programUniformMap_.clear(); }
+  
+  /// @brief Set the pixel format
+  void setPixelFormat(const GLPixelFormat& pixelFormat) {
+    for(const auto& formatPair : pixelFormat.format_) {
+      GLenum param = formatPair.first;
+      int value = formatPair.second;
+  
+      auto it = pixelFormat_.format_.find(param);
+      if(it == pixelFormat_.format_.end() || it->second != value) {
+        glPixelStorei(formatPair.first, formatPair.second);
+        pixelFormat_.set(param, value);
+      }
+    }
+  }
 
 protected:
   /// @brief Enable/Disable the capability `cap`
@@ -274,7 +291,20 @@ protected:
   }
 };
 
-GLStateCacheManager::GLStateCacheManager() { stateCache_ = std::make_unique<GLRenderStateCache>(); }
+GLStateCacheManager::GLStateCacheManager() {
+  stateCache_ = std::make_unique<GLRenderStateCache>();
+
+  // Query the default pixel format
+  auto getAndSetPixelFormat = [this](GLenum param) {
+    int value = get<int>(param);
+    defaultPixelFormat_.set(param, value);
+  };
+
+  getAndSetPixelFormat(GL_UNPACK_ALIGNMENT);
+  getAndSetPixelFormat(GL_UNPACK_ROW_LENGTH);
+
+  stateCache_->setPixelFormat(defaultPixelFormat_);
+}
 
 bool GLStateCacheManager::draw(DrawCommand* command) {
   if(!command->getProgram()->isValid())
@@ -342,6 +372,12 @@ void GLStateCacheManager::setViewport(Viewport* viewport) {
                            viewport->getHeight());
 }
 
+void GLStateCacheManager::setPixelFormat(const GLPixelFormat& pixelFormat) {
+  stateCache_->setPixelFormat(pixelFormat);
+}
+
+void GLStateCacheManager::resetPixelFormat() { stateCache_->setPixelFormat(defaultPixelFormat_); }
+
 void GLStateCacheManager::frameListenerRenderingBegin(RenderTarget* target) {
   stateCache_->resetUniformVariables();
 }
@@ -371,6 +407,14 @@ double GLStateCacheManager::getImpl(GLenum param, double) const noexcept {
   glGetDoublev(param, &value);
   return value;
 }
+
+int GLPixelFormat::get(GLenum param) const noexcept {
+  auto it = format_.find(param);
+  SEQUOIA_ASSERT(format_.end() != it);
+  return it->second;
+}
+
+void GLPixelFormat::set(GLenum param, int value) noexcept { format_.emplace(param, value); }
 
 } // namespace render
 

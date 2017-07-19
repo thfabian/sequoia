@@ -13,6 +13,12 @@
 ##
 ##===------------------------------------------------------------------------------------------===##
 
+if(UNIX)
+  set(gui_arg -DWITH_GTK:BOOL=ON -DWITH_GTK_2_X:BOOL=ON)
+else()
+
+endif()
+
 ExternalProject_Add(
   opencv
   DOWNLOAD_DIR ${download_dir}

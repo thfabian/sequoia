@@ -22,6 +22,9 @@
 #include "sequoia/Render/GL/GLStateCacheManager.h"
 #include "sequoia/Render/GL/GLTextureManager.h"
 #include <gli/gli.hpp>
+#include <opencv2/opencv.hpp>
+
+#include <iostream>
 
 namespace sequoia {
 
@@ -100,12 +103,28 @@ static void allocateTexture(GLenum target, int width, int height, GLenum interna
 }
 
 /// @brief Upload regular image to device
-static void copyRegularImage(GLenum target, const RegularImage* image) {
+///
+/// https://stackoverflow.com/questions/16809833/opencv-image-loading-for-opengl-texture
+static void uploadRegularImage(GLenum target, const RegularImage* image) {
+
+  // TODO: this needs to be the StateCache manager of the RessourceThread
+  GLStateCacheManager* manager = getGLRenderer().getStateCacheManager();
+
+  // We need to vertically flip OpenCV images as OpenGL expects (0, 0) to be in the bottom left
+  // corner and not in top left!
+  cv::Mat imageFlipped;
+  cv::flip(image->getMat(), imageFlipped, 0);
+
+  // Set pixel storage parameter
+  GLPixelFormat format = manager->getDefaultPixelFormat();
+  format.set(GL_UNPACK_ALIGNMENT, imageFlipped.step[0] & 3 ? 1 : 4);
+  format.set(GL_UNPACK_ROW_LENGTH, imageFlipped.step[0] / imageFlipped.elemSize());
+  manager->setPixelFormat(format);
+
   switch(target) {
   case GL_TEXTURE_2D:
-    glTexImage2D(target, 0, GL_RGBA, image->getWidth(), image->getHeight(), 0,
-                 getGLColorFormat(image->getColorFormat()), GL_UNSIGNED_BYTE,
-                 image->getPixelData());
+    glTexImage2D(target, 0, GL_RGBA, imageFlipped.cols, imageFlipped.rows, 0,
+                 getGLColorFormat(image->getColorFormat()), GL_UNSIGNED_BYTE, imageFlipped.ptr());
     break;
   case GL_TEXTURE_1D:
   case GL_TEXTURE_3D:
@@ -113,10 +132,13 @@ static void copyRegularImage(GLenum target, const RegularImage* image) {
   default:
     sequoia_unreachable("not yet implemented");
   }
+
+  // Reset the pixel storage parameters
+  manager->resetPixelFormat();
 }
 
 /// @brief Upload (compressed) texture image to device
-static void copyTextureImage(GLenum target, const TextureImage* image) {
+static void uploadTextureImage(GLenum target, const TextureImage* image) {
   const gli::texture& gliTexture = image->getTexture();
 
   gli::gl GLTranslator(gli::gl::PROFILE_GL33);
@@ -231,11 +253,11 @@ void GLTextureManager::makeValid(GLTexture* texture) {
   if(texture->hasImage()) {
     // Uploade image to device
     if(RegularImage* image = dyn_cast<RegularImage>(texture->getImage().get())) {
-      copyRegularImage(texture->target_, image);
+      uploadRegularImage(texture->target_, image);
       if(param.UseMipmap)
         glGenerateMipmap(texture->target_);
     } else if(TextureImage* image = dyn_cast<TextureImage>(texture->getImage().get()))
-      copyTextureImage(texture->target_, image);
+      uploadTextureImage(texture->target_, image);
     else
       sequoia_unreachable("invalid image format");
 

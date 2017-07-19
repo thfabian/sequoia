@@ -30,6 +30,22 @@ namespace render {
 
 class GLRenderStateCache;
 
+/// @brief Pixel storage modes
+/// @see https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/glPixelStore.xhtml
+class SEQUOIA_API GLPixelFormat {
+  friend class GLRenderStateCache;
+
+  /// Map of the the parameter of the pixel format to their respective values
+  std::unordered_map<GLenum, int> format_;
+
+public:
+  /// @brief Get the value of `param`
+  int get(GLenum param) const noexcept;
+
+  /// @brief Set the `value` of `param`
+  void set(GLenum param, int value) noexcept;
+};
+
 /// @brief Manager of the OpenGL state-machine
 ///
 /// This keeps an in-memory copy of the OpenGL state-machine to avoid unnecessary state changes.
@@ -39,6 +55,9 @@ class SEQUOIA_API GLStateCacheManager : public FrameListener, public NonCopyable
 
   /// In-memory version of the OpenGL state
   std::shared_ptr<GLRenderStateCache> stateCache_;
+  
+  /// Default pixel format
+  GLPixelFormat defaultPixelFormat_;
 
 public:
   GLStateCacheManager();
@@ -86,6 +105,18 @@ public:
   /// @brief Set the viewport geometry
   void setViewport(int x, int y, int width, int height);
   void setViewport(Viewport* viewport);
+
+  /// @brief Get the default `GLPixelFormat`
+  GLPixelFormat getDefaultPixelFormat() const noexcept { return defaultPixelFormat_; }
+
+  /// @brief Set the pixel storage mode to `format`
+  ///
+  /// This affects all subsequent calls to `glReadPixels` as well as the unpacking of textures (e.g
+  /// `glTexImage2D`).
+  void setPixelFormat(const GLPixelFormat& format);
+
+  /// @brief Reset the pixel storage format mode to it's default
+  void resetPixelFormat();
 
   void frameListenerRenderingBegin(RenderTarget* target) override;
   void frameListenerRenderingEnd(RenderTarget* target) override;
