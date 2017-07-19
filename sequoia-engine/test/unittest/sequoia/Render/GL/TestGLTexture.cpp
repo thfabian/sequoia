@@ -83,7 +83,7 @@ TEST_F(GLTextureTest, LoadTexture2DCompressed) {
 
   GLTexture* gltexture = dyn_cast<GLTexture>(texture.get());
   ASSERT_TRUE(isa<TextureImage>(image.get()));
-  const gli::texture& gliTexture = *dyn_cast<TextureImage>(image.get())->getTexture();
+  const gli::texture& gliTexture = dyn_cast<TextureImage>(image.get())->getTexture();
 
   // Base level
   {

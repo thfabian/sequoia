@@ -34,8 +34,8 @@ namespace core {
 
 /// @brief Image interface
 ///
-/// To load and save images use Image::load and Image::save, respectivly.
-/// @ingroup core
+/// To load and save images use Image::load and Image::save, respectively.
+/// @ingroup corerespectivly
 class SEQUOIA_API Image {
 public:
   /// @brief RTTI discriminator
@@ -109,7 +109,7 @@ protected:
 
   /// Format of the color
   ColorFormat colorFormat_;
-  
+
 public:
   /// @brief Load image from `file`
   RegularImage(const std::shared_ptr<File>& file);
@@ -134,9 +134,9 @@ public:
 
   /// @brief Get a copy of the pixel at position `(i, j)`
   ///
-  /// OpenCV stores the image as BGR(A) where `(0, 0)` is the top-left corner `(getHeight() - 1, 0)` 
+  /// OpenCV stores the image as BGR(A) where `(0, 0)` is the top-left corner `(getHeight() - 1, 0)`
   /// is the bottom left corner and `(0, getWidth() - 1)` is the top right corner, respectively.
-  /// 
+  ///
   /// @verbatim
   ///                (0, 0)          (0, getWidth() - 1)                          +-------> x (u)
   ///                       +-----+                                               |
@@ -166,6 +166,10 @@ public:
   /// @copydoc Image::getHeight
   virtual int getHeight() const noexcept override;
 
+  /// @brief Get the OpenCV matrix of the image
+  const cv::Mat& getMat() const;
+  cv::Mat& getMat();
+
   static bool classof(const Image* image) { return image->getKind() == Image::IK_RegularImage; }
 };
 
@@ -173,7 +177,7 @@ public:
 /// @ingroup core
 class SEQUOIA_API TextureImage final : public Image {
 protected:
-  /// Image data  
+  /// Image data
   std::unique_ptr<gli::texture> image_;
 
 public:
@@ -198,9 +202,9 @@ public:
   /// @copydoc Image::getHeight
   virtual int getHeight() const noexcept override;
 
-  /// @brief Get the texture
-  const std::unique_ptr<gli::texture>& getTexture() const { return image_; }
-  std::unique_ptr<gli::texture>& getTexture() { return image_; }
+  /// @brief Get the gli texture of the image
+  const gli::texture& getTexture() const;
+  gli::texture& getTexture();
 
   static bool classof(const Image* image) { return image->getKind() == Image::IK_TextureImage; }
 };

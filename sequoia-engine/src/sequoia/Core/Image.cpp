@@ -58,51 +58,30 @@ Image::Image(Image::ImageKind kind, const std::shared_ptr<File>& file) : kind_(k
 RegularImage::RegularImage(int width, int height, ColorFormat format)
     : Image(IK_RegularImage, nullptr) {}
 
-RegularImage::RegularImage(const std::shared_ptr<File>& file)
-    : Image(IK_RegularImage, file) {
+RegularImage::RegularImage(const std::shared_ptr<File>& file) : Image(IK_RegularImage, file) {
 
-//  FREE_IMAGE_FORMAT FIFormat = GetFreeImageType(file->getType());
-//  SEQUOIA_ASSERT_MSG(FIFormat != FIF_UNKNOWN, "invalid image format");
-//  SEQUOIA_ASSERT_MSG(FreeImage_FIFSupportsReading(FIFormat),
-//                     "format cannot be read (plugin not loaded)");
+  try {
+    image_ = std::make_unique<cv::Mat>(cv::imdecode(
+        cv::Mat(1, file->getNumBytes(), CV_8UC1, (void*)file->getData()), CV_LOAD_IMAGE_UNCHANGED));
+  } catch(cv::Exception& e) {
+    SEQUOIA_THROW(core::Exception, "failed to load image from file: %s: %s", file_->getPath(),
+                  e.what());
+  }
 
-//  // Attach the binary data to a memory stream. Note that a memory buffer wrapped by FreeImage is
-//  // read-only so const cast is safe here.
-//  memory_ = FreeImage_OpenMemory(const_cast<Byte*>(file_->getData()), file_->getNumBytes());
+  if(image_->empty())
+    SEQUOIA_THROW(core::Exception, "failed to load image from file: %s", file_->getPath());
 
-//  // Load the image from the memory stream
-//  bitMap_ = FreeImage_LoadFromMemory(FIFormat, memory_, 0);
-
-//  // Check if the image is stored in RGB or BGR
-//  bool colorOrderIsRGB = FREEIMAGE_COLORORDER == FREEIMAGE_COLORORDER_RGB;
-
-//  // Assert our image is 24 or 32 bits (8 bits per channel, Red/Green/Blue/Alpha)
-//  int bitsPerPixel = FreeImage_GetBPP(bitMap_);
-//  if(bitsPerPixel < 24) {
-//    bitMapCopy_ = FreeImage_ConvertTo24Bits(bitMap_);
-//    std::swap(bitMapCopy_, bitMap_);
-//    colorFormat_ = colorOrderIsRGB ? ColorFormat::RGB : ColorFormat::BGR;
-
-//  } else if(bitsPerPixel == 24) {
-//    colorFormat_ = colorOrderIsRGB ? ColorFormat::RGB : ColorFormat::BGR;
-
-//  } else if(bitsPerPixel == 32) {
-//    colorFormat_ = colorOrderIsRGB ? ColorFormat::RGBA : ColorFormat::BGRA;
-//  }
-
-//  // Get bitmap informations
-//  width_ = FreeImage_GetWidth(bitMap_);
-//  height_ = FreeImage_GetHeight(bitMap_);
-
-//  FREE_IMAGE_TYPE imageType = FreeImage_GetImageType(bitMap_);
-//  FREE_IMAGE_COLOR_TYPE colorType = FreeImage_GetColorType(bitMap_);
-
-//  SEQUOIA_ASSERT_MSG(colorType == FIC_RGB || colorType == FIC_RGBALPHA, "unsupported color type");
-//  SEQUOIA_ASSERT_MSG(imageType == FIT_BITMAP, "unsupported image type");
-
-//  // Get pixel data
-//  pixelData_ = FreeImage_GetBits(bitMap_);
-//  SEQUOIA_ASSERT(pixelData_);
+  // OpenCV images are *always* BGR(A)
+  switch(image_->channels()) {
+  case 3:
+    colorFormat_ = ColorFormat::BGR;
+    break;
+  case 4:
+    colorFormat_ = ColorFormat::BGRA;
+    break;
+  default:
+    sequoia_unreachable("invalid color format");
+  }
 }
 
 RegularImage::~RegularImage() {}
@@ -118,6 +97,10 @@ Color RegularImage::at(int i, int j) const {
 int RegularImage::getWidth() const noexcept { return image_->rows; }
 
 int RegularImage::getHeight() const noexcept { return image_->cols; }
+
+const cv::Mat& RegularImage::getMat() const { return *image_; }
+
+cv::Mat& RegularImage::getMat() { return *image_; }
 
 std::string RegularImage::toString() const {
   return core::format("RegularImage[\n"
@@ -164,7 +147,7 @@ TextureImage::TextureImage(const std::shared_ptr<File>& file) : Image(IK_Texture
       gli::load(reinterpret_cast<char const*>(file_->getData()), file_->getNumBytes()));
 
   if(image_->empty())
-    SEQUOIA_THROW(core::Exception, "failed to load texture image of file: %s", file_->getPath());
+    SEQUOIA_THROW(core::Exception, "failed to load texture image from file: %s", file_->getPath());
 }
 
 TextureImage::~TextureImage() {}
@@ -199,6 +182,10 @@ bool TextureImage::equals(const Image* other) const noexcept {
 
 int TextureImage::getWidth() const noexcept { return image_->extent()[0]; }
 int TextureImage::getHeight() const noexcept { return image_->extent()[1]; }
+
+const gli::texture&TextureImage::getTexture() const { return *image_; }
+
+gli::texture&TextureImage::getTexture() { return *image_; }
 
 } // namespace core
 

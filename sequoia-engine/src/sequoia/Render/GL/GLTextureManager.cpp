@@ -117,7 +117,7 @@ static void copyRegularImage(GLenum target, const RegularImage* image) {
 
 /// @brief Upload (compressed) texture image to device
 static void copyTextureImage(GLenum target, const TextureImage* image) {
-  const gli::texture& gliTexture = *image->getTexture();
+  const gli::texture& gliTexture = image->getTexture();
 
   gli::gl GLTranslator(gli::gl::PROFILE_GL33);
   gli::gl::format format = GLTranslator.translate(gliTexture.format(), gliTexture.swizzles());
