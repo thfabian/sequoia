@@ -19,6 +19,7 @@
 #include "sequoia/Unittest/Environment.h"
 #include <gli/gli.hpp>
 #include <gtest/gtest.h>
+#include <opencv2/opencv.hpp>
 
 using namespace sequoia;
 using namespace sequoia::unittest;
@@ -28,6 +29,10 @@ namespace {
 TEST(ImageTest, PNGImage) {
   Environment& env = Environment::getSingleton();
   auto file = env.getFile("sequoia/Core/TestImage/Test.png");
+  
+//  cv::Mat rawData(1, file->getNumBytes(), CV_8UC1, (void*) file->getData());
+//  cv::Mat im = cv::imdecode(rawData, CV_LOAD_IMAGE_COLOR);
+//  std::cout << im << std::endl;
 
   EXPECT_EQ(file->getNumBytes(), 193);
 

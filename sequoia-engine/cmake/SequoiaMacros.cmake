@@ -44,25 +44,32 @@ endmacro()
 ##    FOUND:BOOL=<>               - Was the package found?
 ##
 macro(sequoia_gen_package_info_str PACKAGE VERSION_STR FOUND)
+  set(length 20)
+
   string(LENGTH ${PACKAGE} package_name_length)
-  math(EXPR indent_length "20 - ${package_name_length}")
+  math(EXPR indent_length "${length} - ${package_name_length}")
 
   set(full_indent "                    ") 
-  string(SUBSTRING ${full_indent} "0" "${indent_length}" indent)
+  string(SUBSTRING ${full_indent} "0" "${indent_length}" indent1)
 
-  set(info "found")
   if(NOT(${FOUND}))
     set(info "NOT found")
+    string(SUBSTRING ${full_indent} "0" "11" indent2)
+  else()
+    set(info "found")
+    string(SUBSTRING ${full_indent} "0" "15" indent2)
   endif()
 
   if(NOT("${VERSION_STR}" STREQUAL ""))
-    set(info "${info} (${VERSION_STR})")
+    set(version "${VERSION_STR}")
+  else()
+    set(version "-")
   endif()
   
   if(NOT(DEFINED SEQUOIA_PACKAGE_INFO))
     set(SEQUOIA_PACKAGE_INFO CACHE BOOL "Information about the found packages" FORCE)
   endif()
-  list(APPEND SEQUOIA_PACKAGE_INFO "${PACKAGE}${indent}: ${info}")
+  list(APPEND SEQUOIA_PACKAGE_INFO "${PACKAGE}${indent1}: ${info}${indent2} ${version}")
 endmacro()
 
 ## sequoia_export_package_variable
@@ -389,30 +396,6 @@ macro(sequoia_check_compiler)
       message(WARNING "
       ### You appear to be using a compiler that is not yet tested with Sequoia.
       ")
-  endif()
-endmacro()
-
-## sequoia_set_default_build_type
-## ------------------------------
-##
-## Set the build-type if nothing was specified by the user.
-##
-##    BUILD_TYPE:STRING=<>      - CMake build-type, one of ["Debug", 
-##                                                          "Release", 
-##                                                          "RelWithDebInfo",
-##                                                          "MinSizeRel"]
-##
-macro(sequoia_set_default_build_type BUILD_TYPE)
-  set(supported_build_types "Debug" "Release" "RelWithDebInfo" "MinSizeRel")
-  
-  if(NOT("${BUILD_TYPE}" IN_LIST supported_build_types))
-      message(FATAL_ERROR 
-              "Unknown build-type (${BUILD_TYPE}), supported values are: ${supported_build_types}")
-  endif()
-  
-  if(NOT CMAKE_BUILD_TYPE)
-    set(CMAKE_BUILD_TYPE "${BUILD_TYPE}" CACHE STRING 
-        "Choose the type of build, options are: Debug Release RelWithDebInfo MinSizeRel" FORCE)
   endif()
 endmacro()
 

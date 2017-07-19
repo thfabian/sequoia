@@ -13,7 +13,7 @@
 ##
 ##===------------------------------------------------------------------------------------------===##
 
-find_package(GLFW REQUIRED)
+find_package(GLFW 3.2.1 REQUIRED)
 include_directories(SYSTEM ${GLFW_INCLUDE_DIRS})
 
 sequoia_export_package(

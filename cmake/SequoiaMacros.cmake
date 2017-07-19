@@ -210,7 +210,7 @@ macro(sequoia_find_package)
     # Has the system the package?
     find_package(${ARG_PACKAGE} ${ARG_PACKAGE_ARGS})
 
-    if(${ARG_PACKAGE}_FOUND)
+    if(${ARG_PACKAGE}_FOUND OR ${ARG_PACKAGE}_DIR) 
       # YES.. use it!
       set(use_system TRUE)
 

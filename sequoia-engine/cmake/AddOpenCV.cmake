@@ -13,38 +13,13 @@
 ##
 ##===------------------------------------------------------------------------------------------===##
 
-#.rst:
-# Findccache
-# ----------
-#
-# This script locates ccache. This script makes use of the standard find_package arguments 
-# ``REQUIRED`` and ``QUIET``. CCACHE_FOUND will report if ccache has been found.
-#
-# Result Variables
-# ^^^^^^^^^^^^^^^^
-#
-# Defines the following variables:
-#
-#   CCACHE_FOUND           - System has ccache
-#   CCACHE_EXECUTABLE      - The location ccache
-#
-# Hints
-# ^^^^^
-#
-# You can directly set ``CCACHE_EXECUTABLE`` if the script has trouble finding ccache.
+find_package(OpenCV NO_MODULE REQUIRED core highgui imgcodecs imgproc)
+include_directories(SYSTEM ${OpenCV_INCLUDE_DIRS})
 
-include(FindPackageHandleStandardArgs)
-
-if(NOT DEFINED CCACHE_EXECUTABLE)
-  find_program(CCACHE_EXECUTABLE NAMES ccache)
-endif()
-
-find_package_handle_standard_args(ccache 
-  FOUND_VAR 
-    CCACHE_FOUND 
-  REQUIRED_VARS 
-    CCACHE_EXECUTABLE
+sequoia_export_package(
+  PACKAGE OpenCV
+  FOUND ${OPENCV_FOUND} 
+  VERSION_STR "${OpenCV_VERSION}" 
+  LIBRARIES ${OpenCV_LIBS}
 )
-
-mark_as_advanced(CCACHE_EXECUTABLE)
 

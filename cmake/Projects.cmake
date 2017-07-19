@@ -91,6 +91,14 @@ set(gtest_url "https://github.com/google/googletest/archive/release-${gtest_vers
 set(gtest_md5 "4ff6353b2560df0afecfbda3b2763847")
 
 #
+# OpenCV
+#
+list(APPEND projects opencv)
+set(opencv_version "3.2.0")
+set(opencv_url "https://github.com/opencv/opencv/archive/${opencv_version}.tar.gz")
+set(opencv_md5 "a43b65488124ba33dde195fea9041b70")
+
+#
 # TBB
 #
 list(APPEND projects tbb)

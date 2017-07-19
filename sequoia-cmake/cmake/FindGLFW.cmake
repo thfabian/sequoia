@@ -184,27 +184,44 @@ else()
      -ldl
     )
 
-    find_library(GLFW_glfw_LIBRARY
-      NAMES 
-        glfw
-        glfw3
-      HINTS
-        "${GLFW_ROOT}/lib"
-        "$ENV{GLFW_ROOT}/lib"
-        "${GLFW_ROOT}/lib/x11"
-        "$ENV{GLFW_ROOT}/lib/x11"
-      PATHS
-        /usr/lib64
-        /usr/lib
-        /usr/lib/${CMAKE_LIBRARY_ARCHITECTURE}
-        /usr/local/lib64
-        /usr/local/lib
-        /usr/local/lib/${CMAKE_LIBRARY_ARCHITECTURE}
-        /usr/openwin/lib
-        /usr/X11R6/lib
-      DOC 
-        "The GLFW library"
-    )
+    if(DEFINED GLFW_ROOT) 
+      find_library(GLFW_glfw_LIBRARY
+        NAMES 
+          glfw
+          glfw3
+        NO_DEFAULT_PATH
+        NO_CMAKE_SYSTEM_PATH
+        PATHS
+          "${GLFW_ROOT}/lib"
+          "$ENV{GLFW_ROOT}/lib"
+          "${GLFW_ROOT}/lib/x11"
+          "$ENV{GLFW_ROOT}/lib/x11"
+        DOC 
+          "The GLFW library"
+      )
+    else()
+      find_library(GLFW_glfw_LIBRARY
+        NAMES 
+          glfw
+          glfw3
+        HINTS
+          "${GLFW_ROOT}/lib"
+          "$ENV{GLFW_ROOT}/lib"
+          "${GLFW_ROOT}/lib/x11"
+          "$ENV{GLFW_ROOT}/lib/x11"
+        PATHS
+          /usr/lib64
+          /usr/lib
+          /usr/lib/${CMAKE_LIBRARY_ARCHITECTURE}
+          /usr/local/lib64
+          /usr/local/lib
+          /usr/local/lib/${CMAKE_LIBRARY_ARCHITECTURE}
+          /usr/openwin/lib
+          /usr/X11R6/lib
+        DOC 
+          "The GLFW library"
+      )
+    endif()
   endif()
 endif()
 

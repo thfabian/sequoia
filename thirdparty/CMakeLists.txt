@@ -55,21 +55,19 @@ sequoia_find_package(
 )
 
 # gli
-sequoia_find_package(
-  PACKAGE gli 
-  PACKAGE_ARGS ${gli_version}
-  FORWARD_VARS GLI_ROOT
-)
+sequoia_build_package(gli)
 
 # glm
-sequoia_find_package(
-  PACKAGE glm 
-  PACKAGE_ARGS ${glm_version}
-  FORWARD_VARS GLM_ROOT
-)
+sequoia_build_package(glm)
 
 # gtest
 sequoia_build_package(gtest)
+
+# OpenCV
+sequoia_find_package(
+  PACKAGE OpenCV 
+  PACKAGE_ARGS NO_MODULE QUIET
+)
 
 # tbb
 sequoia_find_package(

@@ -18,10 +18,15 @@ if(NOT CMAKE_BUILD_TYPE)
       "Choose the type of build, options are: Debug Release RelWithDebInfo MinSizeRel." FORCE)
 endif()
 
+if(DEFINED CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
+  set(CMAKE_CONFIGURATION_TYPES ${CMAKE_BUILD_TYPE})
+endif()
+
 project(SequoiaEngine C CXX)
 cmake_minimum_required(VERSION 3.3)
 
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake" "${CMAKE_SOURCE_DIR}/cmake/modules")
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/../sequoia-cmake/cmake")
 
 ##===-------------------------------------- CMake modules -------------------------------------===##
 include(SequoiaIncludeGuard)
@@ -35,9 +40,6 @@ sequoia_check_in_source_build()
 
 # Check compliance of compiler
 sequoia_check_compiler()
-
-# Set default build-type
-sequoia_set_default_build_type(Release)
 
 # Set C++ standard
 sequoia_set_cxx_standard(c++14)
@@ -72,6 +74,7 @@ include(Addglbinding)
 include(AddGLFW)
 include(Addgli)
 include(Addglm)
+include(AddOpenCV)
 include(AddOpenGL)
 include(AddPython3)
 include(AddTBB)
@@ -86,6 +89,7 @@ set(SEQUOIA_EXTERNAL_LIBRARIES
   ${SEQUOIA_FREEIMAGE_LIBRARIES}
   ${SEQUOIA_GLFW_LIBRARIES}
   ${SEQUOIA_GLBINDING_LIBRARIES}
+  ${SEQUOIA_OPENCV_LIBRARIES}
   ${SEQUOIA_OPENGL_LIBRARIES}
   ${SEQUOIA_TBB_LIBRARIES}
   ${SEQUOIA_THREADS_LIBRARIES}

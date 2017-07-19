@@ -20,10 +20,13 @@
 #include "sequoia/Core/Image.h"
 #include "sequoia/Core/StringSwitch.h"
 #include "sequoia/Core/Unreachable.h"
-#include <FreeImage/FreeImage.h>
 #include <gli/gli.hpp>
+#include <opencv2/opencv.hpp>
 #include <memory>
 #include <mutex>
+
+#include <FreeImage/FreeImage.h>
+
 
 namespace sequoia {
 
