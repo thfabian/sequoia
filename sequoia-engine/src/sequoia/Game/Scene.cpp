@@ -27,6 +27,7 @@
 #include "sequoia/Render/DrawCommandList.h"
 #include "sequoia/Render/RenderWindow.h"
 
+// TODO: Remove me
 #include "sequoia/Render/Texture.h"
 
 namespace sequoia {
@@ -83,7 +84,7 @@ void Scene::makeDummyScene() {
   setActiveCamera(std::make_shared<render::Camera>(math::vec3(0, 5, 5)));
 
   std::shared_ptr<SceneNode> cubeOrigin = SceneNode::create("TestCubeOrigin");
-
+  
   MeshParameter cubeMeshParam;
   cubeMeshParam.TexCoordInvertV = true;
 

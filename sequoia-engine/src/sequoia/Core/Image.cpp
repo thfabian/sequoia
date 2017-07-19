@@ -63,6 +63,8 @@ RegularImage::RegularImage(const std::shared_ptr<File>& file) : Image(IK_Regular
   try {
     image_ = std::make_unique<cv::Mat>(cv::imdecode(
         cv::Mat(1, file->getNumBytes(), CV_8UC1, (void*)file->getData()), CV_LOAD_IMAGE_UNCHANGED));
+    //cv::flip(*image_, *image_, 0);
+
   } catch(cv::Exception& e) {
     SEQUOIA_THROW(core::Exception, "failed to load image from file: %s: %s", file_->getPath(),
                   e.what());
@@ -82,6 +84,9 @@ RegularImage::RegularImage(const std::shared_ptr<File>& file) : Image(IK_Regular
   default:
     sequoia_unreachable("invalid color format");
   }
+
+  // Assert that there are no gaps between rows
+  SEQUOIA_ASSERT_MSG(image_->isContinuous(), "image is non-continous");
 }
 
 RegularImage::~RegularImage() {}
@@ -94,9 +99,9 @@ Color RegularImage::at(int i, int j) const {
   return Color(colorFormat_, image_->ptr() + image_->channels() * (i * image_->rows + j));
 }
 
-int RegularImage::getWidth() const noexcept { return image_->rows; }
+int RegularImage::getWidth() const noexcept { return image_->cols; }
 
-int RegularImage::getHeight() const noexcept { return image_->cols; }
+int RegularImage::getHeight() const noexcept { return image_->rows; }
 
 const cv::Mat& RegularImage::getMat() const { return *image_; }
 

@@ -103,14 +103,6 @@ void Game::init(bool hideWindow) {
 
     mainWindow_ = renderSystem_->createMainWindow(hint);
 
-//    // Set the viewport of the mainwindow
-//    auto viewport = std::make_shared<render::Viewport>(mainWindow_, 0, 0, mainWindow_->getWidth(),
-//                                                       mainWindow_->getHeight());
-//    mainWindow_->setViewport(viewport);
-
-//    // Initialize the main-window
-//    mainWindow_->init();
-
     // Register the game as a keyboard and mouse listener
     renderSystem_->addKeyboardListener(this);
     renderSystem_->addMouseListener(this);
