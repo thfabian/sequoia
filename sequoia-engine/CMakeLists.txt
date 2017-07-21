@@ -80,6 +80,7 @@ include(AddTBB)
 
 if(SEQUOIA_TESTING)
   include(AddGTest)
+  include(Addbenchmark)
 endif()
 
 set(SEQUOIA_EXTERNAL_LIBRARIES

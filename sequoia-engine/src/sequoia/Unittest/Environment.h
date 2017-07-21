@@ -64,9 +64,6 @@ public:
   /// @param path   Path relative to the unittest ressource root
   std::shared_ptr<File> getFile(const char* path) const;
 
-  /// @brief Run the benchmarks?
-  bool runBenchmarks() const { return benchmark_; }
-
 private:
   /// Stack trace
   core::PrettyStackTrace trace_;
@@ -74,19 +71,9 @@ private:
   /// Path of the ressources
   platform::Path path_;
 
-  /// Run the benchmarks?
-  bool benchmark_;
-
   std::unique_ptr<core::SingletonManager> singletonManager_;
 };
 
-/// @brief Indicate this test is a benchmark test and should be skipped if
-/// `Environment::runBenchmarks()` returns `false`
-#define SEQUOIA_BENCHMARK_TEST                                                                     \
-  do {                                                                                             \
-    if(!sequoia::unittest::Environment::getSingleton().runBenchmarks())                            \
-      return;                                                                                      \
-  } while(0)
 
 } // namespace unittest
 

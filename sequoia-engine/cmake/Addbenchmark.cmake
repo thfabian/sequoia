@@ -13,6 +13,13 @@
 ##
 ##===------------------------------------------------------------------------------------------===##
 
-add_subdirectory(unittest)
-add_subdirectory(benchmark)
+find_package(benchmark NO_MODULE REQUIRED)
+include_directories(SYSTEM ${benchmark_INCLUDE_DIRS})
+
+sequoia_export_package(
+  PACKAGE benchmark
+  FOUND ${benchmark_FOUND} 
+  VERSION_STR "${benchmark_VERSION}" 
+  LIBRARIES "benchmark::benchmark"
+)
 

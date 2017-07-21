@@ -21,14 +21,26 @@ endif()
 
 option(NO_SYSTEM_LIBS "By default, do not use system libraries" ${NO_SYSTEM_LIBS_DEFAULT})
 
+#
+# Packages built by default
+#
+sequoia_build_package(backward)
+sequoia_build_package(benchmark)
+sequoia_build_package(glbinding)
+sequoia_build_package(GLFW)
+sequoia_build_package(gli)
+sequoia_build_package(glm)
+sequoia_build_package(gtest)
+
+#
+# Packages which are conditionally built if not found
+#
+
 # zlib
 sequoia_find_package(
   PACKAGE ZLIB 
   FORWARD_VARS ZLIB_ROOT
 )
-
-# backward
-sequoia_build_package(backward)
 
 # Boost
 sequoia_find_package(
@@ -36,29 +48,6 @@ sequoia_find_package(
   PACKAGE_ARGS ${boost_min_version} COMPONENTS ${boost_components}
   FORWARD_VARS BOOST_ROOT Boost_LIBRARY_DIRS Boost_INCLUDE_DIRS
 )
-
-# glbinding
-sequoia_find_package(
-  PACKAGE glbinding 
-  PACKAGE_ARGS ${glbinding_version}
-  FORWARD_VARS GLBINDING_ROOT
-)
-
-# glfw3
-sequoia_find_package(
-  PACKAGE GLFW 
-  PACKAGE_ARGS ${glfw_version}
-  FORWARD_VARS GLFW_ROOT
-)
-
-# gli
-sequoia_build_package(gli)
-
-# glm
-sequoia_build_package(glm)
-
-# gtest
-sequoia_build_package(gtest)
 
 # OpenCV
 sequoia_find_package(

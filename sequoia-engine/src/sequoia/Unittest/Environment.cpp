@@ -30,7 +30,7 @@ SEQUOIA_DECLARE_SINGLETON(unittest::Environment);
 
 namespace unittest {
 
-Environment::Environment(int argc, char* argv[]) : trace_(), benchmark_(false) {
+Environment::Environment(int argc, char* argv[]) : trace_() {
   singletonManager_ = std::make_unique<core::SingletonManager>();
   singletonManager_->allocateSingleton<ErrorHandler>(argc > 0 ? argv[0] : "SequoiaTest");
 
@@ -45,9 +45,7 @@ Environment::Environment(int argc, char* argv[]) : trace_(), benchmark_(false) {
       // --no-debug
       ("no-debug", "Disable debug mode.")
       // --no-log
-      ("no-log", "Disable logging.")
-      // --benchmark
-      ("benchmark", "Run benchmarks.");
+      ("no-log", "Disable logging.");
 
   po::variables_map vm;
 
@@ -72,7 +70,6 @@ Environment::Environment(int argc, char* argv[]) : trace_(), benchmark_(false) {
 
   Options::getSingleton().Core.Debug = !vm.count("no-debug");
 
-  benchmark_ = vm.count("benchmark");
   path_ = SEQUOIA_UNITTEST_RESSOURCEPATH;
 
   if(!platform::filesystem::exists(path_))

@@ -170,11 +170,11 @@ function(sequoia_link_objects)
   
   if(WIN32 AND NOT(MSVC_IDE))
     set_property(TARGET ${ARG_NAME} PROPERTY ARCHIVE_OUTPUT_DIRECTORY 
-                 ${CMAKE_BINARY_DIR}/lib/${CMAKE_BUILD_TYPE})
+                 ${CMAKE_BINARY_DIR}/${CMAKE_BUILD_TYPE}/lib)
     set_property(TARGET ${ARG_NAME} PROPERTY LIBRARY_OUTPUT_DIRECTORY 
-                 ${CMAKE_BINARY_DIR}/lib/${CMAKE_BUILD_TYPE})
+                 ${CMAKE_BINARY_DIR}/${CMAKE_BUILD_TYPE}/lib)
     set_property(TARGET ${ARG_NAME} PROPERTY RUNTIME_OUTPUT_DIRECTORY 
-                 ${CMAKE_BINARY_DIR}/bin/${CMAKE_BUILD_TYPE})
+                 ${CMAKE_BINARY_DIR}/${CMAKE_BUILD_TYPE}/bin)
   else()
     set_property(TARGET ${ARG_NAME} PROPERTY ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
     set_property(TARGET ${ARG_NAME} PROPERTY LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
@@ -189,13 +189,15 @@ endfunction()
 ##    
 ##    NAME:STRING=<>             - Name of the test.
 ##    SOURCES:STRING=<>          - List of source files.
-##    WIN32_APPLICATION          - Build an executable with a WinMain entry point on windows.
+##    OUTPUT_DIR=<>              - Create the executable in `bin/<OUTPUT_DIR>`, if empty the 
+##                                 executable will be created in `bin/`.
+##    WIN32_APPLICATION          - Build an executable with a WinMain entry point on Win32.
 ##    DEPENDS:STRING=<>          - List of external libraries and/or CMake targets to link against.
 ##
 function(sequoia_add_executable)
   # Parse arguments
   set(options WIN32_APPLICATION)
-  set(one_value_args NAME)
+  set(one_value_args NAME OUTPUT_DIR)
   set(multi_value_args SOURCES DEPENDS)
   cmake_parse_arguments(ARG "${options}" "${one_value_args}" "${multi_value_args}" ${ARGN})
   
@@ -223,20 +225,26 @@ function(sequoia_add_executable)
       endif()
     endforeach()
   endif()
-  
+
+  set(out_dir "bin")
+  if(ARG_OUTPUT_DIR)
+    set(out_dir "bin/${ARG_OUTPUT_DIR}")
+  endif()
+
   target_link_libraries(${ARG_NAME} ${ARG_DEPENDS})
   if(WIN32 AND NOT(MSVC_IDE))
     set_property(TARGET ${ARG_NAME} PROPERTY RUNTIME_OUTPUT_DIRECTORY 
-                 ${CMAKE_BINARY_DIR}/bin/${CMAKE_BUILD_TYPE})
+                 ${CMAKE_BINARY_DIR}/${CMAKE_BUILD_TYPE}/${out_dir})
   else()
-    set_property(TARGET ${ARG_NAME} PROPERTY RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+    set_property(TARGET ${ARG_NAME} PROPERTY RUNTIME_OUTPUT_DIRECTORY 
+                 ${CMAKE_BINARY_DIR}/${out_dir})
   endif()
 endfunction()
 
 ## sequoia_add_test
 ## ----------------
 ##
-## Create an executable and register it in CTest.
+## Create an executable in `bin/unittest` and register it within CTest.
 ##    
 ##    NAME:STRING=<>             - Name of the test.
 ##    SOURCES:STRING=<>          - List of source files.
@@ -250,7 +258,7 @@ function(sequoia_add_test)
   cmake_parse_arguments(ARG "${options}" "${one_value_args}" "${multi_value_args}" ${ARGN})
   
   # Add executable
-  sequoia_add_executable(${ARGN})
+  sequoia_add_executable(${ARGN} OUTPUT_DIR unittest)
   
   # Register the test with CTest
   add_test(NAME CTest-${ARG_NAME} COMMAND $<TARGET_FILE:${ARG_NAME}> --gtest_color=yes)

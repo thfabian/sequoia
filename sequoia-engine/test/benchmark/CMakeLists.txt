@@ -13,6 +13,16 @@
 ##
 ##===------------------------------------------------------------------------------------------===##
 
-add_subdirectory(unittest)
-add_subdirectory(benchmark)
+macro(sequoia_add_benchmark SOURCE)
+  get_filename_component(name ${SOURCE} NAME_WE)
+  sequoia_add_executable(
+    NAME Sequoia${name}
+    SOURCES ${SOURCE}
+    DEPENDS Sequoia
+            ${SEQUOIA_BENCHMARK_LIBRARIES}
+    OUTPUT_DIR benchmark
+  )
+endmacro()
+
+sequoia_add_benchmark(BenchmarkUniformVariable.cpp)
 

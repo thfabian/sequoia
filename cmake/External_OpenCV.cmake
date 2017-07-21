@@ -16,7 +16,7 @@
 if(UNIX)
   set(gui_arg -DWITH_GTK:BOOL=ON -DWITH_GTK_2_X:BOOL=ON)
 else()
-
+  # Win32
 endif()
 
 ExternalProject_Add(
@@ -127,7 +127,7 @@ ExternalProject_Add(
 )
 
 ExternalProject_Get_Property(opencv install_dir)
-set(OpenCV_DIR "${install_dir}" CACHE INTERNAL "")
+set(OpenCV_DIR "${install_dir}/share/OpenCV" CACHE INTERNAL "")
 
-list(APPEND Sequoia_THIRDPARTYLIBS_ARGS "-DOpenCV_DIR:PATH=${OpenCV_DIR}/share/OpenCV")
+list(APPEND Sequoia_THIRDPARTYLIBS_ARGS "-DOpenCV_DIR:PATH=${OpenCV_DIR}")
 
