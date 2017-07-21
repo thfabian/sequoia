@@ -29,6 +29,8 @@ sequoia_add_objects(
           FrameBufferObject.cpp
           HostBuffer.h
           HostBuffer.cpp
+          IndexBuffer.h
+          IndexBuffer.cpp
           Input.h
           Input.cpp
           Program.h
@@ -67,6 +69,8 @@ sequoia_add_objects(
           Viewport.cpp
           
           GL/GL.h
+          GL/GLBuffer.h
+          GL/GLBuffer.cpp          
           GL/GLExtensionManager.h
           GL/GLExtensionManager.cpp
           GL/GLFragmentData.h
@@ -78,6 +82,8 @@ sequoia_add_objects(
           GL/GLProgram.cpp
           GL/GLProgramManager.h
           GL/GLProgramManager.cpp
+          GL/GLIndexBuffer.h
+          GL/GLIndexBuffer.cpp
           GL/GLRenderer.h
           GL/GLRenderer.cpp
           GL/GLRenderSystem.h

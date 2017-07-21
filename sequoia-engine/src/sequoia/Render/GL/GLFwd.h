@@ -27,12 +27,14 @@ namespace sequoia {
 
 namespace render {
 
+class GLBuffer;
 class GLExtensionManager;
 struct GLFragmentData;
 class GLFrameBufferObject;
 class GLInputSystem;
 class GLProgram;
 class GLProgramManager;
+class GLIndexBuffer;
 class GLRenderer;
 class GLRenderSystem;
 class GLRenderWindow;

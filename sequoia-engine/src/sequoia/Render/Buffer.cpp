@@ -57,11 +57,11 @@ void Buffer::updateFromShadow() {
   if(shadowBufferIsDirty_) {
 
     // Lock the shadow buffer
-    shadowBuffer_->lock(LK_ReadOnly);
+    shadowBuffer_->lock(LO_ReadOnly);
     void* src = shadowBuffer_->get();
 
     // Lock our buffer
-    lockImpl(LK_Discard);
+    lockImpl(LO_Discard);
     void* dest = get();
 
     // Copy the data

@@ -115,7 +115,7 @@ public:
 ///   }
 /// @endcode
 ///
-/// @threadsafe
+/// @threadsafe Access to this object is thread-safe.
 /// @ingroup core
 class SEQUOIA_API Logger : public Singleton<Logger>, public Listenable<LoggerListener> {
   const LoggingLevel level_; ///< Level at which logging is performed

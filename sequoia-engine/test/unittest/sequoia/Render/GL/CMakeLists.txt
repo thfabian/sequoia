@@ -16,6 +16,7 @@
 sequoia_add_test(
   NAME SequoiaRenderGLTest
   SOURCES TestMain.cpp
+          TestGLBuffer.cpp
           TestGLProgram.cpp
           TestGLRenderWindow.cpp
           TestGLShader.cpp

@@ -39,7 +39,8 @@ namespace render {
 /// and back it with a system memory 'shadow' copy which can be read and updated arbitrarily.
 ///
 /// @ingroup render
-class SEQUOIA_API Buffer : public NonCopyable {
+class SEQUOIA_API 
+    Buffer : public NonCopyable {
 public:
   /// @brief RTTI discriminator
   enum BufferKind {
@@ -89,29 +90,29 @@ public:
   };
 
   /// @brief Specifiy the kind of locking
-  enum LockOptionKind {
+  enum LockOption {
     /// Normal mode, ie allows read/write and contents are preserved. This kind of lock allows
     /// reading and writing from the buffer -- it’s also the least optimal because basically you’re
     /// telling the card you could be doing anything at all. If you’re not using a shadow buffer,
     /// it requires the buffer to be transferred from the card and back again.
     /// If you’re using a shadow buffer the effect is minimal.
-    LK_Normal,
+    LO_Normal,
 
     /// Discards the **entire** buffer while locking, this usually yields the highest performance.
     /// This means you are happy for the card to discard the entire current contents of the
     /// buffer. Implicitly this means you are not going to read the data - it also means
     /// that the card can avoid any stalls if the buffer is currently being rendered from, because
     /// it will actually give you an entirely different one.
-    LK_Discard,
+    LO_Discard,
 
     /// Lock the buffer for reading only. Not allowed in buffers which are created with
     /// `UH_WriteOnly`
-    LK_ReadOnly,
+    LO_ReadOnly,
 
     /// Lock the buffer for writing only.
-    LK_WriteOnly
+    LO_WriteOnly
   };
-
+  
   Buffer(BufferKind kind);
 
   /// @brief Virutal destructor
@@ -129,13 +130,13 @@ public:
   /// @note Locking in this context does **not** refer to mutual exclusion of the buffer object!
   /// It merely indicates to the buffer that it's being accessed.
   ///
-  /// @param lockType   Strategy used to lock the buffer.
-  void lock(LockOptionKind option) {
+  /// @param option   Strategy used to lock the buffer.
+  void lock(LockOption option) {
     SEQUOIA_ASSERT_MSG(!isLocked(), "buffer already locked");
 
     if(hasShadowBuffer()) {
       // Lock the shadow buffer and flag it for update
-      if(option != LK_ReadOnly)
+      if(option != LO_ReadOnly)
         shadowBufferIsDirty_ = true;
 
       shadowBuffer_->lock(option);
@@ -216,7 +217,7 @@ public:
 
 protected:
   /// @brief Lock the buffer and return the data pointer to the locked region
-  virtual void* lockImpl(LockOptionKind option) = 0;
+  virtual void* lockImpl(LockOption option) = 0;
 
   /// @brief Unlock the buffer
   virtual void unlockImpl() = 0;
@@ -234,7 +235,7 @@ protected:
   void setNumBytes(std::size_t numBytes) { numBytes_ = numBytes; }
 
 private:
-  /// Currently locked data pointer. This may point to a region in system RAM or device
+  /// Currently locked data pointer. This may point to a region in system or device RAM
   mutable void* data_;
 
   /// Number of allocated bytes
@@ -271,7 +272,7 @@ private:
 ///   // ... destructor invokes unlock()
 /// @endcode
 ///
-/// which will assert `unlock` is called (even in case of an exception).
+/// which will assert `unlock` is called (even in case of an exception!).
 ///
 /// @ingroup render
 class BufferGuard : public NonCopyable {
@@ -279,12 +280,12 @@ class BufferGuard : public NonCopyable {
 
 public:
   /// @brief Lock buffer
-  BufferGuard(Buffer& buffer, Buffer::LockOptionKind option) : BufferGuard(&buffer, option) {}
-  BufferGuard(std::shared_ptr<Buffer>& buffer, Buffer::LockOptionKind option)
+  BufferGuard(Buffer& buffer, Buffer::LockOption option) : BufferGuard(&buffer, option) {}
+  BufferGuard(std::shared_ptr<Buffer>& buffer, Buffer::LockOption option)
       : BufferGuard(buffer.get(), option) {}
-  BufferGuard(std::unique_ptr<Buffer>& buffer, Buffer::LockOptionKind option)
+  BufferGuard(std::unique_ptr<Buffer>& buffer, Buffer::LockOption option)
       : BufferGuard(buffer.get(), option) {}
-  BufferGuard(Buffer* buffer, Buffer::LockOptionKind option) : buffer_(buffer) {
+  BufferGuard(Buffer* buffer, Buffer::LockOption option) : buffer_(buffer) {
     buffer_->lock(option);
   }
 

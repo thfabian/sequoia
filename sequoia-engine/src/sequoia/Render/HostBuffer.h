@@ -24,7 +24,7 @@ namespace render {
 
 /// @brief Harware buffer allocate in the core system's RAM
 /// @ingroup render
-class SEQUOIA_API HostBuffer : public Buffer {
+class SEQUOIA_API HostBuffer final : public Buffer {
   void* dataPtr_; ///< Pointer to the host memory
 
 public:
@@ -63,10 +63,10 @@ public:
     return static_cast<const T*>(dataPtr_);
   }
 
-  static bool classof(const HostBuffer* buffer) { return buffer->getKind() == BK_HostBuffer; }
+  static bool classof(const Buffer* buffer) { return buffer->getKind() == BK_HostBuffer; }
 
 protected:
-  virtual void* lockImpl(LockOptionKind option) override { return dataPtr_; }
+  virtual void* lockImpl(LockOption option) override { return dataPtr_; }
   virtual void unlockImpl() override {}
 
   /// @copydoc Allocate `numBytes` memory, all hints are ignored

@@ -26,7 +26,7 @@ HostBuffer::HostBuffer() : Buffer(BK_HostBuffer), dataPtr_(nullptr) {}
 
 std::unique_ptr<HostBuffer> HostBuffer::create(std::size_t numBytes) {
   auto buffer = std::make_unique<HostBuffer>();
-  buffer->allocate(numBytes, UH_Dynamic);
+  buffer->allocate(numBytes, UH_Dynamic /* irrelevant */);
   return buffer;
 }
 
