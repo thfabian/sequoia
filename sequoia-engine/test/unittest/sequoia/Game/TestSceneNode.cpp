@@ -18,6 +18,7 @@
 #include "sequoia/Game/SceneGraph.h"
 #include "sequoia/Game/SceneNode.h"
 #include "sequoia/Unittest/GameSetup.h"
+#include <atomic>
 #include <gtest/gtest.h>
 
 using namespace sequoia;
@@ -72,6 +73,19 @@ TEST_F(SceneNodeTest, Construction) {
   EXPECT_TRUE(isa<SceneNode>(node.get()));
 }
 
+TEST_F(SceneNodeTest, Clone) {
+  auto node = SceneNode::allocate("Parent");
+  node->addChild(SceneNode::allocate("Child"));
+
+  auto clone1 = node->clone();
+  EXPECT_STREQ(clone1->getName().c_str(), "Parent_copy_1");
+  EXPECT_STREQ(clone1->getChildren().front()->getName().c_str(), "Child_copy_1");
+
+  auto clone2 = clone1->clone();
+  EXPECT_STREQ(clone2->getName().c_str(), "Parent_copy_2");
+  EXPECT_STREQ(clone2->getChildren().front()->getName().c_str(), "Child_copy_2");
+}
+
 TEST_F(SceneNodeTest, ApplySequential) {
   auto node = SceneNode::allocate("Parent");
   node->addChild(SceneNode::allocate("Child"));
@@ -80,18 +94,33 @@ TEST_F(SceneNodeTest, ApplySequential) {
 
   // Normal execution
   numNodes = 0;
-  node->apply([&numNodes](SceneNode*) { numNodes += 1; }, SceneNode::EP_Sequential);
+  node->apply([&numNodes](SceneNode*) { numNodes++; }, SceneNode::EP_Sequential);
   EXPECT_EQ(numNodes, 2);
 
   // Noexcept execution
   numNodes = 0;
-  node->apply([&numNodes](SceneNode*) noexcept { numNodes += 1; }, SceneNode::EP_Sequential);
+  node->apply([&numNodes](SceneNode*) noexcept { numNodes++; }, SceneNode::EP_Sequential);
   EXPECT_EQ(numNodes, 2);
 
   // Check exceptions
   EXPECT_THROW(
       node->apply([](SceneNode*) { throw std::runtime_error("test"); }, SceneNode::EP_Sequential),
       std::runtime_error);
+}
+
+TEST_F(SceneNodeTest, ApplyParallel) {
+  auto node = SceneNode::allocate("Parent");
+  node->addChild(SceneNode::allocate("Child"));
+
+  // Normal execution
+  std::atomic<int> numNodes(0);
+  node->apply([&numNodes](SceneNode*) { numNodes++; }, SceneNode::EP_Parallel);
+  EXPECT_EQ(numNodes.load(), 2);
+
+  // Noexcept execution
+  numNodes = 0;
+  node->apply([&numNodes](SceneNode*) noexcept { numNodes++; }, SceneNode::EP_Parallel);
+  EXPECT_EQ(numNodes.load(), 2);
 }
 
 } // anonymous namespace

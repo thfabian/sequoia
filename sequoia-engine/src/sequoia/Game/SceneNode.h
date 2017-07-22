@@ -249,8 +249,6 @@ public:
 private:
   /// @brief Apply `functor` to the node and all its children
   void applyImpl(const std::function<void(SceneNode*)>& functor, ExecutionPolicy policy);
-
-  /// @brief Apply noexcept `functor` to the node and all its children
   void applyNoexceptImpl(const std::function<void(SceneNode*) noexcept>& functor,
                          ExecutionPolicy policy) noexcept;
 

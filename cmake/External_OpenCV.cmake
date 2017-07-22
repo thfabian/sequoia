@@ -13,10 +13,13 @@
 ##
 ##===------------------------------------------------------------------------------------------===##
 
+# Platform specific falgs
 if(UNIX)
-  set(gui_arg -DWITH_GTK:BOOL=ON -DWITH_GTK_2_X:BOOL=ON)
-else()
-  # Win32
+  # Add GTK+ support for showing images
+  set(platform_arg -DWITH_GTK:BOOL=ON -DWITH_GTK_2_X:BOOL=ON)
+elseif(WIN32)
+  # We always build with dynamic runtime (/MD)
+  set(platform_arg -DBUILD_WITH_STATIC_CRT:BOOL=OFF -DWITH_WIN32UI:BOOL=ON)
 endif()
 
 ExternalProject_Add(
@@ -32,6 +35,7 @@ ExternalProject_Add(
     -DBUILD_SHARED_LIBS:BOOL=${BUILD_SHARED_LIBS}
     -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
 
+    ${platform_arg}
     -DBUILD_DOCS:BOOL=OFF 
     -DBUILD_EXAMPLES:BOOL=OFF 
     -DBUILD_PACKAGE:BOOL=OFF 
@@ -80,8 +84,7 @@ ExternalProject_Add(
     -DWITH_PNG:BOOL=ON
     -DWITH_TIFF:BOOL=ON
     -DWITH_JPEG:BOOL=ON
-    ${gui_arg}
-
+    
     -DWITH_1394:BOOL=OFF
     -DWITH_ARAVIS:BOOL=OFF
     -DWITH_CLP:BOOL=OFF
@@ -129,5 +132,9 @@ ExternalProject_Add(
 ExternalProject_Get_Property(opencv install_dir)
 set(OpenCV_DIR "${install_dir}/share/OpenCV" CACHE INTERNAL "")
 
-list(APPEND Sequoia_THIRDPARTYLIBS_ARGS "-DOpenCV_DIR:PATH=${OpenCV_DIR}")
+if(WIN32)
+  list(APPEND Sequoia_THIRDPARTYLIBS_ARGS "-DOpenCV_DIR:PATH=${OpenCV_DIR}")
+else()
+  list(APPEND Sequoia_THIRDPARTYLIBS_ARGS "-DOpenCV_DIR:PATH=${OpenCV_DIR}/share/OpenCV")
+endif()
 

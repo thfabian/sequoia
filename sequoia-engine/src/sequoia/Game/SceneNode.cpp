@@ -19,7 +19,9 @@
 #include "sequoia/Core/StringUtil.h"
 #include "sequoia/Game/SceneNode.h"
 #include "sequoia/Math/CoordinateSystem.h"
+#include <boost/lexical_cast.hpp>
 #include <numeric>
+#include <tbb/task.h>
 
 namespace sequoia {
 
@@ -27,18 +29,65 @@ namespace game {
 
 namespace {
 
+/// @brief Task applied to traverse the SceneNodes
+class ApplyParallelTask final : public tbb::task {
+  SceneNode* node_;                                ///< Node to execute the functor on
+  const std::function<void(SceneNode*)>* functor_; ///< Functor to execute
+
+public:
+  ApplyParallelTask(SceneNode* node, const std::function<void(SceneNode*)>* functor)
+      : node_(node), functor_(functor) {}
+
+  ApplyParallelTask(ApplyParallelTask&&) = default;
+  ApplyParallelTask(const ApplyParallelTask&) = default;
+
+  tbb::task* execute() override {
+
+    // The ref count needs to be initialized with 1 as we wait in the end
+    this->set_ref_count(1);
+
+    // Execute functor
+    (*functor_)(node_);
+
+    if(!node_->hasChildren())
+      return nullptr;
+
+    // Spawn child tasks
+    tbb::task_list taskList;
+    for(const auto& child : node_->getChildren()) {
+      ApplyParallelTask& childTask =
+          *new(tbb::task::allocate_child()) ApplyParallelTask(child.get(), functor_);
+      this->increment_ref_count();
+      taskList.push_back(childTask);
+    }
+
+    if(!taskList.empty())
+      this->spawn_and_wait_for_all(taskList);
+
+    return nullptr;
+  }
+};
+
+/// @brief Traverse the SceneNodes in parallel
+inline void applyParallel(SceneNode* node, const std::function<void(SceneNode*)>& functor) {
+  ApplyParallelTask& root_task = *new(tbb::task::allocate_root()) ApplyParallelTask(node, &functor);
+  tbb::task::spawn_root_and_wait(root_task);
+}
+
+/// @brief Traverse the SceneNodes sequentially
 inline void applySequential(SceneNode* node, const std::function<void(SceneNode*)>& functor) {
   functor(node);
   for(const auto& child : node->getChildren())
     applySequential(child.get(), functor);
 }
 
+/// @brief Traverse the SceneNodes sequentially (ignoring any exceptions)
 inline void
-applyNoexceptSequential(SceneNode* node,
+applySequentialNoexcept(SceneNode* node,
                         const std::function<void(SceneNode*) noexcept>& functor) noexcept {
   functor(node);
   for(const auto& child : node->getChildren())
-    applyNoexceptSequential(child.get(), functor);
+    applySequentialNoexcept(child.get(), functor);
 }
 
 } // anonymous namespace
@@ -53,8 +102,19 @@ SceneNode::SceneNode(const std::string& name, SceneNode::SceneNodeKind kind)
 SceneNode::SceneNode(const SceneNode& other)
     : kind_(other.kind_), position_(other.position_), orientation_(other.orientation_),
       scale_(other.scale_), modelMatrix_(other.modelMatrix_),
-      modelMatrixIsDirty_(other.modelMatrixIsDirty_), parent_(other.parent_),
-      name_(other.name_ + "_copy") {
+      modelMatrixIsDirty_(other.modelMatrixIsDirty_), parent_(other.parent_) {
+
+  // Adjust the name, we append a `_copy_X` where `X` is the version of the copy
+  StringRef nameRef(other.name_);
+  std::size_t copyPos = nameRef.find("_copy_");
+
+  if(copyPos != StringRef::npos) {
+    StringRef versionStr = nameRef.substr(copyPos + sizeof("_copy_") - 1);
+    int version = boost::lexical_cast<int>(versionStr.data(), versionStr.size()) + 1;
+    name_ = nameRef.substr(0, copyPos).str() + "_copy_" + std::to_string(version);
+  } else {
+    name_ = other.name_ + "_copy_1";
+  }
 
   // Clone children
   for(const auto& child : other.children_)
@@ -80,15 +140,16 @@ void SceneNode::applyImpl(const std::function<void(SceneNode*)>& functor, Execut
   if(policy == EP_Sequential)
     applySequential(this, functor);
   else
-    SEQUOIA_ASSERT_MSG(0, "not yet implemented");
+    applyParallel(this, functor);
 }
 
 void SceneNode::applyNoexceptImpl(const std::function<void(SceneNode*) noexcept>& functor,
                                   ExecutionPolicy policy) noexcept {
-  if(policy == EP_Sequential)
-    applyNoexceptSequential(this, functor);
-  else
-    SEQUOIA_ASSERT_MSG(0, "not yet implemented");
+  if(policy == EP_Sequential) {
+    applySequentialNoexcept(this, functor);
+  } else {
+    applyParallel(this, functor);
+  }
 }
 
 void SceneNode::update(const UpdateEvent& event) {
