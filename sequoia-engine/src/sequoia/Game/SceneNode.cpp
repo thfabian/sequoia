@@ -25,6 +25,24 @@ namespace sequoia {
 
 namespace game {
 
+namespace {
+
+inline void applySequential(SceneNode* node, const std::function<void(SceneNode*)>& functor) {
+  functor(node);
+  for(const auto& child : node->getChildren())
+    applySequential(child.get(), functor);
+}
+
+inline void
+applyNoexceptSequential(SceneNode* node,
+                        const std::function<void(SceneNode*) noexcept>& functor) noexcept {
+  functor(node);
+  for(const auto& child : node->getChildren())
+    applyNoexceptSequential(child.get(), functor);
+}
+
+} // anonymous namespace
+
 SceneNode::SceneNode(const std::string& name, SceneNode::SceneNodeKind kind)
     : kind_(kind), position_(math::vec3()), orientation_(math::quat()), scale_(1.0f),
       modelMatrix_(), modelMatrixIsDirty_(true), parent_(), name_(name) {
@@ -58,10 +76,19 @@ math::mat3 SceneNode::getLocalAxes() const {
   return math::mat3(axisX, axisY, axisZ);
 }
 
-void SceneNode::apply(const std::function<void(SceneNode*)>& functor) {
-  functor(this);
-  for(const auto& child : children_)
-    child->apply(functor);
+void SceneNode::applyImpl(const std::function<void(SceneNode*)>& functor, ExecutionPolicy policy) {
+  if(policy == EP_Sequential)
+    applySequential(this, functor);
+  else
+    SEQUOIA_ASSERT_MSG(0, "not yet implemented");
+}
+
+void SceneNode::applyNoexceptImpl(const std::function<void(SceneNode*) noexcept>& functor,
+                                  ExecutionPolicy policy) noexcept {
+  if(policy == EP_Sequential)
+    applyNoexceptSequential(this, functor);
+  else
+    SEQUOIA_ASSERT_MSG(0, "not yet implemented");
 }
 
 void SceneNode::update(const UpdateEvent& event) {
@@ -99,7 +126,7 @@ void SceneNode::yaw(const math::Radian& angle, TransformSpace relativeTo) {
   rotate(math::CoordinateSystem::Y(), angle, relativeTo);
 }
 
-std::shared_ptr<SceneNode> SceneNode::clone() { return SceneNode::create<SceneNode>(*this); }
+std::shared_ptr<SceneNode> SceneNode::clone() { return SceneNode::allocate<SceneNode>(*this); }
 
 std::string SceneNode::toString() const {
   auto stringPair = toStringImpl();

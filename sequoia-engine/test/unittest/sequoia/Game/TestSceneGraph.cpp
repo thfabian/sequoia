@@ -29,7 +29,7 @@ SEQUOIA_GAME_TEST_FIXTURE(SceneGraphTest);
 TEST_F(SceneGraphTest, Construction) {
   std::shared_ptr<SceneGraph> graph = std::make_shared<SceneGraph>();
 
-  graph->insert(SceneNode::create<SceneNode>("TestNode"));
+  graph->insert(SceneNode::allocate<SceneNode>("TestNode"));
   EXPECT_EQ(graph->size(), 1);
 }
 

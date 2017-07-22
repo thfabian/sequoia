@@ -67,8 +67,8 @@ render::DrawCommand* Drawable::prepareDrawCommand() {
   drawCommand_.get().setModelMatrix(getNode()->getModelMatrix());
   render::DrawCommand* cmd = &drawCommand_.get();
 
-  // ... and swap the drawcommand. Note that his copies the current draw command `cmd` into the
-  // new one so that subsequent subsequent calls will not corrupt the render-state.
+  // ... and swap the Drawcommand. Note that his copies the current draw command `cmd` into the
+  // new one so that subsequent calls will not corrupt the render-state.
   drawCommand_.swap();
   return cmd;
 }
@@ -76,7 +76,7 @@ render::DrawCommand* Drawable::prepareDrawCommand() {
 void Drawable::update(const SceneNodeUpdateEvent& event) {}
 
 std::shared_ptr<SceneNodeCapability> Drawable::clone(SceneNode* node) const {
-  return SceneNodeAlloc::create<Drawable>(node, mesh_, drawCommand_.get().getProgram());
+  return scene::allocate_shared<Drawable>(node, mesh_, drawCommand_.get().getProgram());
 }
 
 void Drawable::setUniformVariableImpl(const std::string& name, UniformVariable variable) {

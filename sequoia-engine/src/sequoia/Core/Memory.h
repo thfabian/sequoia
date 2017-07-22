@@ -21,6 +21,7 @@
 #include <boost/align/aligned_allocator.hpp>
 #include <boost/align/aligned_delete.hpp>
 #include <boost/align/is_aligned.hpp>
+#include <memory>
 #include <tbb/cache_aligned_allocator.h>
 
 namespace sequoia {
@@ -36,13 +37,29 @@ namespace memory {
 /// @brief Default alignment (32 Bytes)
 static constexpr std::size_t DefaultAlignment = 32;
 
-/// @brief Aligned allocator
-template <class T, std::size_t Alignment = DefaultAlignment>
-using aligned_allocator = boost::alignment::aligned_allocator<T, Alignment>;
+/// @brief Generic deleter for `Alloctor`
+template <typename Allocator>
+struct deleter {
+  deleter(const Allocator& a) : a(a) {}
+
+  typedef typename std::allocator_traits<Allocator>::pointer pointer;
+
+  void operator()(pointer p) const {
+    Allocator alloc(a);
+    std::allocator_traits<Allocator>::destroy(alloc, std::addressof(*p));
+    std::allocator_traits<Allocator>::deallocate(alloc, p, 1);
+  }
+
+  Allocator a;
+};
 
 /// @brief Cache Aligned allocator
 template <class T>
 using cache_aligned_allocator = tbb::cache_aligned_allocator<T>;
+
+/// @brief Aligned allocator
+template <class T, std::size_t Alignment = DefaultAlignment>
+using aligned_allocator = boost::alignment::aligned_allocator<T, Alignment>;
 
 /// @brief This function is used to compare the alignment of a pointer
 inline bool is_aligned(const void* ptr, std::size_t alignment = DefaultAlignment) noexcept {
@@ -58,18 +75,6 @@ inline void* aligned_alloc(std::size_t size, std::size_t alignment = DefaultAlig
 
 /// @brief Free memory allocated with `aligned_alloc`
 inline void aligned_free(void* ptr) noexcept { boost::alignment::aligned_free(ptr); }
-
-/// @brief Deleter that destroys the object and then deallocates space using `aligned_free`
-class aligned_delete {
-public:
-  template <class T>
-  void operator()(T* ptr) const noexcept(noexcept(ptr->~T())) {
-    if(ptr) {
-      ptr->~T();
-      aligned_free(ptr);
-    }
-  }
-};
 
 } // nammespace memory
 

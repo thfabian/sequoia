@@ -26,8 +26,6 @@ namespace sequoia {
 
 namespace game {
 
-class SceneNode;
-
 /// @brief SceneGraphs hold all objects in the scene and are primarly used to stream data to all
 /// nodes
 /// @ingroup game
@@ -47,9 +45,10 @@ public:
   virtual void update(const SceneNode::UpdateEvent& event);
 
   /// @brief Apply `functor` to each node of the graph
-  void apply(const std::function<void(SceneNode*)>& functor) const {
+  template <class Functor>
+  void apply(Functor&& functor) const {
     for(const auto& node : nodes_)
-      node->apply(functor);
+      node->apply(std::forward<Functor>(functor));
   }
 
   /// @brief Clear the graph

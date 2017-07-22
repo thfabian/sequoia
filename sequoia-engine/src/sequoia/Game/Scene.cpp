@@ -83,7 +83,7 @@ void Scene::makeDummyScene() {
   // Create the camera
   setActiveCamera(std::make_shared<render::Camera>(math::vec3(0, 5, 5)));
 
-  std::shared_ptr<SceneNode> cubeOrigin = SceneNode::create("TestCubeOrigin");
+  std::shared_ptr<SceneNode> cubeOrigin = SceneNode::allocate("TestCubeOrigin");
   
   MeshParameter cubeMeshParam;
   cubeMeshParam.TexCoordInvertV = true;
@@ -99,7 +99,7 @@ void Scene::makeDummyScene() {
   int N = 10;
   for(int i = 0; i < N; ++i) {
     for(int j = 0; j < N; ++j) {
-      auto cube = SceneNode::create(core::format("TestCube_%i_%i", i, j));
+      auto cube = SceneNode::allocate(core::format("TestCube_%i_%i", i, j));
       cube->addCapability<Drawable>(cubeMesh, game.getDefaultProgram());
       cube->translate(math::vec3((i - N / 2.0f) * dx, 0, (j - N / 2.0f) * dx));
       cube->setScale(2 * float(i) / N);
@@ -109,7 +109,7 @@ void Scene::makeDummyScene() {
     }
   }
 
-  auto controller = SceneNode::create<CameraControllerFree>("Camera");
+  auto controller = SceneNode::allocate<CameraControllerFree>("Camera");
   controller->setCamera(activeCamera_);
   sceneGraph_->insert(controller);
 

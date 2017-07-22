@@ -29,7 +29,7 @@ namespace {
 SEQUOIA_GAME_TEST_FIXTURE(SceneNodeTest);
 
 TEST_F(SceneNodeTest, Construction) {
-  auto node = SceneNode::create("SceneNode");
+  auto node = SceneNode::allocate("SceneNode");
 
   EXPECT_STREQ(node->getName().data(), "SceneNode");
   EXPECT_EQ(node->getKind(), SceneNode::SK_SceneNode);
@@ -70,6 +70,28 @@ TEST_F(SceneNodeTest, Construction) {
 
   // Test RTTI
   EXPECT_TRUE(isa<SceneNode>(node.get()));
+}
+
+TEST_F(SceneNodeTest, ApplySequential) {
+  auto node = SceneNode::allocate("Parent");
+  node->addChild(SceneNode::allocate("Child"));
+
+  int numNodes;
+
+  // Normal execution
+  numNodes = 0;
+  node->apply([&numNodes](SceneNode*) { numNodes += 1; }, SceneNode::EP_Sequential);
+  EXPECT_EQ(numNodes, 2);
+
+  // Noexcept execution
+  numNodes = 0;
+  node->apply([&numNodes](SceneNode*) noexcept { numNodes += 1; }, SceneNode::EP_Sequential);
+  EXPECT_EQ(numNodes, 2);
+
+  // Check exceptions
+  EXPECT_THROW(
+      node->apply([](SceneNode*) { throw std::runtime_error("test"); }, SceneNode::EP_Sequential),
+      std::runtime_error);
 }
 
 } // anonymous namespace

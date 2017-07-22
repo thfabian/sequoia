@@ -18,28 +18,29 @@
 
 #include "sequoia/Core/Export.h"
 #include "sequoia/Core/Memory.h"
-#include "sequoia/Core/NonCopyable.h"
-#include <memory>
 
 namespace sequoia {
 
 namespace game {
 
-/// @brief Memory allocation routines used by SceneNode and related objects
+/// @namespace scene
+/// @brief Various types an memory allocation routines for scene realted objects
 /// @ingroup game
-class SEQUOIA_API SceneNodeAlloc : public NonCopyable {
-public:
-  /// @brief Memory alloctor for SceneNode related objects
-  template <class T>
-  using AllocatorType = memory::cache_aligned_allocator<T>;
+namespace scene {
 
-  /// @brief Create an object of type `T` (using AllocatorType) with `args...`
-  template <class T, class... Args>
-  static std::shared_ptr<T> create(Args&&... args) {
-    return std::allocate_shared<T, AllocatorType<T>>(AllocatorType<T>(),
-                                                     std::forward<Args>(args)...);
-  }
-};
+/// @brief Memory alloctor for SceneNode related objects
+/// @ingroup game
+template <class T>
+using allocator = memory::cache_aligned_allocator<T>;
+
+/// @brief Allocate a shared object of type `T` with `args...`
+/// @ingroup game
+template <class T, class... Args>
+inline std::shared_ptr<T> allocate_shared(Args&&... args) {
+  return std::allocate_shared<T>(allocator<T>(), std::forward<Args>(args)...);
+}
+
+} // namespace scene
 
 } // namespace game
 

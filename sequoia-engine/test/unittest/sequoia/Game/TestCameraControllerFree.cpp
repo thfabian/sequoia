@@ -30,7 +30,7 @@ namespace {
 SEQUOIA_GAME_TEST_FIXTURE(CameraControllerFreeTest);
 
 TEST_F(CameraControllerFreeTest, CameraControllerFree) {
-  auto node = SceneNode::create<CameraControllerFree>("CameraControllerFree");
+  auto node = SceneNode::allocate<CameraControllerFree>("CameraControllerFree");
 
   EXPECT_STREQ(node->getName().data(), "CameraControllerFree");
   EXPECT_EQ(node->getKind(), SceneNode::SK_CameraControllerFree);

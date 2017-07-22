@@ -44,13 +44,13 @@ public:
 
   /// @brief Create a SceneNode of type `T` by passing `args...` to the constructor
   template <class T = SceneNode, class... Args>
-  static std::shared_ptr<T> create(Args&&... args) {
+  static std::shared_ptr<T> allocate(Args&&... args) {
     static_assert(std::is_base_of<SceneNode, T>::value, "type 'T' is not a SceneNode");
-    return SceneNodeAlloc::create<T>(std::forward<Args>(args)...);
+    return scene::allocate_shared<T>(std::forward<Args>(args)...);
   }
 
   /// @brief RTTI discriminator
-  enum SceneNodeKind {
+  enum SceneNodeKind : std::uint8_t {
     SK_SceneNode,
     SK_CameraController,
     SK_CameraControllerFree,
@@ -58,10 +58,16 @@ public:
   };
 
   /// @brief Enumeration denoting the spaces which a transform can be relative to
-  enum TransformSpace {
+  enum TransformSpace : std::uint8_t {
     TS_Local,  ///< Transform is relative to the local space
     TS_Parent, ///< Transform is relative to the space of the parent node
     TS_World   ///< Transform is relative to world space
+  };
+
+  /// @brief Policy used to execute functors on the nodes
+  enum ExecutionPolicy : std::uint8_t {
+    EP_Sequential, ///< Seqeuential execution
+    EP_Parallel    ///< Parallel execution
   };
 
   SceneNode(const std::string& name, SceneNodeKind kind = SK_SceneNode);
@@ -130,7 +136,7 @@ public:
   bool hasChildren() const { return !children_.empty(); }
 
   /// @brief Get the children
-  const std::vector<std::shared_ptr<SceneNode>>& getChildren() const { return children_; }
+  const std::vector<std::shared_ptr<SceneNode>>& getChildren() const noexcept { return children_; }
 
   /// @brief Check if this node is attached to a parent node
   bool hasParent() const { return !parent_.expired(); }
@@ -147,7 +153,17 @@ public:
   /// @{
 
   /// @brief Apply `functor` to the node and all its children
-  void apply(const std::function<void(SceneNode*)>& functor);
+  ///
+  /// @tparam Functor   Function type: `void(SceneNode*)` or `void(SceneNode*) noexcept`
+  /// @param functor    Functor to apply to the node and its children
+  /// @param policy     Executation policy to launch `functor`
+  template <class Functor>
+  inline void apply(Functor&& functor, ExecutionPolicy policy = EP_Sequential) {
+    if(noexcept(functor(this)))
+      applyNoexceptImpl(std::forward<Functor>(functor), policy);
+    else
+      applyImpl(std::forward<Functor>(functor), policy);
+  }
 
   /// @brief Update the node to indicate the scene progressed to the next time-step
   virtual void update(const UpdateEvent& event);
@@ -191,7 +207,7 @@ public:
   template <class T, class... Args>
   void addCapability(Args&&... args) {
     capabilities_[SceneNodeCapabilityToKind<T>::value] =
-        SceneNodeAlloc::create<T>(this, std::forward<Args>(args)...);
+        scene::allocate_shared<T>(this, std::forward<Args>(args)...);
   }
 
   /// @brief Check if the SceneNode poses the given SceneNodeCapability
@@ -229,6 +245,14 @@ public:
 
   /// @brief RTTI implementation
   static bool classof(const SceneNode* node) noexcept { return node->getKind() == SK_SceneNode; }
+
+private:
+  /// @brief Apply `functor` to the node and all its children
+  void applyImpl(const std::function<void(SceneNode*)>& functor, ExecutionPolicy policy);
+
+  /// @brief Apply noexcept `functor` to the node and all its children
+  void applyNoexceptImpl(const std::function<void(SceneNode*) noexcept>& functor,
+                         ExecutionPolicy policy) noexcept;
 
 protected:
   /// @brief Implementation of `toString` returns stringified members and title

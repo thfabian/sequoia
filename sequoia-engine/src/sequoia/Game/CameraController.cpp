@@ -50,7 +50,7 @@ void CameraController::update(const SceneNode::UpdateEvent& event) {
 }
 
 std::shared_ptr<SceneNode> CameraController::clone() {
-  return SceneNode::create<CameraController>(*this);
+  return SceneNode::allocate<CameraController>(*this);
 }
 
 void CameraController::cameraListenerPositionChanged(render::Camera* camera) {

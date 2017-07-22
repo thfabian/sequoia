@@ -116,7 +116,7 @@ void CameraControllerFree::update(const UpdateEvent& event) {
 }
 
 std::shared_ptr<SceneNode> CameraControllerFree::clone() {
-  return SceneNode::create<CameraControllerFree>(*this);
+  return SceneNode::allocate<CameraControllerFree>(*this);
 }
 
 void CameraControllerFree::keyboardEvent(const render::KeyboardEvent& event) {

@@ -31,7 +31,7 @@ SEQUOIA_GAME_TEST_FIXTURE(DrawableTest);
 
 TEST_F(DrawableTest, Construction) {
   Game& game = Game::getSingleton();
-  std::shared_ptr<SceneNode> node = SceneNode::create("TestNode");
+  std::shared_ptr<SceneNode> node = SceneNode::allocate("TestNode");
   auto mesh = game.getMeshManager()->createCube("TestCube");
 
   node->addCapability<Drawable>(mesh);
