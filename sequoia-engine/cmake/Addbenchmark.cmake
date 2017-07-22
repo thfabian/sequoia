@@ -14,12 +14,13 @@
 ##===------------------------------------------------------------------------------------------===##
 
 find_package(benchmark NO_MODULE REQUIRED)
+
+get_property(benchmark_INCLUDE_DIRS TARGET benchmark::benchmark PROPERTY INTERFACE_INCLUDE_DIRECTORIES)
 include_directories(SYSTEM ${benchmark_INCLUDE_DIRS})
 
 sequoia_export_package(
   PACKAGE benchmark
   FOUND ${benchmark_FOUND} 
-  VERSION_STR "${benchmark_VERSION}" 
   LIBRARIES "benchmark::benchmark"
 )
 

@@ -18,7 +18,8 @@ sequoia_configure_file(Config.h.cmake)
 
 sequoia_add_objects(
   NAME SequoiaUnittest
-  SOURCES Environment.h
+  SOURCES Benchmark.h
+          Environment.h
           Environment.cpp
           Fixture.h
           GameSetup.h
@@ -34,3 +35,4 @@ sequoia_add_objects(
           GL/GLRenderSetup.cpp
   DEPENDS SequoiaCore
 )
+

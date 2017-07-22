@@ -25,4 +25,5 @@ macro(sequoia_add_benchmark SOURCE)
 endmacro()
 
 sequoia_add_benchmark(BenchmarkUniformVariable.cpp)
+sequoia_add_benchmark(GL/BenchmarkGLBuffer.cpp)
 

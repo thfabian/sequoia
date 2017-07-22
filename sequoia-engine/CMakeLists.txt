@@ -63,7 +63,6 @@ sequoia_report_result(
 )
 
 ##===---------------------------------- Add external libraries --------------------------------===##
-include(AddThreads)
 
 include(AddBackward)
 include(AddBoost)
@@ -77,6 +76,7 @@ include(AddOpenCV)
 include(AddOpenGL)
 include(AddPython3)
 include(AddTBB)
+include(AddThreads)
 
 if(SEQUOIA_TESTING)
   include(AddGTest)
@@ -93,7 +93,7 @@ set(SEQUOIA_EXTERNAL_LIBRARIES
   ${SEQUOIA_TBB_LIBRARIES}
   ${SEQUOIA_THREADS_LIBRARIES}
   ${SEQUOIA_GTEST_LIBRARIES}
-  ${SEQUOIA_BENCHMARK_LIBRARIES}
+  ${SEQUOIA_BENCHMARK_TARGETS}
 )
 
 # Output summary of the packages

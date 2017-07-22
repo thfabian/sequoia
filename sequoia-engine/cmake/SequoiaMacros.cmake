@@ -91,7 +91,7 @@ macro(sequoia_export_package)
   # Prase arguments
   set(options)
   set(one_value_args PACKAGE FOUND VERSION_STR)
-  set(multi_value_args LIBRARIES)
+  set(multi_value_args LIBRARIES TARGETS)
   cmake_parse_arguments(ARG "${options}" "${one_value_args}" "${multi_value_args}" ${ARGN})
   
   if(NOT("${ARG_UNPARSED_ARGUMENTS}" STREQUAL ""))

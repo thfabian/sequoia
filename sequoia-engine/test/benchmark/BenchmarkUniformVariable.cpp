@@ -19,6 +19,8 @@
 
 using namespace sequoia;
 
+namespace {
+
 // Benchmark boost::any for assigning data
 
 static void BM_UniformVariableAnyMat4(benchmark::State& state) {
@@ -50,5 +52,7 @@ static void BM_UniformVariableVariantInt(benchmark::State& state) {
     benchmark::DoNotOptimize(variant = int(2));
 }
 BENCHMARK(BM_UniformVariableVariantInt);
+
+} // anonymous namespace
 
 BENCHMARK_MAIN();

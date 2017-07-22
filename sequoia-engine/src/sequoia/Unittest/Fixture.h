@@ -17,25 +17,23 @@
 #define SEQUOIA_UNITTEST_FIXTURE_H
 
 #include "sequoia/Core/NonCopyable.h"
+#include <benchmark/benchmark.h>
+#include <gtest/gtest.h>
 #include <memory>
 
 namespace sequoia {
 
 namespace unittest {
 
-/// @brief Generic base class of fixtures
-///
-/// @tparam Fixture   Class to fixture (needs to support `Fixture::SetUp` and `Fixture::TearDown`)
-/// @tparam Base      Base fixture class (e.g testing::Test for GTest)
-///
+/// @brief Generic base class of all test fixtures
 /// @ingroup unittest
-template <class Fixture, class Base>
-class FixtureBase : public Base, public NonCopyable {
-  std::unique_ptr<Fixture> fixture_;
+template <class FixtureT>
+class TestFixtureBase : public testing::Test, public NonCopyable {
+  std::unique_ptr<FixtureT> fixture_;
 
 protected:
   virtual void SetUp() override {
-    fixture_ = std::make_unique<Fixture>();
+    fixture_ = std::make_unique<FixtureT>();
     fixture_->SetUp();
   }
 
@@ -45,10 +43,28 @@ protected:
   }
 };
 
-#define SEQUOIA_TEST_FIXTURE(Name, Base)                                                           \
-  class Name : public sequoia::unittest::FixtureBase<Base, testing::Test> {};
-#define SEQUOIA_BENCHMARK_FIXTURE(Name, Base)                                                      \
-  class Name : public sequoia::unittest::FixtureBase<Base, benchmark::Fixture> {};
+/// @brief Generic base class of all benchmark fixtures
+/// @ingroup unittest
+template <class FixtureT>
+class BenchmarkFixtureBase : public benchmark::Fixture, public NonCopyable {
+  std::unique_ptr<FixtureT> fixture_;
+
+protected:
+  virtual void SetUp(benchmark::State& st) override {
+    fixture_ = std::make_unique<FixtureT>();
+    fixture_->SetUp();
+  }
+
+  virtual void TearDown(benchmark::State& st) override {
+    fixture_->TearDown();
+    fixture_.release();
+  }
+};
+
+#define SEQUOIA_TEST_FIXTURE(Name, SetupClass)                                                     \
+  class Name : public sequoia::unittest::TestFixtureBase<SetupClass> {};
+#define SEQUOIA_BENCHMARK_FIXTURE(Name, SetupClass)                                                \
+  class Name : public sequoia::unittest::BenchmarkFixtureBase<SetupClass> {};
 
 } // namespace unittest
 
