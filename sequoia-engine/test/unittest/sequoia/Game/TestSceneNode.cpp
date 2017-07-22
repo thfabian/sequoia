@@ -17,7 +17,7 @@
 #include "sequoia/Game/Scene.h"
 #include "sequoia/Game/SceneGraph.h"
 #include "sequoia/Game/SceneNode.h"
-#include "sequoia/Unittest/GameTest.h"
+#include "sequoia/Unittest/GameSetup.h"
 #include <gtest/gtest.h>
 
 using namespace sequoia;
@@ -26,7 +26,7 @@ using namespace sequoia::game;
 
 namespace {
 
-class SceneNodeTest : public GameTest {};
+SEQUOIA_GAME_TEST_FIXTURE(SceneNodeTest);
 
 TEST_F(SceneNodeTest, Construction) {
   auto node = SceneNode::create("SceneNode");

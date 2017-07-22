@@ -15,7 +15,7 @@
 
 #include "sequoia/Core/StringUtil.h"
 #include "sequoia/Render/GL/GLBuffer.h"
-#include "sequoia/Unittest/GL/GLRenderTest.h"
+#include "sequoia/Unittest/GL/GLRenderSetup.h"
 #include <algorithm>
 #include <gtest/gtest.h>
 #include <iostream>
@@ -57,7 +57,7 @@ std::size_t getNumBytes(const std::vector<T>& vec) {
   return vec.size() * sizeof(T);
 }
 
-class GLBufferTest : public GLRenderTest {};
+SEQUOIA_RENDER_TEST_FIXTURE(GLBufferTest);
 
 TEST_F(GLBufferTest, ReadAndWrite) {
   auto vec = makeRandomVector<int>(8);

@@ -13,36 +13,19 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_UNITTEST_GL_GLRENDERTEST_H
-#define SEQUOIA_UNITTEST_GL_GLRENDERTEST_H
-
-#include "sequoia/Core/Export.h"
-#include "sequoia/Core/NonCopyable.h"
-#include "sequoia/Render/GL/GLRenderWindow.h"
-#include <gtest/gtest.h>
+#include "sequoia/Unittest/GameSetup.h"
 
 namespace sequoia {
 
 namespace unittest {
 
-/// @brief Handle creation and initialization of OpenGL RenderWindows for unittesting
-/// @ingroup unittest
-class SEQUOIA_API GLRenderTest : public testing::Test, public NonCopyable {
-  render::GLRenderWindow* window_;
+void GameSetup::SetUp() {
+  game_ = std::make_unique<game::Game>();
+  game_->init(true);
+}
 
-protected:
-  /// @brief Get the active window
-  render::GLRenderWindow* getWindow() const;
-
-  /// @brief Register and initialize the window
-  void SetUp();
-
-  /// @brief Destroy the window
-  void TearDown();
-};
+void GameSetup::TearDown() { game_.reset(); }
 
 } // namespace unittest
 
 } // namespace sequoia
-
-#endif

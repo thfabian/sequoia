@@ -19,7 +19,7 @@ macro(sequoia_add_benchmark SOURCE)
     NAME Sequoia${name}
     SOURCES ${SOURCE}
     DEPENDS Sequoia
-            ${SEQUOIA_BENCHMARK_LIBRARIES}
+            ${SEQUOIA_EXTERNAL_LIBRARIES}
     OUTPUT_DIR benchmark
   )
 endmacro()

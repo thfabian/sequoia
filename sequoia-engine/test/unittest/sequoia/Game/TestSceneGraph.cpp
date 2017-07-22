@@ -15,7 +15,7 @@
 
 #include "sequoia/Game/Scene.h"
 #include "sequoia/Game/SceneGraph.h"
-#include "sequoia/Unittest/GameTest.h"
+#include "sequoia/Unittest/GameSetup.h"
 #include <gtest/gtest.h>
 
 using namespace sequoia;
@@ -24,7 +24,7 @@ using namespace sequoia::game;
 
 namespace {
 
-class SceneGraphTest : public GameTest {};
+SEQUOIA_GAME_TEST_FIXTURE(SceneGraphTest);
 
 TEST_F(SceneGraphTest, Construction) {
   std::shared_ptr<SceneGraph> graph = std::make_shared<SceneGraph>();

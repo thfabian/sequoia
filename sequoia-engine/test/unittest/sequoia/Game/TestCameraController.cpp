@@ -17,7 +17,7 @@
 #include "sequoia/Game/CameraController.h"
 #include "sequoia/Game/Scene.h"
 #include "sequoia/Game/SceneGraph.h"
-#include "sequoia/Unittest/GameTest.h"
+#include "sequoia/Unittest/GameSetup.h"
 #include "sequoia/Unittest/Test.h"
 
 using namespace sequoia;
@@ -26,7 +26,7 @@ using namespace sequoia::game;
 
 namespace {
 
-class CameraControllerTest : public GameTest {};
+SEQUOIA_GAME_TEST_FIXTURE(CameraControllerTest);
 
 TEST_F(CameraControllerTest, CameraController) {
   auto node = SceneNode::create<CameraController>("CameraController");

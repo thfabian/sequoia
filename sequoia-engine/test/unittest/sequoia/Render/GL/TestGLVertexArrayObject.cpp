@@ -21,7 +21,7 @@
 #include "sequoia/Render/GL/GLVertexAttribute.h"
 #include "sequoia/Render/VertexData.h"
 #include "sequoia/Unittest/Environment.h"
-#include "sequoia/Unittest/GL/GLRenderTest.h"
+#include "sequoia/Unittest/GL/GLRenderSetup.h"
 #include <gtest/gtest.h>
 
 using namespace sequoia;
@@ -30,7 +30,7 @@ using namespace sequoia::render;
 
 namespace {
 
-class GLVertexArrayObjectTest : public GLRenderTest {};
+SEQUOIA_RENDER_TEST_FIXTURE(GLVertexArrayObjectTest);
 
 template <class VertexDataType>
 std::unique_ptr<VertexData> makeVertexData(std::size_t numVertices, std::size_t numIndices) {

@@ -20,8 +20,9 @@ sequoia_add_objects(
   NAME SequoiaUnittest
   SOURCES Environment.h
           Environment.cpp
-          GameTest.h
-          GameTest.cpp
+          Fixture.h
+          GameSetup.h
+          GameSetup.cpp
           TestFile.h
           TestFile.cpp
           Test.h
@@ -29,7 +30,7 @@ sequoia_add_objects(
           
           GL/GLEnvironment.h
           GL/GLEnvironment.cpp
-          GL/GLRenderTest.h
-          GL/GLRenderTest.cpp
+          GL/GLRenderSetup.h
+          GL/GLRenderSetup.cpp
   DEPENDS SequoiaCore
 )

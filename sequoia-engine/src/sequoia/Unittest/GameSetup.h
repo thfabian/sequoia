@@ -13,19 +13,37 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Unittest/GameTest.h"
+#ifndef SEQUOIA_UNITTEST_GAMESETUP_H
+#define SEQUOIA_UNITTEST_GAMESETUP_H
+
+#include "sequoia/Core/Export.h"
+#include "sequoia/Core/NonCopyable.h"
+#include "sequoia/Game/Game.h"
+#include "sequoia/Unittest/Fixture.h"
 
 namespace sequoia {
 
 namespace unittest {
 
-void GameTest::SetUp() {
-  game_ = std::make_unique<game::Game>();
-  game_->init(true);
-}
+/// @brief Handle creation and initialization of the game object
+/// @ingroup unittest
+class SEQUOIA_API GameSetup : public NonCopyable {
+  std::unique_ptr<game::Game> game_;
 
-void GameTest::TearDown() { game_.reset(); }
+public:
+  /// @brief Register and initialize the Game
+  void SetUp();
+
+  /// @brief Destroy the Game
+  void TearDown();
+};
+
+#define SEQUOIA_GAME_TEST_FIXTURE(Name) SEQUOIA_TEST_FIXTURE(Name, sequoia::unittest::GameSetup)
+#define SEQUOIA_GAME_BENCHMARK_FIXTURE(Name)                                                       \
+  SEQUOIA_BENCHMARK_FIXTURE(Name, sequoia::unittest::GameSetup)
 
 } // namespace unittest
 
 } // namespace sequoia
+
+#endif

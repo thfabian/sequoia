@@ -22,7 +22,7 @@
 #include "sequoia/Render/GL/GLShaderManager.h"
 #include "sequoia/Render/GL/GLVertexAttribute.h"
 #include "sequoia/Unittest/Environment.h"
-#include "sequoia/Unittest/GL/GLRenderTest.h"
+#include "sequoia/Unittest/GL/GLRenderSetup.h"
 #include <gtest/gtest.h>
 
 using namespace sequoia;
@@ -31,7 +31,7 @@ using namespace sequoia::render;
 
 namespace {
 
-class GLProgramTest : public GLRenderTest {};
+SEQUOIA_RENDER_TEST_FIXTURE(GLProgramTest);
 
 TEST_F(GLProgramTest, LinkingSuccess) {
   Environment& env = Environment::getSingleton();

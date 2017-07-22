@@ -14,7 +14,7 @@
 //===------------------------------------------------------------------------------------------===//
 
 #include "sequoia/Game/MeshManager.h"
-#include "sequoia/Unittest/GameTest.h"
+#include "sequoia/Unittest/GameSetup.h"
 #include <gtest/gtest.h>
 
 using namespace sequoia;
@@ -23,7 +23,7 @@ using namespace sequoia::game;
 
 namespace {
 
-class MeshManagerTest : public GameTest {};
+SEQUOIA_GAME_TEST_FIXTURE(MeshManagerTest);
 
 TEST_F(MeshManagerTest, Cube) {
   Game& game = Game::getSingleton();

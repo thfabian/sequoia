@@ -19,7 +19,7 @@
 #include "sequoia/Render/GL/GLRenderSystem.h"
 #include "sequoia/Render/GL/GLTextureManager.h"
 #include "sequoia/Unittest/Environment.h"
-#include "sequoia/Unittest/GL/GLRenderTest.h"
+#include "sequoia/Unittest/GL/GLRenderSetup.h"
 #include <gli/gli.hpp>
 #include <gtest/gtest.h>
 
@@ -29,7 +29,7 @@ using namespace sequoia::render;
 
 namespace {
 
-class GLTextureTest : public GLRenderTest {};
+SEQUOIA_RENDER_TEST_FIXTURE(GLTextureTest);
 
 TEST_F(GLTextureTest, LoadTexture2D) {
   Environment& env = Environment::getSingleton();

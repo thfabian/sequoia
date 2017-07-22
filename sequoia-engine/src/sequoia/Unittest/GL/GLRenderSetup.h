@@ -13,30 +13,33 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_UNITTEST_GAMETEST_H
-#define SEQUOIA_UNITTEST_GAMETEST_H
+#ifndef SEQUOIA_UNITTEST_GL_GLRENDERSETUP_H
+#define SEQUOIA_UNITTEST_GL_GLRENDERSETUP_H
 
 #include "sequoia/Core/Export.h"
 #include "sequoia/Core/NonCopyable.h"
-#include "sequoia/Game/Game.h"
-#include <gtest/gtest.h>
+#include "sequoia/Render/GL/GLRenderWindow.h"
+#include "sequoia/Unittest/Fixture.h"
 
 namespace sequoia {
 
 namespace unittest {
 
-/// @brief Handle creation and initialization of the game object
+/// @brief Handle creation and initialization of OpenGL RenderWindows
 /// @ingroup unittest
-class SEQUOIA_API GameTest : public testing::Test, public NonCopyable {
-  std::unique_ptr<game::Game> game_;
-
-protected:
-  /// @brief Register and initialize the Game
+class SEQUOIA_API GLRenderSetup : public NonCopyable {
+public:
+  /// @brief Register and initialize the window
   void SetUp();
 
-  /// @brief Destroy the Game
+  /// @brief Destroy the window
   void TearDown();
 };
+
+#define SEQUOIA_RENDER_TEST_FIXTURE(Name)                                                          \
+  SEQUOIA_TEST_FIXTURE(Name, sequoia::unittest::GLRenderSetup)
+#define SEQUOIA_RENDER_BENCHMARK_FIXTURE(Name)                                                     \
+  SEQUOIA_BENCHMARK_FIXTURE(Name, sequoia::unittest::GLRenderSetup)
 
 } // namespace unittest
 

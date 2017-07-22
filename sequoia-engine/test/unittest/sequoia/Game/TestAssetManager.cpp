@@ -15,7 +15,6 @@
 
 #include "sequoia/Game/AssetManager.h"
 #include "sequoia/Unittest/Environment.h"
-#include "sequoia/Unittest/GameTest.h"
 #include <fstream>
 #include <gtest/gtest.h>
 #include <sstream>

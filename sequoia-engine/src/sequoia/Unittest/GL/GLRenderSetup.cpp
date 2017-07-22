@@ -18,22 +18,20 @@
 #include "sequoia/Render/RenderSystem.h"
 #include "sequoia/Render/RenderWindow.h"
 #include "sequoia/Render/Viewport.h"
-#include "sequoia/Unittest/GL/GLRenderTest.h"
+#include "sequoia/Unittest/GL/GLRenderSetup.h"
 
 namespace sequoia {
 
 namespace unittest {
 
-render::GLRenderWindow* GLRenderTest::getWindow() const { return window_; }
-
-void GLRenderTest::SetUp() {
+void GLRenderSetup::SetUp() {
   render::RenderWindow::WindowHint hints;
   hints.HideWindow = true;
   hints.WindowMode = render::RenderWindow::WindowHint::WK_Window;
-  window_ = (render::GLRenderWindow*)render::RenderSystem::getSingleton().createMainWindow(hints);
+  render::RenderSystem::getSingleton().createMainWindow(hints);
 }
 
-void GLRenderTest::TearDown() { render::RenderSystem::getSingleton().destroyMainWindow(); }
+void GLRenderSetup::TearDown() { render::RenderSystem::getSingleton().destroyMainWindow(); }
 
 } // namespace unittest
 
