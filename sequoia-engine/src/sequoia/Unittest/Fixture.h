@@ -31,7 +31,7 @@ template <class FixtureT>
 class TestFixture : public testing::Test, public NonCopyable {
   std::unique_ptr<FixtureT> fixture_;
 
-protected:
+public:
   virtual void SetUp() override {
     fixture_ = std::make_unique<FixtureT>();
     fixture_->SetUp();
@@ -49,7 +49,7 @@ template <class FixtureT>
 class BenchmarkFixture : public benchmark::Fixture, public NonCopyable {
   std::unique_ptr<FixtureT> fixture_;
 
-protected:
+public:
   virtual void SetUp(benchmark::State& st) override {
     fixture_ = std::make_unique<FixtureT>();
     fixture_->SetUp();

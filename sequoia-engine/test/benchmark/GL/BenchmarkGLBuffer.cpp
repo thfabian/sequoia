@@ -26,34 +26,52 @@ using namespace sequoia::unittest;
 
 namespace {
 
-class BM_GLBuffer : public BenchmarkFixture<GLRenderSetup> {};
+class BM_GLBuffer : public BenchmarkFixture<GLRenderSetup> {
+protected:
+  GLenum target_ = GL_ARRAY_BUFFER;
+  std::unique_ptr<GLBuffer> buffer_;
+  core::aligned_vector<Byte> data_;
 
-BENCHMARK_DEFINE_F(BM_GLBuffer, DMAWriteDiscardable)(benchmark::State& state) {
-  GLenum target = GL_ARRAY_BUFFER;
-  std::size_t numBytes = state.range(0);
+public:
+  using Base = BenchmarkFixture<GLRenderSetup>;
 
-  // Initialize OpenGL buffer
-  GLBuffer buffer(target, 1);
-  buffer.allocate(numBytes, Buffer::UH_DynamicWriteOnlyDiscardable);
-  core::aligned_vector<Byte> data(numBytes);
+  void SetUp(benchmark::State& state) {
+    Base::SetUp(state);
 
-  // Bind buffer
-  unsigned int id = buffer.getModifyBufferID();
-  glBindBuffer(target, id);
+    std::size_t numBytes = state.range(0);
 
-  // Benchmark DMA (while discarding the buffer first)
-  while(state.KeepRunning()) {
-    glBufferData(target, numBytes, nullptr, GL_STREAM_DRAW);
-    void* src = glMapBuffer(target, GL_WRITE_ONLY);
-    std::memcpy(data.data(), src, numBytes);
-    glUnmapBuffer(target);
+    // Initialize OpenGL buffer
+    buffer_ = std::make_unique<GLBuffer>(target_, 1);
+    buffer_->allocate(numBytes, Buffer::UH_DynamicWriteOnlyDiscardable);
+    data_.resize(numBytes);
+
+    // Bind buffer
+    buffer_->bind(GLBuffer::BK_Modify);
   }
 
-  glBindBuffer(target, 0);
+  void TearDown(benchmark::State& state) {
+    buffer_->unbind(GLBuffer::BK_Modify);
+    buffer_.release();
+    data_.clear();
+
+    Base::TearDown(state);
+  }
+};
+
+BENCHMARK_DEFINE_F(BM_GLBuffer, DMAWriteDiscard)(benchmark::State& state) {
+  const unsigned int numBytes = data_.size();
+  const void* src = data_.data();
+  const GLenum target = target_;
+
+  while(state.KeepRunning()) {
+    /*glBufferData(target, numBytes, nullptr, GL_STREAM_DRAW);*/
+    void* dest = glMapBuffer(target, GL_WRITE_ONLY);
+    std::memcpy(dest, src, numBytes);
+    glUnmapBuffer(target);
+  }
 }
-BENCHMARK_REGISTER_F(BM_GLBuffer, DMAWriteDiscardable)
-    ->RangeMultiplier(2)
-    ->Range(32, 64 /*2 << 12*/);
+
+BENCHMARK_REGISTER_F(BM_GLBuffer, DMAWriteDiscard)->RangeMultiplier(2)->Range(32, /*64*/ 2 << 12);
 
 } // anonymous namespace
 
