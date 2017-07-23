@@ -26,7 +26,7 @@ using namespace sequoia::game;
 
 namespace {
 
-SEQUOIA_GAME_TEST_FIXTURE(CameraControllerTest);
+class CameraControllerTest : public TestFixture<GameSetup> {};
 
 TEST_F(CameraControllerTest, CameraController) {
   auto node = SceneNode::allocate<CameraController>("CameraController");

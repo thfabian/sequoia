@@ -24,7 +24,7 @@ using namespace sequoia::game;
 
 namespace {
 
-SEQUOIA_GAME_TEST_FIXTURE(SceneGraphTest);
+class SceneGraphTest : public TestFixture<GameSetup> {};
 
 TEST_F(SceneGraphTest, Construction) {
   std::shared_ptr<SceneGraph> graph = std::make_shared<SceneGraph>();

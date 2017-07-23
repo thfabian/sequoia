@@ -36,11 +36,6 @@ public:
   void TearDown();
 };
 
-#define SEQUOIA_RENDER_TEST_FIXTURE(Name)                                                          \
-  SEQUOIA_TEST_FIXTURE(Name, sequoia::unittest::GLRenderSetup)
-#define SEQUOIA_RENDER_BENCHMARK_FIXTURE(Name)                                                     \
-  SEQUOIA_BENCHMARK_FIXTURE(Name, sequoia::unittest::GLRenderSetup)
-
 } // namespace unittest
 
 } // namespace sequoia

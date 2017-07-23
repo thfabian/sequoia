@@ -23,7 +23,7 @@ using namespace sequoia::game;
 
 namespace {
 
-SEQUOIA_GAME_TEST_FIXTURE(MeshManagerTest);
+class MeshManagerTest : public TestFixture<GameSetup> {};
 
 TEST_F(MeshManagerTest, Cube) {
   Game& game = Game::getSingleton();

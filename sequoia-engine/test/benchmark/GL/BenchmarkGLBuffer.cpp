@@ -13,6 +13,7 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
+#include "sequoia/Core/AlignedADT.h"
 #include "sequoia/Render/GL/GL.h"
 #include "sequoia/Render/GL/GLBuffer.h"
 #include "sequoia/Unittest/BenchmarkMain.h"
@@ -21,20 +22,34 @@
 
 using namespace sequoia;
 using namespace sequoia::render;
+using namespace sequoia::unittest;
 
 namespace {
 
-SEQUOIA_RENDER_BENCHMARK_FIXTURE(BM_GLBuffer)
+class BM_GLBuffer : public BenchmarkFixture<GLRenderSetup> {};
 
 BENCHMARK_DEFINE_F(BM_GLBuffer, DMAWriteDiscardable)(benchmark::State& state) {
-  GLBuffer buffer(GL_ARRAY_BUFFER, 1);
-  buffer.allocate(state.range(0), Buffer::UH_DynamicWriteOnlyDiscardable);
+  GLenum target = GL_ARRAY_BUFFER;
+  std::size_t numBytes = state.range(0);
 
-  unsigned int id = buffer.getModifyBufferIdx();
-  glBindBuffer(GL_ARRAY_BUFFER, id);
+  // Initialize OpenGL buffer
+  GLBuffer buffer(target, 1);
+  buffer.allocate(numBytes, Buffer::UH_DynamicWriteOnlyDiscardable);
+  core::aligned_vector<Byte> data(numBytes);
+
+  // Bind buffer
+  unsigned int id = buffer.getModifyBufferID();
+  glBindBuffer(target, id);
+
+  // Benchmark DMA (while discarding the buffer first)
   while(state.KeepRunning()) {
+    glBufferData(target, numBytes, nullptr, GL_STREAM_DRAW);
+    void* src = glMapBuffer(target, GL_WRITE_ONLY);
+    std::memcpy(data.data(), src, numBytes);
+    glUnmapBuffer(target);
   }
-  glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+  glBindBuffer(target, 0);
 }
 BENCHMARK_REGISTER_F(BM_GLBuffer, DMAWriteDiscardable)
     ->RangeMultiplier(2)

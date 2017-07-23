@@ -21,8 +21,8 @@
 #include "sequoia/Render/GL/GLRenderer.h"
 #include "sequoia/Render/GL/GLShaderManager.h"
 #include "sequoia/Render/GL/GLVertexAttribute.h"
-#include "sequoia/Unittest/TestEnvironment.h"
 #include "sequoia/Unittest/GL/GLRenderSetup.h"
+#include "sequoia/Unittest/TestEnvironment.h"
 #include <gtest/gtest.h>
 
 using namespace sequoia;
@@ -31,7 +31,7 @@ using namespace sequoia::render;
 
 namespace {
 
-SEQUOIA_RENDER_TEST_FIXTURE(GLProgramTest);
+class GLProgramTest : public TestFixture<GLRenderSetup> {};
 
 TEST_F(GLProgramTest, LinkingSuccess) {
   TestEnvironment& env = TestEnvironment::getSingleton();

@@ -126,10 +126,16 @@ public:
   void nextTimestep();
 
   /// @brief Get the index into `getBufferIds()` of the buffer which is being drawn
-  unsigned int getDrawBufferIdx() const;
+  unsigned int getDrawBufferIndex() const;
+  
+  /// @brief Get the OpenGL id of the buffer which is being drawn
+  unsigned int getDrawBufferID() const;
 
   /// @brief Get the index into `getBufferIds()` of the buffer which is currently being modified
-  unsigned int getModifyBufferIdx() const;
+  unsigned int getModifyBufferIndex() const;
+  
+  /// @brief Get the OpenGL id of the buffer which is currently being modified
+  unsigned int getModifyBufferID() const;  
 
   /// @brief Get the OpenGL buffer ids
   std::vector<unsigned int> getBuffersIds() const { return bufferIds_; }

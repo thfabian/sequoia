@@ -30,7 +30,7 @@ using namespace sequoia::render;
 
 namespace {
 
-SEQUOIA_RENDER_TEST_FIXTURE(GLVertexArrayObjectTest);
+class GLVertexArrayObjectTest : public TestFixture<GLRenderSetup> {};
 
 template <class VertexDataType>
 std::unique_ptr<VertexData> makeVertexData(std::size_t numVertices, std::size_t numIndices) {

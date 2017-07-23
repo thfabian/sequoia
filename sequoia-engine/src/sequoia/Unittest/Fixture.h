@@ -25,10 +25,10 @@ namespace sequoia {
 
 namespace unittest {
 
-/// @brief Generic base class of all test fixtures
+/// @brief Generic base class for test fixtures
 /// @ingroup unittest
 template <class FixtureT>
-class TestFixtureBase : public testing::Test, public NonCopyable {
+class TestFixture : public testing::Test, public NonCopyable {
   std::unique_ptr<FixtureT> fixture_;
 
 protected:
@@ -43,10 +43,10 @@ protected:
   }
 };
 
-/// @brief Generic base class of all benchmark fixtures
+/// @brief Generic base class for benchmark fixtures
 /// @ingroup unittest
 template <class FixtureT>
-class BenchmarkFixtureBase : public benchmark::Fixture, public NonCopyable {
+class BenchmarkFixture : public benchmark::Fixture, public NonCopyable {
   std::unique_ptr<FixtureT> fixture_;
 
 protected:
@@ -60,11 +60,6 @@ protected:
     fixture_.release();
   }
 };
-
-#define SEQUOIA_TEST_FIXTURE(Name, SetupClass)                                                     \
-  class Name : public sequoia::unittest::TestFixtureBase<SetupClass> {};
-#define SEQUOIA_BENCHMARK_FIXTURE(Name, SetupClass)                                                \
-  class Name : public sequoia::unittest::BenchmarkFixtureBase<SetupClass> {};
 
 } // namespace unittest
 

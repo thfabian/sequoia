@@ -18,8 +18,8 @@
 #include "sequoia/Render/GL/GLRenderSystem.h"
 #include "sequoia/Render/GL/GLRenderer.h"
 #include "sequoia/Render/GL/GLShaderManager.h"
-#include "sequoia/Unittest/TestEnvironment.h"
 #include "sequoia/Unittest/GL/GLRenderSetup.h"
+#include "sequoia/Unittest/TestEnvironment.h"
 #include "sequoia/Unittest/TestFile.h"
 #include <gtest/gtest.h>
 
@@ -30,7 +30,7 @@ using namespace sequoia::render;
 
 namespace {
 
-SEQUOIA_RENDER_TEST_FIXTURE(GLShaderTest);
+class GLShaderTest : public TestFixture<GLRenderSetup> {};
 
 TEST_F(GLShaderTest, LoadingSuccess) {
   TestEnvironment& env = TestEnvironment::getSingleton();

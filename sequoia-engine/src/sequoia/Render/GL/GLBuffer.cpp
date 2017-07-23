@@ -43,7 +43,7 @@ static GLenum getGLBufferUsage(Buffer::UsageHint hint) {
 GLBuffer::GLBuffer(GLenum target, int numBuffers)
     : modifyBufferIdx_(0), target_(target), hint_(GL_INVALID_ENUM), numBytes_(0), isLocked_(false) {
   bufferIds_.resize(numBuffers);
-  
+
   // TODO: for DSA replace with glCreateBuffers
   glGenBuffers(bufferIds_.size(), bufferIds_.data());
 }
@@ -53,10 +53,10 @@ GLBuffer::~GLBuffer() { glDeleteBuffers(bufferIds_.size(), bufferIds_.data()); }
 void GLBuffer::bind(GLBuffer::BindKind kind) {
   switch(kind) {
   case BK_Draw:
-    glBindBuffer(target_, bufferIds_[getDrawBufferIdx()]);
+    glBindBuffer(target_, getDrawBufferID());
     break;
   case BK_Modify:
-    glBindBuffer(target_, bufferIds_[getModifyBufferIdx()]);
+    glBindBuffer(target_, getModifyBufferID());
     break;
   default:
     sequoia_unreachable("invalid BindKind");
@@ -115,9 +115,9 @@ void GLBuffer::allocate(std::size_t numBytes, Buffer::UsageHint hint) {
 void GLBuffer::write(const void* src, std::size_t offset, std::size_t length, bool discardBuffer) {
   bind(BK_Modify);
 
-  if(discardBuffer) 
+  if(discardBuffer)
     glBufferData(target_, numBytes_, nullptr, hint_);
-  
+
   void* dest = glMapBuffer(target_, GL_WRITE_ONLY);
   std::memcpy(static_cast<void*>(((Byte*)dest + offset)), src, length);
   glUnmapBuffer(target_);
@@ -133,11 +133,15 @@ void GLBuffer::read(std::size_t offset, std::size_t length, void* dest) {
 
 void GLBuffer::nextTimestep() { modifyBufferIdx_ = (modifyBufferIdx_ + 1) % bufferIds_.size(); }
 
-unsigned int GLBuffer::getDrawBufferIdx() const {
+unsigned int GLBuffer::getDrawBufferIndex() const {
   return (modifyBufferIdx_ + (bufferIds_.size() - 1)) % bufferIds_.size();
 }
 
-unsigned int GLBuffer::getModifyBufferIdx() const { return modifyBufferIdx_; }
+unsigned int GLBuffer::getDrawBufferID() const { return bufferIds_[getDrawBufferIndex()]; }
+
+unsigned int GLBuffer::getModifyBufferIndex() const { return modifyBufferIdx_; }
+
+unsigned int GLBuffer::getModifyBufferID() const { return bufferIds_[getModifyBufferIndex()]; }
 
 std::string GLBuffer::toString() const {
   return core::format("GLBuffer[\n"

@@ -57,7 +57,7 @@ std::size_t getNumBytes(const std::vector<T>& vec) {
   return vec.size() * sizeof(T);
 }
 
-SEQUOIA_RENDER_TEST_FIXTURE(GLBufferTest);
+class GLBufferTest : public TestFixture<GLRenderSetup> {};
 
 TEST_F(GLBufferTest, ReadAndWrite) {
   auto vec = makeRandomVector<int>(8);
@@ -99,30 +99,30 @@ TEST_F(GLBufferTest, LockAndUnlock) {
 
 TEST_F(GLBufferTest, NextTimestep) {
   GLBuffer buffer(GL_ARRAY_BUFFER, 1);
-  EXPECT_EQ(buffer.getModifyBufferIdx(), 0);
-  EXPECT_EQ(buffer.getDrawBufferIdx(), 0);
+  EXPECT_EQ(buffer.getModifyBufferIndex(), 0);
+  EXPECT_EQ(buffer.getDrawBufferIndex(), 0);
 
   buffer.nextTimestep();
-  EXPECT_EQ(buffer.getModifyBufferIdx(), 0);
-  EXPECT_EQ(buffer.getDrawBufferIdx(), 0);
+  EXPECT_EQ(buffer.getModifyBufferIndex(), 0);
+  EXPECT_EQ(buffer.getDrawBufferIndex(), 0);
 }
 
 TEST_F(GLBufferTest, NextTimestepMultiBuffered) {
   GLBuffer buffer(GL_ARRAY_BUFFER, 3);
-  EXPECT_EQ(buffer.getModifyBufferIdx(), 0);
-  EXPECT_EQ(buffer.getDrawBufferIdx(), 2);
+  EXPECT_EQ(buffer.getModifyBufferIndex(), 0);
+  EXPECT_EQ(buffer.getDrawBufferIndex(), 2);
 
   buffer.nextTimestep();
-  EXPECT_EQ(buffer.getModifyBufferIdx(), 1);
-  EXPECT_EQ(buffer.getDrawBufferIdx(), 0);
+  EXPECT_EQ(buffer.getModifyBufferIndex(), 1);
+  EXPECT_EQ(buffer.getDrawBufferIndex(), 0);
 
   buffer.nextTimestep();
-  EXPECT_EQ(buffer.getModifyBufferIdx(), 2);
-  EXPECT_EQ(buffer.getDrawBufferIdx(), 1);
+  EXPECT_EQ(buffer.getModifyBufferIndex(), 2);
+  EXPECT_EQ(buffer.getDrawBufferIndex(), 1);
 
   buffer.nextTimestep();
-  EXPECT_EQ(buffer.getModifyBufferIdx(), 0);
-  EXPECT_EQ(buffer.getDrawBufferIdx(), 2);
+  EXPECT_EQ(buffer.getModifyBufferIndex(), 0);
+  EXPECT_EQ(buffer.getDrawBufferIndex(), 2);
 }
 
 #undef ASSERT_VECTOR_EQ

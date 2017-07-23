@@ -38,10 +38,6 @@ public:
   void TearDown();
 };
 
-#define SEQUOIA_GAME_TEST_FIXTURE(Name) SEQUOIA_TEST_FIXTURE(Name, sequoia::unittest::GameSetup)
-#define SEQUOIA_GAME_BENCHMARK_FIXTURE(Name)                                                       \
-  SEQUOIA_BENCHMARK_FIXTURE(Name, sequoia::unittest::GameSetup)
-
 } // namespace unittest
 
 } // namespace sequoia

@@ -29,7 +29,7 @@ using namespace sequoia::render;
 
 namespace {
 
-SEQUOIA_RENDER_TEST_FIXTURE(GLTextureTest);
+class GLTextureTest : public TestFixture<GLRenderSetup> {};
 
 TEST_F(GLTextureTest, LoadTexture2D) {
   TestEnvironment& env = TestEnvironment::getSingleton();
