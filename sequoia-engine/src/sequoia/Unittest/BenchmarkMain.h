@@ -13,20 +13,21 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_UNITTEST_BENCHMARK_H
-#define SEQUOIA_UNITTEST_BENCHMARK_H
+#ifndef SEQUOIA_UNITTEST_BENCHMARKMAIN_H
+#define SEQUOIA_UNITTEST_BENCHMARKMAIN_H
 
-#include "sequoia/Unittest/Environment.h"
 #include <benchmark/benchmark.h>
 
-/// @brief Define a benchmark main funtion
+/// @brief Define a benchmark main funtion and setup the given `Environment`
+///
+/// @param Environment    Environment to set-up
 /// @ingroup unittest
-#define SEQUOIA_BENCHMARK_MAIN()                                                                   \
+#define SEQUOIA_BENCHMARK_MAIN(Environment)                                                        \
   int main(int argc, char* argv[]) {                                                               \
-    benchmark::Initialize(&argc, argv);                                                            \
-    if(benchmark::ReportUnrecognizedArguments(argc, argv))                                         \
-      return 1;                                                                                    \
+    auto env = std::make_unique<Environment>(argc, argv);                                          \
+    env->SetUp();                                                                                  \
     benchmark::RunSpecifiedBenchmarks();                                                           \
+    env->TearDown();                                                                               \
     return 0;                                                                                      \
   }
 

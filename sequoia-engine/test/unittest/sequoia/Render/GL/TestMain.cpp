@@ -13,7 +13,7 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Unittest/GL/GLEnvironment.h"
+#include "sequoia/Unittest/GL/GLTestEnvironment.h"
 #include <gtest/gtest.h>
 
 int main(int argc, char* argv[]) {
@@ -21,7 +21,7 @@ int main(int argc, char* argv[]) {
   testing::InitGoogleTest(&argc, argv);
 
   // Register test environment
-  testing::AddGlobalTestEnvironment(new sequoia::unittest::GLEnvironment(argc, argv));
+  testing::AddGlobalTestEnvironment(new sequoia::unittest::GLTestEnvironment(argc, argv));
 
   return RUN_ALL_TESTS();
 }

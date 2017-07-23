@@ -13,24 +13,24 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Unittest/Environment.h"
 #include "sequoia/Core/ErrorHandler.h"
 #include "sequoia/Core/Logging.h"
 #include "sequoia/Core/Options.h"
-#include "sequoia/Driver/CommandLine.h"
 #include "sequoia/Driver/ConsoleLogger.h"
 #include "sequoia/Unittest/Config.h"
+#include "sequoia/Unittest/TestEnvironment.h"
+#include "sequoia/Unittest/TestFile.h"
 #include <boost/program_options.hpp>
 
 namespace po = boost::program_options;
 
 namespace sequoia {
 
-SEQUOIA_DECLARE_SINGLETON(unittest::Environment);
+SEQUOIA_DECLARE_SINGLETON(unittest::TestEnvironment);
 
 namespace unittest {
 
-Environment::Environment(int argc, char* argv[]) : trace_() {
+TestEnvironment::TestEnvironment(int argc, char* argv[]) : trace_() {
   singletonManager_ = std::make_unique<core::SingletonManager>();
   singletonManager_->allocateSingleton<ErrorHandler>(argc > 0 ? argv[0] : "SequoiaTest");
 
@@ -77,29 +77,29 @@ Environment::Environment(int argc, char* argv[]) : trace_() {
                                        PLATFORM_STR("'"));
 }
 
-Environment::~Environment() {}
+TestEnvironment::~TestEnvironment() {}
 
-void Environment::SetUp() {}
+void TestEnvironment::SetUp() {}
 
-void Environment::TearDown() {}
+void TestEnvironment::TearDown() {}
 
-std::string Environment::testCaseName() const {
+std::string TestEnvironment::testCaseName() const {
   const ::testing::TestInfo* testInfo = ::testing::UnitTest::GetInstance()->current_test_info();
   if(testInfo)
     return testInfo->test_case_name();
   return "";
 }
 
-std::string Environment::testName() const {
+std::string TestEnvironment::testName() const {
   const ::testing::TestInfo* testInfo = ::testing::UnitTest::GetInstance()->current_test_info();
   if(testInfo)
     return testInfo->name();
   return "";
 }
 
-const platform::Path& Environment::getRessourcePath() const { return path_; }
+const platform::Path& TestEnvironment::getRessourcePath() const { return path_; }
 
-std::shared_ptr<File> Environment::getFile(const char* path) const {
+std::shared_ptr<File> TestEnvironment::getFile(const char* path) const {
   return std::make_shared<TestFile>(path);
 }
 

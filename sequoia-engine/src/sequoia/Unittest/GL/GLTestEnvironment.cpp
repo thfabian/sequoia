@@ -13,15 +13,22 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Unittest/TestEnvironment.h"
-#include <gtest/gtest.h>
+#include "sequoia/Core/Options.h"
+#include "sequoia/Unittest/GL/GLTestEnvironment.h"
 
-int main(int argc, char* argv[]) {
-  // Initialize gtest
-  testing::InitGoogleTest(&argc, argv);
+namespace sequoia {
 
-  // Register test environment
-  testing::AddGlobalTestEnvironment(new sequoia::unittest::TestEnvironment(argc, argv));
+namespace unittest {
 
-  return RUN_ALL_TESTS();
+GLTestEnvironment::GLTestEnvironment(int argc, char* argv[]) : TestEnvironment(argc, argv) {}
+
+void GLTestEnvironment::SetUp() {
+  renderSystem_ = render::RenderSystem::create(render::RK_OpenGL);
+  renderSystem_->setDebugMode(Options::getSingleton().Core.Debug);
 }
+
+void GLTestEnvironment::TearDown() { renderSystem_.reset(); }
+
+} // namespace unittest
+
+} // namespace sequoia

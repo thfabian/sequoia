@@ -16,7 +16,7 @@
 #include "sequoia/Core/Casting.h"
 #include "sequoia/Core/Exception.h"
 #include "sequoia/Core/Image.h"
-#include "sequoia/Unittest/Environment.h"
+#include "sequoia/Unittest/TestEnvironment.h"
 #include <gli/gli.hpp>
 #include <gtest/gtest.h>
 #include <opencv2/opencv.hpp>
@@ -27,7 +27,7 @@ using namespace sequoia::unittest;
 namespace {
 
 TEST(ImageTest, PNGImage) {
-  Environment& env = Environment::getSingleton();
+  TestEnvironment& env = TestEnvironment::getSingleton();
   auto file = env.getFile("sequoia/Core/TestImage/Test.png");
 
   EXPECT_EQ(file->getNumBytes(), 193);
@@ -57,7 +57,7 @@ TEST(ImageTest, PNGImage) {
 }
 
 TEST(ImageTest, JPEGImage) {
-  Environment& env = Environment::getSingleton();
+  TestEnvironment& env = TestEnvironment::getSingleton();
   auto file = env.getFile("sequoia/Core/TestImage/Test.jpg");
 
   EXPECT_EQ(file->getNumBytes(), 905);
@@ -77,7 +77,7 @@ TEST(ImageTest, JPEGImage) {
 }
 
 TEST(ImageTest, BMPImage) {
-  Environment& env = Environment::getSingleton();
+  TestEnvironment& env = TestEnvironment::getSingleton();
   auto file = env.getFile("sequoia/Core/TestImage/Test.bmp");
 
   EXPECT_EQ(file->getNumBytes(), 714);
@@ -107,7 +107,7 @@ TEST(ImageTest, BMPImage) {
 }
 
 TEST(ImageTest, DDSImage) {
-  Environment& env = Environment::getSingleton();
+  TestEnvironment& env = TestEnvironment::getSingleton();
   auto file = env.getFile("sequoia/Core/TestImage/Test.dds");
 
   std::shared_ptr<Image> loadedImage = Image::load(file);
@@ -141,13 +141,13 @@ TEST(ImageTest, DDSImage) {
 }
 
 TEST(ImageTest, InvalidImage) {
-  Environment& env = Environment::getSingleton();
+  TestEnvironment& env = TestEnvironment::getSingleton();
   auto file = env.getFile("sequoia/Core/TestImage/Test.txt");
   EXPECT_THROW(Image::load(file), core::Exception);
 }
 
 TEST(ImageTest, Comparison) {
-  Environment& env = Environment::getSingleton();
+  TestEnvironment& env = TestEnvironment::getSingleton();
 
   std::shared_ptr<Image> image1 = Image::load(env.getFile("sequoia/Core/TestImage/Test.png"));
   std::shared_ptr<Image> image2 = image1;

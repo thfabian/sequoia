@@ -13,11 +13,11 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_UNITTEST_GL_GLENVIRONMENT_H
-#define SEQUOIA_UNITTEST_GL_GLENVIRONMENT_H
+#ifndef SEQUOIA_UNITTEST_GL_GLTESTENVIRONMENT_H
+#define SEQUOIA_UNITTEST_GL_GLTESTENVIRONMENT_H
 
 #include "sequoia/Render/GL/GLRenderSystem.h"
-#include "sequoia/Unittest/Environment.h"
+#include "sequoia/Unittest/TestEnvironment.h"
 #include <gtest/gtest.h>
 
 namespace sequoia {
@@ -26,11 +26,11 @@ namespace unittest {
 
 /// @brief OpenGL test environment
 /// @ingroup unittest
-class SEQUOIA_API GLEnvironment : public Environment {
+class SEQUOIA_API GLTestEnvironment : public TestEnvironment {
   std::unique_ptr<render::RenderSystem> renderSystem_;
 
 public:
-  GLEnvironment(int argc, char* argv[]);
+  GLTestEnvironment(int argc, char* argv[]);
 
   /// @brief Create the OpenGL RenderSystem
   virtual void SetUp() override;

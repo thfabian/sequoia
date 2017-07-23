@@ -20,8 +20,8 @@
 #include "sequoia/Render/GL/GLVertexArrayObject.h"
 #include "sequoia/Render/GL/GLVertexAttribute.h"
 #include "sequoia/Render/VertexData.h"
-#include "sequoia/Unittest/Environment.h"
 #include "sequoia/Unittest/GL/GLRenderSetup.h"
+#include "sequoia/Unittest/TestEnvironment.h"
 #include <gtest/gtest.h>
 
 using namespace sequoia;

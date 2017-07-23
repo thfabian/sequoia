@@ -18,7 +18,7 @@
 #include "sequoia/Core/Memory.h"
 #include "sequoia/Core/StringRef.h"
 #include "sequoia/Core/UtfString.h"
-#include "sequoia/Unittest/Environment.h"
+#include "sequoia/Unittest/TestEnvironment.h"
 #include <fstream>
 #include <sstream>
 
@@ -42,7 +42,7 @@ std::size_t TestFile::getNumBytes() {
 }
 
 void TestFile::load() {
-  std::string fullPath = platform::toAnsiString(Environment::getSingleton().getRessourcePath() /
+  std::string fullPath = platform::toAnsiString(TestEnvironment::getSingleton().getRessourcePath() /
                                                 platform::asPath(path_));
   std::ios_base::openmode mode = std::ios_base::in;
   if(isBinary())

@@ -18,7 +18,7 @@
 #include "sequoia/Render/GL/GLRenderSystem.h"
 #include "sequoia/Render/GL/GLRenderer.h"
 #include "sequoia/Render/GL/GLShaderManager.h"
-#include "sequoia/Unittest/Environment.h"
+#include "sequoia/Unittest/TestEnvironment.h"
 #include "sequoia/Unittest/GL/GLRenderSetup.h"
 #include "sequoia/Unittest/TestFile.h"
 #include <gtest/gtest.h>
@@ -33,7 +33,7 @@ namespace {
 SEQUOIA_RENDER_TEST_FIXTURE(GLShaderTest);
 
 TEST_F(GLShaderTest, LoadingSuccess) {
-  Environment& env = Environment::getSingleton();
+  TestEnvironment& env = TestEnvironment::getSingleton();
   RenderSystem& rsys = RenderSystem::getSingleton();
 
   std::shared_ptr<Shader> shader =
@@ -60,7 +60,7 @@ TEST_F(GLShaderTest, LoadingSuccess) {
 }
 
 TEST_F(GLShaderTest, LoadingFail) {
-  Environment& env = Environment::getSingleton();
+  TestEnvironment& env = TestEnvironment::getSingleton();
   RenderSystem& rsys = RenderSystem::getSingleton();
 
   // Shader does not exists

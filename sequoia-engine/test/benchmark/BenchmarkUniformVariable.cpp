@@ -15,7 +15,8 @@
 
 #include "sequoia/Core/Any.h"
 #include "sequoia/Render/UniformVariable.h"
-#include <benchmark/benchmark.h>
+#include "sequoia/Unittest/BenchmarkEnvironment.h"
+#include "sequoia/Unittest/BenchmarkMain.h"
 
 using namespace sequoia;
 
@@ -55,4 +56,4 @@ BENCHMARK(BM_UniformVariableVariantInt);
 
 } // anonymous namespace
 
-BENCHMARK_MAIN();
+SEQUOIA_BENCHMARK_MAIN(sequoia::unittest::BenchmarkEnvironment);

@@ -18,7 +18,7 @@
 #include "sequoia/Render/GL/GL.h"
 #include "sequoia/Render/GL/GLRenderSystem.h"
 #include "sequoia/Render/GL/GLTextureManager.h"
-#include "sequoia/Unittest/Environment.h"
+#include "sequoia/Unittest/TestEnvironment.h"
 #include "sequoia/Unittest/GL/GLRenderSetup.h"
 #include <gli/gli.hpp>
 #include <gtest/gtest.h>
@@ -32,7 +32,7 @@ namespace {
 SEQUOIA_RENDER_TEST_FIXTURE(GLTextureTest);
 
 TEST_F(GLTextureTest, LoadTexture2D) {
-  Environment& env = Environment::getSingleton();
+  TestEnvironment& env = TestEnvironment::getSingleton();
   RenderSystem& rsys = RenderSystem::getSingleton();
 
   auto image = Image::load(env.getFile("sequoia/Render/GL/TestGLTexture/Test.png"));
@@ -75,7 +75,7 @@ TEST_F(GLTextureTest, LoadTexture2D) {
 }
 
 TEST_F(GLTextureTest, LoadTexture2DCompressed) {
-  Environment& env = Environment::getSingleton();
+  TestEnvironment& env = TestEnvironment::getSingleton();
   RenderSystem& rsys = RenderSystem::getSingleton();
 
   auto image = Image::load(env.getFile("sequoia/Render/GL/TestGLTexture/Test.dds"));

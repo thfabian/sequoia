@@ -21,7 +21,7 @@
 #include "sequoia/Render/GL/GLRenderer.h"
 #include "sequoia/Render/GL/GLShaderManager.h"
 #include "sequoia/Render/GL/GLVertexAttribute.h"
-#include "sequoia/Unittest/Environment.h"
+#include "sequoia/Unittest/TestEnvironment.h"
 #include "sequoia/Unittest/GL/GLRenderSetup.h"
 #include <gtest/gtest.h>
 
@@ -34,7 +34,7 @@ namespace {
 SEQUOIA_RENDER_TEST_FIXTURE(GLProgramTest);
 
 TEST_F(GLProgramTest, LinkingSuccess) {
-  Environment& env = Environment::getSingleton();
+  TestEnvironment& env = TestEnvironment::getSingleton();
   RenderSystem& rsys = RenderSystem::getSingleton();
 
   std::shared_ptr<Shader> vertexShader = rsys.createShader(
@@ -60,7 +60,7 @@ TEST_F(GLProgramTest, LinkingSuccess) {
 }
 
 TEST_F(GLProgramTest, UniformScalars) {
-  Environment& env = Environment::getSingleton();
+  TestEnvironment& env = TestEnvironment::getSingleton();
   RenderSystem& rsys = RenderSystem::getSingleton();
 
   std::shared_ptr<Shader> vertexShader = rsys.createShader(
@@ -81,7 +81,7 @@ TEST_F(GLProgramTest, UniformScalars) {
 }
 
 TEST_F(GLProgramTest, UniformVectors) {
-  Environment& env = Environment::getSingleton();
+  TestEnvironment& env = TestEnvironment::getSingleton();
   RenderSystem& rsys = RenderSystem::getSingleton();
 
   std::shared_ptr<Shader> vertexShader = rsys.createShader(
@@ -106,7 +106,7 @@ TEST_F(GLProgramTest, UniformVectors) {
 }
 
 TEST_F(GLProgramTest, UniformMatrices) {
-  Environment& env = Environment::getSingleton();
+  TestEnvironment& env = TestEnvironment::getSingleton();
   RenderSystem& rsys = RenderSystem::getSingleton();
 
   std::shared_ptr<Shader> vertexShader = rsys.createShader(
@@ -130,7 +130,7 @@ TEST_F(GLProgramTest, UniformMatrices) {
 }
 
 TEST_F(GLProgramTest, VertexAttributesAll) {
-  Environment& env = Environment::getSingleton();
+  TestEnvironment& env = TestEnvironment::getSingleton();
   RenderSystem& rsys = RenderSystem::getSingleton();
 
   std::shared_ptr<Shader> vertexShader = rsys.createShader(
@@ -148,7 +148,7 @@ TEST_F(GLProgramTest, VertexAttributesAll) {
 
 TEST_F(GLProgramTest, VertexAttributesFail) {
 #if SEQUOIA_ENABLE_ASSERTS
-  Environment& env = Environment::getSingleton();
+  TestEnvironment& env = TestEnvironment::getSingleton();
   RenderSystem& rsys = RenderSystem::getSingleton();
 
   std::shared_ptr<Shader> vertexShader = rsys.createShader(
@@ -159,7 +159,7 @@ TEST_F(GLProgramTest, VertexAttributesFail) {
 }
 
 TEST_F(GLProgramTest, TextureSamplers) {
-  Environment& env = Environment::getSingleton();
+  TestEnvironment& env = TestEnvironment::getSingleton();
   RenderSystem& rsys = RenderSystem::getSingleton();
 
   std::shared_ptr<Shader> fragmentShader = rsys.createShader(

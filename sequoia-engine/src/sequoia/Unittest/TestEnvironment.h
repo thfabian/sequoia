@@ -13,8 +13,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_UNITTEST_ENVIRONMENT_H
-#define SEQUOIA_UNITTEST_ENVIRONMENT_H
+#ifndef SEQUOIA_UNITTEST_TESTENVIRONMENT_H
+#define SEQUOIA_UNITTEST_TESTENVIRONMENT_H
 
 #include "sequoia/Core/Export.h"
 #include "sequoia/Core/Platform.h"
@@ -32,12 +32,13 @@ namespace unittest {
 
 /// @brief Global test environment
 /// @ingroup unittest
-class SEQUOIA_API Environment : public testing::Environment, public Singleton<Environment> {
+class SEQUOIA_API TestEnvironment : public testing::Environment, public Singleton<TestEnvironment> {
 public:
   /// @brief Parse command-line
-  Environment(int argc, char* argv[]);
+  TestEnvironment(int argc, char* argv[]);
 
-  virtual ~Environment();
+  /// @brief Virtual destructor
+  virtual ~TestEnvironment();
 
   /// @brief Set up test environment
   virtual void SetUp() override;
@@ -71,9 +72,9 @@ private:
   /// Path of the ressources
   platform::Path path_;
 
+  /// Manager of the singletons
   std::unique_ptr<core::SingletonManager> singletonManager_;
 };
-
 
 } // namespace unittest
 

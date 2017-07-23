@@ -14,7 +14,7 @@
 //===------------------------------------------------------------------------------------------===//
 
 #include "sequoia/Core/Color.h"
-#include "sequoia/Unittest/Environment.h"
+#include "sequoia/Unittest/TestEnvironment.h"
 #include <gtest/gtest.h>
 
 using namespace sequoia;

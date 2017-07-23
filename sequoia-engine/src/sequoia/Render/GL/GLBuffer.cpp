@@ -21,8 +21,6 @@
 #include "sequoia/Render/GL/GLBuffer.h"
 #include <cstring>
 
-#include <iostream>
-
 namespace sequoia {
 
 namespace render {
@@ -45,7 +43,9 @@ static GLenum getGLBufferUsage(Buffer::UsageHint hint) {
 GLBuffer::GLBuffer(GLenum target, int numBuffers)
     : modifyBufferIdx_(0), target_(target), hint_(GL_INVALID_ENUM), numBytes_(0), isLocked_(false) {
   bufferIds_.resize(numBuffers);
-  glCreateBuffers(bufferIds_.size(), bufferIds_.data());
+  
+  // TODO: for DSA replace with glCreateBuffers
+  glGenBuffers(bufferIds_.size(), bufferIds_.data());
 }
 
 GLBuffer::~GLBuffer() { glDeleteBuffers(bufferIds_.size(), bufferIds_.data()); }

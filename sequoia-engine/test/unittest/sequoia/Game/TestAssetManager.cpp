@@ -14,7 +14,7 @@
 //===------------------------------------------------------------------------------------------===//
 
 #include "sequoia/Game/AssetManager.h"
-#include "sequoia/Unittest/Environment.h"
+#include "sequoia/Unittest/TestEnvironment.h"
 #include <fstream>
 #include <gtest/gtest.h>
 #include <sstream>
@@ -26,7 +26,7 @@ using namespace sequoia::game;
 namespace {
 
 TEST(AssetManagerTest, LoadFromDisk) {
-  auto& env = Environment::getSingleton();
+  auto& env = TestEnvironment::getSingleton();
   AssetManager manager(env.getRessourcePath().native(), PLATFORM_STR(""));
 
   auto file = manager.load("sequoia/Game/TestAssetManager/Test.txt");
@@ -44,7 +44,7 @@ TEST(AssetManagerTest, LoadFromDisk) {
 }
 
 TEST(AssetManagerTest, LoadImage) {
-  auto& env = Environment::getSingleton();
+  auto& env = TestEnvironment::getSingleton();
   AssetManager manager(env.getRessourcePath().native(), PLATFORM_STR(""));
   
   auto image = manager.loadImage("sequoia/Game/TestAssetManager/Test.png");

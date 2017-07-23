@@ -229,6 +229,7 @@ static void uploadTextureImage(GLenum target, const TextureImage* image) {
 GLTextureManager::~GLTextureManager() {}
 
 void GLTextureManager::makeValid(GLTexture* texture) {
+  // TODO: for DSA use glCreateTextures
   glGenTextures(1, &texture->id_);
   texture->target_ = getGLTarget(texture->param_->Kind);
 

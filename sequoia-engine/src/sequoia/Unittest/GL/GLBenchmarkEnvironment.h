@@ -13,22 +13,33 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Core/Options.h"
-#include "sequoia/Unittest/GL/GLEnvironment.h"
+#ifndef SEQUOIA_UNITTEST_GL_GLBENCHMARKENVIRONMENT_H
+#define SEQUOIA_UNITTEST_GL_GLBENCHMARKENVIRONMENT_H
+
+#include "sequoia/Render/GL/GLRenderSystem.h"
+#include "sequoia/Unittest/BenchmarkEnvironment.h"
 
 namespace sequoia {
 
 namespace unittest {
 
-GLEnvironment::GLEnvironment(int argc, char* argv[]) : Environment(argc, argv) {}
+/// @brief OpenGL benchmark environment
+/// @ingroup unittest
+class SEQUOIA_API GLBenchmarkEnvironment : public BenchmarkEnvironment {
+  std::unique_ptr<render::RenderSystem> renderSystem_;
 
-void GLEnvironment::SetUp() {
-  renderSystem_ = render::RenderSystem::create(render::RK_OpenGL);
-  renderSystem_->setDebugMode(Options::getSingleton().Core.Debug);
-}
+public:
+  GLBenchmarkEnvironment(int argc, char* argv[]);
 
-void GLEnvironment::TearDown() { renderSystem_.reset(); }
+  /// @brief Create the OpenGL RenderSystem
+  virtual void SetUp() override;
+
+  /// @brief Tear-down the OpenGL RenderSystem
+  virtual void TearDown() override;
+};
 
 } // namespace unittest
 
 } // namespace sequoia
+
+#endif
