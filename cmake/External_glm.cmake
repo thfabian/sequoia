@@ -30,4 +30,4 @@ ExternalProject_Add(
 ExternalProject_Get_Property(glm install_dir)
 set(GLM_ROOT "${install_dir}" CACHE INTERNAL "")
 
-list(APPEND Sequoia_THIRDPARTYLIBS_ARGS "-DGLM_ROOT:PATH=${GLM_ROOT}")
+list(APPEND Sequoia_THIRDPARTY_CMAKE_ARGS "-DGLM_ROOT:PATH=${GLM_ROOT}")

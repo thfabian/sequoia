@@ -12,11 +12,6 @@
 ## See LICENSE.txt for details.
 ##
 ##===------------------------------------------------------------------------------------------===##
-##
-## Build boost via its bootstrap script. The build tree cannot contain a space. This boost b2 build 
-## system yields errors with spaces in the name of the build dir.
-##
-##===------------------------------------------------------------------------------------------===##
 
 if("${CMAKE_CURRENT_BINARY_DIR}" MATCHES " ")
   message(FATAL_ERROR "cannot use boost bootstrap with a space in the name of the build dir")
@@ -82,7 +77,7 @@ ExternalProject_Add(boost
 ExternalProject_Get_Property(boost install_dir)
 set(BOOST_ROOT "${install_dir}" CACHE INTERNAL "")
 
-list(APPEND Sequoia_THIRDPARTYLIBS_ARGS
+list(APPEND Sequoia_THIRDPARTY_CMAKE_ARGS
   "-DBOOST_ROOT:PATH=${BOOST_ROOT}"
   "-DBoost_INCLUDE_DIR:PATH=${BOOST_ROOT}/include"
   "-DBOOST_LIBRARYDIR:PATH=${BOOST_ROOT}/lib"

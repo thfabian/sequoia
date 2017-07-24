@@ -30,5 +30,5 @@ ExternalProject_Add(
 ExternalProject_Get_Property(backward install_dir)
 set(BACKWARD_ROOT "${install_dir}" CACHE INTERNAL "")
 
-list(APPEND Sequoia_THIRDPARTYLIBS_ARGS "-DBACKWARD_ROOT:PATH=${BACKWARD_ROOT}")
+list(APPEND Sequoia_THIRDPARTY_CMAKE_ARGS "-DBACKWARD_ROOT:PATH=${BACKWARD_ROOT}")
 

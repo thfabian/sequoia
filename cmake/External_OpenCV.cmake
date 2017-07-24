@@ -133,8 +133,8 @@ ExternalProject_Get_Property(opencv install_dir)
 set(OpenCV_DIR "${install_dir}" CACHE INTERNAL "")
 
 if(WIN32)
-  list(APPEND Sequoia_THIRDPARTYLIBS_ARGS "-DOpenCV_DIR:PATH=${OpenCV_DIR}")
+  list(APPEND Sequoia_THIRDPARTY_CMAKE_ARGS "-DOpenCV_DIR:PATH=${OpenCV_DIR}")
 else()
-  list(APPEND Sequoia_THIRDPARTYLIBS_ARGS "-DOpenCV_DIR:PATH=${OpenCV_DIR}/share/OpenCV")
+  list(APPEND Sequoia_THIRDPARTY_CMAKE_ARGS "-DOpenCV_DIR:PATH=${OpenCV_DIR}/share/OpenCV")
 endif()
 

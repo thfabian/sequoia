@@ -21,13 +21,16 @@ endif()
 
 option(NO_SYSTEM_LIBS "By default, do not use system libraries" ${NO_SYSTEM_LIBS_DEFAULT})
 
+set(Sequoia_THIRDPARTY_CMAKE_ARGS)
+set(Sequoia_THIRDPARTY_PREFIX_PATH ${Sequoia_PREFIX_PATH})
+
 #
-# Packages built by default
+# Packages build by default
 #
 sequoia_build_package(backward)
 sequoia_build_package(benchmark)
 sequoia_build_package(glbinding)
-sequoia_build_package(GLFW)
+sequoia_build_package(glfw3)
 sequoia_build_package(gli)
 sequoia_build_package(glm)
 sequoia_build_package(gtest)
@@ -61,6 +64,13 @@ sequoia_find_package(
   FORWARD_VARS TBB_ROOT_DIR
 )
 
-set(Sequoia_THIRDPARTYLIBS_ARGS "${Sequoia_THIRDPARTYLIBS_ARGS}" PARENT_SCOPE)
+# Prepare and export CMake variables of the external projects
+set(thirdparty_cmake_args
+ -DCMAKE_PREFIX_PATH:STRING=${Sequoia_THIRDPARTY_PREFIX_PATH}
+ ${Sequoia_CMAKE_ARGS}
+ ${Sequoia_THIRDPARTY_CMAKE_ARGS}
+)
+set(Sequoia_CMAKE_ARGS "${thirdparty_cmake_args}" PARENT_SCOPE)
+
 sequoia_report_result("Package summary" ${SEQUOIA_PACKAGE_INFO})
 

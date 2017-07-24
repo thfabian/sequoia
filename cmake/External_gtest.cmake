@@ -44,4 +44,4 @@ ExternalProject_Add(
 ExternalProject_Get_Property(gtest install_dir)
 set(GTEST_ROOT "${install_dir}" CACHE INTERNAL "")
 
-list(APPEND Sequoia_THIRDPARTYLIBS_ARGS "-DGTEST_ROOT:PATH=${GTEST_ROOT}")
+list(APPEND Sequoia_THIRDPARTY_CMAKE_ARGS "-DGTEST_ROOT:PATH=${GTEST_ROOT}")

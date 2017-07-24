@@ -30,4 +30,4 @@ ExternalProject_Add(
 ExternalProject_Get_Property(gli install_dir)
 set(GLI_ROOT "${install_dir}" CACHE INTERNAL "")
 
-list(APPEND Sequoia_THIRDPARTYLIBS_ARGS "-DGLI_ROOT:PATH=${GLI_ROOT}")
+list(APPEND Sequoia_THIRDPARTY_CMAKE_ARGS "-DGLI_ROOT:PATH=${GLI_ROOT}")

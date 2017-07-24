@@ -30,5 +30,5 @@ ExternalProject_Add(
 ExternalProject_Get_Property(tbb install_dir)
 set(TBB_ROOT_DIR "${install_dir}" CACHE INTERNAL "")
 
-list(APPEND Sequoia_THIRDPARTYLIBS_ARGS "-DTBB_ROOT_DIR:PATH=${TBB_ROOT_DIR}")
+list(APPEND Sequoia_THIRDPARTY_CMAKE_ARGS "-DTBB_ROOT_DIR:PATH=${TBB_ROOT_DIR}")
 

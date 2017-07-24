@@ -13,12 +13,15 @@
 ##
 ##===------------------------------------------------------------------------------------------===##
 
-find_package(GLFW 3.2.1 REQUIRED)
-include_directories(SYSTEM ${GLFW_INCLUDE_DIRS})
+find_package(glfw3 3.2.1 NO_MODULE REQUIRED)
+
+get_property(glfw3_INCLUDE_DIRS TARGET glfw PROPERTY INTERFACE_INCLUDE_DIRECTORIES)
+include_directories(SYSTEM ${glfw3_INCLUDE_DIRS})
 
 sequoia_export_package(
-  PACKAGE glfw
-  FOUND ${GLFW_FOUND} 
-  VERSION_STR "${GLFW_VERSION}" 
-  LIBRARIES ${GLFW_LIBRARIES}
+  PACKAGE glfw3
+  FOUND ${glfw3_FOUND} 
+  VERSION_STR "${glfw3_VERSION}" 
+  LIBRARIES "glfw"
 )
+

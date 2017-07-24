@@ -30,5 +30,5 @@ ExternalProject_Add(
 ExternalProject_Get_Property(zlib install_dir)
 set(ZLIB_ROOT "${install_dir}" CACHE INTERNAL "")
 
-list(APPEND Sequoia_THIRDPARTYLIBS_ARGS "-DZLIB_ROOT:PATH=${ZLIB_ROOT}")
+list(APPEND Sequoia_THIRDPARTY_CMAKE_ARGS "-DZLIB_ROOT:PATH=${ZLIB_ROOT}")
 

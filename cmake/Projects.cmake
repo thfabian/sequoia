@@ -60,10 +60,10 @@ set(glbinding_md5 "93dab7f4d64eff5385e3d1915e765695")
 #
 # GLFW
 #
-list(APPEND projects glfw)
-set(glfw_version "3.2.1")
-set(glfw_url "https://github.com/glfw/glfw/archive/${glfw_version}.tar.gz")
-set(glfw_md5 "91b8250b6edcc26c9f5205555070a504")
+list(APPEND projects glfw3)
+set(glfw3_version "3.2.1")
+set(glfw3_url "https://github.com/glfw/glfw/archive/${glfw3_version}.tar.gz")
+set(glfw3_md5 "91b8250b6edcc26c9f5205555070a504")
 
 #
 # gli

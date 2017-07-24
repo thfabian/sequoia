@@ -33,5 +33,5 @@ ExternalProject_Add(
 ExternalProject_Get_Property(glbinding install_dir)
 set(GLBINDING_ROOT "${install_dir}" CACHE INTERNAL "")
 
-list(APPEND Sequoia_THIRDPARTYLIBS_ARGS "-DGLBINDING_ROOT:PATH=${GLBINDING_ROOT}")
+list(APPEND Sequoia_THIRDPARTY_CMAKE_ARGS "-DGLBINDING_ROOT:PATH=${GLBINDING_ROOT}")
 

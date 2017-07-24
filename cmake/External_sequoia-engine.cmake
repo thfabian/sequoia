@@ -13,38 +13,38 @@
 ##
 ##===------------------------------------------------------------------------------------------===##
 
-set(_source "${CMAKE_CURRENT_SOURCE_DIR}/sequoia-engine")
-set(_build "${CMAKE_CURRENT_BINARY_DIR}/sequoia-engine")
-
-unset(_deps)
-sequoia_add_optional_deps(_deps "${projects}")
+set(sequoia_engine_cmake_args ${Sequoia_CMAKE_ARGS})
 
 if(SEQUOIA_ASSERTS)
-  list(APPEND cmake_args "-DSEQUOIA_ASSERTS:BOOL=ON")
+  list(APPEND sequoia_engine_cmake_args "-DSEQUOIA_ASSERTS:BOOL=ON")
 else()
   if(${CMAKE_BUILD_TYPE} MATCHES "Release")
-    list(APPEND cmake_args "-DSEQUOIA_ASSERTS:BOOL=OFF")
+    list(APPEND sequoia_engine_cmake_args "-DSEQUOIA_ASSERTS:BOOL=OFF")
   else()
-    list(APPEND cmake_args "-DSEQUOIA_ASSERTS:BOOL=ON")
+    list(APPEND sequoia_engine_cmake_args "-DSEQUOIA_ASSERTS:BOOL=ON")
   endif()
 endif()
-  
+
+set(sequoia_engine_source "${CMAKE_CURRENT_SOURCE_DIR}/sequoia-engine")
+set(sequoia_engine_build "${CMAKE_CURRENT_BINARY_DIR}/sequoia-engine")
+
+unset(sequoia_engine_deps)
+sequoia_add_optional_deps(sequoia_engine_deps "${projects}")
+
 ExternalProject_Add(
   sequoia-engine
-  SOURCE_DIR ${_source}
-  BINARY_DIR ${_build}
+  SOURCE_DIR ${sequoia_engine_source}
+  BINARY_DIR ${sequoia_engine_build}
   INSTALL_COMMAND ""
-  CMAKE_CACHE_ARGS
-    ${Sequoia_DEFAULT_ARGS}
-    ${Sequoia_THIRDPARTYLIBS_ARGS}
-    ${cmake_args}
+  CMAKE_ARGS
+    ${sequoia_engine_cmake_args}
   DEPENDS
-    ${_deps}
+    ${sequoia_engine_deps}
 )
 
-# Create bash or bat script for re-invoking cmake
+# Create bash or bat script for re-invoking cmake (for convenience)
 set(script_args)
-foreach(arg ${Sequoia_DEFAULT_ARGS} ${Sequoia_THIRDPARTYLIBS_ARGS} ${cmake_args})
+foreach(arg ${sequoia_engine_cmake_args})
   string(REGEX MATCH "^(.*)=+(.*)$" dummy ${arg})
   if(NOT(CMAKE_MATCH_1) AND NOT(CMAKE_MATCH_2))
     set(script_args "${script_args} ${arg}")
@@ -56,10 +56,10 @@ endforeach()
 set(script_args "-G \"${CMAKE_GENERATOR}\" ${script_args}")
   
 if(WIN32)
-  file(WRITE ${_build}/rerun-cmake.bat 
+  file(WRITE ${sequoia_engine_build}/rerun-cmake.bat 
        "\"${CMAKE_COMMAND}\" \"${CMAKE_SOURCE_DIR}/sequoia-engine\" ${script_args}\n")
 else()
-  file(WRITE ${_build}/rerun-cmake.sh 
+  file(WRITE ${sequoia_engine_build}/rerun-cmake.sh 
        "#!bin/bash\n${CMAKE_COMMAND} ${CMAKE_SOURCE_DIR}/sequoia-engine ${script_args}\n")
 endif()
 

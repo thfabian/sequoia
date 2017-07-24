@@ -31,4 +31,4 @@ ExternalProject_Add(
 ExternalProject_Get_Property(benchmark install_dir)
 set(benchmark_DIR "${install_dir}/lib/cmake/benchmark" CACHE INTERNAL "")
 
-list(APPEND Sequoia_THIRDPARTYLIBS_ARGS "-Dbenchmark_DIR:PATH=${benchmark_DIR}")
+list(APPEND Sequoia_THIRDPARTY_CMAKE_ARGS "-Dbenchmark_DIR:PATH=${benchmark_DIR}")
