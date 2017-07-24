@@ -17,14 +17,7 @@
 #include "sequoia/Core/Compiler.h"
 
 #ifdef SEQUOIA_ON_LINUX
-
-#if defined(SEQUOIA_BACKWARD_HAS_DW)
-#define BACKWARD_HAS_DW 1
-#elif defined(SEQUOIA_BACKWARD_HAS_BFD)
-#define BACKWARD_HAS_BFD 1
-#endif
-
-#include <backward/backward.hpp>
+#include <backward.hpp>
 #endif
 
 namespace sequoia {

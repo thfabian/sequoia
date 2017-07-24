@@ -13,23 +13,17 @@
 ##
 ##===------------------------------------------------------------------------------------------===##
 
-find_package(Backward REQUIRED)
+find_package(Backward NO_MODULE REQUIRED)
+
 include_directories(SYSTEM ${BACKWARD_INCLUDE_DIRS})
 
-set(BACKWARD_LIBRARIES)
-if(BACKWARD_HAS_DW)
-  include_directories(SYSTEM ${BACKWARD_DW_INCLUDE_DIRS})
-  set(BACKWARD_LIBRARIES ${BACKWARD_DW_LIBRARIES})
-  add_definitions(-DSEQUOIA_BACKWARD_HAS_DW=1)
-elseif(BACKWARD_HAS_BFD)
-  include_directories(SYSTEM ${BACKWARD_BFD_INCLUDE_DIRS})
-  set(BACKWARD_LIBRARIES ${BACKWARD_BFD_LIBRARIES})
-  add_definitions(-DSEQUOIA_BACKWARD_HAS_BFD=1)
-endif()
+foreach(definition ${BACKWARD_DEFINITIONS})
+  add_definitions(-D${definition})
+endforeach()
 
 sequoia_export_package(
-  PACKAGE Backward 
-  FOUND ${BACKWARD_FOUND} 
+  PACKAGE backward 
+  FOUND ${Backward_FOUND} 
   LIBRARIES ${BACKWARD_LIBRARIES}
 )
 
