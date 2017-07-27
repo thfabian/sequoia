@@ -17,6 +17,7 @@
 #define SEQUOIA_DRIVER_DRIVER_H
 
 #include "sequoia/Core/Export.h"
+#include "sequoia/Core/Options.h"
 #include "sequoia/Core/Platform.h"
 
 namespace sequoia {
@@ -36,7 +37,7 @@ public:
 #endif
 
 private:
-  static int runImpl();
+  static int runImpl(Options* options);
 };
 
 } // namespace driver

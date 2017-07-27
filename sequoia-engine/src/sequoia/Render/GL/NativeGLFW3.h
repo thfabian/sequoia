@@ -47,7 +47,7 @@ public:
   ~glfw3NativeGLContext();
 
   /// @brief Create OpenGL context *and* window
-  void init(const RenderWindow::WindowHint& windowHints) override;
+  void init(const RenderWindow::WindowHint& windowHints, Options* options) override;
 
   /// @brief Create a new context using `context` as a parent context
   void init(const std::shared_ptr<NativeGLContext>& context) override;

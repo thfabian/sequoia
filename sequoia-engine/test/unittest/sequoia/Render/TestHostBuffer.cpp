@@ -29,7 +29,6 @@ TEST(HostBufferTest, Allocate) {
   EXPECT_FALSE(buffer->hasShadowBuffer());
   EXPECT_TRUE(buffer->isSystemRAM());
 
-  // Lock & Unlock
   buffer->lock(Buffer::LO_Normal);
   EXPECT_EQ(buffer->getData(), buffer->get());
   buffer->unlock();

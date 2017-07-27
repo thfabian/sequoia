@@ -32,6 +32,8 @@ class SEQUOIA_API GameSetup : public NonCopyable {
 
 public:
   /// @brief Register and initialize the Game
+  /// 
+  /// This uses the `TestOptions` to initialize the game
   void SetUp();
 
   /// @brief Destroy the Game

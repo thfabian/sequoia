@@ -13,30 +13,48 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Core/Options.h"
-#include "sequoia/Core/Format.h"
-#include <iostream>
+#include "sequoia/Unittest/TestOptions.h"
 
 namespace sequoia {
 
-namespace core {
+SEQUOIA_DECLARE_SINGLETON(unittest::TestOptions);
 
-void Options::reset() {
+namespace unittest {
+
+TestOptions::TestOptions() : Options() {}
+
+void TestOptions::save() {
+  Options opt;
 #define OPT(Structure, Name, Type, DefaultValue, CheckFun, Doc, CommandLine, CommandLineShort,     \
             CommandLineMetaVar)                                                                    \
-  Structure.Name = DefaultValue;
+  opt.Structure.Name = this->Structure.Name;
 #include "sequoia/Core/Options.inc"
 #undef OPT
+  snapshots_.push(std::move(opt));
 }
 
-void Options::dump() {
+void TestOptions::load() {
+  if(snapshots_.empty())
+    return;
+
 #define OPT(Structure, Name, Type, DefaultValue, CheckFun, Doc, CommandLine, CommandLineShort,     \
             CommandLineMetaVar)                                                                    \
-  std::cout << format("%-20s", #Structure "." #Name) << std::boolalpha << DefaultValue << "\n";
+  this->Structure.Name = snapshots_.top().Structure.Name;
 #include "sequoia/Core/Options.inc"
 #undef OPT
+  snapshots_.pop();
 }
 
-} // namespace core
+void TestOptions::restoreFirstSnapshot() {
+  if(snapshots_.empty())
+    return;
+
+  while(snapshots_.size() != 1)
+    snapshots_.pop();
+
+  load();
+}
+
+} // namespace unittest
 
 } // namespace sequoia

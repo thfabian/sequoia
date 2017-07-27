@@ -13,8 +13,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Core/Options.h"
 #include "sequoia/Unittest/GL/GLBenchmarkEnvironment.h"
+#include "sequoia/Unittest/TestOptions.h"
 
 namespace sequoia {
 
@@ -24,8 +24,7 @@ GLBenchmarkEnvironment::GLBenchmarkEnvironment(int argc, char* argv[])
     : BenchmarkEnvironment(argc, argv) {}
 
 void GLBenchmarkEnvironment::SetUp() {
-  renderSystem_ = render::RenderSystem::create(render::RK_OpenGL);
-  renderSystem_->setDebugMode(Options::getSingleton().Core.Debug);
+  renderSystem_ = render::RenderSystem::create(render::RK_OpenGL, TestOptions::getSingletonPtr());
 }
 
 void GLBenchmarkEnvironment::TearDown() { renderSystem_.reset(); }

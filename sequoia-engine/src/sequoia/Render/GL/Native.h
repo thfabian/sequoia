@@ -18,6 +18,7 @@
 
 #include "sequoia/Core/Export.h"
 #include "sequoia/Core/Listenable.h"
+#include "sequoia/Core/Options.h"
 #include "sequoia/Render/Input.h"
 #include "sequoia/Render/RenderWindow.h"
 #include <memory>
@@ -51,7 +52,7 @@ public:
   ///
   /// This may also create a window for window systems which tie the context to the window like
   /// glfw3.
-  virtual void init(const RenderWindow::WindowHint& windowHints) = 0;
+  virtual void init(const RenderWindow::WindowHint& windowHints, Options* options) = 0;
 
   /// @brief Construct a context from an existing `context`
   ///

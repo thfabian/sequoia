@@ -13,8 +13,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Core/Options.h"
 #include "sequoia/Unittest/GL/GLTestEnvironment.h"
+#include "sequoia/Unittest/TestOptions.h"
 
 namespace sequoia {
 
@@ -23,8 +23,7 @@ namespace unittest {
 GLTestEnvironment::GLTestEnvironment(int argc, char* argv[]) : TestEnvironment(argc, argv) {}
 
 void GLTestEnvironment::SetUp() {
-  renderSystem_ = render::RenderSystem::create(render::RK_OpenGL);
-  renderSystem_->setDebugMode(Options::getSingleton().Core.Debug);
+  renderSystem_ = render::RenderSystem::create(render::RK_OpenGL, TestOptions::getSingletonPtr());
 }
 
 void GLTestEnvironment::TearDown() { renderSystem_.reset(); }

@@ -19,6 +19,7 @@
 #include "sequoia/Core/Export.h"
 #include "sequoia/Core/Image.h"
 #include "sequoia/Core/Listenable.h"
+#include "sequoia/Core/Options.h"
 #include "sequoia/Core/Singleton.h"
 #include "sequoia/Game/GameFwd.h"
 #include "sequoia/Game/Scene.h"
@@ -62,6 +63,9 @@ class SEQUOIA_API Game final : public Singleton<Game>,
   /// Name of the game
   std::string name_;
 
+  /// Reference to the used options
+  Options* options_;
+
 public:
   Game(std::string name = "Game");
 
@@ -69,8 +73,10 @@ public:
   ~Game();
 
   /// @brief Initializes the game object by initializing the RenderSystem
+  ///
+  /// @param options      Options used to initialize the sub-systems of the game
   /// @param hideWindow   Hide the main-window
-  void init(bool hideWindow = false);
+  void init(Options* options, bool hideWindow = false);
 
   /// @brief Frees all allocated resources
   void cleanup();

@@ -15,11 +15,11 @@
 
 #include "sequoia/Core/ErrorHandler.h"
 #include "sequoia/Core/Logging.h"
-#include "sequoia/Core/Options.h"
 #include "sequoia/Driver/ConsoleLogger.h"
 #include "sequoia/Unittest/Config.h"
 #include "sequoia/Unittest/TestEnvironment.h"
 #include "sequoia/Unittest/TestFile.h"
+#include "sequoia/Unittest/TestOptions.h"
 #include <boost/program_options.hpp>
 
 namespace po = boost::program_options;
@@ -34,8 +34,8 @@ TestEnvironment::TestEnvironment(int argc, char* argv[]) : trace_() {
   singletonManager_ = std::make_unique<core::SingletonManager>();
   singletonManager_->allocateSingleton<ErrorHandler>(argc > 0 ? argv[0] : "SequoiaTest");
 
-  // Initialize options
-  singletonManager_->allocateSingleton<Options>();
+  // Initialize test options
+  singletonManager_->allocateSingleton<TestOptions>();
 
   // Parse command-line
   po::options_description desc("Unittest options");
@@ -68,18 +68,21 @@ TestEnvironment::TestEnvironment(int argc, char* argv[]) : trace_() {
   if(!vm.count("no-log"))
     singletonManager_->allocateSingleton<driver::ConsoleLogger>();
 
-  Options::getSingleton().Core.Debug = !vm.count("no-debug");
+  TestOptions::getSingleton().Core.Debug = !vm.count("no-debug");
 
   path_ = SEQUOIA_UNITTEST_RESSOURCEPATH;
 
   if(!platform::filesystem::exists(path_))
     ErrorHandler::getSingleton().fatal(PLATFORM_STR("invalid ressource path: '") + path_.native() +
                                        PLATFORM_STR("'"));
+
+  // Take snapshot of the options
+  TestOptions::getSingleton().save();
 }
 
 TestEnvironment::~TestEnvironment() {}
 
-void TestEnvironment::SetUp() {}
+void TestEnvironment::SetUp() { TestOptions::getSingleton().restoreFirstSnapshot(); }
 
 void TestEnvironment::TearDown() {}
 

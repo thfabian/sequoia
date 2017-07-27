@@ -20,6 +20,7 @@
 #include "sequoia/Core/Image.h"
 #include "sequoia/Core/Listenable.h"
 #include "sequoia/Core/NonCopyable.h"
+#include "sequoia/Core/Options.h"
 #include "sequoia/Core/Platform.h"
 #include "sequoia/Core/Singleton.h"
 #include "sequoia/Render/FrameListener.h"
@@ -51,7 +52,7 @@ class SEQUOIA_API RenderSystem : public Singleton<RenderSystem>,
 public:
   /// @brief Create the RenderSystem of the given `kind`
   /// @remark Terminates the program on failure
-  static std::unique_ptr<RenderSystem> create(RenderSystemKind kind);
+  static std::unique_ptr<RenderSystem> create(RenderSystemKind kind, Options* options);
 
   /// @brief Terminate the render-system
   virtual ~RenderSystem();
@@ -124,19 +125,18 @@ public:
   virtual const std::shared_ptr<Program>& getDefaultProgram() const = 0;
 
   /// @brief Set if we run in debug-mode
-  void setDebugMode(bool debugMode);
-
-  /// @brief Check if we run in debug-mode
-  bool debugMode() const;
+  Options& getOptions() const { return *options_; }
+  Options* getOptionsPtr() const { return options_; }
 
   void frameListenerRenderingBegin(RenderTarget* target) override;
   void frameListenerRenderingEnd(RenderTarget* target) override;
 
 protected:
-  RenderSystem(RenderSystemKind kind);
+  RenderSystem(RenderSystemKind kind, Options* options);
 
 private:
-  bool debugMode_;
+  /// Reference to the options
+  Options* options_;
 };
 
 } // namespace render

@@ -34,7 +34,7 @@ namespace render {
 ///
 /// @ingroup gl
 class SEQUOIA_API GLBuffer {
-
+  
   /// OpenGL buffer indices
   std::vector<unsigned int> bufferIds_;
 

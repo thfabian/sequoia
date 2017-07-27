@@ -45,13 +45,13 @@ int Driver::run(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, i
   singletonManager->allocateSingleton<ErrorHandler>(program);
 
   // Initialize options, parse config file and parse command-line
-  singletonManager->allocateSingleton<Options>();
-
+  auto options = std::make_unique<Options>();
+  
   // Initialize options, parse config file and parse command-line
   std::vector<std::string> arguments = boost::program_options::split_winmain(lpCmdLine);
-  CommandLine::parse(arguments);
+  CommandLine::parse(arguments, options.get());
 
-  return Driver::runImpl();
+  return Driver::runImpl(options.get());
 }
 
 #else
@@ -66,39 +66,35 @@ int Driver::run(int argc, char* argv[]) {
   singletonManager->allocateSingleton<ErrorHandler>(argc > 0 ? argv[0] : "unknown");
 
   // Initialize options, parse config file and parse command-line
-  singletonManager->allocateSingleton<Options>();
-
-  // TODO: load options from config file
+  auto options = std::make_unique<Options>();
 
   std::vector<std::string> arguments(argv + 1, argv + argc);
-  CommandLine::parse(arguments);
+  CommandLine::parse(arguments, options.get());
 
-  return Driver::runImpl();
+  return Driver::runImpl(options.get());
 }
 
 #endif
 
-int Driver::runImpl() {
+int Driver::runImpl(Options* options) {
   SingletonManager& singletonManager = SingletonManager::getSingleton();
-  Options& opt = Options::getSingleton();
 
-  std::string level = opt.Driver.LoggingLevel;
+  std::string level = options->Driver.LoggingLevel;
 
   // Enable all options for debugging
-  if(opt.Core.Debug) {
-    opt.Driver.Logging = true;
+  if(options->Core.Debug) {
+    options->Driver.Logging = true;
     level = "Debug";
   }
 
   // Setup Logger
   singletonManager.allocateSingleton<core::Logger>(level);
-
-  if(opt.Driver.Logging)
-    singletonManager.allocateSingleton<ConsoleLogger>(opt.Driver.LoggingFile);
+  if(options->Driver.Logging)
+    singletonManager.allocateSingleton<ConsoleLogger>(options->Driver.LoggingFile);
 
   // Setup game
   auto mainGameObject = std::make_unique<game::Game>();
-  mainGameObject->init(false);
+  mainGameObject->init(options);
   mainGameObject->run();
 
   return 0;

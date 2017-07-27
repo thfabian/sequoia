@@ -15,9 +15,9 @@
 
 #include "sequoia/Core/ErrorHandler.h"
 #include "sequoia/Core/Logging.h"
-#include "sequoia/Core/Options.h"
 #include "sequoia/Driver/ConsoleLogger.h"
 #include "sequoia/Unittest/BenchmarkEnvironment.h"
+#include "sequoia/Unittest/TestOptions.h"
 #include <benchmark/benchmark.h>
 #include <boost/program_options.hpp>
 #include <iostream>
@@ -34,8 +34,8 @@ BenchmarkEnvironment::BenchmarkEnvironment(int argc, char* argv[]) {
   singletonManager_ = std::make_unique<core::SingletonManager>();
   singletonManager_->allocateSingleton<ErrorHandler>(argc > 0 ? argv[0] : "SequoiaBenchmark");
 
-  // Initialize options
-  singletonManager_->allocateSingleton<Options>();
+  // Initialize test options
+  singletonManager_->allocateSingleton<TestOptions>();
 
   // Parse command-line
   po::options_description desc("Benchmark options");
@@ -68,12 +68,15 @@ BenchmarkEnvironment::BenchmarkEnvironment(int argc, char* argv[]) {
   if(vm.count("debug"))
     singletonManager_->allocateSingleton<driver::ConsoleLogger>();
 
-  Options::getSingleton().Core.Debug = vm.count("debug");
+  TestOptions::getSingleton().Core.Debug = vm.count("debug");
+
+  // Take snapshot of the options
+  TestOptions::getSingleton().save();
 }
 
 BenchmarkEnvironment::~BenchmarkEnvironment() {}
 
-void BenchmarkEnvironment::SetUp() {}
+void BenchmarkEnvironment::SetUp() { TestOptions::getSingleton().restoreFirstSnapshot(); }
 
 void BenchmarkEnvironment::TearDown() {}
 

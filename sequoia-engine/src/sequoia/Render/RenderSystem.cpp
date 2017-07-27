@@ -24,23 +24,22 @@ SEQUOIA_DECLARE_SINGLETON(render::RenderSystem);
 
 namespace render {
 
-std::unique_ptr<RenderSystem> RenderSystem::create(RenderSystemKind kind) {
+std::unique_ptr<RenderSystem> RenderSystem::create(RenderSystemKind kind, Options* options) {
   switch(kind) {
   case RK_OpenGL:
-    return std::make_unique<GLRenderSystem>();
+    return std::make_unique<GLRenderSystem>(options);
   default:
     SEQUOIA_THROW(RenderSystemException, "invalid RenderSystem");
   }
   return nullptr;
+
+}
+RenderSystem::RenderSystem(RenderSystemKind kind, Options* options)
+    : RenderSystemObject(kind), options_(options) {
+  SEQUOIA_ASSERT_MSG(options_, "invalid options");
 }
 
-RenderSystem::RenderSystem(RenderSystemKind kind) : RenderSystemObject(kind), debugMode_(false) {}
-
 RenderSystem::~RenderSystem() {}
-
-void RenderSystem::setDebugMode(bool debugMode) { debugMode_ = debugMode; }
-
-bool RenderSystem::debugMode() const { return debugMode_; }
 
 void RenderSystem::frameListenerRenderingBegin(RenderTarget* target) {
   for(FrameListener* listener : getListeners<FrameListener>())

@@ -17,7 +17,6 @@
 #define SEQUOIA_CORE_OPTIONS_H
 
 #include "sequoia/Core/Export.h"
-#include "sequoia/Core/Singleton.h"
 #include <string>
 #include <vector>
 
@@ -27,7 +26,8 @@ namespace core {
 
 /// @brief Options of sequoia
 /// @ingroup core
-struct SEQUOIA_API Options : public Singleton<Options> {
+struct SEQUOIA_API Options {
+public:  
 
   // ${SEQUOIA_DECL_HEADER_OPTIONS}
 

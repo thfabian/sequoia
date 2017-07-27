@@ -43,11 +43,14 @@ namespace game {
 
 Game::Game(std::string name)
     : renderSystem_(nullptr), assetManager_(nullptr), meshManager_(nullptr), mainWindow_(nullptr),
-      quitKey_(nullptr), shouldClose_(false), activeScene_(nullptr), name_(name) {}
+      quitKey_(nullptr), shouldClose_(false), activeScene_(nullptr), name_(name),
+      options_(nullptr) {}
 
 Game::~Game() { cleanup(); }
 
 void Game::run() {
+  SEQUOIA_ASSERT_MSG(renderSystem_, "Game not initialized, did you call init()?");  
+      
   LOG(INFO) << "Starting main-loop ...";
 
   render::DrawCommandList* drawCommandList = mainWindow_->getDrawCommandList().get();
@@ -77,18 +80,18 @@ void Game::run() {
 
 void Game::setQuitKey(const std::shared_ptr<Keymap>& key) { quitKey_ = key; }
 
-void Game::init(bool hideWindow) {
+void Game::init(Options* options, bool hideWindow) {
+  SEQUOIA_ASSERT_MSG(options, "Options not initialized");
+  
+  options_ = options;
+  Options& opt = *options_;
+
   LOG(INFO) << "Initializing " << name_ << " ...";
   using namespace render;
 
-  Options& opt = Options::getSingleton();
-
   try {
     // Initialize the RenderSystem
-    renderSystem_ = RenderSystem::create(RK_OpenGL);
-
-    if(Options::getSingleton().Core.Debug)
-      renderSystem_->setDebugMode(true);
+    renderSystem_ = RenderSystem::create(RK_OpenGL, options);
 
     // Create the main-window & initialize the OpenGL context
     RenderWindow::WindowHint hint;

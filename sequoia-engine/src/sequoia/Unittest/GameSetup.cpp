@@ -14,6 +14,7 @@
 //===------------------------------------------------------------------------------------------===//
 
 #include "sequoia/Unittest/GameSetup.h"
+#include "sequoia/Unittest/TestOptions.h"
 
 namespace sequoia {
 
@@ -21,7 +22,7 @@ namespace unittest {
 
 void GameSetup::SetUp() {
   game_ = std::make_unique<game::Game>();
-  game_->init(true);
+  game_->init(TestOptions::getSingletonPtr(), true);
 }
 
 void GameSetup::TearDown() { game_.reset(); }

@@ -30,6 +30,8 @@ sequoia_add_objects(
           TestEnvironment.cpp
           TestFile.h
           TestFile.cpp
+          TestOptions.h
+          TestOptions.cpp
           
           GL/GLTestEnvironment.h
           GL/GLTestEnvironment.cpp

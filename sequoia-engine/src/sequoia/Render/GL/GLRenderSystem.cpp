@@ -63,8 +63,9 @@ std::shared_ptr<T> createRessource(ManagerType* manager, Args&&... args) {
 
 } // anonymous namespace
 
-GLRenderSystem::GLRenderSystem()
-    : RenderSystem(RK_OpenGL), mainContext_(nullptr), mainWindow_(nullptr), renderer_(nullptr) {
+GLRenderSystem::GLRenderSystem(Options* options)
+    : RenderSystem(RK_OpenGL, options), mainContext_(nullptr), mainWindow_(nullptr),
+      renderer_(nullptr) {
   LOG(INFO) << "Initializing OpenGL RenderSystem ...";
 }
 
@@ -80,7 +81,7 @@ RenderWindow* GLRenderSystem::createMainWindow(const RenderWindow::WindowHint& h
 
   // Initialize the main OpenGL context
   mainContext_ = NativeGLContext::create(NativeWindowSystemKind::NK_GLFW3);
-  mainContext_->init(hints);
+  mainContext_->init(hints, getOptionsPtr());
 
   // Create main-window and OpenGL context
   mainWindow_ = std::make_unique<GLRenderWindow>(mainContext_);

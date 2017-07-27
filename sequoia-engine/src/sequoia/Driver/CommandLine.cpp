@@ -13,11 +13,11 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Driver/CommandLine.h"
 #include "sequoia/Core/ErrorHandler.h"
 #include "sequoia/Core/Options.h"
 #include "sequoia/Core/StringRef.h"
 #include "sequoia/Core/Version.h"
+#include "sequoia/Driver/CommandLine.h"
 #include <boost/program_options.hpp>
 #include <functional>
 #include <iostream>
@@ -76,9 +76,9 @@ std::string toString(const std::string& value) {
   return value;
 }
 
-void CommandLine::parse(const std::vector<std::string>& args) {
+void CommandLine::parse(const std::vector<std::string>& args, Options* options) {
   const int MaxLineLen = 80;
-  Options& options = Options::getSingleton();
+  Options& opt = *options;
 
   // Create option description maps & fill options
   std::unordered_map<std::string, po::options_description> optionDescMap;
@@ -94,8 +94,8 @@ void CommandLine::parse(const std::vector<std::string>& args) {
                                                     ? ""                                           \
                                                     : (std::string(",") + CommandLineShort)),      \
                     CommandLineMetaVar);                                                           \
-    updateOptionMap.emplace(CommandLine, [&options](const po::variable_value& value) {             \
-      options.Structure.Name = applyOption<Type>(value);                                           \
+    updateOptionMap.emplace(CommandLine, [&opt](const po::variable_value& value) {                 \
+      opt.Structure.Name = applyOption<Type>(value);                                               \
     });                                                                                            \
   }
 #include "sequoia/Core/Options.inc"
@@ -137,8 +137,8 @@ void CommandLine::parse(const std::vector<std::string>& args) {
 // Check options are valid
 #define OPT(Structure, Name, Type, DefaultValue, CheckFun, Doc, CommandLine, CommandLineShort,     \
             CommandLineMetaVar)                                                                    \
-  if(!CheckFun(options.Structure.Name))                                                            \
-    ErrorHandler::getSingleton().fatal(std::string("value '") + toString(options.Structure.Name) + \
+  if(!CheckFun(opt.Structure.Name))                                                                \
+    ErrorHandler::getSingleton().fatal(std::string("value '") + toString(opt.Structure.Name) +     \
                                            "' of option '--" + CommandLine + "' is invalid",       \
                                        false);
 #include "sequoia/Core/Options.inc"

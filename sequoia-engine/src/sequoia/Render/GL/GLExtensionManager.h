@@ -29,7 +29,7 @@ namespace render {
 /// @brief Manage OpenGL extensions
 /// @ingroup gl
 class SEQUOIA_API GLExtensionManager : public NonCopyable {
-
+  
   /// Access mutex
   SpinMutex mutex_;
 

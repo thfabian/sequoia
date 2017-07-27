@@ -71,8 +71,8 @@ glfw3NativeGLContext::~glfw3NativeGLContext() {
   }
 }
 
-void glfw3NativeGLContext::init(const RenderWindow::WindowHint& windowHints) {
-  Options& opt = Options::getSingleton();
+void glfw3NativeGLContext::init(const RenderWindow::WindowHint& windowHints, Options* options) {
+  Options& opt = *options;
 
   LOG(INFO) << "Initializing glfw3 OpenGL context " << this << " ...";
 
@@ -93,7 +93,7 @@ void glfw3NativeGLContext::init(const RenderWindow::WindowHint& windowHints) {
   glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, true);
   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-  if(RenderSystem::getSingleton().debugMode()) {
+  if(opt.Core.Debug) {
     glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, true);
   }
 

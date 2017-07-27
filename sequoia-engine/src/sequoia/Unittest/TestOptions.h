@@ -13,32 +13,37 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_DRIVER_COMMANDLINE_H
-#define SEQUOIA_DRIVER_COMMANDLINE_H
+#ifndef SEQUOIA_UNITTEST_TESTOPTIONS_H
+#define SEQUOIA_UNITTEST_TESTOPTIONS_H
 
-#include "sequoia/Core/Export.h"
 #include "sequoia/Core/Options.h"
-#include <string>
-#include <vector>
+#include "sequoia/Core/Singleton.h"
+#include <stack>
 
 namespace sequoia {
 
-namespace driver {
+namespace unittest {
 
-/// @brief Parse command-line arguments and update the `Options`
-/// @ingroup driver
-class SEQUOIA_API CommandLine {
+/// @brief Singleton wrapper to for @ref sequoia::core::Options "Options"
+/// @ingroup unittest
+class SEQUOIA_API TestOptions : public Options, public Singleton<TestOptions> {
 public:
-  CommandLine() = delete;
+  TestOptions();
 
-  /// @brief Parse arguments and exit on error
-  ///
-  /// @param args       Arguments to parse
-  /// @param options    Options to update
-  static void parse(const std::vector<std::string>& args, Options* options);
+  /// @brief Take a snapshot of the currently set options
+  void save();
+
+  /// @brief Load the options from the most recently stored snapshot
+  void load();
+
+  /// @brief Remove all but the first stored snapshot and load it
+  void restoreFirstSnapshot();
+
+private:
+  std::stack<Options> snapshots_;
 };
 
-} // namespace driver
+} // namespace unittest
 
 } // namespace sequoia
 
