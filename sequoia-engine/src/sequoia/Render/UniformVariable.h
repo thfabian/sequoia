@@ -111,6 +111,14 @@ public:
   UniformVariable& operator=(const UniformVariable&) = default;
   UniformVariable& operator=(UniformVariable&&) = default;
 
+#define UNIFORM_VARIABLE_TYPE(Type, Name)                                                          \
+  UniformVariable& operator=(const Type& value) {                                                  \
+    this->set<Type>(value);                                                                        \
+    return *this;                                                                                  \
+  }
+#include "sequoia/Render/UniformVariable.inc"
+#undef UNIFORM_VARIABLE_TYPE
+
   /// @brief Get the data of the variable as type `T`
   /// @throws core::Exception  type of the uniform variable is not of type `T`
   template <class T>
@@ -158,6 +166,10 @@ private:
   /// Type of the variable
   UniformType type_;
 };
+
+/// @brief Stream UniformVariable
+/// @ingroup render
+SEQUOIA_API extern std::ostream& operator<<(std::ostream& os, const UniformVariable& var);
 
 } // namespace render
 

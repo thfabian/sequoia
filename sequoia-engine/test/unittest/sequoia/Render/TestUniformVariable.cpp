@@ -28,6 +28,16 @@ TEST(UniformVariableTest, DefaultConstructor) {
   EXPECT_EQ(u, u);
 }
 
+TEST(UniformVariableTest, Assignmment) {
+  UniformVariable u;
+
+  u = float(5.0f);
+  EXPECT_TRUE(u.isOfType<float>());
+
+  u = math::mat3(5.0f);
+  EXPECT_TRUE(u.isOfType<math::mat3>());
+}
+
 TEST(UniformVariableTest, ValueConstructor) {
   UniformVariable u(5.0f);
   EXPECT_EQ(u.getType(), render::UniformType::Float);

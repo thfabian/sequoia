@@ -13,9 +13,9 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Render/UniformVariable.h"
 #include "sequoia/Core/Format.h"
 #include "sequoia/Core/Unreachable.h"
+#include "sequoia/Render/UniformVariable.h"
 #include <ostream>
 #include <sstream>
 
@@ -85,6 +85,10 @@ std::string UniformVariable::toString() const {
                       "  data = %s\n"
                       "]",
                       type_, VariantToString(data_, type_));
+}
+
+std::ostream& operator<<(std::ostream& os, const UniformVariable& var) {
+  return (os << var.toString());
 }
 
 } // namespace render
