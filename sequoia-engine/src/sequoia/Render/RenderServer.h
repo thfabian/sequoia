@@ -62,14 +62,14 @@ private:
     /// Handle of the thread
     std::thread Thread;
 
-    /// Condition variable used to wait if the queue is empty i.e clients weak the worker thread up
+    /// Condition variable used to wait if the queue is empty i.e clients wake the worker thread up
     /// via this variable
     std::condition_variable TasksAvailable;
 
-    /// Mutex to modify `WaitVar`
+    /// Mutex to modify `TasksAvailable`
     std::mutex Mutex;
 
-    /// Signal the thread it should exit the function
+    /// Signal the thread it should exit the function and join the main thread
     std::atomic<bool> Join;
   };
 
