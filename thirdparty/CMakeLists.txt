@@ -39,7 +39,7 @@ sequoia_build_package(gtest)
 # Packages which are conditionally built if not found
 #
 
-# zlib
+# ZLIB
 sequoia_find_package(
   PACKAGE ZLIB 
   FORWARD_VARS ZLIB_ROOT
@@ -56,9 +56,11 @@ sequoia_find_package(
 sequoia_find_package(
   PACKAGE OpenCV 
   PACKAGE_ARGS NO_MODULE QUIET
+  FORWARD_VARS OpenCV_DIR
+  DEPENDS zlib
 )
 
-# tbb
+# TBB
 sequoia_find_package(
   PACKAGE TBB 
   FORWARD_VARS TBB_ROOT_DIR
@@ -66,9 +68,9 @@ sequoia_find_package(
 
 # Prepare and export CMake variables of the external projects
 set(thirdparty_cmake_args
- -DCMAKE_PREFIX_PATH:STRING=${Sequoia_THIRDPARTY_PREFIX_PATH}
- ${Sequoia_CMAKE_ARGS}
- ${Sequoia_THIRDPARTY_CMAKE_ARGS}
+  -DCMAKE_PREFIX_PATH:STRING=${Sequoia_THIRDPARTY_PREFIX_PATH}
+  ${Sequoia_CMAKE_ARGS}
+  ${Sequoia_THIRDPARTY_CMAKE_ARGS}
 )
 set(Sequoia_CMAKE_ARGS "${thirdparty_cmake_args}" PARENT_SCOPE)
 

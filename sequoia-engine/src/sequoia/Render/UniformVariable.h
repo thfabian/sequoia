@@ -68,7 +68,7 @@ struct InvalidTypeToUniformType {
 
 template <class T>
 struct TypeToUniformType {
-  static constexpr UniformType value = InvalidTypeToUniformType<void>::value;
+  static constexpr UniformType value = InvalidTypeToUniformType<T>::value;
   static_assert(value != UniformType::Invalid, "invalid type");
 };
 

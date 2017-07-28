@@ -15,7 +15,6 @@
 
 #include "sequoia/Render/Camera.h"
 #include "sequoia/Unittest/Test.h"
-#include <gtest/gtest.h>
 
 using namespace sequoia;
 using namespace sequoia::render;

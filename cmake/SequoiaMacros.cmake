@@ -59,11 +59,14 @@ endmacro()
 ## takes the external project target name, looks for a variable of the form USE_SYSTEM_TARGETNAME, 
 ## if this does not exist or is set to false the supplied taget name will be added to dep_var.
 ##
+##    DEP_VAR:STRING=<>      - Output variable containing the resolved dependencies
+##    ARGN                   - Dependencies to append
+##
 macro(sequoia_add_optional_deps DEP_VAR)
-  foreach(_dependency ${ARGN})
-    string(TOUPPER "${_dependency}" _uDependency)
-    if(NOT USE_SYSTEM_${_uDependency})
-      list(APPEND ${DEP_VAR} ${_dependency})
+  foreach(dep ${ARGN})
+    string(TOUPPER "${dep}" dependency)
+    if(NOT USE_SYSTEM_${dependency})
+      list(APPEND ${DEP_VAR} ${dep})
     endif()
   endforeach()
 endmacro()
@@ -178,10 +181,12 @@ endmacro()
 ##    PACKAGE_ARGS:LIST=<>        - Arguments passed to ``find_package``
 ##    FORWARD_VARS:LIST=<>        - List of arguments which are appended to the 
 ##                                  ``Sequoia_THIRDPARTYLIBS_ARGS``
+##    DEPENDS:LIST=<>             - Dependencies of this package$
+##
 macro(sequoia_find_package)
   set(options)
   set(one_value_args PACKAGE)
-  set(multi_value_args PACKAGE_ARGS FORWARD_VARS)
+  set(multi_value_args PACKAGE_ARGS FORWARD_VARS DEPENDS)
   cmake_parse_arguments(ARG "${options}" "${one_value_args}" "${multi_value_args}" ${ARGN})
 
   if(NOT("${ARG_UNPARSED_ARGUMENTS}" STREQUAL ""))
@@ -192,6 +197,9 @@ macro(sequoia_find_package)
 
   # Define the external file to include if we cannot find the package
   set(external_file External_${ARG_PACKAGE})
+
+  # Define the name of the target *if* we built it (targets are always lower-case for us)
+  string(TOLOWER ${ARG_PACKAGE} target)
 
   # Do we use the system package or build it from source? 
   set(doc "Should we use the system ${ARG_PACKAGE}?")
@@ -228,6 +236,14 @@ macro(sequoia_find_package)
     endif()
   endif()
 
+  # Set the dependencies if we build
+  if(NOT(use_system) AND ARG_DEPENDS)
+    set(deps)
+    sequoia_add_optional_deps(deps ${ARG_DEPENDS})
+    if(deps)
+      add_dependencies(${target} ${deps})
+    endif()
+  endif()
+
   sequoia_gen_package_info_str(${ARG_PACKAGE} ${use_system})
 endmacro()
-

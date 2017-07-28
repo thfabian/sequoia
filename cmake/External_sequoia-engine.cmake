@@ -36,7 +36,7 @@ ExternalProject_Add(
   SOURCE_DIR ${sequoia_engine_source}
   BINARY_DIR ${sequoia_engine_build}
   INSTALL_COMMAND ""
-  CMAKE_ARGS
+  CMAKE_CACHE_ARGS
     ${sequoia_engine_cmake_args}
   DEPENDS
     ${sequoia_engine_deps}
