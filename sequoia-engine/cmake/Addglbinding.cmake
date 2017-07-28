@@ -14,11 +14,11 @@
 ##===------------------------------------------------------------------------------------------===##
 
 find_package(glbinding REQUIRED)
-include_directories(SYSTEM ${GLBINDING_INCLUDE_DIRS})
 
 sequoia_export_package(
   PACKAGE glbinding
   FOUND ${GLBINDING_FOUND} 
   VERSION_STR "${GLBINDING_VERSION}" 
   LIBRARIES ${GLBINDING_LIBRARIES}
+  INCLUDE_DIRS ${GLBINDING_INCLUDE_DIRS}
 )

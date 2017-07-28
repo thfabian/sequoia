@@ -25,20 +25,14 @@ else()
   set(Boost_USE_STATIC_RUNTIME OFF)
 endif()
 
-# Disable auto-linking
-add_definitions(-DBOOST_ALL_NO_LIB)
-
-# FindBoost
 set(SEQUOIA_BOOST_COMPONENTS filesystem system program_options)
 find_package(Boost 1.58 COMPONENTS ${SEQUOIA_BOOST_COMPONENTS} REQUIRED)
-
-# Add include directories
-include_directories(SYSTEM ${Boost_INCLUDE_DIRS})
-link_directories(${Boost_LIBRARY_DIRS})
 
 sequoia_export_package(
   PACKAGE Boost
   FOUND ${Boost_FOUND} 
   VERSION_STR "${Boost_MAJOR_VERSION}.${Boost_MINOR_VERSION}.${Boost_SUBMINOR_VERSION}" 
   LIBRARIES ${Boost_LIBRARIES}
+  INCLUDE_DIRS ${Boost_INCLUDE_DIRS}
+  DEFINITIONS -DBOOST_ALL_NO_LIB
 )

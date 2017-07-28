@@ -14,10 +14,10 @@
 ##===------------------------------------------------------------------------------------------===##
 
 find_package(GTest REQUIRED)
-include_directories(SYSTEM ${GTEST_INCLUDE_DIRS})
 
 sequoia_export_package(
   PACKAGE gtest
   FOUND ${GTEST_FOUND} 
   LIBRARIES ${GTEST_LIBRARIES}
+  INCLUDE_DIRS ${GTEST_INCLUDE_DIRS}
 )

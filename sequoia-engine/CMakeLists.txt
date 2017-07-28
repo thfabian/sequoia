@@ -69,7 +69,7 @@ include(AddBoost)
 include(AddCppcheck)
 include(Addccache)
 include(Addglbinding)
-include(AddGLFW)
+include(Addglfw3)
 include(Addgli)
 include(Addglm)
 include(AddOpenCV)
@@ -83,18 +83,15 @@ if(SEQUOIA_TESTING)
   include(Addbenchmark)
 endif()
 
-set(SEQUOIA_EXTERNAL_LIBRARIES
-  ${SEQUOIA_BACKWARD_LIBRARIES}
-  ${SEQUOIA_BOOST_LIBRARIES}
-  ${SEQUOIA_GLFW3_LIBRARIES}
-  ${SEQUOIA_GLBINDING_LIBRARIES}
-  ${SEQUOIA_OPENCV_LIBRARIES}
-  ${SEQUOIA_OPENGL_LIBRARIES}
-  ${SEQUOIA_TBB_LIBRARIES}
-  ${SEQUOIA_THREADS_LIBRARIES}
-  ${SEQUOIA_GTEST_LIBRARIES}
-  ${SEQUOIA_BENCHMARK_LIBRARIES}
-)
+# Gather the external libraries, include directories and definitions
+foreach(package BACKWARD BOOST GLBINDING GLFW3 GLM GLI OPENCV OPENGL TBB THREADS GTEST BENCHMARK)
+  list(APPEND SEQUOIA_EXTERNAL_LIBRARIES ${SEQUOIA_${package}_LIBRARIES})
+  list(APPEND SEQUOIA_EXTERNAL_INCLUDE_DIRS ${SEQUOIA_${package}_INCLUDE_DIRS})
+  list(APPEND SEQUOIA_EXTERNAL_DEFINITIONS ${SEQUOIA_${package}_DEFINITIONS})
+endforeach()
+
+include_directories(SYSTEM ${SEQUOIA_EXTERNAL_INCLUDE_DIRS})
+add_definitions(${SEQUOIA_EXTERNAL_DEFINITIONS})
 
 # Output summary of the packages
 sequoia_report_result("External libraries summary" ${SEQUOIA_PACKAGE_INFO})
@@ -106,13 +103,13 @@ include_directories(${CMAKE_BINARY_DIR}/src)
 add_subdirectory(src)
 add_subdirectory(ressource)
 
-##===----------------------------------------- Testing ----------------------------------------===##
+##===--------------------------------------- Testing ------------------------------------------===##
 if(SEQUOIA_TESTING)
   enable_testing()
   add_subdirectory(test)
 endif()
 
-##===----------------------------------------- Documentation ----------------------------------===##
+##===-------------------------------------- Documentation -------------------------------------===##
 if(SEQUOIA_DOCUMENTATION)
   add_subdirectory(docs)
 endif()

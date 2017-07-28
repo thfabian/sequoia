@@ -14,14 +14,15 @@
 ##===------------------------------------------------------------------------------------------===##
 
 find_package(glm REQUIRED)
-include_directories(SYSTEM ${GLM_INCLUDE_DIRS})
 
 if(NOT(WIN32))
-  add_definitions(-DGLM_FORCE_CXX14)
+  list(APPEND glm_definitions -DGLM_FORCE_CXX14)
 endif()
 
 sequoia_export_package(
   PACKAGE glm
   FOUND ${GLM_FOUND} 
-  VERSION_STR "${GLM_VERSION}" 
+  VERSION_STR "${GLM_VERSION}"
+  INCLUDE_DIRS ${GLM_INCLUDE_DIRS}
+  DEFINITIONS ${glm_definitions}
 )

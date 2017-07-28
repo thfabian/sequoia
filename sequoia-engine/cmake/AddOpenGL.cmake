@@ -14,10 +14,10 @@
 ##===------------------------------------------------------------------------------------------===##
 
 find_package(OpenGL REQUIRED)
-include_directories(SYSTEM ${OPENGL_INCLUDE_DIR})
 
 sequoia_export_package(
   PACKAGE OpenGL
   FOUND ${OPENGL_FOUND} 
   LIBRARIES ${OPENGL_LIBRARIES}
+  INCLUDE_DIRS ${OPENGL_INCLUDE_DIR}
 )

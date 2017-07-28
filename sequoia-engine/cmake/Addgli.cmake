@@ -14,11 +14,10 @@
 ##===------------------------------------------------------------------------------------------===##
 
 find_package(gli REQUIRED)
-include_directories(SYSTEM ${GLI_INCLUDE_DIRS})
 
 sequoia_export_package(
   PACKAGE gli
   FOUND ${GLI_FOUND} 
   VERSION_STR "${GLI_VERSION}" 
+  INCLUDE_DIRS ${GLI_INCLUDE_DIRS}
 )
-

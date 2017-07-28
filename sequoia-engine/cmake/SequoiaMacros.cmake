@@ -76,22 +76,26 @@ endmacro()
 ## -------------------------------
 ##
 ## Export the variables:
-##  SEQUOIA_${PACKAGE}_FOUND      : Package was found
-##  SEQUOIA_${PACKAGE}_LIBRARIES  : Libraries of the package to link against
+##  SEQUOIA_${PACKAGE}_FOUND         : True if package was found, False otherwise
+##  SEQUOIA_${PACKAGE}_LIBRARIES     : Libraries of the package to link against
+##  SEQUOIA_${PACKAGE}_INCLUDE_DIRS  : Include directories required by this package
+##  SEQUOIA_${PACKAGE}_DEFINITIONS   : Definitions required by the package
 ##
 ## with ``PACKAGE`` being converted to uppercase from the ``PACKAGE`` argument. In addition, an 
 ## information string will be appended to ``SEQUOIA_PACKAGE_INFO``.
 ##
 ##    PACKAGE:STRING=<>        - Name of the package
 ##    FOUND:BOOL=<>            - Package was found
-##    VERSION_STR:STRING=<>    - Version string if available [optional]
+##    INCLUDE_DIRS=<>          - List of include directories to add [optional]
 ##    LIBRARIES:STRING=<>      - List of libraries required for linking [optional]
+##    DEFINITIONS:STRING=<>    - List of definitions required by the package [optional]
+##    VERSION_STR:STRING=<>    - Version string if available [optional]
 ##
 macro(sequoia_export_package)
   # Prase arguments
   set(options)
   set(one_value_args PACKAGE FOUND VERSION_STR)
-  set(multi_value_args LIBRARIES TARGETS)
+  set(multi_value_args LIBRARIES INCLUDE_DIRS DEFINITIONS)
   cmake_parse_arguments(ARG "${options}" "${one_value_args}" "${multi_value_args}" ${ARGN})
   
   if(NOT("${ARG_UNPARSED_ARGUMENTS}" STREQUAL ""))
@@ -116,6 +120,18 @@ macro(sequoia_export_package)
     set("SEQUOIA_${package}_LIBRARIES" ${ARG_LIBRARIES} CACHE 
         STRING "Libraries of package: ${ARG_PACKAGE}" FORCE)
     mark_as_advanced("SEQUOIA_${package}_LIBRARIES")
+  endif()
+
+  if(DEFINED ARG_INCLUDE_DIRS)  
+    set("SEQUOIA_${package}_INCLUDE_DIRS" ${ARG_INCLUDE_DIRS} CACHE 
+        STRING "Include directories of package: ${ARG_PACKAGE}" FORCE)
+    mark_as_advanced("SEQUOIA_${package}_INCLUDE_DIRS")
+  endif()
+
+  if(DEFINED ARG_DEFINITIONS)
+    set("SEQUOIA_${package}_DEFINITIONS" ${ARG_DEFINITIONS} CACHE 
+        STRING "Definitions of package: ${ARG_PACKAGE}" FORCE)
+    mark_as_advanced("SEQUOIA_${package}_DEFINITIONS")
   endif()
 
   sequoia_gen_package_info_str(${ARG_PACKAGE} "${ARG_VERSION_STR}" ${ARG_FOUND})

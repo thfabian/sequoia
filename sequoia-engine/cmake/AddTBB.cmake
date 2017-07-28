@@ -21,20 +21,20 @@ endif()
 
 set(components tbb)
 find_package(TBB COMPONENTS ${components} REQUIRED)
-include_directories(SYSTEM ${TBB_INCLUDE_DIRS})
 
 set(tbb_libs)
+set(tbb_definitions)
 
 # Get the idivudual components 
 if(${CMAKE_BUILD_TYPE} MATCHES "Debug")
-  add_definitions(${TBB_DEFINITIONS_DEBUG})
+  list(APPEND tbb_definitions ${TBB_DEFINITIONS_DEBUG})
   foreach(comp ${components})
     if(TBB_${comp}_LIBRARY_DEBUG)  
       set(tbb_libs "${TBB_${comp}_LIBRARY_DEBUG}")
     endif()
   endforeach()
 else()
-  add_definitions(${TBB_DEFINITIONS_RELEASE})
+  list(APPEND tbb_definitions ${TBB_DEFINITIONS_RELEASE})
   foreach(comp ${components})
     if(TBB_${comp}_LIBRARY_RELEASE)  
       set(tbb_libs "${TBB_${comp}_LIBRARY_RELEASE}")
@@ -57,5 +57,7 @@ sequoia_export_package(
   FOUND ${TBB_FOUND} 
   VERSION_STR "${TBB_VERSION}"
   LIBRARIES ${tbb_libs}
+  INCLUDE_DIRS ${TBB_INCLUDE_DIRS}
+  DEFINTIONS ${tbb_definitions}
 )
 

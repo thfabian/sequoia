@@ -14,12 +14,11 @@
 ##===------------------------------------------------------------------------------------------===##
 
 find_package(OpenCV NO_MODULE REQUIRED core highgui imgcodecs imgproc)
-include_directories(SYSTEM ${OpenCV_INCLUDE_DIRS})
 
 sequoia_export_package(
   PACKAGE OpenCV
   FOUND ${OPENCV_FOUND} 
   VERSION_STR "${OpenCV_VERSION}" 
   LIBRARIES ${OpenCV_LIBS}
+  INCLUDE_DIRS ${OpenCV_INCLUDE_DIRS}
 )
-
