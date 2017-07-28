@@ -50,6 +50,14 @@ set(boost_md5 "7b493c08bc9557bbde7e29091f28b605")
 set(boost_components thread date_time system atomic chrono filesystem program_options)
 
 #
+# protobuf
+#
+# list(APPEND projects protobuf)
+# set(protobuf_version "3.3.0")
+# set(protobuf_url "https://github.com/google/protobuf/archive/v${protobuf_version}.tar.gz")
+# set(protobuf_md5 "10644296984c7cbdd1e8436e88b069d2")
+
+#
 # glbinding
 #
 list(APPEND projects glbinding)
