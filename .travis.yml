@@ -19,10 +19,6 @@ addons:
 os:
   - linux
 
-compiler:
-  - gcc
-  - clang
-
 matrix:
   include:
     # Linux GCC 5
