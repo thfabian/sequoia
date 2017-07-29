@@ -1,5 +1,7 @@
-language: c++
+dist: trusty
 sudo: false
+
+language: c++
 
 #===---------------------------------------------------------------------------------------------===
 #   Environment
@@ -21,22 +23,18 @@ os:
 
 matrix:
   include:
-    # Linux GCC 5
+    # Linux GCC 5 (Release)
     - os: linux
       compiler: gcc
-      env: 
-        - CXX_COMPILER=g++-5 
-        - CXX_COMPILER=gcc-5 
+      env: CONFIG=Release CXX_COMPILER=g++-5 C_COMPILER=gcc-5
     
-    # Linux GCC 6
+    # Linux GCC 5 (Debug)
     - os: linux
       compiler: gcc
-      env: 
-        - CXX_COMPILER=g++-6 
-        - CXX_COMPILER=gcc-6 
+      env: CONFIG=Release CXX_COMPILER=g++-5 C_COMPILER=gcc-5
 
 
-# Set directories to cache
+# Cache external dependencies
 cache:
   directories:
     - ${TRAVIS_BUILD_DIR}/deps/cmake-3.6.1
@@ -49,14 +47,13 @@ install:
   # Create deps dir if not existing
   - DEPS_DIR="${TRAVIS_BUILD_DIR}/deps"
   - mkdir -p ${DEPS_DIR}
-  
-  - ls
-  - echo ${CXX_COMPILER}
-  - echo ${C_COMPILER}
 
   # Make sure CXX and C are set correctly for Linux builds
   - if [[ "${CXX_COMPILER}" != "" ]]; then export CXX=${CXX_COMPILER}; fi
   - if [[ "${C_COMPILER}" != "" ]]; then export CC=${C_COMPILER}; fi
+
+  - $CC --version
+  - $CXX --version
   
   # Make sure CMAKE_BUILD_TYPE is correctly set
   - if [[ "${CONFIG}" != "" ]]; then export CMAKE_BUILD_TYPE=${CONFIG}; fi
