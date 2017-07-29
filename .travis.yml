@@ -1,0 +1,73 @@
+dist: trusty
+sudo: false
+language: cpp
+
+#===---------------------------------------------------------------------------------------------===
+#   Environment
+#===---------------------------------------------------------------------------------------------===
+env:
+  matrix:
+     include:
+        - os: linux
+          compiler: gcc
+          env: 
+            - CXX_COMPILER=g++-5
+            - C_COMPILER=gcc-5
+            - CONFIG=Release
+          addons:
+            apt:
+              sources: ['ubuntu-toolchain-r-test']
+              packages: 
+                - g++-5
+                - gcc-5
+
+
+# Set directories to cache
+cache:
+  directories:
+    - ${TRAVIS_BUILD_DIR}/deps/cmake-3.6.1
+
+#===---------------------------------------------------------------------------------------------===
+#   Installing (external dependencies)
+#===---------------------------------------------------------------------------------------------===
+
+install:
+  # Create deps dir if not existing
+  - DEPS_DIR="${TRAVIS_BUILD_DIR}/deps"
+  - mkdir -p ${DEPS_DIR}
+  - pushd $(pwd)
+  - cd ${DEPS_DIR}
+
+  # Make sure CXX and C are set correctly for Linux builds
+  - if [[ "${CXX_COMPILER}" != "" ]]; then export CXX=${CXX_COMPILER}; fi
+  - if [[ "${C_COMPILER}" != "" ]]; then export CC=${C_COMPILER}; fi
+  
+  # Make sure CMAKE_BUILD_TYPE is correctly set
+  - if [[ "${CONFIG}" != "" ]]; then export CMAKE_BUILD_TYPE=${CONFIG}; fi
+
+  # Install CMake 3.6.1
+  - |
+     CMAKE_DIR=${DEPS_DIR}/cmake-3.6.1
+     if [[ -z "$(ls -A ${CMAKE_DIR})" ]]; then
+       travis_retry wget --quiet https://cmake.org/files/v3.6/cmake-3.6.1.tar.gz
+       tar xfz cmake-3.6.1.tar.gz
+       (cd cmake-3.6.1 && ./configure --prefix=${CMAKE_DIR}/install && make install)
+     fi
+     export PATH="${CMAKE_DIR}/install/bin:${PATH}"
+
+
+#===---------------------------------------------------------------------------------------------===
+#   Building
+#===---------------------------------------------------------------------------------------------=== 
+
+before_script:
+ - cmake --version
+ - mkdir build
+
+#===---------------------------------------------------------------------------------------------===
+#   Testing
+#===---------------------------------------------------------------------------------------------=== 
+
+script:
+  - pushd $(pwd)
+  - cd build
