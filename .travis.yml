@@ -5,20 +5,21 @@ language: cpp
 #===---------------------------------------------------------------------------------------------===
 #   Environment
 #===---------------------------------------------------------------------------------------------===
-env:
-  matrix:
-    - os: linux
-      compiler: gcc
-      env: 
-        - CXX_COMPILER=g++-5
-        - C_COMPILER=gcc-5
-        - CONFIG=Release
-      addons:
-        apt:
-          sources: ['ubuntu-toolchain-r-test']
-          packages: 
-            - g++-5
-            - gcc-5
+# env:
+#   matrix:
+#     include:
+#         compiler: gcc
+#         env: 
+#           - CXX_COMPILER=g++-5
+#           - C_COMPILER=gcc-5
+#           - CONFIG=Release
+addons:
+  apt:
+    sources: 
+      - ubuntu-toolchain-r-test
+    packages:
+      - g++-5
+      - gcc-5
 
 
 # Set directories to cache
