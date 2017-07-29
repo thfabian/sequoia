@@ -1,26 +1,31 @@
 dist: trusty
 sudo: false
 language: cpp
+os: linux
 
 #===---------------------------------------------------------------------------------------------===
 #   Environment
 #===---------------------------------------------------------------------------------------------===
-# env:
-#   matrix:
-#     include:
-#         compiler: gcc
-#         env: 
-#           - CXX_COMPILER=g++-5
-#           - C_COMPILER=gcc-5
-#           - CONFIG=Release
+
+# APT packages shared by all configurations 
 addons:
   apt:
     sources: 
       - ubuntu-toolchain-r-test
     packages:
+      - g++-6
+      - gcc-6
       - g++-5
       - gcc-5
 
+matrix:
+  include:  
+    # Linux GCC 6
+    - os: linux
+      compiler: gcc
+      env: 
+        - CXX_COMPILER=g++-6 
+        - CXX_COMPILER=gcc-6 
 
 # Set directories to cache
 cache:
@@ -47,13 +52,13 @@ install:
 
   # Install CMake 3.6.1
   - |
-     CMAKE_DIR=${DEPS_DIR}/cmake-3.6.1
-     if [[ -z "$(ls -A ${CMAKE_DIR})" ]]; then
-       travis_retry wget --quiet https://cmake.org/files/v3.6/cmake-3.6.1.tar.gz
-       tar xfz cmake-3.6.1.tar.gz
-       (cd cmake-3.6.1 && ./configure --prefix=${CMAKE_DIR}/install && make install)
-     fi
-     export PATH="${CMAKE_DIR}/install/bin:${PATH}"
+    CMAKE_DIR=${DEPS_DIR}/cmake-3.6.1
+    if [[ -z "$(ls -A ${CMAKE_DIR})" ]]; then
+     travis_retry wget --quiet https://cmake.org/files/v3.6/cmake-3.6.1.tar.gz
+     tar xfz cmake-3.6.1.tar.gz
+     (cd cmake-3.6.1 && ./configure --prefix=${CMAKE_DIR}/install && make install)
+    fi
+    export PATH="${CMAKE_DIR}/install/bin:${PATH}"
 
 
 #===---------------------------------------------------------------------------------------------===
@@ -61,8 +66,15 @@ install:
 #===---------------------------------------------------------------------------------------------=== 
 
 before_script:
- - cmake --version
- - mkdir build
+  # Setup the X-Server and initialize display of 1280x1024x16
+  - export DISPLAY=:99.0
+  - |
+    /sbin/start-stop-daemon --start --quiet --pidfile /tmp/custom_xvfb_99.pid --make-pidfile       \
+                            --background --exec /usr/bin/Xvfb -- :99 -ac -screen 0 1280x1024x16"
+  - sleep 3
+
+  - cmake --version
+  - mkdir build
 
 #===---------------------------------------------------------------------------------------------===
 #   Testing
@@ -71,3 +83,8 @@ before_script:
 script:
   - pushd $(pwd)
   - cd build
+
+
+notifications:
+  on_success: never
+  on_failure: always
