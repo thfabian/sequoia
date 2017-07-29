@@ -23,21 +23,21 @@ os:
 
 matrix:
   include:
-    # Linux GCC 5 (Release)
+    # Linux GCC 5.4 (Release)
     - os: linux
       compiler: gcc
       env: CONFIG=Release CXX_COMPILER=g++-5 C_COMPILER=gcc-5
     
-    # Linux GCC 5 (Debug)
+    # Linux GCC 5.4 (RelWithDebInfo)
     - os: linux
       compiler: gcc
-      env: CONFIG=Release CXX_COMPILER=g++-5 C_COMPILER=gcc-5
+      env: CONFIG=RelWithDebInfo CXX_COMPILER=g++-5 C_COMPILER=gcc-5
 
 
 # Cache external dependencies
 cache:
   directories:
-    - ${TRAVIS_BUILD_DIR}/deps/cmake-3.6.1
+    - ${TRAVIS_BUILD_DIR}/deps/install/cmake-3.6.1
 
 #===---------------------------------------------------------------------------------------------===
 #   Installing (external dependencies)
@@ -48,10 +48,9 @@ install:
   - DEPS_DIR="${TRAVIS_BUILD_DIR}/deps"
   - mkdir -p ${DEPS_DIR}
 
-  # Make sure CXX and C are set correctly for Linux builds
+  # Make sure CXX and C are set correctly
   - if [[ "${CXX_COMPILER}" != "" ]]; then export CXX=${CXX_COMPILER}; fi
   - if [[ "${C_COMPILER}" != "" ]]; then export CC=${C_COMPILER}; fi
-
   - $CC --version
   - $CXX --version
   
@@ -64,13 +63,13 @@ install:
 
   # Install CMake 3.6.1
   - |
-    CMAKE_DIR=${DEPS_DIR}/cmake-3.6.1
-    if [[ -z "$(ls -A ${CMAKE_DIR})" ]]; then
+    CMAKE_INSTALL_DIR=${DEPS_DIR}/install/cmake-3.6.1
+    if [[ -z "$(ls -A ${CMAKE_INSTALL_DIR})" ]]; then
      travis_retry wget --quiet https://cmake.org/files/v3.6/cmake-3.6.1.tar.gz
      tar xfz cmake-3.6.1.tar.gz
-     (cd cmake-3.6.1 && ./configure --prefix=${CMAKE_DIR}/install && make install)
+     (cd cmake-3.6.1 && ./configure --prefix=${CMAKE_INSTALL_DIR} && make install)
     fi
-    export PATH="${CMAKE_DIR}/install/bin:${PATH}"
+    export PATH="${CMAKE_INSTALL_DIR}/bin:${PATH}"
 
   - popd
 
@@ -80,7 +79,7 @@ install:
 #===---------------------------------------------------------------------------------------------=== 
 
 before_script:
-  # Setup the X-Server and initialize display of 1280x1024x16
+  # Setup the X-Server and initialize a virtual display of 1280x1024x16
   - export DISPLAY=:99.0
   - |
     /sbin/start-stop-daemon --start --quiet --pidfile /tmp/custom_xvfb_99.pid --make-pidfile       \
