@@ -1,5 +1,6 @@
 dist: trusty
 sudo: false
+
 language: cpp
 os: linux
 
@@ -19,13 +20,20 @@ addons:
       - gcc-5
 
 matrix:
-  include:  
-    # Linux GCC 6
-    - os: linux
-      compiler: gcc
-      env: 
-        - CXX_COMPILER=g++-6 
-        - CXX_COMPILER=gcc-6 
+  # Linux GCC 5
+  - os: linux
+    compiler: gcc
+    env: 
+      - CXX_COMPILER=g++-5 
+      - CXX_COMPILER=gcc-5 
+  
+  # Linux GCC 6
+  - os: linux
+    compiler: gcc
+    env: 
+      - CXX_COMPILER=g++-6 
+      - CXX_COMPILER=gcc-6 
+
 
 # Set directories to cache
 cache:
@@ -40,8 +48,10 @@ install:
   # Create deps dir if not existing
   - DEPS_DIR="${TRAVIS_BUILD_DIR}/deps"
   - mkdir -p ${DEPS_DIR}
-  - pushd $(pwd)
-  - cd ${DEPS_DIR}
+  
+  - ls
+  - echo ${CXX_COMPILER}
+  - echo ${C_COMPILER}
 
   # Make sure CXX and C are set correctly for Linux builds
   - if [[ "${CXX_COMPILER}" != "" ]]; then export CXX=${CXX_COMPILER}; fi
@@ -49,6 +59,10 @@ install:
   
   # Make sure CMAKE_BUILD_TYPE is correctly set
   - if [[ "${CONFIG}" != "" ]]; then export CMAKE_BUILD_TYPE=${CONFIG}; fi
+
+  # Start building external dependencies
+  - pushd $(pwd)
+  - cd ${DEPS_DIR}
 
   # Install CMake 3.6.1
   - |
@@ -60,6 +74,8 @@ install:
     fi
     export PATH="${CMAKE_DIR}/install/bin:${PATH}"
 
+  - popd
+
 
 #===---------------------------------------------------------------------------------------------===
 #   Building
@@ -70,7 +86,7 @@ before_script:
   - export DISPLAY=:99.0
   - |
     /sbin/start-stop-daemon --start --quiet --pidfile /tmp/custom_xvfb_99.pid --make-pidfile       \
-                            --background --exec /usr/bin/Xvfb -- :99 -ac -screen 0 1280x1024x16"
+                            --background --exec /usr/bin/Xvfb -- :99 -ac -screen 0 1280x1024x16
   - sleep 3
 
   - cmake --version
@@ -87,4 +103,4 @@ script:
 
 notifications:
   on_success: never
-  on_failure: always
+  on_failure: never
