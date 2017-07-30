@@ -159,9 +159,6 @@ install:
     fi
     export BOOST_ROOT="${BOOST_INSTALL_DIR}"
 
-  - ls ${OpenCV_DIR}
-  - ls ${GLBINDING_ROOT}
-  - ls ${BOOST_ROOT}
   - popd
 
 #===---------------------------------------------------------------------------------------------===
@@ -186,7 +183,8 @@ before_script:
   # Build sequoia
   - pushd $(pwd)
   - mkdir build && cd build
-  - cmake .. -DBOOST_ROOT:PATH=$BOOST_ROOT                                                         \
+  - |
+    cmake .. -DBOOST_ROOT:PATH=$BOOST_ROOT                                                         \
              -DGLBINDING_ROOT:PATH=$GLBINDING_ROOT                                                 \
              -DOpenCV_DIR:PATH=$OpenCV_DIR                                                         \
              -DCMAKE_BUILD_TYPE=$CONFIG
