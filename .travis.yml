@@ -26,12 +26,17 @@ addons:
       - libjasper-dev 
 
       # glfw3 deps
+      - xorg-dev 
+      - libglu1-mesa-dev
       - libx11-6
       - libxcursor1
       - libxi6
       - libxinerama1
       - libxrandr2
       - libxxf86vm1
+
+      # backward deps
+      - libdw-dev
 
 os:
   - linux
