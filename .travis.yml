@@ -16,6 +16,9 @@ addons:
       - g++-5
       - gcc-5
 
+      # Sequoia deps
+      - libtbb-dev
+
       # OpenCV deps
       - libjpeg-dev 
       - libpng12-dev 
@@ -37,6 +40,7 @@ env:
   global:
     - BOOST_VERSON=1.63.0
     - CMAKE_VERSION=3.6.1
+    - GLBINDING_VERSION=2.1.1
     - OPENCV_VERSON=3.2.0
 
 matrix:
@@ -55,7 +59,9 @@ matrix:
 # Cache external dependencies
 cache:
   directories:
+    - ${TRAVIS_BUILD_DIR}/deps/install/boost-${BOOST_VERSON}
     - ${TRAVIS_BUILD_DIR}/deps/install/cmake-${CMAKE_VERSION}
+    - ${TRAVIS_BUILD_DIR}/deps/install/glbinding-${GLBINDING_VERSION}
     - ${TRAVIS_BUILD_DIR}/deps/install/opencv-${OPENCV_VERSON}
 
 #===---------------------------------------------------------------------------------------------===
@@ -81,7 +87,7 @@ install:
     if [[ -z "$(ls -A ${CMAKE_INSTALL_DIR})" ]]; then
       CMAKE_SHORT_VERSION=${CMAKE_VERSION%.*}
       travis_retry wget                                                                            \
-                   https://cmake.org/files/v${CMAKE_SHORT_VERSION}/cmake-${CMAKE_VERSION}.tar.gz
+        https://cmake.org/files/v${CMAKE_SHORT_VERSION}/cmake-${CMAKE_VERSION}.tar.gz
       tar xfz cmake-${CMAKE_VERSION}.tar.gz
       (cd cmake-${CMAKE_VERSION} && ./configure --prefix=${CMAKE_INSTALL_DIR} && make install)
     fi
@@ -104,8 +110,60 @@ install:
     fi
     export OpenCV_DIR="${OPENCV_INSTALL_DIR}/share/OpenCV"
 
+  # Install glbinding
+  - |
+    GLBINDING_INSTALL_DIR=${DEPS_DIR}/install/glbinding-${GLBINDING_VERSION}
+    if [[ -z "$(ls -A ${GLBINDING_INSTALL_DIR})" ]]; then
+      travis_retry wget                                                                            \
+        https://github.com/cginternals/glbinding/archive/v${GLBINDING_VERSION}.tar.gz
+      tar xfz ${GLBINDING_VERSION}.tar.gz
+      pushd $(pwd)
+      mkdir glbinding-${GLBINDING_VERSION}/build && cd glbinding-${GLBINDING_VERSION}/build
+      cmake .. -DCMAKE_BUILD_TYPE=Release -DOPTION_BUILD_DOCS:BOOL=OFF                             \
+               -DOPTION_BUILD_EXAMPLES:BOOL=OFF -DOPTION_BUILD_TESTS:BOOL=OFF                      \
+               -DCMAKE_INSTALL_PREFIX=${GLBINDING_INSTALL_DIR}
+      make install
+      popd
+    fi
+    export GLBINDING_ROOT="${GLBINDING_INSTALL_DIR}"
+
+
+  # Install boost
+  - |
+    BOOST_INSTALL_DIR=${DEPS_DIR}/install/boost-${BOOST_VERSON}
+    if [[ -z "$(ls -A ${BOOST_INSTALL_DIR})" ]]; then
+      
+      BOOST_URL=$(printf "http://sourceforge.net/projects/boost/files/boost/%s/boost_%s.tar.gz"    \
+                  ${BOOST_VERSION} ${BOOST_VERSION//\./_})
+      
+      mkdir -p ${BOOST_INSTALL_DIR}
+      { travis_retry wget --quiet -O - ${BOOST_URL} |                                              \
+        tar --strip-components=1 -xz -C ${BOOST_INSTALL_DIR}; } || exit 1
+      
+      GCC_VERSION=$($CXX -dumpversion)
+      pushd $(pwd)
+      cd ${BOOST_INSTALL_DIR}
+      echo "using gcc : ${GCC_VERSION} : ${CXX} ;" > user-config.jam
+      ./bootstrap.sh
+      ./b2 -j2 --toolset=gcc-${GCC_VERSION} --prefix=${BOOST_INSTALL_DIR}                          \
+               --user-config=${BOOST_INSTALL_DIR}/user-config.jam                                  \
+               --with-thread                                                                       \
+               --with-date_time                                                                    \
+               --with-atomic                                                                       \
+               --with-chrono                                                                       \
+               --with-filesystem                                                                   \
+               --with-program_options                                                              \
+               --d+2 install
+      popd
+    fi
+    export BOOST_ROOT="${BOOST_INSTALL_DIR}"
+
   - ls ${OpenCV_DIR}
+  - ls ${GLBINDING_ROOT}
+  - ls ${BOOST_ROOT}
   - popd
+
+thread date_time system atomic chrono filesystem program_options
 
 #===---------------------------------------------------------------------------------------------===
 #   Building
@@ -124,8 +182,6 @@ before_script:
   - export CC=${C_COMPILER}
   - export CMAKE_BUILD_TYPE=${CONFIG}
 
-
-
   - $CC --version
   - $CXX --version
 
@@ -135,7 +191,6 @@ before_script:
 
 script:
   - pushd $(pwd)
-  - cd build
 
 
 notifications:
