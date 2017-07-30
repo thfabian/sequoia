@@ -87,7 +87,7 @@ install:
     if [[ -z "$(ls -A ${CMAKE_INSTALL_DIR})" ]]; then
       CMAKE_SHORT_VERSION=${CMAKE_VERSION%.*}
       { travis_retry wget                                                                          \
-        https://cmake.org/files/v${CMAKE_SHORT_VERSION}/cmake-${CMAKE_VERSION}.tar.gz } || exit 1 
+        https://cmake.org/files/v${CMAKE_SHORT_VERSION}/cmake-${CMAKE_VERSION}.tar.gz; } || exit 1 
       tar xfz cmake-${CMAKE_VERSION}.tar.gz
       (cd cmake-${CMAKE_VERSION} && ./configure --prefix=${CMAKE_INSTALL_DIR} && make install)
     fi
@@ -97,7 +97,7 @@ install:
   - |
     OPENCV_INSTALL_DIR=${DEPS_DIR}/install/opencv-${OPENCV_VERSON}
     if [[ -z "$(ls -A ${OPENCV_INSTALL_DIR})" ]]; then
-      { travis_retry wget https://github.com/opencv/opencv/archive/${OPENCV_VERSON}.tar.gz } ||    \
+      { travis_retry wget https://github.com/opencv/opencv/archive/${OPENCV_VERSON}.tar.gz; } ||   \
         exit 1
       tar xfz ${OPENCV_VERSON}.tar.gz
       pushd $(pwd)
@@ -116,7 +116,7 @@ install:
     GLBINDING_INSTALL_DIR=${DEPS_DIR}/install/glbinding-${GLBINDING_VERSION}
     if [[ -z "$(ls -A ${GLBINDING_INSTALL_DIR})" ]]; then
       { travis_retry wget                                                                          \
-        https://github.com/cginternals/glbinding/archive/v${GLBINDING_VERSION}.tar.gz } || exit 1
+        https://github.com/cginternals/glbinding/archive/v${GLBINDING_VERSION}.tar.gz; } || exit 1
       tar xfz v${GLBINDING_VERSION}.tar.gz
       pushd $(pwd)
       mkdir glbinding-${GLBINDING_VERSION}/build && cd glbinding-${GLBINDING_VERSION}/build
