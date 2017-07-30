@@ -13,16 +13,18 @@
 ##
 ##===------------------------------------------------------------------------------------------===##
 
-find_package(Backward NO_MODULE REQUIRED)
+if(SEQUOIA_ON_LINUX)
+  find_package(Backward NO_MODULE REQUIRED)
 
-foreach(definition ${BACKWARD_DEFINITIONS})
-  list(APPEND backward_definitions -D${definition})
-endforeach()
+  foreach(definition ${BACKWARD_DEFINITIONS})
+    list(APPEND backward_definitions -D${definition})
+  endforeach()
 
-sequoia_export_package(
-  PACKAGE backward 
-  FOUND ${Backward_FOUND} 
-  LIBRARIES ${BACKWARD_LIBRARIES}
-  INCLUDE_DIRS ${BACKWARD_INCLUDE_DIRS}
-  DEFINITIONS ${backward_definitions}
-)
+  sequoia_export_package(
+    PACKAGE backward 
+    FOUND ${Backward_FOUND} 
+    LIBRARIES ${BACKWARD_LIBRARIES}
+    INCLUDE_DIRS ${BACKWARD_INCLUDE_DIRS}
+    DEFINITIONS ${backward_definitions}
+  )
+endif()

@@ -168,18 +168,13 @@ function(sequoia_link_objects)
   add_library(${ARG_NAME} ${objects})
   target_link_libraries(${ARG_NAME} ${ARG_DEPENDS})
   
-  if(WIN32 AND NOT(MSVC_IDE))
-    set_property(TARGET ${ARG_NAME} PROPERTY ARCHIVE_OUTPUT_DIRECTORY 
-                 ${CMAKE_BINARY_DIR}/${CMAKE_BUILD_TYPE}/lib)
-    set_property(TARGET ${ARG_NAME} PROPERTY LIBRARY_OUTPUT_DIRECTORY 
-                 ${CMAKE_BINARY_DIR}/${CMAKE_BUILD_TYPE}/lib)
-    set_property(TARGET ${ARG_NAME} PROPERTY RUNTIME_OUTPUT_DIRECTORY 
-                 ${CMAKE_BINARY_DIR}/${CMAKE_BUILD_TYPE}/bin)
-  else()
-    set_property(TARGET ${ARG_NAME} PROPERTY ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
-    set_property(TARGET ${ARG_NAME} PROPERTY LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
-    set_property(TARGET ${ARG_NAME} PROPERTY RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
-  endif()
+  string(TOUPPER ${CMAKE_BUILD_TYPE} build_type)
+  set_property(TARGET ${ARG_NAME} PROPERTY ARCHIVE_OUTPUT_DIRECTORY_${build_type}
+               ${CMAKE_BINARY_DIR}/lib)
+  set_property(TARGET ${ARG_NAME} PROPERTY LIBRARY_OUTPUT_DIRECTORY_${build_type}
+               ${CMAKE_BINARY_DIR}/lib)
+  set_property(TARGET ${ARG_NAME} PROPERTY RUNTIME_OUTPUT_DIRECTORY_${build_type}
+               ${CMAKE_BINARY_DIR}/bin)
 endfunction()
 
 ## sequoia_add_executable
@@ -226,19 +221,11 @@ function(sequoia_add_executable)
     endforeach()
   endif()
 
-  set(out_dir "bin")
-  if(ARG_OUTPUT_DIR)
-    set(out_dir "bin/${ARG_OUTPUT_DIR}")
-  endif()
-
   target_link_libraries(${ARG_NAME} ${ARG_DEPENDS})
-  if(WIN32 AND NOT(MSVC_IDE))
-    set_property(TARGET ${ARG_NAME} PROPERTY RUNTIME_OUTPUT_DIRECTORY 
-                 ${CMAKE_BINARY_DIR}/${CMAKE_BUILD_TYPE}/${out_dir})
-  else()
-    set_property(TARGET ${ARG_NAME} PROPERTY RUNTIME_OUTPUT_DIRECTORY 
-                 ${CMAKE_BINARY_DIR}/${out_dir})
-  endif()
+  
+  string(TOUPPER ${CMAKE_BUILD_TYPE} build_type)
+  set_property(TARGET ${ARG_NAME} PROPERTY RUNTIME_OUTPUT_DIRECTORY_${build_type}
+               ${CMAKE_BINARY_DIR}/bin/${ARG_OUTPUT_DIR})
 endfunction()
 
 ## sequoia_add_test

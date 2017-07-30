@@ -13,7 +13,10 @@
 ##
 ##===------------------------------------------------------------------------------------------===##
 
-# Platform specific falgs
+if(NOT(USE_SYSTEM_ZLIB))
+  set(build_arg -DBUILD_ZLIB:BOOL=OFF)
+endif()
+
 if(UNIX)
   # Add GTK+ support for showing images
   set(platform_arg -DWITH_GTK:BOOL=ON -DWITH_GTK_2_X:BOOL=ON)
@@ -36,12 +39,12 @@ ExternalProject_Add(
     -DBUILD_SHARED_LIBS:BOOL=${BUILD_SHARED_LIBS}
     -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
 
+    ${build_arg}
     ${platform_arg}
     -DBUILD_DOCS:BOOL=OFF 
     -DBUILD_EXAMPLES:BOOL=OFF 
     -DBUILD_PACKAGE:BOOL=OFF 
     -DBUILD_PERF_TESTS:BOOL=OFF 
-    -DBUILD_SHARED_LIBS:BOOL=OFF 
     -DBUILD_TBB:BOOL=OFF 
     -DBUILD_TESTS:BOOL=OFF 
     -DBUILD_WITH_DEBUG_INFO:BOOL=OFF

@@ -20,7 +20,7 @@ unset(projects)
 #
 list(APPEND projects zlib)
 set(zlib_url "https://github.com/thfabian/zlib/archive/v1.2.11.tar.gz")
-set(zlib_md5 "0095d2d2d1f3442ce1318336637b695f")
+set(zlib_md5 "c380c38d7a493b3b8823408574989f91")
 
 #
 # backward

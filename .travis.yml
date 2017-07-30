@@ -200,10 +200,11 @@ before_script:
 #   Testing
 #===---------------------------------------------------------------------------------------------=== 
 
-script:
+script:  
+  # sequoia-engine
   - pushd $(pwd)
-  - cd build
-  - ctest 
+  - cd build/sequoia-engine
+  - ctest -C ${CONFIG}
   - popd
 
 notifications:
