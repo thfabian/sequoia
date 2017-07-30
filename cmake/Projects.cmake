@@ -33,7 +33,7 @@ set(backward_md5 "b89051fb35fd2eacf5ab9c7bced5faf6")
 #
 # benchmark
 #
-list(APPEND projects backward)
+list(APPEND projects benchmark)
 set(benchmark_version "1.2.0")
 set(benchmark_url "https://github.com/google/benchmark/archive/v${benchmark_version}.tar.gz")
 set(benchmark_md5 "48d0b090cd7a84af2c4a28c8dc963c74")
