@@ -80,7 +80,7 @@ install:
     CMAKE_INSTALL_DIR=${DEPS_DIR}/install/cmake-${CMAKE_VERSION}
     if [[ -z "$(ls -A ${CMAKE_INSTALL_DIR})" ]]; then
       CMAKE_SHORT_VERSION=${CMAKE_VERSION%.*}
-      travis_retry wget --quiet                                                                    \
+      travis_retry wget                                                                            \
                    https://cmake.org/files/v${CMAKE_SHORT_VERSION}/cmake-${CMAKE_VERSION}.tar.gz
       tar xfz cmake-${CMAKE_VERSION}.tar.gz
       (cd cmake-${CMAKE_VERSION} && ./configure --prefix=${CMAKE_INSTALL_DIR} && make install)
@@ -91,8 +91,8 @@ install:
   - |
     OPENCV_INSTALL_DIR=${DEPS_DIR}/install/opencv-${OPENCV_VERSON}
     if [[ -z "$(ls -A ${OPENCV_INSTALL_DIR})" ]]; then
-      travis_retry wget --quiet  https://github.com/opencv/opencv/archive/${OPENCV_VERSON}.tar.gz
-      tar xfz ${OPENCV_VERSON}.tar.gz -C 
+      travis_retry wget https://github.com/opencv/opencv/archive/${OPENCV_VERSON}.tar.gz
+      tar xfz ${OPENCV_VERSON}.tar.gz
       pushd $(pwd)
       mkdir ${OPENCV_VERSON}/build && cd ${OPENCV_VERSON}/build
       cmake .. -DCMAKE_BUILD_TYPE=Release -DWITH_PNG:BOOL=ON -DWITH_TIFF:BOOL=ON                   \
