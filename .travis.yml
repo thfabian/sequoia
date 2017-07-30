@@ -90,7 +90,7 @@ install:
   # Install OpenCV
   - |
     OPENCV_INSTALL_DIR=${DEPS_DIR}/install/opencv-${OPENCV_VERSON}
-    if [[ -z "$(ls -A ${CMAKE_INSTALL_DIR})" ]]; then
+    if [[ -z "$(ls -A ${OPENCV_INSTALL_DIR})" ]]; then
       travis_retry wget --quiet  https://github.com/opencv/opencv/archive/${OPENCV_VERSON}.tar.gz
       tar xfz ${OPENCV_VERSON}.tar.gz -C 
       pushd $(pwd)
