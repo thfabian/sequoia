@@ -16,12 +16,28 @@ addons:
       - g++-5
       - gcc-5
 
+      # OpenCV deps
+      - libjpeg-dev 
+      - libpng12-dev 
+      - libtiff4-dev 
+      - libjasper-dev 
+
+      # glfw3 deps
+      - libx11-6
+      - libxcursor1
+      - libxi6
+      - libxinerama1
+      - libxrandr2
+      - libxxf86vm1
+
 os:
   - linux
 
 env:
   global:
-    CMAKE_VERSION=3.6.1
+    - BOOST_VERSON=1.63.0
+    - CMAKE_VERSION=3.6.1
+    - OPENCV_VERSON=3.2.0
 
 matrix:
   include:
@@ -40,6 +56,7 @@ matrix:
 cache:
   directories:
     - ${TRAVIS_BUILD_DIR}/deps/install/cmake-${CMAKE_VERSION}
+    - ${TRAVIS_BUILD_DIR}/deps/install/opencv-${OPENCV_VERSON}
 
 #===---------------------------------------------------------------------------------------------===
 #   Installing (external dependencies)
@@ -50,33 +67,45 @@ install:
   - DEPS_DIR="${TRAVIS_BUILD_DIR}/deps"
   - mkdir -p ${DEPS_DIR}
 
-  # Make sure CXX and C are set correctly
-  - if [[ "${CXX_COMPILER}" != "" ]]; then export CXX=${CXX_COMPILER}; fi
-  - if [[ "${C_COMPILER}" != "" ]]; then export CC=${C_COMPILER}; fi
-  - $CC --version
-  - $CXX --version
-  
-  # Make sure CMAKE_BUILD_TYPE is correctly set
-  - if [[ "${CONFIG}" != "" ]]; then export CMAKE_BUILD_TYPE=${CONFIG}; fi
+  # External dependencies are always built with gcc 5
+  - export CXX=g++-5
+  - export CC=gcc-5
 
   # Start building external dependencies
   - pushd $(pwd)
   - cd ${DEPS_DIR}
 
-  # Install CMake 3.6.1
+  # Install CMake
   - |
     CMAKE_INSTALL_DIR=${DEPS_DIR}/install/cmake-${CMAKE_VERSION}
     if [[ -z "$(ls -A ${CMAKE_INSTALL_DIR})" ]]; then
-     CMAKE_SHORT_VERSION=${CMAKE_VERSION%.*}
-     travis_retry wget --quiet                                                                     \
-                  https://cmake.org/files/v${CMAKE_SHORT_VERSION}/cmake-${CMAKE_VERSION}.tar.gz
-     tar xfz cmake-${CMAKE_VERSION}.tar.gz
-     (cd cmake-${CMAKE_VERSION} && ./configure --prefix=${CMAKE_INSTALL_DIR} && make install)
+      CMAKE_SHORT_VERSION=${CMAKE_VERSION%.*}
+      travis_retry wget --quiet                                                                    \
+                   https://cmake.org/files/v${CMAKE_SHORT_VERSION}/cmake-${CMAKE_VERSION}.tar.gz
+      tar xfz cmake-${CMAKE_VERSION}.tar.gz
+      (cd cmake-${CMAKE_VERSION} && ./configure --prefix=${CMAKE_INSTALL_DIR} && make install)
     fi
     export PATH="${CMAKE_INSTALL_DIR}/bin:${PATH}"
 
-  - popd
+  # Install OpenCV
+  - |
+    OPENCV_INSTALL_DIR=${DEPS_DIR}/install/opencv-${OPENCV_VERSON}
+    if [[ -z "$(ls -A ${CMAKE_INSTALL_DIR})" ]]; then
+      travis_retry wget --quiet  https://github.com/opencv/opencv/archive/${OPENCV_VERSON}.tar.gz
+      tar xfz ${OPENCV_VERSON}.tar.gz -C 
+      pushd $(pwd)
+      mkdir ${OPENCV_VERSON}/build && cd ${OPENCV_VERSON}/build
+      cmake .. -DCMAKE_BUILD_TYPE=Release -DWITH_PNG:BOOL=ON -DWITH_TIFF:BOOL=ON                   \
+               -DWITH_JPEG:BOOL=ON -DBUILD_opencv_core:BOOL=ON -DBUILD_opencv_highgui:BOOL=ON      \
+               -DBUILD_opencv_imgcodecs:BOOL=ON -DBUILD_opencv_imgproc:BOOL=ON                     \
+               -DCMAKE_INSTALL_PREFIX=${OPENCV_INSTALL_DIR}
+      make install
+      popd
+    fi
+    export OpenCV_DIR="${OPENCV_INSTALL_DIR}/share/OpenCV"
 
+  - ls ${OpenCV_DIR}
+  - popd
 
 #===---------------------------------------------------------------------------------------------===
 #   Building
@@ -90,8 +119,15 @@ before_script:
                             --background --exec /usr/bin/Xvfb -- :99 -ac -screen 0 1280x1024x16
   - sleep 3
 
-  - cmake --version
-  - mkdir build
+  # Make sure C++ and C compilers are set correctly
+  - export CXX=${CXX_COMPILER}
+  - export CC=${C_COMPILER}
+  - export CMAKE_BUILD_TYPE=${CONFIG}
+
+
+
+  - $CC --version
+  - $CXX --version
 
 #===---------------------------------------------------------------------------------------------===
 #   Testing
