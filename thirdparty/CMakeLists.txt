@@ -29,7 +29,6 @@ set(Sequoia_THIRDPARTY_PREFIX_PATH ${Sequoia_PREFIX_PATH})
 #
 sequoia_build_package(backward)
 sequoia_build_package(benchmark)
-sequoia_build_package(glbinding)
 sequoia_build_package(glfw3)
 sequoia_build_package(gli)
 sequoia_build_package(glm)
@@ -52,9 +51,16 @@ sequoia_find_package(
   FORWARD_VARS BOOST_ROOT Boost_LIBRARY_DIRS Boost_INCLUDE_DIRS
 )
 
+# glbinding
+sequoia_find_package(
+  PACKAGE glbinding 
+  PACKAGE_ARGS ${glbinding_version}
+  FORWARD_VARS GLBINDING_ROOT
+)
+
 # OpenCV
 sequoia_find_package(
-  PACKAGE OpenCV 
+  PACKAGE OpenCV
   PACKAGE_ARGS NO_MODULE QUIET
   FORWARD_VARS OpenCV_DIR
   DEPENDS zlib

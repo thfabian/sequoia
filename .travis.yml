@@ -38,7 +38,7 @@ os:
 
 env:
   global:
-    - BOOST_VERSON=1.63.0
+    - BOOST_VERSION=1.63.0
     - CMAKE_VERSION=3.6.1
     - GLBINDING_VERSION=2.1.1
     - OPENCV_VERSON=3.2.0
@@ -59,7 +59,7 @@ matrix:
 # Cache external dependencies
 cache:
   directories:
-    - ${TRAVIS_BUILD_DIR}/deps/install/boost-${BOOST_VERSON}
+    - ${TRAVIS_BUILD_DIR}/deps/install/boost-${BOOST_VERSION}
     - ${TRAVIS_BUILD_DIR}/deps/install/cmake-${CMAKE_VERSION}
     - ${TRAVIS_BUILD_DIR}/deps/install/glbinding-${GLBINDING_VERSION}
     - ${TRAVIS_BUILD_DIR}/deps/install/opencv-${OPENCV_VERSON}
@@ -86,8 +86,8 @@ install:
     CMAKE_INSTALL_DIR=${DEPS_DIR}/install/cmake-${CMAKE_VERSION}
     if [[ -z "$(ls -A ${CMAKE_INSTALL_DIR})" ]]; then
       CMAKE_SHORT_VERSION=${CMAKE_VERSION%.*}
-      travis_retry wget                                                                            \
-        https://cmake.org/files/v${CMAKE_SHORT_VERSION}/cmake-${CMAKE_VERSION}.tar.gz
+      { travis_retry wget                                                                          \
+        https://cmake.org/files/v${CMAKE_SHORT_VERSION}/cmake-${CMAKE_VERSION}.tar.gz } || exit 1 
       tar xfz cmake-${CMAKE_VERSION}.tar.gz
       (cd cmake-${CMAKE_VERSION} && ./configure --prefix=${CMAKE_INSTALL_DIR} && make install)
     fi
@@ -97,7 +97,8 @@ install:
   - |
     OPENCV_INSTALL_DIR=${DEPS_DIR}/install/opencv-${OPENCV_VERSON}
     if [[ -z "$(ls -A ${OPENCV_INSTALL_DIR})" ]]; then
-      travis_retry wget https://github.com/opencv/opencv/archive/${OPENCV_VERSON}.tar.gz
+      { travis_retry wget https://github.com/opencv/opencv/archive/${OPENCV_VERSON}.tar.gz } ||    \
+        exit 1
       tar xfz ${OPENCV_VERSON}.tar.gz
       pushd $(pwd)
       mkdir opencv-${OPENCV_VERSON}/build && cd opencv-${OPENCV_VERSON}/build
@@ -114,9 +115,9 @@ install:
   - |
     GLBINDING_INSTALL_DIR=${DEPS_DIR}/install/glbinding-${GLBINDING_VERSION}
     if [[ -z "$(ls -A ${GLBINDING_INSTALL_DIR})" ]]; then
-      travis_retry wget                                                                            \
-        https://github.com/cginternals/glbinding/archive/v${GLBINDING_VERSION}.tar.gz
-      tar xfz ${GLBINDING_VERSION}.tar.gz
+      { travis_retry wget                                                                          \
+        https://github.com/cginternals/glbinding/archive/v${GLBINDING_VERSION}.tar.gz } || exit 1
+      tar xfz v${GLBINDING_VERSION}.tar.gz
       pushd $(pwd)
       mkdir glbinding-${GLBINDING_VERSION}/build && cd glbinding-${GLBINDING_VERSION}/build
       cmake .. -DCMAKE_BUILD_TYPE=Release -DOPTION_BUILD_DOCS:BOOL=OFF                             \
@@ -130,7 +131,7 @@ install:
 
   # Install boost
   - |
-    BOOST_INSTALL_DIR=${DEPS_DIR}/install/boost-${BOOST_VERSON}
+    BOOST_INSTALL_DIR=${DEPS_DIR}/install/boost-${BOOST_VERSION}
     if [[ -z "$(ls -A ${BOOST_INSTALL_DIR})" ]]; then
       
       BOOST_URL=$(printf "http://sourceforge.net/projects/boost/files/boost/%s/boost_%s.tar.gz"    \
