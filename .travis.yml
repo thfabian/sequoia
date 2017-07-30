@@ -179,10 +179,19 @@ before_script:
   # Make sure C++ and C compilers are set correctly
   - export CXX=${CXX_COMPILER}
   - export CC=${C_COMPILER}
-  - export CMAKE_BUILD_TYPE=${CONFIG}
 
   - $CC --version
   - $CXX --version
+
+  # Build sequoia
+  - pushd $(pwd)
+  - mkdir build && cd build
+  - cmake .. -DBOOST_ROOT:PATH=$BOOST_ROOT                                                         \
+             -DGLBINDING_ROOT:PATH=$GLBINDING_ROOT                                                 \
+             -DOpenCV_DIR:PATH=$OpenCV_DIR                                                         \
+             -DCMAKE_BUILD_TYPE=$CONFIG
+  - make
+  - popd
 
 #===---------------------------------------------------------------------------------------------===
 #   Testing
@@ -190,7 +199,9 @@ before_script:
 
 script:
   - pushd $(pwd)
-
+  - cd build
+  - ctest 
+  - popd
 
 notifications:
   on_success: never
