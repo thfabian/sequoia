@@ -10,7 +10,10 @@ Render:
       Don't capture the Exceptions but rather forward it to the Future
   ☐ Add support for OBJ mesh loading @created(17-07-29 01:15)
   ☐ Add support for materials (blending, shading etc..) @created(17-07-29 01:15)
+  
+Game:
   ☐ Implement SceneLoader @created(17-07-29 01:15)
+    ☐ Add ProtoBuf support @created(17-07-31 23:36)
 
 CMake:
   ☐ Optimization flags on MSVC @created(17-07-31 22:51)
@@ -19,4 +22,13 @@ CMake:
 
 
 Travis CI:
-  ☐ Add Clang support @created(17-07-31 22:54)
+  ☐ Linux CI @created(17-07-31 23:35)
+    ☐ Add GCC 6 support @created(17-07-31 23:34)
+    ☐ Add GCC 7 support  @created(17-07-31 23:34)
+    ☐ Add Clang support @created(17-07-31 22:54)
+      ☐ Clang 3.8 @created(17-07-31 23:35)
+      ☐ Clang 3.9 @created(17-07-31 23:35)
+      ☐ Clang 4.0 @created(17-07-31 23:35)
+ ☐ Windows CI @created(17-07-31 23:35)
+   ☐ Add MSVC 2015 support @created(17-07-31 23:35)
+   ☐ Add MSVC 2017 support @created(17-07-31 23:36)
