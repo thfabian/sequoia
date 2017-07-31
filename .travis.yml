@@ -34,6 +34,7 @@ addons:
       - libxinerama1
       - libxrandr2
       - libxxf86vm1
+      - mesa-utils
 
       # backward deps
       - libdw-dev
@@ -68,6 +69,15 @@ cache:
     - ${TRAVIS_BUILD_DIR}/deps/install/cmake-${CMAKE_VERSION}
     - ${TRAVIS_BUILD_DIR}/deps/install/glbinding-${GLBINDING_VERSION}
     - ${TRAVIS_BUILD_DIR}/deps/install/opencv-${OPENCV_VERSON}
+
+
+before_install:
+  # Setup the X-Server and initialize a virtual display
+  - export DISPLAY=:99.0
+  - |
+    /sbin/start-stop-daemon --start --quiet --pidfile /tmp/custom_xvfb_99.pid --make-pidfile       \
+                            --background --exec /usr/bin/Xvfb -- :99 -ac -screen 0 1280x1024x16
+  - sleep 3
 
 #===---------------------------------------------------------------------------------------------===
 #   Installing (external dependencies)
@@ -171,13 +181,6 @@ install:
 #===---------------------------------------------------------------------------------------------=== 
 
 before_script:
-  # Setup the X-Server and initialize a virtual display of 1280x1024x16
-  - export DISPLAY=:99.0
-  - |
-    /sbin/start-stop-daemon --start --quiet --pidfile /tmp/custom_xvfb_99.pid --make-pidfile       \
-                            --background --exec /usr/bin/Xvfb -- :99 -ac -screen 0 1280x1024x16
-  - sleep 3
-
   # Make sure C++ and C compilers are set correctly
   - export CXX=${CXX_COMPILER}
   - export CC=${C_COMPILER}
@@ -200,10 +203,11 @@ before_script:
 #   Testing
 #===---------------------------------------------------------------------------------------------=== 
 
-script:
+script:  
+  # sequoia-engine
   - pushd $(pwd)
-  - cd build
-  - ctest 
+  - cd build/sequoia-engine
+  - ctest -C ${CONFIG}  --output-on-failure --force-new-ctest-process
   - popd
 
 notifications:

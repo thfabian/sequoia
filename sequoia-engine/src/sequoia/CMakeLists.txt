@@ -20,7 +20,6 @@ add_subdirectory(Render)
 add_subdirectory(Driver)
 add_subdirectory(Game)
 
-set(UnittestTarget)
 if(SEQUOIA_TESTING)
   add_subdirectory(Unittest)
   set(UnittestTarget SequoiaUnittest)
