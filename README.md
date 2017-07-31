@@ -1,4 +1,4 @@
-Sequoia - <a target="_blank" href="https://travis-ci.org/thfabian/sequoia">![Travis status][TravisCI.Badge]]</a>
+Sequoia - <a target="_blank" href="https://travis-ci.org/thfabian/sequoia">![Travis status][TravisCI.Badge]</a>
 =======
 
 Introduction
@@ -14,8 +14,8 @@ Sequoia builds are run on ![Travis CI][TravisCI].
 
 |  Toolchain         |                                                     Status                                            |
 |:-------------------|:-----------------------------------------------------------------------------------------------------:|
-| Linux GCC 5.4      | ![Build Status](https://travis-matrix-badges.herokuapp.com/repos/thfabian/sequoia/branches/master/2)  |
-| Linux GCC 6.1      | ![Build Status](https://travis-matrix-badges.herokuapp.com/repos/thfabian/sequoia/branches/master/4)  |
+| Linux GCC 5.4      | ![Build Status](https://travis-matrix-badges.herokuapp.com/repos/thfabian/sequoia/branches/master/1)  |
+| Linux GCC 6.1      | ![Build Status](https://travis-matrix-badges.herokuapp.com/repos/thfabian/sequoia/branches/master/2)  |
 
 <!-- Links -->
 [TravisCI]: https://travis-ci.org/thfabian/sequoia
