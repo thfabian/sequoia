@@ -1,4 +1,4 @@
-Tasks:
+Render:
   ☐ Replace Vertex buffers with the new interface @created(17-07-29 01:07)
     ☐ Implement IndexBuffer @created(17-07-29 01:07)
     ☐ Implement VertexBuffer @created(17-07-29 01:08)
@@ -11,3 +11,12 @@ Tasks:
   ☐ Add support for OBJ mesh loading @created(17-07-29 01:15)
   ☐ Add support for materials (blending, shading etc..) @created(17-07-29 01:15)
   ☐ Implement SceneLoader @created(17-07-29 01:15)
+
+CMake:
+  ☐ Optimization flags on MSVC @created(17-07-31 22:51)
+   ☐ Figure out how to use LTO @created(17-07-31 22:51)
+   ☐ Figure out how to use PGO @created(17-07-31 22:52)
+
+
+Travis CI:
+  ☐ Add Clang support @created(17-07-31 22:54)

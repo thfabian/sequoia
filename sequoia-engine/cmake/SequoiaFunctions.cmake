@@ -175,6 +175,11 @@ function(sequoia_link_objects)
                ${CMAKE_BINARY_DIR}/lib)
   set_property(TARGET ${ARG_NAME} PROPERTY RUNTIME_OUTPUT_DIRECTORY_${build_type}
                ${CMAKE_BINARY_DIR}/bin)
+
+  # Enable LTO 
+  if(SEQUOIA_USE_LTO)
+     set_property(TARGET ${ARG_NAME} PROPERTY INTERPROCEDURAL_OPTIMIZATION ON)
+  endif()
 endfunction()
 
 ## sequoia_add_executable

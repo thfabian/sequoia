@@ -137,6 +137,18 @@ macro(sequoia_export_package)
   sequoia_gen_package_info_str(${ARG_PACKAGE} "${ARG_VERSION_STR}" ${ARG_FOUND})
 endmacro()
 
+## sequoia_check_cxx_flag
+## ----------------------
+##
+## Test if the compiler flag exists.
+##
+##    FLAG:STRING=<>   - Compiler flag to check (e.g -O3)
+##    NAME:STRING=<>   - Name of the check (e.g HAVE_GCC_O3)
+##
+macro(sequoia_check_cxx_flag FLAG NAME)
+  check_cxx_compiler_flag("${FLAG}" ${NAME})
+endmacro()
+
 ## sequoia_check_and_set_cxx_flag
 ## ------------------------------
 ##
@@ -146,7 +158,7 @@ endmacro()
 ##    NAME:STRING=<>   - Name of the check (e.g HAVE_GCC_O3)
 ##
 macro(sequoia_check_and_set_cxx_flag FLAG NAME)
-  check_cxx_compiler_flag("${FLAG}" ${NAME})
+  sequoia_check_cxx_flag("${FLAG}" ${NAME})
   if(${NAME})
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${FLAG}")
   endif()
@@ -319,9 +331,36 @@ macro(sequoia_set_cxx_flags)
     # Optimization
     if(SEQUOIA_OPTIMIZE)
       sequoia_check_and_set_cxx_flag("-ftree-vectorize" HAVE_GCC_TREE_VECTORIZE)
-      sequoia_check_and_set_cxx_flag("-flto" HAVE_GCC_LTO)
       sequoia_check_and_set_cxx_flag("-ffast-math" HAVE_GCC_FAST_MATH)
       sequoia_check_and_set_cxx_flag("-fomit-frame-pointer" HAVE_GCC_OMIT_FRAME_POINTER)
+
+      # Enable link time optimization (LTO)
+      set(use_lto OFF)
+      if(SEQUOIA_COMPILER_GNU)
+        sequoia_check_cxx_flag("-flto" HAVE_GCC_LTO)
+        if(HAVE_GCC_LTO)
+          # If we are using GCC we *need* to use the gcc-ar and gcc-ranlib for LTO to work properly.
+          # https://gcc.gnu.org/ml/gcc-help/2016-01/msg00061.html
+          get_filename_component(gcc_install_dir ${CMAKE_CXX_COMPILER} DIRECTORY)
+          find_program(GCC_AR gcc-ar HINTS ${gcc_install_dir})
+          find_program(GCC_RANLIB gcc-ranlib HINTS ${gcc_install_dir})
+           
+          if(GCC_AR AND GCC_RANLIB)
+            set(CMAKE_AR ${GCC_AR})
+            set(CMAKE_RANLIB ${GCC_RANLIB})
+            set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -flto")
+            set(use_lto ON)
+          endif()
+
+        endif()
+      elseif(SEQUOIA_COMPILER_CLANG)
+        sequoia_check_and_set_cxx_flag("-flto" HAVE_GCC_LTO)
+        set(use_lto ${HAVE_GCC_LTO})
+      endif()
+
+      if(use_lto)  
+        set(SEQUOIA_USE_LTO ON CACHE INTERNAL "")
+      endif()
     endif()
 
     # Pthread

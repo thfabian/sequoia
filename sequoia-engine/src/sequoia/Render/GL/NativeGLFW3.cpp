@@ -83,11 +83,6 @@ void glfw3NativeGLContext::init(const RenderWindow::WindowHint& windowHints, Opt
   glfwWindowHint(GLFW_SAMPLES, opt.Render.MSAA);
   LOG(INFO) << "Using MSAA: " << opt.Render.MSAA;
 
-  // Specifies whether the OpenGL context should be forward-compatible, i.e. one where all
-  // functionality deprecated in the requested version of OpenGL is removed
-  glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, true);
-  glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-
   if(opt.Core.Debug) {
     glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, true);
   }
@@ -116,9 +111,14 @@ void glfw3NativeGLContext::init(const RenderWindow::WindowHint& windowHints, Opt
   LOG(INFO) << "Using window mode: " << windowHints.WindowMode;
 
   // Select the window-mode
-  auto createWindow = [&](bool throwOnError, int major, int minor) {
+  auto createWindow = [&](bool throwOnError, int major, int minor, bool forwardCompatible) {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, major);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, minor);
+
+    // Specifies whether the OpenGL context should be forward-compatible, i.e. one where all
+    // functionality deprecated in the requested version of OpenGL is removed
+    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, forwardCompatible);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
     LOG(INFO) << "Attempting to initialize glfw3 window, requesting OpenGL (" << major << "."
               << minor << ")";
@@ -145,15 +145,20 @@ void glfw3NativeGLContext::init(const RenderWindow::WindowHint& windowHints, Opt
     if(throwOnError && !window_)
       SEQUOIA_THROW(RenderSystemException,
                     "failed to initialize glfw3 window, required atleast OpenGL Core (>= 3.3)");
+
+    if(!window_)
+      LOG(WARNING) << "Failed to initialize glfw3 window, requested OpenGL (" << major << "."
+                   << minor << ") " << (forwardCompatible ? "" : "non-") << "forward compatible";
   };
 
-  createWindow(false, opt.Render.GLMajorVersion, opt.Render.GLMinorVersion);
+  createWindow(false, opt.Render.GLMajorVersion, opt.Render.GLMinorVersion, true);
   if(!window_) {
-    LOG(WARNING) << "Failed to initialize glfw3 window, requested OpenGL ("
-                 << opt.Render.GLMajorVersion << "." << opt.Render.GLMinorVersion << ")";
+    // Try OpenGL 3.3 Core with forward compatibility
+    createWindow(false, 3, 3, true);
 
-    // We need atleast OpenGL 3.3
-    createWindow(true, 3, 3);
+    if(!window_)
+      // Maybe without forward compatibility?
+      createWindow(true, 3, 3, false);
   }
 
   // Move the window to the correct monitor (fullscreen windows are already moved correctly)

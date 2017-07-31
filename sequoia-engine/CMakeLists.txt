@@ -81,10 +81,12 @@ include(AddThreads)
 if(SEQUOIA_TESTING)
   include(AddGTest)
   include(Addbenchmark)
+  set(testing_pacakges GTEST BENCHMARK)
 endif()
 
 # Gather the external libraries, include directories and definitions
-foreach(package BACKWARD BOOST GLBINDING GLFW3 GLM GLI OPENCV OPENGL TBB THREADS GTEST BENCHMARK)
+foreach(package BACKWARD BOOST GLBINDING GLFW3 GLM GLI OPENCV OPENGL TBB THREADS 
+               ${testing_pacakges})
   list(APPEND SEQUOIA_EXTERNAL_LIBRARIES ${SEQUOIA_${package}_LIBRARIES})
   list(APPEND SEQUOIA_EXTERNAL_INCLUDE_DIRS ${SEQUOIA_${package}_INCLUDE_DIRS})
   list(APPEND SEQUOIA_EXTERNAL_DEFINITIONS ${SEQUOIA_${package}_DEFINITIONS})
