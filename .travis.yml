@@ -207,7 +207,7 @@ script:
   # sequoia-engine
   - pushd $(pwd)
   - cd build/sequoia-engine
-  - ctest -C ${CONFIG}  --output-on-failure --force-new-ctest-process
+  - ctest -C ${CONFIG}  -E "GameTest|RenderGLTest" --output-on-failure --force-new-ctest-process
   - popd
 
 notifications:
