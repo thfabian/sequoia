@@ -25,7 +25,7 @@ set(Sequoia_THIRDPARTY_CMAKE_ARGS)
 set(Sequoia_THIRDPARTY_PREFIX_PATH ${Sequoia_PREFIX_PATH})
 
 #
-# Packages build by default
+# Packages built by default
 #
 sequoia_build_package(backward)
 sequoia_build_package(benchmark)
