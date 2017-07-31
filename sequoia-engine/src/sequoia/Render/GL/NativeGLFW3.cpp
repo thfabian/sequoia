@@ -32,13 +32,8 @@ namespace render {
 //    Context
 //===------------------------------------------------------------------------------------------===//
 
-static void CallbackErrorSoft(int error, const char* description) {
+static void CallbackError(int error, const char* description) {
   LOG(ERROR) << "glfw3 error: " << description;
-}
-
-static void CallbackErrorHard(int error, const char* description) {
-  CallbackErrorSoft(error, description);
-  SEQUOIA_THROW(RenderSystemException, description);
 }
 
 int glfw3NativeGLContext::NumContexts = 0;
@@ -47,11 +42,11 @@ glfw3NativeGLContext::glfw3NativeGLContext()
     : NativeGLContext(NativeWindowSystemKind::NK_GLFW3), window_(nullptr), parent_(nullptr) {
   if(glfw3NativeGLContext::NumContexts == 0) {
     LOG(INFO) << "Initializing glfw3 ... ";
-    glfwSetErrorCallback(CallbackErrorHard);
+    glfwSetErrorCallback(CallbackError);
 
-    glfwInit();
+    if(glfwInit() != GLFW_TRUE)
+      SEQUOIA_THROW(RenderSystemException, "failed to initialize glfw3");
 
-    glfwSetErrorCallback(CallbackErrorSoft);
     LOG(INFO) << "Successfully initialized glfw3: " << glfwGetVersionString();
   }
   glfw3NativeGLContext::NumContexts++;
