@@ -1,0 +1,54 @@
+
+sequoia:
+  Git/Project Structure:
+    ☐ Refactor the way the proejets are setip @created(17-08-01 01:34)
+      ☐ Rename all the CMake projects to match the name of the folder @created(17-08-01 01:59)
+        ☐ Rename Sequoia to sequoia (including all the Sequoia_INSTALL_PREFIX etc..) @created(17-08-01 02:00)
+        ☐ Rename SequoiaEngine to sequoia-engine @created(17-08-01 02:00)
+      ☐ Detect which projects are available and build the necessary dependencies @created(17-08-01 01:35)
+        For example, if we only have sequoia-cmake there is no need to build Boost. Each project
+        should have a SequoiaProject.cmake file which states its needed dependencies on external and internal projects (with required build parameter e.g sequoia-editor require equoia-engine to be built with Qt5 support)
+
+          set(SequoiaEditor_DEPENDS sequoia-engine sequoia-cmake)
+          set(SequoiaEditor_BUILD_PARAM 
+            "sequoia-engine:SEQUOIA_ENGINE_QT5=ON"
+            "sequoia-engine:SEQUOIA_ENGINE_ASSERTS=ON"
+          )
+
+      ☐ Create a git repository for all projects @created(17-08-01 01:33)
+
+sequoia-engine:
+  Render:
+    ☐ Replace Vertex buffers with the new interface @created(17-07-29 01:07)
+      ☐ Implement IndexBuffer @created(17-07-29 01:07)
+      ☐ Implement VertexBuffer @created(17-07-29 01:08)
+      ☐ Refactor VertexData @created(17-07-29 01:08)
+        VertexData should contain an Vertex- and IndexBuffer as well as the type of vertices (i.e triangles etc.) 
+    ☐ Implement RenderServer @created(17-07-29 01:13)
+      ☐ Refactor the RenderRessource @created(17-07-29 01:13)
+        Don't capture the Exceptions but rather forward it to the Future
+    ☐ Add support for OBJ mesh loading @created(17-07-29 01:15)
+    ☐ Add support for materials (blending, shading etc..) @created(17-07-29 01:15)
+    
+  Game:
+    ☐ Implement SceneLoader @created(17-07-29 01:15)
+      ☐ Add ProtoBuf support @created(17-07-31 23:36)
+
+  CMake:
+    ☐ Optimization flags on MSVC @created(17-07-31 22:51)
+     ☐ Figure out how to use LTO @created(17-07-31 22:51)
+     ☐ Figure out how to use PGO @created(17-07-31 22:52)
+
+
+  Travis CI:
+    ☐ Linux CI @created(17-07-31 23:35)
+      ☐ Add GCC support @created(17-07-31 23:34)
+        ✔ GCC 5 @created(17-08-01 01:35) @done (17-08-01 01:35)
+        ☐ GCC 6 @created(17-08-01 01:35)
+      ☐ Add Clang support @created(17-07-31 22:54)
+        ☐ Clang 3.8 @created(17-07-31 23:35)
+        ☐ Clang 3.9 @created(17-07-31 23:35)
+        ☐ Clang 4.0 @created(17-07-31 23:35)
+   ☐ Windows CI @created(17-07-31 23:35)
+     ☐ Add MSVC 2015 support @created(17-07-31 23:35)
+     ☐ Add MSVC 2017 support @created(17-07-31 23:36)

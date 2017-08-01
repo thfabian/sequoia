@@ -1,4 +1,4 @@
-Sequoia - <a target="_blank" href="http://semver.org">![Version][Version.Badge]</a> <a target="_blank" href="https://travis-ci.org/thfabian/sequoia">![Travis status][TravisCI.Badge]</a>
+Sequoia  <a target="_blank" href="http://semver.org">![Version][Version.Badge]</a> <a target="_blank" href="https://travis-ci.org/thfabian/sequoia">![Travis status][TravisCI.Badge]</a>
 =======
 
 ## Introduction
@@ -11,7 +11,7 @@ and Lua -- The project is still in very early development!
 The project is organized in a couple of subdirectories.
 
 - The [sequoia-engine](sequoia-engine) directory contains the 3D game-engine.
-- The [sequoia-cmake](sequoia-engine) directory contains various CMake modules and other scripts 
+- The [sequoia-cmake](sequoia-cmake) directory contains various CMake modules and other scripts 
   shared among all the Sequoia projects.
 
 ## Continuous Integration
