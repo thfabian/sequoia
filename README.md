@@ -16,17 +16,21 @@ The project is organized in a couple of subdirectories.
 
 ## Continuous Integration
 
-Sequoia builds are run on ![Travis CI][TravisCI].
-
-|  Toolchain         |                                                     Status                                            |
-|:-------------------|:-----------------------------------------------------------------------------------------------------:|
-| Linux GCC 5.4      | ![Build Status](https://travis-matrix-badges.herokuapp.com/repos/thfabian/sequoia/branches/master/1)  |
-| Linux GCC 6.1      | ![Build Status](https://travis-matrix-badges.herokuapp.com/repos/thfabian/sequoia/branches/master/3)  |
+### Linux
+|  Toolchain   |                                                     Status                                     |
+|:-------------|:----------------------------------------------------------------------------------------------:|
+| GCC 5.4      | <a target="_blank" href="https://travis-ci.org/thfabian/sequoia">![GCC 5.4][GCC_54.Badge]</a>  |
+| GCC 6.1      | <a target="_blank" href="https://travis-ci.org/thfabian/sequoia">![GCC 6.1][GCC_61.Badge]</a>  |
 
 ## License
-Please see [LICENSE.txt](LICENSE.txt).
+
+> You can check out the full license [here](LICENSE.txt)
+
+This project is licensed under the terms of the **MIT** license.
 
 <!-- Links -->
 [TravisCI]: https://travis-ci.org/thfabian/sequoia
 [TravisCI.Badge]: https://travis-ci.org/thfabian/sequoia.svg?branch=master
 [Version.Badge]: https://badge.fury.io/gh/thfabian%2Fsequoia.svg
+[GCC_54.Badge]: https://travis-matrix-badges.herokuapp.com/repos/thfabian/sequoia/branches/master/1
+[GCC_61.Badge]: https://travis-matrix-badges.herokuapp.com/repos/thfabian/sequoia/branches/master/3

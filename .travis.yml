@@ -3,15 +3,9 @@ sudo: false
 
 language: c++
 
-#===---------------------------------------------------------------------------------------------===
-#   Environment
-#===---------------------------------------------------------------------------------------------===
-
-# APT packages shared by all configurations 
 addons:
   apt:
     sources: 
-      - boost-latest
       - ubuntu-toolchain-r-test
     packages:
       - g++-5
@@ -34,7 +28,6 @@ addons:
       - libxinerama1
       - libxrandr2
       - libxxf86vm1
-      - mesa-utils
 
       # backward deps
       - libdw-dev
@@ -56,29 +49,37 @@ matrix:
       compiler: gcc
       env: CONFIG=Release CXX_COMPILER=g++-5 C_COMPILER=gcc-5
     
-    # # Linux GCC 5.4 (RelWithDebInfo)
-    # - os: linux
-    #   compiler: gcc
-    #   env: CONFIG=RelWithDebInfo CXX_COMPILER=g++-5 C_COMPILER=gcc-5
+    # Linux GCC 5.4 (RelWithDebInfo)
+    - os: linux
+      compiler: gcc
+      env: CONFIG=RelWithDebInfo CXX_COMPILER=g++-5 C_COMPILER=gcc-5
 
-    # # Linux GCC 6.1 (Release)
-    # - os: linux
-    #   compiler: gcc
-    #   env: CONFIG=Release CXX_COMPILER=g++-6 C_COMPILER=gcc-6
+    # Linux GCC 6.1 (Release)
+    - os: linux
+      compiler: gcc
+      env: CONFIG=Release CXX_COMPILER=g++-6 C_COMPILER=gcc-6
     
-    # # Linux GCC 6.1 (RelWithDebInfo)
-    # - os: linux
-    #   compiler: gcc
-    #   env: CONFIG=RelWithDebInfo CXX_COMPILER=g++-6 C_COMPILER=gcc-6
+    # Linux GCC 6.1 (RelWithDebInfo)
+    - os: linux
+      compiler: gcc
+      env: CONFIG=RelWithDebInfo CXX_COMPILER=g++-6 C_COMPILER=gcc-6
 
 
-# Cache external dependencies
 cache:
   directories:
     - ${TRAVIS_BUILD_DIR}/deps/install/boost-${BOOST_VERSION}
     - ${TRAVIS_BUILD_DIR}/deps/install/cmake-${CMAKE_VERSION}
     - ${TRAVIS_BUILD_DIR}/deps/install/glbinding-${GLBINDING_VERSION}
     - ${TRAVIS_BUILD_DIR}/deps/install/opencv-${OPENCV_VERSON}
+
+
+
+
+
+
+
+
+
 
 #===---------------------------------------------------------------------------------------------===
 #   Installing (external dependencies)
@@ -124,71 +125,71 @@ install:
 
   - cmake --version
 
-  # # Install OpenCV
-  # - |
-  #   OPENCV_INSTALL_DIR=${DEPS_DIR}/install/opencv-${OPENCV_VERSON}
-  #   if [[ -z "$(ls -A ${OPENCV_INSTALL_DIR})" ]]; then
-  #     { travis_retry wget https://github.com/opencv/opencv/archive/${OPENCV_VERSON}.tar.gz; } ||   \
-  #       exit 1
-  #     tar xfz ${OPENCV_VERSON}.tar.gz
-  #     pushd $(pwd)
-  #     mkdir opencv-${OPENCV_VERSON}/build && cd opencv-${OPENCV_VERSON}/build
-  #     cmake .. -DCMAKE_BUILD_TYPE=Release -DWITH_PNG:BOOL=ON -DWITH_TIFF:BOOL=ON                   \
-  #              -DWITH_JPEG:BOOL=ON -DBUILD_opencv_core:BOOL=ON -DBUILD_opencv_highgui:BOOL=ON      \
-  #              -DBUILD_opencv_imgcodecs:BOOL=ON -DBUILD_opencv_imgproc:BOOL=ON                     \
-  #              -DCMAKE_INSTALL_PREFIX=${OPENCV_INSTALL_DIR}
-  #     make install
-  #     popd
-  #   fi
-  #   export OpenCV_DIR="${OPENCV_INSTALL_DIR}/share/OpenCV"
+  # Install OpenCV
+  - |
+    OPENCV_INSTALL_DIR=${DEPS_DIR}/install/opencv-${OPENCV_VERSON}
+    if [[ -z "$(ls -A ${OPENCV_INSTALL_DIR})" ]]; then
+      { travis_retry wget https://github.com/opencv/opencv/archive/${OPENCV_VERSON}.tar.gz; } ||   \
+        exit 1
+      tar xfz ${OPENCV_VERSON}.tar.gz
+      pushd $(pwd)
+      mkdir opencv-${OPENCV_VERSON}/build && cd opencv-${OPENCV_VERSON}/build
+      cmake .. -DCMAKE_BUILD_TYPE=Release -DWITH_PNG:BOOL=ON -DWITH_TIFF:BOOL=ON                   \
+               -DWITH_JPEG:BOOL=ON -DBUILD_opencv_core:BOOL=ON -DBUILD_opencv_highgui:BOOL=ON      \
+               -DBUILD_opencv_imgcodecs:BOOL=ON -DBUILD_opencv_imgproc:BOOL=ON                     \
+               -DCMAKE_INSTALL_PREFIX=${OPENCV_INSTALL_DIR}
+      make install
+      popd
+    fi
+    export OpenCV_DIR="${OPENCV_INSTALL_DIR}/share/OpenCV"
 
-  # # Install glbinding
-  # - |
-  #   GLBINDING_INSTALL_DIR=${DEPS_DIR}/install/glbinding-${GLBINDING_VERSION}
-  #   if [[ -z "$(ls -A ${GLBINDING_INSTALL_DIR})" ]]; then
-  #     { travis_retry wget                                                                          \
-  #       https://github.com/cginternals/glbinding/archive/v${GLBINDING_VERSION}.tar.gz; } || exit 1
-  #     tar xfz v${GLBINDING_VERSION}.tar.gz
-  #     pushd $(pwd)
-  #     mkdir glbinding-${GLBINDING_VERSION}/build && cd glbinding-${GLBINDING_VERSION}/build
-  #     cmake .. -DCMAKE_BUILD_TYPE=Release -DOPTION_BUILD_DOCS:BOOL=OFF                             \
-  #              -DOPTION_BUILD_EXAMPLES:BOOL=OFF -DOPTION_BUILD_TESTS:BOOL=OFF                      \
-  #              -DCMAKE_INSTALL_PREFIX=${GLBINDING_INSTALL_DIR}
-  #     make install
-  #     popd
-  #   fi
-  #   export GLBINDING_ROOT="${GLBINDING_INSTALL_DIR}"
+  # Install glbinding
+  - |
+    GLBINDING_INSTALL_DIR=${DEPS_DIR}/install/glbinding-${GLBINDING_VERSION}
+    if [[ -z "$(ls -A ${GLBINDING_INSTALL_DIR})" ]]; then
+      { travis_retry wget                                                                          \
+        https://github.com/cginternals/glbinding/archive/v${GLBINDING_VERSION}.tar.gz; } || exit 1
+      tar xfz v${GLBINDING_VERSION}.tar.gz
+      pushd $(pwd)
+      mkdir glbinding-${GLBINDING_VERSION}/build && cd glbinding-${GLBINDING_VERSION}/build
+      cmake .. -DCMAKE_BUILD_TYPE=Release -DOPTION_BUILD_DOCS:BOOL=OFF                             \
+               -DOPTION_BUILD_EXAMPLES:BOOL=OFF -DOPTION_BUILD_TESTS:BOOL=OFF                      \
+               -DCMAKE_INSTALL_PREFIX=${GLBINDING_INSTALL_DIR}
+      make install
+      popd
+    fi
+    export GLBINDING_ROOT="${GLBINDING_INSTALL_DIR}"
 
 
-  # # Install boost
-  # - |
-  #   BOOST_INSTALL_DIR=${DEPS_DIR}/install/boost-${BOOST_VERSION}
-  #   if [[ -z "$(ls -A ${BOOST_INSTALL_DIR})" ]]; then
+  # Install boost
+  - |
+    BOOST_INSTALL_DIR=${DEPS_DIR}/install/boost-${BOOST_VERSION}
+    if [[ -z "$(ls -A ${BOOST_INSTALL_DIR})" ]]; then
       
-  #     BOOST_URL=$(printf "http://sourceforge.net/projects/boost/files/boost/%s/boost_%s.tar.gz"    \
-  #                 ${BOOST_VERSION} ${BOOST_VERSION//\./_})
+      BOOST_URL=$(printf "http://sourceforge.net/projects/boost/files/boost/%s/boost_%s.tar.gz"    \
+                  ${BOOST_VERSION} ${BOOST_VERSION//\./_})
       
-  #     mkdir -p ${BOOST_INSTALL_DIR}
-  #     { travis_retry wget --quiet -O - ${BOOST_URL} |                                              \
-  #       tar --strip-components=1 -xz -C ${BOOST_INSTALL_DIR}; } || exit 1
+      mkdir -p ${BOOST_INSTALL_DIR}
+      { travis_retry wget --quiet -O - ${BOOST_URL} |                                              \
+        tar --strip-components=1 -xz -C ${BOOST_INSTALL_DIR}; } || exit 1
       
-  #     GCC_VERSION=$($CXX -dumpversion)
-  #     pushd $(pwd)
-  #     cd ${BOOST_INSTALL_DIR}
-  #     echo "using gcc : ${GCC_VERSION} : ${CXX} ;" > user-config.jam
-  #     ./bootstrap.sh
-  #     ./b2 -j2 --toolset=gcc-${GCC_VERSION} --prefix=${BOOST_INSTALL_DIR}                          \
-  #              --user-config=${BOOST_INSTALL_DIR}/user-config.jam                                  \
-  #              --with-thread                                                                       \
-  #              --with-date_time                                                                    \
-  #              --with-atomic                                                                       \
-  #              --with-chrono                                                                       \
-  #              --with-filesystem                                                                   \
-  #              --with-program_options                                                              \
-  #              --d+2 install
-  #     popd
-  #   fi
-  #   export BOOST_ROOT="${BOOST_INSTALL_DIR}"
+      GCC_VERSION=$($CXX -dumpversion)
+      pushd $(pwd)
+      cd ${BOOST_INSTALL_DIR}
+      echo "using gcc : ${GCC_VERSION} : ${CXX} ;" > user-config.jam
+      ./bootstrap.sh
+      ./b2 -j2 --toolset=gcc-${GCC_VERSION} --prefix=${BOOST_INSTALL_DIR}                          \
+               --user-config=${BOOST_INSTALL_DIR}/user-config.jam                                  \
+               --with-thread                                                                       \
+               --with-date_time                                                                    \
+               --with-atomic                                                                       \
+               --with-chrono                                                                       \
+               --with-filesystem                                                                   \
+               --with-program_options                                                              \
+               --d+2 install
+      popd
+    fi
+    export BOOST_ROOT="${BOOST_INSTALL_DIR}"
 
   # If we have atleast 20 min left we attempt to build the main project otherwise we skip and 
   # immediately upload the build dependencies
@@ -219,30 +220,30 @@ before_script:
   - $CXX --version
 
   - echo $RUN_BUILD
-  # - |
-  #   if [ $RUN_BUILD = true ]; then
-  #     pushd $(pwd)
-  #     mkdir build && cd build
-  #     cmake .. -DBOOST_ROOT:PATH=$BOOST_ROOT                                                       \
-  #              -DGLBINDING_ROOT:PATH=$GLBINDING_ROOT                                               \
-  #              -DOpenCV_DIR:PATH=$OpenCV_DIR                                                       \
-  #              -DCMAKE_BUILD_TYPE=$CONFIG
-  #     make
-  #     popd
-  #   fi
+  - |
+    if [ $RUN_BUILD = true ]; then
+      pushd $(pwd)
+      mkdir build && cd build
+      cmake .. -DBOOST_ROOT:PATH=$BOOST_ROOT                                                       \
+               -DGLBINDING_ROOT:PATH=$GLBINDING_ROOT                                               \
+               -DOpenCV_DIR:PATH=$OpenCV_DIR                                                       \
+               -DCMAKE_BUILD_TYPE=$CONFIG
+      make
+      popd
+    fi
 
 #===---------------------------------------------------------------------------------------------===
 #   Testing
 #===---------------------------------------------------------------------------------------------===
 script:  
   - echo $RUN_BUILD
-  # - |
-  #   if [ $RUN_BUILD = true ]; then
-  #     pushd $(pwd)
-  #     cd build/sequoia-engine
-  #     ctest -C ${CONFIG}  -E "GameTest|RenderGLTest" --output-on-failure --force-new-ctest-process
-  #     popd
-  #   fi
+  - |
+    if [ $RUN_BUILD = true ]; then
+      pushd $(pwd)
+      cd build/sequoia-engine
+      ctest -C ${CONFIG}  -E "GameTest|RenderGLTest" --output-on-failure --force-new-ctest-process
+      popd
+    fi
   - exit 1
 
 notifications:
