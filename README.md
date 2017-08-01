@@ -3,9 +3,10 @@ Sequoia  <a target="_blank" href="http://semver.org">![Version][Version.Badge]</
 
 ## Introduction
 
-Sequoia is a collection of different tools to create 3D games for Windows and Linux using C++, Python
-and Lua -- The project is still in very early development!
+Sequoia is a collection of tools to create 3D games for Windows and Linux using C++, Python
+and Lua 
 
+> The project is still in very early development!
 
 ## Project organization
 The project is organized in a couple of subdirectories.
@@ -24,7 +25,7 @@ The project is organized in a couple of subdirectories.
 
 ## License
 
-> You can check out the full license [here](LICENSE.txt)
+> You can check out the full license [here](LICENSE.txt).
 
 This project is licensed under the terms of the **MIT** license.
 
