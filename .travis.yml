@@ -122,6 +122,8 @@ install:
     fi
     export PATH="${CMAKE_INSTALL_DIR}/bin:${PATH}"
 
+  - cmake --version
+
   # # Install OpenCV
   # - |
   #   OPENCV_INSTALL_DIR=${DEPS_DIR}/install/opencv-${OPENCV_VERSON}
@@ -241,6 +243,7 @@ script:
   #     ctest -C ${CONFIG}  -E "GameTest|RenderGLTest" --output-on-failure --force-new-ctest-process
   #     popd
   #   fi
+  - exit 1
 
 notifications:
   on_success: never
