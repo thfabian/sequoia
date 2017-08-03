@@ -82,3 +82,8 @@ cache:
     - ${CACHE_DIR}/boost-${BOOST_VERSION}
     - ${CACHE_DIR}/glbinding-${GLBINDING_VERSION}
     - ${CACHE_DIR}/opencv-${OPENCV_VERSION}
+
+
+notifications:
+  on_success: never
+  on_failure: never
