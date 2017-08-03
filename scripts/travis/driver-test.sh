@@ -16,6 +16,10 @@
 
 this_script_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
+# Setup dependencies
+source $this_script_dir/install.sh
+install_driver -i ${CACHE_DIR} -b cmake,boost,glbinding,opencv
+
 # Make sure C++ and C compilers are set correctly
 export CXX=${CXX_COMPILER}
 export CC=${C_COMPILER}
@@ -23,23 +27,20 @@ export CC=${C_COMPILER}
 $CC --version
 $CXX --version
 
-# Setup dependencies
-source $this_script_dir/install.sh
-install_driver -i ${CACHE_DIR} -b cmake,boost,glbinding,opencv
-cmake --version
-
-# Build
+# Build sequoia
 pushd $(pwd)
 mkdir build && cd build
 cmake .. -DBOOST_ROOT:PATH=$BOOST_ROOT                                                             \
          -DGLBINDING_ROOT:PATH=$GLBINDING_ROOT                                                     \
          -DOpenCV_DIR:PATH=$OpenCV_DIR                                                             \
-         -DCMAKE_BUILD_TYPE=$CONFIG
-make -j2
+         -DCMAKE_BUILD_TYPE=$CONFIG                                                                \
+      || fatal_error "failed to confgure sequoia"
+make -j2 || fatal_error "failed to build sequoia"
 popd
 
 # Test
 pushd $(pwd)
 cd build/sequoia-engine
-ctest -C ${CONFIG}  -E "GameTest|RenderGLTest" --output-on-failure --force-new-ctest-process
+ctest -C ${CONFIG}  -E "GameTest|RenderGLTest" --output-on-failure --force-new-ctest-process       \
+     || fatal_error "failed to run tests of sequoia"
 popd

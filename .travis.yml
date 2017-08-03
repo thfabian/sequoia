@@ -12,7 +12,9 @@ addons:
       - gcc-5
       - g++-6
       - gcc-6
+
       - ccache
+      - libtbb-dev
 
       # OpenCV deps
       - libjpeg-dev 
