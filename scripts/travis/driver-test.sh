@@ -25,7 +25,7 @@ $CXX --version
 
 # Setup dependencies
 source $this_script_dir/install.sh
-install_driver -i ${CACHE_DIR} -b cmake
+install_driver -i ${CACHE_DIR} -b cmake,boost,glbinding,opencv
 cmake --version
 
 # Build
