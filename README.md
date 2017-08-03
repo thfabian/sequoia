@@ -33,5 +33,5 @@ This project is licensed under the terms of the **MIT** license.
 [TravisCI]: https://travis-ci.org/thfabian/sequoia
 [TravisCI.Badge]: https://travis-ci.org/thfabian/sequoia.svg?branch=master
 [Version.Badge]: https://badge.fury.io/gh/thfabian%2Fsequoia.svg
-[GCC_54.Badge]: https://travis-matrix-badges.herokuapp.com/repos/thfabian/sequoia/branches/master/1
-[GCC_61.Badge]: https://travis-matrix-badges.herokuapp.com/repos/thfabian/sequoia/branches/master/3
+[GCC_54.Badge]: https://travis-matrix-badges.herokuapp.com/repos/thfabian/sequoia/branches/master/2
+[GCC_61.Badge]: https://travis-matrix-badges.herokuapp.com/repos/thfabian/sequoia/branches/master/4

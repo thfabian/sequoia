@@ -1,5 +1,5 @@
 #!/bin/bash 
-##===------------------------------------------------------------------------------*- CMake -*-===##
+##===-------------------------------------------------------------------------------*- Bash -*-===##
 ##                         _____                        _
 ##                        / ____|                      (_)
 ##                       | (___   ___  __ _ _   _  ___  _  __ _
@@ -24,7 +24,8 @@ $CC --version
 $CXX --version
 
 # Setup dependencies
-bash ${SCRIPT_DIR}/install.sh -i ${CACHE_DIR} -b cmake,boost,glbinding,opencv
+bash ${this_script_dir}/install.sh -i ${CACHE_DIR} -b cmake,boost,glbinding,opencv
+cmake --version
 
 # Build
 pushd $(pwd)
