@@ -11,4 +11,4 @@
 
 # Build directories
 build*/
-install*
+install/*
