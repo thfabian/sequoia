@@ -4,7 +4,7 @@ sudo: false
 language: c++
 
 addons:
-  apt:
+  apt: &global_addons
     sources: 
       - ubuntu-toolchain-r-test
       # - llvm-toolchain-trusty-3.9
@@ -61,29 +61,29 @@ jobs:
         bash ${SCRIPT_DIR}/driver-install.sh -i ${CACHE_DIR}                                       \
              -b cmake,boost,glbinding,opencv
 
-    # Linux GCC 5.4 (Release)
-    - stage: Test
-      compiler: gcc
-      env: CONFIG=Release CXX_COMPILER=g++-5 C_COMPILER=gcc-5
-      script: bash ${SCRIPT_DIR}/driver-test.sh
+    # # Linux GCC 5.4 (Release)
+    # - stage: Test
+    #   compiler: gcc
+    #   env: CONFIG=Release CXX_COMPILER=g++-5 C_COMPILER=gcc-5
+    #   script: bash ${SCRIPT_DIR}/driver-test.sh
     
-    # Linux GCC 5.4 (RelWithDebInfo)
-    - stage: Test
-      compiler: gcc
-      env: CONFIG=RelWithDebInfo CXX_COMPILER=g++-5 C_COMPILER=gcc-5
-      script: bash ${SCRIPT_DIR}/driver-test.sh
+    # # Linux GCC 5.4 (RelWithDebInfo)
+    # - stage: Test
+    #   compiler: gcc
+    #   env: CONFIG=RelWithDebInfo CXX_COMPILER=g++-5 C_COMPILER=gcc-5
+    #   script: bash ${SCRIPT_DIR}/driver-test.sh
 
-    # Linux GCC 6.3 (Release)
-    - stage: Test
-      compiler: gcc
-      env: CONFIG=Release CXX_COMPILER=g++-6 C_COMPILER=gcc-6
-      script: bash ${SCRIPT_DIR}/driver-test.sh
+    # # Linux GCC 6.3 (Release)
+    # - stage: Test
+    #   compiler: gcc
+    #   env: CONFIG=Release CXX_COMPILER=g++-6 C_COMPILER=gcc-6
+    #   script: bash ${SCRIPT_DIR}/driver-test.sh
     
-    # Linux GCC 6.3 (RelWithDebInfo)
-    - stage: Test
-      compiler: gcc
-      env: CONFIG=RelWithDebInfo CXX_COMPILER=g++-6 C_COMPILER=gcc-6
-      script: bash ${SCRIPT_DIR}/driver-test.sh
+    # # Linux GCC 6.3 (RelWithDebInfo)
+    # - stage: Test
+    #   compiler: gcc
+    #   env: CONFIG=RelWithDebInfo CXX_COMPILER=g++-6 C_COMPILER=gcc-6
+    #   script: bash ${SCRIPT_DIR}/driver-test.sh
 
     # Clang 3.9 (Release)
     - stage: Test
@@ -91,6 +91,7 @@ jobs:
       env: CONFIG=Release CXX_COMPILER=clang++-3.9 C_COMPILER=clang-3.9
       script: bash ${SCRIPT_DIR}/driver-test.sh
       addons:
+        <<: *global_addons  
         apt:
           sources: llvm-toolchain-trusty-3.9
           packages: 
