@@ -7,17 +7,17 @@ addons:
   apt:
     sources: 
       - ubuntu-toolchain-r-test
+      - llvm-toolchain-trusty-3.9
       - llvm-toolchain-trusty-4.0
-      - llvm-toolchain-trusty-5.0
     packages:
       - g++-5
       - gcc-5
       - g++-6
       - gcc-6
+      - clang-3.9
+      - clang++-3.9
       - clang-4.0
       - clang++-4.0
-      - clang-5.0
-      - clang++-5.0
 
       - ccache
       - libtbb-dev
@@ -51,7 +51,6 @@ env:
     - BOOST_VERSION=1.63.0
     - CMAKE_VERSION=3.8.1
     - GLBINDING_VERSION=2.1.1
-    - LLVM_VERSION=3.9.1
     - OPENCV_VERSION=3.2.0
 
 jobs:
@@ -86,6 +85,18 @@ jobs:
       env: CONFIG=RelWithDebInfo CXX_COMPILER=g++-6 C_COMPILER=gcc-6
       script: bash ${SCRIPT_DIR}/driver-test.sh
 
+    # Clang 3.9 (Release)
+    - stage: Test
+      compiler: clang
+      env: CONFIG=Release CXX_COMPILER=clang++-3.9 C_COMPILER=clang-3.9
+      script: bash ${SCRIPT_DIR}/driver-test.sh
+
+    # Clang 3.9 (RelWithDebInfo)
+    - stage: Test
+      compiler: clang
+      env: CONFIG=RelWithDebInfo CXX_COMPILER=clang++-3.9 C_COMPILER=clang-3.9
+      script: bash ${SCRIPT_DIR}/driver-test.sh
+
     # Clang 4.0 (Release)
     - stage: Test
       compiler: clang
@@ -96,18 +107,6 @@ jobs:
     - stage: Test
       compiler: clang
       env: CONFIG=RelWithDebInfo CXX_COMPILER=clang++-4.0 C_COMPILER=clang-4.0
-      script: bash ${SCRIPT_DIR}/driver-test.sh
-
-    # Clang 5.0 (Release)
-    - stage: Test
-      compiler: clang
-      env: CONFIG=Release CXX_COMPILER=clang++-5.0 C_COMPILER=clang-5.0
-      script: bash ${SCRIPT_DIR}/driver-test.sh
-
-    # Clang 5.0 (RelWithDebInfo)
-    - stage: Test
-      compiler: clang
-      env: CONFIG=RelWithDebInfo CXX_COMPILER=clang++-5.0 C_COMPILER=clang-5.0
       script: bash ${SCRIPT_DIR}/driver-test.sh
 
 cache:

@@ -22,6 +22,9 @@ The project is organized in a couple of subdirectories.
 |:-------------|:----------------------------------------------------------------------------------------------:|
 | GCC 5.4      | <a target="_blank" href="https://travis-ci.org/thfabian/sequoia">![GCC 5.4][GCC_54.Badge]</a>  |
 | GCC 6.3      | <a target="_blank" href="https://travis-ci.org/thfabian/sequoia">![GCC 6.3][GCC_63.Badge]</a>  |
+| Clang 3.9    | <a target="_blank" href="https://travis-ci.org/thfabian/sequoia">![Clang 3.9][Clang_39.Badge]</a>  |
+| Clang 4.0    | <a target="_blank" href="https://travis-ci.org/thfabian/sequoia">![Clang 4.0][Clang_40.Badge]</a>  |
+
 
 ## License
 
@@ -35,3 +38,5 @@ This project is licensed under the terms of the **MIT** license.
 [Version.Badge]: https://badge.fury.io/gh/thfabian%2Fsequoia.svg
 [GCC_54.Badge]: https://travis-matrix-badges.herokuapp.com/repos/thfabian/sequoia/branches/master/2
 [GCC_63.Badge]: https://travis-matrix-badges.herokuapp.com/repos/thfabian/sequoia/branches/master/4
+[Clang_39.Badge]: https://travis-matrix-badges.herokuapp.com/repos/thfabian/sequoia/branches/master/6
+[Clang_40.Badge]: https://travis-matrix-badges.herokuapp.com/repos/thfabian/sequoia/branches/master/8
