@@ -7,17 +7,17 @@ addons:
   apt:
     sources: 
       - ubuntu-toolchain-r-test
-      - llvm-toolchain-trusty-3.9
-      - llvm-toolchain-trusty-4.0
+      # - llvm-toolchain-trusty-3.9
+      # - llvm-toolchain-trusty-4.0
     packages:
       - g++-5
       - gcc-5
       - g++-6
       - gcc-6
-      - clang-3.9
-      - clang++-3.9
-      - clang-4.0
-      - clang++-4.0
+      # - clang-3.9
+      # - clang++-3.9
+      # - clang-4.0
+      # - clang++-4.0
 
       - ccache
       - libtbb-dev
@@ -90,24 +90,30 @@ jobs:
       compiler: clang
       env: CONFIG=Release CXX_COMPILER=clang++-3.9 C_COMPILER=clang-3.9
       script: bash ${SCRIPT_DIR}/driver-test.sh
+      addons:
+        apt:
+          sources: llvm-toolchain-trusty-3.9
+          packages: 
+            - clang-3.9 
+            - clang++-3.9
 
-    # Clang 3.9 (RelWithDebInfo)
-    - stage: Test
-      compiler: clang
-      env: CONFIG=RelWithDebInfo CXX_COMPILER=clang++-3.9 C_COMPILER=clang-3.9
-      script: bash ${SCRIPT_DIR}/driver-test.sh
+    # # Clang 3.9 (RelWithDebInfo)
+    # - stage: Test
+    #   compiler: clang
+    #   env: CONFIG=RelWithDebInfo CXX_COMPILER=clang++-3.9 C_COMPILER=clang-3.9
+    #   script: bash ${SCRIPT_DIR}/driver-test.sh
 
-    # Clang 4.0 (Release)
-    - stage: Test
-      compiler: clang
-      env: CONFIG=Release CXX_COMPILER=clang++-4.0 C_COMPILER=clang-4.0
-      script: bash ${SCRIPT_DIR}/driver-test.sh
+    # # Clang 4.0 (Release)
+    # - stage: Test
+    #   compiler: clang
+    #   env: CONFIG=Release CXX_COMPILER=clang++-4.0 C_COMPILER=clang-4.0
+    #   script: bash ${SCRIPT_DIR}/driver-test.sh
 
-    # Clang 4.0 (RelWithDebInfo)
-    - stage: Test
-      compiler: clang
-      env: CONFIG=RelWithDebInfo CXX_COMPILER=clang++-4.0 C_COMPILER=clang-4.0
-      script: bash ${SCRIPT_DIR}/driver-test.sh
+    # # Clang 4.0 (RelWithDebInfo)
+    # - stage: Test
+    #   compiler: clang
+    #   env: CONFIG=RelWithDebInfo CXX_COMPILER=clang++-4.0 C_COMPILER=clang-4.0
+    #   script: bash ${SCRIPT_DIR}/driver-test.sh
 
 cache:
   directories:
