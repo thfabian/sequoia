@@ -60,6 +60,13 @@ jobs:
       script: |
         bash ${SCRIPT_DIR}/driver-install.sh -i ${CACHE_DIR}                                       \
              -b cmake,boost,glbinding,opencv
+      addons:
+        apt:
+          <<: *global_addons  
+          sources+: llvm-toolchain-trusty-3.9
+          packages+: 
+            - clang-3.9 
+            - clang++-3.9
 
     # # Linux GCC 5.4 (Release)
     # - stage: Test
@@ -85,18 +92,11 @@ jobs:
     #   env: CONFIG=RelWithDebInfo CXX_COMPILER=g++-6 C_COMPILER=gcc-6
     #   script: bash ${SCRIPT_DIR}/driver-test.sh
 
-    # Clang 3.9 (Release)
-    - stage: Test
-      compiler: clang
-      env: CONFIG=Release CXX_COMPILER=clang++-3.9 C_COMPILER=clang-3.9
-      script: bash ${SCRIPT_DIR}/driver-test.sh
-      addons:
-        <<: *global_addons  
-        apt:
-          sources: llvm-toolchain-trusty-3.9
-          packages: 
-            - clang-3.9 
-            - clang++-3.9
+    # # Clang 3.9 (Release)
+    # - stage: Test
+    #   compiler: clang
+    #   env: CONFIG=Release CXX_COMPILER=clang++-3.9 C_COMPILER=clang-3.9
+    #   script: bash ${SCRIPT_DIR}/driver-test.sh
 
     # # Clang 3.9 (RelWithDebInfo)
     # - stage: Test
