@@ -1,4 +1,3 @@
-
 //===--------------------------------------------------------------------------------*- C++ -*-===//
 //                         _____                        _
 //                        / ____|                      (_)
@@ -14,37 +13,26 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_RENDER_GL_GLFWD_H
-#define SEQUOIA_RENDER_GL_GLFWD_H
+#ifndef SEQUOIA_RENDER_NULL_NULLFWD_H
+#define SEQUOIA_RENDER_NULL_NULLFWD_H
 
-#include <glbinding/gl/enum.h>
-#include <glbinding/gl/extension.h>
-#include <glbinding/gl/types.h>
-
-using namespace gl;
+#ifdef SEQUOIA_DOXYGEN_INVOKED
+/// @defgroup null Null
+/// @brief Implementation for no particular rendering API
+/// @ingroup render
+#endif
 
 namespace sequoia {
 
 namespace render {
 
-class GLBuffer;
-class GLExtensionManager;
-class GLFrameBufferObject;
-class GLIndexBuffer;
-class GLInputSystem;
-class GLProgram;
-class GLProgramManager;
-class GLRenderer;
-class GLRenderSystem;
-class GLRenderWindow;
-class GLShader;
-class GLShaderManager;
-class GLStateCacheManager;
-class GLTexture;
-class GLTextureManager;
-class GLVertexArrayObject;
-struct GLFragmentData;
-struct GLVertexAttribute;
+class NullIndexBuffer;
+class NullInputSystem;
+class NullProgram;
+class NullRenderWindow;
+class NullShader;
+class NullTexture;
+class NullVertexBuffer;
 
 } // namespace render
 

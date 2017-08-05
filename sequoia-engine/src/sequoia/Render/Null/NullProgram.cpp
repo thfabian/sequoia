@@ -1,4 +1,3 @@
-
 //===--------------------------------------------------------------------------------*- C++ -*-===//
 //                         _____                        _
 //                        / ____|                      (_)
@@ -14,40 +13,33 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_RENDER_GL_GLFWD_H
-#define SEQUOIA_RENDER_GL_GLFWD_H
-
-#include <glbinding/gl/enum.h>
-#include <glbinding/gl/extension.h>
-#include <glbinding/gl/types.h>
-
-using namespace gl;
+#include "sequoia/Core/Format.h"
+#include "sequoia/Core/StringUtil.h"
+#include "sequoia/Render/Null/NullProgram.h"
+#include "sequoia/Render/Shader.h"
 
 namespace sequoia {
 
 namespace render {
 
-class GLBuffer;
-class GLExtensionManager;
-class GLFrameBufferObject;
-class GLIndexBuffer;
-class GLInputSystem;
-class GLProgram;
-class GLProgramManager;
-class GLRenderer;
-class GLRenderSystem;
-class GLRenderWindow;
-class GLShader;
-class GLShaderManager;
-class GLStateCacheManager;
-class GLTexture;
-class GLTextureManager;
-class GLVertexArrayObject;
-struct GLFragmentData;
-struct GLVertexAttribute;
+NullProgram::NullProgram(const std::set<std::shared_ptr<Shader>>& shaders)
+    : Program(RK_Null), shaders_(shaders) {}
+
+NullProgram::~NullProgram() {}
+
+const std::set<std::shared_ptr<Shader>>& NullProgram::getShaders() const { return shaders_; }
+
+std::string NullProgram::toString() const {
+  return core::format("NullProgram[\n"
+                      "  shaders = %s\n"
+                      "]",
+                      core::toStringRange(shaders_, [](const std::shared_ptr<Shader>& shader) {
+                        return core::indent(shader->toString());
+                      }));
+}
+
+void NullProgram::makeValidImpl() {}
 
 } // namespace render
 
 } // namespace sequoia
-
-#endif

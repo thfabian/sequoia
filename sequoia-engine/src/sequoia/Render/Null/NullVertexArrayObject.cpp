@@ -1,4 +1,3 @@
-
 //===--------------------------------------------------------------------------------*- C++ -*-===//
 //                         _____                        _
 //                        / ____|                      (_)
@@ -14,40 +13,26 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_RENDER_GL_GLFWD_H
-#define SEQUOIA_RENDER_GL_GLFWD_H
-
-#include <glbinding/gl/enum.h>
-#include <glbinding/gl/extension.h>
-#include <glbinding/gl/types.h>
-
-using namespace gl;
+#include "sequoia/Render/Null/NullVertexArrayObject.h"
 
 namespace sequoia {
 
 namespace render {
 
-class GLBuffer;
-class GLExtensionManager;
-class GLFrameBufferObject;
-class GLIndexBuffer;
-class GLInputSystem;
-class GLProgram;
-class GLProgramManager;
-class GLRenderer;
-class GLRenderSystem;
-class GLRenderWindow;
-class GLShader;
-class GLShaderManager;
-class GLStateCacheManager;
-class GLTexture;
-class GLTextureManager;
-class GLVertexArrayObject;
-struct GLFragmentData;
-struct GLVertexAttribute;
+NullVertexArrayObject::~NullVertexArrayObject() {}
+
+NullVertexArrayObject::NullVertexArrayObject() : VertexArrayObject(RK_Null) {}
+
+void NullVertexArrayObject::writeVertexData(std::size_t offset, std::size_t length) {}
+
+void NullVertexArrayObject::writeIndexData(std::size_t offset, std::size_t length) {}
+
+std::string NullVertexArrayObject::toString() const { return "NullVertexArrayObject[]"; }
+
+void NullVertexArrayObject::attachVertexDataDevice() {}
+
+void NullVertexArrayObject::freeVertexDataDevice() {}
 
 } // namespace render
 
 } // namespace sequoia
-
-#endif

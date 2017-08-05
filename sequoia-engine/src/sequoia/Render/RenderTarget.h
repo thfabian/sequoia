@@ -30,7 +30,12 @@ namespace render {
 class SEQUOIA_API RenderTarget {
 public:
   /// @brief Discriminator for RTTI (dyn_cast<> et al.)
-  enum RenderTargetKind { RK_RenderWindow, RK_GLRenderWindow, RK_RenderWindowLast };
+  enum RenderTargetKind {
+    RK_RenderWindow,
+    RK_GLRenderWindow,
+    RK_NullRenderWindow,
+    RK_RenderWindowLast
+  };
 
   /// @brief Initialize the target
   RenderTarget(RenderTargetKind kind);

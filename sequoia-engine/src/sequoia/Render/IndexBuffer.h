@@ -53,15 +53,16 @@ public:
   /// @brief Get the number of indices
   std::size_t getNumIndices() const { return getNumBytes() / getSizeOfIndexType(); }
 
-  static bool classof(const Buffer* buffer) {
-    return buffer->getKind() >= BK_IndexBuffer && buffer->getKind() < BK_IndexBufferLast;
-  }
 
   /// @brief Get the size of the underlying tpye
   std::size_t getSizeOfIndexType() const noexcept;
 
   /// @brief Get the underlying type
   IndexType getIndexType() const noexcept { return type_; }
+
+  static bool classof(const Buffer* buffer) {
+    return buffer->getKind() >= BK_IndexBuffer && buffer->getKind() < BK_IndexBufferLast;
+  }
 
 protected:
   /// @copydoc Buffer::lockImpl

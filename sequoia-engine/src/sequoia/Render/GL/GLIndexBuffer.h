@@ -46,6 +46,8 @@ public:
   /// @brief Update the buffer to the next timestep
   void nextTimestep();
 
+  static bool classof(const Buffer* buffer) { return buffer->getKind() == BK_GLIndexBuffer; }
+
 protected:
   /// @copydoc Buffer::lockImpl
   void* lockImpl(LockOption option) override;

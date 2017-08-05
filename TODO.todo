@@ -1,21 +1,32 @@
 
 sequoia:
   Git/Project Structure:
-    ☐ Refactor the way the proejets are setip @created(17-08-01 01:34)
-      ☐ Rename all the CMake projects to match the name of the folder @created(17-08-01 01:59)
-        ☐ Rename Sequoia to sequoia (including all the Sequoia_INSTALL_PREFIX etc..) @created(17-08-01 02:00)
-        ☐ Rename SequoiaEngine to sequoia-engine @created(17-08-01 02:00)
+    ☐ Refactor the way the projects are setup @created(17-08-01 01:34)
+      ✘ Rename all the CMake projects to match the name of the folder @created(17-08-01 01:59) @cancelled (17-08-06 01:26)
+        ✘ Rename Sequoia to sequoia (including all the Sequoia_INSTALL_PREFIX etc..) @created(17-08-01 02:00) @cancelled (17-08-06 01:26)
+        ✘ Rename SequoiaEngine to sequoia-engine @created(17-08-01 02:00) @cancelled (17-08-06 01:25)
+
+        > CMake allows to use "-" in variables -- no need to rename!
+
+      ☐ Rename the parameters of sequoia-engine to be prefixed with SEQUOIA_ENGINE_* @created(17-08-06 01:26)
       ☐ Detect which projects are available and build the necessary dependencies @created(17-08-01 01:35)
         For example, if we only have sequoia-cmake there is no need to build Boost. Each project
-        should have a SequoiaProject.cmake file which states its needed dependencies on external and internal projects (with required build parameter e.g sequoia-editor require equoia-engine to be built with Qt5 support)
+        should have a sequoia-project.cmake file which states its needed dependencies on external and internal projects (with required build parameter e.g sequoia-editor require sequoia-engine to be built with Qt5 support)
 
-          set(SequoiaEditor_DEPENDS sequoia-engine sequoia-cmake)
-          set(SequoiaEditor_BUILD_PARAM 
+          set(PROJECT_NAME "sequoia-editor")
+          set(sequoia-editor_DEPENDS sequoia-engine sequoia-cmake boost qt5 lua)
+          set(sequoia-editor_BUILD_PARAM 
             "sequoia-engine:SEQUOIA_ENGINE_QT5=ON"
             "sequoia-engine:SEQUOIA_ENGINE_ASSERTS=ON"
           )
 
+          ☐ Create a linter module (maybe in Python) which checks if all the parameter are set correctly, there are no circual dependencies etc. @created(17-08-06 01:32)
+
       ☐ Create a git repository for all projects @created(17-08-01 01:33)
+        ☐ Hand over owner-ship to the user sequoia @created(17-08-06 01:35)
+
+sequoia-cmake:
+  ☐ Refactor out all the commenly used functions form sequoia and sequoiua-engine @created(17-08-06 01:27)
 
 sequoia-engine:
   Render:
@@ -24,31 +35,65 @@ sequoia-engine:
       ☐ Implement VertexBuffer @created(17-07-29 01:08)
       ☐ Refactor VertexData @created(17-07-29 01:08)
         VertexData should contain an Vertex- and IndexBuffer as well as the type of vertices (i.e triangles etc.) 
+      ☐ Refactor the VertexArray @created(17-08-06 01:11)
+        Should only be a concept of Render and not of the backend. Remove the whole concept and merge the functionality with VertexData?
     ☐ Implement RenderServer @created(17-07-29 01:13)
       ☐ Refactor the RenderRessource @created(17-07-29 01:13)
         Don't capture the Exceptions but rather forward it to the Future
     ☐ Add support for OBJ mesh loading @created(17-07-29 01:15)
     ☐ Add support for materials (blending, shading etc..) @created(17-07-29 01:15)
-    
+    ☐ Add support for instanced rendering and add hooks in the scene @created(17-08-04 16:30)
+    ☐ Add a Null Render backend which does nothing (for unittesting) @created(17-08-03 14:44)
+      ☐ Add unittests @created(17-08-06 01:13)
+
   Game:
     ☐ Implement SceneLoader @created(17-07-29 01:15)
+      Proposed structure
+
+      Each folder should have a level.xml file which is loaded first and drives the loading of  all the other level files (like the setup of the gui, physics parameter etc...). In general, each module should have an XML file whith the *meta* data while the actual data is stored as a protobuf file (e.g the scenes) 
+
+        MyScene
+        |_ level.xml
+        |_ physics.xml
+        |_ gui.xml
+        |_ gui-00.layout
+        |_ gui-01.layout
+        |_ scene.xml
+        |_ scene-00.pb
+        |_ scene-01.pb
+
+      ☐ Checkout XML libraries @created(17-08-06 01:14)
+        ☐ Expat @created(17-08-06 01:18)
+        ☐ LibXML2 @created(17-08-06 01:20)
+        ☐ RapidXML @created(17-08-06 01:21)
+        ☐ TinyXML @created(17-08-06 01:21)
+        ☐ Xerces-C++ @created(17-08-06 01:22)
       ☐ Add ProtoBuf support @created(17-07-31 23:36)
+
+  Gui:
+    ☐ Setup CEGUI @created(17-08-06 01:22)
+      http://cegui.org.uk/wiki/Building_from_source
+
+  Scripting:
+    ☐ Setup Lua @created(17-08-06 01:23)
+      ☐ Checkout different C++ binding libraries @created(17-08-06 01:23)
+
+  Unittest:
+    ☐ Add ability TestCaseFixture which only runs SetUp for the first test @created(17-08-03 14:44)
 
   CMake:
     ☐ Optimization flags on MSVC @created(17-07-31 22:51)
      ☐ Figure out how to use LTO @created(17-07-31 22:51)
      ☐ Figure out how to use PGO @created(17-07-31 22:52)
 
-
   Travis CI:
     ☐ Linux CI @created(17-07-31 23:35)
-      ☐ Add GCC support @created(17-07-31 23:34)
+      ✔ Add GCC support @created(17-07-31 23:34) @done (17-08-03 14:43)
         ✔ GCC 5 @created(17-08-01 01:35) @done (17-08-01 01:35)
-        ☐ GCC 6 @created(17-08-01 01:35)
-      ☐ Add Clang support @created(17-07-31 22:54)
-        ☐ Clang 3.8 @created(17-07-31 23:35)
-        ☐ Clang 3.9 @created(17-07-31 23:35)
-        ☐ Clang 4.0 @created(17-07-31 23:35)
+        ✔ GCC 6 @created(17-08-01 01:35) @done (17-08-03 14:43)
+      ✔ Add Clang support @created(17-07-31 22:54) @done (17-08-06 01:12)
+        ✔ Clang 4.0 @created(17-07-31 23:35) @done (17-08-06 01:13)
+        ✔ Clang 5.0 @created(17-07-31 23:35) @done (17-08-06 01:13)
    ☐ Windows CI @created(17-07-31 23:35)
      ☐ Add MSVC 2015 support @created(17-07-31 23:35)
      ☐ Add MSVC 2017 support @created(17-07-31 23:36)

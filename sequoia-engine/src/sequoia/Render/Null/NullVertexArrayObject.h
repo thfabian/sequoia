@@ -13,8 +13,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_RENDER_GL_GLVERTEXARRAYOBJECT_H
-#define SEQUOIA_RENDER_GL_GLVERTEXARRAYOBJECT_H
+#ifndef SEQUOIA_RENDER_NULL_NULLVERTEXARRAYOBJECT_H
+#define SEQUOIA_RENDER_NULL_NULLVERTEXARRAYOBJECT_H
 
 #include "sequoia/Render/VertexArrayObject.h"
 
@@ -22,30 +22,12 @@ namespace sequoia {
 
 namespace render {
 
-class GLRenderer;
-
-/// @brief OpenGL vertex array object (VAO) with VBO and EBOs
-/// @ingroup gl
-class SEQUOIA_API GLVertexArrayObject final : public VertexArrayObject {
-  /// OpenGL ids
-  unsigned int vaoID_, eboID_, vboID_;
-
-  /// Are the buffers allocated?
-  bool allocated_;
-
+/// @brief Null vertex array
+/// @ingroup null
+class SEQUOIA_API NullVertexArrayObject final : public VertexArrayObject {
 public:
-  virtual ~GLVertexArrayObject();
-  GLVertexArrayObject();
-
-  /// @brief Bind the VAO
-  /// @note Do not call this function directly, use `GLRenderer::bindVertexArrayObject` instead
-  void bind();
-
-  /// @brief Unbind VAO
-  static void unbind();
-
-  /// @brief Get the VAO ID
-  unsigned int getVAOID() const;
+  virtual ~NullVertexArrayObject();
+  NullVertexArrayObject();
 
   /// @copydoc VertexArrayObject::updateVertexData
   virtual void writeVertexData(std::size_t offset, std::size_t length) override;
@@ -53,20 +35,17 @@ public:
   /// @copydoc VertexArrayObject::updateIndexData
   virtual void writeIndexData(std::size_t offset, std::size_t length) override;
 
-  /// @copydoc VertexArrayObject::attachVertexDataDevice
-  virtual void attachVertexDataDevice() override;
-
-  /// @copydoc VertexArrayObject::freeVertexDataDevice
-  virtual void freeVertexDataDevice() override;
-
   /// @copydoc VertexArrayObject::toString
   virtual std::string toString() const override;
 
   SEQUOIA_GL_OBJECT(VertexArrayObject);
 
-private:
-  std::size_t getNumVertexBytes(std::size_t length) const;
-  std::size_t getNumIndexBytes(std::size_t length) const;
+protected:
+  /// @copydoc VertexArrayObject::attachVertexDataDevice
+  virtual void attachVertexDataDevice() override;
+
+  /// @copydoc VertexArrayObject::freeVertexDataDevice
+  virtual void freeVertexDataDevice() override;
 };
 
 } // namespace render

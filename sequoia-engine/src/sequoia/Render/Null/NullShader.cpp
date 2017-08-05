@@ -1,4 +1,3 @@
-
 //===--------------------------------------------------------------------------------*- C++ -*-===//
 //                         _____                        _
 //                        / ____|                      (_)
@@ -14,40 +13,34 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_RENDER_GL_GLFWD_H
-#define SEQUOIA_RENDER_GL_GLFWD_H
-
-#include <glbinding/gl/enum.h>
-#include <glbinding/gl/extension.h>
-#include <glbinding/gl/types.h>
-
-using namespace gl;
+#include "sequoia/Core/Format.h"
+#include "sequoia/Core/UtfString.h"
+#include "sequoia/Render/Null/NullShader.h"
 
 namespace sequoia {
 
 namespace render {
 
-class GLBuffer;
-class GLExtensionManager;
-class GLFrameBufferObject;
-class GLIndexBuffer;
-class GLInputSystem;
-class GLProgram;
-class GLProgramManager;
-class GLRenderer;
-class GLRenderSystem;
-class GLRenderWindow;
-class GLShader;
-class GLShaderManager;
-class GLStateCacheManager;
-class GLTexture;
-class GLTextureManager;
-class GLVertexArrayObject;
-struct GLFragmentData;
-struct GLVertexAttribute;
+NullShader::NullShader(Shader::ShaderType type, const std::shared_ptr<File>& file)
+    : Shader(RK_Null, type), file_(file) {
+  code_ = file->getDataAsString();
+}
+
+NullShader::~NullShader() {}
+
+const std::shared_ptr<File>& NullShader::getFile() const { return file_; }
+
+std::string NullShader::getSourceCode() const { return code_; }
+
+std::string NullShader::toString() const {
+  return core::format("NullShader[\n"
+                      "  path = \"%s\"\n"
+                      "]",
+                      UtfString(file_->getPath()).toAnsiString());
+}
+
+void NullShader::makeValidImpl() {}
 
 } // namespace render
 
 } // namespace sequoia
-
-#endif

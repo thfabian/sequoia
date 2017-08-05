@@ -120,7 +120,7 @@ public:
 #undef UNIFORM_VARIABLE_TYPE
 
   /// @brief Get the data of the variable as type `T`
-  /// @throws core::Exception  type of the uniform variable is not of type `T`
+  /// @throws core::RenderSystemException  type of the uniform variable is not of type `T`
   template <class T>
   inline const T& get() const {
     if(!isOfType<T>()) {

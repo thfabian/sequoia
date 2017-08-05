@@ -13,25 +13,20 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_RENDER_GL_GLSHADER_H
-#define SEQUOIA_RENDER_GL_GLSHADER_H
+#ifndef SEQUOIA_RENDER_NULL_NULLSHADER_H
+#define SEQUOIA_RENDER_NULL_NULLSHADER_H
 
-#include "sequoia/Render/GL/GLFwd.h"
 #include "sequoia/Render/Shader.h"
 
 namespace sequoia {
 
 namespace render {
 
-/// @brief OpenGL shader implementation
-/// @ingroup gl
-class SEQUOIA_API GLShader final : public Shader {
-  friend class GLShaderManager;
+/// @brief Null shader implementation
+/// @ingroup null
+class SEQUOIA_API NullShader final : public Shader {
 
-  /// OpenGL shader index
-  unsigned int id_;
-
-  /// Copy of the (optimized) source code of the shader
+  /// Copy of the source code of the shader
   std::string code_;
 
   /// File the shader was loaded from
@@ -39,15 +34,10 @@ class SEQUOIA_API GLShader final : public Shader {
 
 public:
   /// @brief Create an empty shader object
-  GLShader(ShaderType type, const std::shared_ptr<File>& file);
+  NullShader(ShaderType type, const std::shared_ptr<File>& file);
 
   /// @brief Destroy the shader
-  virtual ~GLShader();
-
-  /// @brief Get the identifer of the shader
-  ///
-  /// Note that IDs might be reused after a shader has been destroyed.
-  unsigned int getID() const;
+  virtual ~NullShader();
 
   /// @copydoc Shader::getFile
   virtual const std::shared_ptr<File>& getFile() const override;
@@ -58,17 +48,10 @@ public:
   /// @copydoc Shader::toString
   virtual std::string toString() const override;
 
-  /// @brief Destroy the shader by deregistering it from OpenGL (i.e it's status will be changed to
-  /// `InMemory`)
-  friend SEQUOIA_API void destroyGLShader(GLShader* shader) noexcept;
-
-  /// @brief Get OpenGL shader type
-  static GLenum getGLShaderType(ShaderType type);
-
-  SEQUOIA_GL_OBJECT(Shader)
+  SEQUOIA_NULL_OBJECT(Shader)
 
 protected:
-  void makeValidImpl() override;
+  virtual void makeValidImpl() override;
 };
 
 } // namespace render

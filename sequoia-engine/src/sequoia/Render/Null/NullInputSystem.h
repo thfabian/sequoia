@@ -1,4 +1,3 @@
-
 //===--------------------------------------------------------------------------------*- C++ -*-===//
 //                         _____                        _
 //                        / ____|                      (_)
@@ -14,37 +13,19 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_RENDER_GL_GLFWD_H
-#define SEQUOIA_RENDER_GL_GLFWD_H
+#ifndef SEQUOIA_RENDER_NULL_NULLINPUTSYSTEM_H
+#define SEQUOIA_RENDER_NULL_NULLINPUTSYSTEM_H
 
-#include <glbinding/gl/enum.h>
-#include <glbinding/gl/extension.h>
-#include <glbinding/gl/types.h>
-
-using namespace gl;
+#include "sequoia/Core/Listenable.h"
+#include "sequoia/Render/Input.h"
 
 namespace sequoia {
 
 namespace render {
 
-class GLBuffer;
-class GLExtensionManager;
-class GLFrameBufferObject;
-class GLIndexBuffer;
-class GLInputSystem;
-class GLProgram;
-class GLProgramManager;
-class GLRenderer;
-class GLRenderSystem;
-class GLRenderWindow;
-class GLShader;
-class GLShaderManager;
-class GLStateCacheManager;
-class GLTexture;
-class GLTextureManager;
-class GLVertexArrayObject;
-struct GLFragmentData;
-struct GLVertexAttribute;
+/// @brief Mock implemenation of an input system
+/// @ingroup null
+class SEQUOIA_API NullInputSystem : public Listenable<KeyboardListener, MouseListener> {};
 
 } // namespace render
 

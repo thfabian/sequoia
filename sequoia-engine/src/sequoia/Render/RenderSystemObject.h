@@ -22,7 +22,11 @@ namespace render {
 
 /// @brief Enumeration of all RenderSystems
 /// @ingroup render
-enum RenderSystemKind { RK_Invalid, RK_OpenGL };
+enum RenderSystemKind {
+  RK_Invalid = 0,
+  RK_Null,  ///< Null implementation
+  RK_OpenGL ///< OpenGL implementation
+};
 
 /// @brief Base class of all RenderSystem specific objects to provide fast RTTI
 /// @ingroup render
@@ -37,12 +41,18 @@ protected:
   RenderSystemKind renderSystemKind_;
 };
 
-/// @brief OpenGL RenderSystemObject
-/// @ingroup gl
-#define SEQUOIA_GL_OBJECT(Type)                                                                    \
+#define SEQUOIA_OBJECT_IMPL(Type, Kind)                                                            \
   inline static bool classof(const Type* type) noexcept {                                          \
-    return type->getRenderSystemKind() == RK_OpenGL;                                               \
+    return type->getRenderSystemKind() == Kind;                                                    \
   }
+
+/// @brief Declare as OpenGL RenderSystemObject
+/// @ingroup gl
+#define SEQUOIA_GL_OBJECT(Type) SEQUOIA_OBJECT_IMPL(Type, sequoia::render::RK_OpenGL)
+
+/// @brief Declare as Null RenderSystemObject
+/// @ingroup null
+#define SEQUOIA_NULL_OBJECT(Type) SEQUOIA_OBJECT_IMPL(Type, sequoia::render::RK_Null)
 
 } // namespace render
 

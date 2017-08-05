@@ -13,10 +13,12 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Render/RenderSystem.h"
 #include "sequoia/Core/Unreachable.h"
 #include "sequoia/Render/Exception.h"
+#include "sequoia/Render/RenderSystem.h"
+
 #include "sequoia/Render/GL/GLRenderSystem.h"
+#include "sequoia/Render/Null/NullRenderSystem.h"
 
 namespace sequoia {
 
@@ -28,12 +30,14 @@ std::unique_ptr<RenderSystem> RenderSystem::create(RenderSystemKind kind, Option
   switch(kind) {
   case RK_OpenGL:
     return std::make_unique<GLRenderSystem>(options);
+  case RK_Null:
+    return std::make_unique<NullRenderSystem>(options);
   default:
-    SEQUOIA_THROW(RenderSystemException, "invalid RenderSystem");
+    SEQUOIA_THROW(RenderSystemException, "RenderSystem not avaialable");
   }
   return nullptr;
-
 }
+
 RenderSystem::RenderSystem(RenderSystemKind kind, Options* options)
     : RenderSystemObject(kind), options_(options) {
   SEQUOIA_ASSERT_MSG(options_, "invalid options");

@@ -13,101 +13,123 @@
 ##
 ##===------------------------------------------------------------------------------------------===##
 
+set(GL_SOURCE
+  GL/GL.h
+  GL/GLBuffer.cpp          
+  GL/GLBuffer.h
+  GL/GLExtensionManager.cpp
+  GL/GLExtensionManager.h
+  GL/GLFragmentData.cpp
+  GL/GLFragmentData.h
+  GL/GLFrameBufferObject.cpp
+  GL/GLFrameBufferObject.h
+  GL/GLFwd.h  
+  GL/GLIndexBuffer.cpp
+  GL/GLIndexBuffer.h
+  GL/GLProgram.cpp
+  GL/GLProgram.h
+  GL/GLProgramManager.cpp
+  GL/GLProgramManager.h
+  GL/GLRenderer.cpp
+  GL/GLRenderer.h
+  GL/GLRenderSystem.cpp
+  GL/GLRenderSystem.h
+  GL/GLRenderWindow.cpp
+  GL/GLRenderWindow.h
+  GL/GLShader.cpp
+  GL/GLShader.h
+  GL/GLShaderManager.cpp
+  GL/GLShaderManager.h
+  GL/GLStateCacheManager.cpp
+  GL/GLStateCacheManager.h
+  GL/GLTexture.cpp
+  GL/GLTexture.h
+  GL/GLTextureManager.cpp
+  GL/GLTextureManager.h
+  GL/GLVertexArrayObject.cpp
+  GL/GLVertexArrayObject.h
+  GL/GLVertexAttribute.cpp
+  GL/GLVertexAttribute.h
+  GL/Native.cpp          
+  GL/Native.h
+  GL/NativeGLFW3.cpp
+  GL/NativeGLFW3.h
+)
+
+set(NULL_SOURCE
+  Null/NullFwd.h
+  Null/NullInputSystem.h
+  Null/NullProgram.cpp
+  Null/NullProgram.h
+  Null/NullRenderSystem.cpp
+  Null/NullRenderSystem.h
+  Null/NullRenderWindow.cpp
+  Null/NullRenderWindow.h
+  Null/NullShader.cpp
+  Null/NullShader.h
+  Null/NullTexture.cpp
+  Null/NullTexture.h
+  Null/NullVertexArrayObject.cpp
+  Null/NullVertexArrayObject.h
+)
+
 sequoia_add_objects(
   NAME SequoiaRender
   SOURCES Buffer.h
           Buffer.cpp
-          Camera.h
           Camera.cpp
-          DrawCommand.h
+          Camera.h
           DrawCommand.cpp
-          DrawCommandList.h
+          DrawCommand.h
           DrawCommandList.cpp
+          DrawCommandList.h
           Exception.h
-          FrameListener.h
-          FrameBufferObject.h
           FrameBufferObject.cpp
-          HostBuffer.h
+          FrameBufferObject.h
+          FrameListener.h
           HostBuffer.cpp
-          IndexBuffer.h
+          HostBuffer.h
           IndexBuffer.cpp
-          Input.h
+          IndexBuffer.h
           Input.cpp
-          Program.h
+          Input.h
           Program.cpp
+          Program.h
           RenderFwd.h
-          RenderRessource.h
           RenderRessource.cpp
-          RenderServer.h
+          RenderRessource.h
           RenderServer.cpp
-          RenderState.h
+          RenderServer.h
           RenderState.cpp
+          RenderState.h
           RenderState.inc
-          RenderSystem.h
           RenderSystem.cpp
+          RenderSystem.h
           RenderSystemObject.h
-          RenderTarget.h
           RenderTarget.cpp
+          RenderTarget.h
           RenderWindow.h
-          Shader.h
           Shader.cpp
-          Texture.h
+          Shader.h
           Texture.cpp
-          UniformVariable.h
+          Texture.h
           UniformVariable.cpp
+          UniformVariable.h
           UniformVariable.inc
-          Vertex.h
           Vertex.cpp
-          VertexArrayObject.h
+          Vertex.h
           VertexArrayObject.cpp
-          VertexData.h
+          VertexArrayObject.h
           VertexData.cpp
-          VertexVisitor.h
+          VertexData.h
           VertexVisitor.cpp
+          VertexVisitor.h
           ViewFrustum.h
-          Viewport.h
           Viewport.cpp
+          Viewport.h
           
-          GL/GL.h
-          GL/GLBuffer.h
-          GL/GLBuffer.cpp          
-          GL/GLExtensionManager.h
-          GL/GLExtensionManager.cpp
-          GL/GLFragmentData.h
-          GL/GLFragmentData.cpp
-          GL/GLFwd.h  
-          GL/GLFrameBufferObject.h
-          GL/GLFrameBufferObject.cpp
-          GL/GLProgram.h
-          GL/GLProgram.cpp
-          GL/GLProgramManager.h
-          GL/GLProgramManager.cpp
-          GL/GLIndexBuffer.h
-          GL/GLIndexBuffer.cpp
-          GL/GLRenderer.h
-          GL/GLRenderer.cpp
-          GL/GLRenderSystem.h
-          GL/GLRenderSystem.cpp
-          GL/GLRenderWindow.h
-          GL/GLRenderWindow.cpp
-          GL/GLShader.h
-          GL/GLShader.cpp
-          GL/GLShaderManager.h
-          GL/GLShaderManager.cpp
-          GL/GLStateCacheManager.h
-          GL/GLStateCacheManager.cpp
-          GL/GLTexture.h
-          GL/GLTexture.cpp
-          GL/GLTextureManager.h
-          GL/GLTextureManager.cpp
-          GL/GLVertexArrayObject.h
-          GL/GLVertexArrayObject.cpp
-          GL/GLVertexAttribute.h
-          GL/GLVertexAttribute.cpp
-          GL/Native.h
-          GL/Native.cpp          
-          GL/NativeGLFW3.h
-          GL/NativeGLFW3.cpp
+          ${GL_SOURCE}
+          ${NULL_SOURCE}
 
   DEPENDS SequoiaCore
 )

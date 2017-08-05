@@ -34,7 +34,7 @@ cmake .. -DBOOST_ROOT:PATH=$BOOST_ROOT                                          
          -DGLBINDING_ROOT:PATH=$GLBINDING_ROOT                                                     \
          -DOpenCV_DIR:PATH=$OpenCV_DIR                                                             \
          -DCMAKE_BUILD_TYPE=$CONFIG                                                                \
-      || fatal_error "failed to confgure sequoia"
+      || fatal_error "failed to configure sequoia"
 make -j2 || fatal_error "failed to build sequoia"
 popd
 

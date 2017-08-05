@@ -81,12 +81,12 @@ include(AddThreads)
 if(SEQUOIA_TESTING)
   include(AddGTest)
   include(Addbenchmark)
-  set(testing_pacakges GTEST BENCHMARK)
+  set(testing_packages GTEST BENCHMARK)
 endif()
 
 # Gather the external libraries, include directories and definitions
-foreach(package BACKWARD BOOST GLBINDING GLFW3 GLM GLI OPENCV OPENGL TBB THREADS 
-               ${testing_pacakges})
+foreach(package BACKWARD BOOST GLBINDING GLFW3 GLM GLI OPENCV OPENGL TBB 
+                ${testing_packages} THREADS)
   list(APPEND SEQUOIA_EXTERNAL_LIBRARIES ${SEQUOIA_${package}_LIBRARIES})
   list(APPEND SEQUOIA_EXTERNAL_INCLUDE_DIRS ${SEQUOIA_${package}_INCLUDE_DIRS})
   list(APPEND SEQUOIA_EXTERNAL_DEFINITIONS ${SEQUOIA_${package}_DEFINITIONS})
@@ -98,7 +98,7 @@ add_definitions(${SEQUOIA_EXTERNAL_DEFINITIONS})
 # Output summary of the packages
 sequoia_report_result("External libraries summary" ${SEQUOIA_PACKAGE_INFO})
   
-##===------------------------------------ Sequoia libraries -----------------------------------===##
+##===----------------------------------- Sequoia libraries ------------------------------------===##
 include_directories(${CMAKE_SOURCE_DIR}/src)
 include_directories(${CMAKE_BINARY_DIR}/src)
 
@@ -111,8 +111,7 @@ if(SEQUOIA_TESTING)
   add_subdirectory(test)
 endif()
 
-##===-------------------------------------- Documentation -------------------------------------===##
+##===------------------------------------- Documentation --------------------------------------===##
 if(SEQUOIA_DOCUMENTATION)
   add_subdirectory(docs)
 endif()
-

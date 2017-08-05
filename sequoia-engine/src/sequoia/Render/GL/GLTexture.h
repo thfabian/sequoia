@@ -34,16 +34,16 @@ public:
   ~GLTexture();
 
   /// @copydoc Texture::getImage
-  const std::shared_ptr<Image>& getImage() const override;
+  virtual const std::shared_ptr<Image>& getImage() const override;
 
   /// @copydoc Texture::getParameter
-  const std::shared_ptr<TextureParameter>& getParameter() const override;
+  virtual  const std::shared_ptr<TextureParameter>& getParameter() const override;
 
   /// @copydoc Texture::toString
-  std::string toString() const override;
+  virtual  std::string toString() const override;
 
   /// @copydoc Texture::hasImage
-  bool hasImage() const override;
+  virtual  bool hasImage() const override;
 
   /// @brief Get the unique identifer of the texture
   ///

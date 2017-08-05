@@ -1,4 +1,3 @@
-
 //===--------------------------------------------------------------------------------*- C++ -*-===//
 //                         _____                        _
 //                        / ____|                      (_)
@@ -14,37 +13,36 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_RENDER_GL_GLFWD_H
-#define SEQUOIA_RENDER_GL_GLFWD_H
+#ifndef SEQUOIA_RENDER_NULL_NULLPROGRAM_H
+#define SEQUOIA_RENDER_NULL_NULLPROGRAM_H
 
-#include <glbinding/gl/enum.h>
-#include <glbinding/gl/extension.h>
-#include <glbinding/gl/types.h>
-
-using namespace gl;
+#include "sequoia/Render/Program.h"
 
 namespace sequoia {
 
 namespace render {
 
-class GLBuffer;
-class GLExtensionManager;
-class GLFrameBufferObject;
-class GLIndexBuffer;
-class GLInputSystem;
-class GLProgram;
-class GLProgramManager;
-class GLRenderer;
-class GLRenderSystem;
-class GLRenderWindow;
-class GLShader;
-class GLShaderManager;
-class GLStateCacheManager;
-class GLTexture;
-class GLTextureManager;
-class GLVertexArrayObject;
-struct GLFragmentData;
-struct GLVertexAttribute;
+/// @brief Null program implementation
+/// @ingroup null
+class SEQUOIA_API NullProgram final : public Program {
+public:
+  NullProgram(const std::set<std::shared_ptr<Shader>>& shaders);
+  virtual ~NullProgram();
+
+  /// @copydoc Program::getShaders
+  virtual const std::set<std::shared_ptr<Shader>>& getShaders() const override;
+
+  /// @copydoc Program::toString
+  virtual std::string toString() const override;
+
+  SEQUOIA_GL_OBJECT(Program)
+
+protected:
+  virtual void makeValidImpl() override;
+
+private:
+  std::set<std::shared_ptr<Shader>> shaders_;
+};
 
 } // namespace render
 
