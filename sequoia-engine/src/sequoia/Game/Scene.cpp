@@ -26,6 +26,7 @@
 #include "sequoia/Render/Camera.h"
 #include "sequoia/Render/DrawCommandList.h"
 #include "sequoia/Render/RenderWindow.h"
+#include <functional>
 
 // TODO: Remove me
 #include "sequoia/Render/Texture.h"

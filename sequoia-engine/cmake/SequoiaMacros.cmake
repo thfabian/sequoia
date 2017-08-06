@@ -185,7 +185,7 @@ macro(sequoia_set_cxx_standard MIN_CXX_STANDARD)
       #set(std_cxx_latest "c++latest")
       # TODO: We need to use boost >= 1.63 for this
     else()
-      set(std_cxx_latest "c++17" "c++1z")      
+      set(std_cxx_latest "c++17")      
     endif()
     
     set(cxx_stanard_flag)
@@ -383,6 +383,7 @@ macro(sequoia_set_cxx_flags)
     sequoia_check_and_set_cxx_flag("-Werror=address" HAVE_GCC_WERROR_ADDRESS)
     sequoia_check_and_set_cxx_flag("-Werror=sequence-point" HAVE_GCC_WERROR_SEQUENCE_POINT)
 
+    sequoia_check_and_set_cxx_flag("-Wno-sign-promo" HAVE_GCC_WNO_SIGN_PROMO)
     sequoia_check_and_set_cxx_flag("-Wno-sign-compare" HAVE_GCC_WNO_SIGN_COMPARE)
     sequoia_check_and_set_cxx_flag("-Wno-unused-parameter" HAVE_GCC_WNO_UNUSDED_PARAMETER)
     

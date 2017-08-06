@@ -72,6 +72,11 @@ std::string toString(const T& value) {
 }
 
 template <>
+std::string toString(const bool& value) {
+  return (value ? "true" : "false");
+}
+
+template <>
 std::string toString(const std::string& value) {
   return value;
 }

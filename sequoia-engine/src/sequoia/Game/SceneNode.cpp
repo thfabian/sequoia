@@ -93,15 +93,16 @@ applySequentialNoexcept(SceneNode* node,
 } // anonymous namespace
 
 SceneNode::SceneNode(const std::string& name, SceneNode::SceneNodeKind kind)
-    : kind_(kind), position_(math::vec3()), orientation_(math::quat()), scale_(1.0f),
-      modelMatrix_(), modelMatrixIsDirty_(true), parent_(), name_(name) {
+    : std::enable_shared_from_this<SceneNode>(), kind_(kind), position_(math::vec3()),
+      orientation_(math::quat()), scale_(1.0f), modelMatrix_(), modelMatrixIsDirty_(true),
+      parent_(), name_(name) {
   for(int i = 0; i < capabilities_.size(); ++i)
     capabilities_[i] = nullptr;
 }
 
 SceneNode::SceneNode(const SceneNode& other)
-    : kind_(other.kind_), position_(other.position_), orientation_(other.orientation_),
-      scale_(other.scale_), modelMatrix_(other.modelMatrix_),
+    : std::enable_shared_from_this<SceneNode>(), kind_(other.kind_), position_(other.position_),
+      orientation_(other.orientation_), scale_(other.scale_), modelMatrix_(other.modelMatrix_),
       modelMatrixIsDirty_(other.modelMatrixIsDirty_), parent_(other.parent_) {
 
   // Adjust the name, we append a `_copy_X` where `X` is the version of the copy

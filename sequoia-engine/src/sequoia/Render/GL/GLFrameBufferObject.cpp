@@ -129,12 +129,12 @@ std::string GLFrameBufferObject::toString() const {
       !fragmentDataMap_.empty()
           ? core::indent(core::toStringRange(fragmentDataMap_,
                                              [](const auto& pair) {
-                                               std::stringstream ss;
-                                               ss << "[\n  fragment_data = " << pair.second << "\n"
-                                                  << "  texture = "
-                                                  << core::indent(pair.second->toString()) << "\n"
-                                                  << "]";
-                                               return ss.str();
+                                               std::stringstream s;
+                                               s << "[\n  fragment_data = " << pair.second << "\n"
+                                                 << "  texture = "
+                                                 << core::indent(pair.second->toString()) << "\n"
+                                                 << "]";
+                                               return s.str();
                                              }))
           : "null");
 }

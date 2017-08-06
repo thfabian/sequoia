@@ -96,19 +96,19 @@ std::string GLProgram::toString() const {
       !uniformInfoMap_.empty()
           ? core::indent(core::toStringRange(uniformInfoMap_,
                                              [](const auto& pair) {
-                                               std::stringstream ss;
-                                               ss << "name = " << pair.first
-                                                  << ", type = " << pair.second.Type;
-                                               return ss.str();
+                                               std::stringstream s;
+                                               s << "name = " << pair.first
+                                                 << ", type = " << pair.second.Type;
+                                               return s.str();
                                              }))
           : "null",
       !textureSamplers_.empty()
           ? core::indent(core::toStringRange(textureSamplers_,
                                              [](const auto& pair) {
-                                               std::stringstream ss;
-                                               ss << "name = " << pair.second
-                                                  << ", textureUnit = " << pair.first;
-                                               return ss.str();
+                                               std::stringstream s;
+                                               s << "name = " << pair.second
+                                                 << ", textureUnit = " << pair.first;
+                                               return s.str();
                                              }))
           : "null",
       !shaders_.empty()
