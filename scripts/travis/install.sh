@@ -118,13 +118,13 @@ function install_driver() {
     exit 1
   fi
 
-  if [ -z ${CC_COMPILER+x} ]; then
-    >&2 echo "$0: error: CC_COMPILER is undefined"
+  if [ -z ${C_COMPILER+x} ]; then
+    >&2 echo "$0: error: C_COMPILER is undefined"
     exit 1
   fi
 
   export CXX=${CXX_COMPILER}
-  export CC=${CC_COMPILER}
+  export CC=${C_COMPILER}
 
   # Build package(s)
   IFS=', ' read -r -a split_package <<< "$packages"
