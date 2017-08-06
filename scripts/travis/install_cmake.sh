@@ -18,7 +18,7 @@
 #
 # @param $1   Install directory
 # @param $2   CMake version triple (X.Y.Z)
-install_cmake() {
+function install_cmake() {
   pushd $(pwd)
   local start_time=$(date +%s)
 

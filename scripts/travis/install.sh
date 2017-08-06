@@ -23,13 +23,13 @@ LOG_LEVEL_ALL
 # @brief Issue an error message to `stderr` and exit with 1
 #
 # @param $1   Message to print
-fatal_error() {
+function fatal_error() {
   ERROR $1 
   exit 1
 }
 
 # @brief Print the usage and exit with 0
-print_help() {
+function print_help() {
 cat << EOF
 Usage: $0 --install-dir <install-dir> --build <package> [options]
 
@@ -62,7 +62,7 @@ EOF
 # @param $1   Install directory
 # @param $2   Package to install
 # @param $*   Additional arguments passed to the install function
-install_package() {
+function install_package() {
   local install_dir=$1
   shift
   local package=$1
@@ -79,8 +79,8 @@ install_package() {
   "install_${package}" $install_dir ${!package_version_var} $args
 }
 
-# @brief Install driver
-install_driver() {
+# @brief Install command-line driver
+function install_driver() {
   args=$(getopt -o b:i:h:: -l build:,install-dir:,help:: -n 'install' -- "$@")
   eval set -- "$args"
 
@@ -113,8 +113,18 @@ install_driver() {
   mkdir -p ${install_dir}
 
   # Export toolchain
-  export CXX=g++-5
-  export CC=gcc-5
+  if [ -z ${CXX_COMPILER+x} ]; then
+    >&2 echo "$0: error: CXX_COMPILER is undefined"
+    exit 1
+  fi
+
+  if [ -z ${CC_COMPILER+x} ]; then
+    >&2 echo "$0: error: CC_COMPILER is undefined"
+    exit 1
+  fi
+
+  export CXX=${CXX_COMPILER}
+  export CC=${CC_COMPILER}
 
   # Build package(s)
   IFS=', ' read -r -a split_package <<< "$packages"

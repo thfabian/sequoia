@@ -16,12 +16,10 @@
 
 # @brief Install the Boost libraries
 #
-# This function relies on $CXX pointing to a GNU compiler.
-#
 # @param $1   Install directory
 # @param $2   Boost version triple (X.Y.Z)
 # @param $*   Boost components to build (e.g program_options)
-install_boost() {
+function install_boost() {
   pushd $(pwd)
   local start_time=$(date +%s)
 
@@ -57,9 +55,18 @@ install_boost() {
     NOTICE "${FUNCNAME[0]}: Successfully downloaded $boost_url"
 
     cd ${boost_install_dir}
-    local gcc_version=$($CXX -dumpversion)
-    NOTICE "${FUNCNAME[0]}: Building boost with toolset gcc : $gcc_version ..."
-    echo "using gcc : ${gcc_version} : ${CXX} ;" > user-config.jam
+
+    if [ "$(echo $CXX | grep gcc -c)" = "1" ]; then
+      local toolset="gcc"
+      local toolset_version=$($CXX -dumpversion)
+    else
+      local toolset="clang"
+      local toolset_version=$($CXX --version | grep version |                                      \
+                              sed "s/.*version \([0-9]*\.[0-9]*\.[0-9]*\).*/\1/")
+    fi
+
+    echo "using ${toolset} : ${toolset_version} : ${CXX} ;" > user-config.jam
+    NOTICE "${FUNCNAME[0]}: Building boost with toolset $toolset : $toolset_version ..."
     
     NOTICE "${FUNCNAME[0]}: Building components: $*"
     local boost_components_arg=$*
@@ -69,7 +76,7 @@ install_boost() {
 
     NOTICE "${FUNCNAME[0]}: Starting to build boost ..."
     ./bootstrap.sh || abort_and_cleanup "Failed to configure boost"
-    ./b2 -j2 --toolset=gcc-${gcc_version} --prefix=${boost_install_dir}                            \
+    ./b2 -j2 --toolset=${toolset}-${toolset_version} --prefix=${boost_install_dir}                 \
              --user-config=${boost_install_dir}/user-config.jam                                    \
              ${boost_components_arg} install || abort_and_cleanup "Failed to build boost"
   fi

@@ -18,7 +18,7 @@
 #
 # @param $1   Install directory
 # @param $2   opencv version triple (X.Y.Z)
-install_opencv() {
+function install_opencv() {
   pushd $(pwd)
   local start_time=$(date +%s)
 

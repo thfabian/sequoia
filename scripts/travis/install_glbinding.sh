@@ -18,7 +18,7 @@
 #
 # @param $1   Install directory
 # @param $2   glbinding version triple (X.Y.Z)
-install_glbinding() {
+function install_glbinding() {
   pushd $(pwd)
   local start_time=$(date +%s)
 
