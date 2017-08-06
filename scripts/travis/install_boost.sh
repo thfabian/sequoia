@@ -56,13 +56,13 @@ function install_boost() {
 
     cd ${boost_install_dir}
 
-    if [ "$(echo $CXX | grep g++ -c)" = "1" ]; then
-      local toolset="gcc"
-      local toolset_version=$($CXX -dumpversion)
-    else
+    if [ "$(echo $CXX | grep clang++ -c)" = "1" ]; then
       local toolset="clang"
       local toolset_version=$($CXX --version | grep version |                                      \
                               sed "s/.*version \([0-9]*\.[0-9]*\.[0-9]*\).*/\1/")
+    else
+      local toolset="gcc"
+      local toolset_version=$($CXX -dumpversion)
     fi
 
     echo "using ${toolset} : ${toolset_version} : ${CXX} ;" > user-config.jam
