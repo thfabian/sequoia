@@ -4,12 +4,12 @@ sudo: false
 language: c++
 
 addons:
-  apt: &global_addons
-    sources: 
+  apt:
+    sources:
       - ubuntu-toolchain-r-test
-      # - llvm-toolchain-trusty-3.9
-      # - llvm-toolchain-trusty-4.0
-    packages:
+      - llvm-toolchain-trusty-3.9
+      - llvm-toolchain-trusty-4.0
+    packages: &global_packages
       - g++-5
       - gcc-5
       - g++-6
@@ -62,11 +62,9 @@ jobs:
              -b cmake,boost,glbinding,opencv
       addons:
         apt:
-          <<: *global_addons  
-          sources+: llvm-toolchain-trusty-3.9
-          packages+: 
-            - clang-3.9 
-            - clang++-3.9
+          << : global_packages
+          ? clang-3.9 
+          ? clang++-3.9
 
     # # Linux GCC 5.4 (Release)
     # - stage: Test
