@@ -126,6 +126,9 @@ function install_driver() {
   export CXX=${CXX_COMPILER}
   export CC=${C_COMPILER}
 
+  $CXX --version
+  $CC --version
+
   # Build package(s)
   IFS=', ' read -r -a split_package <<< "$packages"
   for package in "${split_package[@]}"

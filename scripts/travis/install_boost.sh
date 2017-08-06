@@ -56,7 +56,7 @@ function install_boost() {
 
     cd ${boost_install_dir}
 
-    if [ "$(echo $CXX | grep gcc -c)" = "1" ]; then
+    if [ "$(echo $CXX | grep g++ -c)" = "1" ]; then
       local toolset="gcc"
       local toolset_version=$($CXX -dumpversion)
     else
