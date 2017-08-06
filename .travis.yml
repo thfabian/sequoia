@@ -60,11 +60,11 @@ jobs:
       script: |
         bash ${SCRIPT_DIR}/driver-install.sh -i ${CACHE_DIR}                                       \
              -b cmake,boost,glbinding,opencv
-      # addons:
-      #   apt:
-      #     << : *global_packages
-      #       - clang-3.9 
-      #       - clang++-3.9
+      addons:
+        apt:
+          << : *global_packages
+          - clang-3.9 
+          - clang++-3.9
 
     # Linux GCC 5.4 (Release)
     - stage: Test
