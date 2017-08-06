@@ -62,10 +62,9 @@ jobs:
              -b cmake,boost,glbinding,opencv
       addons:
         apt:
-          << : global_packages
+          << : *global_packages
           ? clang-3.9 
           ? clang++-3.9
-
 
     # # Linux GCC 5.4 (Release)
     # - stage: Test
