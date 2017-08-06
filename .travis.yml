@@ -7,14 +7,14 @@ addons:
   apt:
     sources:
       - ubuntu-toolchain-r-test
-      - llvm-toolchain-trusty-3.8
+      - llvm-toolchain-trusty-4.0
     packages:
       - g++-5
       - gcc-5
       - g++-6
       - gcc-6
-      - clang-3.8
-      - clang++-3.8
+      - clang-4.0
+      - clang++-4.0
 
       - ccache
       - libtbb-dev
@@ -60,7 +60,7 @@ jobs:
              -b cmake,boost,glbinding,opencv
     - stage: Prepare Cache
       compiler: clang
-      env: CXX_COMPILER=clang++-3.8 C_COMPILER=clang-3.8
+      env: CXX_COMPILER=clang++-4.0 C_COMPILER=clang-4.0
       script: |
         bash ${SCRIPT_DIR}/driver-install.sh -i ${CACHE_DIR}                                       \
              -b cmake,boost,glbinding,opencv
@@ -89,16 +89,16 @@ jobs:
       env: CONFIG=RelWithDebInfo CXX_COMPILER=g++-6 C_COMPILER=gcc-6
       script: bash ${SCRIPT_DIR}/driver-test.sh
 
-    # Clang 3.8 (Release)
+    # Clang 4.0 (Release)
     - stage: Test
       compiler: clang
-      env: CONFIG=Release CXX_COMPILER=clang++-3.8 C_COMPILER=clang-3.8
+      env: CONFIG=Release CXX_COMPILER=clang++-4.0 C_COMPILER=clang-4.0
       script: bash ${SCRIPT_DIR}/driver-test.sh
 
-    # Clang 3.8 (RelWithDebInfo)
+    # Clang 4.0 (RelWithDebInfo)
     - stage: Test
       compiler: clang
-      env: CONFIG=RelWithDebInfo CXX_COMPILER=clang++-3.8 C_COMPILER=clang-3.8
+      env: CONFIG=RelWithDebInfo CXX_COMPILER=clang++-4.0 C_COMPILER=clang-4.0
       script: bash ${SCRIPT_DIR}/driver-test.sh
 
 cache:
