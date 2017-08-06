@@ -40,17 +40,17 @@ static constexpr std::size_t DefaultAlignment = 32;
 /// @brief Generic deleter for `Alloctor`
 template <typename Allocator>
 struct deleter {
-  deleter(const Allocator& a) : a(a) {}
+  deleter(const Allocator& a) : a_(a) {}
 
   typedef typename std::allocator_traits<Allocator>::pointer pointer;
 
   void operator()(pointer p) const {
-    Allocator alloc(a);
+    Allocator alloc(a_);
     std::allocator_traits<Allocator>::destroy(alloc, std::addressof(*p));
     std::allocator_traits<Allocator>::deallocate(alloc, p, 1);
   }
 
-  Allocator a;
+  Allocator a_;
 };
 
 /// @brief Cache Aligned allocator

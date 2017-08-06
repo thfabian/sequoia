@@ -85,6 +85,8 @@ private:
 /// @ingroup gl
 class SEQUOIA_API NativeWindowListener {
 public:
+  virtual ~NativeWindowListener() {}
+
   /// @brief Window has been resized
   virtual void nativeWindowGeometryChanged(NativeWindow* window) = 0;
 

@@ -52,6 +52,7 @@ using VertexIndexType = unsigned int;
 ///
 /// where @b X is one of `{ Position, Normal, TexCoord, Color}`.
 struct SEQUOIA_API VertexLayout {
+  virtual ~VertexLayout() {}
 
   enum Type {
     Invalid,
@@ -124,6 +125,8 @@ struct SEQUOIA_API Vertex2D {
 
 /// @brief Layout description of `Vertex2D`
 struct SEQUOIA_API Vertex2DLayout : public VertexLayout {
+  virtual ~Vertex2DLayout() {}
+  
   using VertexType = Vertex2D;
   virtual void accept(VertexVisitor& visitor) const override;
 };
@@ -155,6 +158,8 @@ struct SEQUOIA_API Vertex3D {
 /// @brief Layout description of `Vertex3D`
 /// @ingroup render
 struct SEQUOIA_API Vertex3DLayout : public VertexLayout {
+  virtual ~Vertex3DLayout() {}
+  
   using VertexType = Vertex3D;
   virtual void accept(VertexVisitor& visitor) const override;
 };

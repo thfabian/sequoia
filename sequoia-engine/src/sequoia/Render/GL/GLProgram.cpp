@@ -201,10 +201,9 @@ struct GLTypeCompat {};
 
 SEQUOIA_SET_UNIFORM_VARIABLE_IMPL(int, glProgramUniform1iv, GL_INT, GL_SAMPLER_2D)
 SEQUOIA_SET_UNIFORM_VARIABLE_IMPL(float, glProgramUniform1fv, GL_FLOAT)
-SEQUOIA_SET_UNIFORM_VARIABLE_IMPL(bool, ([](GLuint program, GLint location, GLsizei count,
-                                            const bool* value) {
-                                    GLboolean valuePtr = *value;
-                                    glProgramUniform1bv(program, location, count, &valuePtr);
+SEQUOIA_SET_UNIFORM_VARIABLE_IMPL(bool, ([](GLuint p, GLint l, GLsizei c, const bool* v) {
+                                    GLboolean valuePtr = *v;
+                                    glProgramUniform1bv(p, l, c, &valuePtr);
                                   }),
                                   GL_BOOL)
 
@@ -212,22 +211,16 @@ SEQUOIA_SET_UNIFORM_VARIABLE_IMPL(math::vec2, glProgramUniform2fv, GL_FLOAT_VEC2
 SEQUOIA_SET_UNIFORM_VARIABLE_IMPL(math::vec3, glProgramUniform3fv, GL_FLOAT_VEC3)
 SEQUOIA_SET_UNIFORM_VARIABLE_IMPL(math::vec4, glProgramUniform4fv, GL_FLOAT_VEC4)
 
-SEQUOIA_SET_UNIFORM_VARIABLE_IMPL(math::mat2, ([](GLuint program, GLint location, GLsizei count,
-                                                  const GLfloat* value) {
-                                    glProgramUniformMatrix2fv(program, location, count, false,
-                                                              value);
+SEQUOIA_SET_UNIFORM_VARIABLE_IMPL(math::mat2, ([](GLuint p, GLint l, GLsizei c, const GLfloat* v) {
+                                    glProgramUniformMatrix2fv(p, l, c, false, v);
                                   }),
                                   GL_FLOAT_MAT2)
-SEQUOIA_SET_UNIFORM_VARIABLE_IMPL(math::mat3, ([](GLuint program, GLint location, GLsizei count,
-                                                  const GLfloat* value) {
-                                    glProgramUniformMatrix3fv(program, location, count, false,
-                                                              value);
+SEQUOIA_SET_UNIFORM_VARIABLE_IMPL(math::mat3, ([](GLuint p, GLint l, GLsizei c, const GLfloat* v) {
+                                    glProgramUniformMatrix3fv(p, l, c, false, v);
                                   }),
                                   GL_FLOAT_MAT3)
-SEQUOIA_SET_UNIFORM_VARIABLE_IMPL(math::mat4, ([](GLuint program, GLint location, GLsizei count,
-                                                  const GLfloat* value) {
-                                    glProgramUniformMatrix4fv(program, location, count, false,
-                                                              value);
+SEQUOIA_SET_UNIFORM_VARIABLE_IMPL(math::mat4, ([](GLuint p, GLint l, GLsizei c, const GLfloat* v) {
+                                    glProgramUniformMatrix4fv(p, l, c, false, v);
                                   }),
                                   GL_FLOAT_MAT4)
 
@@ -237,7 +230,7 @@ SEQUOIA_SET_UNIFORM_VARIABLE_IMPL(math::mat4, ([](GLuint program, GLint location
 
 bool GLProgram::setUniformVariable(const std::string& name, const UniformVariable& variable) {
   SEQUOIA_ASSERT_MSG(isValid(), "setting uniform variable of invalid program");
-  
+
   switch(variable.getType()) {
 #define UNIFORM_VARIABLE_TYPE(Type, Name)                                                          \
   case UniformType::Name:                                                                          \

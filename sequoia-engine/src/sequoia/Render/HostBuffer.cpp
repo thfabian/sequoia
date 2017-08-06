@@ -50,6 +50,7 @@ void HostBuffer::read(std::size_t offset, std::size_t length, void* dest) {
 }
 
 void HostBuffer::allocateImpl(std::size_t numBytes, Buffer::UsageHint usageHint) {
+  (void)usageHint;
   dataPtr_ = memory::aligned_alloc(numBytes);
 }
 

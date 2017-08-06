@@ -82,6 +82,10 @@ using Singleton = core::Singleton<Derived>;
 
 } // namespace sequoia
 
+// This should never be instantiated
+template <typename T>
+T* sequoia::core::Singleton<T>::Instance = nullptr;
+
 /// @brief Declares the instance of the singleton `Class`
 ///
 /// Note that you **must** declare `SEQUOIA_DECLARE_SINGLETON` inside the `sequoia` namespace (and

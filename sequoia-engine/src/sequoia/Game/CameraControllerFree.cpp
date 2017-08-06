@@ -13,8 +13,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Game/CameraControllerFree.h"
 #include "sequoia/Core/Format.h"
+#include "sequoia/Game/CameraControllerFree.h"
 #include "sequoia/Game/Game.h"
 
 namespace sequoia {

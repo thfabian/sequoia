@@ -13,8 +13,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Game/MeshManager.h"
 #include "sequoia/Core/Logging.h"
+#include "sequoia/Game/MeshManager.h"
 #include "sequoia/Render/RenderSystem.h"
 
 namespace sequoia {

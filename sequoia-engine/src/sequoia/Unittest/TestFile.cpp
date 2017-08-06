@@ -27,7 +27,7 @@ namespace sequoia {
 namespace unittest {
 
 TestFile::TestFile(const char* path, FileType type)
-    : File(File::TypeFromExtension(path)), path_(path) {}
+    : File(type == FileType::Unknown ? File::TypeFromExtension(path) : type), path_(path) {}
 
 const Byte* TestFile::getData() {
   if(data_.empty())

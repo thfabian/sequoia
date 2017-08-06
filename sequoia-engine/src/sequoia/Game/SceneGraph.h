@@ -35,6 +35,8 @@ class SEQUOIA_API SceneGraph : public NonCopyable {
   std::vector<std::shared_ptr<SceneNode>> nodes_;
 
 public:
+  virtual ~SceneGraph() {}
+
   /// @brief Insert a new scenen `node` into the graph
   void insert(const std::shared_ptr<SceneNode>& node) { nodes_.emplace_back(node); }
 

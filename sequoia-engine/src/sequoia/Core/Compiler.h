@@ -59,7 +59,9 @@
 #endif
 
 #if __cplusplus >= 201500L
-#define SEQUOIA_HAS_CXX1Z 1
+#define SEQUOIA_HAS_CXX17 1
+#else
+#define SEQUOIA_HAS_CXX17 0
 #endif
 
 /// @brief Extend the default `__GNUC_PREREQ` even if glibc's `features.h` isn't available

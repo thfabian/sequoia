@@ -18,7 +18,7 @@
 
 #include "sequoia/Core/Compiler.h"
 
-#if SEQUOIA_HAS_CXX1Z && __has_include(<optional>)
+#if SEQUOIA_HAS_CXX17 && __has_include(<optional>)
 #define SEQUOIA_USE_STD_OPTIONAL
 #include <optional>
 #else

@@ -144,7 +144,7 @@ std::vector<GLenum> GLFrameBufferObject::getDrawBuffers() const noexcept {
   // highest `location` value
   unsigned int maxLocation = std::accumulate(
       fragmentDataMap_.begin(), fragmentDataMap_.end(), 0,
-      [](unsigned int maxLocation, const auto& pair) { return std::max(maxLocation, pair.first); });
+      [](unsigned int maxLoc, const auto& pair) { return std::max(maxLoc, pair.first); });
 
   std::vector<GLenum> drawBuffers(maxLocation + 1, GL_NONE);
   std::for_each(fragmentDataMap_.begin(), fragmentDataMap_.end(), [&drawBuffers](const auto& pair) {

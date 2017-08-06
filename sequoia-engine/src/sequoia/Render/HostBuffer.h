@@ -66,7 +66,10 @@ public:
   static bool classof(const Buffer* buffer) { return buffer->getKind() == BK_HostBuffer; }
 
 protected:
-  virtual void* lockImpl(LockOption option) override { return dataPtr_; }
+  virtual void* lockImpl(LockOption option) override {
+    (void)option;
+    return dataPtr_;
+  }
   virtual void unlockImpl() override {}
 
   /// @copydoc Allocate `numBytes` memory, all hints are ignored

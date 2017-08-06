@@ -13,8 +13,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Core/Terminal.h"
 #include "sequoia/Core/Compiler.h"
+#include "sequoia/Core/Terminal.h"
 #include "sequoia/Core/Unreachable.h"
 #include <iostream>
 
@@ -239,7 +239,7 @@ struct ColorImplUnix : public ColorImpl {
 #endif
 
 // Factory method to get the platform specific implementation
-ColorImpl* ColorFactory() {
+static ColorImpl* ColorFactory() {
   if(Terminal::Color::DisableColor) {
     static ColorImplEmpty colorInstance;
     return static_cast<ColorImpl*>(&colorInstance);

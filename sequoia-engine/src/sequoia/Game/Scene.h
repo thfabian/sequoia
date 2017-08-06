@@ -32,6 +32,8 @@ namespace game {
 /// @ingroup game
 class SEQUOIA_API SceneListener {
 public:
+  virtual ~SceneListener() {}
+
   /// @brief The active camera of the scene changed
   virtual void sceneListenerActiveCameraChanged(Scene* scene) = 0;
 };
@@ -44,6 +46,9 @@ public:
 
   /// @brief Create an empty scene
   Scene();
+
+  /// @brief Destruct scene
+  virtual ~Scene() {}
 
   /// @brief Set the active Camera
   void setActiveCamera(const std::shared_ptr<render::Camera>& camera);

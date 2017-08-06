@@ -51,11 +51,13 @@ class BenchmarkFixture : public benchmark::Fixture, public NonCopyable {
 
 public:
   virtual void SetUp(benchmark::State& st) override {
+    (void) st;
     fixture_ = std::make_unique<FixtureT>();
     fixture_->SetUp();
   }
 
   virtual void TearDown(benchmark::State& st) override {
+    (void) st;
     fixture_->TearDown();
     fixture_.release();
   }

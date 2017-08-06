@@ -368,11 +368,26 @@ macro(sequoia_set_cxx_flags)
 
     # Warnings
     sequoia_check_and_set_cxx_flag("-Wall" HAVE_GCC_WALL)
-    sequoia_check_and_set_cxx_flag("-Werror=return-type" HAVE_GCC_ERROR_RETURN_TYPE)
+    sequoia_check_and_set_cxx_flag("-W" HAVE_GCC_W)
+    sequoia_check_and_set_cxx_flag("-Wformat" HAVE_GCC_WFORMAT)
+    sequoia_check_and_set_cxx_flag("-Wmissing-declarations" HAVE_GCC_WMISSING_DECLARATIONS)
+    sequoia_check_and_set_cxx_flag("-Wmissing-prototypes" HAVE_GCC_WMISSING_PROTOTYPES)
+    sequoia_check_and_set_cxx_flag("-Wstrict-prototypes" HAVE_GCC_WSTRICT_PROTOTYPES)
+    sequoia_check_and_set_cxx_flag("-Wundef" HAVE_GCC_WUNDEF)
+    sequoia_check_and_set_cxx_flag("-Winit-self" HAVE_GCC_WINI_SELF)
+    sequoia_check_and_set_cxx_flag("-Wpointer-arith" HAVE_GCC_WPOINTER_ARITH)
+    sequoia_check_and_set_cxx_flag("-Wshadow" HAVE_GCC_WSHADOW)
+    sequoia_check_and_set_cxx_flag("-Wsign-promo" HAVE_GCC_WSIGN_PROMO)
+    sequoia_check_and_set_cxx_flag("-Werror=return-type" HAVE_GCC_WERROR_RETURN_TYPE)
+    sequoia_check_and_set_cxx_flag("-Werror=non-virtual-dtor" HAVE_GCC_WERROR_NON_VIRTUAL_DTOR)
+    sequoia_check_and_set_cxx_flag("-Werror=address" HAVE_GCC_WERROR_ADDRESS)
+    sequoia_check_and_set_cxx_flag("-Werror=sequence-point" HAVE_GCC_WERROR_SEQUENCE_POINT)
+
     sequoia_check_and_set_cxx_flag("-Wno-sign-compare" HAVE_GCC_WNO_SIGN_COMPARE)
+    sequoia_check_and_set_cxx_flag("-Wno-unused-parameter" HAVE_GCC_WNO_UNUSDED_PARAMETER)
     
     if(BUILD_SHARED_LIBS)
-      sequoia_check_and_set_cxx_flag("-fPIC" HAVE_GCC_POSITION_INDEPENDENT_CODE)
+      sequoia_check_and_set_cxx_flag("-fPIC" HAVE_GCC_PIC)
     endif()
 
     if(SEQUOIA_USE_CCACHE)

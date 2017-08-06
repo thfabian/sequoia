@@ -252,12 +252,12 @@ void GLTextureManager::makeValid(GLTexture* texture) {
 
   if(texture->hasImage()) {
     // Uploade image to device
-    if(RegularImage* image = dyn_cast<RegularImage>(texture->getImage().get())) {
-      uploadRegularImage(texture->target_, image);
+    if(RegularImage* regularImage = dyn_cast<RegularImage>(texture->getImage().get())) {
+      uploadRegularImage(texture->target_, regularImage);
       if(param.UseMipmap)
         glGenerateMipmap(texture->target_);
-    } else if(TextureImage* image = dyn_cast<TextureImage>(texture->getImage().get()))
-      uploadTextureImage(texture->target_, image);
+    } else if(TextureImage* texImage = dyn_cast<TextureImage>(texture->getImage().get()))
+      uploadTextureImage(texture->target_, texImage);
     else
       sequoia_unreachable("invalid image format");
 

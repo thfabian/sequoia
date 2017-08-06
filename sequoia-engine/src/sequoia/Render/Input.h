@@ -242,6 +242,8 @@ struct SEQUOIA_API KeyboardEvent {
 /// @ingroup render
 class SEQUOIA_API KeyboardListener {
 public:
+  virtual ~KeyboardListener() {}
+  
   /// @brief Handle keyboard event
   virtual void keyboardEvent(const KeyboardEvent& event) = 0;
 };
@@ -316,6 +318,8 @@ struct SEQUOIA_API MousePositionEvent {
 /// @ingroup render
 class SEQUOIA_API MouseListener {
 public:
+  virtual ~MouseListener() {}
+  
   /// @brief Handle mouse button event
   virtual void mouseButtonEvent(const MouseButtonEvent& event) = 0;
 
@@ -327,6 +331,8 @@ public:
 /// @ingroup render
 class SEQUOIA_API InputEventListener {
 public:
+  virtual ~InputEventListener() {}
+  
   /// @brief Start polling input events
   virtual void inputEventStart() = 0;
 

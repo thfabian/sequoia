@@ -20,6 +20,8 @@ using namespace sequoia::core;
 
 namespace sequoia {
 
+std::ostream& operator<<(std::ostream& OS, const std::pair<StringRef, StringRef>& P);
+
 std::ostream& operator<<(std::ostream& OS, const std::pair<StringRef, StringRef>& P) {
   OS << "(" << P.first << ", " << P.second << ")";
   return OS;

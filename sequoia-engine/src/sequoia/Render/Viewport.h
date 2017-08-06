@@ -28,6 +28,8 @@ namespace render {
 /// @ingroup render
 class SEQUOIA_API ViewportListener {
 public:
+  virtual ~ViewportListener() {}
+  
   /// @brief The geometry of the Viewport changed
   ///
   /// Default implementation does nothing

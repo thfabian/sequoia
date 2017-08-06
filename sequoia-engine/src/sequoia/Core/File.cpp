@@ -27,7 +27,6 @@ static std::unordered_map<std::string, FileType> ExtensionMap;
 static std::once_flag ExtensionMapInitFlag;
 
 FileType File::TypeFromExtension(StringRef path) noexcept {
-  std::string ext(path.substr(path.find_last_of(".")).str());
 
   std::call_once(ExtensionMapInitFlag, []() {
     std::vector<StringRef> extensionsVec;
@@ -40,6 +39,7 @@ FileType File::TypeFromExtension(StringRef path) noexcept {
 #undef FILE_TYPE
   });
 
+  std::string ext(path.substr(path.find_last_of(".")).str());
   auto it = ExtensionMap.find(ext);
   return it != ExtensionMap.end() ? it->second : FileType::Unknown;
 }

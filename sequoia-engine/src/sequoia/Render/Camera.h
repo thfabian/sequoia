@@ -32,6 +32,8 @@ namespace render {
 /// @ingroup render
 class SEQUOIA_API CameraPositionListener {
 public:
+  virtual ~CameraPositionListener() {}
+
   /// @brief The camera position changed
   virtual void cameraListenerPositionChanged(Camera* camera) = 0;
 

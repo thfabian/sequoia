@@ -60,6 +60,8 @@ class SEQUOIA_API VertexVisitor {
   std::size_t numVertices_ = 0; ///< Number of vertices
 
 public:
+  virtual ~VertexVisitor() {}
+  
   /// @brief Get the vertex data corresponding to the given layout
   template <class VertexLayoutType, class VertexType = typename VertexLayoutType::VertexType>
   VertexType* getVerticesPtr(const VertexLayoutType*) {
@@ -89,6 +91,8 @@ class SEQUOIA_API VertexVisitorStringifier : public VertexVisitor {
   std::string string_;
 
 public:
+  virtual ~VertexVisitorStringifier() {}
+
   virtual void visit(const Vertex3DLayout* layout) override;
   virtual void visit(const Vertex2DLayout* layout) override;
 

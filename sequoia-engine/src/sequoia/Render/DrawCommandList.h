@@ -38,6 +38,8 @@ protected:
   std::vector<DrawCommand*> commands_;
 
 public:
+  virtual ~DrawCommandList() {}
+  
   /// @brief Default size of a DrawCommandList
   static constexpr std::size_t DefaultSize = 1024;
 

@@ -29,6 +29,8 @@ class RenderTarget;
 /// @ingroup render
 class SEQUOIA_API FrameListener {
 public:
+  virtual ~FrameListener() {}
+
   /// @brief Begin of the rendering a frame of `target`
   virtual void frameListenerRenderingBegin(RenderTarget* target) = 0;
 

@@ -178,8 +178,7 @@ std::string TextureImage::toString() const {
                       "  height = %i,\n"
                       "  levels = %i\n"
                       "]",
-                      file_->getPath(), image_->extent()[0], image_->extent()[1],
-                      image_->levels());
+                      file_->getPath(), image_->extent()[0], image_->extent()[1], image_->levels());
 }
 
 bool TextureImage::equals(const Image* other) const noexcept {
@@ -196,9 +195,9 @@ bool TextureImage::equals(const Image* other) const noexcept {
 int TextureImage::getWidth() const noexcept { return image_->extent()[0]; }
 int TextureImage::getHeight() const noexcept { return image_->extent()[1]; }
 
-const gli::texture&TextureImage::getTexture() const { return *image_; }
+const gli::texture& TextureImage::getTexture() const { return *image_; }
 
-gli::texture&TextureImage::getTexture() { return *image_; }
+gli::texture& TextureImage::getTexture() { return *image_; }
 
 } // namespace core
 
