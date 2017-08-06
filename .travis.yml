@@ -3,43 +3,42 @@ sudo: false
 
 language: c++
 
-addons:
-  apt:
-    sources:
-      - ubuntu-toolchain-r-test
-      - llvm-toolchain-trusty-3.9
-      - llvm-toolchain-trusty-4.0
-    packages: &global_packages
-      - g++-5
-      - gcc-5
-      - g++-6
-      - gcc-6
-      # - clang-3.9
-      # - clang++-3.9
-      # - clang-4.0
-      # - clang++-4.0
+_apt:
+  &shared_sources:
+    - ubuntu-toolchain-r-test
+    - llvm-toolchain-trusty-3.9
+    - llvm-toolchain-trusty-4.0
+  &shared_packages
+    - g++-5
+    - gcc-5
+    - g++-6
+    - gcc-6
+    # - clang-3.9
+    # - clang++-3.9
+    # - clang-4.0
+    # - clang++-4.0
 
-      - ccache
-      - libtbb-dev
+    - ccache
+    - libtbb-dev
 
-      # OpenCV deps
-      - libjpeg-dev 
-      - libpng12-dev 
-      - libtiff4-dev 
-      - libjasper-dev 
+    # OpenCV deps
+    - libjpeg-dev 
+    - libpng12-dev 
+    - libtiff4-dev 
+    - libjasper-dev 
 
-      # glfw3 deps
-      - xorg-dev 
-      - libglu1-mesa-dev
-      - libx11-6
-      - libxcursor1
-      - libxi6
-      - libxinerama1
-      - libxrandr2
-      - libxxf86vm1
+    # glfw3 deps
+    - xorg-dev 
+    - libglu1-mesa-dev
+    - libx11-6
+    - libxcursor1
+    - libxi6
+    - libxinerama1
+    - libxrandr2
+    - libxxf86vm1
 
-      # backward deps
-      - libdw-dev
+    # backward deps
+    - libdw-dev
 
 os:
   - linux
@@ -62,57 +61,56 @@ jobs:
              -b cmake,boost,glbinding,opencv
       addons:
         apt:
-          << : *global_packages
-          - clang-3.9 
-          - clang++-3.9
+          sources: *shared_sources
+          packages: *shared_packages
 
-    # Linux GCC 5.4 (Release)
-    - stage: Test
-      compiler: gcc
-      env: CONFIG=Release CXX_COMPILER=g++-5 C_COMPILER=gcc-5
-      script: bash ${SCRIPT_DIR}/driver-test.sh
+    # # Linux GCC 5.4 (Release)
+    # - stage: Test
+    #   compiler: gcc
+    #   env: CONFIG=Release CXX_COMPILER=g++-5 C_COMPILER=gcc-5
+    #   script: bash ${SCRIPT_DIR}/driver-test.sh
     
-    # Linux GCC 5.4 (RelWithDebInfo)
-    - stage: Test
-      compiler: gcc
-      env: CONFIG=RelWithDebInfo CXX_COMPILER=g++-5 C_COMPILER=gcc-5
-      script: bash ${SCRIPT_DIR}/driver-test.sh
+    # # Linux GCC 5.4 (RelWithDebInfo)
+    # - stage: Test
+    #   compiler: gcc
+    #   env: CONFIG=RelWithDebInfo CXX_COMPILER=g++-5 C_COMPILER=gcc-5
+    #   script: bash ${SCRIPT_DIR}/driver-test.sh
 
-    # Linux GCC 6.3 (Release)
-    - stage: Test
-      compiler: gcc
-      env: CONFIG=Release CXX_COMPILER=g++-6 C_COMPILER=gcc-6
-      script: bash ${SCRIPT_DIR}/driver-test.sh
+    # # Linux GCC 6.3 (Release)
+    # - stage: Test
+    #   compiler: gcc
+    #   env: CONFIG=Release CXX_COMPILER=g++-6 C_COMPILER=gcc-6
+    #   script: bash ${SCRIPT_DIR}/driver-test.sh
     
-    # Linux GCC 6.3 (RelWithDebInfo)
-    - stage: Test
-      compiler: gcc
-      env: CONFIG=RelWithDebInfo CXX_COMPILER=g++-6 C_COMPILER=gcc-6
-      script: bash ${SCRIPT_DIR}/driver-test.sh
+    # # Linux GCC 6.3 (RelWithDebInfo)
+    # - stage: Test
+    #   compiler: gcc
+    #   env: CONFIG=RelWithDebInfo CXX_COMPILER=g++-6 C_COMPILER=gcc-6
+    #   script: bash ${SCRIPT_DIR}/driver-test.sh
 
-    # Clang 3.9 (Release)
-    - stage: Test
-      compiler: clang
-      env: CONFIG=Release CXX_COMPILER=clang++-3.9 C_COMPILER=clang-3.9
-      script: bash ${SCRIPT_DIR}/driver-test.sh
+    # # Clang 3.9 (Release)
+    # - stage: Test
+    #   compiler: clang
+    #   env: CONFIG=Release CXX_COMPILER=clang++-3.9 C_COMPILER=clang-3.9
+    #   script: bash ${SCRIPT_DIR}/driver-test.sh
 
-    # Clang 3.9 (RelWithDebInfo)
-    - stage: Test
-      compiler: clang
-      env: CONFIG=RelWithDebInfo CXX_COMPILER=clang++-3.9 C_COMPILER=clang-3.9
-      script: bash ${SCRIPT_DIR}/driver-test.sh
+    # # Clang 3.9 (RelWithDebInfo)
+    # - stage: Test
+    #   compiler: clang
+    #   env: CONFIG=RelWithDebInfo CXX_COMPILER=clang++-3.9 C_COMPILER=clang-3.9
+    #   script: bash ${SCRIPT_DIR}/driver-test.sh
 
-    # Clang 4.0 (Release)
-    - stage: Test
-      compiler: clang
-      env: CONFIG=Release CXX_COMPILER=clang++-4.0 C_COMPILER=clang-4.0
-      script: bash ${SCRIPT_DIR}/driver-test.sh
+    # # Clang 4.0 (Release)
+    # - stage: Test
+    #   compiler: clang
+    #   env: CONFIG=Release CXX_COMPILER=clang++-4.0 C_COMPILER=clang-4.0
+    #   script: bash ${SCRIPT_DIR}/driver-test.sh
 
-    # Clang 4.0 (RelWithDebInfo)
-    - stage: Test
-      compiler: clang
-      env: CONFIG=RelWithDebInfo CXX_COMPILER=clang++-4.0 C_COMPILER=clang-4.0
-      script: bash ${SCRIPT_DIR}/driver-test.sh
+    # # Clang 4.0 (RelWithDebInfo)
+    # - stage: Test
+    #   compiler: clang
+    #   env: CONFIG=RelWithDebInfo CXX_COMPILER=clang++-4.0 C_COMPILER=clang-4.0
+    #   script: bash ${SCRIPT_DIR}/driver-test.sh
 
 cache:
   directories:
