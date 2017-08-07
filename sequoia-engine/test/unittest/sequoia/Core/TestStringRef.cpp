@@ -520,46 +520,46 @@ TEST(StringRefTest, Count) {
 }
 
 TEST(StringRefTest, Drop) {
-  StringRef Test("StringRefTest::Drop");
+  StringRef S("StringRefTest::Drop");
 
-  StringRef Dropped = Test.drop_front(5);
+  StringRef Dropped = S.drop_front(5);
   EXPECT_EQ(Dropped, "gRefTest::Drop");
 
-  Dropped = Test.drop_back(5);
+  Dropped = S.drop_back(5);
   EXPECT_EQ(Dropped, "StringRefTest:");
 
-  Dropped = Test.drop_front(0);
-  EXPECT_EQ(Dropped, Test);
+  Dropped = S.drop_front(0);
+  EXPECT_EQ(Dropped, S);
 
-  Dropped = Test.drop_back(0);
-  EXPECT_EQ(Dropped, Test);
+  Dropped = S.drop_back(0);
+  EXPECT_EQ(Dropped, S);
 
-  Dropped = Test.drop_front(Test.size());
+  Dropped = S.drop_front(S.size());
   EXPECT_TRUE(Dropped.empty());
 
-  Dropped = Test.drop_back(Test.size());
+  Dropped = S.drop_back(S.size());
   EXPECT_TRUE(Dropped.empty());
 }
 
 TEST(StringRefTest, Take) {
-  StringRef Test("StringRef::Take");
+  StringRef S("StringRef::Take");
 
-  StringRef Taken = Test.take_front(5);
+  StringRef Taken = S.take_front(5);
   EXPECT_EQ(Taken, "Strin");
 
-  Taken = Test.take_back(5);
+  Taken = S.take_back(5);
   EXPECT_EQ(Taken, ":Take");
 
-  Taken = Test.take_front(Test.size());
-  EXPECT_EQ(Taken, Test);
+  Taken = S.take_front(S.size());
+  EXPECT_EQ(Taken, S);
 
-  Taken = Test.take_back(Test.size());
-  EXPECT_EQ(Taken, Test);
+  Taken = S.take_back(S.size());
+  EXPECT_EQ(Taken, S);
 
-  Taken = Test.take_front(0);
+  Taken = S.take_front(0);
   EXPECT_TRUE(Taken.empty());
 
-  Taken = Test.take_back(0);
+  Taken = S.take_back(0);
   EXPECT_TRUE(Taken.empty());
 }
 
@@ -580,39 +580,39 @@ TEST(StringRefTest, FindIf) {
 }
 
 TEST(StringRefTest, TakeWhileUntil) {
-  StringRef Test("String With 1 Number");
+  StringRef S("String With 1 Number");
 
-  StringRef Taken = Test.take_while([](char c) { return ::isdigit(c); });
+  StringRef Taken = S.take_while([](char c) { return ::isdigit(c); });
   EXPECT_EQ("", Taken);
 
-  Taken = Test.take_until([](char c) { return ::isdigit(c); });
+  Taken = S.take_until([](char c) { return ::isdigit(c); });
   EXPECT_EQ("String With ", Taken);
 
-  Taken = Test.take_while([](char c) { return true; });
-  EXPECT_EQ(Test, Taken);
+  Taken = S.take_while([](char c) { return true; });
+  EXPECT_EQ(S, Taken);
 
-  Taken = Test.take_until([](char c) { return true; });
+  Taken = S.take_until([](char c) { return true; });
   EXPECT_EQ("", Taken);
 
-  Test = "";
-  Taken = Test.take_while([](char c) { return true; });
+  S = "";
+  Taken = S.take_while([](char c) { return true; });
   EXPECT_EQ("", Taken);
 }
 
 TEST(StringRefTest, DropWhileUntil) {
-  StringRef Test("String With 1 Number");
+  StringRef S("String With 1 Number");
 
-  StringRef Taken = Test.drop_while([](char c) { return ::isdigit(c); });
-  EXPECT_EQ(Test, Taken);
+  StringRef Taken = S.drop_while([](char c) { return ::isdigit(c); });
+  EXPECT_EQ(S, Taken);
 
-  Taken = Test.drop_until([](char c) { return ::isdigit(c); });
+  Taken = S.drop_until([](char c) { return ::isdigit(c); });
   EXPECT_EQ("1 Number", Taken);
 
-  Taken = Test.drop_while([](char c) { return true; });
+  Taken = S.drop_while([](char c) { return true; });
   EXPECT_EQ("", Taken);
 
-  Taken = Test.drop_until([](char c) { return true; });
-  EXPECT_EQ(Test, Taken);
+  Taken = S.drop_until([](char c) { return true; });
+  EXPECT_EQ(S, Taken);
 
   StringRef EmptyString = "";
   Taken = EmptyString.drop_while([](char c) { return true; });

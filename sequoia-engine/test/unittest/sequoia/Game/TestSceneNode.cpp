@@ -39,22 +39,22 @@ TEST_F(SceneNodeTest, Construction) {
 
   // Adjust scale
   node->setScale(2.0f);
-  EXPECT_EQ(node->getScale(), 2.0f);
-  EXPECT_EQ(node->getModelMatrix()[0][0], 2.0f);
-  EXPECT_EQ(node->getModelMatrix()[1][1], 2.0f);
+  EXPECT_FLOAT_EQ(node->getScale(), 2.0f);
+  EXPECT_FLOAT_EQ(node->getModelMatrix()[0][0], 2.0f);
+  EXPECT_FLOAT_EQ(node->getModelMatrix()[1][1], 2.0f);
   EXPECT_EQ(node->getModelMatrix()[2][2], 2.0f);
 
   // Adjust position
   node->setPosition(math::vec3(1.0f, 2.0f, 3.0f));
   EXPECT_EQ(node->getPosition(), math::vec3(1.0f, 2.0f, 3.0f));
-  EXPECT_EQ(node->getModelMatrix()[3][0], 1.0f);
-  EXPECT_EQ(node->getModelMatrix()[3][1], 2.0f);
-  EXPECT_EQ(node->getModelMatrix()[3][2], 3.0f);
+  EXPECT_FLOAT_EQ(node->getModelMatrix()[3][0], 1.0f);
+  EXPECT_FLOAT_EQ(node->getModelMatrix()[3][1], 2.0f);
+  EXPECT_FLOAT_EQ(node->getModelMatrix()[3][2], 3.0f);
 
   // Adjust orientation
   node->setOrientation(math::rotation(math::vec3(0.0f, 1.0f, 0.0f), math::vec3(0.0f, -1.0f, 0.0f)));
-  EXPECT_EQ(node->getModelMatrix()[1][1], -2.0f);
-  EXPECT_EQ(node->getModelMatrix()[2][2], -2.0f);
+  EXPECT_FLOAT_EQ(node->getModelMatrix()[1][1], -2.0f);
+  EXPECT_FLOAT_EQ(node->getModelMatrix()[2][2], -2.0f);
 
   // Clone node
   auto nodeClone = node->clone();

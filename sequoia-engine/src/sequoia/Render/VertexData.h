@@ -171,7 +171,7 @@ private:
       acceptReadVisitor(visitor);
   }
 
-  void accept(VertexVisitor& visitor, bool write) const;
+  void accept(VertexVisitor& visitor, bool isWrite) const;
 
 private:
   /// Host vertex data
