@@ -19,6 +19,11 @@
 #include "sequoia/Core/NonCopyable.h"
 #include <cassert>
 
+#ifdef SEQUOIA_COMPILER_CLANG
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wundefined-var-template"
+#endif
+
 namespace sequoia {
 
 namespace core {
@@ -92,4 +97,9 @@ using Singleton = core::Singleton<Derived>;
   template <>                                                                                      \
   Class* sequoia::core::Singleton<Class>::Instance = nullptr
 
+#ifdef SEQUOIA_COMPILER_CLANG
+#pragma clang diagnostic pop
 #endif
+
+#endif
+
