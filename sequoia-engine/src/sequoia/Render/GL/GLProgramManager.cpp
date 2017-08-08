@@ -112,7 +112,7 @@ std::size_t GLProgramManager::hash(const std::set<std::shared_ptr<Shader>>& shad
 }
 
 void GLProgramManager::getUniforms(GLProgram* program) const {
-  LOG(DEBUG) << "Getting uniform variables of program (ID=" << program->id_ << ")";
+  LOG(DEBUG) << "Getting uniform variables of program (ID=" << program->id_ << ") ...";
 
   program->uniformInfoMap_.clear();
   program->textureSamplers_.clear();
@@ -173,7 +173,7 @@ void GLProgramManager::getUniforms(GLProgram* program) const {
 }
 
 void GLProgramManager::setVertexAttributes(GLProgram* program) const {
-  LOG(DEBUG) << "Setting vertex attributes of program (ID=" << program->id_ << ")";
+  LOG(DEBUG) << "Setting vertex attributes of program (ID=" << program->id_ << ") ...";
 
   GLVertexAttribute::forEach([&program](unsigned int index, const char* name) {
     glBindAttribLocation(program->id_, index, name);
@@ -183,7 +183,7 @@ void GLProgramManager::setVertexAttributes(GLProgram* program) const {
 }
 
 bool GLProgramManager::checkVertexAttributes(GLProgram* program) const {
-  LOG(DEBUG) << "Checking vertex attributes of program (ID=" << program->id_ << ")";
+  LOG(DEBUG) << "Checking vertex attributes of program (ID=" << program->id_ << ") ...";
 
   int numActiveAttrs = 0;
   glGetProgramiv(program->id_, GL_ACTIVE_ATTRIBUTES, &numActiveAttrs);
@@ -213,7 +213,7 @@ bool GLProgramManager::checkVertexAttributes(GLProgram* program) const {
 }
 
 void GLProgramManager::setFragmentData(GLProgram* program) const {
-  LOG(DEBUG) << "Setting fragment data of program (ID=" << program->id_ << ")";
+  LOG(DEBUG) << "Setting fragment data of program (ID=" << program->id_ << ") ...";
 
   GLFragmentData::forEach([&program](unsigned int index, const char* name) {
     glBindFragDataLocation(program->id_, index, name);
@@ -224,7 +224,7 @@ void GLProgramManager::setFragmentData(GLProgram* program) const {
 
 bool GLProgramManager::checkFragmentData(GLProgram* program) const {
   if(getGLRenderer().isExtensionSupported(GLextension::GL_ARB_program_interface_query)) {
-    LOG(DEBUG) << "Checking fragment data of program (ID=" << program->id_ << ")";
+    LOG(DEBUG) << "Checking fragment data of program (ID=" << program->id_ << ") ...";
 
     int numFragData = 0;
     glGetProgramInterfaceiv(program->id_, GL_PROGRAM_OUTPUT, GL_ACTIVE_RESOURCES, &numFragData);
