@@ -36,6 +36,7 @@ include(SequoiaMacros)
 include(SequoiaFunctions)
 
 # Prevent in source builds
+include(SequoiaCheckInSourceBuild)
 sequoia_check_in_source_build()
 
 # Check compliance of compiler
@@ -48,6 +49,7 @@ sequoia_set_cxx_standard(c++14)
 sequoia_set_cxx_flags()
 
 # Custom tragets
+include(SequoiaAddTargetCleanAll)
 sequoia_add_target_clean_all()
 sequoia_add_target_clang_format(${CMAKE_SOURCE_DIR}/src)
 

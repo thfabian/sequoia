@@ -19,21 +19,6 @@ include(CheckCXXCompilerFlag)
 include(CheckCXXSourceRuns)
 include(CMakeParseArguments)
 
-## sequoia_check_in_source_build
-## -----------------------------
-##
-## Prevent in source builds.
-##
-macro(sequoia_check_in_source_build)
-  if(CMAKE_SOURCE_DIR STREQUAL CMAKE_BINARY_DIR AND NOT MSVC_IDE)
-    message(FATAL_ERROR "In-source builds are not allowed.
-Please create a build directory and run cmake from there, passing the path
-to this source directory as the last argument.
-This process created the file `CMakeCache.txt' and the directory `CMakeFiles'.
-Please delete them.")
-  endif()
-endmacro()
-
 ## sequoia_gen_package_info_str
 ## ----------------------------
 ##
@@ -474,18 +459,6 @@ macro(sequoia_check_compiler)
       ### You appear to be using a compiler that is not yet tested with Sequoia.
       ")
   endif()
-endmacro()
-
-## sequoia_add_target_clean_all
-## ------------------------------
-##
-## Provide a ``clean-all`` target which clears the CMake Cache.
-##
-macro(sequoia_add_target_clean_all)
-  add_custom_target(clean-all
-          COMMAND ${CMAKE_MAKE_PROGRAM} clean
-          COMMAND ${CMAKE_COMMAND} -P 
-                  "${CMAKE_SOURCE_DIR}/cmake/scripts/CleanAll.cmake")
 endmacro()
 
 ## sequoia_add_target_clang_format

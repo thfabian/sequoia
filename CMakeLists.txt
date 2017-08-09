@@ -33,12 +33,14 @@ include(SequoiaMacros)
 include(ExternalProject)
 
 # Prevent in source builds
+include(SequoiaCheckInSourceBuild)
 sequoia_check_in_source_build()
 
 # Set default download dir
 sequoia_set_default_download_dir()
 
 # Provide clean-all target which clears the CMakeCache
+include(SequoiaAddTargetCleanAll)
 sequoia_add_target_clean_all()
 
 # Set default CMake arguments

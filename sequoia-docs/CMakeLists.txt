@@ -13,17 +13,12 @@
 ##
 ##===------------------------------------------------------------------------------------------===##
 
-set(cmake_generated ${CMAKE_BINARY_DIR}/CMakeCache.txt
-                    ${CMAKE_BINARY_DIR}/CTestTestfile.cmake
-                    ${CMAKE_BINARY_DIR}/cmake_install.cmake
-                    ${CMAKE_BINARY_DIR}/Makefile
-                    ${CMAKE_BINARY_DIR}/CMakeFiles
-                    ${CMAKE_BINARY_DIR}/external
-)
+project(sequoia-docs C CXX)
+cmake_minimum_required(VERSION 3.3)
 
-foreach(file ${cmake_generated})
-  if(EXISTS ${file})
-     file(REMOVE_RECURSE ${file})
-  endif()
-endforeach(file)
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/../sequoia-cmake/cmake")
 
+# Prevent in source builds
+include(SequoiaCheckInSourceBuild)
+sequoia_check_in_source_build()

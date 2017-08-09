@@ -37,23 +37,8 @@ macro(sequoia_report_result HEADER)
   message(STATUS "${full_header}")
 endmacro()
 
-## sequoia_check_in_source_build
-## -----------------------------
-##
-## Prevent in source builds.
-##
-macro(sequoia_check_in_source_build)
-  if(CMAKE_SOURCE_DIR STREQUAL CMAKE_BINARY_DIR AND NOT MSVC_IDE)
-    message(FATAL_ERROR "In-source builds are not allowed.
-Please create a build directory and run cmake from there, passing the path
-to this source directory as the last argument.
-This process created the file `CMakeCache.txt' and the directory `CMakeFiles'.
-Please delete them.")
-  endif()
-endmacro()
-
-## sequoia_check_in_source_build
-## -----------------------------
+## sequoia_add_optional_deps
+## -------------------------
 ##
 ## Convenience macro for adding dependencies optionally if not using system copies. This function 
 ## takes the external project target name, looks for a variable of the form USE_SYSTEM_TARGETNAME, 
