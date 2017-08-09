@@ -74,7 +74,7 @@ void VertexData::setVertexArrayObject(std::unique_ptr<VertexArrayObject> vao,
   vao_->attachVertexData(this, usage);
 }
 
-void VertexData::accept(VertexVisitor& visitor, bool write) const {
+void VertexData::accept(VertexVisitor& visitor, bool isWrite) const {
 
   //  shadowBuffer_
 
