@@ -13,22 +13,9 @@
 ##
 ##===------------------------------------------------------------------------------------------===##
 
-project(sequoia-docs C CXX)
-cmake_minimum_required(VERSION 3.5)
-
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/../sequoia-cmake/cmake")
-
-# Prevent in source builds
-include(SequoiaCheckInSourceBuild)
-sequoia_check_in_source_build()
-
-# Add clean-all target
-include(SequoiaAddTargetCleanAll)
-sequoia_add_target_clean_all(${CMAKE_BINARY_DIR}/sphinx ${CMAKE_BINARY_DIR}/sequoia-cmake)
-
-# Include the tools
-include(AddPython3)
-include(AddSphinx)
-
-add_subdirectory(sphinx)
+add_custom_target(sphinx
+   COMMAND ${SPHINX_EXECUTABLE} -b html -d ${CMAKE_BINARY_DIR}/sphinx/doctrees 
+           ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_BINARY_DIR}/sphinx/html
+   WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+   COMMENT "Generating sphinx documentation" VERBATIM
+)

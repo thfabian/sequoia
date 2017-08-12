@@ -13,22 +13,16 @@
 ##
 ##===------------------------------------------------------------------------------------------===##
 
-project(sequoia-docs C CXX)
-cmake_minimum_required(VERSION 3.5)
+set(cmake_generated ${CMAKE_BINARY_DIR}/CMakeCache.txt
+                    ${CMAKE_BINARY_DIR}/CTestTestfile.cmake
+                    ${CMAKE_BINARY_DIR}/cmake_install.cmake
+                    ${CMAKE_BINARY_DIR}/CMakeFiles
+                    @sequoia_add_target_clean_all_extra_args@
+)
 
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/../sequoia-cmake/cmake")
-
-# Prevent in source builds
-include(SequoiaCheckInSourceBuild)
-sequoia_check_in_source_build()
-
-# Add clean-all target
-include(SequoiaAddTargetCleanAll)
-sequoia_add_target_clean_all(${CMAKE_BINARY_DIR}/sphinx ${CMAKE_BINARY_DIR}/sequoia-cmake)
-
-# Include the tools
-include(AddPython3)
-include(AddSphinx)
-
-add_subdirectory(sphinx)
+foreach(file ${cmake_generated})
+  if(EXISTS ${file})
+    message(STATUS "Removing ${file}")
+    file(REMOVE_RECURSE ${file})
+  endif()
+endforeach(file)

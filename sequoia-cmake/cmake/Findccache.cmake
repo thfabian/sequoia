@@ -36,7 +36,10 @@
 include(FindPackageHandleStandardArgs)
 
 if(NOT DEFINED CCACHE_EXECUTABLE)
-  find_program(CCACHE_EXECUTABLE NAMES ccache)
+  find_program(CCACHE_EXECUTABLE 
+    NAMES ccache
+    DOC "Path to ccache executable"
+  )
 endif()
 
 find_package_handle_standard_args(ccache 

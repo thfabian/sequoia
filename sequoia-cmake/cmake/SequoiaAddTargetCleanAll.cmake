@@ -37,9 +37,17 @@ include(SequoiaGetScriptDir)
 #
 function(sequoia_add_target_clean_all)
   sequoia_get_script_dir(script_dir)
+  set(sequoia_add_target_clean_all_extra_args ${ARGN})
+
+  set(input_script ${script_dir}/SequoiaAddTargetCleanAll-Script.cmake.in)
+  set(output_script ${CMAKE_BINARY_DIR}/sequoia-cmake/cmake/SequoiaAddTargetCleanAll-Script.cmake)
+
+  # Configure the script
+  configure_file(${input_script} ${output_script} @ONLY)
+
   add_custom_target(clean-all
       COMMAND ${CMAKE_MAKE_PROGRAM} clean
-      COMMAND ${CMAKE_COMMAND} -P "${script_dir}/SequoiaAddTargetCleanAll-Script.cmake"
+      COMMAND ${CMAKE_COMMAND} -P "${output_script}"
       COMMENT "Removing CMake related files"
- )
+  )
 endfunction()

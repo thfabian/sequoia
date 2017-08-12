@@ -14,40 +14,39 @@
 ##===------------------------------------------------------------------------------------------===##
 
 #.rst:
-# FindCppcheck
-# ------------
+# FindSphinx
+# ----------
 #
-# This script locates Cppcheck. This script makes use of the standard find_package arguments 
-# ``REQUIRED`` and ``QUIET``. CPPCHECK_FOUND will report if cppcheck has been found.
+# This script locates Sphinx. This script makes use of the standard find_package arguments 
+# ``REQUIRED`` and ``QUIET``. SPHINX_FOUND will report if Sphinx has been found.
 #
 # Result Variables
 # ^^^^^^^^^^^^^^^^
 #
 # Defines the following variables:
 #
-#   CPPCHECK_FOUND           - System has cppcheck
-#   CPPCHECK_EXECUTABLE      - The location cppcheck
+#   SPHINX_FOUND           - System has Sphinx
+#   SPHINX_EXECUTABLE      - The location of Sphinx binary
 #
 # Hints
 # ^^^^^
 #
-# You can directly set ``CPPCHECK_EXECUTABLE`` if the script has trouble finding Cppcheck.
+# You can directly set ``SPHINX_EXECUTABLE`` if the script has trouble finding SPHINX.
 
 include(FindPackageHandleStandardArgs)
 
-if(NOT DEFINED CPPCHECK_EXECUTABLE)
-  find_program(CPPCHECK_EXECUTABLE 
-    NAMES cppcheck
-    DOC "Path to cppcheck executable"
+if(NOT DEFINED SPHINX_EXECUTABLE)
+  find_program(SPHINX_EXECUTABLE 
+    NAMES sphinx-build sphinx-build2 
+    DOC "Path to sphinx-build executable"
   )
 endif()
 
-find_package_handle_standard_args(Cppcheck 
+find_package_handle_standard_args(sphinx 
   FOUND_VAR 
-    CPPCHECK_FOUND 
-  REQUIRED_VARS 
-    CPPCHECK_EXECUTABLE
+    SPHINX_FOUND 
+  REQUIRED_VARS
+    SPHINX_EXECUTABLE
 )
 
-mark_as_advanced(CPPCHECK_EXECUTABLE)
-
+mark_as_advanced(SPHINX_EXECUTABLE)
