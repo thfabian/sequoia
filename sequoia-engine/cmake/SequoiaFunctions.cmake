@@ -17,27 +17,6 @@ sequoia_include_guard()
 
 include(CMakeParseArguments)
 
-## sequoia_report_result
-## ---------------------
-##
-## Report a list of strings as STATUS.
-##
-##    FILE:STRING=<>             - Header of the current report.
-##    ARGN:STRING=<>             - List of strings to report.
-##
-function(sequoia_report_result HEADER)
-  string(LENGTH ${HEADER} header_length)
-  set(full_header "----------------------------------------------------------------")
-  math(EXPR right_header_length "43 - ${header_length}")
-  string(SUBSTRING ${full_header} "0" "${right_header_length}" right_header)
-  
-  message(STATUS "------------------- ${HEADER} ${right_header}")
-  foreach(arg ${ARGN})
-    message(STATUS "${arg}")
-  endforeach()
-  message(STATUS "${full_header}")
-endfunction()
-
 ## sequoia_run_cppcheck
 ## --------------------
 ##

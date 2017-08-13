@@ -13,9 +13,26 @@
 ##
 ##===------------------------------------------------------------------------------------------===##
 
-add_custom_target(sphinx
+set(SPHINX_ROOT ${CMAKE_CURRENT_LIST_DIR})
+
+#
+# sequoia-cmake
+#
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/sequoia-cmake-generate.cmake.in
+               ${CMAKE_CURRENT_BINARY_DIR}/sequoia-cmake-generate.cmake @ONLY)
+add_custom_target(sequoia-cmake
+  COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/sequoia-cmake-generate.cmake
+  COMMENT "Configuring sequoia-cmake" VERBATIM
+)
+
+#
+# sphinx
+#
+add_custom_target(sphinx ALL
    COMMAND ${SPHINX_EXECUTABLE} -b html -d ${CMAKE_BINARY_DIR}/sphinx/doctrees 
            ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_BINARY_DIR}/sphinx/html
    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
    COMMENT "Generating sphinx documentation" VERBATIM
 )
+
+add_dependencies(sphinx sequoia-cmake)

@@ -81,5 +81,5 @@ set(thirdparty_cmake_args
 )
 set(Sequoia_CMAKE_ARGS "${thirdparty_cmake_args}" PARENT_SCOPE)
 
+include(SequoiaReportResult)
 sequoia_report_result("Package summary" ${SEQUOIA_PACKAGE_INFO})
-

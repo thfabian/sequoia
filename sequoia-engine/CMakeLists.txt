@@ -31,8 +31,9 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 include(SequoiaCMakeInit)
 sequoia_cmake_init()
 
+include(SequoiaReportResult)
+
 ##===-------------------------------------- CMake modules -------------------------------------===##
-include(SequoiaIncludeGuard)
 include(SequoiaOptions)
 include(SequoiaDefinitions)
 include(SequoiaMacros)

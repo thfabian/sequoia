@@ -15,7 +15,7 @@
 
 #.rst:
 # Findgli
-# ---------
+# -------
 #
 # This script locates gli. This script makes use of the standard find_package arguments of
 # ``VERSION``, ``REQUIRED`` and ``QUIET``. GLI_FOUND will report if an acceptable version of

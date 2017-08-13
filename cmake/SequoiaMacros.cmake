@@ -16,27 +16,6 @@
 include(CheckCXXCompilerFlag)
 include(CMakeParseArguments)
 
-## sequoia_report_result
-## ---------------------
-##
-## Report a list of strings as STATUS.
-##
-##    FILE:STRING=<>             - Header of the current report.
-##    ARGN:STRING=<>             - List of strings to report.
-##
-macro(sequoia_report_result HEADER)
-  string(LENGTH ${HEADER} header_length)
-  set(full_header "----------------------------------------------------------------")
-  math(EXPR right_header_length "43 - ${header_length}")
-  string(SUBSTRING ${full_header} "0" "${right_header_length}" right_header)
-  
-  message(STATUS "------------------- ${HEADER} ${right_header}")
-  foreach(arg ${ARGN})
-    message(STATUS "${arg}")
-  endforeach()
-  message(STATUS "${full_header}")
-endmacro()
-
 ## sequoia_add_optional_deps
 ## -------------------------
 ##
@@ -100,18 +79,6 @@ macro(sequoia_set_default_download_dir)
   if(NOT EXISTS "${download_dir}")
     message(FATAL_ERROR "could not find or make Downloads directory")
   endif()
-endmacro()
-
-## sequoia_add_target_clean_all
-## ----------------------------
-##
-## Provide a ``clean-all`` target which clears the CMake Cache.
-##
-macro(sequoia_add_target_clean_all)
-  add_custom_target(clean-all
-          COMMAND ${CMAKE_MAKE_PROGRAM} clean
-          COMMAND ${CMAKE_COMMAND} -P 
-                  "${CMAKE_SOURCE_DIR}/cmake/scripts/CleanAll.cmake")
 endmacro()
 
 ## sequoia_gen_package_info_str

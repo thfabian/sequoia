@@ -1,0 +1,62 @@
+##===------------------------------------------------------------------------------*- CMake -*-===##
+##                         _____                        _
+##                        / ____|                      (_)
+##                       | (___   ___  __ _ _   _  ___  _  __ _
+##                        \___ \ / _ \/ _` | | | |/ _ \| |/ _` |
+##                        ____) |  __/ (_| | |_| | (_) | | (_| |
+##                       |_____/ \___|\__, |\__,_|\___/|_|\__,_| - Game Engine (2016-2017)
+##                                       | |
+##                                       |_|
+##
+## This file is distributed under the MIT License (MIT).
+## See LICENSE.txt for details.
+##
+##===------------------------------------------------------------------------------------------===##
+
+# This script automagically finds all the scripts in <sequoia-cmake>/cmake directory, copies them in
+# the source tree and generates a corresponding .rst file
+
+set(sequoia_cmake_dir @SEQUOIA_CMAKE_DIR@)
+set(sphinx_root @SPHINX_ROOT@)
+
+if("${sequoia_cmake_dir}" STREQUAL "")
+  message(WARNING "sequoia-cmake not available - documentation incomplete!")
+else()
+  # Copy the scripts from <sequoia-cmake>/cmake
+  file(COPY ${sequoia_cmake_dir}/cmake/ DESTINATION ${sphinx_root}/sequoia-cmake)
+  file(GLOB scripts "${sphinx_root}/sequoia-cmake/*.cmake")
+
+  # Generate the *.rst
+  foreach(script ${scripts})
+    get_filename_component(script_name ${script} NAME_WE)
+    message(STATUS "Configuring ${script_name}")
+
+    # Check if we have a module (e.g FindX) or a simple script
+    if("${script_name}" MATCHES "Find*")
+      set(kind_of_script "modules")
+    else()
+      set(kind_of_script "function_and_macros")
+    endif()
+
+    # Append the current script to `modules` or `function_and_macros` lists. Format them correctly
+    # for configuring sequoia-cmake.rst
+    if("${${kind_of_script}}" STREQUAL "")
+      set(${kind_of_script} "  /sequoia-cmake/${script_name}")
+    else()
+      set(${kind_of_script} "${${kind_of_script}}\n  /sequoia-cmake/${script_name}")
+    endif()
+
+    # Generate the corresponding *.rst file
+    file(WRITE "${sphinx_root}/sequoia-cmake/${script_name}.rst"
+  "
+.. toctree::
+  :hidden:
+  :maxdepth: 2
+
+.. cmake-module:: ${script_name}.cmake
+  ")
+  endforeach()
+endif()
+
+# Configure sequoia-cmake.rst
+configure_file(${sphinx_root}/sequoia-cmake.rst.in ${sphinx_root}/sequoia-cmake.rst @ONLY)
