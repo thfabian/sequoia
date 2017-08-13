@@ -23,12 +23,12 @@ include(SequoiaGetScriptDir)
 # ----------------------------
 #
 # Provide a ``clean-all`` target which clears the CMake cache and all related CMake files and 
-# directories. This effectively removes the following files in the ``CMAKE_BINARY_DIR``:
+# directories. This effectively removes the following files/directories:
 #
-#    - CMakeCache.txt
-#    - CTestTestfile.cmake
-#    - cmake_install.cmake
-#    - CMakeFiles
+#    - ``${CMAKE_BINARY_DIR}/CMakeCache.txt``
+#    - ``${CMAKE_BINARY_DIR}/CTestTestfile.cmake``
+#    - ``${CMAKE_BINARY_DIR}/cmake_install.cmake``
+#    - ``${CMAKE_BINARY_DIR}/CMakeFiles``
 #
 # .. code-block:: cmake
 #

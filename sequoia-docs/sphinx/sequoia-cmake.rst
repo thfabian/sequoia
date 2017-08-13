@@ -2,21 +2,33 @@
 sequoia-cmake
 *************
 
-CMake modules of the Sequoia project. To use the functions and macros, add the ``sequoia-cmake`` directory as a sub-directory (this will add the correct paths to the ``CMAKE_MODULE_PATH``).
+CMake modules of the Sequoia project. 
+
+Installation
+~~~~~~~~~~~~
+
+Add the ``<sequoia-cmake>/cmake`` to the ``CMAKE_MODULE_PATH`` to use the functions, macros and modules:
 
 .. code-block:: cmake
 
-  add_subdirectory(<sequoia-cmake>)
+  list(APPEND CMAKE_MODULE_PATH "<sequoia-cmake>")
 
-Each function and macro uses a `snake-case <https://en.wikipedia.org/wiki/Snake_case>`_ identifier and is defined in a spereate file using he corresponding `camel-case <https://en.wikipedia.org/wiki/Camel_case>`_ filename. For example, to use the function ``sequoia_my_function`` include the file ``SequoiaMyFunction``.
+Note that all sequoia projects contain a ``sequoia_cmake_init`` macro which tries to find the sequoia-cmake module and respects the ``SEQUOIA_CMAKE_DIR`` (environment) variable.
 
 .. code-block:: cmake
 
-  include(SequoiaMyFunction)
-  sequoia_my_function()
+  include(SequoiaCMakeInit)
+  sequoia_cmake_init()
 
 Functions & Macros
 ~~~~~~~~~~~~~~~~~~
+
+Each function and macro uses a `snake-case <https://en.wikipedia.org/wiki/Snake_case>`_ identifier and is defined in a spereate file using he corresponding `camel-case <https://en.wikipedia.org/wiki/Camel_case>`_ filename. For example, to use the function ``sequoia_add_target_clean_all`` include the file ``SequoiaAddTargetCleanAll``.
+
+.. code-block:: cmake
+
+  include(SequoiaAddTargetCleanAll)
+  sequoia_add_target_clean_all()
 
 .. toctree::
    :maxdepth: 2
@@ -24,6 +36,7 @@ Functions & Macros
    /sequoia-cmake/SequoiaAddTargetCleanAll
    /sequoia-cmake/SequoiaGetScriptDir
    /sequoia-cmake/SequoiaIncludeGuard
+   /sequoia-cmake/SequoiaCMakeInit
 
 Modules
 ~~~~~~~

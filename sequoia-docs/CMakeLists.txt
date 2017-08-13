@@ -13,11 +13,14 @@
 ##
 ##===------------------------------------------------------------------------------------------===##
 
-project(sequoia-docs C CXX)
+project(sequoia-docs)
 cmake_minimum_required(VERSION 3.5)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/../sequoia-cmake/cmake")
+
+# Initialize sequoia-cmake
+include(SequoiaCMakeInit)
+sequoia_cmake_init()
 
 # Prevent in source builds
 include(SequoiaCheckInSourceBuild)

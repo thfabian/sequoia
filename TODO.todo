@@ -29,10 +29,12 @@ sequoia:
 
 sequoia-cmake:
   ☐ Refactor out all the commenly used functions form sequoia and sequoiua-engine @created(17-08-06 01:27)
+  ☐ Add a git-hook to check if SequoiaCMakeInit.cmake is the same in all projects @created(17-08-13 19:48)
 
 sequoia-doc:
   ☐ Setup sphinx @created(17-08-12 02:29)
-   ☐ Enable support for CMake @created(17-08-12 02:31)
+   ✔ Enable support for CMake @created(17-08-12 02:31) @done (17-08-13 19:16)
+  ☐ Copy all the modules and source into the build path to make relative paths always work @created(17-08-13 19:19)
 
 sequoia-engine:
   Render:
