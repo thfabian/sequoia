@@ -18,22 +18,24 @@ sequoia_include_guard()
 
 include(SequoiaGetScriptDir)
 
-# .rst
+#.rst:
 # sequoia_add_target_clean_all
 # ----------------------------
 #
-# Provide a ``clean-all`` target which clears the CMake Cache and all related CMake files and 
+# Provide a ``clean-all`` target which clears the CMake cache and all related CMake files and 
 # directories. This effectively removes the following files in the ``CMAKE_BINARY_DIR``:
 #
-#    CMakeCache.txt
-#    CTestTestfile.cmake
-#    cmake_install.cmake
-#    CMakeFiles
+#    - CMakeCache.txt
+#    - CTestTestfile.cmake
+#    - cmake_install.cmake
+#    - CMakeFiles
 #
-# To provide additional cleanup files or directories:
+# .. code-block:: cmake
 #
-#    ARGN:STRING=<>      - Addtional files or directories (relative to ``CMAKE_BINARY_DIR``) to 
-#                          remove.
+#  sequoia_add_target_clean_all([ARGN...])
+#
+# ``ARGN``
+#   Addtional files or directories (relative to ``CMAKE_BINARY_DIR``) to remove.
 #
 function(sequoia_add_target_clean_all)
   sequoia_get_script_dir(script_dir)

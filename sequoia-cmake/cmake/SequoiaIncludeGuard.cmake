@@ -13,11 +13,15 @@
 ##
 ##===------------------------------------------------------------------------------------------===##
 
-# .rst
+#.rst:
 # sequoia_include_guard
 # ---------------------
 #
 # Prevent frequently-included CMake files from being re-parsed multiple times.
+#
+# .. code-block:: cmake
+#
+#   sequoia_include_guard()
 #
 macro(sequoia_include_guard)
   if(DEFINED "__SEQUOIA_INCLUDE_GUARD_${CMAKE_CURRENT_LIST_FILE}")

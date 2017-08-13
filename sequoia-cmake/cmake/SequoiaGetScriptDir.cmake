@@ -18,14 +18,20 @@ sequoia_include_guard()
 
 get_filename_component(__sequoia_cmake_script_dir__ ${CMAKE_CURRENT_LIST_FILE} PATH)
 
-# .rst
+#.rst:
 # sequoia_get_script_dir
 # ----------------------
 #
 # Get the directory of the scripts located ``sequoia-cmake/scripts``.
-# This function is for interal use only.
 #
-#    SCRIPT_DIR_VAR:STRING=<>      - Variable will be set to the script directory.
+# .. code-block:: cmake
+#
+#   sequoia_get_script_dir(SCRIPT_DIR_VAR)
+#
+# ``SCRIPT_DIR_VAR``
+#   Variable which will contain the script directory on output.
+#
+# .. note:: This function is for internal use only.
 #
 function(sequoia_get_script_dir SCRIPT_DIR_VAR)
   set(${SCRIPT_DIR_VAR} "${__sequoia_cmake_script_dir__}/scripts" PARENT_SCOPE)

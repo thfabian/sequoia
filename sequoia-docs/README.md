@@ -20,7 +20,7 @@ The following packages are required:
   
   <!-- Python -->
   <tr>
-    <td rowspan="2"><a href=" https://www.python.org/downloads/">Python3</a></td>
+    <td rowspan="2"><a href="https://www.python.org/downloads/">Python3</a></td>
     <td>Sphinx</td>
     <td colspan="1" align="right"><div>>= 3.5</div></td>
   </tr>
