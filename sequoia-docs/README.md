@@ -1,4 +1,4 @@
-# Sequoia - Docs
+# sequoia-docs
 
 This repository contains the documentation of the Sequoia projects.
 

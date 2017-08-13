@@ -1,4 +1,4 @@
-# Sequoia - CMake
+# sequoia-cmake
 
 This repository contains the CMake scripts shared among all the Sequoia projects. 
 
