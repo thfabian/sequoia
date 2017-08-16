@@ -36,6 +36,7 @@ Each function and macro uses a `snake-case <https://en.wikipedia.org/wiki/Snake_
   /sequoia-cmake/SequoiaAddTargetCleanAll
   /sequoia-cmake/SequoiaCMakeInit
   /sequoia-cmake/SequoiaCheckInSourceBuild
+  /sequoia-cmake/SequoiaFindPythonModule
   /sequoia-cmake/SequoiaGetScriptDir
   /sequoia-cmake/SequoiaIncludeGuard
   /sequoia-cmake/SequoiaReportResult

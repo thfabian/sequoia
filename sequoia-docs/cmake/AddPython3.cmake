@@ -14,3 +14,9 @@
 ##===------------------------------------------------------------------------------------------===##
 
 find_package(PythonInterp 3.5 REQUIRED)
+
+# Look for all the required modules
+include(SequoiaFindPythonModule)
+sequoia_find_python_module(sphinx REQUIRED)
+sequoia_find_python_module(docutils REQUIRED)
+

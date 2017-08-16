@@ -33,7 +33,7 @@ Each function and macro uses a `snake-case <https://en.wikipedia.org/wiki/Snake_
 .. toctree::
   :maxdepth: 1
 
-@function_and_macros@
+__function_and_macros__
 
 Modules
 ~~~~~~~
@@ -44,4 +44,4 @@ Load settings for an external project via `find_package <https://cmake.org/cmake
 .. toctree::
   :maxdepth: 1
 
-@modules@
+__modules__
