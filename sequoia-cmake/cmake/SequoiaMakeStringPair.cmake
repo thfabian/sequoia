@@ -36,8 +36,11 @@ sequoia_include_guard()
 # ``OUT_STRING``
 #   Output string.
 #
-# This is equivalent to the python snippet 
-# ``print("%s%s%s" % (FIRST, " " * (NUM_CHARS - len(FIRST)), SECOND))``.
+# This is equivalent to the python snippet:
+#
+# .. code-block:: python
+#
+#   OUT_STRING = "%s%s%s" % (FIRST, " " * (NUM_CHARS - len(FIRST)), SECOND)
 #
 # Example
 # ^^^^^^^

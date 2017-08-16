@@ -41,7 +41,6 @@ Each function and macro uses a `snake-case <https://en.wikipedia.org/wiki/Snake_
   /sequoia-cmake/SequoiaFindPythonModule
   /sequoia-cmake/SequoiaGetScriptDir
   /sequoia-cmake/SequoiaIncludeGuard
-  /sequoia-cmake/SequoiaMakePairString
   /sequoia-cmake/SequoiaMakeStringPair
   /sequoia-cmake/SequoiaReportResult
 
