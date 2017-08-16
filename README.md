@@ -13,7 +13,7 @@ The project is organized in a couple of subdirectories.
 
 - The [sequoia-cmake](sequoia-cmake) directory contains various CMake modules and other scripts 
   shared among all the Sequoia projects.
-- The [sequoia-docs](sequoia-cmake) directory contains the HTML documentation of all Sequoia projects.
+- The [sequoia-docs](sequoia-docs) directory contains the HTML documentation of all Sequoia projects.
 - The [sequoia-engine](sequoia-engine) directory contains the 3D game-engine.
 
 

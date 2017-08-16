@@ -17,21 +17,28 @@
 # Findccache
 # ----------
 #
-# This script locates ccache. This script makes use of the standard find_package arguments 
-# ``REQUIRED`` and ``QUIET``. CCACHE_FOUND will report if ccache has been found.
+# .. code-block:: cmake
+#
+#   find_package(ccache [REQUIRED] [QUIET])
+#
+# This module locates ccache_. ``CCACHE_FOUND`` will report if ccache has been found.
 #
 # Result Variables
 # ^^^^^^^^^^^^^^^^
 #
 # Defines the following variables:
 #
-#   CCACHE_FOUND           - System has ccache
-#   CCACHE_EXECUTABLE      - The location ccache
+# ``CCACHE_FOUND``
+#   System has ccache.
+# ``CCACHE_EXECUTABLE``
+#   Path to the ccache executable.
 #
 # Hints
 # ^^^^^
 #
-# You can directly set ``CCACHE_EXECUTABLE`` if the script has trouble finding ccache.
+# You can directly set ``CCACHE_EXECUTABLE`` if the module has trouble finding ccache.
+#
+# .. _ccache: https://ccache.samba.org
 
 include(FindPackageHandleStandardArgs)
 

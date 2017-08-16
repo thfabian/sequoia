@@ -36,78 +36,103 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-#
+
+#.rst:
 # FindTBB
 # -------
 #
-# Find TBB include directories and libraries.
+# .. code-block:: cmake
 #
-# Usage:
+#   find_package(TBB 
+#     [version] [EXACT]                     # Minimum or EXACT version as major[.minor] (e.g 2.0)
+#     [REQUIRED]                            # Fail with error if gli is not found
+#     [QUIET]                               # Supress output
+#     [[COMPONENTS] [components...]]        # Components: tbb, tbb_debug, tbbmalloc, tbbmalloc_debug
+#                                           # tbb_preview or tbb_preview_debug
+#   )
 #
-#  find_package(TBB [major[.minor]] [EXACT]
-#               [QUIET] [REQUIRED]
-#               [[COMPONENTS] [components...]]
-#               [OPTIONAL_COMPONENTS components...]) 
+# This module locates Intel TBB_. ``TBB_FOUND`` will report if an acceptable version of TBB was 
+# found.
 #
-# where the allowed components are tbbmalloc and tbb_preview. Users may modify 
-# the behavior of this module with the following variables:
-#
-# * TBB_ROOT_DIR          - The base directory the of TBB installation.
-# * TBB_INCLUDE_DIR       - The directory that contains the TBB headers files.
-# * TBB_LIBRARY           - The directory that contains the TBB library files.
-# * TBB_<library>_LIBRARY - The path of the TBB the corresponding TBB library. 
-#                           These libraries, if specified, override the 
-#                           corresponding library search results, where <library>
-#                           may be tbb, tbb_debug, tbbmalloc, tbbmalloc_debug,
-#                           tbb_preview, or tbb_preview_debug.
-# * TBB_USE_DEBUG_BUILD   - The debug version of tbb libraries, if present, will
-#                           be used instead of the release version.
-#
-# Users may modify the behavior of this module with the following environment
-# variables:
-#
-# * TBB_INSTALL_DIR        - Set to the location of the TBB installation
-# * TBBROOT
-# * LIBRARY_PATH 
+# Result Variables
+# ^^^^^^^^^^^^^^^^
 #
 # This module will set the following variables:
 #
-# * TBB_FOUND             - Set to false, or undefined, if we haven't found, or
-#                           don't want to use TBB.
-# * TBB_<component>_FOUND - If False, optional <component> part of TBB sytem is
-#                           not available.
-# * TBB_VERSION           - The full version string
-# * TBB_VERSION_MAJOR     - The major version
-# * TBB_VERSION_MINOR     - The minor version
-# * TBB_INTERFACE_VERSION - The interface version number defined in 
-#                           tbb/tbb_stddef.h.
-# * TBB_<library>_LIBRARY_RELEASE - The path of the TBB release version of 
-#                           <library>, where <library> may be tbb, tbb_debug,
-#                           tbbmalloc, tbbmalloc_debug, tbb_preview, or 
-#                           tbb_preview_debug.
-# * TBB_<library>_LIBRARY_DEGUG - The path of the TBB release version of 
-#                           <library>, where <library> may be tbb, tbb_debug,
-#                           tbbmalloc, tbbmalloc_debug, tbb_preview, or 
-#                           tbb_preview_debug.
+# ``TBB_FOUND``
+#   Set to false, or undefined, if we haven't found, or don't want to use TBB.
+# ``TBB_<component>_FOUND``
+#   If False, optional <component> part of TBB sytem is not available.
+# ``TBB_VERSION``
+#   The full version string
+# ``TBB_VERSION_MAJOR``
+#   The major version
+# ``TBB_VERSION_MINOR``
+#   The minor version
+# ``TBB_INTERFACE_VERSION``
+#   The interface version number defined in ``tbb/tbb_stddef.h``.
+# ``TBB_<library>_LIBRARY_RELEASE``
+#   The path of the TBB release version of <library>, where <library> may be ``tbb``, ``tbb_debug``, 
+#   ``tbbmalloc``, ``tbbmalloc_debug``, ``tbb_preview``, or ``tbb_preview_debug``.
+# ``TBB_<library>_LIBRARY_DEGUG``
+#   The path of the TBB release version of <library>, where <library> may be ``tbb``, ``tbb_debug``, 
+#   ``tbbmalloc``, ``tbbmalloc_debug``, ``tbb_preview``, or ``tbb_preview_debug``. 
 #
 # The following varibles should be used to build and link with TBB:
 #
-# * TBB_INCLUDE_DIRS        - The include directory for TBB.
-# * TBB_LIBRARIES           - The libraries to link against to use TBB.
-# * TBB_BINARIES            - The DLLs of TBB (Windows only).
-# * TBB_LIBRARIES_RELEASE   - The release libraries to link against to use TBB.
-# * TBB_LIBRARIES_DEBUG     - The debug libraries to link against to use TBB.
-# * TBB_BINARIES_RELEASE    - The release DLLs of TBB (Windows only).
-# * TBB_BINARIES_DEBUG      - The debug DLLs of TBB (Windows only).
-# * TBB_DEFINITIONS         - Definitions to use when compiling code that uses
-#                             TBB.
-# * TBB_DEFINITIONS_RELEASE - Definitions to use when compiling release code that
-#                             uses TBB.
-# * TBB_DEFINITIONS_DEBUG   - Definitions to use when compiling debug code that
-#                             uses TBB.
+# ``TBB_INCLUDE_DIRS``
+#   The include directory for TBB.
+# ``TBB_LIBRARIES``
+#   The libraries to link against to use TBB.
+# ``TBB_BINARIES``            
+#   The DLLs of TBB (Windows only).
+# ``TBB_LIBRARIES_RELEASE``
+#   The release libraries to link against to use TBB.
+# ``TBB_LIBRARIES_DEBUG``
+#   The debug libraries to link against to use TBB.
+# ``TBB_BINARIES_RELEASE``
+#   The release DLLs of TBB (Windows only).
+# ``TBB_BINARIES_DEBUG``
+#   The debug DLLs of TBB (Windows only).
+# ``TBB_DEFINITIONS``
+#   Definitions to use when compiling code that uses TBB.
+# ``TBB_DEFINITIONS_RELEASE``
+#   Definitions to use when compiling release code that uses TBB.
+# ``TBB_DEFINITIONS_DEBUG``
+#   Definitions to use when compiling debug code that uses TBB.
 #
-# This module will also create the "tbb" target that may be used when building
-# executables and libraries.
+# This module will export the ``tbb`` target that may be used when building executables and 
+# libraries.
+#
+# Hints
+# ^^^^^
+#
+# Users may modify the behavior of this module with the following variables:
+#
+# ``TBB_ROOT_DIR``
+#   The base directory the of TBB installation.
+# ``TBB_INCLUDE_DIR``
+#   The directory that contains the TBB headers files.
+# ``TBB_LIBRARY``
+#   The directory that contains the TBB library files.
+# ``TBB_<library>_LIBRARY``
+#   The path to the corresponding TBB libraries. These libraries, if specified, override the 
+#   corresponding library search results, where ``<library>`` may be ``tbb``, ``tbb_debug``, 
+#   ``tbbmalloc``, ``tbbmalloc_debug``, ``tbb_preview``, or ``tbb_preview_debug``.
+# ``TBB_USE_DEBUG_BUILD``
+#   The debug version of tbb libraries, if present, will be used instead of the release version.
+#
+# Users may modify the behavior of this module with the following environment variables:
+#
+# ``LIBRARY_PATH`` 
+#  Path to the TBB libraries.
+# ``TBBROOT``
+#   Set to the location of the TBB installation.
+# ``TBB_INSTALL_DIR``
+#   Set to the location of the TBB installation.
+#
+# .. _TBB: https://www.threadingbuildingblocks.org/
+#
 
 include(FindPackageHandleStandardArgs)
 

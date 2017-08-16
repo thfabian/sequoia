@@ -16,12 +16,16 @@
 include(SequoiaIncludeGuard)
 sequoia_include_guard()
 
-## .rst
-## sequoia_check_in_source_build
-## -----------------------------
-##
-## Abort with a meaningful error message if ``CMAKE_BINARY_DIR`` matches ``CMAKE_SOURCE_DIR``.
-##
+#.rst:
+# sequoia_check_in_source_build
+# -----------------------------
+#
+# Abort with a meaningful error message if ``CMAKE_BINARY_DIR`` matches ``CMAKE_SOURCE_DIR``.
+#
+# .. code-block:: cmake
+#
+#   sequoia_check_in_source_build()  
+#
 function(sequoia_check_in_source_build)
   if(CMAKE_SOURCE_DIR STREQUAL CMAKE_BINARY_DIR AND NOT MSVC_IDE)
     message(FATAL_ERROR "

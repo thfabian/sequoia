@@ -17,23 +17,37 @@
 # Findglbinding
 # -------------
 #
-# This script locates glbinding. This script makes use of the standard find_package arguments of
-# ``VERSION``, ``REQUIRED`` and ``QUIET``. GLBINDING_FOUND will report if an acceptable version of
-# glbinding was found.
+# .. code-block:: cmake
+#
+#   find_package(glbinding 
+#     [version] [EXACT]      # Minimum or EXACT version e.g. 2.1.1
+#     [REQUIRED]             # Fail with error if glbinding is not found
+#     [QUIET]                # Supress output
+#   )
+#
+# This module locates glbinding_.``GLBINDING_FOUND`` will report if an acceptable version 
+# of glbinding was found.
 #
 # Result Variables
 # ^^^^^^^^^^^^^^^^
 #
 # Defines the following variables:
 #
-#   GLBINDING_FOUND               - System has the glbinding.
-#   GLBINDING_INCLUDE_DIRS        - The location of glbinding headers
-#   GLBINDING_LIBRARIES           - The location of glbinding library
+# ``GLBINDING_FOUND``
+#   System has glbinding.
+# ``GLBINDING_INCLUDE_DIRS``
+#   The location of glbinding headers.
+# ``GLBINDING_LIBRARIES``
+#   The location of glbinding library.
 #
 # Hints
 # ^^^^^
 #
-# Set ``GLBINDING_ROOT`` to a directory that contains a GLBINDING installation
+# Set ``GLBINDING_ROOT`` to a directory that contains a glbinding installation if the module has 
+# trouble finding glbinding.
+#
+# .. _glbinding: https://github.com/cginternals/glbinding
+#
 
 include(FindPackageHandleStandardArgs)
 
@@ -69,16 +83,16 @@ if(NOT glbinding_FIND_VERSION)
       "${glbinding_FIND_VERSION_MAJOR}.${glbinding_FIND_VERSION_MINOR}.${glbinding_FIND_VERSION_PATCH}")
 endif()
 
-#===---------------------------------------------------------------------------------------------===
-#   Find glbinding headers
-#====--------------------------------------------------------------------------------------------===
+#
+# Find glbinding headers
+#
 if(NOT(GLBINDING_INCLUDE_DIRS))
   find_path(GLBINDING_INCLUDE_DIRS NAMES glbinding/Binding.h HINTS ${GLBINDING_ROOT}/include)
 endif()
 
-#===---------------------------------------------------------------------------------------------===
-#   Read version from glbinding/glbinding-version.h
-#====--------------------------------------------------------------------------------------------===
+#
+# Read version from glbinding/glbinding-version.h
+#
 if(GLBINDING_INCLUDE_DIRS AND NOT(GLBINDING_VERSION))
   file(READ ${GLBINDING_INCLUDE_DIRS}/glbinding/glbinding-version.h _CONFIG_FILE)
 
@@ -94,16 +108,16 @@ if(GLBINDING_INCLUDE_DIRS AND NOT(GLBINDING_VERSION))
       "${GLBINDING_MAJOR_VERSION}.${GLBINDING_MINOR_VERSION}.${GLBINDING_PATCH_VERSION}")
 endif()
 
-#===---------------------------------------------------------------------------------------------===
-#   Find glbinding library
-#====--------------------------------------------------------------------------------------------===
+#
+# Find glbinding library
+#
 if(NOT(GLBINDING_LIBRARIES))
   find_library(GLBINDING_LIBRARIES NAMES glbinding HINTS ${GLBINDING_ROOT}/lib)
 endif()
 
-#===---------------------------------------------------------------------------------------------===
-#   Find glbinding DLL
-#====--------------------------------------------------------------------------------------------===
+#
+# Find glbinding DLL
+#
 if(WIN32 AND NOT(GLBINDING_BINARY))
   set(old_suffix "${CMAKE_FIND_LIBRARY_SUFFIXES}")
   set(CMAKE_FIND_LIBRARY_SUFFIXES ".dll")
@@ -111,10 +125,9 @@ if(WIN32 AND NOT(GLBINDING_BINARY))
   set(CMAKE_FIND_LIBRARY_SUFFIXES "${old_suffix}")
 endif()
 
-#===---------------------------------------------------------------------------------------------===
-#   Report result 
-#====--------------------------------------------------------------------------------------------===
-
+#
+# Report result 
+#
 set(required_vars GLBINDING_LIBRARIES GLBINDING_INCLUDE_DIRS)
 if(WIN32)
   list(APPEND GLBINDING_BINARY)

@@ -15,27 +15,38 @@
 
 #.rst:
 # Findglm
-# ---------
+# -------
 #
-# This script locates glm. This script makes use of the standard find_package arguments of
-# ``VERSION``, ``REQUIRED`` and ``QUIET``. GLM_FOUND will report if an acceptable version of
-# glm was found.
+# .. code-block:: cmake
+#
+#   find_package(glm 
+#     [version] [EXACT]      # Minimum or EXACT version e.g. 0.9
+#     [REQUIRED]             # Fail with error if glm is not found
+#     [QUIET]                # Supress output
+#   )
+#
+# This module locates glm_. ``GLM_FOUND`` will report if an acceptable version of glm was found.
 #
 # Result Variables
 # ^^^^^^^^^^^^^^^^
 #
 # Defines the following variables:
 #
-#   GLM_FOUND               - System has the glm headers
-#   GLM_INCLUDE_DIRS        - The location of GLM headers (i.e the header glm.hpp is in 
-#                             ${GLM_INCLUDE_DIRS}/glm/glm.hpp)
-#   GLM_VERSION             - Version of glm
+# ``GLM_FOUND``
+#  System has the glm headers.
+# ``GLM_INCLUDE_DIRS``
+#  The location of glm headers i.e the header ``glm.hpp`` is in ``${GLM_INCLUDE_DIRS}/glm/glm.hpp``.
+# ``GLM_VERSION``
+#  Version of glm.
 #
 # Hints
 # ^^^^^
 #
-# Set ``GLM_ROOT`` to a directory that contains a GLM installation, or directly set 
-# ``GLM_INCLUDE_DIRS``.
+# Set ``GLM_ROOT`` to a directory that contains a glm installation, or directly set 
+# ``GLM_INCLUDE_DIRS`` if the module has trouble finding glm.
+#
+# .. _glm: https://glm.g-truc.net/0.9.8/index.html
+#
 
 include(FindPackageHandleStandardArgs)
 

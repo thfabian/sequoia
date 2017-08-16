@@ -17,21 +17,29 @@
 # FindSphinx
 # ----------
 #
-# This script locates Sphinx. This script makes use of the standard find_package arguments 
-# ``REQUIRED`` and ``QUIET``. SPHINX_FOUND will report if Sphinx has been found.
+# .. code-block:: cmake
+#
+#   find_package(Sphinx [REQUIRED] [QUIET])
+#
+# This module locates Sphinx_. ``SPHINX_FOUND`` will report if sphinx has been found.
 #
 # Result Variables
 # ^^^^^^^^^^^^^^^^
 #
 # Defines the following variables:
 #
-#   SPHINX_FOUND           - System has Sphinx
-#   SPHINX_EXECUTABLE      - The location of Sphinx binary
+# ``SPHINX_FOUND``
+#   System has sphinx.
+# ``SPHINX_EXECUTABLE``
+#   Path to sphinx-build executable.
 #
 # Hints
 # ^^^^^
 #
-# You can directly set ``SPHINX_EXECUTABLE`` if the script has trouble finding SPHINX.
+# You can directly set ``SPHINX_EXECUTABLE`` if the module has trouble finding sphinx.
+#
+# .. _Sphinx: http://www.sphinx-doc.org/en/stable
+#
 
 include(FindPackageHandleStandardArgs)
 

@@ -25,6 +25,7 @@ else()
   # Copy the scripts from <sequoia-cmake>/cmake
   file(COPY ${sequoia_cmake_dir}/cmake/ DESTINATION ${sphinx_root}/sequoia-cmake)
   file(GLOB scripts "${sphinx_root}/sequoia-cmake/*.cmake")
+  list(SORT scripts)
 
   # Generate the *.rst
   foreach(script ${scripts})

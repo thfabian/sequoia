@@ -17,8 +17,15 @@
 # Findgli
 # -------
 #
-# This script locates gli. This script makes use of the standard find_package arguments of
-# ``VERSION``, ``REQUIRED`` and ``QUIET``. GLI_FOUND will report if an acceptable version of
+# .. code-block:: cmake
+#
+#   find_package(gli 
+#     [version] [EXACT]      # Minimum or EXACT version e.g. 0.8
+#     [REQUIRED]             # Fail with error if gli is not found
+#     [QUIET]                # Supress output
+#   )
+#
+# This module locates gli_. ``GLI_FOUND`` will report if an acceptable version of
 # gli was found.
 #
 # Result Variables
@@ -26,16 +33,21 @@
 #
 # Defines the following variables:
 #
-#   GLI_FOUND               - System has the gli headers
-#   GLI_INCLUDE_DIRS        - The location of GLI headers (i.e the header gli.hpp is in 
-#                             ${GLI_INCLUDE_DIRS}/gli/gli.hpp)
-#   GLI_VERSION             - Version of gli
+# ``GLI_FOUND``
+#  System has the gli headers.
+# ``GLI_INCLUDE_DIRS``
+#  The location of gli headers i.e the header ``gli.hpp`` is in ``${GLI_INCLUDE_DIRS}/gli/gli.hpp``.
+# ``GLI_VERSION``
+#  Version of gli.
 #
 # Hints
 # ^^^^^
 #
-# Set ``GLI_ROOT`` to a directory that contains a GLI installation, or directly set 
-# ``GLI_INCLUDE_DIRS``.
+# Set ``GLI_ROOT`` to a directory that contains a gli installation, or directly set 
+# ``GLI_INCLUDE_DIRS`` if the module has trouble finding gli.
+#
+# .. _gli: http://gli.g-truc.net/0.8.2/index.html
+#
 
 include(FindPackageHandleStandardArgs)
 
@@ -67,16 +79,16 @@ if(NOT gli_FIND_VERSION)
   set(gli_FIND_VERSION "${gli_FIND_VERSION_MAJOR}.${gli_FIND_VERSION_MINOR}")
 endif(NOT gli_FIND_VERSION)
 
-#===---------------------------------------------------------------------------------------------===
-#   Find gli headers
-#====--------------------------------------------------------------------------------------------===
+#
+# Find gli headers
+#
 if(NOT(GLI_INCLUDE_DIRS))
   find_path(GLI_INCLUDE_DIRS NAMES gli/gli.hpp HINTS ${GLI_ROOT})
 endif()
 
-#===---------------------------------------------------------------------------------------------===
-#   Read version from gli/gli.hpp
-#====--------------------------------------------------------------------------------------------===
+#
+# Read version from gli/gli.hpp
+#
 if(GLI_INCLUDE_DIRS AND NOT(GLI_VERSION))
   file(READ ${GLI_INCLUDE_DIRS}/gli/gli.hpp _CONFIG_FILE)
 
@@ -90,9 +102,9 @@ if(GLI_INCLUDE_DIRS AND NOT(GLI_VERSION))
   set(GLI_VERSION "${GLI_VERSION_MAJOR}.${GLI_VERSION_MINOR}")
 endif()
 
-#===---------------------------------------------------------------------------------------------===
-#   Report result 
-#====--------------------------------------------------------------------------------------------===
+#
+# Report result 
+#
 find_package_handle_standard_args(
   gli
   FAIL_MESSAGE "Could NOT find GLI. (Try setting GLI_ROOT in the env)"

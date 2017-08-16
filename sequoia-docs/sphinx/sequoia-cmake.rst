@@ -31,14 +31,14 @@ Each function and macro uses a `snake-case <https://en.wikipedia.org/wiki/Snake_
   sequoia_add_target_clean_all()
 
 .. toctree::
-  :maxdepth: 2
+  :maxdepth: 1
 
+  /sequoia-cmake/SequoiaAddTargetCleanAll
+  /sequoia-cmake/SequoiaCMakeInit
+  /sequoia-cmake/SequoiaCheckInSourceBuild
   /sequoia-cmake/SequoiaGetScriptDir
   /sequoia-cmake/SequoiaIncludeGuard
-  /sequoia-cmake/SequoiaAddTargetCleanAll
-  /sequoia-cmake/SequoiaCheckInSourceBuild
   /sequoia-cmake/SequoiaReportResult
-  /sequoia-cmake/SequoiaCMakeInit
 
 Modules
 ~~~~~~~
@@ -47,13 +47,13 @@ Load settings for an external project via `find_package <https://cmake.org/cmake
 
 
 .. toctree::
-  :maxdepth: 2
+  :maxdepth: 1
 
-  /sequoia-cmake/Findglbinding
-  /sequoia-cmake/Findglm
-  /sequoia-cmake/FindTBB
+  /sequoia-cmake/FindCppcheck
   /sequoia-cmake/FindLibDL
   /sequoia-cmake/FindSphinx
+  /sequoia-cmake/FindTBB
   /sequoia-cmake/Findccache
-  /sequoia-cmake/FindCppcheck
+  /sequoia-cmake/Findglbinding
   /sequoia-cmake/Findgli
+  /sequoia-cmake/Findglm

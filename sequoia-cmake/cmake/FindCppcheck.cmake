@@ -17,21 +17,28 @@
 # FindCppcheck
 # ------------
 #
-# This script locates Cppcheck. This script makes use of the standard find_package arguments 
-# ``REQUIRED`` and ``QUIET``. CPPCHECK_FOUND will report if cppcheck has been found.
+# .. code-block:: cmake
+#
+#   find_package(Cppcheck [REQUIRED] [QUIET])
+#
+# This module locates Cppcheck_. ``CPPCHECK_FOUND`` will report if Cppcheck has been found.
 #
 # Result Variables
 # ^^^^^^^^^^^^^^^^
 #
 # Defines the following variables:
 #
-#   CPPCHECK_FOUND           - System has cppcheck
-#   CPPCHECK_EXECUTABLE      - The location cppcheck
+# ``CPPCHECK_FOUND``
+#   System has Cppcheck.
+# ``CPPCHECK_EXECUTABLE``
+#   Path to the Cppcheck executable.
 #
 # Hints
 # ^^^^^
 #
-# You can directly set ``CPPCHECK_EXECUTABLE`` if the script has trouble finding Cppcheck.
+# You can directly set ``CPPCHECK_EXECUTABLE`` if the module has trouble finding Cppcheck.
+#
+# .. _Cppcheck: http://cppcheck.sourceforge.net/
 
 include(FindPackageHandleStandardArgs)
 

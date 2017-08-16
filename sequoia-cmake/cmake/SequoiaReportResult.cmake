@@ -20,16 +20,17 @@ sequoia_include_guard()
 # sequoia_report_result
 # ---------------------
 #
-## Report a list of strings, encompassed by a box.
+# Report a list of strings, encompassed by a box.
 #
 # .. code-block:: cmake
 #
-#   sequoia_include_guard(HEADER [ARGN...])
+#   sequoia_report_result(HEADER [ARGN...])
 #
 # ``HEADER``
 #   Header to print
 # ``ARGN``
 #   List of strings to report
+#
 macro(sequoia_report_result HEADER)
   string(LENGTH ${HEADER} header_length)
   set(full_header "----------------------------------------------------------------")

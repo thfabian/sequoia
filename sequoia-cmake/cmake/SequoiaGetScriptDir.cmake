@@ -22,7 +22,7 @@ get_filename_component(__sequoia_cmake_script_dir__ ${CMAKE_CURRENT_LIST_FILE} P
 # sequoia_get_script_dir
 # ----------------------
 #
-# Get the directory of the scripts located ``sequoia-cmake/scripts``.
+# Get the directory of the scripts located ``<sequoia-cmake>/cmake/scripts``.
 #
 # .. code-block:: cmake
 #
