@@ -31,7 +31,7 @@ sequoia_include_guard()
 # ``ARGN``
 #   List of strings to report
 #
-macro(sequoia_report_result HEADER)
+function(sequoia_report_result HEADER)
   string(LENGTH ${HEADER} header_length)
   set(full_header "----------------------------------------------------------------")
   math(EXPR right_header_length "43 - ${header_length}")
@@ -42,4 +42,4 @@ macro(sequoia_report_result HEADER)
     message(STATUS "${arg}")
   endforeach()
   message(STATUS "${full_header}")
-endmacro()
+endfunction()

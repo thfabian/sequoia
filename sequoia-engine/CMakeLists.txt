@@ -33,7 +33,6 @@ sequoia_cmake_init()
 
 include(SequoiaReportResult)
 
-##===-------------------------------------- CMake modules -------------------------------------===##
 include(SequoiaOptions)
 include(SequoiaDefinitions)
 include(SequoiaMacros)
@@ -68,8 +67,7 @@ sequoia_report_result(
   "Build shared: ${BUILD_SHARED_LIBS}"
 )
 
-##===---------------------------------- Add external libraries --------------------------------===##
-
+# Add external libraries
 include(AddBackward)
 include(AddBoost)
 include(AddCppcheck)
@@ -102,22 +100,22 @@ include_directories(SYSTEM ${SEQUOIA_EXTERNAL_INCLUDE_DIRS})
 add_definitions(${SEQUOIA_EXTERNAL_DEFINITIONS})
 
 # Output summary of the packages
-sequoia_report_result("External libraries summary" ${SEQUOIA_PACKAGE_INFO})
+sequoia_report_result("Package summary" ${SEQUOIA_PACKAGE_INFO})
   
-##===----------------------------------- Sequoia libraries ------------------------------------===##
+# Sequoia libraries
 include_directories(${CMAKE_SOURCE_DIR}/src)
 include_directories(${CMAKE_BINARY_DIR}/src)
 
 add_subdirectory(src)
 add_subdirectory(ressource)
 
-##===--------------------------------------- Testing ------------------------------------------===##
+# Testing
 if(SEQUOIA_TESTING)
   enable_testing()
   add_subdirectory(test)
 endif()
 
-##===------------------------------------- Documentation --------------------------------------===##
+# Documentation
 if(SEQUOIA_DOCUMENTATION)
   add_subdirectory(docs)
 endif()

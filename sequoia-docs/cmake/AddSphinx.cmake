@@ -14,3 +14,9 @@
 ##===------------------------------------------------------------------------------------------===##
 
 find_package(Sphinx REQUIRED)
+
+sequoia_export_package(
+  NAME Sphinx
+  FOUND ${SPHINX_FOUND}
+  EXECUTABLE ${SPHINX_EXECUTABLE}
+)

@@ -20,3 +20,9 @@ include(SequoiaFindPythonModule)
 sequoia_find_python_module(sphinx REQUIRED)
 sequoia_find_python_module(docutils REQUIRED)
 
+sequoia_export_package(
+  NAME Python3
+  FOUND ${PYTHONINTERP_FOUND}
+  EXECUTABLE ${PYTHON_EXECUTABLE}
+  VERSION ${PYTHON_VERSION_STRING}
+)

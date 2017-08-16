@@ -35,7 +35,7 @@ include(SequoiaGetScriptDir)
 #  sequoia_add_target_clean_all([ARGN...])
 #
 # ``ARGN``
-#   Addtional files or directories (relative to ``CMAKE_BINARY_DIR``) to remove.
+#   Addtional files or directories to remove.
 #
 function(sequoia_add_target_clean_all)
   sequoia_get_script_dir(script_dir)

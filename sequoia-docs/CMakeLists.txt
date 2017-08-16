@@ -28,10 +28,20 @@ sequoia_check_in_source_build()
 
 # Add clean-all target
 include(SequoiaAddTargetCleanAll)
-sequoia_add_target_clean_all(${CMAKE_BINARY_DIR}/sphinx ${CMAKE_BINARY_DIR}/sequoia-cmake)
+sequoia_add_target_clean_all(${CMAKE_BINARY_DIR}/sphinx 
+                             ${CMAKE_BINARY_DIR}/sequoia-cmake 
+                             ${CMAKE_SOURCE_DIR}/sphinx/sequoia-cmake)
 
-# Include the tools
-include(AddPython3)
-include(AddSphinx)
+# Include the packages
+include(SequoiaCreatePackageString)
+include(SequoiaExportPackage)
+include(SequoiaReportResult)
+
+foreach(package Python3 Sphinx)
+  include("Add${package}")
+  sequoia_create_package_string(${package} packge_str)
+  list(APPEND package_info ${packge_str})
+endforeach()
+sequoia_report_result("Package summary" ${package_info})
 
 add_subdirectory(sphinx)
