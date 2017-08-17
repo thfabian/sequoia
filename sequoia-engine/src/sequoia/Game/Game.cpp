@@ -33,24 +33,18 @@ namespace sequoia {
 
 SEQUOIA_DECLARE_SINGLETON(game::Game);
 
-namespace {
-
-/// @brief Listen to changes of the camera of the current scene
-class CameraChangeListener {};
-}
-
 namespace game {
 
-Game::Game(std::string name)
+Game::Game()
     : renderSystem_(nullptr), assetManager_(nullptr), meshManager_(nullptr), mainWindow_(nullptr),
-      quitKey_(nullptr), shouldClose_(false), activeScene_(nullptr), name_(name),
+      quitKey_(nullptr), shouldClose_(false), activeScene_(nullptr), name_("<unknown>"),
       options_(nullptr) {}
 
 Game::~Game() { cleanup(); }
 
 void Game::run() {
-  SEQUOIA_ASSERT_MSG(renderSystem_, "Game not initialized, did you call init()?");  
-      
+  SEQUOIA_ASSERT_MSG(renderSystem_, "Game not initialized, did you call init()?");
+
   LOG(INFO) << "Starting main-loop ...";
 
   render::DrawCommandList* drawCommandList = mainWindow_->getDrawCommandList().get();
@@ -80,10 +74,10 @@ void Game::run() {
 
 void Game::setQuitKey(const std::shared_ptr<Keymap>& key) { quitKey_ = key; }
 
-void Game::init(Options* options, bool hideWindow) {
-  SEQUOIA_ASSERT_MSG(options, "Options not initialized");
-  
-  options_ = options;
+void Game::init(const GameOptions& gameOptions) {
+  name_ = gameOptions.Name;
+  options_ = gameOptions.Options;
+
   Options& opt = *options_;
 
   LOG(INFO) << "Initializing " << name_ << " ...";
@@ -91,7 +85,7 @@ void Game::init(Options* options, bool hideWindow) {
 
   try {
     // Initialize the RenderSystem
-    renderSystem_ = RenderSystem::create(RK_OpenGL, options);
+    renderSystem_ = RenderSystem::create(gameOptions.RenderSystemKind, options_);
 
     // Create the main-window & initialize the OpenGL context
     RenderWindow::WindowHint hint;
@@ -102,7 +96,7 @@ void Game::init(Options* options, bool hideWindow) {
                           .Case("fullscreen", WindowModeKind::WK_Fullscreen)
                           .Case("windowed-fullscreen", WindowModeKind::WK_WindowedFullscreen)
                           .Default(WindowModeKind::WK_Window);
-    hint.HideWindow = hideWindow;
+    hint.HideWindow = gameOptions.HideWindow;
 
     mainWindow_ = renderSystem_->createMainWindow(hint);
 

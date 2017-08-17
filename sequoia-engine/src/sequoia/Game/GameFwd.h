@@ -25,6 +25,7 @@ class CameraController;
 class CameraControllerFree;
 class Drawable;
 class Game;
+struct GameOptions;
 class Keymap;
 class Mesh;
 class MeshManager;

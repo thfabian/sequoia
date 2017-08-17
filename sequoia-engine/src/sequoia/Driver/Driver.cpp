@@ -13,7 +13,6 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Driver/Driver.h"
 #include "sequoia/Core/ErrorHandler.h"
 #include "sequoia/Core/Exception.h"
 #include "sequoia/Core/Logging.h"
@@ -22,6 +21,7 @@
 #include "sequoia/Core/SingletonManager.h"
 #include "sequoia/Driver/CommandLine.h"
 #include "sequoia/Driver/ConsoleLogger.h"
+#include "sequoia/Driver/Driver.h"
 #include "sequoia/Driver/Win32Console.h"
 #include "sequoia/Game/Game.h"
 
@@ -46,7 +46,7 @@ int Driver::run(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, i
 
   // Initialize options, parse config file and parse command-line
   auto options = std::make_unique<Options>();
-  
+
   // Initialize options, parse config file and parse command-line
   std::vector<std::string> arguments = boost::program_options::split_winmain(lpCmdLine);
   CommandLine::parse(arguments, options.get());
@@ -94,7 +94,11 @@ int Driver::runImpl(Options* options) {
 
   // Setup game
   auto mainGameObject = std::make_unique<game::Game>();
-  mainGameObject->init(options);
+  game::GameOptions gameOptions(options, render::RK_OpenGL);
+  gameOptions.HideWindow = false;
+  gameOptions.Name = "SequoiaStandalone";
+
+  mainGameObject->init(gameOptions);
   mainGameObject->run();
 
   return 0;

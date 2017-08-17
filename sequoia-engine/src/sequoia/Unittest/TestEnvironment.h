@@ -21,6 +21,7 @@
 #include "sequoia/Core/PrettyStackTrace.h"
 #include "sequoia/Core/Singleton.h"
 #include "sequoia/Core/SingletonManager.h"
+#include "sequoia/Render/RenderSystemObject.h"
 #include "sequoia/Unittest/TestFile.h"
 #include <gtest/gtest.h>
 #include <string>
@@ -57,7 +58,10 @@ public:
   std::string testName() const;
 
   /// @brief Get the ressource path of the unittest
-  const platform::Path& getRessourcePath() const;
+  const platform::Path& getRessourcePath() const { return path_; }
+
+  /// @brief Get the render-system to use
+  render::RenderSystemKind getRenderSystemKind() const { return renderSystemKind_; }
 
   /// @brief Get the full path of the ressource file specified by `path` relative to the unittest
   /// ressource root (i.e `Environment::getRessourcePath()`)
@@ -71,6 +75,9 @@ private:
 
   /// Path of the ressources
   platform::Path path_;
+
+  /// Renderer to use
+  render::RenderSystemKind renderSystemKind_;
 
   /// Manager of the singletons
   std::unique_ptr<core::SingletonManager> singletonManager_;

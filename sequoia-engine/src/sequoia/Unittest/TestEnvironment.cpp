@@ -14,7 +14,9 @@
 //===------------------------------------------------------------------------------------------===//
 
 #include "sequoia/Core/ErrorHandler.h"
+#include "sequoia/Core/Format.h"
 #include "sequoia/Core/Logging.h"
+#include "sequoia/Core/StringSwitch.h"
 #include "sequoia/Driver/ConsoleLogger.h"
 #include "sequoia/Unittest/Config.h"
 #include "sequoia/Unittest/TestEnvironment.h"
@@ -45,7 +47,10 @@ TestEnvironment::TestEnvironment(int argc, char* argv[]) : trace_() {
       // --no-debug
       ("no-debug", "Disable debug mode.")
       // --no-log
-      ("no-log", "Disable logging.");
+      ("no-log", "Disable logging.")
+      // -r, --renderer
+      ("renderer,r", po::value<std::string>()->value_name("RENDERER"),
+       "Renderer to use, where <RENDERER> is one of [gl, null].");
 
   po::variables_map vm;
 
@@ -60,6 +65,21 @@ TestEnvironment::TestEnvironment(int argc, char* argv[]) : trace_() {
     std::cout << "\nSequoia Unittests (" << SEQUOIA_VERSION_STRING << ")\n\n" << desc << std::endl;
     std::exit(EXIT_SUCCESS);
   }
+
+  // Set the preferred RenderSystem
+  if(vm.count("renderer"))
+    renderSystemKind_ =
+        core::StringSwitch<render::RenderSystemKind>(vm["renderer"].as<std::string>())
+            .Case("gl", render::RK_OpenGL)
+            .Case("null", render::RK_Null)
+            .Default(render::RK_Invalid);
+  else
+    renderSystemKind_ = render::RK_Null;
+
+  if(renderSystemKind_ == render::RK_Invalid)
+    ErrorHandler::getSingleton().fatal(
+        core::format("invalid value '%s' of option '--render'", vm["renderer"].as<std::string>()),
+        false, false);
 
   // Unittesting always runs in debug mode and with logging on
   singletonManager_->allocateSingleton<core::Logger>(
@@ -99,8 +119,6 @@ std::string TestEnvironment::testName() const {
     return testInfo->name();
   return "";
 }
-
-const platform::Path& TestEnvironment::getRessourcePath() const { return path_; }
 
 std::shared_ptr<File> TestEnvironment::getFile(const char* path) const {
   return std::make_shared<TestFile>(path);

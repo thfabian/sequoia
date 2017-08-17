@@ -41,6 +41,6 @@ popd
 # Test
 pushd $(pwd)
 cd build/sequoia-engine
-ctest -C ${CONFIG}  -E "GameTest|RenderGLTest" --output-on-failure --force-new-ctest-process       \
+ctest -C ${CONFIG}  -E "RenderGLTest" --output-on-failure --force-new-ctest-process                \
      || fatal_error "failed to run tests of sequoia"
 popd

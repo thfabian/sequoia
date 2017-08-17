@@ -16,6 +16,8 @@
 #ifndef SEQUOIA_RENDER_RENDERFWD_H
 #define SEQUOIA_RENDER_RENDERFWD_H
 
+#include <sequoia/Render/RenderSystemObject.h>
+
 namespace sequoia {
 
 namespace render {

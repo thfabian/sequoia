@@ -32,6 +32,29 @@ namespace sequoia {
 
 namespace game {
 
+/// @brief Options used to initialize the Game
+/// @ingroup game
+struct GameOptions {
+
+  /// Name of the Game
+  std::string Name = "Game";
+
+  /// Hide the main-window of the Game
+  bool HideWindow = false;
+
+  /// RenderSystem to use
+  render::RenderSystemKind RenderSystemKind;
+
+  /// Reference to the general options
+  core::Options* Options;
+
+  GameOptions(core::Options* options, render::RenderSystemKind renderSystemKind)
+      : RenderSystemKind(renderSystemKind), Options(options) {}
+
+  GameOptions(const GameOptions&) = default;
+  GameOptions(GameOptions&&) = default;
+};
+
 /// @brief Main class holding all game and rendering related objects and running the main-loop
 /// @ingroup game
 class SEQUOIA_API Game final : public Singleton<Game>,
@@ -67,16 +90,13 @@ class SEQUOIA_API Game final : public Singleton<Game>,
   Options* options_;
 
 public:
-  Game(std::string name = "Game");
+  Game();
 
   /// @brief Cleanup all allocted objects
   ~Game();
 
-  /// @brief Initializes the game object by initializing the RenderSystem
-  ///
-  /// @param options      Options used to initialize the sub-systems of the game
-  /// @param hideWindow   Hide the main-window
-  void init(Options* options, bool hideWindow = false);
+  /// @brief Initialize the game
+  void init(const GameOptions& gameOptions);
 
   /// @brief Frees all allocated resources
   void cleanup();
