@@ -31,15 +31,18 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 include(SequoiaCMakeInit)
 sequoia_cmake_init()
 
+include(SequoiaAddTargetCleanAll)
+include(SequoiaCheckInSourceBuild)
+include(SequoiaCreatePackageString)
+include(SequoiaDefinitions)
+include(SequoiaExportPackage)
+include(SequoiaFunctions)
+include(SequoiaMacros)
+include(SequoiaMakeStringPair)
+include(SequoiaOptions)
 include(SequoiaReportResult)
 
-include(SequoiaOptions)
-include(SequoiaDefinitions)
-include(SequoiaMacros)
-include(SequoiaFunctions)
-
 # Prevent in source builds
-include(SequoiaCheckInSourceBuild)
 sequoia_check_in_source_build()
 
 # Check compliance of compiler
@@ -52,55 +55,43 @@ sequoia_set_cxx_standard(c++14)
 sequoia_set_cxx_flags()
 
 # Custom tragets
-include(SequoiaAddTargetCleanAll)
 sequoia_add_target_clean_all()
 sequoia_add_target_clang_format(${CMAKE_SOURCE_DIR}/src)
 
-# Output findings
-sequoia_report_result(
-  "Configuration summary" 
-  "Sequoia version: ${SEQUOIA_VERSION_STRING}"
-  "Platform: ${SEQUOIA_PLATFORM_STRING}"
-  "Architecture: ${SEQUOIA_ARCHITECTURE_STRING}"
-  "Compiler: ${SEQUOIA_COMPILER_STRING}"
-  "Build type: ${CMAKE_BUILD_TYPE}"
-  "Build shared: ${BUILD_SHARED_LIBS}"
-)
+# Output summary of the configuration
+macro(make_config_string FIRST SECOND)
+  sequoia_make_string_pair(${FIRST} ": ${SECOND}" 20 out)
+  list(APPEND config_info ${out})
+endmacro()
+make_config_string("Sequoia version" ${SEQUOIA_VERSION_STRING})
+make_config_string("Platform" ${SEQUOIA_PLATFORM_STRING})
+make_config_string("Architecture" ${SEQUOIA_ARCHITECTURE_STRING})
+make_config_string("Compiler" ${SEQUOIA_COMPILER_STRING})
+make_config_string("Build type" ${CMAKE_BUILD_TYPE})
+make_config_string("Build shared" ${BUILD_SHARED_LIBS})
+sequoia_report_result("Configuration summary" ${config_info})
 
-# Add external libraries
-include(AddBackward)
-include(AddBoost)
-include(AddCppcheck)
-include(Addccache)
-include(Addglbinding)
-include(Addglfw3)
-include(Addgli)
-include(Addglm)
-include(AddOpenCV)
-include(AddOpenGL)
-include(AddPython3)
-include(AddTBB)
-include(AddThreads)
-
+# Find the packages
 if(SEQUOIA_TESTING)
-  include(AddGTest)
-  include(Addbenchmark)
-  set(testing_packages GTEST BENCHMARK)
+  set(testing_packages GTest benchmark)
 endif()
 
-# Gather the external libraries, include directories and definitions
-foreach(package BACKWARD BOOST GLBINDING GLFW3 GLM GLI OPENCV OPENGL TBB 
-                ${testing_packages} THREADS)
-  list(APPEND SEQUOIA_EXTERNAL_LIBRARIES ${SEQUOIA_${package}_LIBRARIES})
-  list(APPEND SEQUOIA_EXTERNAL_INCLUDE_DIRS ${SEQUOIA_${package}_INCLUDE_DIRS})
-  list(APPEND SEQUOIA_EXTERNAL_DEFINITIONS ${SEQUOIA_${package}_DEFINITIONS})
+foreach(package Backward Boost ccache Cppcheck glbinding glfw3 gli glm OpenCV OpenGL Python3 TBB
+                ${testing_packages} Threads)
+  include("Add${package}")
+  string(TOUPPER ${package} PACKAGE)
+  list(APPEND SEQUOIA_EXTERNAL_LIBRARIES ${SEQUOIA_${PACKAGE}_LIBRARIES})
+  list(APPEND SEQUOIA_EXTERNAL_INCLUDE_DIRS ${SEQUOIA_${PACKAGE}_INCLUDE_DIRS})
+  list(APPEND SEQUOIA_EXTERNAL_DEFINITIONS ${SEQUOIA_${PACKAGE}_DEFINITIONS})
+  sequoia_create_package_string(${package} info)
+  list(APPEND package_info ${info})
 endforeach()
 
 include_directories(SYSTEM ${SEQUOIA_EXTERNAL_INCLUDE_DIRS})
 add_definitions(${SEQUOIA_EXTERNAL_DEFINITIONS})
 
 # Output summary of the packages
-sequoia_report_result("Package summary" ${SEQUOIA_PACKAGE_INFO})
+sequoia_report_result("Package summary" ${package_info})
   
 # Sequoia libraries
 include_directories(${CMAKE_SOURCE_DIR}/src)

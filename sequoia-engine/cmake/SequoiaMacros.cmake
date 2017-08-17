@@ -19,109 +19,6 @@ include(CheckCXXCompilerFlag)
 include(CheckCXXSourceRuns)
 include(CMakeParseArguments)
 
-## sequoia_gen_package_info_str
-## ----------------------------
-##
-## Append a package info string to ``SEQUOIA_PACKAGE_INFO`` for ``PACKAGE``.
-##
-##    PACKAGE:STRING=<>           - Name of the package
-##    VERSION_STR:STRING=<>       - Version string of the package or empty
-##    FOUND:BOOL=<>               - Was the package found?
-##
-macro(sequoia_gen_package_info_str PACKAGE VERSION_STR FOUND)
-  set(length 20)
-
-  string(LENGTH ${PACKAGE} package_name_length)
-  math(EXPR indent_length "${length} - ${package_name_length}")
-
-  set(full_indent "                    ") 
-  string(SUBSTRING ${full_indent} "0" "${indent_length}" indent1)
-
-  if(NOT(${FOUND}))
-    set(info "NOT found")
-    string(SUBSTRING ${full_indent} "0" "11" indent2)
-  else()
-    set(info "found")
-    string(SUBSTRING ${full_indent} "0" "15" indent2)
-  endif()
-
-  if(NOT("${VERSION_STR}" STREQUAL ""))
-    set(version "${VERSION_STR}")
-  else()
-    set(version "-")
-  endif()
-  
-  if(NOT(DEFINED SEQUOIA_PACKAGE_INFO))
-    set(SEQUOIA_PACKAGE_INFO CACHE BOOL "Information about the found packages" FORCE)
-  endif()
-  list(APPEND SEQUOIA_PACKAGE_INFO "${PACKAGE}${indent1}: ${info}${indent2} ${version}")
-endmacro()
-
-## sequoia_export_package_variable
-## -------------------------------
-##
-## Export the variables:
-##  SEQUOIA_${PACKAGE}_FOUND         : True if package was found, False otherwise
-##  SEQUOIA_${PACKAGE}_LIBRARIES     : Libraries of the package to link against
-##  SEQUOIA_${PACKAGE}_INCLUDE_DIRS  : Include directories required by this package
-##  SEQUOIA_${PACKAGE}_DEFINITIONS   : Definitions required by the package
-##
-## with ``PACKAGE`` being converted to uppercase from the ``PACKAGE`` argument. In addition, an 
-## information string will be appended to ``SEQUOIA_PACKAGE_INFO``.
-##
-##    PACKAGE:STRING=<>        - Name of the package
-##    FOUND:BOOL=<>            - Package was found
-##    INCLUDE_DIRS=<>          - List of include directories to add [optional]
-##    LIBRARIES:STRING=<>      - List of libraries required for linking [optional]
-##    DEFINITIONS:STRING=<>    - List of definitions required by the package [optional]
-##    VERSION_STR:STRING=<>    - Version string if available [optional]
-##
-macro(sequoia_export_package)
-  # Prase arguments
-  set(options)
-  set(one_value_args PACKAGE FOUND VERSION_STR)
-  set(multi_value_args LIBRARIES INCLUDE_DIRS DEFINITIONS)
-  cmake_parse_arguments(ARG "${options}" "${one_value_args}" "${multi_value_args}" ${ARGN})
-  
-  if(NOT("${ARG_UNPARSED_ARGUMENTS}" STREQUAL ""))
-    message(FATAL_ERROR "invalid argument ${ARG_UNPARSED_ARGUMENTS}")
-  endif()
-
-  if(NOT(DEFINED ARG_PACKAGE))
-    message(FATAL_ERROR "sequoia_export_package: PACKAGE variable required")
-  endif()
-
-  if(NOT(DEFINED ARG_FOUND))
-    message(FATAL_ERROR "sequoia_export_package: FOUND variable required")
-  endif()
-
-  string(TOUPPER ${ARG_PACKAGE} package)
-
-  # Export variables
-  set("SEQUOIA_${package}_FOUND" ${ARG_FOUND} CACHE BOOL "${ARG_PACKAGE} found" FORCE)
-  mark_as_advanced("SEQUOIA_${package}_FOUND")
-
-  if(DEFINED ARG_LIBRARIES)  
-    set("SEQUOIA_${package}_LIBRARIES" ${ARG_LIBRARIES} CACHE 
-        STRING "Libraries of package: ${ARG_PACKAGE}" FORCE)
-    mark_as_advanced("SEQUOIA_${package}_LIBRARIES")
-  endif()
-
-  if(DEFINED ARG_INCLUDE_DIRS)  
-    set("SEQUOIA_${package}_INCLUDE_DIRS" ${ARG_INCLUDE_DIRS} CACHE 
-        STRING "Include directories of package: ${ARG_PACKAGE}" FORCE)
-    mark_as_advanced("SEQUOIA_${package}_INCLUDE_DIRS")
-  endif()
-
-  if(DEFINED ARG_DEFINITIONS)
-    set("SEQUOIA_${package}_DEFINITIONS" ${ARG_DEFINITIONS} CACHE 
-        STRING "Definitions of package: ${ARG_PACKAGE}" FORCE)
-    mark_as_advanced("SEQUOIA_${package}_DEFINITIONS")
-  endif()
-
-  sequoia_gen_package_info_str(${ARG_PACKAGE} "${ARG_VERSION_STR}" ${ARG_FOUND})
-endmacro()
-
 ## sequoia_check_cxx_flag
 ## ----------------------
 ##
@@ -155,10 +52,10 @@ endmacro()
 ## Set the minimum standard of C++.
 ##
 ##    MIN_CXX_STANDARD:STRING=<>   - Minimum C++ standard which needs to be supported, one of 
-##                                   ["c++14"].
+##                                   ["c++14" "c++17"].
 ##
 macro(sequoia_set_cxx_standard MIN_CXX_STANDARD)
-    set(supported_standards "c++14")    
+    set(supported_standards "c++14" "c++17")    
     
     if(NOT("${MIN_CXX_STANDARD}" IN_LIST supported_standards))
       message(FATAL_ERROR 
@@ -380,6 +277,8 @@ macro(sequoia_set_cxx_flags)
       if(SEQUOIA_COMPILER_CLANG)
         sequoia_check_and_set_cxx_flag("-Qunused-arguments" HAVE_CLANG_UNUSED_ARGUMENTS)
         sequoia_check_and_set_cxx_flag("-fcolor-diagnostics" HAVE_CLANG_COLOR_DIAGNOSTICS)
+        sequoia_check_and_set_cxx_flag("-Wno-undefined-var-template" 
+                                       HAVE_CLANG_WNO_UNDEFINED_VAR_TEMPLATE)
       endif()
 
       if(SEQUOIA_COMPILER_GNU)

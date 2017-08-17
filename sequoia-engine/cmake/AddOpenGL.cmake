@@ -16,7 +16,7 @@
 find_package(OpenGL REQUIRED)
 
 sequoia_export_package(
-  PACKAGE OpenGL
+  NAME OpenGL
   FOUND ${OPENGL_FOUND} 
   LIBRARIES ${OPENGL_LIBRARIES}
   INCLUDE_DIRS ${OPENGL_INCLUDE_DIR}

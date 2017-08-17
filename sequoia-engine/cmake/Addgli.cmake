@@ -16,8 +16,8 @@
 find_package(gli REQUIRED)
 
 sequoia_export_package(
-  PACKAGE gli
+  NAME gli
   FOUND ${GLI_FOUND} 
-  VERSION_STR "${GLI_VERSION}" 
+  VERSION "${GLI_VERSION}" 
   INCLUDE_DIRS ${GLI_INCLUDE_DIRS}
 )

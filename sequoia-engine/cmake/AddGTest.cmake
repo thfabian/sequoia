@@ -16,7 +16,7 @@
 find_package(GTest REQUIRED)
 
 sequoia_export_package(
-  PACKAGE gtest
+  NAME gtest
   FOUND ${GTEST_FOUND} 
   LIBRARIES ${GTEST_LIBRARIES}
   INCLUDE_DIRS ${GTEST_INCLUDE_DIRS}

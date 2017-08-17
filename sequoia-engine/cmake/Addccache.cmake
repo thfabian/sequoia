@@ -19,8 +19,9 @@ if(NOT(MSVC))
   if(CCACHE_FOUND)
     set(SEQUOIA_HAS_CCACHE 1)
     sequoia_export_package(
-      PACKAGE ccache
-      FOUND ${CCACHE_FOUND} 
+      NAME ccache
+      FOUND ${CCACHE_FOUND}
+      EXECUTABLE ${CCACHE_EXECUTABLE}
     )
 
     if(SEQUOIA_USE_CCACHE)

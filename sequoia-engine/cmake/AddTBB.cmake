@@ -53,9 +53,9 @@ if(SEQUOIA_ON_LINUX)
 endif()
 
 sequoia_export_package(
-  PACKAGE TBB
+  NAME TBB
   FOUND ${TBB_FOUND} 
-  VERSION_STR "${TBB_VERSION}"
+  VERSION "${TBB_VERSION}"
   LIBRARIES ${tbb_libs}
   INCLUDE_DIRS ${TBB_INCLUDE_DIRS}
   DEFINTIONS ${tbb_definitions}

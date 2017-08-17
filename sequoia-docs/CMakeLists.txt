@@ -39,8 +39,8 @@ include(SequoiaReportResult)
 
 foreach(package Python3 Sphinx)
   include("Add${package}")
-  sequoia_create_package_string(${package} packge_str)
-  list(APPEND package_info ${packge_str})
+  sequoia_create_package_string(${package} info)
+  list(APPEND package_info ${info})
 endforeach()
 sequoia_report_result("Package summary" ${package_info})
 

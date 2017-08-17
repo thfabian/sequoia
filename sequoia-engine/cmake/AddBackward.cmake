@@ -20,7 +20,7 @@ foreach(definition ${BACKWARD_DEFINITIONS})
 endforeach()
 
 sequoia_export_package(
-  PACKAGE backward 
+  NAME backward 
   FOUND ${Backward_FOUND} 
   LIBRARIES ${BACKWARD_LIBRARIES}
   INCLUDE_DIRS ${BACKWARD_INCLUDE_DIRS}

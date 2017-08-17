@@ -16,8 +16,9 @@
 find_package(Cppcheck)
 
 sequoia_export_package(
-  PACKAGE Cppcheck
+  NAME Cppcheck
   FOUND ${CPPCHECK_FOUND} 
+  EXECUTABLE ${CPPCHECK_EXECUTABLE}
 )
 
 if(CPPCHECK_FOUND)

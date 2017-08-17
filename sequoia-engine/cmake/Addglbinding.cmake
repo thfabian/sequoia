@@ -16,9 +16,9 @@
 find_package(glbinding REQUIRED)
 
 sequoia_export_package(
-  PACKAGE glbinding
+  NAME glbinding
   FOUND ${GLBINDING_FOUND} 
-  VERSION_STR "${GLBINDING_VERSION}" 
+  VERSION "${GLBINDING_VERSION}" 
   LIBRARIES ${GLBINDING_LIBRARIES}
   INCLUDE_DIRS ${GLBINDING_INCLUDE_DIRS}
 )

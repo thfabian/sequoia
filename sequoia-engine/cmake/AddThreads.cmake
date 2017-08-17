@@ -26,8 +26,8 @@ elseif(CMAKE_HP_PTHREADS_INIT)
 endif()
 
 sequoia_export_package(
-  PACKAGE Threads
+  NAME Threads
   FOUND ON 
-  VERSION_STR "${threadlib}"
+  VERSION "${threadlib}"
   LIBRARIES ${CMAKE_THREAD_LIBS_INIT}
 )

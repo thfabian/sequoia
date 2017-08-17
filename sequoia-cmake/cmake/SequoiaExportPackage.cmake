@@ -57,6 +57,8 @@ include(CMakeParseArguments)
 #   Include directories required by this package.
 # ``SEQUOIA_<NAME>_DEFINITIONS``
 #   Definitions required by the package.
+# ``SEQUOIA_<NAME>EXECUTABLE``
+#   Executable of the package.
 # ``SEQUOIA_<NAME>_VERSION``
 #   Version string of the package.
 #

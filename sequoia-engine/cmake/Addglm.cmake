@@ -20,9 +20,9 @@ if(NOT(WIN32))
 endif()
 
 sequoia_export_package(
-  PACKAGE glm
+  NAME glm
   FOUND ${GLM_FOUND} 
-  VERSION_STR "${GLM_VERSION}"
+  VERSION "${GLM_VERSION}"
   INCLUDE_DIRS ${GLM_INCLUDE_DIRS}
   DEFINITIONS ${glm_definitions}
 )

@@ -18,9 +18,9 @@ find_package(glfw3 3.2.1 NO_MODULE REQUIRED)
 get_property(glfw3_INCLUDE_DIRS TARGET glfw PROPERTY INTERFACE_INCLUDE_DIRECTORIES)
 
 sequoia_export_package(
-  PACKAGE glfw3
+  NAME glfw3
   FOUND ${glfw3_FOUND} 
-  VERSION_STR "${glfw3_VERSION}" 
+  VERSION "${glfw3_VERSION}" 
   LIBRARIES glfw
   INCLUDE_DIRS ${glfw3_INCLUDE_DIRS}
 )
