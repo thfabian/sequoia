@@ -31,19 +31,19 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 include(SequoiaCMakeInit)
 sequoia_cmake_init()
 
-##===---------------------------------- CMake modules -----------------------------------------===##
-include(SequoiaMacros)
+include(SequoiaAddTargetCleanAll)
+include(SequoiaCheckInSourceBuild)
+
 include(ExternalProject)
+include(SequoiaMacros)
 
 # Prevent in source builds
-include(SequoiaCheckInSourceBuild)
 sequoia_check_in_source_build()
 
 # Set default download dir
 sequoia_set_default_download_dir()
 
 # Provide clean-all target which clears the CMakeCache
-include(SequoiaAddTargetCleanAll)
 sequoia_add_target_clean_all()
 
 # Set default CMake arguments
@@ -68,10 +68,8 @@ option(SEQUOIA_ASSERTS "Enable asserts in all libraries i.e undefine -DNDEBUG"
        ${BUILD_IS_NOT_RELEASE})
 sequoia_set_assert_level()
 
-##===---------------------------------- Third party projects ----------------------------------===##
 include(Projects)
 add_subdirectory(thirdparty)
 
-##===---------------------------------- Sequoia projects --------------------------------------===##
 include(External_sequoia-engine)
 

@@ -34,13 +34,14 @@ sequoia_cmake_init()
 include(SequoiaAddTargetCleanAll)
 include(SequoiaCheckInSourceBuild)
 include(SequoiaCreatePackageString)
-include(SequoiaDefinitions)
 include(SequoiaExportPackage)
-include(SequoiaFunctions)
-include(SequoiaMacros)
 include(SequoiaMakeStringPair)
-include(SequoiaOptions)
 include(SequoiaReportResult)
+
+include(SequoiaEngineDefinitions)
+include(SequoiaEngineFunctions)
+include(SequoiaEngineMacros)
+include(SequoiaEngineOptions)
 
 # Prevent in source builds
 sequoia_check_in_source_build()
@@ -83,6 +84,7 @@ foreach(package Backward Boost ccache Cppcheck glbinding glfw3 gli glm OpenCV Op
   list(APPEND SEQUOIA_EXTERNAL_LIBRARIES ${SEQUOIA_${PACKAGE}_LIBRARIES})
   list(APPEND SEQUOIA_EXTERNAL_INCLUDE_DIRS ${SEQUOIA_${PACKAGE}_INCLUDE_DIRS})
   list(APPEND SEQUOIA_EXTERNAL_DEFINITIONS ${SEQUOIA_${PACKAGE}_DEFINITIONS})
+  
   sequoia_create_package_string(${package} info)
   list(APPEND package_info ${info})
 endforeach()

@@ -13,6 +13,8 @@
 ##
 ##===------------------------------------------------------------------------------------------===##
 
+include(SequoiaReportResult)
+
 if(WIN32)
   set(NO_SYSTEM_LIBS_DEFAULT ON)
 else()
@@ -81,5 +83,4 @@ set(thirdparty_cmake_args
 )
 set(Sequoia_CMAKE_ARGS "${thirdparty_cmake_args}" PARENT_SCOPE)
 
-include(SequoiaReportResult)
 sequoia_report_result("Package summary" ${SEQUOIA_PACKAGE_INFO})
