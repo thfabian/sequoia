@@ -37,15 +37,15 @@ TEST(DoubleBufferedTest, Allocate) {
   EXPECT_TRUE(*uptrs.get() == 4.0);
 }
 
-TEST(DoubleBufferedTest, Swap) {
+TEST(DoubleBufferedTest, NexTimeStep) {
   {
     DoubleBuffered<std::string> ab("a", "b");
     EXPECT_TRUE(ab.get() == "a");
-    ab.swap(false);
+    ab.nextTimestep(false);
     EXPECT_TRUE(ab.get() == "b");
-    ab.swap(false);
+    ab.nextTimestep(false);
     EXPECT_TRUE(ab.get() == "a");
-    ab.swap(false);
+    ab.nextTimestep(false);
     EXPECT_TRUE(ab.get() == "b");
   }
 
@@ -56,7 +56,7 @@ TEST(DoubleBufferedTest, Swap) {
     std::string& a = ab.get();
 
     // first: "a"     second: "a"    idx : 1    [swap with copy meaning `second = first`]
-    ab.swap();
+    ab.nextTimestep();
     EXPECT_TRUE(ab.get() == "a");
 
     // first: "aaa"   second: "a"    idx : 1    [modify first, second remains the same]
@@ -64,13 +64,13 @@ TEST(DoubleBufferedTest, Swap) {
     EXPECT_TRUE(ab.get() == "a");
 
     // first: "a"     second: "a"    idx : 0    [swap and copy again meaning `first = second`]
-    ab.swap();
+    ab.nextTimestep();
     EXPECT_TRUE(ab.get() == "a");
     EXPECT_TRUE(a == "a");
   }
 }
 
-TEST(DoubleBufferedTest, SwapSharedPtr) {
+TEST(DoubleBufferedTest, NexTimeStepSharedPtr) {
   // first: "a"     second: "b"    idx : 0
   DoubleBuffered<std::shared_ptr<std::string>> ab(std::make_shared<std::string>("a"),
                                                   std::make_shared<std::string>("b"));
@@ -78,7 +78,7 @@ TEST(DoubleBufferedTest, SwapSharedPtr) {
   std::string& a = *ab.get();
 
   // first: "a"     second: "a"    idx : 1    [swap with copy meaning `second = first`]
-  ab.swap();
+  ab.nextTimestep();
   EXPECT_TRUE(*ab.get() == "a");
 
   // first: "aaa"   second: "a"    idx : 1    [modify first, second remains the same]
@@ -86,12 +86,12 @@ TEST(DoubleBufferedTest, SwapSharedPtr) {
   EXPECT_TRUE(*ab.get() == "a");
 
   // first: "a"     second: "a"    idx : 0    [swap and copy again meaning `first = second`]
-  ab.swap();
+  ab.nextTimestep();
   EXPECT_TRUE(*ab.get() == "a");
   EXPECT_TRUE(a == "a");
 }
 
-TEST(DoubleBufferedTest, SwapUniquePtr) {
+TEST(DoubleBufferedTest, NexTimeStepUniquePtr) {
   // first: "a"     second: "b"    idx : 0
   DoubleBuffered<std::unique_ptr<std::string>> ab(std::make_unique<std::string>("a"),
                                                   std::make_unique<std::string>("b"));
@@ -99,7 +99,7 @@ TEST(DoubleBufferedTest, SwapUniquePtr) {
   std::string& a = *ab.get();
 
   // first: "a"     second: "a"    idx : 1    [swap with copy meaning `second = first`]
-  ab.swap();
+  ab.nextTimestep();
   EXPECT_TRUE(*ab.get() == "a");
 
   // first: "aaa"   second: "a"    idx : 1    [modify first, second remains the same]
@@ -107,7 +107,7 @@ TEST(DoubleBufferedTest, SwapUniquePtr) {
   EXPECT_TRUE(*ab.get() == "a");
 
   // first: "a"     second: "a"    idx : 0    [swap and copy again meaning `first = second`]
-  ab.swap();
+  ab.nextTimestep();
   EXPECT_TRUE(*ab.get() == "a");
   EXPECT_TRUE(a == "a");
 }

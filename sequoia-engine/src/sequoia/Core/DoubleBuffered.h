@@ -80,9 +80,9 @@ inline void assign(T& a, const T& b) {
 ///   // The individual buffers can also be accessed via .first() and .second()
 ///   assert(ab.first() == "a" && ab.second() == "b");
 ///
-///   // Swapping the buffer sets the currently active buffer to the second one and copies the first
-///   // buffer into the second (i.e get() still returns "a")
-///   ab.swap();
+///   // Progress to the next time-step by setting the currently active buffer to the second one
+///   // and copy the first buffer into the second (i.e get() still returns "a")
+///   ab.nextTimestep();
 ///   assert(ab.get() == "a");
 ///   assert(&ab.get() == &ab.second());
 ///
@@ -126,13 +126,14 @@ public:
   T& get() noexcept { return data_[idx_]; }
   const T& get() const noexcept { return data_[idx_]; }
 
-  /// @brief Swap the buffers and optionally copy the old buffer to the new one
+  /// @brief Progress to the next time-step by swapping the buffers and optionally copy the old
+  /// buffer to the new one
   ///
-  /// If `T` is a pointer type (including `std::unqiue_ptr` and `std::shared_ptr`), the *pointee* 
+  /// If `T` is a pointer type (including `std::unqiue_ptr` and `std::shared_ptr`), the *pointee*
   /// will be copied.
   ///
   /// @param copy   Copy the old buffer to the new one?
-  inline void swap(bool copy = true) {
+  inline void nextTimestep(bool copy = true) {
     std::int8_t oldIdx = idx_;
     idx_ = (idx_ + 1) % 2;
     if(copy)

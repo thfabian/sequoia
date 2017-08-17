@@ -26,6 +26,7 @@ namespace render {
 /// @brief OpenGL buffer for storing vertex indices (elements)
 /// @ingroup gl
 class SEQUOIA_API GLIndexBuffer final : public IndexBuffer {
+  
   GLBuffer glBuffer_; ///< OpenGL buffer
 
 public:

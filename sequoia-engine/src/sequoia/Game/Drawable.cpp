@@ -67,9 +67,10 @@ render::DrawCommand* Drawable::prepareDrawCommand() {
   drawCommand_.get().setModelMatrix(getNode()->getModelMatrix());
   render::DrawCommand* cmd = &drawCommand_.get();
 
-  // ... and swap the Drawcommand. Note that his copies the current draw command `cmd` into the
-  // new one so that subsequent calls will not corrupt the render-state.
-  drawCommand_.swap();
+  // ... and progress to the next time-step with the Drawcommand. Note that his copies the current
+  // draw command (i.e cmd) into the new one so that subsequent calls will not corrupt the
+  // render-state.
+  drawCommand_.nextTimestep();
   return cmd;
 }
 
