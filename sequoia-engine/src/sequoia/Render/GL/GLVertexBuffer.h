@@ -13,26 +13,26 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_RENDER_GL_GLINDEXBUFFER_H
-#define SEQUOIA_RENDER_GL_GLINDEXBUFFER_H
+#ifndef SEQUOIA_RENDER_GL_GLVERTEXBUFFER_H
+#define SEQUOIA_RENDER_GL_GLVERTEXBUFFER_H
 
 #include "sequoia/Render/GL/GLBuffer.h"
-#include "sequoia/Render/IndexBuffer.h"
+#include "sequoia/Render/VertexBuffer.h"
 
 namespace sequoia {
 
 namespace render {
 
-/// @brief OpenGL buffer for storing vertex indices (elements)
+/// @brief OpenGL buffer for storing vertices
 /// @ingroup gl
-class SEQUOIA_API GLIndexBuffer final : public IndexBuffer {
+class SEQUOIA_API GLVertexBuffer final : public VertexBuffer {
   GLBuffer glBuffer_; ///< OpenGL buffer
 
-public:  
-  GLIndexBuffer(IndexBuffer::IndexType type);
+public:
+  GLVertexBuffer(const VertexLayout* layout, int numBuffers);
 
   /// @brief Free all memory
-  ~GLIndexBuffer();
+  ~GLVertexBuffer();
 
   /// @copydoc Buffer::write
   void write(const void* src, std::size_t offset, std::size_t length, bool discardBuffer) override;
@@ -63,9 +63,9 @@ protected:
 
   /// @copydoc Buffer::toStringImpl
   std::pair<std::string, std::string> toStringImpl() const override;
-  
+
 private:
-  using Base = IndexBuffer;
+  using Base = VertexBuffer;
 };
 
 } // namespace render

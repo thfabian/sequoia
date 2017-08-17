@@ -23,6 +23,10 @@ namespace render {
 
 static const char* indexTypeToString(IndexBuffer::IndexType type) {
   switch(type) {
+  case IndexBuffer::IT_UInt8:
+    return "std::uint8_t";
+  case IndexBuffer::IT_UInt16:
+    return "std::uint16_t";
   case IndexBuffer::IT_UInt32:
     return "std::uint32_t";
   default:
@@ -32,6 +36,10 @@ static const char* indexTypeToString(IndexBuffer::IndexType type) {
 
 static std::size_t sizeOfIndexType(IndexBuffer::IndexType type) {
   switch(type) {
+  case IndexBuffer::IT_UInt8:
+    return sizeof(std::uint8_t);
+  case IndexBuffer::IT_UInt16:
+    return sizeof(std::uint16_t);
   case IndexBuffer::IT_UInt32:
     return sizeof(std::uint32_t);
   default:
@@ -40,6 +48,12 @@ static std::size_t sizeOfIndexType(IndexBuffer::IndexType type) {
 }
 
 IndexBuffer::IndexBuffer(BufferKind kind, IndexType type) : Buffer(kind), type_(type) {}
+
+IndexBuffer::~IndexBuffer() {}
+
+void IndexBuffer::allocateIndices(std::size_t numIndices) {
+  allocate(numIndices * getSizeOfIndexType(), Buffer::UH_StaticWriteOnly);
+}
 
 std::size_t IndexBuffer::getSizeOfIndexType() const noexcept { return sizeOfIndexType(type_); }
 

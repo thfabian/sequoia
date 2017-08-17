@@ -13,30 +13,24 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_RENDER_INDEXBUFFER_H
-#define SEQUOIA_RENDER_INDEXBUFFER_H
+#ifndef SEQUOIA_RENDER_VERTEXBUFFER_H
+#define SEQUOIA_RENDER_VERTEXBUFFER_H
 
 #include "sequoia/Render/Buffer.h"
+#include "sequoia/Render/Vertex.h"
 
 namespace sequoia {
 
 namespace render {
 
-/// @brief Harware buffer for storing vertex indices (elements)
+/// @brief Harware buffer for storing vertices
 /// @ingroup render
-class SEQUOIA_API IndexBuffer : public Buffer {
+class SEQUOIA_API VertexBuffer : public Buffer {
 public:
-  /// @brief Type of the indices
-  enum IndexType {
-    IT_UInt8,  ///< 8 bit unsigned integer
-    IT_UInt16, ///< 16 bit unsigned integer
-    IT_UInt32  ///< 32 bit unsigned integer
-  };
-
-  IndexBuffer(BufferKind kind, IndexType type);
+  VertexBuffer(BufferKind kind, const VertexLayout* layout);
 
   /// @brief Free all memory
-  virtual ~IndexBuffer();
+  virtual ~VertexBuffer();
 
   /// @copydoc Buffer::write
   virtual void write(const void* src, std::size_t offset, std::size_t length,
@@ -49,19 +43,16 @@ public:
   virtual bool isSystemRAM() const override = 0;
 
   /// @brief Allocate `numIndices`
-  void allocateIndices(std::size_t numIndices);
+  void allocateVertices(std::size_t numVertices, Buffer::UsageHint hint);
 
-  /// @brief Get the number of indices
-  std::size_t getNumIndices() const { return getNumBytes() / getSizeOfIndexType(); }
+  /// @brief Get the number of vertices
+  std::size_t getNumVertices() const { return getNumBytes() / layout_->SizeOf; }
 
-  /// @brief Get the size of the underlying tpye
-  std::size_t getSizeOfIndexType() const noexcept;
-
-  /// @brief Get the underlying type
-  IndexType getIndexType() const noexcept { return type_; }
+  /// @brief Get the layout of the vertices
+  const VertexLayout* getLayout() const { return layout_; }
 
   static bool classof(const Buffer* buffer) {
-    return buffer->getKind() >= BK_IndexBuffer && buffer->getKind() < BK_IndexBufferLast;
+    return buffer->getKind() >= BK_VertexBuffer && buffer->getKind() < BK_VertexBufferLast;
   }
 
 protected:
@@ -78,7 +69,8 @@ protected:
   virtual std::pair<std::string, std::string> toStringImpl() const override;
 
 private:
-  IndexType type_; ///< Type of the indices
+  /// Layout of each individual vertex
+  const VertexLayout* layout_;
 
 private:
   using Base = Buffer;

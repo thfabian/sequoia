@@ -76,6 +76,14 @@ public:
   createTexture(const std::shared_ptr<Image>& image,
                 const TextureParameter& param = TextureParameter()) override;
 
+  /// @copydoc RenderSystem::createIndexBuffer
+  virtual std::shared_ptr<IndexBuffer> createIndexBuffer(IndexBuffer::IndexType type) override {
+    return nullptr;
+  }
+
+  /// @copydoc RenderSystem::createVertexBuffer
+  virtual std::shared_ptr<VertexBuffer> createVertexBuffer() override { return nullptr; }
+
   /// @copydoc RenderSystem::addKeyboardListener
   virtual void addKeyboardListener(KeyboardListener* listener) override;
 

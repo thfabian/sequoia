@@ -19,6 +19,7 @@
 #include "sequoia/Core/Unreachable.h"
 #include "sequoia/Render/Exception.h"
 #include "sequoia/Render/GL/GL.h"
+#include "sequoia/Render/GL/GLIndexBuffer.h"
 #include "sequoia/Render/GL/GLProgramManager.h"
 #include "sequoia/Render/GL/GLRenderSystem.h"
 #include "sequoia/Render/GL/GLRenderWindow.h"
@@ -146,6 +147,12 @@ std::shared_ptr<Texture> GLRenderSystem::createTexture(const std::shared_ptr<Ima
   return createRessource<GLTexture>(getRenderer()->getTextureManager(), image,
                                     std::make_shared<TextureParameter>(param));
 }
+
+std::shared_ptr<IndexBuffer> GLRenderSystem::createIndexBuffer(IndexBuffer::IndexType type) {
+  return std::make_shared<GLIndexBuffer>(type);
+}
+
+std::shared_ptr<VertexBuffer> GLRenderSystem::createVertexBuffer() { return nullptr; }
 
 void GLRenderSystem::addKeyboardListener(KeyboardListener* listener) {
   mainWindow_->getInputSystem()->addListener(listener);

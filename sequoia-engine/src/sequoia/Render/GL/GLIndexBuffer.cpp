@@ -22,7 +22,9 @@ namespace sequoia {
 namespace render {
 
 GLIndexBuffer::GLIndexBuffer(IndexBuffer::IndexType type)
-    : IndexBuffer(BK_GLIndexBuffer, type), glBuffer_(GL_ELEMENT_ARRAY_BUFFER, 1) {}
+  : IndexBuffer(BK_GLIndexBuffer, type), glBuffer_(GL_ELEMENT_ARRAY_BUFFER, 1) {}
+
+GLIndexBuffer::~GLIndexBuffer() {}
 
 void GLIndexBuffer::write(const void* src, std::size_t offset, std::size_t length,
                           bool discardBuffer) {

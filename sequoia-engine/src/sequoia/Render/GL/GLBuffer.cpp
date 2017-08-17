@@ -88,6 +88,8 @@ void* GLBuffer::lock(Buffer::LockOption option) {
     access = GL_WRITE_ONLY;
   }
 
+  // TODO: allow returning a scratchpad memory for small buffers
+
   // Initiate the DMA
   return glMapBuffer(target_, access);
 }
@@ -117,6 +119,8 @@ void GLBuffer::write(const void* src, std::size_t offset, std::size_t length, bo
 
   if(discardBuffer)
     glBufferData(target_, numBytes_, nullptr, hint_);
+
+  // TODO: figure out when using glBufferData vs. glMapBuffer
 
   void* dest = glMapBuffer(target_, GL_WRITE_ONLY);
   std::memcpy(static_cast<void*>(((Byte*)dest + offset)), src, length);

@@ -13,11 +13,11 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Render/Vertex.h"
 #include "sequoia/Core/Format.h"
 #include "sequoia/Core/StringUtil.h"
 #include "sequoia/Core/Unreachable.h"
 #include "sequoia/Math/Math.h"
+#include "sequoia/Render/Vertex.h"
 #include "sequoia/Render/VertexVisitor.h"
 #include <memory>
 #include <mutex>

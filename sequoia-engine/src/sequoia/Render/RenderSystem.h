@@ -24,12 +24,14 @@
 #include "sequoia/Core/Platform.h"
 #include "sequoia/Core/Singleton.h"
 #include "sequoia/Render/FrameListener.h"
+#include "sequoia/Render/IndexBuffer.h"
 #include "sequoia/Render/Input.h"
 #include "sequoia/Render/RenderFwd.h"
 #include "sequoia/Render/RenderSystemObject.h"
 #include "sequoia/Render/RenderWindow.h"
 #include "sequoia/Render/Shader.h"
 #include "sequoia/Render/Texture.h"
+#include "sequoia/Render/VertexBuffer.h"
 #include <memory>
 #include <set>
 #include <string>
@@ -95,6 +97,13 @@ public:
   virtual std::shared_ptr<Texture>
   createTexture(const std::shared_ptr<Image>& image,
                 const TextureParameter& param = TextureParameter()) = 0;
+  
+  /// @brief Create an *empty* index buffer
+  virtual std::shared_ptr<IndexBuffer>
+  createIndexBuffer(IndexBuffer::IndexType type = IndexBuffer::IT_UInt32) = 0;
+  
+  /// @brief Create an *empty* vertex buffer
+  virtual std::shared_ptr<VertexBuffer> createVertexBuffer() = 0;
 
   /// @brief Add the keyboard `listener`
   virtual void addKeyboardListener(KeyboardListener* listener) = 0;

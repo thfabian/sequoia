@@ -26,7 +26,7 @@ namespace sequoia {
 
 namespace render {
 
-/// @brief OpenGL abstraction of hardware buffer
+/// @brief OpenGL abstraction of a hardware buffer
 ///
 /// A `GLBuffer` can contain multiple OpenGL buffers to avoid pipeline stalls of draw commands. If
 /// more than one buffer is allocated, the buffers are arranged such that there is a maximum

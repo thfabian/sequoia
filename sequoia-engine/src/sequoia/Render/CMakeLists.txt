@@ -50,6 +50,8 @@ set(GL_SOURCE
   GL/GLVertexArrayObject.h
   GL/GLVertexAttribute.cpp
   GL/GLVertexAttribute.h
+  GL/GLVertexBuffer.cpp
+  GL/GLVertexBuffer.h
   GL/Native.cpp          
   GL/Native.h
   GL/NativeGLFW3.cpp
@@ -120,6 +122,8 @@ sequoia_add_objects(
           Vertex.h
           VertexArrayObject.cpp
           VertexArrayObject.h
+          VertexBuffer.cpp
+          VertexBuffer.h
           VertexData.cpp
           VertexData.h
           VertexVisitor.cpp
