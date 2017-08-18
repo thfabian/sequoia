@@ -39,6 +39,7 @@ class VertexArrayObject;
 struct VertexLayout;
 struct Vertex2DLayout;
 struct Vertex3DLayout;
+class VertexData;
 class VertexVistor;
 class ViewFrustum;
 class Viewport;

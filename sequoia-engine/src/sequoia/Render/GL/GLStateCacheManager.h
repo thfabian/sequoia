@@ -84,8 +84,8 @@ public:
   /// @brief Unbind any programs
   void unbindProgram();
 
-  /// @brief Bind the given vertex array object `vao`
-  void bindVertexArrayObject(VertexArrayObject* vao);
+  /// @brief Bind the given vertex data
+  void bindVertexData(VertexData* data);
 
   /// @brief Unbind any vertex array objects
   void unbindVertexArrayObject();

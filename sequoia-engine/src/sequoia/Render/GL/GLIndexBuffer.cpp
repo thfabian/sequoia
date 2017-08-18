@@ -15,6 +15,7 @@
 
 #include "sequoia/Core/Format.h"
 #include "sequoia/Core/StringUtil.h"
+#include "sequoia/Core/Unreachable.h"
 #include "sequoia/Render/GL/GLIndexBuffer.h"
 
 namespace sequoia {
@@ -22,7 +23,7 @@ namespace sequoia {
 namespace render {
 
 GLIndexBuffer::GLIndexBuffer(IndexBuffer::IndexType type)
-  : IndexBuffer(BK_GLIndexBuffer, type), glBuffer_(GL_ELEMENT_ARRAY_BUFFER, 1) {}
+    : IndexBuffer(BK_GLIndexBuffer, type), glBuffer_(GL_ELEMENT_ARRAY_BUFFER, 1) {}
 
 GLIndexBuffer::~GLIndexBuffer() {}
 
@@ -38,6 +39,19 @@ void GLIndexBuffer::read(std::size_t offset, std::size_t length, void* dest) {
 void GLIndexBuffer::bindForDrawing() { glBuffer_.bind(GLBuffer::BK_Draw); }
 
 void GLIndexBuffer::nextTimestep() { glBuffer_.nextTimestep(); }
+
+GLenum GLIndexBuffer::getGLIndexType() const {
+  switch(getIndexType()) {
+  case IndexBuffer::IT_UInt8:
+    return GL_UNSIGNED_BYTE;
+  case IndexBuffer::IT_UInt16:
+    return GL_UNSIGNED_SHORT;
+  case IndexBuffer::IT_UInt32:
+    return GL_UNSIGNED_INT;
+  default:
+    sequoia_unreachable("invalid type");
+  }
+}
 
 void* GLIndexBuffer::lockImpl(Buffer::LockOption option) { return glBuffer_.lock(option); }
 

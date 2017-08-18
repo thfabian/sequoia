@@ -22,6 +22,7 @@
 #include "sequoia/Render/GL/GLTexture.h"
 #include "sequoia/Render/GL/GLVertexArrayObject.h"
 #include "sequoia/Render/GL/GLVertexAttribute.h"
+#include "sequoia/Render/GL/GLVertexData.h"
 #include "sequoia/Render/RenderState.h"
 #include "sequoia/Render/VertexData.h"
 #include "sequoia/Render/Viewport.h"
@@ -31,27 +32,6 @@ namespace sequoia {
 namespace render {
 
 namespace {
-
-/// @brief Get the `GLenum` of the draw-mode
-static GLenum getGLDrawMode(VertexData::DrawModeKind mode) {
-  switch(mode) {
-  case VertexData::DrawModeKind::DM_Triangles:
-    return GL_TRIANGLES;
-  default:
-    sequoia_unreachable("invalid DrawModeKind");
-  }
-}
-
-/// @brief Get the enum of the index type
-template <class T>
-struct GetIndexType {};
-
-template <>
-struct GetIndexType<unsigned int> {
-  static constexpr GLenum value = GL_UNSIGNED_INT;
-};
-
-} // anonymous namespace
 
 /// @brief OpenGL implementation of the RenderStateCache
 /// @ingroup gl
@@ -66,10 +46,10 @@ class GLRenderStateCache final : public RenderStateCache {
 
   /// Viewport
   int x_, y_, width_, height_;
-  
-  /// Current set pixel format 
+
+  /// Current set pixel format
   GLPixelFormat pixelFormat_;
-  
+
 public:
   GLRenderStateCache()
       : RenderStateCache(), activeTextureUnit_(-1), x_(-1), y_(-1), width_(-1), height_(-1) {
@@ -92,13 +72,13 @@ public:
   void unbindProgram() { GLProgram::unbind(); }
 
   /// @brief Bind the given `VBO`
-  void bindVertexArrayObject(VertexArrayObject* vao) {
-    if(getRenderState().VertexArrayObject != vao)
-      VertexArrayObjectChanged(vao);
+  void bindVertexData(VertexData* data) {
+    if(getRenderState().VertexData != data)
+      VertexDataChanged(data);
   }
 
   /// @brief Unbind any `VBO`
-  void unbindVertexArrayObject() { GLVertexArrayObject::unbind(); }
+  void unbindVertexData() { GLVertexData::unbind(); }
 
   /// @brief Bind the given `FBO`
   void bindFrameBufferObject(FrameBufferObject* fbo) {
@@ -173,13 +153,13 @@ public:
 
   /// @brief Reset the uniform variables
   void resetUniformVariables() { programUniformMap_.clear(); }
-  
+
   /// @brief Set the pixel format
   void setPixelFormat(const GLPixelFormat& pixelFormat) {
     for(const auto& formatPair : pixelFormat.format_) {
       GLenum param = formatPair.first;
       int value = formatPair.second;
-  
+
       auto it = pixelFormat_.format_.find(param);
       if(it == pixelFormat_.format_.end() || it->second != value) {
         glPixelStorei(formatPair.first, formatPair.second);
@@ -253,12 +233,11 @@ protected:
     return true;
   }
 
-  virtual bool VertexArrayObjectChanged(VertexArrayObject* vao) override {
-    SEQUOIA_ASSERT(vao);
-
-    GLVertexArrayObject* glvao = dyn_cast<GLVertexArrayObject>(vao);
-
-    glvao->bind();
+  virtual bool VertexDataChanged(VertexData* data) override {
+    SEQUOIA_ASSERT(data);
+  
+    GLVertexData* gldata = dyn_cast<GLVertexData>(data);
+    gldata->bind();
     return true;
   }
 
@@ -323,14 +302,8 @@ bool GLStateCacheManager::draw(DrawCommand* command) {
   // Check that all uniform variables are set correctly
   dyn_cast<GLProgram>(state.Program)->checkUniformVariables();
 
-  // Draw the VAO
-  GLVertexArrayObject* vao = dyn_cast<GLVertexArrayObject>(state.VertexArrayObject);
-  if(vao->hasIndices()) {
-    glDrawElements(getGLDrawMode(vao->getVertexData()->getDrawMode()), vao->getNumIndices(),
-                   GetIndexType<VertexIndexType>::value, (void*)0);
-  } else {
-    glDrawArrays(getGLDrawMode(vao->getVertexData()->getDrawMode()), 0, vao->getNumVertices());
-  }
+  // Draw the vertex-data
+  dyn_cast<GLVertexData>(state.VertexData)->draw();
 
   return true;
 }
@@ -343,11 +316,9 @@ void GLStateCacheManager::bindProgram(Program* program) { stateCache_->bindProgr
 
 void GLStateCacheManager::unbindProgram() { stateCache_->unbindProgram(); }
 
-void GLStateCacheManager::bindVertexArrayObject(VertexArrayObject* vao) {
-  stateCache_->bindVertexArrayObject(vao);
-}
+void GLStateCacheManager::bindVertexData(VertexData* data) { stateCache_->bindVertexData(data); }
 
-void GLStateCacheManager::unbindVertexArrayObject() { stateCache_->unbindVertexArrayObject(); }
+void GLStateCacheManager::unbindVertexArrayObject() { stateCache_->unbindVertexData(); }
 
 void GLStateCacheManager::bindFrameBufferObject(FrameBufferObject* fbo) {
   stateCache_->bindFrameBufferObject(fbo);

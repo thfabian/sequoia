@@ -39,8 +39,7 @@ namespace render {
 /// and back it with a system memory 'shadow' copy which can be read and updated arbitrarily.
 ///
 /// @ingroup render
-class SEQUOIA_API 
-    Buffer : public NonCopyable {
+class SEQUOIA_API Buffer : public NonCopyable {
 public:
   /// @brief RTTI discriminator
   enum BufferKind {
@@ -267,7 +266,7 @@ private:
 /// you may use
 ///
 /// @code{.cpp}
-///   BufferGuard lock(buffer, Buffer::LK_Discard);
+///   BufferGuard lock(buffer, Buffer::LO_ReadOnly);
 ///   void* data = buffer.get();
 ///   // ... destructor invokes unlock()
 /// @endcode

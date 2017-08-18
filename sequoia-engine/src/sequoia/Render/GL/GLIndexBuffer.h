@@ -17,6 +17,7 @@
 #define SEQUOIA_RENDER_GL_GLINDEXBUFFER_H
 
 #include "sequoia/Render/GL/GLBuffer.h"
+#include "sequoia/Render/GL/GLFwd.h"
 #include "sequoia/Render/IndexBuffer.h"
 
 namespace sequoia {
@@ -28,7 +29,7 @@ namespace render {
 class SEQUOIA_API GLIndexBuffer final : public IndexBuffer {
   GLBuffer glBuffer_; ///< OpenGL buffer
 
-public:  
+public:
   GLIndexBuffer(IndexBuffer::IndexType type);
 
   /// @brief Free all memory
@@ -49,6 +50,9 @@ public:
   /// @brief Update the buffer to the next timestep
   void nextTimestep();
 
+  /// @brief Get the `GLenum` of the index type
+  GLenum getGLIndexType() const;
+
   static bool classof(const Buffer* buffer) { return buffer->getKind() == BK_GLIndexBuffer; }
 
 protected:
@@ -63,7 +67,7 @@ protected:
 
   /// @copydoc Buffer::toStringImpl
   std::pair<std::string, std::string> toStringImpl() const override;
-  
+
 private:
   using Base = IndexBuffer;
 };

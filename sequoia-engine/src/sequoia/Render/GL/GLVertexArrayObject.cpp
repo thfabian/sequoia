@@ -88,7 +88,7 @@ unsigned int GLVertexArrayObject::getVAOID() const { return vaoID_; }
 void GLVertexArrayObject::writeVertexData(std::size_t offset, std::size_t length) {
 
   // Bind program
-  getGLRenderSystem().getStateCacheManager()->bindVertexArrayObject(this);
+  getGLRenderSystem().getStateCacheManager()->bindVertexData(this);
 
   // TODO: Discardable data should use glBufferData(GL_ARRAY_BUFFER, ..., NULL, ...) first
 
@@ -107,7 +107,7 @@ void GLVertexArrayObject::writeIndexData(std::size_t offset, std::size_t length)
     return;
 
   // Bind program
-  getGLRenderSystem().getStateCacheManager()->bindVertexArrayObject(this);
+  getGLRenderSystem().getStateCacheManager()->bindVertexData(this);
 
   // TODO: Discardable data should use glBufferData(GL_ARRAY_BUFFER, ..., NULL, ...) first
 
@@ -132,7 +132,7 @@ void GLVertexArrayObject::attachVertexDataDevice() {
     glGenBuffers(1, &eboID_);
 
   // Bind program
-  getGLRenderSystem().getStateCacheManager()->bindVertexArrayObject(this);
+  getGLRenderSystem().getStateCacheManager()->bindVertexData(this);
 
   const VertexLayout* layout = data_->getLayout();
 

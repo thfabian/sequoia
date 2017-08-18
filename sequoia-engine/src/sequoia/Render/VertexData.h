@@ -18,92 +18,89 @@
 
 #include "sequoia/Core/NonCopyable.h"
 #include "sequoia/Core/STLExtras.h"
-#include "sequoia/Math/AxisAlignedBox.h"
+#include "sequoia/Render/IndexBuffer.h"
+#include "sequoia/Render/RenderSystemObject.h"
 #include "sequoia/Render/Vertex.h"
-#include "sequoia/Render/VertexArrayObject.h"
+#include "sequoia/Render/VertexBuffer.h"
 #include "sequoia/Render/VertexVisitor.h"
+#include <functional>
 
 namespace sequoia {
 
 namespace render {
 
-/// @brief Storage of vertex data on the host and device
+/// @brief Parameter used to initialize the VertexData
 /// @ingroup render
-class SEQUOIA_API VertexData : public NonCopyable {
+struct VertexDataParameter {
+
+  /// Layout of the vertices
+  const VertexLayout* Layout;
+
+  /// Number of vertices to allocate
+  std::size_t NumVertices;
+
+  /// Number of indices to allocate
+  std::size_t NumIndices;
+
+  /// Usage hint of the vertex-buffer
+  Buffer::UsageHint VertexBufferUsageHint;
+
+  /// Number of redundant vertex-buffers to allocate
+  int NumVertexBuffers = 1;
+
+  /// Use a shadow buffer for the vertices?
+  bool UseVertexShadowBuffer = true;
+
+  /// Use a shadow buffer for the indices?
+  bool UseIndexShadowBuffer = true;
+
+  /// Type of indices
+  IndexBuffer::IndexType IndexType = IndexBuffer::IT_UInt32;
+
+  VertexDataParameter(const VertexLayout* layout, std::size_t numVertices, std::size_t numIndices,
+                      Buffer::UsageHint vertexBufferUsageHint)
+      : Layout(layout), NumVertices(numVertices), NumIndices(numIndices),
+        VertexBufferUsageHint(vertexBufferUsageHint) {}
+
+  VertexDataParameter(const VertexDataParameter&) = default;
+  VertexDataParameter(VertexDataParameter&&) = default;
+};
+
+/// @brief Manage storage of vertices and indices
+/// @ingroup render
+class SEQUOIA_API VertexData : public RenderSystemObject, public NonCopyable {
 public:
   /// @brief Draw mode
   enum DrawModeKind {
     DM_Triangles = 0 ///< Treats each triplet of vertices as an independent triangle
   };
-
-  /// @brief Allocate memory for `numVertices` and `numIndices`
-  ///
-  /// @param layout         Layout of the allocated vertices (`numVertices * layout->SizeOf` bytes
-  ///                       will be allocated)
-  /// @param drawMode       Mode to draw the vertices
-  /// @param numVertices    Number of vertices to allocate
-  /// @param numIndices     Number of indices to allocate (`0` disabled indices)
-  /// @param shadowBuffer   Keep an exact copy of the device hardware buffer (i.e a shadow buffer)
-  ///                       on the host
-  ///
-  /// @throw RenderException  Out of memory
-  VertexData(const VertexLayout* layout, DrawModeKind drawMode, std::size_t numVertices,
-             std::size_t numIndices, bool shadowBuffer);
+  
+  VertexData(RenderSystemKind renderSystemKind, DrawModeKind drawMode);
 
   /// @brief Deallocate all memory
-  ~VertexData();
-
-  /// @brief Get the pointer to the host vertex data
-  const void* getVerticesPtr() const { return verticesPtr_; }
-  void* getVerticesPtr() { return verticesPtr_; }
-
-  /// @brief Get the number of vertices
-  std::size_t getNumVertices() const { return numVertices_; }
-
-  /// @brief Get the layout of the vertex-data
-  const VertexLayout* getLayout() const { return layout_; }
-
-  /// @brief Get the number of indices
-  std::size_t getNumIndices() const { return numIndices_; }
-
-  /// @brief Do we draw with indices?
-  bool hasIndices() const { return (indicesPtr_ != nullptr); }
+  virtual ~VertexData();
 
   /// @brief Get the draw-mode
-  DrawModeKind getDrawMode() const { return drawMode_; }
+  DrawModeKind getDrawMode() const noexcept { return drawMode_; }
 
-  /// @brief Set the vertex array object
-  ///
-  /// This takes ownership of the VAO and allocate a the hardware buffers
-  void setVertexArrayObject(std::unique_ptr<VertexArrayObject> vao,
-                            VertexArrayObject::BufferUsageKind usage);
+  /// @brief Get the layout of the vertices
+  const VertexLayout* getLayout() const noexcept { return getVertexBuffer()->getLayout(); }
 
-  /// @brief Get the vertex array object
-  const VertexArrayObject* getVertexArrayObject() const { return vao_.get(); }
-  VertexArrayObject* getVertexArrayObject() { return vao_.get(); }
+  /// @brief Get number of allocated vertices
+  std::size_t getNumVertices() const noexcept { return getVertexBuffer()->getNumVertices(); }
 
-  /// @brief Check if a vertex array object has been attached
-  bool hasVertexArrayObject() const { return (vao_ != nullptr); }
+  /// @brief Check if IndexBuffer is allocated
+  bool hasIndices() const { return getIndexBuffer() != nullptr; }
 
-  /// @brief Set the local bounding box volume
-  void setAxisAlignedBox(const math::AxisAlignedBox& aab) { aab_ = aab; }
+  /// @brief Get number of allocated indices
+  std::size_t getNumIndices() const noexcept {
+    return getVertexBuffer() ? getVertexBuffer()->getNumVertices() : 0;
+  }
 
-  /// @brief Get the local bounding box volume
-  const math::AxisAlignedBox& getAxisAlignedBox() const { return aab_; }
-  math::AxisAlignedBox& getAxisAlignedBox() { return aab_; }
-
-  /// @brief Get the indices vector
-  const VertexIndexType* getIndicesPtr() const { return indicesPtr_; }
-  VertexIndexType* getIndicesPtr() { return indicesPtr_; }
-
-  /// @brief Accept a VertexVisitor to write data to the buffer
-  ///
-  /// This operation will ensure proper snychronize of the host and device data in the end.
+  /// @brief Accept a VertexVisitor to write vertex data
   void acceptWriteVisitor(VertexVisitor& visitor) const { accept(visitor, true); }
 
   /// @brief Accept a read-only visitor of the vertex data
-  ///
-  /// This operation will ensure proper snychronize of the host and device data in the end.
   void acceptReadVisitor(VertexVisitor& visitor) const { accept(visitor, false); }
 
   /// @brief Obtain the vertex data for reading/writing
@@ -112,17 +109,14 @@ public:
   ///                       of `{Vertex2D, Vertex3D}`
   /// @param functor        Functor to run on the vertex data
   ///
-  /// This operation will ensure proper snychronize of the host and device data in the end.
-  ///
   /// @b Example
   /// @code{.cpp}
-  ///   VertexData data(Vertex3D::getLayout(), 64);
+  ///   VertexData data(...);
   ///   data.write([&data](Vertex3D* vertices) {
   ///     for(int i = 0; i < data.getNumVertices(); ++i) {
   ///       Vertex3D vertex = vertices[i];
   ///       // Do something ...
   ///     }
-  ///
   ///   });
   /// @endcode
   /// @{
@@ -136,11 +130,24 @@ public:
   }
   /// @}
 
+  /// @brief Get the VertexBuffer
+  virtual VertexBuffer* getVertexBuffer() const = 0;
+
+  /// @brief Get the IndexBuffer
+  virtual IndexBuffer* getIndexBuffer() const = 0;
+
+  /// @brief Update the buffer to the next timestep
+  virtual void nextTimestep() = 0;
+  
   /// @brief Dump the vertex data and indices to `stdout`
   void dump() const;
 
   /// @brief Convert to string
   std::string toString() const;
+
+protected:
+  /// @brief Implementation of `toString` returns stringified members and title
+  virtual std::pair<std::string, std::string> toStringImpl() const;
 
 private:
   template <bool IsWrite, class FunctorType>
@@ -174,32 +181,8 @@ private:
   void accept(VertexVisitor& visitor, bool isWrite) const;
 
 private:
-  /// Host vertex data
-  void* verticesPtr_;
-
-  /// Number of vertices
-  std::size_t numVertices_;
-
-  /// Device vertex data
-  std::unique_ptr<VertexArrayObject> vao_;
-
-  /// Host indices
-  VertexIndexType* indicesPtr_;
-
-  /// Number of indices
-  std::size_t numIndices_;
-
-  /// Layout of the vertex
-  const render::VertexLayout* layout_;
-
   /// Mode of drawing the vertices
   DrawModeKind drawMode_;
-
-  /// Local bounding box volume
-  math::AxisAlignedBox aab_;
-
-  /// Keep an exact copy of the device hardware buffer
-  bool shadowBuffer_;
 };
 
 } // namespace render

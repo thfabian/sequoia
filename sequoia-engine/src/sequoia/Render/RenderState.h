@@ -74,7 +74,7 @@ struct SEQUOIA_API RenderState {
   render::Program* Program;
 
   /// VertexArrayObject used to retrieve the vertex and index buffer objects
-  render::VertexArrayObject* VertexArrayObject;
+  render::VertexData* VertexData;
 
   /// Textures bound to the specific texture units (map of texture-unit to texture)
   std::unordered_map<int, Texture*> TextureMap;
@@ -105,9 +105,9 @@ protected:
   /// @returns `true` if the new program was successfully updated, `false` otherwise
   virtual bool ProgramChanged(Program* program) = 0;
 
-  /// @brief VertexArrayObject changed
-  /// @returns `true` if the new VertexArrayObject was successfully updated, `false` otherwise
-  virtual bool VertexArrayObjectChanged(VertexArrayObject* vao) = 0;
+  /// @brief VertexData changed
+  /// @returns `true` if the new VertexData was successfully updated, `false` otherwise
+  virtual bool VertexDataChanged(VertexData* data) = 0;
 
   /// @brief Texture of `textureUnit` was enabled or disabled
   /// @returns `true` if the new texture was successfully updated, `false` otherwise

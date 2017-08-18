@@ -57,7 +57,7 @@ public:
   unsigned int getID() const;
 
   /// @brief Bind the program to the current render pipline
-  /// @note Do not call this function directly, use `GLRenderer::bindProgram` instead
+  /// @note Do not call this function directly, use `GLStateCacheManager::bindProgram` instead
   void bind();
 
   /// @brief Unbind *any* program

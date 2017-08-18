@@ -71,7 +71,7 @@ RenderState::RenderState() {
 #undef RENDER_STATE
 
   Program = nullptr;
-  VertexArrayObject = nullptr;
+  VertexData = nullptr;
 }
 
 std::string RenderState::toString() const {
@@ -84,7 +84,7 @@ std::string RenderState::toString() const {
 
   ss << "  Program = " << (Program ? core::indent(Program->toString()) : "null") << ",\n";
   ss << "  VertexArrayObject = "
-     << (VertexArrayObject ? core::indent(VertexArrayObject->toString()) : "null") << ",\n";
+     << (VertexData ? core::indent(VertexData->toString()) : "null") << ",\n";
   ss << "  TextureMap = "
      << (!TextureMap.empty() ? core::toStringRange(TextureMap,
                                                    [](const auto& texturePair) {
@@ -125,10 +125,10 @@ bool RenderStateCache::setRenderState(const RenderState& newState) noexcept {
 #include "sequoia/Render/RenderState.inc"
 #undef RENDER_STATE
 
-  if(state_.VertexArrayObject != newState.VertexArrayObject) {
-    if(!VertexArrayObjectChanged(newState.VertexArrayObject))
+  if(state_.VertexData != newState.VertexData) {
+    if(!VertexDataChanged(newState.VertexData))
       return false;
-    state_.VertexArrayObject = newState.VertexArrayObject;
+    state_.VertexData = newState.VertexData;
   }
 
   if(state_.TextureMap != newState.TextureMap) {

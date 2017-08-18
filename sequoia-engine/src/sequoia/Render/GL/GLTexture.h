@@ -37,13 +37,13 @@ public:
   virtual const std::shared_ptr<Image>& getImage() const override;
 
   /// @copydoc Texture::getParameter
-  virtual  const std::shared_ptr<TextureParameter>& getParameter() const override;
+  virtual const std::shared_ptr<TextureParameter>& getParameter() const override;
 
   /// @copydoc Texture::toString
-  virtual  std::string toString() const override;
+  virtual std::string toString() const override;
 
   /// @copydoc Texture::hasImage
-  virtual  bool hasImage() const override;
+  virtual bool hasImage() const override;
 
   /// @brief Get the unique identifer of the texture
   ///
@@ -54,7 +54,7 @@ public:
   GLenum getTarget() const;
 
   /// @brief Bind the texture to the current render pipline
-  /// @note Do not call this function directly, use `GLRenderer::bindTexture` instead.
+  /// @note Do not call this function directly, use `GLStateCacheManager::bindTexture` instead.
   void bind();
 
   /// @brief Unbind texture

@@ -52,6 +52,8 @@ set(GL_SOURCE
   GL/GLVertexAttribute.h
   GL/GLVertexBuffer.cpp
   GL/GLVertexBuffer.h
+  GL/GLVertexData.cpp
+  GL/GLVertexData.h
   GL/Native.cpp          
   GL/Native.h
   GL/NativeGLFW3.cpp

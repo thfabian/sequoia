@@ -50,8 +50,8 @@ public:
   void setProgram(Program* program) noexcept { state_.Program = program; }
 
   /// @brief Get/Set the vertex data to draw
-  VertexArrayObject* getVertexArrayObject() const noexcept { return state_.VertexArrayObject; }
-  void setVertexArrayObject(VertexArrayObject* vao) noexcept { state_.VertexArrayObject = vao; }
+  VertexArrayObject* getVertexArrayObject() const noexcept { return state_.VertexData; }
+  void setVertexArrayObject(VertexArrayObject* vao) noexcept { state_.VertexData = vao; }
 
   /// @brief Get the state of the render pipeline
   const RenderState& getRenderState() const noexcept { return state_; }
