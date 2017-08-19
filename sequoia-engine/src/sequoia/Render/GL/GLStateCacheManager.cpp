@@ -52,7 +52,8 @@ class GLRenderStateCache final : public RenderStateCache {
 
 public:
   GLRenderStateCache()
-      : RenderStateCache(), activeTextureUnit_(-1), x_(-1), y_(-1), width_(-1), height_(-1) {
+      : RenderStateCache(), activeTextureUnit_(-1), x_(-1), y_(-1), width_(-1), height_(-1),
+        vertexBindKind_(GLBuffer::BK_Unknown) {
     initState();
   }
 
@@ -205,7 +206,7 @@ protected:
       glDepthFunc(GL_LESS);
       break;
     case RenderState::DepthFuncKind::DF_Equal:
-      glDepthFunc(GL_LESS);
+      glDepthFunc(GL_EQUAL);
       break;
     case RenderState::DepthFuncKind::DF_LessEqual:
       glDepthFunc(GL_LEQUAL);

@@ -137,7 +137,7 @@ std::shared_ptr<Mesh> MeshManager::createCube(const std::string& name, bool modi
           vertex.TexCoord[1] = CubeVertexData[i * CubeVertexDataStride + 10];
       }
     });
-
+    
     // Set bounding box
     data->setAxisAlignedBox(
         math::AxisAlignedBox(math::vec3(-0.5, -0.5, -0.5), math::vec3(0.5, 0.5, 0.5)));

@@ -62,15 +62,15 @@ render::DrawCommand* Drawable::prepareDrawCommand() {
 
   // Set the new model matrix
   drawCommand_.get().setModelMatrix(getNode()->getModelMatrix());
-  
+
   // Advance the vertex buffers to the next time-step
-  drawCommand_.get().getVertexData()->nextTimestep();
 
   // Progress to the next time-step with the Drawcommand. Note that this copies the current
   // draw command (i.e cmd) into the new one so that subsequent calls will not corrupt the
   // render-state.
   render::DrawCommand* cmd = &drawCommand_.get();
   drawCommand_.nextTimestep();
+  drawCommand_.get().getVertexData()->nextTimestep();
   return cmd;
 }
 

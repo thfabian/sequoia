@@ -69,19 +69,12 @@ void Buffer::updateFromShadow() {
 
   if(shadowBufferIsDirty_) {
 
-    // Lock the shadow buffer
+    // Lock the shadow buffer and copy it's content to our buffer
     shadowBuffer_->lock(LO_ReadOnly);
+
     void* src = shadowBuffer_->get();
+    writeImpl(src, 0, numBytes_, true);
 
-    // Lock our buffer
-    lockImpl(LO_Discard);
-    void* dest = get();
-
-    // Copy the data
-    std::memcpy(dest, src, numBytes_);
-
-    // Unlock ourself and the shadow buffer
-    unlockImpl();
     shadowBuffer_->unlock();
 
     shadowBufferIsDirty_ = false;

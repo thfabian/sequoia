@@ -54,7 +54,7 @@ GLVertexData::GLVertexData(const VertexDataParameter& param)
       vaoID_(0) {
   
   SEQUOIA_ASSERT_MSG(param.NumVertexBuffers <= 1 || param.UseVertexShadowBuffer,
-                     "multiple vertex buffer require shadow buffering");
+                     "multiple vertex buffers require shadow buffering");
   
   const VertexLayout* layout = param.Layout;
 
@@ -103,7 +103,7 @@ GLVertexData::GLVertexData(const VertexDataParameter& param)
   // Allocate shadow buffers
   if(param.UseVertexShadowBuffer)
     vertexBuffer_->setShadowBuffer(HostBuffer::create(vertexBuffer_->getNumBytes()));
-
+    
   if(indexBuffer_ && param.UseIndexShadowBuffer)
     indexBuffer_->setShadowBuffer(HostBuffer::create(indexBuffer_->getNumBytes()));
 }
@@ -144,11 +144,12 @@ void GLVertexData::nextTimestep() {
 }
 
 void GLVertexData::draw() const noexcept {
-  if(indexBuffer_)
+  if(indexBuffer_) {
     glDrawElements(getGLDrawMode(getDrawMode()), indexBuffer_->getNumIndices(),
                    indexBuffer_->getGLIndexType(), (void*)0);
-  else
+  } else {
     glDrawArrays(getGLDrawMode(getDrawMode()), 0, vertexBuffer_->getNumVertices());
+  }
 }
 
 std::pair<std::string, std::string> GLVertexData::toStringImpl() const {

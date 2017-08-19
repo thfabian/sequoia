@@ -90,7 +90,7 @@ void* GLBuffer::lock(Buffer::LockOption option) {
   }
 
   // TODO: allow returning a scratchpad memory for small buffers
-
+  
   // Initiate the DMA
   return glMapBuffer(target_, access);
 }
