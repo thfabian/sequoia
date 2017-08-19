@@ -32,13 +32,6 @@ public:
   /// @brief Free all memory
   virtual ~VertexBuffer();
 
-  /// @copydoc Buffer::write
-  virtual void write(const void* src, std::size_t offset, std::size_t length,
-                     bool discardBuffer) override = 0;
-
-  /// @copydoc Buffer::read
-  virtual void read(std::size_t offset, std::size_t length, void* dest) override = 0;
-
   /// @copydoc Buffer::isSystemRAM
   virtual bool isSystemRAM() const override = 0;
 
@@ -56,6 +49,13 @@ public:
   }
 
 protected:
+  /// @copydoc Buffer::writeImpl
+  virtual void writeImpl(const void* src, std::size_t offset, std::size_t length,
+                         bool discardBuffer) override = 0;
+
+  /// @copydoc Buffer::readImpl
+  virtual void readImpl(std::size_t offset, std::size_t length, void* dest) override = 0;
+  
   /// @copydoc Buffer::lockImpl
   virtual void* lockImpl(LockOption option) override = 0;
 

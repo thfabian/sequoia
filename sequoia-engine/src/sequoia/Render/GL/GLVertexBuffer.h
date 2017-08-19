@@ -34,12 +34,6 @@ public:
   /// @brief Free all memory
   ~GLVertexBuffer();
 
-  /// @copydoc Buffer::write
-  void write(const void* src, std::size_t offset, std::size_t length, bool discardBuffer) override;
-
-  /// @copydoc Buffer::read
-  void read(std::size_t offset, std::size_t length, void* dest) override;
-
   /// @copydoc Buffer::isSystemRAM
   bool isSystemRAM() const override { return false; }
 
@@ -55,6 +49,13 @@ public:
   static bool classof(const Buffer* buffer) { return buffer->getKind() == BK_GLIndexBuffer; }
 
 protected:
+  /// @copydoc Buffer::writeImpl
+  virtual void writeImpl(const void* src, std::size_t offset, std::size_t length,
+                         bool discardBuffer) override;
+
+  /// @copydoc Buffer::readImpl
+  virtual void readImpl(std::size_t offset, std::size_t length, void* dest) override;
+
   /// @copydoc Buffer::lockImpl
   void* lockImpl(LockOption option) override;
 

@@ -60,6 +60,8 @@ set(GL_SOURCE
 
 set(NULL_SOURCE
   Null/NullFwd.h
+  Null/NullIndexBuffer.cpp
+  Null/NullIndexBuffer.h
   Null/NullInputSystem.h
   Null/NullProgram.cpp
   Null/NullProgram.h
@@ -71,6 +73,10 @@ set(NULL_SOURCE
   Null/NullShader.h
   Null/NullTexture.cpp
   Null/NullTexture.h
+  Null/NullVertexBuffer.cpp
+  Null/NullVertexBuffer.h
+  Null/NullVertexData.cpp
+  Null/NullVertexData.h
 )
 
 sequoia_add_objects(

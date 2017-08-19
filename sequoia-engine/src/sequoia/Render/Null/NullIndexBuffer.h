@@ -13,44 +13,32 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_RENDER_GL_GLINDEXBUFFER_H
-#define SEQUOIA_RENDER_GL_GLINDEXBUFFER_H
+#ifndef SEQUOIA_RENDER_NULL_NULLINDEXBUFFER_H
+#define SEQUOIA_RENDER_NULL_NULLINDEXBUFFER_H
 
-#include "sequoia/Render/GL/GLBuffer.h"
-#include "sequoia/Render/GL/GLFwd.h"
+#include "sequoia/Render/HostBuffer.h"
 #include "sequoia/Render/IndexBuffer.h"
 
 namespace sequoia {
 
 namespace render {
 
-/// @brief OpenGL buffer for storing vertex indices (elements)
-/// @ingroup gl
-class SEQUOIA_API GLIndexBuffer final : public IndexBuffer {
-  GLBuffer glBuffer_; ///< OpenGL buffer
+/// @brief Null index buffer
+///
+/// This is simply a HostBuffer.
+///
+/// @ingroup null
+class SEQUOIA_API NullIndexBuffer final : public IndexBuffer {
+  std::unique_ptr<HostBuffer> buffer_; ///< Mock data
 
 public:
-  GLIndexBuffer(IndexBuffer::IndexType type);
-
-  /// @brief Free all memory
-  ~GLIndexBuffer();
+  NullIndexBuffer(IndexBuffer::IndexType type);
+  ~NullIndexBuffer();
 
   /// @copydoc Buffer::isSystemRAM
-  bool isSystemRAM() const override { return false; }
+  virtual bool isSystemRAM() const override { return buffer_->isSystemRAM(); }
 
-  /// @brief Bind the buffer for drawing
-  void bindForDrawing();
-
-  /// @brief Bind the buffer for modify
-  void bindForModify();
-
-  /// @brief Update the buffer to the next timestep
-  void nextTimestep();
-
-  /// @brief Get the `GLenum` of the index type
-  GLenum getGLIndexType() const;
-
-  static bool classof(const Buffer* buffer) { return buffer->getKind() == BK_GLIndexBuffer; }
+  static bool classof(const Buffer* buffer) { return buffer->getKind() == BK_NullIndexBuffer; }
 
 protected:
   /// @copydoc Buffer::writeImpl

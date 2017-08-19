@@ -26,12 +26,12 @@ GLVertexBuffer::GLVertexBuffer(const VertexLayout* layout, int numBuffers)
 
 GLVertexBuffer::~GLVertexBuffer() {}
 
-void GLVertexBuffer::write(const void* src, std::size_t offset, std::size_t length,
-                           bool discardBuffer) {
+void GLVertexBuffer::writeImpl(const void* src, std::size_t offset, std::size_t length,
+                               bool discardBuffer) {
   glBuffer_.write(src, offset, length, discardBuffer);
 }
 
-void GLVertexBuffer::read(std::size_t offset, std::size_t length, void* dest) {
+void GLVertexBuffer::readImpl(std::size_t offset, std::size_t length, void* dest) {
   glBuffer_.read(offset, length, dest);
 }
 
@@ -50,10 +50,10 @@ void GLVertexBuffer::allocateImpl(std::size_t numBytes, Buffer::UsageHint usageH
 }
 
 std::pair<std::string, std::string> GLVertexBuffer::toStringImpl() const {
-  return std::make_pair("GLVertexBuffer", core::format("%s"
-                                                       "glBuffer = %s,\n",
-                                                       Base::toStringImpl().second,
-                                                       glBuffer_.toString()));
+  return std::make_pair("GLVertexBuffer",
+                        core::format("%s"
+                                     "glBuffer = %s,\n",
+                                     Base::toStringImpl().second, glBuffer_.toString()));
 }
 
 } // render

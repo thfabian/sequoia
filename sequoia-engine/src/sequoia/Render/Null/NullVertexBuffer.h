@@ -13,44 +13,34 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_RENDER_GL_GLINDEXBUFFER_H
-#define SEQUOIA_RENDER_GL_GLINDEXBUFFER_H
+#ifndef SEQUOIA_RENDER_NULL_NULLVERTEXBUFFER_H
+#define SEQUOIA_RENDER_NULL_NULLVERTEXBUFFER_H
 
-#include "sequoia/Render/GL/GLBuffer.h"
-#include "sequoia/Render/GL/GLFwd.h"
-#include "sequoia/Render/IndexBuffer.h"
+#include "sequoia/Render/HostBuffer.h"
+#include "sequoia/Render/VertexBuffer.h"
 
 namespace sequoia {
 
 namespace render {
 
-/// @brief OpenGL buffer for storing vertex indices (elements)
+/// @brief Null buffer for storing vertices
+///
+/// This is simply a HostBuffer.
+///
 /// @ingroup gl
-class SEQUOIA_API GLIndexBuffer final : public IndexBuffer {
-  GLBuffer glBuffer_; ///< OpenGL buffer
+class SEQUOIA_API NullVertexBuffer final : public VertexBuffer {
+  std::unique_ptr<HostBuffer> buffer_; ///< Mock data
 
 public:
-  GLIndexBuffer(IndexBuffer::IndexType type);
+  NullVertexBuffer(const VertexLayout* layout, int numBuffers);
 
   /// @brief Free all memory
-  ~GLIndexBuffer();
+  ~NullVertexBuffer();
 
   /// @copydoc Buffer::isSystemRAM
-  bool isSystemRAM() const override { return false; }
+  bool isSystemRAM() const override { return buffer_->isSystemRAM(); }
 
-  /// @brief Bind the buffer for drawing
-  void bindForDrawing();
-
-  /// @brief Bind the buffer for modify
-  void bindForModify();
-
-  /// @brief Update the buffer to the next timestep
-  void nextTimestep();
-
-  /// @brief Get the `GLenum` of the index type
-  GLenum getGLIndexType() const;
-
-  static bool classof(const Buffer* buffer) { return buffer->getKind() == BK_GLIndexBuffer; }
+  static bool classof(const Buffer* buffer) { return buffer->getKind() == BK_NullVertexBuffer; }
 
 protected:
   /// @copydoc Buffer::writeImpl
@@ -73,7 +63,7 @@ protected:
   std::pair<std::string, std::string> toStringImpl() const override;
 
 private:
-  using Base = IndexBuffer;
+  using Base = VertexBuffer;
 };
 
 } // namespace render

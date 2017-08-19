@@ -46,6 +46,19 @@ Buffer::Buffer(BufferKind kind)
 
 Buffer::~Buffer() {}
 
+void Buffer::write(const void* src, std::size_t offset, std::size_t length, bool discardBuffer) {
+  if(hasShadowBuffer())
+    shadowBuffer_->writeImpl(src, offset, length, discardBuffer);
+  writeImpl(src, offset, length, discardBuffer);
+}
+
+void Buffer::read(std::size_t offset, std::size_t length, void* dest) {
+  if(hasShadowBuffer())
+    shadowBuffer_->readImpl(offset, length, dest);
+  else
+    readImpl(offset, length, dest);
+}
+
 std::string Buffer::toString() const {
   auto stringPair = toStringImpl();
   return core::format("%s[\n  %s]", stringPair.first, core::indent(stringPair.second));

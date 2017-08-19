@@ -37,14 +37,14 @@ HostBuffer::~HostBuffer() {
   }
 }
 
-void HostBuffer::write(const void* src, std::size_t offset, std::size_t length,
-                       bool discardBuffer) {
+void HostBuffer::writeImpl(const void* src, std::size_t offset, std::size_t length,
+                           bool discardBuffer) {
   (void)discardBuffer;
   SEQUOIA_ASSERT_MSG((offset + length) <= getNumBytes(), "out of bound writing");
   std::memcpy(static_cast<void*>(((Byte*)dataPtr_ + offset)), src, length);
 }
 
-void HostBuffer::read(std::size_t offset, std::size_t length, void* dest) {
+void HostBuffer::readImpl(std::size_t offset, std::size_t length, void* dest) {
   SEQUOIA_ASSERT_MSG((offset + length) <= getNumBytes(), "out of bound reading");
   std::memcpy(dest, static_cast<void*>(((Byte*)dataPtr_ + offset)), length);
 }

@@ -39,13 +39,6 @@ public:
   /// @brief Free the host memory
   virtual ~HostBuffer();
 
-  /// @copydoc Buffer::write
-  virtual void write(const void* src, std::size_t offset, std::size_t length,
-                     bool discardBuffer) override;
-
-  /// @copydoc Buffer::read
-  virtual void read(std::size_t offset, std::size_t length, void* dest) override;
-
   /// @copydoc Buffer::isSystemRAM
   virtual bool isSystemRAM() const override { return true; }
 
@@ -66,6 +59,13 @@ public:
   static bool classof(const Buffer* buffer) { return buffer->getKind() == BK_HostBuffer; }
 
 protected:
+  /// @copydoc Buffer::writeImpl
+  virtual void writeImpl(const void* src, std::size_t offset, std::size_t length,
+                         bool discardBuffer) override;
+
+  /// @copydoc Buffer::readImpl
+  virtual void readImpl(std::size_t offset, std::size_t length, void* dest) override;
+
   virtual void* lockImpl(LockOption option) override {
     (void)option;
     return dataPtr_;

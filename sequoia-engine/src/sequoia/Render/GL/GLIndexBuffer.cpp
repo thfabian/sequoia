@@ -27,12 +27,12 @@ GLIndexBuffer::GLIndexBuffer(IndexBuffer::IndexType type)
 
 GLIndexBuffer::~GLIndexBuffer() {}
 
-void GLIndexBuffer::write(const void* src, std::size_t offset, std::size_t length,
-                          bool discardBuffer) {
+void GLIndexBuffer::writeImpl(const void* src, std::size_t offset, std::size_t length,
+                              bool discardBuffer) {
   glBuffer_.write(src, offset, length, discardBuffer);
 }
 
-void GLIndexBuffer::read(std::size_t offset, std::size_t length, void* dest) {
+void GLIndexBuffer::readImpl(std::size_t offset, std::size_t length, void* dest) {
   glBuffer_.read(offset, length, dest);
 }
 

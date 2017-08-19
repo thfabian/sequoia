@@ -313,13 +313,13 @@ TYPED_TEST(GLVertexDataTest, ReadAndWrite) {
     TestWriteVisitor writeVisitor;
     gldata->accept(Buffer::LO_Discard, writeVisitor);
 
-    //    gldata->writeIndex(indices.data(), indices.size());
-    //    gldata->dump();
+        gldata->writeIndex(indices.data(), indices.size());
+        gldata->dump();
 
     TestReadVisitor readVisitor;
     gldata->accept(Buffer::LO_ReadOnly, readVisitor);
 
-    gldata->writeIndex(indices.data(), indices.size());
+//    gldata->writeIndex(indices.data(), indices.size());
     std::vector<unsigned int> indicesRef(2, 0);
     gldata->readIndex(indicesRef.data(), indices.size());
     EXPECT_EQ(indices, indicesRef);

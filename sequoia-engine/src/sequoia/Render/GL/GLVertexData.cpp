@@ -52,7 +52,10 @@ static GLenum getGLDrawMode(VertexData::DrawModeKind mode) {
 GLVertexData::GLVertexData(const VertexDataParameter& param)
     : VertexData(RK_OpenGL, param.DrawMode), vertexBuffer_(nullptr), indexBuffer_(nullptr),
       vaoID_(0) {
-
+  
+  SEQUOIA_ASSERT_MSG(param.NumVertexBuffers <= 1 || param.UseVertexShadowBuffer,
+                     "multiple vertex buffer require shadow buffering");
+  
   const VertexLayout* layout = param.Layout;
 
   // Generate VAO, VBO and VEO

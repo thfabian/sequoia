@@ -199,7 +199,7 @@ struct VertexDataParameter {
   bool UseVertexShadowBuffer = true;
 
   /// Use a shadow buffer for the indices?
-  bool UseIndexShadowBuffer = true;
+  bool UseIndexShadowBuffer = false;
 
   /// Type of indices
   IndexBuffer::IndexType IndexType = IndexBuffer::IT_UInt32;

@@ -19,6 +19,7 @@
 #include "sequoia/Render/Null/NullRenderWindow.h"
 #include "sequoia/Render/Null/NullShader.h"
 #include "sequoia/Render/Null/NullTexture.h"
+#include "sequoia/Render/Null/NullVertexData.h"
 
 namespace sequoia {
 
@@ -64,6 +65,10 @@ NullRenderSystem::createProgram(const std::set<std::shared_ptr<Shader>>& shaders
 std::shared_ptr<Texture> NullRenderSystem::createTexture(const std::shared_ptr<Image>& image,
                                                          const TextureParameter& param) {
   return std::make_shared<NullTexture>(image, std::make_shared<TextureParameter>(param));
+}
+
+std::shared_ptr<VertexData> NullRenderSystem::createVertexData(const VertexDataParameter& param) {
+  return std::make_shared<NullVertexData>(param);
 }
 
 void NullRenderSystem::addKeyboardListener(KeyboardListener* listener) {

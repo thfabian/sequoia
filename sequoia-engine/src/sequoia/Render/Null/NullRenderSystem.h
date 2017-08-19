@@ -74,9 +74,7 @@ public:
                 const TextureParameter& param = TextureParameter()) override;
 
   /// @copydoc RenderSystem::createIndexBuffer
-  virtual std::shared_ptr<VertexData> createVertexData(const VertexDataParameter& param) override {
-    return nullptr;
-  }
+  virtual std::shared_ptr<VertexData> createVertexData(const VertexDataParameter& param) override;
 
   /// @copydoc RenderSystem::addKeyboardListener
   virtual void addKeyboardListener(KeyboardListener* listener) override;

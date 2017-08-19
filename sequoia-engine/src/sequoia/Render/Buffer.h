@@ -46,9 +46,11 @@ public:
     BK_HostBuffer,
     BK_IndexBuffer,
     BK_GLIndexBuffer,
+    BK_NullIndexBuffer,    
     BK_IndexBufferLast,
     BK_VertexBuffer,
     BK_GLVertexBuffer,
+    BK_NullVertexBuffer,    
     BK_VertexBufferLast,
   };
 
@@ -172,13 +174,13 @@ public:
   /// @brief Write `length` bytes, starting at `offset`, from `src` to the buffer
   ///
   /// The buffer needs to be of sufficient length to accomodate the data.
+  /// This keeps the shadow buffer in sync.
   ///
   /// @param src            Data pointer of size `numBytes`
   /// @param offset         The *byte* offset from the start of the buffer to start writing
   /// @param length         Number of *bytes* to wrie
   /// @param discardBuffer  If true, will discard the entire content of this buffer before copying
-  virtual void write(const void* src, std::size_t offset, std::size_t length,
-                     bool discardBuffer = true) = 0;
+  void write(const void* src, std::size_t offset, std::size_t length, bool discardBuffer = true);
 
   /// @brief Read `length` bytes, starting from `offset`, from the buffer and place it in the
   /// memory pointed to by `dest`
@@ -186,7 +188,7 @@ public:
   /// @param offset   The *byte* offset from the start of the buffer to read
   /// @param length   Number of *bytes* to read
   /// @param dest     Destination to write the data (must be atleast of size `length`)
-  virtual void read(std::size_t offset, std::size_t length, void* dest) = 0;
+  void read(std::size_t offset, std::size_t length, void* dest);
 
   /// @brief Check if the buffer is allocated in system RAM
   virtual bool isSystemRAM() const = 0;
@@ -214,6 +216,13 @@ public:
   BufferKind getKind() const noexcept { return kind_; }
 
 protected:
+  /// @brief Write to the buffer
+  virtual void writeImpl(const void* src, std::size_t offset, std::size_t length,
+                         bool discardBuffer = true) = 0;
+
+  /// @brief Read from the buffer
+  virtual void readImpl(std::size_t offset, std::size_t length, void* dest) = 0;
+
   /// @brief Lock the buffer and return the data pointer to the locked region
   virtual void* lockImpl(LockOption option) = 0;
 

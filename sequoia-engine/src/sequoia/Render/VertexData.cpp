@@ -75,9 +75,6 @@ void VertexData::dump() const {
     BufferGuard guard(getIndexBuffer(), Buffer::LO_ReadOnly);
     Byte* data = static_cast<Byte*>(guard.get());
     
-    unsigned int* d = (unsigned int*) data;
-    std::cout << *d << std::endl;
-    
     auto type = getIndexBuffer()->getIndexType();
     for(std::size_t i = 0; i < getNumIndices(); i++, data += getIndexBuffer()->getSizeOfIndexType())
       std::cout << "  " << indexToString(data, type) << ((i == getNumIndices() - 1) ? "" : ",")
