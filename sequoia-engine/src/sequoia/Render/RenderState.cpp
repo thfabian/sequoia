@@ -19,7 +19,7 @@
 #include "sequoia/Render/Program.h"
 #include "sequoia/Render/RenderState.h"
 #include "sequoia/Render/Texture.h"
-#include "sequoia/Render/VertexArrayObject.h"
+#include "sequoia/Render/VertexData.h"
 #include "sequoia/Render/FrameBufferObject.h"
 #include <unordered_set>
 
@@ -126,7 +126,7 @@ bool RenderStateCache::setRenderState(const RenderState& newState) noexcept {
 #undef RENDER_STATE
 
   if(state_.VertexData != newState.VertexData) {
-    if(!VertexDataChanged(newState.VertexData))
+    if(!VertexDataChanged(newState.VertexData, true /* always bind for drawing */))
       return false;
     state_.VertexData = newState.VertexData;
   }

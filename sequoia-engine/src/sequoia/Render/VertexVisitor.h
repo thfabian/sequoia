@@ -38,8 +38,8 @@ namespace render {
 /// passing the visitor to a `Mesh`.
 ///
 /// @b Example
-/// Consider the following example which sets the first component of the position of all the vertices
-/// in the vertex data to `0`.
+/// Consider the following example which sets the first component of the position of all the
+/// vertices in the vertex data to `0`.
 /// @code{.cpp}
 ///   class VertexSetter : public VertexVisitor {
 ///     virtual void visit(Vertex3DLayout* layout) override {
@@ -61,7 +61,7 @@ class SEQUOIA_API VertexVisitor {
 
 public:
   virtual ~VertexVisitor() {}
-  
+
   /// @brief Get the vertex data corresponding to the given layout
   template <class VertexLayoutType, class VertexType = typename VertexLayoutType::VertexType>
   VertexType* getVerticesPtr(const VertexLayoutType*) {

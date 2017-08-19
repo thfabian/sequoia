@@ -24,14 +24,13 @@
 #include "sequoia/Core/Platform.h"
 #include "sequoia/Core/Singleton.h"
 #include "sequoia/Render/FrameListener.h"
-#include "sequoia/Render/IndexBuffer.h"
 #include "sequoia/Render/Input.h"
 #include "sequoia/Render/RenderFwd.h"
 #include "sequoia/Render/RenderSystemObject.h"
 #include "sequoia/Render/RenderWindow.h"
 #include "sequoia/Render/Shader.h"
 #include "sequoia/Render/Texture.h"
-#include "sequoia/Render/VertexBuffer.h"
+#include "sequoia/Render/VertexData.h"
 #include <memory>
 #include <set>
 #include <string>
@@ -82,14 +81,11 @@ public:
   /// renderer into the the FrameBufferObject instead of the main-screen.
   virtual void renderOneFrame(RenderTarget* target) = 0;
 
-  /// @brief Create a new VertexArrayObject for `target`
-  virtual std::unique_ptr<VertexArrayObject> createVertexArrayObject() = 0;
-
-  /// @brief Create a shader from source for `target`
+  /// @brief Create a shader from source
   virtual std::shared_ptr<Shader> createShader(Shader::ShaderType type,
                                                const std::shared_ptr<File>& file) = 0;
 
-  /// @brief Create a GPU program from the given `shaders` for `target`
+  /// @brief Create a GPU program from the given `shaders`
   virtual std::shared_ptr<Program>
   createProgram(const std::set<std::shared_ptr<Shader>>& shaders) = 0;
 
@@ -98,12 +94,8 @@ public:
   createTexture(const std::shared_ptr<Image>& image,
                 const TextureParameter& param = TextureParameter()) = 0;
   
-  /// @brief Create an *empty* index buffer
-  virtual std::shared_ptr<IndexBuffer>
-  createIndexBuffer(IndexBuffer::IndexType type = IndexBuffer::IT_UInt32) = 0;
-  
-  /// @brief Create an *empty* vertex buffer
-  virtual std::shared_ptr<VertexBuffer> createVertexBuffer() = 0;
+  /// @brief Allocate vertex data
+  virtual std::shared_ptr<VertexData> createVertexData(const VertexDataParameter& param) = 0;
 
   /// @brief Add the keyboard `listener`
   virtual void addKeyboardListener(KeyboardListener* listener) = 0;

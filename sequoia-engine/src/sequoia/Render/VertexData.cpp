@@ -18,7 +18,6 @@
 #include "sequoia/Core/StringUtil.h"
 #include "sequoia/Core/Unreachable.h"
 #include "sequoia/Render/Exception.h"
-#include "sequoia/Render/VertexArrayObject.h"
 #include "sequoia/Render/VertexData.h"
 #include "sequoia/Render/VertexVisitor.h"
 #include <iostream>
@@ -27,7 +26,7 @@ namespace sequoia {
 
 namespace render {
 
-std::string indexToString(void* data, IndexBuffer::IndexType type) {
+static std::string indexToString(void* data, IndexBuffer::IndexType type) {
   switch(type) {
   case IndexBuffer::IT_UInt8:
     return std::to_string(*static_cast<std::uint8_t*>(data));
@@ -50,14 +49,15 @@ static const char* drawModeToString(VertexData::DrawModeKind mode) {
 }
 
 VertexData::VertexData(RenderSystemKind renderSystemKind, VertexData::DrawModeKind drawMode)
-    : RenderSystemObject(renderSystemKind), drawMode_(drawMode) {}
+    : RenderSystemObject(renderSystemKind), bbox_(nullptr), drawMode_(drawMode) {}
 
 VertexData::~VertexData() {}
 
-void VertexData::accept(VertexVisitor& visitor, bool isWrite) const {
-  //  visitor.setNumVertices(numVertices_);
-  //  visitor.setVerticesPtr(verticesPtr_);
-  //  layout_->accept(visitor);
+void VertexData::accept(Buffer::LockOption option, VertexVisitor& visitor) const {
+  BufferGuard guard(getVertexBuffer(), option);
+  visitor.setVerticesPtr(guard.get());
+  visitor.setNumVertices(getVertexBuffer()->getNumVertices());
+  getVertexBuffer()->getLayout()->accept(visitor);
 }
 
 void VertexData::dump() const {
@@ -65,7 +65,7 @@ void VertexData::dump() const {
 
   // Print vertices
   VertexVisitorStringifier visitor;
-  acceptReadVisitor(visitor);
+  accept(Buffer::LO_ReadOnly, visitor);
   std::cout << "  " << core::indent(visitor.toString()) << "]";
 
   // Print indices
@@ -74,10 +74,15 @@ void VertexData::dump() const {
 
     BufferGuard guard(getIndexBuffer(), Buffer::LO_ReadOnly);
     Byte* data = static_cast<Byte*>(guard.get());
+    
+    unsigned int* d = (unsigned int*) data;
+    std::cout << *d << std::endl;
+    
     auto type = getIndexBuffer()->getIndexType();
     for(std::size_t i = 0; i < getNumIndices(); i++, data += getIndexBuffer()->getSizeOfIndexType())
       std::cout << "  " << indexToString(data, type) << ((i == getNumIndices() - 1) ? "" : ",")
                 << "\n";
+    
     std::cout << "]\n";
   } else
     std::cout << "\n";

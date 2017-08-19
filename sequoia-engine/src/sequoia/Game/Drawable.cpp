@@ -40,7 +40,7 @@ Drawable::Drawable(SceneNode* node, const std::shared_ptr<Mesh>& mesh,
 
 void Drawable::setMesh(const std::shared_ptr<Mesh>& mesh) {
   mesh_ = mesh;
-  drawCommand_.get().setVertexArrayObject(mesh_->getVertexArrayObject());
+  drawCommand_.get().setVertexData(mesh_->getVertexData());
 }
 
 void Drawable::setTexture(int textureUnit, render::Texture* texture) noexcept {
@@ -58,18 +58,18 @@ void Drawable::setProgram(render::Program* program) noexcept {
 
 render::DrawCommand* Drawable::prepareDrawCommand() {
   SEQUOIA_ASSERT(active_);
-
-  SEQUOIA_ASSERT_MSG(mesh_, "no Mesh set");
-  SEQUOIA_ASSERT_MSG(drawCommand_.get().getVertexArrayObject(), "no VertexArrayObject set");
   SEQUOIA_ASSERT_MSG(drawCommand_.get().getProgram(), "no Program set");
 
-  // Set the new model matrix ...
+  // Set the new model matrix
   drawCommand_.get().setModelMatrix(getNode()->getModelMatrix());
-  render::DrawCommand* cmd = &drawCommand_.get();
+  
+  // Advance the vertex buffers to the next time-step
+  drawCommand_.get().getVertexData()->nextTimestep();
 
-  // ... and progress to the next time-step with the Drawcommand. Note that his copies the current
+  // Progress to the next time-step with the Drawcommand. Note that this copies the current
   // draw command (i.e cmd) into the new one so that subsequent calls will not corrupt the
   // render-state.
+  render::DrawCommand* cmd = &drawCommand_.get();
   drawCommand_.nextTimestep();
   return cmd;
 }

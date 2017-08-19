@@ -19,7 +19,6 @@
 #include "sequoia/Render/Null/NullRenderWindow.h"
 #include "sequoia/Render/Null/NullShader.h"
 #include "sequoia/Render/Null/NullTexture.h"
-#include "sequoia/Render/Null/NullVertexArrayObject.h"
 
 namespace sequoia {
 
@@ -51,10 +50,6 @@ RenderWindow* NullRenderSystem::getMainWindow() const {
 void NullRenderSystem::pollEvents() {}
 
 void NullRenderSystem::renderOneFrame(RenderTarget* target) {}
-
-std::unique_ptr<VertexArrayObject> NullRenderSystem::createVertexArrayObject() {
-  return std::make_unique<NullVertexArrayObject>();
-}
 
 std::shared_ptr<Shader> NullRenderSystem::createShader(Shader::ShaderType type,
                                                        const std::shared_ptr<File>& path) {

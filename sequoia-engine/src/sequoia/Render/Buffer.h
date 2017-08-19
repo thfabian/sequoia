@@ -111,7 +111,7 @@ public:
     /// Lock the buffer for writing only.
     LO_WriteOnly
   };
-  
+
   Buffer(BufferKind kind);
 
   /// @brief Virutal destructor
@@ -164,7 +164,6 @@ public:
   bool isLocked() const noexcept { return data_ != nullptr; }
 
   /// @brief Get the currently locked data pointer
-  /// @see BufferGuard
   void* get() noexcept {
     SEQUOIA_ASSERT_MSG(data_, "data is NULL, did you forget to lock the buffer?");
     return data_;
@@ -287,6 +286,9 @@ public:
   BufferGuard(Buffer* buffer, Buffer::LockOption option) : buffer_(buffer) {
     buffer_->lock(option);
   }
+
+  /// @brief Get the currently locked data pointer
+  void* get() noexcept { return buffer_->get(); }
 
   /// @brief Unlock the buffer
   ~BufferGuard() { buffer_->unlock(); }

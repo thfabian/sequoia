@@ -20,8 +20,8 @@
 #include "sequoia/Core/File.h"
 #include "sequoia/Core/Platform.h"
 #include "sequoia/Game/Mesh.h"
+#include "sequoia/Render/Buffer.h"
 #include "sequoia/Render/RenderFwd.h"
-#include "sequoia/Render/VertexArrayObject.h"
 #include <unordered_map>
 #include <vector>
 
@@ -40,8 +40,6 @@ class SEQUOIA_API MeshManager : public NonCopyable {
   std::unordered_map<MeshParameter, std::size_t> cubeMeshLookupMap_;
 
 public:
-  using BufferUsageKind = render::VertexArrayObject::BufferUsageKind;
-
   /// @brief Load mesh from disk
   ///
   /// @param name         Name of the mesh
@@ -49,8 +47,8 @@ public:
   /// @param modifiable   Request a copy of the mesh which allows to modify the vertex data
   /// @param usage        Buffer usage of the hardware vertex buffers
   std::shared_ptr<Mesh> load(const std::string& name, const std::shared_ptr<File>& file,
-                             bool modifiable = false,
-                             BufferUsageKind usage = BufferUsageKind::BK_StaticWriteOnly);
+                             bool modifiable = false, const MeshParameter& param = MeshParameter(),
+                             render::Buffer::UsageHint usage = render::Buffer::UH_StaticWriteOnly);
 
   /// @brief Create a unit cube mesh which is centered at `(0, 0, 0)` and spans
   /// `{-0.5, 0.5} x {-0.5, 0.5} x {-0.5, 0.5}`
@@ -69,9 +67,10 @@ public:
   ///  |/      |/
   ///  v2------v3
   /// @endverbatim
-  std::shared_ptr<Mesh> createCube(const std::string& name, bool modifiable = false,
-                                   const MeshParameter& param = MeshParameter(),
-                                   BufferUsageKind usage = BufferUsageKind::BK_StaticWriteOnly);
+  std::shared_ptr<Mesh>
+  createCube(const std::string& name, bool modifiable = false,
+             const MeshParameter& param = MeshParameter(),
+             render::Buffer::UsageHint usage = render::Buffer::UH_StaticWriteOnly);
 
   /// @brief Get number of registered meshes
   std::size_t getNumMeshes() const;

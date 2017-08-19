@@ -20,7 +20,6 @@
 #include "sequoia/Render/GL/GLProgram.h"
 #include "sequoia/Render/GL/GLStateCacheManager.h"
 #include "sequoia/Render/GL/GLTexture.h"
-#include "sequoia/Render/GL/GLVertexArrayObject.h"
 #include "sequoia/Render/GL/GLVertexAttribute.h"
 #include "sequoia/Render/GL/GLVertexData.h"
 #include "sequoia/Render/RenderState.h"
@@ -30,8 +29,6 @@
 namespace sequoia {
 
 namespace render {
-
-namespace {
 
 /// @brief OpenGL implementation of the RenderStateCache
 /// @ingroup gl
@@ -49,6 +46,9 @@ class GLRenderStateCache final : public RenderStateCache {
 
   /// Current set pixel format
   GLPixelFormat pixelFormat_;
+  
+  /// Check if the vertex-data is bound for drawing or modification
+  GLBuffer::BindKind vertexBindKind_;
 
 public:
   GLRenderStateCache()
@@ -71,13 +71,19 @@ public:
   /// @brief Unbind any `program`
   void unbindProgram() { GLProgram::unbind(); }
 
-  /// @brief Bind the given `VBO`
-  void bindVertexData(VertexData* data) {
+  /// @brief Bind VertexData for drawing
+  void bindVertexDataForModify(VertexData* data) {
     if(getRenderState().VertexData != data)
-      VertexDataChanged(data);
+      VertexDataChanged(data, false); 
+  }
+  
+  /// @brief Bind VertexData for modificiation
+  void bindVertexDataForDrawing(VertexData* data) {
+    if(getRenderState().VertexData != data)
+      VertexDataChanged(data, true);
   }
 
-  /// @brief Unbind any `VBO`
+  /// @brief Unbind any VertexData
   void unbindVertexData() { GLVertexData::unbind(); }
 
   /// @brief Bind the given `FBO`
@@ -232,12 +238,24 @@ protected:
     glprogram->bind();
     return true;
   }
-
-  virtual bool VertexDataChanged(VertexData* data) override {
+  
+  virtual bool VertexDataChanged(VertexData* data, bool bindForDrawing) override {
     SEQUOIA_ASSERT(data);
   
+    vertexBindKind_ = bindForDrawing ? GLBuffer::BK_Draw : GLBuffer::BK_Modify;
     GLVertexData* gldata = dyn_cast<GLVertexData>(data);
-    gldata->bind();
+  
+    switch(vertexBindKind_) {
+    case GLBuffer::BK_Modify:
+      gldata->bindForModify();
+      break;
+    case GLBuffer::BK_Draw:
+      gldata->bindForDrawing();
+      break;
+    default:
+      sequoia_unreachable("invalid BindKind");
+    }
+  
     return true;
   }
 
@@ -316,9 +334,15 @@ void GLStateCacheManager::bindProgram(Program* program) { stateCache_->bindProgr
 
 void GLStateCacheManager::unbindProgram() { stateCache_->unbindProgram(); }
 
-void GLStateCacheManager::bindVertexData(VertexData* data) { stateCache_->bindVertexData(data); }
+void GLStateCacheManager::bindVertexDataForModify(VertexData* data) {
+  stateCache_->bindVertexDataForModify(data);
+}
 
-void GLStateCacheManager::unbindVertexArrayObject() { stateCache_->unbindVertexData(); }
+void GLStateCacheManager::bindVertexDataForDrawing(VertexData* data) {
+  stateCache_->bindVertexDataForDrawing(data);
+}
+
+void GLStateCacheManager::unbindVertexData() { stateCache_->unbindVertexData(); }
 
 void GLStateCacheManager::bindFrameBufferObject(FrameBufferObject* fbo) {
   stateCache_->bindFrameBufferObject(fbo);

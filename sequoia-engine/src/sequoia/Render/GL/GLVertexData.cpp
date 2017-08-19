@@ -45,22 +45,23 @@ static GLenum getGLDrawMode(VertexData::DrawModeKind mode) {
     return GL_TRIANGLES;
   default:
     sequoia_unreachable("invalid DrawModeKind");
-    return GL_INVALID_ENUM;    
+    return GL_INVALID_ENUM;
   }
 }
 
-GLVertexData::GLVertexData(DrawModeKind drawMode, const VertexDataParameter& param)
-    : VertexData(RK_OpenGL, drawMode), vertexBuffer_(nullptr), indexBuffer_(nullptr), vaoID_(0) {
+GLVertexData::GLVertexData(const VertexDataParameter& param)
+    : VertexData(RK_OpenGL, param.DrawMode), vertexBuffer_(nullptr), indexBuffer_(nullptr),
+      vaoID_(0) {
 
   const VertexLayout* layout = param.Layout;
 
   // Generate VAO, VBO and VEO
   glGenVertexArrays(1, &vaoID_);
   vertexBuffer_ = std::make_unique<GLVertexBuffer>(layout, param.NumVertexBuffers);
-  if(numIndices > 0)
+  if(param.NumIndices > 0)
     indexBuffer_ = std::make_unique<GLIndexBuffer>(param.IndexType);
 
-  getGLRenderSystem().getStateCacheManager()->bindVertexData(this);
+  getGLRenderSystem().getStateCacheManager()->bindVertexDataForModify(this);
 
   // Enable the active attributes
   if(layout->hasPosition()) {
@@ -110,11 +111,20 @@ GLVertexData::~GLVertexData() {
   glDeleteVertexArrays(1, &vaoID_);
 }
 
-void GLVertexData::bind() {
+void GLVertexData::bindForDrawing() {
   glBindVertexArray(vaoID_);
   vertexBuffer_->bindForDrawing();
   if(indexBuffer_)
     indexBuffer_->bindForDrawing();
+  else
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+}
+
+void GLVertexData::bindForModify() {
+  glBindVertexArray(vaoID_);
+  vertexBuffer_->bindForModify();
+  if(indexBuffer_)
+    indexBuffer_->bindForModify();
   else
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
@@ -126,11 +136,11 @@ void GLVertexData::unbind() {
 }
 
 void GLVertexData::nextTimestep() {
-  vertexBuffer_->nextTimeStep();
-  indexBuffer_->nextTimeStep();
+  vertexBuffer_->nextTimestep();
+  indexBuffer_->nextTimestep();
 }
 
-void GLVertexData::draw() const {
+void GLVertexData::draw() const noexcept {
   if(indexBuffer_)
     glDrawElements(getGLDrawMode(getDrawMode()), indexBuffer_->getNumIndices(),
                    indexBuffer_->getGLIndexType(), (void*)0);
@@ -139,14 +149,13 @@ void GLVertexData::draw() const {
 }
 
 std::pair<std::string, std::string> GLVertexData::toStringImpl() const {
-  return std::make_pair(
-      "GLVertexData",
-      core::format("%s"
-                   "vertexBuffer = %s,\n"
-                   "indexBuffer = %s,\n"
-                   "vaoID = %s,\n",
-                   Base::toStringImpl().second, core::indent(vertexBuffer_->toString()),
-                   indexBuffer_ ? core::indent(indexBuffer_->toString()) : "null", vaoID_));
+  return std::make_pair("GLVertexData",
+                        core::format("%s"
+                                     "vertexBuffer = %s,\n"
+                                     "indexBuffer = %s,\n"
+                                     "vaoID = %s\n",
+                                     Base::toStringImpl().second, vertexBuffer_->toString(),
+                                     indexBuffer_ ? indexBuffer_->toString() : "null", vaoID_));
 }
 
 } // namespace render

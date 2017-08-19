@@ -37,6 +37,8 @@ void GLVertexBuffer::read(std::size_t offset, std::size_t length, void* dest) {
 
 void GLVertexBuffer::bindForDrawing() { glBuffer_.bind(GLBuffer::BK_Draw); }
 
+void GLVertexBuffer::bindForModify() { glBuffer_.bind(GLBuffer::BK_Modify); }
+
 void GLVertexBuffer::nextTimestep() { glBuffer_.nextTimestep(); }
 
 void* GLVertexBuffer::lockImpl(Buffer::LockOption option) { return glBuffer_.lock(option); }
@@ -51,7 +53,7 @@ std::pair<std::string, std::string> GLVertexBuffer::toStringImpl() const {
   return std::make_pair("GLVertexBuffer", core::format("%s"
                                                        "glBuffer = %s,\n",
                                                        Base::toStringImpl().second,
-                                                       core::indent(glBuffer_.toString())));
+                                                       glBuffer_.toString()));
 }
 
 } // render

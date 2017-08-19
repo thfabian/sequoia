@@ -38,6 +38,8 @@ void GLIndexBuffer::read(std::size_t offset, std::size_t length, void* dest) {
 
 void GLIndexBuffer::bindForDrawing() { glBuffer_.bind(GLBuffer::BK_Draw); }
 
+void GLIndexBuffer::bindForModify() { glBuffer_.bind(GLBuffer::BK_Modify); }
+
 void GLIndexBuffer::nextTimestep() { glBuffer_.nextTimestep(); }
 
 GLenum GLIndexBuffer::getGLIndexType() const {
@@ -62,10 +64,10 @@ void GLIndexBuffer::allocateImpl(std::size_t numBytes, Buffer::UsageHint usageHi
 }
 
 std::pair<std::string, std::string> GLIndexBuffer::toStringImpl() const {
-  return std::make_pair("GLIndexBuffer", core::format("%s"
-                                                      "glBuffer = %s,\n",
-                                                      Base::toStringImpl().second,
-                                                      core::indent(glBuffer_.toString())));
+  return std::make_pair("GLIndexBuffer",
+                        core::format("%s"
+                                     "glBuffer = %s,\n",
+                                     Base::toStringImpl().second, glBuffer_.toString()));
 }
 
 } // render

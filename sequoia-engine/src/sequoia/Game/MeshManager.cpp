@@ -14,6 +14,7 @@
 //===------------------------------------------------------------------------------------------===//
 
 #include "sequoia/Core/Logging.h"
+#include "sequoia/Game/Game.h"
 #include "sequoia/Game/MeshManager.h"
 #include "sequoia/Render/RenderSystem.h"
 
@@ -22,13 +23,10 @@ namespace sequoia {
 namespace game {
 
 std::shared_ptr<Mesh> MeshManager::load(const std::string& name, const std::shared_ptr<File>& file,
-                                        bool modifiable, BufferUsageKind usage) {
+                                        bool modifiable, const MeshParameter& param,
+                                        render::Buffer::UsageHint usage) {
   return nullptr;
 }
-
-//===------------------------------------------------------------------------------------------===//
-//    Cube Mesh
-//===------------------------------------------------------------------------------------------===//
 
 namespace {
 
@@ -87,7 +85,8 @@ static unsigned int CubeIndices[]  = {   0, 1, 2,   2, 3, 0,                    
 } // anonymous namespace
 
 std::shared_ptr<Mesh> MeshManager::createCube(const std::string& name, bool modifiable,
-                                              const MeshParameter& param, BufferUsageKind usage) {
+                                              const MeshParameter& param,
+                                              render::Buffer::UsageHint usage) {
   LOG(DEBUG) << "Creating cube mesh \"" << name << "\" ...";
 
   auto it = cubeMeshLookupMap_.find(param);
@@ -99,51 +98,52 @@ std::shared_ptr<Mesh> MeshManager::createCube(const std::string& name, bool modi
     std::size_t numVertices = 24;
     std::size_t numIndices = 36;
 
-    std::shared_ptr<render::VertexData> data(
-        new render::VertexData(render::Vertex3D::getLayout(), render::VertexData::DM_Triangles,
-                               numVertices, numIndices, false));
+    render::VertexDataParameter vertexParam(render::VertexData::DM_Triangles,
+                                            render::Vertex3D::getLayout(), numVertices, numIndices,
+                                            usage);
+    vertexParam.IndexType = render::IndexBuffer::IT_UInt32;
+    vertexParam.UseVertexShadowBuffer = true;
+    vertexParam.UseIndexShadowBuffer = false;
 
-    // Set vertex data
-    render::Vertex3D* vertex = (render::Vertex3D*)data->getVerticesPtr();
-    for(std::size_t i = 0; i < numVertices; ++i) {
-      // Position
-      for(int j = 0; j < 3; ++j)
-        vertex[i].Position[j] = CubeVertexData[i * CubeVertexDataStride + j];
+    std::shared_ptr<render::VertexData> data =
+        Game::getSingleton().getRenderSystem()->createVertexData(vertexParam);
 
-      // Normal
-      for(int j = 0; j < 3; ++j)
-        vertex[i].Normal[j] = CubeVertexData[i * CubeVertexDataStride + 3 + j];
+    data->writeVertex(render::Buffer::LO_Discard, [&](render::Vertex3D* vertices) {
+      for(std::size_t i = 0; i < numVertices; ++i) {
+        render::Vertex3D& vertex = vertices[i];
 
-      // Color
-      static_assert(std::is_integral<render::Vertex3D::ColorType>::value,
-                    "color should be integral");
+        // Position
+        for(int j = 0; j < 3; ++j)
+          vertex.Position[j] = CubeVertexData[i * CubeVertexDataStride + j];
 
-      constexpr auto maxRGBValue = std::numeric_limits<render::Vertex3D::ColorType>::max();
-      for(int j = 0; j < 3; ++j)
-        vertex[i].Color[j] = maxRGBValue * CubeVertexData[i * CubeVertexDataStride + 6 + j];
-      vertex[i].Color[3] = maxRGBValue;
+        // Normal
+        for(int j = 0; j < 3; ++j)
+          vertex.Normal[j] = CubeVertexData[i * CubeVertexDataStride + 3 + j];
 
-      // TexCoord
-      vertex[i].TexCoord[0] = CubeVertexData[i * CubeVertexDataStride + 9];
-      if(param.TexCoordInvertV)
-        vertex[i].TexCoord[1] = 1.0f - CubeVertexData[i * CubeVertexDataStride + 10];
-      else
-        vertex[i].TexCoord[1] = CubeVertexData[i * CubeVertexDataStride + 10];
-    }
+        // Color
+        static_assert(std::is_integral<render::Vertex3D::ColorType>::value,
+                      "color should be integral");
+
+        constexpr auto maxRGBValue = std::numeric_limits<render::Vertex3D::ColorType>::max();
+        for(int j = 0; j < 3; ++j)
+          vertex.Color[j] = maxRGBValue * CubeVertexData[i * CubeVertexDataStride + 6 + j];
+        vertex.Color[3] = maxRGBValue;
+
+        // TexCoord
+        vertex.TexCoord[0] = CubeVertexData[i * CubeVertexDataStride + 9];
+        if(param.TexCoordInvertV)
+          vertex.TexCoord[1] = 1.0f - CubeVertexData[i * CubeVertexDataStride + 10];
+        else
+          vertex.TexCoord[1] = CubeVertexData[i * CubeVertexDataStride + 10];
+      }
+    });
 
     // Set bounding box
     data->setAxisAlignedBox(
         math::AxisAlignedBox(math::vec3(-0.5, -0.5, -0.5), math::vec3(0.5, 0.5, 0.5)));
 
     // Set indices
-    std::memcpy(data->getIndicesPtr(), CubeIndices, numIndices * sizeof(render::VertexIndexType));
-
-    // Set the VAO
-    data->setVertexArrayObject(render::RenderSystem::getSingleton().createVertexArrayObject(),
-                               usage);
-    data->getVertexArrayObject()->writeVertexData(0, numVertices);
-    data->getVertexArrayObject()->writeIndexData(0, numIndices);
-
+    data->writeIndex(CubeIndices, numIndices);
     vertexDataList_.emplace_back(data);
 
     index = vertexDataList_.size() - 1;

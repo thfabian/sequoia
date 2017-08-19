@@ -107,7 +107,7 @@ protected:
 
   /// @brief VertexData changed
   /// @returns `true` if the new VertexData was successfully updated, `false` otherwise
-  virtual bool VertexDataChanged(VertexData* data) = 0;
+  virtual bool VertexDataChanged(VertexData* data, bool bindForDrawing) = 0;
 
   /// @brief Texture of `textureUnit` was enabled or disabled
   /// @returns `true` if the new texture was successfully updated, `false` otherwise
@@ -121,8 +121,8 @@ public:
 
   /// @brief Set the interal render-state to `state` and call the appropriate methods for every
   /// state change
-  ///
-  /// @param state    New RenderState
+  /// 
+  /// @param state            New RenderState
   /// @returns `true` if the RenderState was successfully updated, `false` otherwise
   bool setRenderState(const RenderState& state) noexcept;
 

@@ -19,14 +19,13 @@
 #include "sequoia/Core/Unreachable.h"
 #include "sequoia/Render/Exception.h"
 #include "sequoia/Render/GL/GL.h"
-#include "sequoia/Render/GL/GLIndexBuffer.h"
 #include "sequoia/Render/GL/GLProgramManager.h"
 #include "sequoia/Render/GL/GLRenderSystem.h"
 #include "sequoia/Render/GL/GLRenderWindow.h"
 #include "sequoia/Render/GL/GLRenderer.h"
 #include "sequoia/Render/GL/GLShaderManager.h"
 #include "sequoia/Render/GL/GLTextureManager.h"
-#include "sequoia/Render/GL/GLVertexArrayObject.h"
+#include "sequoia/Render/GL/GLVertexData.h"
 #include "sequoia/Render/GL/Native.h"
 
 namespace sequoia {
@@ -128,10 +127,6 @@ void GLRenderSystem::pollEvents() {
 
 void GLRenderSystem::renderOneFrame(RenderTarget* target) { getRenderer()->render(target); }
 
-std::unique_ptr<VertexArrayObject> GLRenderSystem::createVertexArrayObject() {
-  return std::make_unique<GLVertexArrayObject>();
-}
-
 std::shared_ptr<Shader> GLRenderSystem::createShader(Shader::ShaderType type,
                                                      const std::shared_ptr<File>& file) {
   return createRessource<GLShader>(getRenderer()->getShaderManager(), type, file);
@@ -148,11 +143,9 @@ std::shared_ptr<Texture> GLRenderSystem::createTexture(const std::shared_ptr<Ima
                                     std::make_shared<TextureParameter>(param));
 }
 
-std::shared_ptr<IndexBuffer> GLRenderSystem::createIndexBuffer(IndexBuffer::IndexType type) {
-  return std::make_shared<GLIndexBuffer>(type);
+std::shared_ptr<VertexData> GLRenderSystem::createVertexData(const VertexDataParameter& param) {
+  return std::make_shared<GLVertexData>(param);
 }
-
-std::shared_ptr<VertexBuffer> GLRenderSystem::createVertexBuffer() { return nullptr; }
 
 void GLRenderSystem::addKeyboardListener(KeyboardListener* listener) {
   mainWindow_->getInputSystem()->addListener(listener);

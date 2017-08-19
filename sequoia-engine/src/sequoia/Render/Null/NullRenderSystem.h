@@ -61,9 +61,6 @@ public:
   virtual void renderOneFrame(RenderTarget* target) override;
 
   /// @copydoc RenderSystem::createVertexArrayObject
-  virtual std::unique_ptr<VertexArrayObject> createVertexArrayObject() override;
-
-  /// @copydoc RenderSystem::createVertexArrayObject
   virtual std::shared_ptr<Shader> createShader(Shader::ShaderType type,
                                                const std::shared_ptr<File>& path) override;
 
@@ -77,12 +74,9 @@ public:
                 const TextureParameter& param = TextureParameter()) override;
 
   /// @copydoc RenderSystem::createIndexBuffer
-  virtual std::shared_ptr<IndexBuffer> createIndexBuffer(IndexBuffer::IndexType type) override {
+  virtual std::shared_ptr<VertexData> createVertexData(const VertexDataParameter& param) override {
     return nullptr;
   }
-
-  /// @copydoc RenderSystem::createVertexBuffer
-  virtual std::shared_ptr<VertexBuffer> createVertexBuffer() override { return nullptr; }
 
   /// @copydoc RenderSystem::addKeyboardListener
   virtual void addKeyboardListener(KeyboardListener* listener) override;

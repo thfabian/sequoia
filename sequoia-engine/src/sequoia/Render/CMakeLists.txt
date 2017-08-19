@@ -46,8 +46,6 @@ set(GL_SOURCE
   GL/GLTexture.h
   GL/GLTextureManager.cpp
   GL/GLTextureManager.h
-  GL/GLVertexArrayObject.cpp
-  GL/GLVertexArrayObject.h
   GL/GLVertexAttribute.cpp
   GL/GLVertexAttribute.h
   GL/GLVertexBuffer.cpp
@@ -73,8 +71,6 @@ set(NULL_SOURCE
   Null/NullShader.h
   Null/NullTexture.cpp
   Null/NullTexture.h
-  Null/NullVertexArrayObject.cpp
-  Null/NullVertexArrayObject.h
 )
 
 sequoia_add_objects(
@@ -122,8 +118,6 @@ sequoia_add_objects(
           UniformVariable.inc
           Vertex.cpp
           Vertex.h
-          VertexArrayObject.cpp
-          VertexArrayObject.h
           VertexBuffer.cpp
           VertexBuffer.h
           VertexData.cpp

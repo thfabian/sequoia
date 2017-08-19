@@ -29,14 +29,20 @@ namespace render {
 class SEQUOIA_API GLVertexData final : public VertexData {
 public:
   /// @brief Allocate a vertex array object (VAO) with a vertex and index buffer
-  GLVertexData(DrawModeKind drawMode, const VertexDataParameter& param);
+  GLVertexData(const VertexDataParameter& param);
 
   /// @brief Deallocate all memory
   ~GLVertexData();
 
-  /// @brief Bind the vertex-data for drawing in the current render pipline
-  /// @note Do not call this function directly, use `GLStateCacheManager::bindVertexData` instead.
-  void bind();
+  /// @brief Bind the buffer for drawing
+  /// @note Do not call this function directly, use `GLStateCacheManager::bindVertexDataForDrawing`
+  /// instead.
+  void bindForDrawing();
+
+  /// @brief Bind the buffer for modify
+  /// @note Do not call this function directly, use `GLStateCacheManager::bindVertexDataForModify`
+  /// instead.
+  void bindForModify();
 
   /// @brief Unbind texture
   static void unbind();
@@ -52,6 +58,9 @@ public:
 
   /// @brief Draw the vertex-data
   void draw() const noexcept;
+  
+  /// @brief Get the VAO ID
+  unsigned int getVAOID() const noexcept { return vaoID_; }
 
   SEQUOIA_GL_OBJECT(VertexData)
 
@@ -67,7 +76,7 @@ private:
   std::unique_ptr<GLIndexBuffer> indexBuffer_;
 
   /// Vertex array object (VAO)
-  unsigned vaoID_;
+  unsigned int vaoID_;
 
 private:
   using Base = VertexData;

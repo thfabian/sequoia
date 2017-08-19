@@ -19,6 +19,7 @@
 #include "sequoia/Core/Export.h"
 #include "sequoia/Core/HashCombine.h"
 #include "sequoia/Core/NonCopyable.h"
+#include "sequoia/Math/AxisAlignedBox.h"
 #include "sequoia/Render/VertexData.h"
 #include <memory>
 
@@ -26,9 +27,7 @@ namespace sequoia {
 
 namespace game {
 
-class MeshManager;
-
-/// @brief Parameters used to construct the Texture
+/// @brief Parameters used to construct the Mesh
 /// @ingroup game
 struct SEQUOIA_API MeshParameter {
 
@@ -58,43 +57,51 @@ struct SEQUOIA_API MeshParameter {
 /// @brief Ressource holding the 3D mesh
 /// @ingroup game
 class SEQUOIA_API Mesh : public NonCopyable {
-public:
   friend class MeshManager;
 
-  /// @brief Parameter of the Mesh
+  /// Do we own the mesh i.e can we modify it?
+  const bool isModifiable_;
 
+  /// Vertex data
+  std::shared_ptr<render::VertexData> data_;
+
+  /// Name of the mesh
+  std::string name_;
+
+public:
   /// @brief Create empty mesh
   Mesh(const std::string& name, const std::shared_ptr<render::VertexData>& data, bool isModifiable);
 
-  /// @brief Get the local bounding box
-  const math::AxisAlignedBox& getAxisAlignedBox() const { return data_->getAxisAlignedBox(); }
-
-  /// @brief Get the associated VertexArrayObject
-  render::VertexArrayObject* getVertexArrayObject() const { return data_->getVertexArrayObject(); }
-
   /// @brief Get the VertexData
-  const render::VertexData* getVertexData() { return data_.get(); }
   render::VertexData* getVertexData() const { return data_.get(); }
 
   /// @brief Accept a VertexVisitor to access/modify the underlying vertex data
-  void accept(render::VertexVisitor& visitor) const;
-
-  /// @brief Obtain the vertex data for reading/writing
-  /// @see render::VertexData::write
-  /// @endcode
-  /// @{
-  template <class FunctorType>
-  void write(FunctorType&& functor) const {
-    if(!isModifiable_)
-      logWarning();
-    else
-      data_->write(std::forward<FunctorType>(functor));
+  /// @see render::VertexData::accept
+  void accept(render::Buffer::LockOption option, render::VertexVisitor& visitor) const {
+    data_->accept(option, visitor);
   }
+
+  /// @brief Obtain the vertex data for writing
+  /// @see render::VertexData::writeVertex
   template <class FunctorType>
-  void read(FunctorType&& functor) const {
-    data_->read(std::forward<FunctorType>(functor));
+  void write(render::Buffer::LockOption option, FunctorType&& functor) const {
+    SEQUOIA_ASSERT_MSG(isModifiable_, "Attempting to modify read-only mesh");
+    data_->writeVertex(option, std::forward<FunctorType>(functor));
+  }
+
+  /// @brief Obtain the vertex data for reading
+  /// @see render::VertexData::readVertex
+  template <class FunctorType>
+  void read(render::Buffer::LockOption option, FunctorType&& functor) const {
+    data_->readVertex(option, std::forward<FunctorType>(functor));
   }
   /// @}
+
+  /// @brief Get the axis aligned bounding box
+  const math::AxisAlignedBox& getAxisAlignedBox() const noexcept;
+
+  /// @brief Set the axis aligned bounding box
+  void setAxisAlignedBox(const math::AxisAlignedBox& bbox);
 
   /// @brief Set the name of the mesh
   void setName(const std::string& name) { name_ = name; }
@@ -111,19 +118,6 @@ public:
 
   /// @brief Convert to string
   std::string toString() const;
-
-private:
-  void logWarning() const;
-
-private:
-  /// Do we own the mesh i.e can we modify it?
-  const bool isModifiable_;
-
-  /// Vertex data
-  std::shared_ptr<render::VertexData> data_;
-
-  /// Name of the mesh
-  std::string name_;
 };
 
 } // namespace game

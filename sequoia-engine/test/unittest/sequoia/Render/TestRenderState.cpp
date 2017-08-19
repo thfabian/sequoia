@@ -39,7 +39,7 @@ protected:
     return true;
   }
 
-  bool VertexDataChanged(VertexArrayObject* vao) override {
+  bool VertexDataChanged(VertexData* Data, bool bindForDrawing) override {
     changes_.emplace_back("VertexArrayObject");
     return true;
   }

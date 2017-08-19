@@ -34,7 +34,7 @@ namespace render {
 ///
 /// @ingroup gl
 class SEQUOIA_API GLBuffer {
-  
+
   /// OpenGL buffer indices
   std::vector<unsigned int> bufferIds_;
 
@@ -56,6 +56,7 @@ class SEQUOIA_API GLBuffer {
 public:
   /// @brief Specify the kind of buffer to bind
   enum BindKind {
+    BK_Unknown = 0,
     BK_Draw,  ///< Bind the buffer which is currently being drawn
     BK_Modify ///< Bind the buffer which is currently used to modify the data
   };
@@ -127,15 +128,15 @@ public:
 
   /// @brief Get the index into `getBufferIds()` of the buffer which is being drawn
   unsigned int getDrawBufferIndex() const;
-  
+
   /// @brief Get the OpenGL id of the buffer which is being drawn
   unsigned int getDrawBufferID() const;
 
   /// @brief Get the index into `getBufferIds()` of the buffer which is currently being modified
   unsigned int getModifyBufferIndex() const;
-  
+
   /// @brief Get the OpenGL id of the buffer which is currently being modified
-  unsigned int getModifyBufferID() const;  
+  unsigned int getModifyBufferID() const;
 
   /// @brief Get the OpenGL buffer ids
   std::vector<unsigned int> getBuffersIds() const { return bufferIds_; }

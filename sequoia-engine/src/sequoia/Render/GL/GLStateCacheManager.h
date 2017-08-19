@@ -85,10 +85,13 @@ public:
   void unbindProgram();
 
   /// @brief Bind the given vertex data
-  void bindVertexData(VertexData* data);
+  void bindVertexDataForModify(VertexData* data);
 
+  /// @brief Bind the given vertex data  
+  void bindVertexDataForDrawing(VertexData* data);
+  
   /// @brief Unbind any vertex array objects
-  void unbindVertexArrayObject();
+  void unbindVertexData();
 
   /// @brief Bind the given frame buffer object `fbo`
   void bindFrameBufferObject(FrameBufferObject* fbo);

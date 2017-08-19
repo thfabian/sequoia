@@ -21,7 +21,7 @@ sequoia_add_test(
           TestGLRenderWindow.cpp
           TestGLShader.cpp
           TestGLTexture.cpp
-          TestGLVertexArrayObject.cpp
+          TestGLVertexData.cpp
   DEPENDS Sequoia
           ${SEQUOIA_EXTERNAL_LIBRARIES}
 )

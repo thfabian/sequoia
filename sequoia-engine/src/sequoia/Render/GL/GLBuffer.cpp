@@ -21,6 +21,8 @@
 #include "sequoia/Render/GL/GLBuffer.h"
 #include <cstring>
 
+#include <iostream>
+
 namespace sequoia {
 
 namespace render {
@@ -116,13 +118,14 @@ void GLBuffer::allocate(std::size_t numBytes, Buffer::UsageHint hint) {
 
 void GLBuffer::write(const void* src, std::size_t offset, std::size_t length, bool discardBuffer) {
   bind(BK_Modify);
-  SEQUOIA_ASSERT_MSG((numBytes_ - (lentgth - offset)) >= 0, "writing out of bounds");
+  SEQUOIA_ASSERT_MSG((std::int64_t(numBytes_) - std::int64_t(length - offset)) >= 0,
+                     "writing out of bounds");
 
   if(discardBuffer)
     glBufferData(target_, numBytes_, nullptr, hint_);
 
   // TODO: figure out when using glBufferData vs. glMapBuffer
-
+  
   void* dest = glMapBuffer(target_, GL_WRITE_ONLY);
   std::memcpy(static_cast<void*>(((Byte*)dest + offset)), src, length);
   glUnmapBuffer(target_);
@@ -130,8 +133,9 @@ void GLBuffer::write(const void* src, std::size_t offset, std::size_t length, bo
 
 void GLBuffer::read(std::size_t offset, std::size_t length, void* dest) {
   bind(BK_Modify);
-  SEQUOIA_ASSERT_MSG((numBytes_ - (lentgth - offset)) >= 0, "reading out of bounds");
-
+  SEQUOIA_ASSERT_MSG((std::int64_t(numBytes_) - std::int64_t(length - offset)) >= 0,
+                     "reading out of bounds");
+  
   void* src = glMapBuffer(target_, GL_READ_ONLY);
   std::memcpy(dest, static_cast<void*>(((Byte*)src + offset)), length);
   glUnmapBuffer(target_);

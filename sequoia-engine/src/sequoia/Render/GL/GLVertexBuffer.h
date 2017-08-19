@@ -46,6 +46,9 @@ public:
   /// @brief Bind the buffer for drawing
   void bindForDrawing();
 
+  /// @brief Bind the buffer for modify
+  void bindForModify();
+
   /// @brief Update the buffer to the next timestep
   void nextTimestep();
 

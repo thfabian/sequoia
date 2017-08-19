@@ -68,11 +68,17 @@ public:
   };
 
   /// @brief Empty box
-  inline AxisAlignedBox() : minimum_(0), maximum_(0), extent_(EK_Null) {}
+  AxisAlignedBox() : minimum_(0), maximum_(0), extent_(EK_Null) {}
 
   /// @brief Initialize with `minimum` and `maximum`
-  inline AxisAlignedBox(const vec3& minimum, const vec3& maximum)
+  AxisAlignedBox(const vec3& minimum, const vec3& maximum)
       : minimum_(minimum), maximum_(maximum), extent_(EK_Finite) {}
+
+  AxisAlignedBox(const AxisAlignedBox&) = default;
+  AxisAlignedBox(AxisAlignedBox&&) = default;
+  
+  AxisAlignedBox& operator=(const AxisAlignedBox&) = default;
+  AxisAlignedBox& operator=(AxisAlignedBox&&) = default;
 
   /// @brief Get the minimum corner of the box
   inline const vec3& getMinimum() const { return minimum_; }

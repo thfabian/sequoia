@@ -118,6 +118,9 @@ public:
 
   /// @brief Get the main RenderTarget
   render::RenderTarget* getMainRenderTarget() const;
+  
+  /// @brief Get the RenderSystem
+  render::RenderSystem* getRenderSystem() const { return renderSystem_.get(); }
 
   /// @brief Create a texture from the `image` using default parameters
   render::Texture* createTexture(const std::shared_ptr<Image>& image);
