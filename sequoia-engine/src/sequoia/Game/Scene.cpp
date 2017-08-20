@@ -85,7 +85,7 @@ void Scene::makeDummyScene() {
   setActiveCamera(std::make_shared<render::Camera>(math::vec3(0, 5, 5)));
 
   std::shared_ptr<SceneNode> cubeOrigin = SceneNode::allocate("TestCubeOrigin");
-  
+
   MeshParameter cubeMeshParam;
   cubeMeshParam.TexCoordInvertV = true;
 
@@ -109,6 +109,12 @@ void Scene::makeDummyScene() {
       sceneGraph_->insert(cube);
     }
   }
+
+  std::shared_ptr<SceneNode> gridOrigin = SceneNode::allocate("TestGridOrigin");
+  gridOrigin->addCapability<Drawable>(game.getMeshManager()->createGrid("TestGrid", 2));
+  gridOrigin->translate(math::vec3(0.0f, -1.0f, 0.0f));
+  gridOrigin->setScale(100);
+  sceneGraph_->insert(gridOrigin);
 
   auto controller = SceneNode::allocate<CameraControllerFree>("Camera");
   controller->setCamera(activeCamera_);

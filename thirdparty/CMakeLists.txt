@@ -35,6 +35,7 @@ sequoia_build_package(glfw3)
 sequoia_build_package(gli)
 sequoia_build_package(glm)
 sequoia_build_package(gtest)
+sequoia_build_package(tinyobjloader)
 
 #
 # Packages which are conditionally built if not found

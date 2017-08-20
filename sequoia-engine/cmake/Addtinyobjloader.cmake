@@ -13,25 +13,12 @@
 ##
 ##===------------------------------------------------------------------------------------------===##
 
-ExternalProject_Add(
-  glfw3
-  DOWNLOAD_DIR ${download_dir}
-  URL ${glfw3_url}
-  URL_MD5 ${glfw3_md5}
-  BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}/glfw3"
-  INSTALL_DIR "${Sequoia_INSTALL_PREFIX}/glfw3"
-  CMAKE_CACHE_ARGS
-    ${Sequoia_THIRDPARTY_CMAKE_ARGS}
-    -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
-    -DCMAKE_CONFIGURATION_TYPES:STRING=${CMAKE_CONFIGURATION_TYPES}
-    -DBUILD_SHARED_LIBS:BOOL=${BUILD_SHARED_LIBS}
-    -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
-    -DGLFW_BUILD_DOCS:BOOL=OFF
-    -DGLFW_BUILD_EXAMPLES:BOOL=OFF
-    -DGLFW_BUILD_TESTS:BOOL=OFF
+find_package(tinyobjloader NO_MODULE REQUIRED)
+
+sequoia_export_package(
+  NAME tinyobjloader
+  FOUND ${tinyobjloader_FOUND} 
+  VERSION "${TINYOBJLOADER_VERSION}" 
+  LIBRARIES ${TINYOBJLOADER_LIBRARIES}
+  INCLUDE_DIRS ${TINYOBJLOADER_INCLUDE_DIRS}
 )
-
-ExternalProject_Get_Property(glfw3 install_dir)
-set(glfw3_DIR "${install_dir}/lib/cmake/glfw3" CACHE INTERNAL "")
-
-list(APPEND Sequoia_THIRDPARTY_CMAKE_ARGS "-Dglfw3_DIR:PATH=${glfw3_DIR}")

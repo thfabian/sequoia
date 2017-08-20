@@ -13,6 +13,7 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
+#include "sequoia/Core/HashCombine.h"
 #include "sequoia/Core/Logging.h"
 #include "sequoia/Game/Game.h"
 #include "sequoia/Game/MeshManager.h"
@@ -137,7 +138,7 @@ std::shared_ptr<Mesh> MeshManager::createCube(const std::string& name, bool modi
           vertex.TexCoord[1] = CubeVertexData[i * CubeVertexDataStride + 10];
       }
     });
-    
+
     // Set bounding box
     data->setAxisAlignedBox(
         math::AxisAlignedBox(math::vec3(-0.5, -0.5, -0.5), math::vec3(0.5, 0.5, 0.5)));
@@ -151,8 +152,113 @@ std::shared_ptr<Mesh> MeshManager::createCube(const std::string& name, bool modi
   }
 
   const std::shared_ptr<render::VertexData>& data = vertexDataList_[index];
+  
+  // TODO: Copy for modifieable
 
   LOG(DEBUG) << "Successfully created cube mesh \"" << name << "\"";
+  return std::make_shared<Mesh>(name, data, modifiable);
+}
+
+std::shared_ptr<Mesh> MeshManager::createGrid(const std::string& name, unsigned int N,
+                                              bool modifiable, const MeshParameter& param,
+                                              render::Buffer::UsageHint usage) {
+  std::size_t hash = 0;
+  core::hashCombine(hash, N, std::hash<MeshParameter>()(param));
+
+  LOG(DEBUG) << "Creating grid mesh \"" << name << "\" ...";
+
+  auto it = gridMeshLookupMap_.find(hash);
+  std::size_t index = 0;
+
+  if(it != gridMeshLookupMap_.end())
+    index = it->second;
+  else {
+    unsigned int numVertices = N * N;
+    unsigned int numIndices = 6 * (N - 1) * (N - 1);
+
+    render::VertexDataParameter vertexParam(render::VertexData::DM_Triangles,
+                                            render::Vertex3D::getLayout(), numVertices, numIndices,
+                                            usage);
+
+    vertexParam.IndexType = render::IndexBuffer::IT_UInt32;
+    vertexParam.UseVertexShadowBuffer = true;
+    vertexParam.UseIndexShadowBuffer = false;
+
+    std::shared_ptr<render::VertexData> data =
+        Game::getSingleton().getRenderSystem()->createVertexData(vertexParam);
+
+    const float dx = 1.0f / (N - 1);
+    data->writeVertex(render::Buffer::LO_Discard, [&](render::Vertex3D* vertices) {
+      for(unsigned int i = 0; i < N; ++i) {
+        for(unsigned int j = 0; j < N; ++j) {
+          render::Vertex3D& vertex = vertices[i * N + j];
+
+          // Position
+          vertex.Position[0] = dx * (i - 0.5f * (N - 1));
+          vertex.Position[1] = 0.0f;
+          vertex.Position[2] = dx * (j - 0.5f * (N - 1));
+
+          // Normal
+          vertex.Normal[0] = 0;
+          vertex.Normal[1] = 1;
+          vertex.Normal[2] = 0;
+
+          // Color
+          static_assert(std::is_integral<render::Vertex3D::ColorType>::value,
+                        "color should be integral");
+
+          constexpr auto maxRGBValue = std::numeric_limits<render::Vertex3D::ColorType>::max();
+          vertex.Color[0] = vertex.Color[1] = vertex.Color[2] = 155;
+          vertex.Color[3] = maxRGBValue;
+
+          // TexCoord
+          float u = 0;
+          float v = 0;
+
+          vertex.TexCoord[0] = u;
+          vertex.TexCoord[1] = param.TexCoordInvertV ? 1.0f - v : v;
+        }
+      }
+    });
+
+    //    0 ------ 3      1. Triangle { 1, 0, 3}
+    //    |        |      2. Triangle { 4, 1, 3}
+    //    |        |
+    //    1 ------ 4
+    //
+    //   index = [ 1, 0, 3, 4, 1, 3 ]
+    //
+    data->getIndexBuffer()->lock(render::Buffer::LO_Discard);
+    unsigned int* indices = static_cast<unsigned int*>(data->getIndexBuffer()->get());
+    for(unsigned int i = 0; i < N - 1; ++i) {
+      for(unsigned int j = 0; j < N - 1; ++j) {
+        unsigned int tri = 6 * (i * (N - 1) + j);
+
+        // We always store 2 triangles at once
+        indices[tri + 0] = i * N + j + 1;
+        indices[tri + 1] = i * N + j;
+        indices[tri + 2] = i * N + j + N;
+
+        indices[tri + 3] = i * N + j + N + 1;
+        indices[tri + 4] = i * N + j + 1;
+        indices[tri + 5] = i * N + j + N;
+      }
+    }
+    data->getIndexBuffer()->unlock();
+
+    // Set bounding box
+    data->setAxisAlignedBox(
+        math::AxisAlignedBox(math::vec3(-0.5f, 0.0f, -0.5f), math::vec3(0.5f, 0.0f, 0.5f)));
+
+    vertexDataList_.emplace_back(data);
+    index = vertexDataList_.size() - 1;
+
+    gridMeshLookupMap_.emplace(hash, index);
+  }
+
+  const std::shared_ptr<render::VertexData>& data = vertexDataList_[index];
+
+  LOG(DEBUG) << "Successfully created grid mesh \"" << name << "\"";
   return std::make_shared<Mesh>(name, data, modifiable);
 }
 

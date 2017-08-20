@@ -14,24 +14,24 @@
 ##===------------------------------------------------------------------------------------------===##
 
 ExternalProject_Add(
-  glfw3
+  tinyobjloader
   DOWNLOAD_DIR ${download_dir}
-  URL ${glfw3_url}
-  URL_MD5 ${glfw3_md5}
-  BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}/glfw3"
-  INSTALL_DIR "${Sequoia_INSTALL_PREFIX}/glfw3"
+  URL ${tinyobjloader_url}
+  URL_MD5 ${tinyobjloader_md5}
+  BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}/tinyobjloader"
+  INSTALL_DIR "${Sequoia_INSTALL_PREFIX}/tinyobjloader"
   CMAKE_CACHE_ARGS
     ${Sequoia_THIRDPARTY_CMAKE_ARGS}
     -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
     -DCMAKE_CONFIGURATION_TYPES:STRING=${CMAKE_CONFIGURATION_TYPES}
     -DBUILD_SHARED_LIBS:BOOL=${BUILD_SHARED_LIBS}
     -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
-    -DGLFW_BUILD_DOCS:BOOL=OFF
-    -DGLFW_BUILD_EXAMPLES:BOOL=OFF
-    -DGLFW_BUILD_TESTS:BOOL=OFF
+    -DTINYOBJLOADER_COMPILATION_SHARED:BOOL=${BUILD_SHARED_LIBS}
+    -DTINYOBJLOADER_BUILD_TEST_LOADER:BOOL=OFF
+    -DTINYOBJLOADER_USE_DOUBLE:BOOL=OFF
 )
 
-ExternalProject_Get_Property(glfw3 install_dir)
-set(glfw3_DIR "${install_dir}/lib/cmake/glfw3" CACHE INTERNAL "")
+ExternalProject_Get_Property(tinyobjloader install_dir)
+set(tinyobjloader_DIR "${install_dir}/lib/tinyobjloader/cmake" CACHE INTERNAL "")
 
-list(APPEND Sequoia_THIRDPARTY_CMAKE_ARGS "-Dglfw3_DIR:PATH=${glfw3_DIR}")
+list(APPEND Sequoia_THIRDPARTY_CMAKE_ARGS "-Dtinyobjloader_DIR:PATH=${tinyobjloader_DIR}")

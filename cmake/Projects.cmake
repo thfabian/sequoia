@@ -113,3 +113,11 @@ set(opencv_md5 "a43b65488124ba33dde195fea9041b70")
 list(APPEND projects tbb)
 set(tbb_url "https://github.com/thfabian/tbb/archive/tbb44u4.tar.gz")
 set(tbb_md5 "bfbeb805c91fcd32f858f8d9c26ad0e8")
+
+#
+# tinyobjloader
+#
+list(APPEND projects tinyobjloader)
+set(tinyobjloader_version "1.0.6")
+set(tinyobjloader_url "https://github.com/syoyo/tinyobjloader/archive/v${tinyobjloader_version}.tar.gz")
+set(tinyobjloader_md5 "ef3198fdbd98171d43d3cc703015be33")

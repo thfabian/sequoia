@@ -39,6 +39,9 @@ class SEQUOIA_API MeshManager : public NonCopyable {
   /// Cube mesh indices
   std::unordered_map<MeshParameter, std::size_t> cubeMeshLookupMap_;
 
+  /// Plane mesh indices
+  std::unordered_map<std::size_t, std::size_t> gridMeshLookupMap_;
+
 public:
   /// @brief Load mesh from disk
   ///
@@ -50,13 +53,13 @@ public:
                              bool modifiable = false, const MeshParameter& param = MeshParameter(),
                              render::Buffer::UsageHint usage = render::Buffer::UH_StaticWriteOnly);
 
-  /// @brief Create a unit cube mesh which is centered at `(0, 0, 0)` and spans
+  /// @brief Create a unit cube, centered at `(0, 0, 0)`, spanning
   /// `{-0.5, 0.5} x {-0.5, 0.5} x {-0.5, 0.5}`
   ///
   /// @param name         Name of the mesh
   /// @param modifiable   Request a copy of the mesh which allows to modify the vertex data
-  /// @param usage        Buffer usage of the hardware vertex buffers
   /// @param param        Parameter used to initialize the mesh
+  /// @param usage        Buffer usage of the hardware vertex buffers
   ///
   /// @verbatim
   ///    v6----- v5
@@ -69,6 +72,31 @@ public:
   /// @endverbatim
   std::shared_ptr<Mesh>
   createCube(const std::string& name, bool modifiable = false,
+             const MeshParameter& param = MeshParameter(),
+             render::Buffer::UsageHint usage = render::Buffer::UH_StaticWriteOnly);
+
+  /// @brief Create a grid, centered at `(0, 0, 0)`, with `N^2` gridpoints (vertices) spanning
+  /// `{-0.5, 0.5} x {0} x {-0.5, 0.5}`
+  ///
+  /// Each `1x1` subgrid spans the full `{0, 1} x {0, 1}` UV texture coordinate space.
+  ///
+  /// @param name         Name of the mesh
+  /// @param modifiable   Request a copy of the mesh which allows to modify the vertex data
+  /// @param N            Number of gridpoints (vertices) in `X` and `Z` dimension
+  /// @param param        Parameter used to initialize the mesh
+  /// @param usage        Buffer usage of the hardware vertex buffers
+  ///
+  /// @verbatim
+  ///      --------> X
+  ///    |   _________
+  ///    |  |_|_|_|_|_|
+  ///    |  |_|_|_|_|_|  N = 4
+  ///    v  |_|_|_|_|_|
+  ///    Z  |_|_|_|_|_|
+  ///
+  /// @endverbatim
+  std::shared_ptr<Mesh>
+  createGrid(const std::string& name, unsigned int N, bool modifiable = false,
              const MeshParameter& param = MeshParameter(),
              render::Buffer::UsageHint usage = render::Buffer::UH_StaticWriteOnly);
 
