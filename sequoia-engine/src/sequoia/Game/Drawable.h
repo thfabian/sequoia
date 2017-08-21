@@ -81,6 +81,9 @@ public:
 
   /// @brief Set the Program used in the render-pipeline when invoking the `DrawCommand`
   void setProgram(render::Program* program) noexcept;
+  void setProgram(const std::shared_ptr<render::Program>& program) noexcept {
+    setProgram(program.get());
+  }
 
   /// @brief Set a uniform variable
   template <class T>

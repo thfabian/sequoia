@@ -44,6 +44,9 @@ public:
 
   /// @brief Set the `value` of `param`
   void set(GLenum param, int value) noexcept;
+
+  /// @brief Convert pixel format to string
+  std::string toString() const;
 };
 
 /// @brief Manager of the OpenGL state-machine
@@ -55,7 +58,7 @@ class SEQUOIA_API GLStateCacheManager : public FrameListener, public NonCopyable
 
   /// In-memory version of the OpenGL state
   std::shared_ptr<GLRenderStateCache> stateCache_;
-  
+
   /// Default pixel format
   GLPixelFormat defaultPixelFormat_;
 
@@ -87,9 +90,9 @@ public:
   /// @brief Bind the given vertex data
   void bindVertexDataForModify(VertexData* data);
 
-  /// @brief Bind the given vertex data  
+  /// @brief Bind the given vertex data
   void bindVertexDataForDrawing(VertexData* data);
-  
+
   /// @brief Unbind any vertex array objects
   void unbindVertexData();
 

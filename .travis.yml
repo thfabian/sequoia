@@ -102,6 +102,10 @@ cache:
     - ${CACHE_DIR}/glbinding-${GLBINDING_VERSION}
     - ${CACHE_DIR}/opencv-${OPENCV_VERSION}
 
+branches:
+  only:
+    - master
+    
 notifications:
   on_success: never
   on_failure: never

@@ -14,6 +14,7 @@
 //===------------------------------------------------------------------------------------------===//
 
 #include "sequoia/Core/Casting.h"
+#include "sequoia/Core/StringUtil.h"
 #include "sequoia/Render/DrawCommand.h"
 #include "sequoia/Render/GL/GL.h"
 #include "sequoia/Render/GL/GLFrameBufferObject.h"
@@ -46,7 +47,7 @@ class GLRenderStateCache final : public RenderStateCache {
 
   /// Current set pixel format
   GLPixelFormat pixelFormat_;
-  
+
   /// Check if the vertex-data is bound for drawing or modification
   GLBuffer::BindKind vertexBindKind_;
 
@@ -75,9 +76,9 @@ public:
   /// @brief Bind VertexData for drawing
   void bindVertexDataForModify(VertexData* data) {
     if(getRenderState().VertexData != data)
-      VertexDataChanged(data, false); 
+      VertexDataChanged(data, false);
   }
-  
+
   /// @brief Bind VertexData for modificiation
   void bindVertexDataForDrawing(VertexData* data) {
     if(getRenderState().VertexData != data)
@@ -239,13 +240,13 @@ protected:
     glprogram->bind();
     return true;
   }
-  
+
   virtual bool VertexDataChanged(VertexData* data, bool bindForDrawing) override {
     SEQUOIA_ASSERT(data);
-  
+
     vertexBindKind_ = bindForDrawing ? GLBuffer::BK_Draw : GLBuffer::BK_Modify;
     GLVertexData* gldata = dyn_cast<GLVertexData>(data);
-  
+
     switch(vertexBindKind_) {
     case GLBuffer::BK_Modify:
       gldata->bindForModify();
@@ -256,7 +257,7 @@ protected:
     default:
       sequoia_unreachable("invalid BindKind");
     }
-  
+
     return true;
   }
 
@@ -410,7 +411,16 @@ int GLPixelFormat::get(GLenum param) const noexcept {
   return it->second;
 }
 
-void GLPixelFormat::set(GLenum param, int value) noexcept { format_.emplace(param, value); }
+void GLPixelFormat::set(GLenum param, int value) noexcept { format_[param] = value; }
+
+std::string GLPixelFormat::toString() const {
+  return core::format("GLPixelFormat[\n"
+                      "  format = %s\n"
+                      "]",
+                      core::indent(core::toStringRange(format_, [](auto pair) {
+                        return core::format("%s = %s", pair.first, pair.second);
+                      })));
+}
 
 } // namespace render
 

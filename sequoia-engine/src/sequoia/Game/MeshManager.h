@@ -78,7 +78,17 @@ public:
   /// @brief Create a grid, centered at `(0, 0, 0)`, with `N^2` gridpoints (vertices) spanning
   /// `{-0.5, 0.5} x {0} x {-0.5, 0.5}`
   ///
-  /// Each `1x1` subgrid spans the full `{0, 1} x {0, 1}` UV texture coordinate space.
+  /// Texture coordiantes are repeated meaning the texture should have an
+  /// render::TextureParameter::EK_MirroredRepeat or render::TextureParameter::EK_MirroredRepeat
+  ///
+  /// Example for setting up a texture for the grid:
+  ///
+  /// @code{.cpp}
+  ///   render::TextureParameter texParam;
+  ///   texParam.Dim1EdgeSampling = texParam.Dim2EdgeSampling =
+  ///       render::TextureParameter::EK_MirroredRepeat;
+  ///   Game::getSingleton().createTexture("foo.png", texParam);
+  /// @endcode
   ///
   /// @param name         Name of the mesh
   /// @param modifiable   Request a copy of the mesh which allows to modify the vertex data
@@ -88,11 +98,11 @@ public:
   ///
   /// @verbatim
   ///      --------> X
-  ///    |   _________
-  ///    |  |_|_|_|_|_|
-  ///    |  |_|_|_|_|_|  N = 4
-  ///    v  |_|_|_|_|_|
-  ///    Z  |_|_|_|_|_|
+  ///    |   _______
+  ///    |  |_|_|_|_|
+  ///    |  |_|_|_|_|  N = 5
+  ///    v  |_|_|_|_|
+  ///    Z  |_|_|_|_|
   ///
   /// @endverbatim
   std::shared_ptr<Mesh>

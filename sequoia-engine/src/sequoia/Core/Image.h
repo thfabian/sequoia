@@ -90,6 +90,15 @@ public:
   /// @brief Convert to string
   virtual std::string toString() const = 0;
 
+  /// @brief Show the image in an external window (if possible)
+  ///
+  /// This opens an external window and **blocks** until the window is closed or *any* key is
+  /// pressed.
+  ///
+  /// @note This might fail if OpenCV was compiled without GUI support. This function will not throw
+  /// and the error will silently be ignored i.e the function will return immediately.
+  virtual void show() const = 0;
+
   /// @brief Get the image kind
   ImageKind getKind() const { return kind_; }
 
@@ -166,17 +175,12 @@ public:
   /// @copydoc Image::getHeight
   virtual int getHeight() const noexcept override;
 
+  /// @brief Image::show
+  virtual void show() const override;
+
   /// @brief Get the OpenCV matrix of the image
   const cv::Mat& getMat() const;
   cv::Mat& getMat();
-  
-  /// @brief Show the image in an external window
-  ///
-  /// This opens an external window and **blocks** until the window is closed or *any* key is 
-  /// pressed.
-  ///
-  /// @note This might fail if OpenCV was compiled without GUI support.
-  void show() const;
 
   static bool classof(const Image* image) { return image->getKind() == Image::IK_RegularImage; }
 };
@@ -209,6 +213,9 @@ public:
 
   /// @copydoc Image::getHeight
   virtual int getHeight() const noexcept override;
+
+  /// @brief Image::show
+  virtual void show() const override;
 
   /// @brief Get the gli texture of the image
   const gli::texture& getTexture() const;

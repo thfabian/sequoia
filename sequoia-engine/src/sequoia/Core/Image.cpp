@@ -41,6 +41,7 @@ std::shared_ptr<Image> Image::load(const std::shared_ptr<File>& file) {
   case FileType::Png:
   case FileType::Jpeg:
   case FileType::Bmp:
+  case FileType::Tiff:
     return std::make_shared<RegularImage>(file);
   case FileType::DDS:
     return std::make_shared<TextureImage>(file);
@@ -63,12 +64,12 @@ RegularImage::RegularImage(const std::shared_ptr<File>& file) : Image(IK_Regular
 
   try {
     image_ = std::make_unique<cv::Mat>(cv::imdecode(
-        cv::Mat(1, file->getNumBytes(), CV_8UC1, (void*)file->getData()), CV_LOAD_IMAGE_UNCHANGED));
+        cv::Mat(1, file->getNumBytes(), CV_8UC4, (void*)file->getData()), CV_LOAD_IMAGE_COLOR));
   } catch(cv::Exception& e) {
     SEQUOIA_THROW(core::Exception, "failed to load image from file: %s: %s", file_->getPath(),
                   e.what());
   }
-
+  
   if(image_->empty())
     SEQUOIA_THROW(core::Exception, "failed to load image from file: %s", file_->getPath());
 
@@ -194,6 +195,10 @@ bool TextureImage::equals(const Image* other) const noexcept {
 
 int TextureImage::getWidth() const noexcept { return image_->extent()[0]; }
 int TextureImage::getHeight() const noexcept { return image_->extent()[1]; }
+
+void TextureImage::show() const {
+  LOG(ERROR) << "Failed to to show image \"" << file_->getPath() << "\": DDS images can't be shown";
+}
 
 const gli::texture& TextureImage::getTexture() const { return *image_; }
 

@@ -25,7 +25,10 @@
 #include "sequoia/Game/Scene.h"
 #include "sequoia/Render/Input.h"
 #include "sequoia/Render/RenderFwd.h"
+#include "sequoia/Render/Shader.h"
+#include <initializer_list>
 #include <memory>
+#include <set>
 #include <unordered_map>
 
 namespace sequoia {
@@ -118,7 +121,7 @@ public:
 
   /// @brief Get the main RenderTarget
   render::RenderTarget* getMainRenderTarget() const;
-  
+
   /// @brief Get the RenderSystem
   render::RenderSystem* getRenderSystem() const { return renderSystem_.get(); }
 
@@ -128,6 +131,18 @@ public:
   /// @brief Create a texture from the `image` and `param`
   render::Texture* createTexture(const std::shared_ptr<Image>& image,
                                  const render::TextureParameter& param);
+
+  /// @brief Compile the given shader
+  std::shared_ptr<render::Shader> createShader(render::Shader::ShaderType type,
+                                               const std::shared_ptr<File>& source);
+
+  /// @brief Create a GPU program by compiling the given shaders sources
+  std::shared_ptr<render::Program> createProgram(
+      std::initializer_list<std::pair<render::Shader::ShaderType, std::shared_ptr<File>>> shaders);
+
+  /// @brief Create a GPU program of the given shaders
+  std::shared_ptr<render::Program>
+  createProgram(const std::set<std::shared_ptr<render::Shader>>& shaders);
 
   /// @brief Get the default vertex shader
   const std::shared_ptr<render::Shader>& getDefaultVertexShader() const;

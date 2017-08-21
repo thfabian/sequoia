@@ -174,6 +174,24 @@ render::Texture* Game::createTexture(const std::shared_ptr<Image>& image,
   return renderSystem_->createTexture(image, param).get();
 }
 
+std::shared_ptr<render::Shader> Game::createShader(render::Shader::ShaderType type,
+                                                   const std::shared_ptr<File>& source) {
+  return renderSystem_->createShader(type, source);
+}
+
+std::shared_ptr<render::Program>
+Game::createProgram(const std::set<std::shared_ptr<render::Shader>>& shaders) {
+  return renderSystem_->createProgram(shaders);
+}
+
+std::shared_ptr<render::Program> Game::createProgram(
+    std::initializer_list<std::pair<render::Shader::ShaderType, std::shared_ptr<File>>> shaders) {
+  std::set<std::shared_ptr<render::Shader>> shaderSet;
+  for(const auto& shaderPair : shaders)
+    shaderSet.insert(createShader(shaderPair.first, shaderPair.second));
+  return createProgram(shaderSet);
+}
+
 const std::shared_ptr<render::Shader>& Game::getDefaultVertexShader() const {
   return renderSystem_->getDefaultVertexShader();
 }

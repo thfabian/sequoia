@@ -82,10 +82,15 @@ void Scene::makeDummyScene() {
   sceneGraph_ = std::make_shared<SceneGraph>();
 
   // Create the camera
-  setActiveCamera(std::make_shared<render::Camera>(math::vec3(0, 5, 5)));
+  std::shared_ptr<render::Camera> camera = std::make_shared<render::Camera>(math::vec3(0, 5, 5));
+  camera->setZNearClipping(0.1f);
+  setActiveCamera(camera);
 
   std::shared_ptr<SceneNode> cubeOrigin = SceneNode::allocate("TestCubeOrigin");
 
+  //
+  // UV coord cube
+  //
   MeshParameter cubeMeshParam;
   cubeMeshParam.TexCoordInvertV = true;
 
@@ -94,7 +99,10 @@ void Scene::makeDummyScene() {
   cubeOrigin->get<Drawable>()->setTexture(0, game.createTexture(game.getAssetManager()->loadImage(
                                                  "sequoia/texture/UVTest512x512.dds")));
   sceneGraph_->insert(cubeOrigin);
-
+  
+  //
+  // Mini cubes
+  //
   auto cubeMesh = game.getMeshManager()->createCube("TestCube");
   float dx = 3.0f;
   int N = 10;
@@ -105,15 +113,33 @@ void Scene::makeDummyScene() {
       cube->translate(math::vec3((i - N / 2.0f) * dx, 0, (j - N / 2.0f) * dx));
       cube->setScale(2 * float(i) / N);
       cube->get<Drawable>()->setTexture(
-          0, game.createTexture(game.getAssetManager()->loadImage("sequoia/texture/Gaben.png")));
+          0, game.createTexture(game.getAssetManager()->loadImage("sequoia/texture/Gaben.jpg")));
       sceneGraph_->insert(cube);
     }
   }
 
+  //
+  // Grid
+  //
   std::shared_ptr<SceneNode> gridOrigin = SceneNode::allocate("TestGridOrigin");
-  gridOrigin->addCapability<Drawable>(game.getMeshManager()->createGrid("TestGrid", 2));
+  gridOrigin->addCapability<Drawable>(game.getMeshManager()->createGrid("TestGrid", 33));
   gridOrigin->translate(math::vec3(0.0f, -1.0f, 0.0f));
-  gridOrigin->setScale(100);
+  gridOrigin->setScale(50);
+  render::TextureParameter texParam;
+  texParam.Dim1EdgeSampling = texParam.Dim2EdgeSampling =
+      render::TextureParameter::EK_MirroredRepeat;
+
+  gridOrigin->get<Drawable>()->setProgram(game.createProgram(
+      {{render::Shader::ST_Vertex, game.getAssetManager()->load("sequoia/shader/MultiTex.vert")},
+       {render::Shader::ST_Fragment,
+        game.getAssetManager()->load("sequoia/shader/MultiTex.frag")}}));
+  gridOrigin->get<Drawable>()->setTexture(
+      0, game.createTexture(game.getAssetManager()->loadImage("sequoia/texture/SandTex0.png"),
+                            texParam));
+  gridOrigin->get<Drawable>()->setTexture(
+      1, game.createTexture(game.getAssetManager()->loadImage("sequoia/texture/SandTex1.tiff"),
+                            texParam));
+
   sceneGraph_->insert(gridOrigin);
 
   auto controller = SceneNode::allocate<CameraControllerFree>("Camera");

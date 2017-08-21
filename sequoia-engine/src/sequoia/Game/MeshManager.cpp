@@ -208,12 +208,12 @@ std::shared_ptr<Mesh> MeshManager::createGrid(const std::string& name, unsigned 
                         "color should be integral");
 
           constexpr auto maxRGBValue = std::numeric_limits<render::Vertex3D::ColorType>::max();
-          vertex.Color[0] = vertex.Color[1] = vertex.Color[2] = 155;
+          vertex.Color[0] = vertex.Color[1] = vertex.Color[2] = 0;
           vertex.Color[3] = maxRGBValue;
 
           // TexCoord
-          float u = 0;
-          float v = 0;
+          float u = i;
+          float v = j;
 
           vertex.TexCoord[0] = u;
           vertex.TexCoord[1] = param.TexCoordInvertV ? 1.0f - v : v;

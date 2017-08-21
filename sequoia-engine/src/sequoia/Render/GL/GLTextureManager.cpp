@@ -24,6 +24,8 @@
 #include <gli/gli.hpp>
 #include <opencv2/opencv.hpp>
 
+#include <iostream>
+
 namespace sequoia {
 
 namespace render {
@@ -108,8 +110,6 @@ static void uploadRegularImage(GLenum target, const RegularImage* image) {
   // TODO: this needs to be the StateCache manager of the RessourceThread
   GLStateCacheManager* manager = getGLRenderer().getStateCacheManager();
 
-  // We need to vertically flip OpenCV images as OpenGL expects (0, 0) to be in the bottom left
-  // corner and not in top left!
   cv::Mat imageFlipped;
   cv::flip(image->getMat(), imageFlipped, 0);
 
