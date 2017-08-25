@@ -16,10 +16,12 @@
 #ifndef SEQUOIA_GAME_SCENE_H
 #define SEQUOIA_GAME_SCENE_H
 
+#include "sequoia/Core/DoubleBuffered.h"
 #include "sequoia/Core/Export.h"
 #include "sequoia/Core/Listenable.h"
 #include "sequoia/Core/NonCopyable.h"
 #include "sequoia/Game/GameFwd.h"
+#include "sequoia/Render/RenderCommand.h"
 #include "sequoia/Render/RenderFwd.h"
 #include <memory>
 #include <vector>
@@ -59,6 +61,9 @@ public:
   /// @brief Get the SceneGraph
   SceneGraph* getSceneGraph() const;
 
+  /// @brief Prepare the RenderCommand for rendering the next frame to `target`
+  render::RenderCommand* prepareRenderCommand(render::RenderTarget* target) noexcept;
+
   /// @brief Update the scene and progress to the next time-step
   ///
   /// By default, this does nothing.
@@ -78,14 +83,17 @@ private:
   void updateDrawCommandList(render::DrawCommandList* list);
 
 private:
-  /// List of currently active DrawCommands of this scene
-  std::vector<render::DrawCommand*> drawCommandList_;
+  /// Double buffered render command
+  DoubleBuffered<render::RenderCommand> renderCommand_;
 
   /// Graph of the scene
   std::shared_ptr<SceneGraph> sceneGraph_;
 
   /// Currently active camera
   std::shared_ptr<render::Camera> activeCamera_;
+
+  /// Temporary list of draw-commands
+  std::vector<render::DrawCommand*> drawCommands_;
 };
 
 } // namespace game

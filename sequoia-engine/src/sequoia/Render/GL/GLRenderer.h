@@ -67,8 +67,8 @@ public:
   /// @brief Release the OpenGL context
   ~GLRenderer();
 
-  /// @brief Render `target`
-  void render(RenderTarget* target);
+  /// @brief Render `command`
+  void render(RenderCommand* command);
 
   /// @brief Get the shader manager
   GLShaderManager* getShaderManager();

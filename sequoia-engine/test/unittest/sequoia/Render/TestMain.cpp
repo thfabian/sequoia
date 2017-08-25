@@ -21,7 +21,8 @@ int main(int argc, char* argv[]) {
   testing::InitGoogleTest(&argc, argv);
 
   // Register test environment
-  testing::AddGlobalTestEnvironment(new sequoia::unittest::TestEnvironment(argc, argv));
-  
+  testing::AddGlobalTestEnvironment(
+      new sequoia::unittest::TestEnvironment(argc, argv, sequoia::render::RK_Null));
+
   return RUN_ALL_TESTS();
 }

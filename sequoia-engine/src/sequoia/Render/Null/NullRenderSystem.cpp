@@ -50,7 +50,7 @@ RenderWindow* NullRenderSystem::getMainWindow() const {
 
 void NullRenderSystem::pollEvents() {}
 
-void NullRenderSystem::renderOneFrame(RenderTarget* target) {}
+void NullRenderSystem::renderOneFrame(RenderCommand* command) {}
 
 std::shared_ptr<Shader> NullRenderSystem::createShader(Shader::ShaderType type,
                                                        const std::shared_ptr<File>& path) {

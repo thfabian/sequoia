@@ -97,7 +97,7 @@ public:
   void unbindVertexData();
 
   /// @brief Bind the given frame buffer object `fbo`
-  void bindFrameBufferObject(FrameBufferObject* fbo);
+  void bindFrameBufferObject(FrameBuffer* fbo);
 
   /// @brief Unbind any frame buffer objects
   void unbindFrameBufferObject();
@@ -124,8 +124,8 @@ public:
   /// @brief Reset the pixel storage format mode to it's default
   void resetPixelFormat();
 
-  void frameListenerRenderingBegin(RenderTarget* target) override;
-  void frameListenerRenderingEnd(RenderTarget* target) override;
+  void frameListenerRenderingBegin(RenderCommand* command) override;
+  void frameListenerRenderingEnd(RenderCommand* command) override;
 
 protected:
   bool getImpl(GLenum param, bool) const noexcept;

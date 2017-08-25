@@ -14,13 +14,13 @@
 //===------------------------------------------------------------------------------------------===//
 
 #include "sequoia/Core/Format.h"
-#include "sequoia/Render/FrameBufferObject.h"
+#include "sequoia/Render/FrameBuffer.h"
 
 namespace sequoia {
 
 namespace render {
 
-std::string FrameBufferObjectParameter::toString() const {
+std::string FrameBufferParameter::toString() const {
   return core::format("FrameBufferObjectParameter[\n"
                       "  Width = %s,\n"
                       "  Height = %s,\n"
@@ -29,9 +29,9 @@ std::string FrameBufferObjectParameter::toString() const {
                       Width, Height, MSAA);
 }
 
-FrameBufferObject::~FrameBufferObject() {}
+FrameBuffer::~FrameBuffer() {}
 
-FrameBufferObject::FrameBufferObject(RenderSystemKind kind) : RenderSystemObject(kind) {}
+FrameBuffer::FrameBuffer(RenderSystemKind kind) : RenderSystemObject(kind) {}
 
 } // namespace render
 

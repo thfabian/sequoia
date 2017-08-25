@@ -90,9 +90,11 @@ sequoia_add_objects(
           DrawCommandList.cpp
           DrawCommandList.h
           Exception.h
-          FrameBufferObject.cpp
-          FrameBufferObject.h
+          FrameBuffer.cpp
+          FrameBuffer.h
           FrameListener.h
+          GlobalRenderState.cpp
+          GlobalRenderState.h
           HostBuffer.cpp
           HostBuffer.h
           IndexBuffer.cpp
@@ -101,6 +103,8 @@ sequoia_add_objects(
           Input.h
           Program.cpp
           Program.h
+          RenderCommand.cpp
+          RenderCommand.h
           RenderFwd.h
           RenderRessource.cpp
           RenderRessource.h

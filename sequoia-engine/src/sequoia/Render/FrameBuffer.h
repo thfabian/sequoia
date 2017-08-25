@@ -13,8 +13,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_RENDER_FRAMEBUFFEROBJECT_H
-#define SEQUOIA_RENDER_FRAMEBUFFEROBJECT_H
+#ifndef SEQUOIA_RENDER_FRAMEBUFFER_H
+#define SEQUOIA_RENDER_FRAMEBUFFER_H
 
 #include "sequoia/Core/Export.h"
 #include "sequoia/Core/NonCopyable.h"
@@ -27,13 +27,13 @@ namespace sequoia {
 
 namespace render {
 
-/// @brief Parameters used to construct the FrameBufferObject
+/// @brief Parameters used to construct the frame buffer
 /// @ingroup render
-struct SEQUOIA_API FrameBufferObjectParameter {
-  FrameBufferObjectParameter(int width, int height) : Width(width), Height(height) {}
-  
-  FrameBufferObjectParameter(const FrameBufferObjectParameter&) = default;
-  FrameBufferObjectParameter(FrameBufferObjectParameter&&) = default;
+struct SEQUOIA_API FrameBufferParameter {
+  FrameBufferParameter(int width, int height) : Width(width), Height(height) {}
+
+  FrameBufferParameter(const FrameBufferParameter&) = default;
+  FrameBufferParameter(FrameBufferParameter&&) = default;
 
   /// Width of the frame buffer
   int Width;
@@ -48,15 +48,15 @@ struct SEQUOIA_API FrameBufferObjectParameter {
   std::string toString() const;
 };
 
-/// @brief Framebuffer objects allow to render to a user-defined location, and thus render without
+/// @brief Frame buffers allow to render to a user-defined location, and thus render without
 /// disturbing the main screen.
 ///
-/// @see RenderSystem::createFrameBufferObject
+/// @see RenderSystem::createFrameBuffer
 /// @ingroup render
-class SEQUOIA_API FrameBufferObject : public RenderSystemObject, public NonCopyable {
+class SEQUOIA_API FrameBuffer : public RenderSystemObject, public NonCopyable {
 public:
-  FrameBufferObject(RenderSystemKind kind);
-  virtual ~FrameBufferObject();
+  FrameBuffer(RenderSystemKind kind);
+  virtual ~FrameBuffer();
 
   /// @brief Convert to string
   virtual std::string toString() const = 0;

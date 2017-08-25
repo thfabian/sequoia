@@ -23,26 +23,28 @@ namespace sequoia {
 namespace render {
 
 class Camera;
-class Program;
 class DrawCommand;
 class DrawCommandList;
-class FrameBufferObject;
-struct RenderState;
+class FrameBuffer;
+class GlobalRenderState;
+class Program;
 class RenderStateCache;
 class RenderSystem;
 class RenderTarget;
 class RenderWindow;
 class Shader;
 class Texture;
-struct TextureParameter;
 class VertexArrayObject;
-struct VertexLayout;
-struct Vertex2DLayout;
-struct Vertex3DLayout;
 class VertexData;
 class VertexVistor;
 class ViewFrustum;
 class Viewport;
+struct RenderState;
+class RenderCommand;
+struct TextureParameter;
+struct Vertex2DLayout;
+struct Vertex3DLayout;
+struct VertexLayout;
 
 } // namespace render
 

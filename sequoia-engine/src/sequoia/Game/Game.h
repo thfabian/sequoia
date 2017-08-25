@@ -69,7 +69,7 @@ class SEQUOIA_API Game final : public Singleton<Game>,
   /// Active render-system
   std::unique_ptr<render::RenderSystem> renderSystem_;
 
-  /// Manager
+  /// Managers
   std::unique_ptr<AssetManager> assetManager_;
   std::unique_ptr<MeshManager> meshManager_;
 

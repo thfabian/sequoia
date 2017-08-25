@@ -20,9 +20,11 @@ namespace sequoia {
 
 namespace unittest {
 
-GLTestEnvironment::GLTestEnvironment(int argc, char* argv[]) : TestEnvironment(argc, argv) {}
+GLTestEnvironment::GLTestEnvironment(int argc, char* argv[])
+    : TestEnvironment(argc, argv, render::RK_OpenGL) {}
 
 void GLTestEnvironment::SetUp() {
+  TestEnvironment::SetUp();
   renderSystem_ = render::RenderSystem::create(render::RK_OpenGL, TestOptions::getSingletonPtr());
 }
 

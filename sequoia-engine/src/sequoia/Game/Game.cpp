@@ -47,17 +47,14 @@ void Game::run() {
 
   LOG(INFO) << "Starting main-loop ...";
 
-  render::DrawCommandList* drawCommandList = mainWindow_->getDrawCommandList().get();
-
   // Start main-loop
   while(!mainWindow_->isClosed() && !shouldClose_) {
 
-    // Set the draw commands
-    drawCommandList->clear();
-    activeScene_->updateDrawCommandList(drawCommandList);
+    // Set the render commands
+    render::RenderCommand* renderCommand = activeScene_->prepareRenderCommand(mainWindow_);
 
     // Start rendering to the main-window
-    renderSystem_->renderOneFrame(mainWindow_);
+    renderSystem_->renderOneFrame(renderCommand);
 
     // Compute next time-step
     activeScene_->updateImpl();

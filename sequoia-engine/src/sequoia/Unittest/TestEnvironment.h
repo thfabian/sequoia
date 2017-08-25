@@ -36,7 +36,7 @@ namespace unittest {
 class SEQUOIA_API TestEnvironment : public testing::Environment, public Singleton<TestEnvironment> {
 public:
   /// @brief Parse command-line
-  TestEnvironment(int argc, char* argv[]);
+  TestEnvironment(int argc, char* argv[], render::RenderSystemKind kind = render::RK_Invalid);
 
   /// @brief Virtual destructor
   virtual ~TestEnvironment();

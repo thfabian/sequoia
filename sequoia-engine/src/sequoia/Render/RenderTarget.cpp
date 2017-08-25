@@ -14,17 +14,20 @@
 //===------------------------------------------------------------------------------------------===//
 
 #include "sequoia/Core/Assert.h"
+#include "sequoia/Core/Format.h"
+#include "sequoia/Core/StringUtil.h"
 #include "sequoia/Render/Camera.h"
 #include "sequoia/Render/DrawCommandList.h"
+#include "sequoia/Render/FrameBuffer.h"
 #include "sequoia/Render/RenderTarget.h"
+#include "sequoia/Render/Viewport.h"
 
 namespace sequoia {
 
 namespace render {
 
-RenderTarget::RenderTarget(RenderTargetKind kind) : kind_(kind), viewport_(nullptr), fbo_(nullptr) {
-  list_ = std::make_shared<render::DrawCommandListDefault>();
-}
+RenderTarget::RenderTarget(RenderTargetKind kind)
+    : kind_(kind), viewport_(nullptr), fbo_(nullptr) {}
 
 Viewport* RenderTarget::getViewport() {
   SEQUOIA_ASSERT(viewport_);
@@ -34,6 +37,15 @@ Viewport* RenderTarget::getViewport() {
 const Viewport* RenderTarget::getViewport() const {
   SEQUOIA_ASSERT(viewport_);
   return viewport_.get();
+}
+
+std::string RenderTarget::toString() const {
+  return core::format("RenderTarget[\n"
+                      "  viewport = %s,\n"
+                      "  fbo = %s\n"
+                      "]",
+                      core::indent(viewport_->toString()),
+                      core::indent(fbo_ ? fbo_->toString() : "null"));
 }
 
 } // namespace render

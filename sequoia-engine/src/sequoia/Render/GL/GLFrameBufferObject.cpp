@@ -58,8 +58,8 @@ static void checkFramebufferStatus(unsigned int id) {
   }
 }
 
-GLFrameBufferObject::GLFrameBufferObject(const FrameBufferObjectParameter& param)
-    : FrameBufferObject(RK_OpenGL), fboID_(0), rboDepthID_(0), rboColorID_(0), param_(param) {
+GLFrameBufferObject::GLFrameBufferObject(const FrameBufferParameter& param)
+    : FrameBuffer(RK_OpenGL), fboID_(0), rboDepthID_(0), rboColorID_(0), param_(param) {
   glGenFramebuffers(1, &fboID_);
 }
 
@@ -75,7 +75,7 @@ GLFrameBufferObject::~GLFrameBufferObject() {
 
 unsigned int GLFrameBufferObject::getID() const { return fboID_; }
 
-const FrameBufferObjectParameter& GLFrameBufferObject::getParam() const { return param_; }
+const FrameBufferParameter& GLFrameBufferObject::getParam() const { return param_; }
 
 void GLFrameBufferObject::attachTexture(GLFragmentData::Data attachmentPoint,
                                         const std::shared_ptr<GLTexture>& texture) {

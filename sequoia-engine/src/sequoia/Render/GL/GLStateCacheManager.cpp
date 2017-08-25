@@ -89,7 +89,7 @@ public:
   void unbindVertexData() { GLVertexData::unbind(); }
 
   /// @brief Bind the given `FBO`
-  void bindFrameBufferObject(FrameBufferObject* fbo) {
+  void bindFrameBufferObject(FrameBuffer* fbo) {
     if(fbo)
       dyn_cast<GLFrameBufferObject>(fbo)->bind();
   }
@@ -346,7 +346,7 @@ void GLStateCacheManager::bindVertexDataForDrawing(VertexData* data) {
 
 void GLStateCacheManager::unbindVertexData() { stateCache_->unbindVertexData(); }
 
-void GLStateCacheManager::bindFrameBufferObject(FrameBufferObject* fbo) {
+void GLStateCacheManager::bindFrameBufferObject(FrameBuffer* fbo) {
   stateCache_->bindFrameBufferObject(fbo);
 }
 
@@ -375,11 +375,11 @@ void GLStateCacheManager::setPixelFormat(const GLPixelFormat& pixelFormat) {
 
 void GLStateCacheManager::resetPixelFormat() { stateCache_->setPixelFormat(defaultPixelFormat_); }
 
-void GLStateCacheManager::frameListenerRenderingBegin(RenderTarget* target) {
+void GLStateCacheManager::frameListenerRenderingBegin(RenderCommand* command) {
   stateCache_->resetUniformVariables();
 }
 
-void GLStateCacheManager::frameListenerRenderingEnd(RenderTarget* target) {}
+void GLStateCacheManager::frameListenerRenderingEnd(RenderCommand* target) {}
 
 bool GLStateCacheManager::getImpl(GLenum param, bool) const noexcept {
   GLboolean value;

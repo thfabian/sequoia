@@ -45,14 +45,14 @@ RenderSystem::RenderSystem(RenderSystemKind kind, Options* options)
 
 RenderSystem::~RenderSystem() {}
 
-void RenderSystem::frameListenerRenderingBegin(RenderTarget* target) {
+void RenderSystem::frameListenerRenderingBegin(RenderCommand* command) {
   for(FrameListener* listener : getListeners<FrameListener>())
-    listener->frameListenerRenderingBegin(target);
+    listener->frameListenerRenderingBegin(command);
 }
 
-void RenderSystem::frameListenerRenderingEnd(RenderTarget* target) {
+void RenderSystem::frameListenerRenderingEnd(RenderCommand* command) {
   for(FrameListener* listener : getListeners<FrameListener>())
-    listener->frameListenerRenderingEnd(target);
+    listener->frameListenerRenderingEnd(command);
 }
 
 } // namespace render

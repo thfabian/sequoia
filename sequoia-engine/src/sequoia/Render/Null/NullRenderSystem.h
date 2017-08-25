@@ -58,7 +58,7 @@ public:
   virtual void pollEvents() override;
 
   /// @copydoc RenderSystem::renderOneFrame
-  virtual void renderOneFrame(RenderTarget* target) override;
+  virtual void renderOneFrame(RenderCommand* command) override;
 
   /// @copydoc RenderSystem::createVertexArrayObject
   virtual std::shared_ptr<Shader> createShader(Shader::ShaderType type,

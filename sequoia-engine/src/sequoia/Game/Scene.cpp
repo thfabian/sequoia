@@ -25,6 +25,7 @@
 #include "sequoia/Game/SceneGraph.h"
 #include "sequoia/Render/Camera.h"
 #include "sequoia/Render/DrawCommandList.h"
+#include "sequoia/Render/RenderCommand.h"
 #include "sequoia/Render/RenderWindow.h"
 #include <functional>
 
@@ -36,28 +37,30 @@ namespace sequoia {
 namespace game {
 
 Scene::Scene() : activeCamera_(nullptr) {
-  drawCommandList_.reserve(render::DrawCommandList::DefaultSize);
+  renderCommand_.first().setDrawCommandList(std::make_shared<render::DrawCommandListDefault>());
+  renderCommand_.second().setDrawCommandList(std::make_shared<render::DrawCommandListDefault>());
+  drawCommands_.reserve(render::DrawCommandList::DefaultSize);
 }
 
 void Scene::updateDrawCommandList(render::DrawCommandList* list) {
-  drawCommandList_.clear();
+  list->clear();
+  drawCommands_.clear();
 
   // Extract all DrawCommands
   sceneGraph_->apply([this](SceneNode* node) {
     if(Drawable* draw = node->get<Drawable>()) {
       if(draw->isActive()) {
-        drawCommandList_.emplace_back(draw->prepareDrawCommand());
+        drawCommands_.emplace_back(draw->prepareDrawCommand());
       }
     }
   });
 
   // Copy DrawCommands
-  list->insert(drawCommandList_);
+  list->insert(drawCommands_);
 }
 
 void Scene::setActiveCamera(const std::shared_ptr<render::Camera>& camera) {
   activeCamera_ = camera;
-
   for(auto listener : getListeners<SceneListener>())
     listener->sceneListenerActiveCameraChanged(this);
 }
@@ -65,6 +68,16 @@ void Scene::setActiveCamera(const std::shared_ptr<render::Camera>& camera) {
 const std::shared_ptr<render::Camera>& Scene::getActiveCamera() const { return activeCamera_; }
 
 SceneGraph* Scene::getSceneGraph() const { return sceneGraph_.get(); }
+
+render::RenderCommand* Scene::prepareRenderCommand(render::RenderTarget* target) noexcept {
+  render::RenderCommand* cmd = &renderCommand_.get();
+
+  cmd->setRenderTarget(target);
+  updateDrawCommandList(cmd->getDrawCommandList());
+
+  renderCommand_.nextTimestep(false);
+  return cmd;
+}
 
 void Scene::update() {}
 
@@ -99,7 +112,7 @@ void Scene::makeDummyScene() {
   cubeOrigin->get<Drawable>()->setTexture(0, game.createTexture(game.getAssetManager()->loadImage(
                                                  "sequoia/texture/UVTest512x512.dds")));
   sceneGraph_->insert(cubeOrigin);
-  
+
   //
   // Mini cubes
   //

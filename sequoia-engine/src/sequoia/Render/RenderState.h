@@ -26,7 +26,7 @@ namespace sequoia {
 
 namespace render {
 
-/// @brief State of the render pipline
+/// @brief State of the render pipline of a specific DrawCommand
 ///
 /// <table>
 /// <caption id="multi_row">Available render-states</caption>

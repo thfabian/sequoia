@@ -23,7 +23,7 @@ namespace sequoia {
 
 namespace render {
 
-class RenderTarget;
+class RenderCommand;
 
 /// @brief Listen to frame events
 /// @ingroup render
@@ -31,11 +31,11 @@ class SEQUOIA_API FrameListener {
 public:
   virtual ~FrameListener() {}
 
-  /// @brief Begin of the rendering a frame of `target`
-  virtual void frameListenerRenderingBegin(RenderTarget* target) = 0;
+  /// @brief Begin of the rendering the rendering `command`
+  virtual void frameListenerRenderingBegin(RenderCommand* command) = 0;
 
   /// @brief End of the rendering of the previous frame of `target`
-  virtual void frameListenerRenderingEnd(RenderTarget* target) = 0;
+  virtual void frameListenerRenderingEnd(RenderCommand* command) = 0;
 };
 
 } // namespace render

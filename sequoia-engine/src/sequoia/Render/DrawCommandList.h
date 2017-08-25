@@ -39,7 +39,7 @@ protected:
 
 public:
   virtual ~DrawCommandList() {}
-  
+
   /// @brief Default size of a DrawCommandList
   static constexpr std::size_t DefaultSize = 1024;
 
@@ -68,6 +68,9 @@ public:
 
   /// @brief Clear the list
   void clear() noexcept { commands_.clear(); }
+
+  /// @brief Get the number of DrawCommands
+  std::size_t size() const noexcept { return commands_.size(); }
 
   /// @brief Convert draw command list to string
   virtual std::string toString() const noexcept = 0;

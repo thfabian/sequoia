@@ -57,20 +57,16 @@ public:
   void setViewport(const std::shared_ptr<Viewport>& viewport) { viewport_ = viewport; }
 
   /// @brief Get the FrameBufferobeject of the target (if any)
-  /// @see RenderSystem::renderOneFrame()
-  std::shared_ptr<FrameBufferObject>& getFrameBufferObject() { return fbo_; }
+  std::shared_ptr<FrameBuffer>& getFrameBuffer() { return fbo_; }
 
   /// @brief Set the FrameBufferobeject of the target
-  void setFrameBufferObject(const std::shared_ptr<FrameBufferObject>& fbo) { fbo_ = fbo; }
+  void setFrameBuffer(const std::shared_ptr<FrameBuffer>& fbo) { fbo_ = fbo; }
 
   /// @brief Check if a frame buffer has been attached to the RenderTarget
-  bool hasFrameBufferObject() const { return fbo_ != nullptr; }
+  bool hasFrameBuffer() const { return fbo_ != nullptr; }
 
-  /// @brief Set the `DrawCommandList` which will be rendered
-  void setDrawCommandList(const std::shared_ptr<DrawCommandList>& list) { list_ = list; }
-
-  /// @brief Get the `DrawCommandList`
-  const std::shared_ptr<DrawCommandList>& getDrawCommandList() const { return list_; }
+  /// @brief Convert to string
+  std::string toString() const;
 
 private:
   /// RTTI discriminator
@@ -79,11 +75,8 @@ private:
   /// Viewport connecting the target to a camera
   std::shared_ptr<Viewport> viewport_;
 
-  /// List of draw commands
-  std::shared_ptr<DrawCommandList> list_;
-
   /// Attached FBO of the target (if any)
-  std::shared_ptr<FrameBufferObject> fbo_;
+  std::shared_ptr<FrameBuffer> fbo_;
 };
 
 } // namespace render

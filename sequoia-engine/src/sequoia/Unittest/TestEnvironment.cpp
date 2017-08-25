@@ -32,7 +32,8 @@ SEQUOIA_DECLARE_SINGLETON(unittest::TestEnvironment);
 
 namespace unittest {
 
-TestEnvironment::TestEnvironment(int argc, char* argv[]) : trace_() {
+TestEnvironment::TestEnvironment(int argc, char* argv[], render::RenderSystemKind kind)
+    : trace_(), renderSystemKind_(kind) {
   singletonManager_ = std::make_unique<core::SingletonManager>();
   singletonManager_->allocateSingleton<ErrorHandler>(argc > 0 ? argv[0] : "SequoiaTest");
 
@@ -67,14 +68,16 @@ TestEnvironment::TestEnvironment(int argc, char* argv[]) : trace_() {
   }
 
   // Set the preferred RenderSystem
-  if(vm.count("renderer"))
-    renderSystemKind_ =
-        core::StringSwitch<render::RenderSystemKind>(vm["renderer"].as<std::string>())
-            .Case("gl", render::RK_OpenGL)
-            .Case("null", render::RK_Null)
-            .Default(render::RK_Invalid);
-  else
-    renderSystemKind_ = render::RK_Null;
+  if(renderSystemKind_ == render::RK_Invalid) {
+    if(vm.count("renderer"))
+      renderSystemKind_ =
+          core::StringSwitch<render::RenderSystemKind>(vm["renderer"].as<std::string>())
+              .Case("gl", render::RK_OpenGL)
+              .Case("null", render::RK_Null)
+              .Default(render::RK_Invalid);
+    else
+      renderSystemKind_ = render::RK_Null;
+  }
 
   if(renderSystemKind_ == render::RK_Invalid)
     ErrorHandler::getSingleton().fatal(

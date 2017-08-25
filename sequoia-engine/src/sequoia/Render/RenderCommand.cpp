@@ -4,7 +4,7 @@
 //                       | (___   ___  __ _ _   _  ___  _  __ _
 //                        \___ \ / _ \/ _` | | | |/ _ \| |/ _` |
 //                        ____) |  __/ (_| | |_| | (_) | | (_| |
-//                       |_____/ \___|\__, |\__,_|\___/|_|\__,_| - Game Engine (2016-2017)
+//                       |_____/ \___|\__, |\__,_|\___/|_|\__,_| - Game Engine
 //                                       | |
 //                                       |_|
 //
@@ -15,31 +15,29 @@
 
 #include "sequoia/Core/Format.h"
 #include "sequoia/Core/StringUtil.h"
-#include "sequoia/Render/Null/NullProgram.h"
-#include "sequoia/Render/Shader.h"
+#include "sequoia/Render/DrawCommandList.h"
+#include "sequoia/Render/GlobalRenderState.h"
+#include "sequoia/Render/RenderCommand.h"
+#include "sequoia/Render/RenderTarget.h"
 
 namespace sequoia {
 
 namespace render {
 
-NullProgram::NullProgram(const std::set<std::shared_ptr<Shader>>& shaders)
-    : Program(RK_Null), shaders_(shaders) {}
+RenderCommand::RenderCommand()
+    : drawCommandList_(nullptr), globalRenderState_(nullptr), target_(nullptr) {}
 
-NullProgram::~NullProgram() {}
-
-const std::set<std::shared_ptr<Shader>>& NullProgram::getShaders() const { return shaders_; }
-
-std::string NullProgram::toString() const {
+std::string RenderCommand::toString() const {
   return core::format(
-      "NullProgram[\n"
-      "  shaders = %s\n"
+      "RenderCommand[\n"
+      "  numDrawCommands = %s,\n"
+      "  globalRenderState = %s,\n"
+      "  target = %s\n"
       "]",
-      core::indent(core::toStringRange(shaders_, [](const std::shared_ptr<Shader>& shader) {
-        return core::indent(shader->toString());
-      })));
+      core::indent(drawCommandList_ ? std::to_string(drawCommandList_->size()) : "null"),
+      core::indent(globalRenderState_ ? globalRenderState_->toString() : "null"),
+      core::indent(target_ ? target_->toString() : "null"));
 }
-
-void NullProgram::makeValidImpl() {}
 
 } // namespace render
 

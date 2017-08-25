@@ -25,6 +25,7 @@
 #include "sequoia/Core/Singleton.h"
 #include "sequoia/Render/FrameListener.h"
 #include "sequoia/Render/Input.h"
+#include "sequoia/Render/RenderCommand.h"
 #include "sequoia/Render/RenderFwd.h"
 #include "sequoia/Render/RenderSystemObject.h"
 #include "sequoia/Render/RenderWindow.h"
@@ -75,11 +76,8 @@ public:
   /// @brief Processes events that are in the event queue
   virtual void pollEvents() = 0;
 
-  /// @brief Render one frame into `target`
-  ///
-  /// If the `target` has a FrameBufferObject attached, the DrawCommands of `target` will be
-  /// renderer into the the FrameBufferObject instead of the main-screen.
-  virtual void renderOneFrame(RenderTarget* target) = 0;
+  /// @brief Render one frame using the instructions given in `RenderCommand`.
+  virtual void renderOneFrame(RenderCommand* command) = 0;
 
   /// @brief Create a shader from source
   virtual std::shared_ptr<Shader> createShader(Shader::ShaderType type,
@@ -129,8 +127,8 @@ public:
   Options& getOptions() const { return *options_; }
   Options* getOptionsPtr() const { return options_; }
 
-  void frameListenerRenderingBegin(RenderTarget* target) override;
-  void frameListenerRenderingEnd(RenderTarget* target) override;
+  void frameListenerRenderingBegin(RenderCommand* command) override;
+  void frameListenerRenderingEnd(RenderCommand* command) override;
 
 protected:
   RenderSystem(RenderSystemKind kind, Options* options);

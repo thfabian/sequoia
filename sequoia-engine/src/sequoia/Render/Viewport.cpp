@@ -13,9 +13,11 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Render/Viewport.h"
 #include "sequoia/Core/Assert.h"
+#include "sequoia/Core/Format.h"
+#include "sequoia/Core/StringUtil.h"
 #include "sequoia/Render/Camera.h"
+#include "sequoia/Render/Viewport.h"
 
 namespace sequoia {
 
@@ -64,6 +66,17 @@ int Viewport::getY() const { return y_; }
 int Viewport::getWidth() const { return width_; }
 
 int Viewport::getHeight() const { return height_; }
+
+std::string Viewport::toString() const {
+  return core::format("Viewport[\n"
+                      "  camera = %s,\n"
+                      "  x = %s,\n"
+                      "  y = %s,\n"
+                      "  width = %s,\n"
+                      "  height = %s\n"
+                      "]",
+                      core::indent(camera_->toString()), x_, y_, width_, height_);
+}
 
 } // namespace viewport
 

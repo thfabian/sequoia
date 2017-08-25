@@ -87,6 +87,9 @@ public:
   int getWidth() const;
   int getHeight() const;
   /// @}
+  
+  /// @brief Convert to string
+  std::string toString() const;
 };
 
 } // namespace render

@@ -16,7 +16,7 @@
 #ifndef SEQUOIA_RENDER_GLFRAMEBUFFEROBJECT_H
 #define SEQUOIA_RENDER_GLFRAMEBUFFEROBJECT_H
 
-#include "sequoia/Render/FrameBufferObject.h"
+#include "sequoia/Render/FrameBuffer.h"
 #include "sequoia/Render/GL/GLFragmentData.h"
 #include <type_traits>
 #include <unordered_map>
@@ -29,7 +29,7 @@ class GLTexture;
 
 /// @brief OpenGL implemenation of the frame-buffer objects
 /// @ingroup gl
-class SEQUOIA_API GLFrameBufferObject final : public FrameBufferObject {
+class SEQUOIA_API GLFrameBufferObject final : public FrameBuffer {
 
   /// OpenGL index of the frame buffer
   unsigned int fboID_;
@@ -41,13 +41,13 @@ class SEQUOIA_API GLFrameBufferObject final : public FrameBufferObject {
   unsigned int rboColorID_;
 
   /// Parameter used for initialization
-  FrameBufferObjectParameter param_;
+  FrameBufferParameter param_;
 
   /// Textures bound to the correspond output fragment data, see `GLFragmentData::Data`
   std::unordered_map<unsigned int, std::shared_ptr<GLTexture>> fragmentDataMap_;
 
 public:
-  GLFrameBufferObject(const FrameBufferObjectParameter& param);
+  GLFrameBufferObject(const FrameBufferParameter& param);
   virtual ~GLFrameBufferObject();
 
   /// @brief Get the unique identifer of the program
@@ -56,7 +56,7 @@ public:
   unsigned int getID() const;
 
   /// @brief Get the parameter used for initialization
-  const FrameBufferObjectParameter& getParam() const;
+  const FrameBufferParameter& getParam() const;
 
   /// @brief Attach a `texture` to the frame-buffer which captures the output of the
   /// `attachmentPoint`
@@ -78,7 +78,7 @@ public:
   /// @brief Convert to string
   virtual std::string toString() const override;
 
-  SEQUOIA_GL_OBJECT(FrameBufferObject)
+  SEQUOIA_GL_OBJECT(FrameBuffer)
 
 private:
   std::vector<GLenum> getDrawBuffers() const noexcept;

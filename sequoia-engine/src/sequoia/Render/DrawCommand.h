@@ -27,16 +27,16 @@ namespace sequoia {
 
 namespace render {
 
-/// @brief Instructions on how to render the VertexArrayObject
+/// @brief Instructions on how to render an object
 ///
 /// This class should not be directly used but rather constructed via
-/// @ref sequoia::game::Drawable::prepareDrawCommand "Drawable::prepareDrawCommand", otherwise the
-/// VertexArrayObjects might be in an invalid state.
+/// @ref sequoia::game::Drawable::prepareDrawCommand "Drawable::prepareDrawCommand", otherwise
+/// certain objects might be in an invalid state (such as the VertexBuffer).
 ///
 /// @ingroup render
 class SEQUOIA_API DrawCommand {
 public:
-  /// @brief Initializ empty DrawCommand
+  /// @brief Initialize empty DrawCommand
   DrawCommand(const RenderState& state = RenderState())
       : state_(state), modelMatrix_(math::mat4(1.0f)) {}
 
@@ -104,12 +104,10 @@ private:
   /// ModelMatrix used to compute the Model-View-Projection matrix
   math::mat4 modelMatrix_;
 
-  /// Map of the uniform variables send to the associated program
+  /// Map of the uniform variables send to the associated program. Note that this should only
+  /// contain uniforms *specific* to this DrawCommand and not global uniform varaibles of the Scene
+  /// (like light positions etc.).
   std::unordered_map<std::string, UniformVariable> variables_;
-
-  // TODO: keep a list of "global" uniform variables from the scene and keep those in the
-  // drawCommandList --> GlobalRenderState --> sharedVariables_
-  // std::vector<int> // only store the id
 };
 
 } // namespace render

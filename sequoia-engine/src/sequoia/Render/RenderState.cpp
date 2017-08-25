@@ -16,11 +16,11 @@
 #include "sequoia/Core/Format.h"
 #include "sequoia/Core/StringUtil.h"
 #include "sequoia/Core/Unreachable.h"
+#include "sequoia/Render/FrameBuffer.h"
 #include "sequoia/Render/Program.h"
 #include "sequoia/Render/RenderState.h"
 #include "sequoia/Render/Texture.h"
 #include "sequoia/Render/VertexData.h"
-#include "sequoia/Render/FrameBufferObject.h"
 #include <unordered_set>
 
 namespace sequoia {
@@ -83,8 +83,8 @@ std::string RenderState::toString() const {
 #undef RENDER_STATE
 
   ss << "  Program = " << (Program ? core::indent(Program->toString()) : "null") << ",\n";
-  ss << "  VertexArrayObject = "
-     << (VertexData ? core::indent(VertexData->toString()) : "null") << ",\n";
+  ss << "  VertexArrayObject = " << (VertexData ? core::indent(VertexData->toString()) : "null")
+     << ",\n";
   ss << "  TextureMap = "
      << (!TextureMap.empty() ? core::toStringRange(TextureMap,
                                                    [](const auto& texturePair) {

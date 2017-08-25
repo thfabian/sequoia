@@ -160,18 +160,26 @@ GLRenderer::~GLRenderer() {
   LOG(INFO) << "Done terminating OpenGL renderer " << this << " ... ";
 }
 
-void GLRenderer::render(RenderTarget* target) {
-  // Bind the FrameBuffer of the target - if no FBO is attached, we render to the main-screen
-  if(target->hasFrameBufferObject())
-    stateCacheManager_->bindFrameBufferObject(target->getFrameBufferObject().get());
+void GLRenderer::render(RenderCommand* command) {
+  RenderTarget* target = command->getRenderTarget();
+  SEQUOIA_ASSERT_MSG(target, "no RenderTarget set");
+
+  // Bind the FrameBuffer - if no FBO is attached, we render to the main-screen
+  if(target->hasFrameBuffer())
+    stateCacheManager_->bindFrameBufferObject(target->getFrameBuffer().get());
 
   // Inform everyone that we start rendering a frame
   for(FrameListener* listener : getListeners<FrameListener>())
-    listener->frameListenerRenderingBegin(target);
+    listener->frameListenerRenderingBegin(command);
 
   Viewport* viewport = target->getViewport();
+  SEQUOIA_ASSERT_MSG(viewport, "no Viewport set");
+
   Camera* camera = viewport->getCamera();
-  DrawCommandList* drawCommandList = target->getDrawCommandList().get();
+  SEQUOIA_ASSERT_MSG(camera, "no Camera set");
+
+  DrawCommandList* drawCommandList = command->getDrawCommandList();
+  SEQUOIA_ASSERT_MSG(drawCommandList, "no DrawCommandList set");
 
   // Set the viewport
   stateCacheManager_->setViewport(viewport);
@@ -182,17 +190,17 @@ void GLRenderer::render(RenderTarget* target) {
   // Clear the screen
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-  auto draw = [&matViewProj, this](DrawCommand* command) -> bool {
-    GLProgram* program = dyn_cast<GLProgram>(command->getProgram());
+  auto draw = [&matViewProj, this](DrawCommand* cmd) -> bool {
+    GLProgram* program = dyn_cast<GLProgram>(cmd->getProgram());
     if(!program->isValid())
       return false;
 
     // Compute the full model-view-projection matrix
-    UniformVariable u_ModelViewProjection = matViewProj * command->getModelMatrix();
+    UniformVariable u_ModelViewProjection = matViewProj * cmd->getModelMatrix();
     program->setUniformVariable("u_ModelViewProjection", u_ModelViewProjection);
 
     // Update the OpenGL state-machine and draw the command
-    return stateCacheManager_->draw(command);
+    return stateCacheManager_->draw(cmd);
   };
 
   // Draw the commands
@@ -204,10 +212,10 @@ void GLRenderer::render(RenderTarget* target) {
 
   // Inform everyone that we finished rendering the frame
   for(FrameListener* listener : getListeners<FrameListener>())
-    listener->frameListenerRenderingEnd(target);
+    listener->frameListenerRenderingEnd(command);
 
   // Unbind the FBO
-  if(target->hasFrameBufferObject())
+  if(target->hasFrameBuffer())
     stateCacheManager_->unbindFrameBufferObject();
 }
 

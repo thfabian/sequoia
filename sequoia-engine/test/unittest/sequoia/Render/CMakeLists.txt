@@ -18,15 +18,15 @@ add_subdirectory(GL)
 sequoia_add_test(
   NAME SequoiaRenderTest
   SOURCES TestCamera.cpp
+          TestGlobalRenderState.cpp
           TestHostBuffer.cpp
-          TestMain.cpp
           TestInput.cpp
+          TestMain.cpp
           TestRenderServer.cpp
           TestRenderState.cpp
           TestTexture.cpp
           TestUniformVariable.cpp
           TestVertex.cpp
-          TestVertexData.cpp
   DEPENDS Sequoia
           ${SEQUOIA_EXTERNAL_LIBRARIES}
 )
