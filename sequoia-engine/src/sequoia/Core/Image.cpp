@@ -25,6 +25,8 @@
 #include <memory>
 #include <opencv2/opencv.hpp>
 
+#include <iostream>
+
 namespace sequoia {
 
 namespace core {
@@ -61,15 +63,14 @@ RegularImage::RegularImage(int width, int height, ColorFormat format)
     : Image(IK_RegularImage, nullptr) {}
 
 RegularImage::RegularImage(const std::shared_ptr<File>& file) : Image(IK_RegularImage, file) {
-
   try {
     image_ = std::make_unique<cv::Mat>(cv::imdecode(
-        cv::Mat(1, file->getNumBytes(), CV_8UC4, (void*)file->getData()), CV_LOAD_IMAGE_COLOR));
+        cv::Mat(1, file->getNumBytes(), CV_8UC1, (void*)file->getData()), CV_LOAD_IMAGE_COLOR));
   } catch(cv::Exception& e) {
     SEQUOIA_THROW(core::Exception, "failed to load image from file: %s: %s", file_->getPath(),
                   e.what());
   }
-  
+
   if(image_->empty())
     SEQUOIA_THROW(core::Exception, "failed to load image from file: %s", file_->getPath());
 
