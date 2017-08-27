@@ -17,6 +17,7 @@
 #define SEQUOIA_CORE_HASHCOMBINE_H
 
 #include <boost/functional/hash.hpp>
+#include <utility>
 
 namespace sequoia {
 
@@ -46,6 +47,16 @@ inline void hashCombine(std::size_t& seed, T&& arg, Args&&... args) noexcept {
   core::hashCombine(seed, args...);
 }
 /// @}
+
+/// @brief Compute a hash of `value`
+///
+/// This requires a specialization of `std::hash<T>`.
+///
+/// @ingroup support
+template <class T>
+inline std::size_t hash(const T& value) noexcept {
+  return std::hash<T>()(value);
+}
 
 } // namespace core
 

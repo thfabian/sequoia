@@ -134,8 +134,7 @@ private:
   };
 
   /// Access mutex to `objMeshLookupMap`
-  // TODO: could be a ReadWrite lock
-  Mutex vertexDataMutex_;
+  ReadWriteMutex vertexDataMutex_;
 
   /// Record of all the loaded meshes (use count of 1 implies the mesh is *not* in use)
   std::vector<std::shared_ptr<render::VertexData>> vertexData_;

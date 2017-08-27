@@ -45,7 +45,14 @@ std::shared_ptr<Mesh> MeshManager::loadObjMesh(const std::string& name,
                                                const std::shared_ptr<File>& file, bool modifiable,
                                                const MeshParameter& param,
                                                render::Buffer::UsageHint usage) {
+
   LOG(DEBUG) << "Loading obj mesh \"" << name << "\" ...";
+
+  std::shared_ptr<render::VertexData> vertexData = nullptr;
+  VertexDataAccessRecord* record = nullptr;
+
+  std::size_t hash = 0;
+  core::hashCombine(hash, core::hash(file), core::hash(param));
 
   LOG(DEBUG) << "Successfully loaded obj mesh \"" << name << "\"";
   return nullptr;
@@ -119,7 +126,7 @@ std::shared_ptr<Mesh> MeshManager::createCube(const std::string& name, bool modi
   std::shared_ptr<render::VertexData> vertexData = nullptr;
   VertexDataAccessRecord* record = nullptr;
 
-  std::size_t hash = std::hash<MeshParameter>()(param);
+  std::size_t hash = core::hash(param);
 
   // Has the vertex-data already been created?
   cubeMutex_.lock();
@@ -136,8 +143,9 @@ std::shared_ptr<Mesh> MeshManager::createCube(const std::string& name, bool modi
   cubeMutex_.unlock();
 
   if(record->Index != -1) {
-    SEQUOIA_LOCK_GUARD(vertexDataMutex_);
+    vertexDataMutex_.lock_read();
     vertexData = vertexData_[record->Index];
+    vertexDataMutex_.unlock();
   } else {
     std::size_t numVertices = 24;
     std::size_t numIndices = 36;
@@ -189,12 +197,15 @@ std::shared_ptr<Mesh> MeshManager::createCube(const std::string& name, bool modi
     vertexData->writeIndex(CubeIndices, numIndices);
 
     // Register the data
-    SEQUOIA_LOCK_GUARD(vertexDataMutex_);
+    vertexDataMutex_.lock();
     vertexData_.emplace_back(vertexData);
     record->Index = vertexData_.size() - 1;
+    vertexDataMutex_.unlock();
   }
 
   record->Mutex.unlock();
+
+  // TODO: Copy for modifieable
 
   LOG(DEBUG) << "Successfully created cube mesh \"" << name << "\"";
   return std::make_shared<Mesh>(name, vertexData, modifiable);
@@ -214,7 +225,7 @@ std::shared_ptr<Mesh> MeshManager::createGrid(const std::string& name, unsigned 
   VertexDataAccessRecord* record = nullptr;
 
   std::size_t hash = 0;
-  core::hashCombine(hash, N, std::hash<MeshParameter>()(param));
+  core::hashCombine(hash, N, core::hash(param));
 
   // Has the vertex-data already been created?
   gridMutex_.lock();
@@ -231,8 +242,9 @@ std::shared_ptr<Mesh> MeshManager::createGrid(const std::string& name, unsigned 
   gridMutex_.unlock();
 
   if(record->Index != -1) {
-    SEQUOIA_LOCK_GUARD(vertexDataMutex_);
+    vertexDataMutex_.lock_read();
     vertexData = vertexData_[record->Index];
+    vertexDataMutex_.unlock();
   } else {
     unsigned int numVertices = N * N;
     unsigned int numIndices = 6 * (N - 1) * (N - 1);
@@ -307,9 +319,10 @@ std::shared_ptr<Mesh> MeshManager::createGrid(const std::string& name, unsigned 
     vertexData->getIndexBuffer()->unlock();
 
     // Register the data
-    SEQUOIA_LOCK_GUARD(vertexDataMutex_);
+    vertexDataMutex_.lock();
     vertexData_.emplace_back(vertexData);
     record->Index = vertexData_.size() - 1;
+    vertexDataMutex_.unlock();
   }
 
   record->Mutex.unlock();

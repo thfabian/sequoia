@@ -19,8 +19,8 @@
 #include "sequoia/Core/Compiler.h"
 #include <mutex>
 #include <tbb/mutex.h>
+#include <tbb/reader_writer_lock.h>
 #include <tbb/spin_mutex.h>
-#include <type_traits>
 
 namespace sequoia {
 
@@ -28,11 +28,19 @@ namespace core {
 
 /// @brief Class that models Mutex Concept using a spin lock
 ///
-/// This should be the default lock as it is very lightweight (1 Byte) and  extremely fast under low
+/// This should be the default lock as it is very lightweight (1 Byte) and extremely fast under low
 /// contention.
 ///
 /// @ingroup core
 using SpinMutex = tbb::spin_mutex;
+
+/// @brief Writer-preference reader-writer lock with local-only spinning on readers
+///
+/// Loosely adapted from Mellor-Crummey and Scott pseudocode at
+/// http://www.cs.rochester.edu/research/synchronization/pseudocode/rw.html#s_wp
+///
+/// @ingroup core
+using ReadWriteMutex = tbb::reader_writer_lock;
 
 /// @brief Class that models Mutex Concept using underlying OS locks
 ///
@@ -50,6 +58,7 @@ using Mutex = tbb::mutex;
 
 using Mutex = core::Mutex;
 using SpinMutex = core::SpinMutex;
+using ReadWriteMutex = core::ReadWriteMutex;
 
 } // namespace sequoia
 
