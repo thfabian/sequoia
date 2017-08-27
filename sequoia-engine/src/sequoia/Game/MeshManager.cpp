@@ -15,9 +15,11 @@
 
 #include "sequoia/Core/HashCombine.h"
 #include "sequoia/Core/Logging.h"
+#include "sequoia/Game/Exception.h"
 #include "sequoia/Game/Game.h"
 #include "sequoia/Game/MeshManager.h"
 #include "sequoia/Render/RenderSystem.h"
+#include <tiny_obj_loader.h>
 
 namespace sequoia {
 
@@ -26,8 +28,32 @@ namespace game {
 std::shared_ptr<Mesh> MeshManager::load(const std::string& name, const std::shared_ptr<File>& file,
                                         bool modifiable, const MeshParameter& param,
                                         render::Buffer::UsageHint usage) {
+  switch(file->getType()) {
+  case core::FileType::Obj:
+    return loadObjMesh(name, file, modifiable, param, usage);
+  default:
+    SEQUOIA_THROW(GameException, "cannot load mesh %s: unknown format", file->getPath());
+    return nullptr;
+  }
+}
+
+//===------------------------------------------------------------------------------------------===//
+//    Wavefornt OBJ
+//===------------------------------------------------------------------------------------------===//
+
+std::shared_ptr<Mesh> MeshManager::loadObjMesh(const std::string& name,
+                                               const std::shared_ptr<File>& file, bool modifiable,
+                                               const MeshParameter& param,
+                                               render::Buffer::UsageHint usage) {
+  LOG(DEBUG) << "Loading obj mesh \"" << name << "\" ...";
+
+  LOG(DEBUG) << "Successfully loaded obj mesh \"" << name << "\"";
   return nullptr;
 }
+
+//===------------------------------------------------------------------------------------------===//
+//    Cube
+//===------------------------------------------------------------------------------------------===//
 
 namespace {
 
@@ -90,12 +116,29 @@ std::shared_ptr<Mesh> MeshManager::createCube(const std::string& name, bool modi
                                               render::Buffer::UsageHint usage) {
   LOG(DEBUG) << "Creating cube mesh \"" << name << "\" ...";
 
-  auto it = cubeMeshLookupMap_.find(param);
-  std::size_t index = 0;
+  std::shared_ptr<render::VertexData> vertexData = nullptr;
+  VertexDataAccessRecord* record = nullptr;
 
-  if(it != cubeMeshLookupMap_.end())
-    index = it->second;
-  else {
+  std::size_t hash = std::hash<MeshParameter>()(param);
+
+  // Has the vertex-data already been created?
+  cubeMutex_.lock();
+
+  auto it = cubeMeshLookupMap_.find(hash);
+  if(it != cubeMeshLookupMap_.end()) {
+    record = it->second.get();
+  } else {
+    record = cubeMeshLookupMap_.emplace(hash, std::make_unique<VertexDataAccessRecord>())
+                 .first->second.get();
+  }
+  record->Mutex.lock();
+
+  cubeMutex_.unlock();
+
+  if(record->Index != -1) {
+    SEQUOIA_LOCK_GUARD(vertexDataMutex_);
+    vertexData = vertexData_[record->Index];
+  } else {
     std::size_t numVertices = 24;
     std::size_t numIndices = 36;
 
@@ -106,10 +149,9 @@ std::shared_ptr<Mesh> MeshManager::createCube(const std::string& name, bool modi
     vertexParam.UseVertexShadowBuffer = true;
     vertexParam.UseIndexShadowBuffer = false;
 
-    std::shared_ptr<render::VertexData> data =
-        Game::getSingleton().getRenderSystem()->createVertexData(vertexParam);
+    vertexData = Game::getSingleton().getRenderSystem()->createVertexData(vertexParam);
 
-    data->writeVertex(render::Buffer::LO_Discard, [&](render::Vertex3D* vertices) {
+    vertexData->writeVertex(render::Buffer::LO_Discard, [&](render::Vertex3D* vertices) {
       for(std::size_t i = 0; i < numVertices; ++i) {
         render::Vertex3D& vertex = vertices[i];
 
@@ -140,39 +182,58 @@ std::shared_ptr<Mesh> MeshManager::createCube(const std::string& name, bool modi
     });
 
     // Set bounding box
-    data->setAxisAlignedBox(
+    vertexData->setAxisAlignedBox(
         math::AxisAlignedBox(math::vec3(-0.5, -0.5, -0.5), math::vec3(0.5, 0.5, 0.5)));
 
     // Set indices
-    data->writeIndex(CubeIndices, numIndices);
-    vertexDataList_.emplace_back(data);
+    vertexData->writeIndex(CubeIndices, numIndices);
 
-    index = vertexDataList_.size() - 1;
-    cubeMeshLookupMap_.emplace(param, index);
+    // Register the data
+    SEQUOIA_LOCK_GUARD(vertexDataMutex_);
+    vertexData_.emplace_back(vertexData);
+    record->Index = vertexData_.size() - 1;
   }
 
-  const std::shared_ptr<render::VertexData>& data = vertexDataList_[index];
-  
-  // TODO: Copy for modifieable
+  record->Mutex.unlock();
 
   LOG(DEBUG) << "Successfully created cube mesh \"" << name << "\"";
-  return std::make_shared<Mesh>(name, data, modifiable);
+  return std::make_shared<Mesh>(name, vertexData, modifiable);
 }
+
+//===------------------------------------------------------------------------------------------===//
+//    Grid
+//===------------------------------------------------------------------------------------------===//
 
 std::shared_ptr<Mesh> MeshManager::createGrid(const std::string& name, unsigned int N,
                                               bool modifiable, const MeshParameter& param,
                                               render::Buffer::UsageHint usage) {
-  std::size_t hash = 0;
-  core::hashCombine(hash, N, std::hash<MeshParameter>()(param));
 
   LOG(DEBUG) << "Creating grid mesh \"" << name << "\" ...";
 
-  auto it = gridMeshLookupMap_.find(hash);
-  std::size_t index = 0;
+  std::shared_ptr<render::VertexData> vertexData = nullptr;
+  VertexDataAccessRecord* record = nullptr;
 
-  if(it != gridMeshLookupMap_.end())
-    index = it->second;
-  else {
+  std::size_t hash = 0;
+  core::hashCombine(hash, N, std::hash<MeshParameter>()(param));
+
+  // Has the vertex-data already been created?
+  gridMutex_.lock();
+
+  auto it = gridMeshLookupMap_.find(hash);
+  if(it != gridMeshLookupMap_.end()) {
+    record = it->second.get();
+  } else {
+    record = gridMeshLookupMap_.emplace(hash, std::make_unique<VertexDataAccessRecord>())
+                 .first->second.get();
+  }
+  record->Mutex.lock();
+
+  gridMutex_.unlock();
+
+  if(record->Index != -1) {
+    SEQUOIA_LOCK_GUARD(vertexDataMutex_);
+    vertexData = vertexData_[record->Index];
+  } else {
     unsigned int numVertices = N * N;
     unsigned int numIndices = 6 * (N - 1) * (N - 1);
 
@@ -184,11 +245,10 @@ std::shared_ptr<Mesh> MeshManager::createGrid(const std::string& name, unsigned 
     vertexParam.UseVertexShadowBuffer = true;
     vertexParam.UseIndexShadowBuffer = false;
 
-    std::shared_ptr<render::VertexData> data =
-        Game::getSingleton().getRenderSystem()->createVertexData(vertexParam);
+    vertexData = Game::getSingleton().getRenderSystem()->createVertexData(vertexParam);
 
     const float dx = 1.0f / (N - 1);
-    data->writeVertex(render::Buffer::LO_Discard, [&](render::Vertex3D* vertices) {
+    vertexData->writeVertex(render::Buffer::LO_Discard, [&](render::Vertex3D* vertices) {
       for(unsigned int i = 0; i < N; ++i) {
         for(unsigned int j = 0; j < N; ++j) {
           render::Vertex3D& vertex = vertices[i * N + j];
@@ -228,8 +288,8 @@ std::shared_ptr<Mesh> MeshManager::createGrid(const std::string& name, unsigned 
     //
     //   index = [ 1, 0, 3, 4, 1, 3 ]
     //
-    data->getIndexBuffer()->lock(render::Buffer::LO_Discard);
-    unsigned int* indices = static_cast<unsigned int*>(data->getIndexBuffer()->get());
+    vertexData->getIndexBuffer()->lock(render::Buffer::LO_Discard);
+    unsigned int* indices = static_cast<unsigned int*>(vertexData->getIndexBuffer()->get());
     for(unsigned int i = 0; i < N - 1; ++i) {
       for(unsigned int j = 0; j < N - 1; ++j) {
         unsigned int tri = 6 * (i * (N - 1) + j);
@@ -244,34 +304,34 @@ std::shared_ptr<Mesh> MeshManager::createGrid(const std::string& name, unsigned 
         indices[tri + 5] = i * N + j + N;
       }
     }
-    data->getIndexBuffer()->unlock();
+    vertexData->getIndexBuffer()->unlock();
 
-    // Set bounding box
-    data->setAxisAlignedBox(
-        math::AxisAlignedBox(math::vec3(-0.5f, 0.0f, -0.5f), math::vec3(0.5f, 0.0f, 0.5f)));
-
-    vertexDataList_.emplace_back(data);
-    index = vertexDataList_.size() - 1;
-
-    gridMeshLookupMap_.emplace(hash, index);
+    // Register the data
+    SEQUOIA_LOCK_GUARD(vertexDataMutex_);
+    vertexData_.emplace_back(vertexData);
+    record->Index = vertexData_.size() - 1;
   }
 
-  const std::shared_ptr<render::VertexData>& data = vertexDataList_[index];
+  record->Mutex.unlock();
+
+  // TODO: Copy for modifieable
 
   LOG(DEBUG) << "Successfully created grid mesh \"" << name << "\"";
-  return std::make_shared<Mesh>(name, data, modifiable);
+  return std::make_shared<Mesh>(name, vertexData, modifiable);
 }
 
-std::size_t MeshManager::getNumMeshes() const { return vertexDataList_.size(); }
+std::size_t MeshManager::getNumMeshes() const { return vertexData_.size(); }
 
 void MeshManager::freeUnusedMeshes() {
+  SEQUOIA_LOCK_GUARD(vertexDataMutex_);
+
   auto it = std::remove_if(
-      vertexDataList_.begin(), vertexDataList_.end(),
+      vertexData_.begin(), vertexData_.end(),
       [](const std::shared_ptr<render::VertexData>& meshPtr) { return meshPtr.use_count() == 1; });
 
-  if(it != vertexDataList_.end()) {
-    LOG(INFO) << "Removing " << std::distance(it, vertexDataList_.end()) << " unused meshes";
-    vertexDataList_.erase(it, vertexDataList_.end());
+  if(it != vertexData_.end()) {
+    LOG(INFO) << "Removing " << std::distance(it, vertexData_.end()) << " unused meshes";
+    vertexData_.erase(it, vertexData_.end());
   }
 }
 
