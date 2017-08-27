@@ -58,7 +58,7 @@ sequoia_add_objects(
           FileType.inc
           Format.h
           Future.h
-          HashCombine.h
+          Hash.h
           Image.h
           Image.cpp         
           Listenable.h

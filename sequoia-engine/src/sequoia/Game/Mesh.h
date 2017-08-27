@@ -17,7 +17,7 @@
 #define SEQUOIA_GAME_MESH_H
 
 #include "sequoia/Core/Export.h"
-#include "sequoia/Core/HashCombine.h"
+#include "sequoia/Core/Hash.h"
 #include "sequoia/Core/NonCopyable.h"
 #include "sequoia/Math/AxisAlignedBox.h"
 #include "sequoia/Render/VertexData.h"
@@ -124,24 +124,7 @@ public:
 
 } // namespace sequoia
 
-namespace std {
-
-template <>
-struct hash<sequoia::game::MeshParameter> {
-  std::size_t operator()(const sequoia::game::MeshParameter& param) const {
-    std::size_t seed = 0;
-    sequoia::core::hashCombine(seed, param.TexCoordInvertV);
-    return seed;
-  }
-};
-
-template <>
-struct hash<std::shared_ptr<sequoia::game::MeshParameter>> {
-  std::size_t operator()(const std::shared_ptr<sequoia::game::MeshParameter>& param) const {
-    return hash<sequoia::game::MeshParameter>()(*param);
-  }
-};
-
-} // namespace std
+SEQUOIA_DECLARE_STD_HASH(sequoia::game::MeshParameter, param, param.TexCoordInvertV)
+SEQUOIA_DECLARE_STD_HASH(std::shared_ptr<sequoia::game::MeshParameter>, paramPtr, *paramPtr)
 
 #endif

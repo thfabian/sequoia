@@ -16,7 +16,7 @@
 #ifndef SEQUOIA_RENDER_GL_GLTEXTURE_H
 #define SEQUOIA_RENDER_GL_GLTEXTURE_H
 
-#include "sequoia/Core/HashCombine.h"
+#include "sequoia/Core/Hash.h"
 #include "sequoia/Render/GL/GLFwd.h"
 #include "sequoia/Render/Texture.h"
 
@@ -112,19 +112,6 @@ private:
 
 } // namespace sequoia
 
-namespace std {
-
-template <>
-struct hash<sequoia::render::GLTexture::Desc> {
-  std::size_t operator()(const sequoia::render::GLTexture::Desc& desc) const {
-    std::size_t seed = 0;
-    sequoia::core::hashCombine(seed,
-                               std::hash<sequoia::render::TextureParameter>()(*desc.getParam()),
-                               std::hash<sequoia::core::Image>()(*desc.getImage()));
-    return seed;
-  }
-};
-
-} // namespace std
+SEQUOIA_DECLARE_STD_HASH(sequoia::render::GLTexture::Desc, desc, *desc.getParam(), *desc.getImage())
 
 #endif

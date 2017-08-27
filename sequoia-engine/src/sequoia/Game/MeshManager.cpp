@@ -13,7 +13,6 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Core/HashCombine.h"
 #include "sequoia/Core/Logging.h"
 #include "sequoia/Game/Exception.h"
 #include "sequoia/Game/Game.h"
@@ -46,15 +45,28 @@ std::shared_ptr<Mesh> MeshManager::loadObjMesh(const std::string& name,
                                                const MeshParameter& param,
                                                render::Buffer::UsageHint usage) {
 
-  LOG(DEBUG) << "Loading obj mesh \"" << name << "\" ...";
+  //  LOG(DEBUG) << "Loading obj mesh \"" << name << "\" ...";
 
-  std::shared_ptr<render::VertexData> vertexData = nullptr;
-  VertexDataAccessRecord* record = nullptr;
+  //  std::shared_ptr<render::VertexData> vertexData = nullptr;
+  //  VertexDataAccessRecord* record = nullptr;
 
-  std::size_t hash = 0;
-  core::hashCombine(hash, core::hash(file), core::hash(param));
+  //  std::size_t hash = 0;
+  //  core::hashCombine(hash, core::hash(file), core::hash(param));
 
-  LOG(DEBUG) << "Successfully loaded obj mesh \"" << name << "\"";
+  //  objMutex_.lock();
+
+  //  auto it = objMeshLookupMap_.find(hash);
+  //  if(it != objMeshLookupMap_.end()) {
+  //    record = it->second.get();
+  //  } else {
+  //    record = objMeshLookupMap_.emplace(hash, std::make_unique<VertexDataAccessRecord>())
+  //                 .first->second.get();
+  //  }
+  //  record->Mutex.lock();
+
+  //  objMutex_.unlock();
+
+  //  LOG(DEBUG) << "Successfully loaded obj mesh \"" << name << "\"";
   return nullptr;
 }
 
@@ -126,16 +138,15 @@ std::shared_ptr<Mesh> MeshManager::createCube(const std::string& name, bool modi
   std::shared_ptr<render::VertexData> vertexData = nullptr;
   VertexDataAccessRecord* record = nullptr;
 
-  std::size_t hash = core::hash(param);
+  internal::CubeInfo info{param};
 
-  // Has the vertex-data already been created?
   cubeMutex_.lock();
 
-  auto it = cubeMeshLookupMap_.find(hash);
+  auto it = cubeMeshLookupMap_.find(info);
   if(it != cubeMeshLookupMap_.end()) {
     record = it->second.get();
   } else {
-    record = cubeMeshLookupMap_.emplace(hash, std::make_unique<VertexDataAccessRecord>())
+    record = cubeMeshLookupMap_.emplace(std::move(info), std::make_unique<VertexDataAccessRecord>())
                  .first->second.get();
   }
   record->Mutex.lock();
@@ -224,17 +235,15 @@ std::shared_ptr<Mesh> MeshManager::createGrid(const std::string& name, unsigned 
   std::shared_ptr<render::VertexData> vertexData = nullptr;
   VertexDataAccessRecord* record = nullptr;
 
-  std::size_t hash = 0;
-  core::hashCombine(hash, N, core::hash(param));
+  internal::GridInfo info{N, param};
 
-  // Has the vertex-data already been created?
   gridMutex_.lock();
 
-  auto it = gridMeshLookupMap_.find(hash);
+  auto it = gridMeshLookupMap_.find(info);
   if(it != gridMeshLookupMap_.end()) {
     record = it->second.get();
   } else {
-    record = gridMeshLookupMap_.emplace(hash, std::make_unique<VertexDataAccessRecord>())
+    record = gridMeshLookupMap_.emplace(std::move(info), std::make_unique<VertexDataAccessRecord>())
                  .first->second.get();
   }
   record->Mutex.lock();

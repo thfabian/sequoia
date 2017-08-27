@@ -18,13 +18,52 @@
 
 #include "sequoia/Core/Export.h"
 #include "sequoia/Core/File.h"
+#include "sequoia/Core/Hash.h"
 #include "sequoia/Core/Mutex.h"
-#include "sequoia/Core/Platform.h"
 #include "sequoia/Game/Mesh.h"
-#include "sequoia/Render/Buffer.h"
 #include "sequoia/Render/RenderFwd.h"
 #include <unordered_map>
 #include <vector>
+
+namespace sequoia {
+
+namespace game {
+
+namespace internal {
+
+struct ObjInfo {
+  std::shared_ptr<core::File> File;
+  MeshParameter Param;
+
+  bool operator==(const ObjInfo& other) const noexcept {
+    return File->equals(other.File.get()) && Param == other.Param;
+  }
+};
+
+struct CubeInfo {
+  MeshParameter Param;
+
+  bool operator==(const CubeInfo& other) const noexcept { return Param == other.Param; }
+};
+
+struct GridInfo {
+  unsigned int N;
+  MeshParameter Param;
+
+  bool operator==(const GridInfo& other) const noexcept {
+    return N == other.N && Param == other.Param;
+  }
+};
+
+} // namespace internal
+
+} // namespace game
+
+} // namespace sequoia
+
+SEQUOIA_DECLARE_STD_HASH(sequoia::game::internal::ObjInfo, value, value.File, value.Param)
+SEQUOIA_DECLARE_STD_HASH(sequoia::game::internal::CubeInfo, value, value.Param)
+SEQUOIA_DECLARE_STD_HASH(sequoia::game::internal::GridInfo, value, value.N, value.Param)
 
 namespace sequoia {
 
@@ -143,19 +182,21 @@ private:
   Mutex objMutex_;
 
   /// OBJ mesh record
-  std::unordered_map<std::size_t, std::unique_ptr<VertexDataAccessRecord>> objMeshLookupMap_;
+  std::unordered_map<internal::ObjInfo, std::unique_ptr<VertexDataAccessRecord>> objMeshLookupMap_;
 
   /// Access mutex to `cubeMeshLookupMap`
   Mutex cubeMutex_;
 
   /// Cube mesh record
-  std::unordered_map<std::size_t, std::unique_ptr<VertexDataAccessRecord>> cubeMeshLookupMap_;
+  std::unordered_map<internal::CubeInfo, std::unique_ptr<VertexDataAccessRecord>>
+      cubeMeshLookupMap_;
 
   /// Access mutex to `gridMeshLookupMap`
   Mutex gridMutex_;
 
   /// Grid mesh record
-  std::unordered_map<std::size_t, std::unique_ptr<VertexDataAccessRecord>> gridMeshLookupMap_;
+  std::unordered_map<internal::GridInfo, std::unique_ptr<VertexDataAccessRecord>>
+      gridMeshLookupMap_;
 };
 
 } // namespace game

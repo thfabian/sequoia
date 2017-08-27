@@ -17,7 +17,7 @@
 #define SEQUOIA_RENDER_TEXTURE_H
 
 #include "sequoia/Core/Export.h"
-#include "sequoia/Core/HashCombine.h"
+#include "sequoia/Core/Hash.h"
 #include "sequoia/Core/Image.h"
 #include "sequoia/Core/NonCopyable.h"
 #include "sequoia/Render/RenderRessource.h"
@@ -182,27 +182,11 @@ public:
 
 } // namespace sequoia
 
-namespace std {
+SEQUOIA_DECLARE_STD_HASH(sequoia::render::TextureParameter, param, param.Kind, param.Usage,
+                         param.MinFilter, param.MagFilter, param.UseMipmap,
+                         param.InterpolateBetweenMipmaps, param.Dim1EdgeSampling,
+                         param.Dim2EdgeSampling, param.Dim3EdgeSampling)
 
-template <>
-struct hash<sequoia::render::TextureParameter> {
-  std::size_t operator()(const sequoia::render::TextureParameter& param) const {
-    std::size_t seed = 0;
-    sequoia::core::hashCombine(seed, param.Kind, param.Usage, param.MinFilter, param.MagFilter,
-                               param.UseMipmap, param.InterpolateBetweenMipmaps,
-                               param.Dim1EdgeSampling, param.Dim2EdgeSampling,
-                               param.Dim3EdgeSampling);
-    return seed;
-  }
-};
-
-template <>
-struct hash<std::shared_ptr<sequoia::render::TextureParameter>> {
-  std::size_t operator()(const std::shared_ptr<sequoia::render::TextureParameter>& param) const {
-    return hash<sequoia::render::TextureParameter>()(*param);
-  }
-};
-
-} // namespace std
+SEQUOIA_DECLARE_STD_HASH(std::shared_ptr<sequoia::render::TextureParameter>, paramPtr, *paramPtr)
 
 #endif

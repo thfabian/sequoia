@@ -16,7 +16,7 @@
 #include "sequoia/Core/Casting.h"
 #include "sequoia/Core/Exception.h"
 #include "sequoia/Core/Format.h"
-#include "sequoia/Core/HashCombine.h"
+#include "sequoia/Core/Hash.h"
 #include "sequoia/Core/Image.h"
 #include "sequoia/Core/Logging.h"
 #include "sequoia/Core/StringSwitch.h"
@@ -142,11 +142,7 @@ bool RegularImage::equals(const Image* other) const noexcept {
 }
 
 std::size_t RegularImage::hash() const noexcept {
-  std::size_t seed = 0;
-  if(hasFile())
-    core::hashCombine(seed, file_->hash());
-  core::hashCombine(seed, getPixelData());
-  return seed;
+  return hasFile() ? core::hash(file_) : core::hash(getPixelData());
 }
 
 //===------------------------------------------------------------------------------------------===//
@@ -167,11 +163,7 @@ TextureImage::TextureImage(const std::shared_ptr<File>& file) : Image(IK_Texture
 
 TextureImage::~TextureImage() {}
 
-std::size_t TextureImage::hash() const noexcept {
-  std::size_t seed = 0;
-  core::hashCombine(seed, file_->hash(), std::hash<std::unique_ptr<gli::texture>>()(image_));
-  return seed;
-}
+std::size_t TextureImage::hash() const noexcept { return core::hash(file_, image_); }
 
 std::string TextureImage::toString() const {
   return core::format("TextureImage[\n"
