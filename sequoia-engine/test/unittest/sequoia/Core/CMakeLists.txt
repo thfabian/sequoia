@@ -19,16 +19,17 @@ sequoia_add_test(
           TestArrayRef.cpp
           TestColor.cpp
           TestDoubleBuffered.cpp
-          TestImage.cpp
           TestFile.cpp
           TestFuture.cpp
+          TestHash.cpp
+          TestImage.cpp
           TestMain.cpp
           TestMemory.cpp
           TestMutex.cpp
           TestPlatform.cpp
           TestSingletonManager.cpp
-          TestStringRef.cpp
           TestSTLExtra.cpp
+          TestStringRef.cpp
           TestVersion.cpp
   DEPENDS Sequoia
           ${SEQUOIA_EXTERNAL_LIBRARIES}

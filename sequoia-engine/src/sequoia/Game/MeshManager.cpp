@@ -44,30 +44,59 @@ std::shared_ptr<Mesh> MeshManager::loadObjMesh(const std::string& name,
                                                const std::shared_ptr<File>& file, bool modifiable,
                                                const MeshParameter& param,
                                                render::Buffer::UsageHint usage) {
+  LOG(DEBUG) << "Loading obj mesh \"" << name << "\" ...";
 
-  //  LOG(DEBUG) << "Loading obj mesh \"" << name << "\" ...";
+  std::shared_ptr<render::VertexData> vertexData = nullptr;
+  VertexDataAccessRecord* record = nullptr;
 
-  //  std::shared_ptr<render::VertexData> vertexData = nullptr;
-  //  VertexDataAccessRecord* record = nullptr;
+  internal::ObjInfo info{file, param};
 
-  //  std::size_t hash = 0;
-  //  core::hashCombine(hash, core::hash(file), core::hash(param));
+  objMutex_.lock();
 
-  //  objMutex_.lock();
+  auto it = objMeshLookupMap_.find(info);
+  if(it != objMeshLookupMap_.end())
+    record = it->second.get();
+  else
+    record = objMeshLookupMap_.emplace(std::move(info), std::make_unique<VertexDataAccessRecord>())
+                 .first->second.get();
 
-  //  auto it = objMeshLookupMap_.find(hash);
-  //  if(it != objMeshLookupMap_.end()) {
-  //    record = it->second.get();
-  //  } else {
-  //    record = objMeshLookupMap_.emplace(hash, std::make_unique<VertexDataAccessRecord>())
-  //                 .first->second.get();
-  //  }
-  //  record->Mutex.lock();
+  record->Mutex.lock();
+  
+  objMutex_.unlock();
+  
+  if(record->Index != -1) {
+    vertexDataMutex_.lock_read();
+    vertexData = vertexData_[record->Index];
+    vertexDataMutex_.unlock();
+  } else {
+    
+    tinyobj::attrib_t attrib;
+    std::vector<tinyobj::shape_t> shapes;
+    std::vector<tinyobj::material_t> materials;
+    
+    std::string err;
+    std::istringstream inStream(file->getDataAsString());
+    bool ret = tinyobj::LoadObj(&attrib, &shapes, &materials, &err, &inStream);
+   
+    if(!ret)
+      SEQUOIA_THROW(GameException, "failed to load obj mesh %s: %s", file->getPath(), err);
+    
+    if(!err.empty())
+      LOG(WARNING) << "obj mesh: " << file->getPath() << ": " << err;
+    
+    // Register the data
+    vertexDataMutex_.lock();
+    vertexData_.emplace_back(vertexData);
+    record->Index = vertexData_.size() - 1;
+    vertexDataMutex_.unlock();
+  }
 
-  //  objMutex_.unlock();
+  record->Mutex.unlock();
 
-  //  LOG(DEBUG) << "Successfully loaded obj mesh \"" << name << "\"";
-  return nullptr;
+  // TODO: Copy for modifieable
+
+  LOG(DEBUG) << "Successfully loaded obj mesh \"" << name << "\"";
+  return std::make_shared<Mesh>(name, vertexData, modifiable);
 }
 
 //===------------------------------------------------------------------------------------------===//
@@ -143,12 +172,12 @@ std::shared_ptr<Mesh> MeshManager::createCube(const std::string& name, bool modi
   cubeMutex_.lock();
 
   auto it = cubeMeshLookupMap_.find(info);
-  if(it != cubeMeshLookupMap_.end()) {
+  if(it != cubeMeshLookupMap_.end())
     record = it->second.get();
-  } else {
+  else
     record = cubeMeshLookupMap_.emplace(std::move(info), std::make_unique<VertexDataAccessRecord>())
                  .first->second.get();
-  }
+
   record->Mutex.lock();
 
   cubeMutex_.unlock();
@@ -229,7 +258,6 @@ std::shared_ptr<Mesh> MeshManager::createCube(const std::string& name, bool modi
 std::shared_ptr<Mesh> MeshManager::createGrid(const std::string& name, unsigned int N,
                                               bool modifiable, const MeshParameter& param,
                                               render::Buffer::UsageHint usage) {
-
   LOG(DEBUG) << "Creating grid mesh \"" << name << "\" ...";
 
   std::shared_ptr<render::VertexData> vertexData = nullptr;
@@ -240,12 +268,12 @@ std::shared_ptr<Mesh> MeshManager::createGrid(const std::string& name, unsigned 
   gridMutex_.lock();
 
   auto it = gridMeshLookupMap_.find(info);
-  if(it != gridMeshLookupMap_.end()) {
+  if(it != gridMeshLookupMap_.end())
     record = it->second.get();
-  } else {
+  else
     record = gridMeshLookupMap_.emplace(std::move(info), std::make_unique<VertexDataAccessRecord>())
                  .first->second.get();
-  }
+
   record->Mutex.lock();
 
   gridMutex_.unlock();

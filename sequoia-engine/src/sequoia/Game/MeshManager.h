@@ -81,6 +81,8 @@ public:
   /// @param param        Parameter used to initialize the mesh
   /// @param usage        Buffer usage of the hardware vertex buffers
   ///
+  /// @throws GameException   Unable to load the mesh (invalid format)
+  ///
   /// @remark Thread-safe
   std::shared_ptr<Mesh> load(const std::string& name, const std::shared_ptr<File>& file,
                              bool modifiable = false, const MeshParameter& param = MeshParameter(),
