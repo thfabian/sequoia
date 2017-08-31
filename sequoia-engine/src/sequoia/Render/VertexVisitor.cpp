@@ -13,9 +13,9 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Render/VertexVisitor.h"
 #include "sequoia/Core/Format.h"
 #include "sequoia/Math/Math.h"
+#include "sequoia/Render/VertexVisitor.h"
 #include <sstream>
 
 namespace sequoia {
@@ -30,13 +30,14 @@ std::string toStringImpl(const VertexType* vertices, const std::size_t numVertic
   return ss.str();
 }
 
-void VertexVisitorStringifier::visit(const Vertex3DLayout* layout) {
-  string_ = toStringImpl(getVerticesPtr(layout), getNumVertices());
-}
+#define SEQUOIA_VERTEXVISITOR_IMPL(r, data, elem)                                                  \
+  void VertexVisitorStringifier::visit(const elem* layout) {                                       \
+    string_ = toStringImpl(getVerticesPtr(layout), getNumVertices());                              \
+  }
 
-void VertexVisitorStringifier::visit(const Vertex2DLayout* layout) {
-  string_ = toStringImpl(getVerticesPtr(layout), getNumVertices());
-}
+BOOST_PP_SEQ_FOR_EACH(SEQUOIA_VERTEXVISITOR_IMPL, _, SEQUOIA_VERTEX_LAYOUT_SEQ)
+
+#undef SEQUOIA_VERTEXVISITOR_IMPL
 
 } // namespace render
 

@@ -29,9 +29,9 @@ namespace render {
 
 static GLenum getGLType(VertexLayout::Type type) {
   switch(type) {
-  case VertexLayout::Float:
+  case VertexLayout::Float32:
     return GL_FLOAT;
-  case VertexLayout::UnsignedByte:
+  case VertexLayout::UInt8:
     return GL_UNSIGNED_BYTE;
   default:
     sequoia_unreachable("invlid type");
@@ -69,30 +69,30 @@ GLVertexData::GLVertexData(const VertexDataParameter& param)
   // Enable the active attributes
   if(layout->hasPosition()) {
     glEnableVertexAttribArray(GLVertexAttribute::Position);
-    glVertexAttribPointer(GLVertexAttribute::Position, layout->PositionNumElement,
-                          getGLType(layout->PositionType), layout->PositionNormalized,
-                          layout->SizeOf, (void*)layout->PositionOffset);
+    glVertexAttribPointer(GLVertexAttribute::Position, layout->Position.NumElements,
+                          getGLType(layout->Position.Type), layout->Position.Normalized,
+                          layout->SizeOf, (void*)layout->Position.Offset);
   }
 
   if(layout->hasNormal()) {
     glEnableVertexAttribArray(GLVertexAttribute::Normal);
-    glVertexAttribPointer(GLVertexAttribute::Normal, layout->NormalNumElement,
-                          getGLType(layout->NormalType), layout->NormalNormalized, layout->SizeOf,
-                          (void*)layout->NormalOffset);
+    glVertexAttribPointer(GLVertexAttribute::Normal, layout->Normal.NumElements,
+                          getGLType(layout->Normal.Type), layout->Normal.Normalized, layout->SizeOf,
+                          (void*)layout->Normal.Offset);
   }
 
   if(layout->hasTexCoord()) {
     glEnableVertexAttribArray(GLVertexAttribute::TexCoord);
-    glVertexAttribPointer(GLVertexAttribute::TexCoord, layout->TexCoordNumElement,
-                          getGLType(layout->TexCoordType), layout->TexCoordNormalized,
-                          layout->SizeOf, (void*)layout->TexCoordOffset);
+    glVertexAttribPointer(GLVertexAttribute::TexCoord, layout->TexCoord.NumElements,
+                          getGLType(layout->TexCoord.Type), layout->TexCoord.Normalized,
+                          layout->SizeOf, (void*)layout->TexCoord.Offset);
   }
 
   if(layout->hasColor()) {
     glEnableVertexAttribArray(GLVertexAttribute::Color);
-    glVertexAttribPointer(GLVertexAttribute::Color, layout->ColorNumElement,
-                          getGLType(layout->ColorType), layout->ColorNormalized, layout->SizeOf,
-                          (void*)layout->ColorOffset);
+    glVertexAttribPointer(GLVertexAttribute::Color, layout->Color.NumElements,
+                          getGLType(layout->Color.Type), layout->Color.Normalized, layout->SizeOf,
+                          (void*)layout->Color.Offset);
   }
 
   // Allocate buffers

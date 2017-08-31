@@ -1,0 +1,99 @@
+//===--------------------------------------------------------------------------------*- C++ -*-===//
+//                         _____                        _
+//                        / ____|                      (_)
+//                       | (___   ___  __ _ _   _  ___  _  __ _
+//                        \___ \ / _ \/ _` | | | |/ _ \| |/ _` |
+//                        ____) |  __/ (_| | |_| | (_) | | (_| |
+//                       |_____/ \___|\__, |\__,_|\___/|_|\__,_| - Game Engine (2016-2017)
+//                                       | |
+//                                       |_|
+//
+// This file is distributed under the MIT License (MIT).
+// See LICENSE.txt for details.
+//
+//===------------------------------------------------------------------------------------------===//
+
+#ifndef SEQUOIA_RENDER_VERTEX_H
+#define SEQUOIA_RENDER_VERTEX_H
+
+#include "sequoia/Core/Assert.h"
+#include "sequoia/Core/Export.h"
+#include "sequoia/Core/Hash.h"
+#include <boost/preprocessor/seq/for_each.hpp>
+#include <cstddef>
+#include <cstdint>
+#include <string>
+
+namespace sequoia {
+
+namespace render {
+
+class VertexVisitor;
+
+/// @brief Layout description of vertices
+///
+/// Each attribute is described by an array of the form `T Attribute[N]` in the vertex struct with:
+///   - @b XType : Type `T` of the attribute (e.g `float`)
+///   - @b XOffset : Offset in the vertex struct (in bytes)
+///   - @b XNumElement : Number of elements `N` of the attribute
+///   - @b XNormalized : Should the attribute be normalized when uploaded to the GPU?
+///
+/// where @b X is one of `{ Position, Normal, TexCoord, Color}`.
+/// @ingroup render
+struct SEQUOIA_API VertexLayout {
+
+  /// Type specifciation
+  enum Type {
+    Invalid = 0,
+    UInt8,  ///< 8-bit unsigned integer
+    Float32 ///< 32-bit floating point number
+  };
+
+  /// Vertex attribute
+  struct Attribute {
+    VertexLayout::Type Type = Invalid;
+    std::size_t Offset = 0;
+    std::size_t NumElements = 0;
+    bool Normalized = false;
+  };
+
+  VertexLayout() = default;
+  virtual ~VertexLayout();
+
+  /// @name Attribute description
+  /// @{
+  std::size_t SizeOf = 0; ///< Total size (in bytes) of one vertex
+  Attribute Position;     ///< Positional attribute
+  Attribute Normal;       ///< Normal attribute
+  Attribute TexCoord;     ///< Texture coordinate attribute
+  Attribute Color;        ///< Color attribute
+  /// @}
+
+  /// @brief Check if `Position` attribute is available
+  bool hasPosition() const { return Position.NumElements > 0; }
+
+  /// @brief Check if `Normal` attribute is available
+  bool hasNormal() const { return Normal.NumElements > 0; }
+
+  /// @brief Check if `TexCoord` attribute is available
+  bool hasTexCoord() const { return TexCoord.NumElements > 0; }
+
+  /// @brief Check if `Color` attribute is available
+  bool hasColor() const { return Color.NumElements > 0; }
+
+  /// @brief Accept a VertexVisitor
+  virtual void accept(VertexVisitor& visitor) const = 0;
+
+  /// @brief Convert to string
+  std::string toString() const;
+};
+
+} // namespace render
+
+} // namespace sequoia
+
+// clang-format off
+${SEQUOIA_DECL_HEADER_VERTICES}
+// clang-format on
+
+#endif

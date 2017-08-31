@@ -1,0 +1,57 @@
+{
+  "Vertices" : {
+    "Vertex3D" : [
+      { 
+        "Position" : {
+          "Type" : "Float32",
+          "NumElements" : 3,
+          "Normalized": false
+        }
+      },
+      { 
+        "Normal" : {
+          "Type" : "Float32",
+          "NumElements" : 3,
+          "Normalized": false
+        }
+      },
+      { 
+        "TexCoord" : {
+          "Type" : "Float32",
+          "NumElements" : 2,
+          "Normalized": false
+        }
+      },
+      { 
+        "Color" : {
+          "Type" : "UInt8",
+          "NumElements" : 4,
+          "Normalized": true
+        }
+      }
+    ],
+    "Vertex2D" : [
+      { 
+        "Position" : {
+          "Type" : "Float32",
+          "NumElements" : 2,
+          "Normalized": false
+        }
+      },
+      { 
+        "TexCoord" : {
+          "Type" : "Float32",
+          "NumElements" : 2,
+          "Normalized": false
+        }
+      },
+      { 
+        "Color" : {
+          "Type" : "UInt8",
+          "NumElements" : 4,
+          "Normalized": true
+        }
+      }
+    ]
+  }
+}

@@ -13,6 +13,7 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
+#include "sequoia/Core/Byte.h"
 #include "sequoia/Core/Format.h"
 #include "sequoia/Core/Memory.h"
 #include "sequoia/Core/StringUtil.h"
@@ -74,12 +75,12 @@ void VertexData::dump() const {
 
     BufferGuard guard(getIndexBuffer(), Buffer::LO_ReadOnly);
     Byte* data = static_cast<Byte*>(guard.get());
-    
+
     auto type = getIndexBuffer()->getIndexType();
     for(std::size_t i = 0; i < getNumIndices(); i++, data += getIndexBuffer()->getSizeOfIndexType())
       std::cout << "  " << indexToString(data, type) << ((i == getNumIndices() - 1) ? "" : ",")
                 << "\n";
-    
+
     std::cout << "]\n";
   } else
     std::cout << "\n";

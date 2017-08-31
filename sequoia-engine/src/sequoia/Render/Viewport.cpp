@@ -28,10 +28,7 @@ void ViewportListener::viewportGeometryChanged(Viewport* viewport) {}
 Viewport::Viewport(RenderTarget* target, int x, int y, int width, int height)
     : target_(target), camera_(nullptr), x_(x), y_(y), width_(width), height_(height) {}
 
-Camera* Viewport::getCamera() const {
-  SEQUOIA_ASSERT(camera_);
-  return camera_;
-}
+Camera* Viewport::getCamera() const { return camera_; }
 
 void Viewport::setCamera(Camera* camera) {
   SEQUOIA_ASSERT(camera);

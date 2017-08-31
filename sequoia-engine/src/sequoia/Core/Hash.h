@@ -26,7 +26,14 @@ namespace core {
 
 namespace internal {
 
-template <bool IsEnum>
+inline void hashCombineImpl(std::size_t& seed, std::size_t hash) noexcept {
+  seed ^= hash + 0x9e3779b9 + (seed << 6) + (seed >> 2);
+}
+
+template <class T>
+inline std::size_t hashImpl(const T& value) noexcept;
+
+template <bool IsEnum, bool IsArray>
 struct Hasher {
   template <class T>
   static inline std::size_t hash(const T& value) noexcept {
@@ -36,7 +43,7 @@ struct Hasher {
 };
 
 template <>
-struct Hasher<true> {
+struct Hasher<true, false> {
   template <class T>
   static inline std::size_t hash(const T& value) noexcept {
     using UnderlyingType = std::underlying_type_t<T>;
@@ -45,9 +52,20 @@ struct Hasher<true> {
   }
 };
 
+template <>
+struct Hasher<false, true> {
+  template <class T, std::size_t N>
+  static inline std::size_t hash(const T (&value)[N]) noexcept {
+    std::size_t seed;
+    for(std::size_t i = 0; i < N; ++i)
+      hashCombineImpl(seed, hashImpl(value[i]));
+    return seed;
+  }
+};
+
 template <class T>
-std::size_t hashImpl(const T& value) noexcept {
-  return Hasher<std::is_enum<T>::value>::hash(value);
+inline std::size_t hashImpl(const T& value) noexcept {
+  return Hasher<std::is_enum<T>::value, std::is_array<T>::value>::hash(value);
 }
 
 } // namespace internal
@@ -69,7 +87,7 @@ inline void hashCombine(std::size_t& seed) noexcept { (void)seed; }
 /// @ingroup core
 template <class T, class... Args>
 inline void hashCombine(std::size_t& seed, const T& arg, const Args&... args) noexcept {
-  seed ^= internal::hashImpl(arg) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
+  internal::hashCombineImpl(seed, internal::hashImpl(arg));
   hashCombine(seed, args...);
 }
 

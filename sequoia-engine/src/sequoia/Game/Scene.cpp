@@ -40,9 +40,13 @@ Scene::Scene() : activeCamera_(nullptr) {
   renderCommand_.first().setDrawCommandList(std::make_shared<render::DrawCommandListDefault>());
   renderCommand_.second().setDrawCommandList(std::make_shared<render::DrawCommandListDefault>());
   drawCommands_.reserve(render::DrawCommandList::DefaultSize);
+
+  sceneGraph_ = std::make_shared<SceneGraph>();
 }
 
 void Scene::updateDrawCommandList(render::DrawCommandList* list) {
+  SEQUOIA_ASSERT(list);
+  
   list->clear();
   drawCommands_.clear();
 
@@ -92,7 +96,6 @@ void Scene::updateImpl() {
 
 void Scene::makeDummyScene() {
   Game& game = Game::getSingleton();
-  sceneGraph_ = std::make_shared<SceneGraph>();
 
   // Create the camera
   std::shared_ptr<render::Camera> camera = std::make_shared<render::Camera>(math::vec3(0, 5, 5));

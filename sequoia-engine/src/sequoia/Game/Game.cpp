@@ -50,13 +50,13 @@ void Game::run() {
   // Start main-loop
   while(!mainWindow_->isClosed() && !shouldClose_) {
 
-    // Set the render commands
+    // Create the render commands
     render::RenderCommand* renderCommand = activeScene_->prepareRenderCommand(mainWindow_);
 
     // Start rendering to the main-window
     renderSystem_->renderOneFrame(renderCommand);
 
-    // Compute next time-step
+    // Advance to the next time-step
     activeScene_->updateImpl();
 
     // Update screen

@@ -29,7 +29,7 @@ namespace render {
 class SEQUOIA_API ViewportListener {
 public:
   virtual ~ViewportListener() {}
-  
+
   /// @brief The geometry of the Viewport changed
   ///
   /// Default implementation does nothing
@@ -87,7 +87,7 @@ public:
   int getWidth() const;
   int getHeight() const;
   /// @}
-  
+
   /// @brief Convert to string
   std::string toString() const;
 };

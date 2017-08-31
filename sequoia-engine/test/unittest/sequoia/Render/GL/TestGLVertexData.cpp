@@ -32,9 +32,9 @@ GLenum getGLType(VertexLayout::Type type) {
   switch(type) {
   case VertexLayout::Invalid:
     return GL_INVALID_ENUM;
-  case VertexLayout::UnsignedByte:
+  case VertexLayout::UInt8:
     return GL_UNSIGNED_BYTE;
-  case VertexLayout::Float:
+  case VertexLayout::Float32:
     return GL_FLOAT;
   default:
     sequoia_unreachable("invalid type");
@@ -92,16 +92,16 @@ TYPED_TEST(GLVertexDataTest, VertexAttributes) {
 
       GLenum type;
       glGetVertexAttribiv(GLVertexAttribute::Position, GL_VERTEX_ATTRIB_ARRAY_TYPE, &type);
-      EXPECT_EQ(type, getGLType(layout->PositionType));
+      EXPECT_EQ(type, getGLType(layout->Position.Type));
 
       GLint normalized;
       glGetVertexAttribiv(GLVertexAttribute::Position, GL_VERTEX_ATTRIB_ARRAY_NORMALIZED,
                           &normalized);
-      EXPECT_EQ(normalized, layout->PositionNormalized);
+      EXPECT_EQ(normalized, layout->Position.Normalized);
 
       GLint size;
       glGetVertexAttribiv(GLVertexAttribute::Position, GL_VERTEX_ATTRIB_ARRAY_SIZE, &size);
-      EXPECT_EQ(size, layout->PositionNumElement);
+      EXPECT_EQ(size, layout->Position.NumElements);
 
       GLint stride;
       glGetVertexAttribiv(GLVertexAttribute::Position, GL_VERTEX_ATTRIB_ARRAY_STRIDE, &stride);
@@ -110,7 +110,7 @@ TYPED_TEST(GLVertexDataTest, VertexAttributes) {
       void* pointer;
       glGetVertexAttribPointerv(GLVertexAttribute::Position, GL_VERTEX_ATTRIB_ARRAY_POINTER,
                                 &pointer);
-      EXPECT_EQ((std::size_t)pointer, layout->PositionOffset);
+      EXPECT_EQ((std::size_t)pointer, layout->Position.Offset);
     }
   }
 
@@ -129,16 +129,16 @@ TYPED_TEST(GLVertexDataTest, VertexAttributes) {
 
       GLenum type;
       glGetVertexAttribiv(GLVertexAttribute::Normal, GL_VERTEX_ATTRIB_ARRAY_TYPE, &type);
-      EXPECT_EQ(type, getGLType(layout->NormalType));
+      EXPECT_EQ(type, getGLType(layout->Normal.Type));
 
       GLint normalized;
       glGetVertexAttribiv(GLVertexAttribute::Normal, GL_VERTEX_ATTRIB_ARRAY_NORMALIZED,
                           &normalized);
-      EXPECT_EQ(normalized, layout->NormalNormalized);
+      EXPECT_EQ(normalized, layout->Normal.Normalized);
 
       GLint size;
       glGetVertexAttribiv(GLVertexAttribute::Normal, GL_VERTEX_ATTRIB_ARRAY_SIZE, &size);
-      EXPECT_EQ(size, layout->NormalNumElement);
+      EXPECT_EQ(size, layout->Normal.NumElements);
 
       GLint stride;
       glGetVertexAttribiv(GLVertexAttribute::Normal, GL_VERTEX_ATTRIB_ARRAY_STRIDE, &stride);
@@ -147,7 +147,7 @@ TYPED_TEST(GLVertexDataTest, VertexAttributes) {
       void* pointer;
       glGetVertexAttribPointerv(GLVertexAttribute::Normal, GL_VERTEX_ATTRIB_ARRAY_POINTER,
                                 &pointer);
-      EXPECT_EQ((std::size_t)pointer, layout->NormalOffset);
+      EXPECT_EQ((std::size_t)pointer, layout->Normal.Offset);
     }
   }
 
@@ -166,16 +166,16 @@ TYPED_TEST(GLVertexDataTest, VertexAttributes) {
 
       GLenum type;
       glGetVertexAttribiv(GLVertexAttribute::TexCoord, GL_VERTEX_ATTRIB_ARRAY_TYPE, &type);
-      EXPECT_EQ(type, getGLType(layout->TexCoordType));
+      EXPECT_EQ(type, getGLType(layout->TexCoord.Type));
 
       GLint normalized;
       glGetVertexAttribiv(GLVertexAttribute::TexCoord, GL_VERTEX_ATTRIB_ARRAY_NORMALIZED,
                           &normalized);
-      EXPECT_EQ(normalized, layout->TexCoordNormalized);
+      EXPECT_EQ(normalized, layout->TexCoord.Normalized);
 
       GLint size;
       glGetVertexAttribiv(GLVertexAttribute::TexCoord, GL_VERTEX_ATTRIB_ARRAY_SIZE, &size);
-      EXPECT_EQ(size, layout->TexCoordNumElement);
+      EXPECT_EQ(size, layout->TexCoord.NumElements);
 
       GLint stride;
       glGetVertexAttribiv(GLVertexAttribute::TexCoord, GL_VERTEX_ATTRIB_ARRAY_STRIDE, &stride);
@@ -184,7 +184,7 @@ TYPED_TEST(GLVertexDataTest, VertexAttributes) {
       void* pointer;
       glGetVertexAttribPointerv(GLVertexAttribute::TexCoord, GL_VERTEX_ATTRIB_ARRAY_POINTER,
                                 &pointer);
-      EXPECT_EQ((std::size_t)pointer, layout->TexCoordOffset);
+      EXPECT_EQ((std::size_t)pointer, layout->TexCoord.Offset);
     }
   }
 
@@ -203,15 +203,15 @@ TYPED_TEST(GLVertexDataTest, VertexAttributes) {
 
       GLenum type;
       glGetVertexAttribiv(GLVertexAttribute::Color, GL_VERTEX_ATTRIB_ARRAY_TYPE, &type);
-      EXPECT_EQ(type, getGLType(layout->ColorType));
+      EXPECT_EQ(type, getGLType(layout->Color.Type));
 
       GLint normalized;
       glGetVertexAttribiv(GLVertexAttribute::Color, GL_VERTEX_ATTRIB_ARRAY_NORMALIZED, &normalized);
-      EXPECT_EQ(normalized, layout->ColorNormalized);
+      EXPECT_EQ(normalized, layout->Color.Normalized);
 
       GLint size;
       glGetVertexAttribiv(GLVertexAttribute::Color, GL_VERTEX_ATTRIB_ARRAY_SIZE, &size);
-      EXPECT_EQ(size, layout->ColorNumElement);
+      EXPECT_EQ(size, layout->Color.NumElements);
 
       GLint stride;
       glGetVertexAttribiv(GLVertexAttribute::Color, GL_VERTEX_ATTRIB_ARRAY_STRIDE, &stride);
@@ -219,7 +219,7 @@ TYPED_TEST(GLVertexDataTest, VertexAttributes) {
 
       void* pointer;
       glGetVertexAttribPointerv(GLVertexAttribute::Color, GL_VERTEX_ATTRIB_ARRAY_POINTER, &pointer);
-      EXPECT_EQ((std::size_t)pointer, layout->ColorOffset);
+      EXPECT_EQ((std::size_t)pointer, layout->Color.Offset);
     }
   }
 }
@@ -232,16 +232,16 @@ public:
     for(int i = 0; i < getNumVertices(); ++i) {
       Vertex3D& vertex = vertices[i];
 
-      for(int j = 0; j < layout->PositionNumElement; ++j)
+      for(int j = 0; j < layout->Position.NumElements; ++j)
         vertex.Position[j] = j;
 
-      for(int j = 0; j < layout->NormalNumElement; ++j)
+      for(int j = 0; j < layout->Normal.NumElements; ++j)
         vertex.Normal[j] = j;
 
-      for(int j = 0; j < layout->TexCoordNumElement; ++j)
+      for(int j = 0; j < layout->TexCoord.NumElements; ++j)
         vertex.TexCoord[j] = j;
 
-      for(int j = 0; j < layout->ColorNumElement; ++j)
+      for(int j = 0; j < layout->Color.NumElements; ++j)
         vertex.Color[j] = j;
     }
   }
@@ -252,13 +252,13 @@ public:
     for(int i = 0; i < getNumVertices(); ++i) {
       Vertex2D& vertex = vertices[i];
 
-      for(int j = 0; j < layout->PositionNumElement; ++j)
+      for(int j = 0; j < layout->Position.NumElements; ++j)
         vertex.Position[j] = j;
 
-      for(int j = 0; j < layout->TexCoordNumElement; ++j)
+      for(int j = 0; j < layout->TexCoord.NumElements; ++j)
         vertex.TexCoord[j] = j;
 
-      for(int j = 0; j < layout->ColorNumElement; ++j)
+      for(int j = 0; j < layout->Color.NumElements; ++j)
         vertex.Color[j] = j;
     }
   }
@@ -272,16 +272,16 @@ public:
     for(int i = 0; i < getNumVertices(); ++i) {
       Vertex3D& vertex = vertices[i];
 
-      for(int j = 0; j < layout->PositionNumElement; ++j)
+      for(int j = 0; j < layout->Position.NumElements; ++j)
         EXPECT_EQ(vertex.Position[j], j) << "vertex index " << i;
 
-      for(int j = 0; j < layout->NormalNumElement; ++j)
+      for(int j = 0; j < layout->Normal.NumElements; ++j)
         EXPECT_EQ(vertex.Normal[j], j) << "vertex index " << i;
 
-      for(int j = 0; j < layout->TexCoordNumElement; ++j)
+      for(int j = 0; j < layout->TexCoord.NumElements; ++j)
         EXPECT_EQ(vertex.TexCoord[j], j) << "vertex index " << i;
 
-      for(int j = 0; j < layout->ColorNumElement; ++j)
+      for(int j = 0; j < layout->Color.NumElements; ++j)
         EXPECT_EQ(vertex.Color[j], j) << "vertex index " << i;
     }
   }
@@ -292,13 +292,13 @@ public:
     for(int i = 0; i < getNumVertices(); ++i) {
       Vertex2D& vertex = vertices[i];
 
-      for(int j = 0; j < layout->PositionNumElement; ++j)
+      for(int j = 0; j < layout->Position.NumElements; ++j)
         EXPECT_EQ(vertex.Position[j], j) << "vertex index " << i;
 
-      for(int j = 0; j < layout->TexCoordNumElement; ++j)
+      for(int j = 0; j < layout->TexCoord.NumElements; ++j)
         EXPECT_EQ(vertex.TexCoord[j], j) << "vertex index " << i;
 
-      for(int j = 0; j < layout->ColorNumElement; ++j)
+      for(int j = 0; j < layout->Color.NumElements; ++j)
         EXPECT_EQ(vertex.Color[j], j) << "vertex index " << i;
     }
   }

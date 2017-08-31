@@ -13,12 +13,16 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
+#include "sequoia/Core/AlignedADT.h"
 #include "sequoia/Core/Logging.h"
 #include "sequoia/Game/Exception.h"
 #include "sequoia/Game/Game.h"
 #include "sequoia/Game/MeshManager.h"
 #include "sequoia/Render/RenderSystem.h"
+#include <algorithm>
 #include <tiny_obj_loader.h>
+
+#include <iostream>
 
 namespace sequoia {
 
@@ -44,59 +48,185 @@ std::shared_ptr<Mesh> MeshManager::loadObjMesh(const std::string& name,
                                                const std::shared_ptr<File>& file, bool modifiable,
                                                const MeshParameter& param,
                                                render::Buffer::UsageHint usage) {
-  LOG(DEBUG) << "Loading obj mesh \"" << name << "\" ...";
+  //  LOG(DEBUG) << "Loading obj mesh \"" << name << "\" from \"" << file->getPath() << "\" ...";
 
-  std::shared_ptr<render::VertexData> vertexData = nullptr;
-  VertexDataAccessRecord* record = nullptr;
+  //  std::shared_ptr<render::VertexData> vertexData = nullptr;
+  //  VertexDataAccessRecord* record = nullptr;
 
-  internal::ObjInfo info{file, param};
+  //  internal::ObjInfo info{file, param};
 
-  objMutex_.lock();
+  //  objMutex_.lock();
 
-  auto it = objMeshLookupMap_.find(info);
-  if(it != objMeshLookupMap_.end())
-    record = it->second.get();
-  else
-    record = objMeshLookupMap_.emplace(std::move(info), std::make_unique<VertexDataAccessRecord>())
-                 .first->second.get();
+  //  auto it = objMeshLookupMap_.find(info);
+  //  if(it != objMeshLookupMap_.end())
+  //    record = it->second.get();
+  //  else
+  //    record = objMeshLookupMap_.emplace(std::move(info),
+  //    std::make_unique<VertexDataAccessRecord>())
+  //                 .first->second.get();
 
-  record->Mutex.lock();
-  
-  objMutex_.unlock();
-  
-  if(record->Index != -1) {
-    vertexDataMutex_.lock_read();
-    vertexData = vertexData_[record->Index];
-    vertexDataMutex_.unlock();
-  } else {
-    
-    tinyobj::attrib_t attrib;
-    std::vector<tinyobj::shape_t> shapes;
-    std::vector<tinyobj::material_t> materials;
-    
-    std::string err;
-    std::istringstream inStream(file->getDataAsString());
-    bool ret = tinyobj::LoadObj(&attrib, &shapes, &materials, &err, &inStream);
-   
-    if(!ret)
-      SEQUOIA_THROW(GameException, "failed to load obj mesh %s: %s", file->getPath(), err);
-    
-    if(!err.empty())
-      LOG(WARNING) << "obj mesh: " << file->getPath() << ": " << err;
-    
-    // Register the data
-    vertexDataMutex_.lock();
-    vertexData_.emplace_back(vertexData);
-    record->Index = vertexData_.size() - 1;
-    vertexDataMutex_.unlock();
-  }
+  //  record->Mutex.lock();
 
-  record->Mutex.unlock();
+  //  objMutex_.unlock();
 
-  // TODO: Copy for modifieable
+  //  if(record->Index != -1) {
+  //    vertexDataMutex_.lock_read();
+  //    vertexData = vertexData_[record->Index];
+  //    vertexDataMutex_.unlock();
+  //  } else {
 
-  LOG(DEBUG) << "Successfully loaded obj mesh \"" << name << "\"";
-  return std::make_shared<Mesh>(name, vertexData, modifiable);
+  //    tinyobj::attrib_t attrib;
+  //    std::vector<tinyobj::shape_t> shapes;
+  //    std::vector<tinyobj::material_t> materials;
+
+  //    std::string err;
+  //    std::istringstream inStream(file->getDataAsString());
+  //    bool ret = tinyobj::LoadObj(&attrib, &shapes, &materials, &err, &inStream);
+
+  //    if(!ret)
+  //      SEQUOIA_THROW(GameException, "failed to load obj mesh %s: %s", file->getPath(), err);
+
+  //    if(!err.empty())
+  //      LOG(WARNING) << "obj mesh: " << file->getPath() << ": " << err;
+
+  //    std::size_t numVertices = attrib.vertices.size() / 3;
+
+  //    math::AxisAlignedBox aab;
+
+  //    // Allocate temporary buffer
+  //    aligned_vector<render::Vertex3D> buffer;
+  //    buffer.reserve(numVertices);
+
+  //    for(std::size_t s = 0; s < shapes.size(); ++s) {
+  //      std::size_t numIndicesPerFace = shapes[s].mesh.indices.size() / 3;
+  //      for(std::size_t f = 0; f < numIndicesPerFace; ++f) {
+
+  //        // Vertices per face
+  //        std::array<render::Vertex3D, 3> vertices;
+
+  //        tinyobj::index_t idx0 = shapes[s].mesh.indices[3 * f + 0];
+  //        tinyobj::index_t idx1 = shapes[s].mesh.indices[3 * f + 1];
+  //        tinyobj::index_t idx2 = shapes[s].mesh.indices[3 * f + 2];
+
+  //        // Decode vertices
+  //        for(int k = 0; k < 3; ++k) {
+  //          int f0 = idx0.vertex_index;
+  //          int f1 = idx1.vertex_index;
+  //          int f2 = idx2.vertex_index;
+
+  //          vertices[0].Position[k] = attrib.vertices[3 * f0 + k];
+  //          vertices[1].Position[k] = attrib.vertices[3 * f1 + k];
+  //          vertices[2].Position[k] = attrib.vertices[3 * f2 + k];
+
+  //          // TODO: bounding box
+  //        }
+
+  //        // Decode normals
+  //        if(attrib.normals.size() > 0) {
+  //          int f0 = idx0.normal_index;
+  //          int f1 = idx1.normal_index;
+  //          int f2 = idx2.normal_index;
+
+  //          for(int k = 0; k < 3; ++k) {
+  //            vertices[0].Normal[k] = attrib.normals[3 * f0 + k];
+  //            vertices[1].Normal[k] = attrib.normals[3 * f1 + k];
+  //            vertices[2].Normal[k] = attrib.normals[3 * f2 + k];
+  //          }
+  //        } else {
+  //          math::vec3 v0 = math::make_vec3(vertices[0].Position);
+  //          math::vec3 v1 = math::make_vec3(vertices[1].Position);
+  //          math::vec3 v2 = math::make_vec3(vertices[2].Position);
+
+  //          math::vec3 v10 = v1 - v0;
+  //          math::vec3 v20 = v2 - v0;
+
+  //          math::vec3 n = math::normalize(math::cross(v10, v20));
+
+  //          for(int k = 0; k < 3; ++k) {
+  //            vertices[0].Normal[k] = n[k];
+  //            vertices[1].Normal[k] = n[k];
+  //            vertices[2].Normal[k] = n[k];
+  //          }
+  //        }
+
+  //        // Decode texture coordiantes
+  //        if(attrib.texcoords.size() > 0) {
+  //          int f0 = idx0.texcoord_index;
+  //          int f1 = idx1.texcoord_index;
+  //          int f2 = idx2.texcoord_index;
+
+  //          for(int k = 0; k < 2; ++k) {
+  //            vertices[0].TexCoord[k] = attrib.texcoords[2 * f0 + k];
+  //            vertices[1].TexCoord[k] = attrib.texcoords[2 * f1 + k];
+  //            vertices[2].TexCoord[k] = attrib.texcoords[2 * f2 + k];
+  //          }
+
+  //          if(param.TexCoordInvertV) {
+  //            vertices[0].TexCoord[1] = 1.0f - vertices[0].TexCoord[1];
+  //            vertices[1].TexCoord[1] = 1.0f - vertices[1].TexCoord[1];
+  //            vertices[2].TexCoord[1] = 1.0f - vertices[2].TexCoord[1];
+  //          }
+
+  //        } else {
+  //          for(int k = 0; k < 2; ++k) {
+  //            vertices[0].TexCoord[k] = 0.0f;
+  //            vertices[1].TexCoord[k] = 0.0f;
+  //            vertices[2].TexCoord[k] = 0.0f;
+  //          }
+  //        }
+
+  //        // Combine normal and diffuse to get color.
+  //        float normal_factor = 0.2;
+  //        float diffuse_factor = 1 - normal_factor;
+
+  //        int curMaterialID = shapes[s].mesh.material_ids[f];
+
+  //        if(curMaterialID < 0 || curMaterialID >= static_cast<int>(materials.size()))
+  //          // Invaid material ID. Use default material which is added to the last item in
+  //          `materials`
+  //          curMaterialID = materials.size() - 1;
+
+  //        float diffuse[3];
+  //        for(int k = 0; k < 3; ++k)
+  //          diffuse[k] = materials[curMaterialID].diffuse[k];
+
+  //        constexpr auto maxRGBValue = std::numeric_limits<render::Vertex3D::ColorType>::max();
+
+  //        for(int i = 0; i < 3; ++i) {
+  //          math::vec3 color(vertices[i].Normal[0] * normal_factor + diffuse[0] * diffuse_factor,
+  //                           vertices[i].Normal[1] * normal_factor + diffuse[1] * diffuse_factor,
+  //                           vertices[i].Normal[2] * normal_factor + diffuse[2] * diffuse_factor);
+
+  //          color = math::normalize(color);
+  //          color = 0.5f * color + 0.5f;
+
+  //          vertices[i].Color[0] = maxRGBValue * color[0];
+  //          vertices[i].Color[1] = maxRGBValue * color[1];
+  //          vertices[i].Color[2] = maxRGBValue * color[2];
+  //        }
+  //        vertices[0].Color[3] = vertices[1].Color[3] = vertices[2].Color[3] = maxRGBValue;
+
+  //        // Move the vertices of this face into the buffer
+  //        std::move(vertices.begin(), vertices.end(), std::back_inserter(buffer));
+  //      }
+  //    }
+
+  //    // Register the data
+  //    vertexDataMutex_.lock();
+  //    vertexData_.emplace_back(vertexData);
+  //    record->Index = vertexData_.size() - 1;
+  //    vertexDataMutex_.unlock();
+  //  }
+
+  //  record->Mutex.unlock();
+
+  //  // TODO: Copy for modifieable
+
+  //  LOG(DEBUG) << "Successfully loaded obj mesh \"" << name << "\" from \"" << file->getPath()
+  //             << "\"";
+  //  return std::make_shared<Mesh>(name, vertexData, modifiable);
+
+  return nullptr;
 }
 
 //===------------------------------------------------------------------------------------------===//

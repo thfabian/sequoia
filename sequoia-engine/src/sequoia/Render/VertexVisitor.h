@@ -19,6 +19,7 @@
 #include "sequoia/Core/Assert.h"
 #include "sequoia/Core/Export.h"
 #include "sequoia/Render/Vertex.h"
+#include <boost/preprocessor/seq/for_each.hpp>
 #include <cstddef>
 #include <functional>
 #include <string>
@@ -78,23 +79,37 @@ public:
   /// @brief Set the number of vertices
   void setNumVertices(std::size_t numVertices) { numVertices_ = numVertices; }
 
-  /// @brief Visit Vertex3D
-  virtual void visit(const Vertex3DLayout* layout) = 0;
+#define SEQUOIA_VERTEXVISITOR_IMPL(r, data, elem) virtual void visit(const elem* layout) = 0;
 
-  /// @brief Visit Vertex2D
-  virtual void visit(const Vertex2DLayout* layout) = 0;
+  BOOST_PP_SEQ_FOR_EACH(SEQUOIA_VERTEXVISITOR_IMPL, _, SEQUOIA_VERTEX_LAYOUT_SEQ)
+
+#undef SEQUOIA_VERTEXVISITOR_IMPL
+};
+
+/// @brief VertexVisitor which passes through by default
+/// @ingroup render
+class SEQUOIA_API VertexVisitorPassthrough : public VertexVisitor {
+public:
+#define SEQUOIA_VERTEXVISITOR_IMPL(r, data, elem) virtual void visit(const elem* layout) override{};
+
+  BOOST_PP_SEQ_FOR_EACH(SEQUOIA_VERTEXVISITOR_IMPL, _, SEQUOIA_VERTEX_LAYOUT_SEQ)
+
+#undef SEQUOIA_VERTEXVISITOR_IMPL
 };
 
 /// @brief Convert vertex-data to string
 /// @ingroup render
-class SEQUOIA_API VertexVisitorStringifier : public VertexVisitor {
+class SEQUOIA_API VertexVisitorStringifier final : public VertexVisitor {
   std::string string_;
 
 public:
   virtual ~VertexVisitorStringifier() {}
 
-  virtual void visit(const Vertex3DLayout* layout) override;
-  virtual void visit(const Vertex2DLayout* layout) override;
+#define SEQUOIA_VERTEXVISITOR_IMPL(r, data, elem) virtual void visit(const elem* layout) override;
+
+  BOOST_PP_SEQ_FOR_EACH(SEQUOIA_VERTEXVISITOR_IMPL, _, SEQUOIA_VERTEX_LAYOUT_SEQ)
+
+#undef SEQUOIA_VERTEXVISITOR_IMPL
 
   /// @brief Get the string
   const std::string& toString() const { return string_; }
@@ -121,7 +136,7 @@ struct RunFunctorImpl<false> {
 /// @brief Run the given `functor` on the vertex data
 /// @ingroup render
 template <class VertexType>
-class VertexVisitorRunFunctor : public VertexVisitor {
+class VertexVisitorRunFunctor final : public VertexVisitor {
   const std::function<void(VertexType*)>& functor_;
 
 public:
@@ -134,8 +149,12 @@ public:
                                                                             getVerticesPtr(layout));
   }
 
-  virtual void visit(const Vertex3DLayout* layout) override { runImpl(layout); }
-  virtual void visit(const Vertex2DLayout* layout) override { runImpl(layout); }
+#define SEQUOIA_VERTEXVISITOR_IMPL(r, data, elem)                                                  \
+  virtual void visit(const elem* layout) override { runImpl(layout); }
+
+  BOOST_PP_SEQ_FOR_EACH(SEQUOIA_VERTEXVISITOR_IMPL, _, SEQUOIA_VERTEX_LAYOUT_SEQ)
+
+#undef SEQUOIA_VERTEXVISITOR_IMPL
 };
 
 } // namespace render

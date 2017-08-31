@@ -15,6 +15,7 @@
 
 #include "sequoia/Game/MeshManager.h"
 #include "sequoia/Unittest/GameSetup.h"
+#include "sequoia/Unittest/TestEnvironment.h"
 #include <gtest/gtest.h>
 
 using namespace sequoia;
@@ -35,6 +36,14 @@ TEST_F(MeshManagerTest, Cube) {
   EXPECT_FALSE(mesh->isModifiable());
   EXPECT_TRUE(mesh->getAxisAlignedBox() ==
               math::AxisAlignedBox(math::vec3(-0.5, -0.5, -0.5), math::vec3(0.5, 0.5, 0.5)));
+}
+
+TEST_F(MeshManagerTest, Obj) {
+  Game& game = Game::getSingleton();
+  TestEnvironment& env = TestEnvironment::getSingleton();
+
+  std::shared_ptr<Mesh> mesh =
+      game.getMeshManager()->load("TestCube", env.getFile("sequoia/Game/TestMeshManager/Cube.obj"));
 }
 
 TEST_F(MeshManagerTest, FreeUnusedMeshes) {

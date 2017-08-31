@@ -13,6 +13,20 @@
 ##
 ##===------------------------------------------------------------------------------------------===##
 
+# Generate the Vertex.h and Vertex.cpp
+set(vertex_input_header ${CMAKE_CURRENT_SOURCE_DIR}/Vertex.h.in)
+set(vertex_input_cpp ${CMAKE_CURRENT_SOURCE_DIR}/Vertex.cpp.in)
+set(vertex_output_header ${CMAKE_CURRENT_BINARY_DIR}/Vertex.h)
+set(vertex_output_cpp ${CMAKE_CURRENT_BINARY_DIR}/Vertex.cpp)
+
+sequoia_generate_vertices(
+  VERTICES ${CMAKE_CURRENT_SOURCE_DIR}/Vertex.json
+  INPUT_HEADER ${vertex_input_header}
+  INPUT_CPP ${vertex_input_cpp}
+  OUTPUT_HEADER ${vertex_output_header}
+  OUTPUT_CPP ${vertex_output_cpp}
+)
+
 set(GL_SOURCE
   GL/GL.h
   GL/GLBuffer.cpp          
@@ -126,8 +140,6 @@ sequoia_add_objects(
           UniformVariable.cpp
           UniformVariable.h
           UniformVariable.inc
-          Vertex.cpp
-          Vertex.h
           VertexBuffer.cpp
           VertexBuffer.h
           VertexData.cpp
@@ -137,6 +149,11 @@ sequoia_add_objects(
           ViewFrustum.h
           Viewport.cpp
           Viewport.h
+
+          ${vertex_output_header}
+          ${vertex_output_cpp}
+          ${vertex_input_header}
+          ${vertex_input_cpp}
           
           ${GL_SOURCE}
           ${NULL_SOURCE}
