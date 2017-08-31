@@ -32,11 +32,22 @@ namespace game {
 namespace internal {
 
 struct ObjInfo {
-  std::shared_ptr<core::File> File;
+  std::shared_ptr<core::File> ObjFile;
+  std::shared_ptr<core::File> MtlFile;
   MeshParameter Param;
 
   bool operator==(const ObjInfo& other) const noexcept {
-    return File->equals(other.File.get()) && Param == other.Param;
+    return *ObjFile == *other.ObjFile && MtlFile && other.MtlFile && *MtlFile == *other.MtlFile &&
+           Param == other.Param;
+  }
+
+  static std::size_t hashFiles(const std::shared_ptr<core::File>& objFile,
+                               const std::shared_ptr<core::File>& matFile) noexcept {
+    std::size_t hash = 0;
+    core::hashCombine(hash, *objFile);
+    if(matFile)
+      core::hashCombine(hash, *matFile);
+    return hash;
   }
 };
 
@@ -61,7 +72,9 @@ struct GridInfo {
 
 } // namespace sequoia
 
-SEQUOIA_DECLARE_STD_HASH(sequoia::game::internal::ObjInfo, value, value.File, value.Param)
+SEQUOIA_DECLARE_STD_HASH(sequoia::game::internal::ObjInfo, value,
+                         sequoia::game::internal::ObjInfo::hashFiles(value.ObjFile, value.MtlFile),
+                         value.Param)
 SEQUOIA_DECLARE_STD_HASH(sequoia::game::internal::CubeInfo, value, value.Param)
 SEQUOIA_DECLARE_STD_HASH(sequoia::game::internal::GridInfo, value, value.N, value.Param)
 
@@ -76,7 +89,8 @@ public:
   /// @brief Load mesh from disk
   ///
   /// @param name         Name of the mesh
-  /// @param file         Path to the mesh file
+  /// @param objFile      Path to the object file
+  /// @param mtlFile      Path to the material file (may be `NULL`)
   /// @param modifiable   Request a copy of the mesh which allows to modify the vertex data
   /// @param param        Parameter used to initialize the mesh
   /// @param usage        Buffer usage of the hardware vertex buffers
@@ -84,7 +98,8 @@ public:
   /// @throws GameException   Unable to load the mesh (invalid format)
   ///
   /// @remark Thread-safe
-  std::shared_ptr<Mesh> load(const std::string& name, const std::shared_ptr<File>& file,
+  std::shared_ptr<Mesh> load(const std::string& name, const std::shared_ptr<File>& objFile,
+                             const std::shared_ptr<File>& mtlFile = nullptr,
                              bool modifiable = false, const MeshParameter& param = MeshParameter(),
                              render::Buffer::UsageHint usage = render::Buffer::UH_StaticWriteOnly);
 
@@ -159,10 +174,9 @@ public:
 
 protected:
   /// Load a Wavefront OBJ mesh from file
-  std::shared_ptr<Mesh>
-  loadObjMesh(const std::string& name, const std::shared_ptr<File>& file, bool modifiable = false,
-              const MeshParameter& param = MeshParameter(),
-              render::Buffer::UsageHint usage = render::Buffer::UH_StaticWriteOnly);
+  std::shared_ptr<Mesh> loadObjMesh(const std::string& name, const std::shared_ptr<File>& objFile,
+                                    const std::shared_ptr<File>& mtlFile, bool modifiable,
+                                    const MeshParameter& param, render::Buffer::UsageHint usage);
 
 private:
   /// @brief Access record of a VertexData

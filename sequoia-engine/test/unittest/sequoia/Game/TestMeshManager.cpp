@@ -43,7 +43,14 @@ TEST_F(MeshManagerTest, Obj) {
   TestEnvironment& env = TestEnvironment::getSingleton();
 
   std::shared_ptr<Mesh> mesh =
-      game.getMeshManager()->load("TestCube", env.getFile("sequoia/Game/TestMeshManager/Cube.obj"));
+      game.getMeshManager()->load("TestCube", env.getFile("sequoia/Game/TestMeshManager/Cube.obj"),
+                                  env.getFile("sequoia/Game/TestMeshManager/Cube.mtl"));
+
+  EXPECT_EQ(mesh->getVertexData()->getNumIndices(), 36);
+  EXPECT_EQ(mesh->getVertexData()->getNumVertices(), 24);
+  EXPECT_FALSE(mesh->isModifiable());
+  EXPECT_TRUE(mesh->getAxisAlignedBox() ==
+              math::AxisAlignedBox(math::vec3(0, 0, 0), math::vec3(2, 2, 2)));
 }
 
 TEST_F(MeshManagerTest, FreeUnusedMeshes) {

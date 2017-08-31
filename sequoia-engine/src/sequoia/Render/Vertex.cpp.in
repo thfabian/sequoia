@@ -57,7 +57,7 @@ std::string arrayToString(const T (&vec)[N]) {
   std::stringstream ss;
   ss << "[ ";
   for(int i = 0; i < N; ++i)
-    ss << elementToString(vec[i]) << (i == N - 1 ? ", " : "");
+    ss << elementToString(vec[i]) << (i != N - 1 ? ", " : "");
   ss << " ]";
   return ss.str();
 }

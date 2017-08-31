@@ -46,7 +46,7 @@ Scene::Scene() : activeCamera_(nullptr) {
 
 void Scene::updateDrawCommandList(render::DrawCommandList* list) {
   SEQUOIA_ASSERT(list);
-  
+
   list->clear();
   drawCommands_.clear();
 
@@ -133,6 +133,17 @@ void Scene::makeDummyScene() {
       sceneGraph_->insert(cube);
     }
   }
+
+  //
+  // Cornell box
+  //
+  std::shared_ptr<SceneNode> cornellBox = SceneNode::allocate("CornellBox");
+  cornellBox->addCapability<Drawable>(game.getMeshManager()->load(
+      "CornellBox", game.getAssetManager()->load("sequoia/mesh/CornellBox.obj"),
+      game.getAssetManager()->load("sequoia/mesh/CornellBox.mtl")));
+  cornellBox->translate(math::vec3(13.0f, 0.0f, 13.0f));
+  cornellBox->setScale(0.01f);
+  sceneGraph_->insert(cornellBox);
 
   //
   // Grid

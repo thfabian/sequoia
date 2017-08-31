@@ -178,7 +178,7 @@ public:
   ///
   /// @param src            Data pointer of size `numBytes`
   /// @param offset         The *byte* offset from the start of the buffer to start writing
-  /// @param length         Number of *bytes* to wrie
+  /// @param length         Number of *bytes* to write
   /// @param discardBuffer  If true, will discard the entire content of this buffer before copying
   void write(const void* src, std::size_t offset, std::size_t length, bool discardBuffer = true);
 

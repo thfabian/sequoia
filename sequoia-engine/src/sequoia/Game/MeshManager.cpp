@@ -22,20 +22,20 @@
 #include <algorithm>
 #include <tiny_obj_loader.h>
 
-#include <iostream>
-
 namespace sequoia {
 
 namespace game {
 
-std::shared_ptr<Mesh> MeshManager::load(const std::string& name, const std::shared_ptr<File>& file,
-                                        bool modifiable, const MeshParameter& param,
+std::shared_ptr<Mesh> MeshManager::load(const std::string& name,
+                                        const std::shared_ptr<File>& objFile,
+                                        const std::shared_ptr<File>& mtlFile, bool modifiable,
+                                        const MeshParameter& param,
                                         render::Buffer::UsageHint usage) {
-  switch(file->getType()) {
+  switch(objFile->getType()) {
   case core::FileType::Obj:
-    return loadObjMesh(name, file, modifiable, param, usage);
+    return loadObjMesh(name, objFile, mtlFile, modifiable, param, usage);
   default:
-    SEQUOIA_THROW(GameException, "cannot load mesh %s: unknown format", file->getPath());
+    SEQUOIA_THROW(GameException, "cannot load mesh %s: unknown format", objFile->getPath());
     return nullptr;
   }
 }
@@ -45,188 +45,233 @@ std::shared_ptr<Mesh> MeshManager::load(const std::string& name, const std::shar
 //===------------------------------------------------------------------------------------------===//
 
 std::shared_ptr<Mesh> MeshManager::loadObjMesh(const std::string& name,
-                                               const std::shared_ptr<File>& file, bool modifiable,
-                                               const MeshParameter& param,
+                                               const std::shared_ptr<File>& objFile,
+                                               const std::shared_ptr<File>& mtlFile,
+                                               bool modifiable, const MeshParameter& param,
                                                render::Buffer::UsageHint usage) {
-  //  LOG(DEBUG) << "Loading obj mesh \"" << name << "\" from \"" << file->getPath() << "\" ...";
+  LOG(DEBUG) << "Loading obj mesh \"" << name << "\" from \"" << objFile->getPath() << "\" ...";
 
-  //  std::shared_ptr<render::VertexData> vertexData = nullptr;
-  //  VertexDataAccessRecord* record = nullptr;
+  std::shared_ptr<render::VertexData> vertexData = nullptr;
+  VertexDataAccessRecord* record = nullptr;
 
-  //  internal::ObjInfo info{file, param};
+  internal::ObjInfo info{objFile, mtlFile, param};
 
-  //  objMutex_.lock();
+  objMutex_.lock();
 
-  //  auto it = objMeshLookupMap_.find(info);
-  //  if(it != objMeshLookupMap_.end())
-  //    record = it->second.get();
-  //  else
-  //    record = objMeshLookupMap_.emplace(std::move(info),
-  //    std::make_unique<VertexDataAccessRecord>())
-  //                 .first->second.get();
+  auto it = objMeshLookupMap_.find(info);
+  if(it != objMeshLookupMap_.end())
+    record = it->second.get();
+  else
+    record = objMeshLookupMap_.emplace(std::move(info), std::make_unique<VertexDataAccessRecord>())
+                 .first->second.get();
 
-  //  record->Mutex.lock();
+  record->Mutex.lock();
 
-  //  objMutex_.unlock();
+  objMutex_.unlock();
 
-  //  if(record->Index != -1) {
-  //    vertexDataMutex_.lock_read();
-  //    vertexData = vertexData_[record->Index];
-  //    vertexDataMutex_.unlock();
-  //  } else {
+  if(record->Index != -1) {
+    vertexDataMutex_.lock_read();
+    vertexData = vertexData_[record->Index];
+    vertexDataMutex_.unlock();
+  } else {
 
-  //    tinyobj::attrib_t attrib;
-  //    std::vector<tinyobj::shape_t> shapes;
-  //    std::vector<tinyobj::material_t> materials;
+    tinyobj::attrib_t attrib;
+    std::vector<tinyobj::shape_t> shapes;
+    std::vector<tinyobj::material_t> materials;
 
-  //    std::string err;
-  //    std::istringstream inStream(file->getDataAsString());
-  //    bool ret = tinyobj::LoadObj(&attrib, &shapes, &materials, &err, &inStream);
+    std::string err;
 
-  //    if(!ret)
-  //      SEQUOIA_THROW(GameException, "failed to load obj mesh %s: %s", file->getPath(), err);
+    std::unique_ptr<std::istringstream> objStream =
+        std::make_unique<std::istringstream>(objFile->getDataAsString());
 
-  //    if(!err.empty())
-  //      LOG(WARNING) << "obj mesh: " << file->getPath() << ": " << err;
+    std::unique_ptr<std::istringstream> mtlStream = nullptr;
+    std::unique_ptr<tinyobj::MaterialStreamReader> materialReader = nullptr;
+    if(mtlFile) {
+      mtlStream = std::make_unique<std::istringstream>(mtlFile->getDataAsString());
+      materialReader = std::make_unique<tinyobj::MaterialStreamReader>(*mtlStream);
+    }
 
-  //    std::size_t numVertices = attrib.vertices.size() / 3;
+    bool ret =
+        tinyobj::LoadObj(&attrib, &shapes, &materials, &err, objStream.get(), materialReader.get());
 
-  //    math::AxisAlignedBox aab;
+    if(!ret)
+      SEQUOIA_THROW(GameException, "failed to load obj mesh %s: %s", objFile->getPath(), err);
 
-  //    // Allocate temporary buffer
-  //    aligned_vector<render::Vertex3D> buffer;
-  //    buffer.reserve(numVertices);
+    if(!err.empty())
+      LOG(WARNING) << "obj mesh: " << objFile->getPath() << ": " << err;
 
-  //    for(std::size_t s = 0; s < shapes.size(); ++s) {
-  //      std::size_t numIndicesPerFace = shapes[s].mesh.indices.size() / 3;
-  //      for(std::size_t f = 0; f < numIndicesPerFace; ++f) {
+    math::AxisAlignedBox aab;
 
-  //        // Vertices per face
-  //        std::array<render::Vertex3D, 3> vertices;
+    // Allocate temporary buffer
+    std::unordered_map<render::Vertex3D, std::size_t> indexMap;
 
-  //        tinyobj::index_t idx0 = shapes[s].mesh.indices[3 * f + 0];
-  //        tinyobj::index_t idx1 = shapes[s].mesh.indices[3 * f + 1];
-  //        tinyobj::index_t idx2 = shapes[s].mesh.indices[3 * f + 2];
+    aligned_vector<unsigned int> indexBuffer;
+    aligned_vector<render::Vertex3D> vertexBuffer;
 
-  //        // Decode vertices
-  //        for(int k = 0; k < 3; ++k) {
-  //          int f0 = idx0.vertex_index;
-  //          int f1 = idx1.vertex_index;
-  //          int f2 = idx2.vertex_index;
+    for(std::size_t s = 0; s < shapes.size(); ++s) {
+      std::size_t numIndicesPerFace = shapes[s].mesh.indices.size() / 3;
+      for(std::size_t f = 0; f < numIndicesPerFace; ++f) {
 
-  //          vertices[0].Position[k] = attrib.vertices[3 * f0 + k];
-  //          vertices[1].Position[k] = attrib.vertices[3 * f1 + k];
-  //          vertices[2].Position[k] = attrib.vertices[3 * f2 + k];
+        // Vertices per face
+        std::array<render::Vertex3D, 3> vertices;
 
-  //          // TODO: bounding box
-  //        }
+        tinyobj::index_t idx0 = shapes[s].mesh.indices[3 * f + 0];
+        tinyobj::index_t idx1 = shapes[s].mesh.indices[3 * f + 1];
+        tinyobj::index_t idx2 = shapes[s].mesh.indices[3 * f + 2];
 
-  //        // Decode normals
-  //        if(attrib.normals.size() > 0) {
-  //          int f0 = idx0.normal_index;
-  //          int f1 = idx1.normal_index;
-  //          int f2 = idx2.normal_index;
+        // Decode vertices
+        for(int k = 0; k < 3; ++k) {
+          int f0 = idx0.vertex_index;
+          int f1 = idx1.vertex_index;
+          int f2 = idx2.vertex_index;
 
-  //          for(int k = 0; k < 3; ++k) {
-  //            vertices[0].Normal[k] = attrib.normals[3 * f0 + k];
-  //            vertices[1].Normal[k] = attrib.normals[3 * f1 + k];
-  //            vertices[2].Normal[k] = attrib.normals[3 * f2 + k];
-  //          }
-  //        } else {
-  //          math::vec3 v0 = math::make_vec3(vertices[0].Position);
-  //          math::vec3 v1 = math::make_vec3(vertices[1].Position);
-  //          math::vec3 v2 = math::make_vec3(vertices[2].Position);
+          vertices[0].Position[k] = attrib.vertices[3 * f0 + k];
+          vertices[1].Position[k] = attrib.vertices[3 * f1 + k];
+          vertices[2].Position[k] = attrib.vertices[3 * f2 + k];
+        }
 
-  //          math::vec3 v10 = v1 - v0;
-  //          math::vec3 v20 = v2 - v0;
+        // Update bounding box
+        for(int i = 0; i < 3; ++i)
+          aab.merge(math::make_vec3(vertices[i].Position));
 
-  //          math::vec3 n = math::normalize(math::cross(v10, v20));
+        // Decode normals
+        if(attrib.normals.size() > 0) {
+          int f0 = idx0.normal_index;
+          int f1 = idx1.normal_index;
+          int f2 = idx2.normal_index;
 
-  //          for(int k = 0; k < 3; ++k) {
-  //            vertices[0].Normal[k] = n[k];
-  //            vertices[1].Normal[k] = n[k];
-  //            vertices[2].Normal[k] = n[k];
-  //          }
-  //        }
+          for(int k = 0; k < 3; ++k) {
+            vertices[0].Normal[k] = attrib.normals[3 * f0 + k];
+            vertices[1].Normal[k] = attrib.normals[3 * f1 + k];
+            vertices[2].Normal[k] = attrib.normals[3 * f2 + k];
+          }
+        } else {
+          math::vec3 v0 = math::make_vec3(vertices[0].Position);
+          math::vec3 v1 = math::make_vec3(vertices[1].Position);
+          math::vec3 v2 = math::make_vec3(vertices[2].Position);
 
-  //        // Decode texture coordiantes
-  //        if(attrib.texcoords.size() > 0) {
-  //          int f0 = idx0.texcoord_index;
-  //          int f1 = idx1.texcoord_index;
-  //          int f2 = idx2.texcoord_index;
+          math::vec3 v10 = v1 - v0;
+          math::vec3 v20 = v2 - v0;
 
-  //          for(int k = 0; k < 2; ++k) {
-  //            vertices[0].TexCoord[k] = attrib.texcoords[2 * f0 + k];
-  //            vertices[1].TexCoord[k] = attrib.texcoords[2 * f1 + k];
-  //            vertices[2].TexCoord[k] = attrib.texcoords[2 * f2 + k];
-  //          }
+          math::vec3 n = math::normalize(math::cross(v10, v20));
 
-  //          if(param.TexCoordInvertV) {
-  //            vertices[0].TexCoord[1] = 1.0f - vertices[0].TexCoord[1];
-  //            vertices[1].TexCoord[1] = 1.0f - vertices[1].TexCoord[1];
-  //            vertices[2].TexCoord[1] = 1.0f - vertices[2].TexCoord[1];
-  //          }
+          for(int k = 0; k < 3; ++k) {
+            vertices[0].Normal[k] = n[k];
+            vertices[1].Normal[k] = n[k];
+            vertices[2].Normal[k] = n[k];
+          }
+        }
 
-  //        } else {
-  //          for(int k = 0; k < 2; ++k) {
-  //            vertices[0].TexCoord[k] = 0.0f;
-  //            vertices[1].TexCoord[k] = 0.0f;
-  //            vertices[2].TexCoord[k] = 0.0f;
-  //          }
-  //        }
+        // Decode texture coordiantes
+        if(attrib.texcoords.size() > 0) {
+          int f0 = idx0.texcoord_index;
+          int f1 = idx1.texcoord_index;
+          int f2 = idx2.texcoord_index;
 
-  //        // Combine normal and diffuse to get color.
-  //        float normal_factor = 0.2;
-  //        float diffuse_factor = 1 - normal_factor;
+          for(int k = 0; k < 2; ++k) {
+            vertices[0].TexCoord[k] = attrib.texcoords[2 * f0 + k];
+            vertices[1].TexCoord[k] = attrib.texcoords[2 * f1 + k];
+            vertices[2].TexCoord[k] = attrib.texcoords[2 * f2 + k];
+          }
 
-  //        int curMaterialID = shapes[s].mesh.material_ids[f];
+          if(param.TexCoordInvertV) {
+            vertices[0].TexCoord[1] = 1.0f - vertices[0].TexCoord[1];
+            vertices[1].TexCoord[1] = 1.0f - vertices[1].TexCoord[1];
+            vertices[2].TexCoord[1] = 1.0f - vertices[2].TexCoord[1];
+          }
 
-  //        if(curMaterialID < 0 || curMaterialID >= static_cast<int>(materials.size()))
-  //          // Invaid material ID. Use default material which is added to the last item in
-  //          `materials`
-  //          curMaterialID = materials.size() - 1;
+        } else {
+          for(int k = 0; k < 2; ++k) {
+            vertices[0].TexCoord[k] = 0.0f;
+            vertices[1].TexCoord[k] = 0.0f;
+            vertices[2].TexCoord[k] = 0.0f;
+          }
+        }
 
-  //        float diffuse[3];
-  //        for(int k = 0; k < 3; ++k)
-  //          diffuse[k] = materials[curMaterialID].diffuse[k];
+        constexpr auto maxRGBValue = std::numeric_limits<render::Vertex3D::ColorType>::max();
 
-  //        constexpr auto maxRGBValue = std::numeric_limits<render::Vertex3D::ColorType>::max();
+        if(materials.empty()) {
+          for(int k = 0; k < 3; ++k) {
+            vertices[0].Color[k] = maxRGBValue;
+            vertices[1].Color[k] = maxRGBValue;
+            vertices[2].Color[k] = maxRGBValue;
+          }
+          vertices[0].Color[3] = vertices[1].Color[3] = vertices[2].Color[3] = maxRGBValue;
 
-  //        for(int i = 0; i < 3; ++i) {
-  //          math::vec3 color(vertices[i].Normal[0] * normal_factor + diffuse[0] * diffuse_factor,
-  //                           vertices[i].Normal[1] * normal_factor + diffuse[1] * diffuse_factor,
-  //                           vertices[i].Normal[2] * normal_factor + diffuse[2] * diffuse_factor);
+        } else {
+          // Combine normal and diffuse to get color.
+          float normal_factor = 0.2;
+          float diffuse_factor = 1 - normal_factor;
 
-  //          color = math::normalize(color);
-  //          color = 0.5f * color + 0.5f;
+          int curMaterialID = shapes[s].mesh.material_ids[f];
 
-  //          vertices[i].Color[0] = maxRGBValue * color[0];
-  //          vertices[i].Color[1] = maxRGBValue * color[1];
-  //          vertices[i].Color[2] = maxRGBValue * color[2];
-  //        }
-  //        vertices[0].Color[3] = vertices[1].Color[3] = vertices[2].Color[3] = maxRGBValue;
+          if(curMaterialID < 0 || curMaterialID >= static_cast<int>(materials.size()))
+            // Invaid material ID. Use default material which is added to the last item in
+            // `materials`
+            curMaterialID = materials.size() - 1;
 
-  //        // Move the vertices of this face into the buffer
-  //        std::move(vertices.begin(), vertices.end(), std::back_inserter(buffer));
-  //      }
-  //    }
+          float diffuse[3];
+          for(int k = 0; k < 3; ++k)
+            diffuse[k] = materials[curMaterialID].diffuse[k];
 
-  //    // Register the data
-  //    vertexDataMutex_.lock();
-  //    vertexData_.emplace_back(vertexData);
-  //    record->Index = vertexData_.size() - 1;
-  //    vertexDataMutex_.unlock();
-  //  }
+          for(int i = 0; i < 3; ++i) {
+            math::vec3 color(vertices[i].Normal[0] * normal_factor + diffuse[0] * diffuse_factor,
+                             vertices[i].Normal[1] * normal_factor + diffuse[1] * diffuse_factor,
+                             vertices[i].Normal[2] * normal_factor + diffuse[2] * diffuse_factor);
 
-  //  record->Mutex.unlock();
+            color = math::normalize(color);
+            color = 0.5f * color + 0.5f;
 
-  //  // TODO: Copy for modifieable
+            vertices[i].Color[0] = maxRGBValue * color[0];
+            vertices[i].Color[1] = maxRGBValue * color[1];
+            vertices[i].Color[2] = maxRGBValue * color[2];
+          }
+          vertices[0].Color[3] = vertices[1].Color[3] = vertices[2].Color[3] = maxRGBValue;
+        }
 
-  //  LOG(DEBUG) << "Successfully loaded obj mesh \"" << name << "\" from \"" << file->getPath()
-  //             << "\"";
-  //  return std::make_shared<Mesh>(name, vertexData, modifiable);
+        // Add vertices to the buffer and compute indices
+        for(int i = 0; i < 3; ++i) {
+          auto indexMapIt = indexMap.find(vertices[i]);
+          if(indexMapIt != indexMap.end()) {
+            indexBuffer.emplace_back(indexMapIt->second);
+          } else {
+            vertexBuffer.emplace_back(vertices[i]);
+            unsigned int index = vertexBuffer.size() - 1;
+            indexBuffer.emplace_back(index);
+            indexMap.emplace(vertices[i], index);
+          }
+        }
+      }
+    }
 
-  return nullptr;
+    // Upload data to the GPU
+    render::VertexDataParameter vertexParam(render::VertexData::DM_Triangles,
+                                            render::Vertex3D::getLayout(), vertexBuffer.size(),
+                                            indexBuffer.size(), usage);
+    vertexParam.IndexType = render::IndexBuffer::IT_UInt32;
+    vertexParam.UseVertexShadowBuffer = true;
+    vertexParam.UseIndexShadowBuffer = false;
+    vertexData = Game::getSingleton().getRenderSystem()->createVertexData(vertexParam);
+
+    vertexData->getVertexBuffer()->write(
+        vertexBuffer.data(), 0, vertexBuffer.size() * vertexData->getLayout()->SizeOf, true);
+    vertexData->writeIndex(indexBuffer.data(), indexBuffer.size());
+    vertexData->setAxisAlignedBox(aab);
+
+    // Register the data
+    vertexDataMutex_.lock();
+    vertexData_.emplace_back(vertexData);
+    record->Index = vertexData_.size() - 1;
+    vertexDataMutex_.unlock();
+  }
+
+  record->Mutex.unlock();
+
+  // TODO: Copy for modifieable
+
+  LOG(DEBUG) << "Successfully loaded obj mesh \"" << name << "\" from \"" << objFile->getPath()
+             << "\"";
+  return std::make_shared<Mesh>(name, vertexData, modifiable);
 }
 
 //===------------------------------------------------------------------------------------------===//
