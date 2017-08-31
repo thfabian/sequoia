@@ -100,6 +100,9 @@ std::shared_ptr<Mesh> MeshManager::loadObjMesh(const std::string& name,
     if(!err.empty())
       LOG(WARNING) << "obj mesh: " << objFile->getPath() << ": " << err;
 
+    // Append `default` material
+    materials.push_back(tinyobj::material_t());
+
     math::AxisAlignedBox aab;
 
     // Allocate temporary buffer
@@ -188,46 +191,36 @@ std::shared_ptr<Mesh> MeshManager::loadObjMesh(const std::string& name,
           }
         }
 
+        // Combine normal and diffuse to get color.
+        float normal_factor = 0.2;
+        float diffuse_factor = 1 - normal_factor;
+
+        int curMaterialID = shapes[s].mesh.material_ids[f];
+
+        if(curMaterialID < 0 || curMaterialID >= static_cast<int>(materials.size()))
+          // Invaid material ID. Use default material which is added to the last item in
+          // `materials`
+          curMaterialID = materials.size() - 1;
+
+        float diffuse[3];
+        for(int k = 0; k < 3; ++k)
+          diffuse[k] = materials[curMaterialID].diffuse[k];
+
         constexpr auto maxRGBValue = std::numeric_limits<render::Vertex3D::ColorType>::max();
 
-        if(materials.empty()) {
-          for(int k = 0; k < 3; ++k) {
-            vertices[0].Color[k] = maxRGBValue;
-            vertices[1].Color[k] = maxRGBValue;
-            vertices[2].Color[k] = maxRGBValue;
-          }
-          vertices[0].Color[3] = vertices[1].Color[3] = vertices[2].Color[3] = maxRGBValue;
+        for(int i = 0; i < 3; ++i) {
+          math::vec3 color(vertices[i].Normal[0] * normal_factor + diffuse[0] * diffuse_factor,
+                           vertices[i].Normal[1] * normal_factor + diffuse[1] * diffuse_factor,
+                           vertices[i].Normal[2] * normal_factor + diffuse[2] * diffuse_factor);
 
-        } else {
-          // Combine normal and diffuse to get color.
-          float normal_factor = 0.2;
-          float diffuse_factor = 1 - normal_factor;
+          color = math::normalize(color);
+          color = 0.5f * color + 0.5f;
 
-          int curMaterialID = shapes[s].mesh.material_ids[f];
-
-          if(curMaterialID < 0 || curMaterialID >= static_cast<int>(materials.size()))
-            // Invaid material ID. Use default material which is added to the last item in
-            // `materials`
-            curMaterialID = materials.size() - 1;
-
-          float diffuse[3];
-          for(int k = 0; k < 3; ++k)
-            diffuse[k] = materials[curMaterialID].diffuse[k];
-
-          for(int i = 0; i < 3; ++i) {
-            math::vec3 color(vertices[i].Normal[0] * normal_factor + diffuse[0] * diffuse_factor,
-                             vertices[i].Normal[1] * normal_factor + diffuse[1] * diffuse_factor,
-                             vertices[i].Normal[2] * normal_factor + diffuse[2] * diffuse_factor);
-
-            color = math::normalize(color);
-            color = 0.5f * color + 0.5f;
-
-            vertices[i].Color[0] = maxRGBValue * color[0];
-            vertices[i].Color[1] = maxRGBValue * color[1];
-            vertices[i].Color[2] = maxRGBValue * color[2];
-          }
-          vertices[0].Color[3] = vertices[1].Color[3] = vertices[2].Color[3] = maxRGBValue;
+          vertices[i].Color[0] = maxRGBValue * color[0];
+          vertices[i].Color[1] = maxRGBValue * color[1];
+          vertices[i].Color[2] = maxRGBValue * color[2];
         }
+        vertices[0].Color[3] = vertices[1].Color[3] = vertices[2].Color[3] = maxRGBValue;
 
         // Add vertices to the buffer and compute indices
         for(int i = 0; i < 3; ++i) {
