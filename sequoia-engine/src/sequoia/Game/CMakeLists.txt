@@ -42,5 +42,6 @@ sequoia_add_objects(
           SceneNodeAlloc.h          
           SceneNodeCapability.h
   DEPENDS SequoiaCore
+          SequoiaRender
 )
 

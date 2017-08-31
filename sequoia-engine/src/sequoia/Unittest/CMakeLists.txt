@@ -40,5 +40,6 @@ sequoia_add_objects(
           GL/GLRenderSetup.h
           GL/GLRenderSetup.cpp
   DEPENDS SequoiaCore
+          SequoiaRender
 )
 
