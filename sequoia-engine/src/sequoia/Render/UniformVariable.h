@@ -31,7 +31,7 @@ namespace render {
 /// @brief Type of uniform variables
 /// @ingroup render
 enum class UniformType {
-  Invalid,
+  Invalid = 0,
 #define UNIFORM_VARIABLE_TYPE(Type, Name) Name, VectorOf##Name,
 #include "sequoia/Render/UniformVariable.inc"
 #undef UNIFORM_VARIABLE_TYPE
@@ -154,7 +154,7 @@ public:
     return *this;
   }
 
-  /// @brief Get the data of the variable as type `T`
+  /// @brief Get a *reference* to the data of the variable as type `T`
   /// @throws core::RenderSystemException  type of the uniform variable is not of type `T`
   template <class T>
   inline const T& get() const {

@@ -129,40 +129,102 @@ void GLProgram::makeValidImpl() { getGLRenderer().getProgramManager()->makeValid
 
 namespace {
 
-// Generic "address of" computation
+// Generic value type computation
 template <class T, bool IsFundamental>
-struct ComputeReturnType {
-  using type = const T*;
+struct ComputeValueTypeImpl {
+  using type = T;
 };
 
 template <class T>
-struct ComputeReturnType<T, false> {
-  using type = const typename T::value_type*;
+struct ComputeValueTypeImpl<T, false> {
+  using type = typename T::value_type;
+};
+
+template <class T>
+struct ComputeValueType {
+  using type = typename ComputeValueTypeImpl<T, std::is_fundamental<T>::value>::type;
+};
+
+// Generic "address of" computation
+template <class T>
+struct ComputeReturnType {
+  using type = const typename ComputeValueType<T>::type*;
 };
 
 template <class T, bool IsFundamental>
 struct AddressOf {
-  static typename ComputeReturnType<T, IsFundamental>::type apply(const T& value) {
-    return std::addressof(value);
-  }
+  static typename ComputeReturnType<T>::type apply(const T& value) { return std::addressof(value); }
 };
 
 template <class T>
 struct AddressOf<T, false> {
-  static typename ComputeReturnType<T, false>::type apply(const T& value) {
+  static typename ComputeReturnType<T>::type apply(const T& value) {
     return math::value_ptr(value);
   }
 };
 
 template <class T, bool IsFundamental = std::is_fundamental<T>::value>
-inline typename ComputeReturnType<T, IsFundamental>::type addressOf(const T& value) {
+inline typename ComputeReturnType<T>::type addressOf(const T& value) {
   return AddressOf<T, IsFundamental>::apply(value);
 }
+
+// Copy data if we have boolean vector
+template <class T>
+const T* getDataFromVector(const std::vector<T>& vec) {
+  return vec.data();
+}
+
+template <>
+const bool* getDataFromVector(const std::vector<bool>& vec) {
+  bool* data = new bool[vec.size()];
+  for(int i = 0; i < vec.size(); ++i)
+    data[i] = vec[i];
+  return data;
+}
+
+/// @brief Wrapper for `std::vector<T>` which disables `std::vector<bool>` optimizations
+template <class T, bool IsBoolVector = std::is_same<T, bool>::value>
+class VectorWrapper : public NonCopyable {
+public:
+  using ValueType = typename ComputeValueType<T>::type;
+
+  VectorWrapper(const std::vector<T>& vec) : size_(vec.size()) {
+    // This will copy the data if we have a boolean vector and extract the data pointer to the first
+    // elements data
+    data_ = addressOf(getDataFromVector(vec)[0]);
+  }
+
+  ~VectorWrapper() {
+    if(IsBoolVector)
+      delete[] data_;
+  }
+
+  /// @brief Return a pointer to the data
+  ///
+  /// Note that if we have a vector of e.g math::vec3 (i.e a composed type), this returns a pointer
+  /// to the first element of math::vec3 (math::vec3.x) of the first element in the full vector.
+  const ValueType* data() const noexcept { return reinterpret_cast<const ValueType*>(data_); }
+
+  /// @brief Get the number of elements in the vector
+  std::size_t size() const noexcept { return size_; }
+
+private:
+  const ValueType* data_;
+  std::size_t size_;
+};
 
 template <class T>
 struct GLTypeCompat {};
 
-/// @brief Create a setter implementation for a uniform variable of `TYPE`
+template <class T>
+struct UniformVariableSetter {};
+
+/// @brief Create a setter implementation for a uniform variable of `TYPE` as well as the vector
+/// version of it (i.e `std::vector<TYPE>`)
+///
+/// The function takes a pointer to the data and its array size (which is 1 or scalars), checks that
+/// the type and size of the uniform variable recorded in the program matches the ones provided and
+/// uploads the data to the GPU.
 ///
 /// @param TYPE    C++ type of the uniform variable
 /// @param FUNC    OpenGL function invoked to set the uniform variable
@@ -177,28 +239,32 @@ struct GLTypeCompat {};
     }                                                                                              \
     static constexpr const char* getTypeName() { return #TYPE; }                                   \
   };                                                                                               \
-                                                                                                   \
-  bool setUniformVariableImpl(GLProgram* program, const std::string& name, const TYPE& value) {    \
-    auto it = program->getUniformVariables().find(name);                                           \
-    if(it == program->getUniformVariables().end()) {                                               \
-      program->reportWarningForInvalidUniformVariable(name);                                       \
-      return false;                                                                                \
+  template <>                                                                                      \
+  struct UniformVariableSetter<TYPE> {                                                             \
+    template <class DataType = typename ComputeValueType<TYPE>::type>                              \
+    static bool apply(GLProgram* program, const std::string& name, const DataType* data,           \
+                      std::size_t size) {                                                          \
+      auto it = program->getUniformVariables().find(name);                                         \
+      if(it == program->getUniformVariables().end()) {                                             \
+        program->reportWarningForInvalidUniformVariable(name);                                     \
+        return false;                                                                              \
+      }                                                                                            \
+      GLProgram::GLUniformInfo& info = it->second;                                                 \
+      if(!GLTypeCompat<TYPE>::isCompatible(info.Type))                                             \
+        SEQUOIA_THROW(RenderSystemException, "failed to set uniform variable '%s' in program "     \
+                                             "(ID=%i), cannot convert type '%s' to '%s'",          \
+                      name, program->getID(), GLTypeCompat<TYPE>::getTypeName(), info.Type);       \
+      if(info.Size != size)                                                                        \
+        SEQUOIA_THROW(RenderSystemException, "invalid rank (size of array) '%i' of uniform "       \
+                                             "variable '%s' in program (ID=%i), expected '%i'",    \
+                      1, name, program->getID(), info.Size);                                       \
+      FUNC(program->getID(), info.Location, info.Size, data);                                      \
+      info.ValueSet = true;                                                                        \
+      return true;                                                                                 \
     }                                                                                              \
-    GLProgram::GLUniformInfo& info = it->second;                                                   \
-    if(!GLTypeCompat<TYPE>::isCompatible(info.Type))                                               \
-      SEQUOIA_THROW(RenderSystemException, "failed to set uniform variable '%s' in program "       \
-                                           "(ID=%i), cannot convert type '%s' to '%s'",            \
-                    name, program->getID(), GLTypeCompat<TYPE>::getTypeName(), info.Type);         \
-    if(info.Size != 1)                                                                             \
-      SEQUOIA_THROW(                                                                               \
-          RenderSystemException,                                                                   \
-          "invalid rank '%i' of uniform variable '%s' in program (ID=%i), expected '%i'", 1, name, \
-          program->getID(), info.Size);                                                            \
-    FUNC(program->getID(), info.Location, info.Size, addressOf(value));                            \
-    info.ValueSet = true;                                                                          \
-    return true;                                                                                   \
-  }
+  };
 
+// Scalars
 SEQUOIA_SET_UNIFORM_VARIABLE_IMPL(int, glProgramUniform1iv, GL_INT, GL_SAMPLER_2D)
 SEQUOIA_SET_UNIFORM_VARIABLE_IMPL(float, glProgramUniform1fv, GL_FLOAT)
 SEQUOIA_SET_UNIFORM_VARIABLE_IMPL(bool, ([](GLuint p, GLint l, GLsizei c, const bool* v) {
@@ -207,10 +273,12 @@ SEQUOIA_SET_UNIFORM_VARIABLE_IMPL(bool, ([](GLuint p, GLint l, GLsizei c, const 
                                   }),
                                   GL_BOOL)
 
+// Vectors
 SEQUOIA_SET_UNIFORM_VARIABLE_IMPL(math::vec2, glProgramUniform2fv, GL_FLOAT_VEC2)
 SEQUOIA_SET_UNIFORM_VARIABLE_IMPL(math::vec3, glProgramUniform3fv, GL_FLOAT_VEC3)
 SEQUOIA_SET_UNIFORM_VARIABLE_IMPL(math::vec4, glProgramUniform4fv, GL_FLOAT_VEC4)
 
+// Matrices
 SEQUOIA_SET_UNIFORM_VARIABLE_IMPL(math::mat2, ([](GLuint p, GLint l, GLsizei c, const GLfloat* v) {
                                     glProgramUniformMatrix2fv(p, l, c, false, v);
                                   }),
@@ -234,7 +302,11 @@ bool GLProgram::setUniformVariable(const std::string& name, const UniformVariabl
   switch(variable.getType()) {
 #define UNIFORM_VARIABLE_TYPE(Type, Name)                                                          \
   case UniformType::Name:                                                                          \
-    return setUniformVariableImpl(this, name, variable.get<Type>());
+    return UniformVariableSetter<Type>::apply(this, name, addressOf(variable.get<Type>()), 1);     \
+  case UniformType::VectorOf##Name: {                                                              \
+    VectorWrapper<Type> vec(variable.get<std::vector<Type>>());                                    \
+    return UniformVariableSetter<Type>::apply(this, name, vec.data(), vec.size());                 \
+  }
 #include "sequoia/Render/UniformVariable.inc"
 #undef UNIFORM_VARIABLE_TYPE
   default:
