@@ -150,6 +150,7 @@ sequoia_add_objects(
           Viewport.cpp
           Viewport.h
 
+          Vertex.json
           ${vertex_output_header}
           ${vertex_output_cpp}
           ${vertex_input_header}

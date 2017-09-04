@@ -79,7 +79,7 @@ inline void hashCombine(std::size_t& seed) noexcept { (void)seed; }
 ///
 /// @code
 ///   int a = 5;
-///   int b = 2;
+///   double b = 2.3;
 ///   std::size_t hash = 0;
 ///   core::hashCombine(hash, a, b); // Uses std::hash<T> to compute the individual hashes
 /// @endcode

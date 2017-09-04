@@ -14,8 +14,10 @@
 //===------------------------------------------------------------------------------------------===//
 
 #include "sequoia/Core/Format.h"
+#include "sequoia/Core/StringUtil.h"
 #include "sequoia/Core/Unreachable.h"
 #include "sequoia/Render/UniformVariable.h"
+#include <boost/preprocessor/stringize.hpp>
 #include <ostream>
 #include <sstream>
 
@@ -31,6 +33,14 @@ static std::string VariantToString(const UniformVariable::DataType& data, Unifor
 #define UNIFORM_VARIABLE_TYPE(Type, Name)                                                          \
   case UniformType::Name:                                                                          \
     ss << boost::get<Type>(data);                                                                  \
+    break;                                                                                         \
+  case UniformType::VectorOf##Name:                                                                \
+    ss << core::RangeToString(", ", "{", "}")(boost::get<std::vector<Type>>(data),                 \
+                                              [](const Type& value) {                              \
+                                                std::stringstream sout;                            \
+                                                sout << value;                                     \
+                                                return sout.str();                                 \
+                                              });                                                  \
     break;
 #include "sequoia/Render/UniformVariable.inc"
 #undef UNIFORM_VARIABLE_TYPE
@@ -50,6 +60,9 @@ std::ostream& operator<<(std::ostream& os, UniformType type) {
 #define UNIFORM_VARIABLE_TYPE(Type, Name)                                                          \
   case UniformType::Name:                                                                          \
     os << #Name;                                                                                   \
+    break;                                                                                         \
+  case UniformType::VectorOf##Name:                                                                \
+    os << BOOST_PP_STRINGIZE(VectorOf##Name);                                                      \
     break;
 #include "sequoia/Render/UniformVariable.inc"
 #undef UNIFORM_VARIABLE_TYPE
@@ -69,7 +82,9 @@ bool UniformVariable::operator==(const UniformVariable& other) const noexcept {
   switch(type_) {
 #define UNIFORM_VARIABLE_TYPE(Type, Name)                                                          \
   case UniformType::Name:                                                                          \
-    return boost::get<Type>(data_) == boost::get<Type>(other.data_);
+    return boost::get<Type>(data_) == boost::get<Type>(other.data_);                               \
+  case UniformType::VectorOf##Name:                                                                \
+    return boost::get<std::vector<Type>>(data_) == boost::get<std::vector<Type>>(other.data_);
 #include "sequoia/Render/UniformVariable.inc"
 #undef UNIFORM_VARIABLE_TYPE
   case UniformType::Invalid:

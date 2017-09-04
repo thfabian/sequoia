@@ -38,6 +38,16 @@ TEST(UniformVariableTest, Assignmment) {
   EXPECT_TRUE(u.isOfType<math::mat3>());
 }
 
+TEST(UniformVariableTest, AssignmmentVector) {
+  UniformVariable u;
+
+  u = std::vector<float>{1.0f, 2.0f, 3.0f};
+  EXPECT_TRUE(u.isOfType<std::vector<float>>());
+
+  u = {1.0f, 2.0f, 3.0f};
+  EXPECT_TRUE(u.isOfType<std::vector<float>>());
+}
+
 TEST(UniformVariableTest, ValueConstructor) {
   UniformVariable u(5.0f);
   EXPECT_EQ(u.getType(), render::UniformType::Float);
@@ -62,6 +72,16 @@ TEST(UniformVariableTest, Comparison) {
   EXPECT_NE(u1, u3);
 }
 
+TEST(UniformVariableTest, ComparisonVector) {
+  UniformVariable u1({5.0f, 4.0f, 2.0f});
+  UniformVariable u2({5.0f, 4.0f});
+  UniformVariable u3({math::vec2(4.0f, 3.0f), math::vec2(2.0f, 1.0f)});
+
+  EXPECT_EQ(u1, u1);
+  EXPECT_NE(u1, u2);
+  EXPECT_NE(u1, u3);
+}
+
 TEST(UniformVariableTest, CopyConstructor) {
   UniformVariable u(5.0f);
   UniformVariable uCopy(u);
@@ -73,7 +93,21 @@ TEST(UniformVariableTest, CopyConstructor) {
   uCopy = u;
   UniformVariable uMove;
   uMove = std::move(u);
-  EXPECT_EQ(u, uMove);
+  EXPECT_EQ(uMove, uCopy);
+}
+
+TEST(UniformVariableTest, CopyConstructorVector) {
+  UniformVariable u({5.0f, 4.0f, 3.0f});
+  UniformVariable uCopy(u);
+  EXPECT_EQ(u, uCopy);
+
+  u = {math::vec3(0), math::vec3(1)};
+  EXPECT_NE(u, uCopy);
+
+  uCopy = u;
+  UniformVariable uMove;
+  uMove = std::move(u);
+  EXPECT_EQ(uMove, uCopy);
 }
 
 } // anonymous namespace

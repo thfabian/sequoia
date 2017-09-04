@@ -19,6 +19,7 @@
 #include "sequoia/Core/Export.h"
 #include "sequoia/Math/Math.h"
 #include "sequoia/Render/Exception.h"
+#include <array>
 #include <boost/variant/get.hpp>
 #include <boost/variant/variant.hpp>
 #include <iosfwd>
@@ -31,7 +32,7 @@ namespace render {
 /// @ingroup render
 enum class UniformType {
   Invalid,
-#define UNIFORM_VARIABLE_TYPE(Type, Name) Name,
+#define UNIFORM_VARIABLE_TYPE(Type, Name) Name, VectorOf##Name,
 #include "sequoia/Render/UniformVariable.inc"
 #undef UNIFORM_VARIABLE_TYPE
 };
@@ -57,6 +58,10 @@ struct UniformTypeToType {
   template <>                                                                                      \
   struct UniformTypeToType<UniformType::Name> {                                                    \
     using type = Type;                                                                             \
+  };                                                                                               \
+  template <>                                                                                      \
+  struct UniformTypeToType<UniformType::VectorOf##Name> {                                          \
+    using type = std::vector<Type>;                                                                \
   };
 #include "sequoia/Render/UniformVariable.inc"
 #undef UNIFORM_VARIABLE_TYPE
@@ -76,6 +81,10 @@ struct TypeToUniformType {
   template <>                                                                                      \
   struct TypeToUniformType<Type> {                                                                 \
     static constexpr UniformType value = UniformType::Name;                                        \
+  };                                                                                               \
+  template <>                                                                                      \
+  struct TypeToUniformType<std::vector<Type>> {                                                    \
+    static constexpr UniformType value = UniformType::VectorOf##Name;                              \
   };
 #include "sequoia/Render/UniformVariable.inc"
 #undef UNIFORM_VARIABLE_TYPE
@@ -92,7 +101,7 @@ public:
   };
 
   using DataType = boost::variant<
-#define UNIFORM_VARIABLE_TYPE(Type, Name) Type,
+#define UNIFORM_VARIABLE_TYPE(Type, Name) Type, std::vector<Type>,
 #include "sequoia/Render/UniformVariable.inc"
 #undef UNIFORM_VARIABLE_TYPE
       InvalidData>;
@@ -102,6 +111,16 @@ public:
   template <class T>
   UniformVariable(const T& data) {
     this->set(data);
+  }
+
+  template <class T, std::size_t N>
+  UniformVariable(const T (&data)[N]) {
+    this->set(toVec(data));
+  }
+
+  template <class T, std::size_t N>
+  UniformVariable(const std::array<T, N>& data) {
+    this->set(toVec(data));
   }
 
   UniformVariable() : data_(InvalidData{}), type_(UniformType::Invalid) {}
@@ -115,9 +134,25 @@ public:
   UniformVariable& operator=(const Type& value) {                                                  \
     this->set<Type>(value);                                                                        \
     return *this;                                                                                  \
+  }                                                                                                \
+  UniformVariable& operator=(const std::vector<Type>& value) {                                     \
+    this->set<std::vector<Type>>(value);                                                           \
+    return *this;                                                                                  \
   }
 #include "sequoia/Render/UniformVariable.inc"
 #undef UNIFORM_VARIABLE_TYPE
+
+  template <class T, std::size_t N>
+  UniformVariable& operator=(const T (&value)[N]) {
+    this->set(toVec(value));
+    return *this;
+  }
+
+  template <class T, std::size_t N>
+  UniformVariable& operator=(const std::array<T, N>& value) {
+    this->set(toVec(value));
+    return *this;
+  }
 
   /// @brief Get the data of the variable as type `T`
   /// @throws core::RenderSystemException  type of the uniform variable is not of type `T`
@@ -158,6 +193,17 @@ public:
 
   /// @brief Convert to string
   std::string toString() const;
+
+private:
+  template <class T, std::size_t N>
+  inline std::vector<T> toVec(const T (&value)[N]) {
+    return std::vector<T>(value, value + N);
+  }
+
+  template <class T, std::size_t N>
+  inline std::vector<T> toVec(const std::array<T, N>& value) {
+    return std::vector<T>(value.begin(), value.end());
+  }
 
 private:
   /// Data of the variable
