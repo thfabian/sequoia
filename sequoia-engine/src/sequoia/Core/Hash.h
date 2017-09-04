@@ -56,7 +56,7 @@ template <>
 struct Hasher<false, true> {
   template <class T, std::size_t N>
   static inline std::size_t hash(const T (&value)[N]) noexcept {
-    std::size_t seed;
+    std::size_t seed = 0;
     for(std::size_t i = 0; i < N; ++i)
       hashCombineImpl(seed, hashImpl(value[i]));
     return seed;
@@ -75,13 +75,13 @@ inline void hashCombine(std::size_t& seed) noexcept { (void)seed; }
 /// @brief Called repeatedly to incrementally create a hash value from several variables
 ///
 /// Note that the order of arguments matters, meaning:
-/// `hash_combine(arg1, arg2) != hash_combine(arg2, arg1)`
+/// `hashCombine(arg1, arg2) != hashCombine(arg2, arg1)`
 ///
 /// @code
 ///   int a = 5;
 ///   int b = 2;
 ///   std::size_t hash = 0;
-///   core::hash_combine(hash, a, b); // Uses std::hash<T> to compute the individual hashes
+///   core::hashCombine(hash, a, b); // Uses std::hash<T> to compute the individual hashes
 /// @endcode
 ///
 /// @ingroup core
