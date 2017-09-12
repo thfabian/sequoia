@@ -30,7 +30,7 @@ using namespace sequoia::render;
 
 namespace {
 
-class GLShaderTest : public TestFixture<GLRenderSetup> {};
+SEQUOIA_TESTCASEFIXTURE(GLShaderTest, GLRenderSetup);
 
 TEST_F(GLShaderTest, LoadingSuccess) {
   TestEnvironment& env = TestEnvironment::getSingleton();

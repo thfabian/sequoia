@@ -31,7 +31,7 @@ using namespace sequoia::render;
 
 namespace {
 
-class GLProgramTest : public TestFixture<GLRenderSetup> {};
+SEQUOIA_TESTCASEFIXTURE(GLProgramTest, GLRenderSetup);
 
 TEST_F(GLProgramTest, LinkingSuccess) {
   TestEnvironment& env = TestEnvironment::getSingleton();
@@ -137,8 +137,8 @@ TEST_F(GLProgramTest, UniformArrays) {
 }
 
 TEST_F(GLProgramTest, UniformStruct) {
-//  TestEnvironment& env = TestEnvironment::getSingleton();
-//  RenderSystem& rsys = RenderSystem::getSingleton();
+  //  TestEnvironment& env = TestEnvironment::getSingleton();
+  //  RenderSystem& rsys = RenderSystem::getSingleton();
 }
 
 TEST_F(GLProgramTest, UniformMatrices) {

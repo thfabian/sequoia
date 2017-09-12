@@ -25,23 +25,70 @@ namespace sequoia {
 
 namespace unittest {
 
-/// @brief Generic base class for test fixtures
+/// @brief Sets up the stuff for *each* test in the test case.
+///
+/// @tparam FixtureT  Type of test fixture
+///
+/// This runs `FixtureT::SetUp` before *each* test and `FixtureT::TearDown` after the test has run.
+///
 /// @ingroup unittest
 template <class FixtureT>
 class TestFixture : public testing::Test, public NonCopyable {
-  std::unique_ptr<FixtureT> fixture_;
+  std::unique_ptr<FixtureT> fixture_ = nullptr;
 
 public:
+  /// @brief Run before *each* test
   virtual void SetUp() override {
     fixture_ = std::make_unique<FixtureT>();
     fixture_->SetUp();
   }
 
+  /// @brief Run after *each* test
   virtual void TearDown() override {
     fixture_->TearDown();
     fixture_.release();
   }
 };
+
+#define SEQUOIA_DEFINE_TESTCASEFIXTURE_IMPL(TestCaseName, FixtureT)                                \
+  class TestCaseName : public testing::Test, public NonCopyable {                                  \
+  public:                                                                                          \
+    static std::unique_ptr<FixtureT> Fixture;                                                      \
+    static void SetUpTestCase() {                                                                  \
+      Fixture = std::make_unique<FixtureT>();                                                      \
+      Fixture->SetUp();                                                                            \
+    }                                                                                              \
+    static void TearDownTestCase() {                                                               \
+      Fixture->TearDown();                                                                         \
+      Fixture.release();                                                                           \
+    }                                                                                              \
+  };
+
+/// @brief Sets up the stuff shared by *all* tests in a test case
+///
+/// @param TestCaseName   Name of the test case i.e test fixture class
+/// @param FixtureT       Type of test fixture
+///
+/// This runs `FixtureT::SetUp` before the test-case (i.e before all tests) and `FixtureT::TearDown`
+/// after all tests have run.
+///
+/// @see sequoia::unittest::TestCaseFixture
+/// @ingroup unittest
+#define SEQUOIA_TESTCASEFIXTURE(TestCaseName, FixtureT)                                            \
+  SEQUOIA_DEFINE_TESTCASEFIXTURE_IMPL(TestCaseName, FixtureT)                                      \
+  std::unique_ptr<FixtureT> TestCaseName::Fixture = nullptr
+
+/// @brief Sets up the stuff shared by *all* tests in a test case
+///
+/// This version allows typed tests (`TYPED_TEST_CASE`).
+///
+/// @see SEQUOIA_SETUP_TESTCASEFIXTURE
+/// @ingroup unittest
+#define SEQUOIA_TESTCASEFIXTURE_TEMPLATE(TestCaseName, FixtureT)                                   \
+  template <class T>                                                                               \
+  SEQUOIA_DEFINE_TESTCASEFIXTURE_IMPL(TestCaseName, FixtureT)                                      \
+  template <class T>                                                                               \
+  std::unique_ptr<FixtureT> TestCaseName<T>::Fixture = nullptr
 
 /// @brief Generic base class for benchmark fixtures
 /// @ingroup unittest
@@ -51,13 +98,13 @@ class BenchmarkFixture : public benchmark::Fixture, public NonCopyable {
 
 public:
   virtual void SetUp(benchmark::State& st) override {
-    (void) st;
+    (void)st;
     fixture_ = std::make_unique<FixtureT>();
     fixture_->SetUp();
   }
 
   virtual void TearDown(benchmark::State& st) override {
-    (void) st;
+    (void)st;
     fixture_->TearDown();
     fixture_.release();
   }

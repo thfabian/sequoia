@@ -29,6 +29,8 @@ using namespace sequoia::render;
 
 namespace {
 
+SEQUOIA_TESTCASEFIXTURE(GLBufferTest, GLRenderSetup);
+
 /// @brief Generate a random vector of type `T`
 template <class T>
 std::vector<T> makeRandomVector(std::size_t size) {
@@ -56,8 +58,6 @@ template <class T>
 std::size_t getNumBytes(const std::vector<T>& vec) {
   return vec.size() * sizeof(T);
 }
-
-class GLBufferTest : public TestFixture<GLRenderSetup> {};
 
 TEST_F(GLBufferTest, ReadAndWrite) {
   auto vec = makeRandomVector<int>(8);

@@ -28,6 +28,11 @@ using namespace sequoia::render;
 
 namespace {
 
+SEQUOIA_TESTCASEFIXTURE_TEMPLATE(GLVertexDataTest, GLRenderSetup);
+
+using VertexTypes = testing::Types<Vertex2D, Vertex3D>;
+TYPED_TEST_CASE(GLVertexDataTest, VertexTypes);
+
 GLenum getGLType(VertexLayout::Type type) {
   switch(type) {
   case VertexLayout::Invalid:
@@ -40,12 +45,6 @@ GLenum getGLType(VertexLayout::Type type) {
     sequoia_unreachable("invalid type");
   }
 }
-
-template <typename T>
-class GLVertexDataTest : public TestFixture<GLRenderSetup> {};
-
-using VertexTypes = testing::Types<Vertex2D, Vertex3D>;
-TYPED_TEST_CASE(GLVertexDataTest, VertexTypes);
 
 template <class VertexDataType>
 std::shared_ptr<GLVertexData> makeVertexData(std::size_t numVertices, std::size_t numIndices,
