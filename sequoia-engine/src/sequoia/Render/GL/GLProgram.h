@@ -19,7 +19,6 @@
 #include "sequoia/Render/GL/GLFwd.h"
 #include "sequoia/Render/Program.h"
 #include "sequoia/Render/UniformVariable.h"
-
 #include <unordered_map>
 #include <unordered_set>
 
@@ -35,7 +34,7 @@ public:
   /// @brief Represent uniform variables in shaders
   struct GLUniformInfo {
     GLenum Type;     ///< Type of the unifrom variable
-    GLint Size;      ///< Size of the uniform variable
+    GLint Rank;      ///< Rank of the uniform variable (Rank == 1 indicates a scalar variable)
     GLint Location;  ///< Location of the uniform variable
     bool ValueSet;   ///< Check if the value of the uniform variable has been set
     int TextureUnit; ///< If this uniform corresponds to a texture sampler the associated texture

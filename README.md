@@ -3,7 +3,7 @@ Sequoia  <a target="_blank" href="http://semver.org">![Version][Version.Badge]</
 
 ## Introduction
 
-Sequoia is a collection of tools to create 3D games for Windows and Linux using C++, Python
+Sequoia is a collection of tools to create 3D games for Windows and Linux using C++, Python.
 and Lua 
 
 > The project is still in very early development!

@@ -98,6 +98,7 @@ GLProgramManager::create(const std::set<std::shared_ptr<Shader>>& shaders) {
 
 void GLProgramManager::remove(const std::shared_ptr<GLProgram>& program) noexcept {
   SEQUOIA_LOCK_GUARD(mutex_);
+  
   programList_.erase(std::remove(programList_.begin(), programList_.end(), program),
                      programList_.end());
   shaderSetLookupMap_.erase(GLProgramManager::hash(program->getShaders()));
@@ -129,8 +130,8 @@ void GLProgramManager::getUniforms(GLProgram* program) const {
 
   for(int index = 0; index < numActiveUniforms; ++index) {
     GLenum type;
-    GLint size, length;
-    glGetActiveUniform(program->id_, index, activeUniformMaxLength, &length, &size, &type,
+    GLint rank, length;
+    glGetActiveUniform(program->id_, index, activeUniformMaxLength, &length, &rank, &type,
                        name.get());
 
     GLint location = glGetUniformLocation(program->id_, name.get());
@@ -152,12 +153,13 @@ void GLProgramManager::getUniforms(GLProgram* program) const {
     }
 
     LOG(DEBUG) << "Active uniform variable: name=" << name.get() << ", type=" << type
+               << (rank != 1 ? core::format(", size=%i", rank) : "")
                << (textureUnit != -1 ? core::format(", textureUnit=%i", textureUnit) : "")
                << ", location=" << location;
 
     if(location != -1) {
       program->uniformInfoMap_.emplace(
-          name.get(), GLProgram::GLUniformInfo{type, size, location, false, textureUnit});
+          name.get(), GLProgram::GLUniformInfo{type, rank, location, false, textureUnit});
 
       if(textureUnit != -1) {
         auto ret = program->textureSamplers_.emplace(textureUnit, name.get());
@@ -195,8 +197,8 @@ bool GLProgramManager::checkVertexAttributes(GLProgram* program) const {
 
   for(unsigned int index = 0; index < numActiveAttrs; ++index) {
     GLenum type;
-    GLint size, length;
-    glGetActiveAttrib(program->id_, index, activeAttrMaxLength, &length, &size, &type, name.get());
+    GLint rank, length;
+    glGetActiveAttrib(program->id_, index, activeAttrMaxLength, &length, &rank, &type, name.get());
     GLint location = glGetAttribLocation(program->id_, name.get());
 
     LOG(DEBUG) << "Active vertex attribute: name=" << name.get() << ", type=" << type

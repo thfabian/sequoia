@@ -97,12 +97,48 @@ TEST_F(GLProgramTest, UniformVectors) {
 
   math::vec3 u_fvec3;
   EXPECT_TRUE(glprogram->setUniformVariable("u_fvec3", u_fvec3));
+
+  // Invalid type -> throw
   EXPECT_THROW(glprogram->setUniformVariable("u_fvec2", u_fvec3), render::RenderSystemException);
 
   math::vec4 u_fvec4;
   EXPECT_TRUE(glprogram->setUniformVariable("u_fvec4", u_fvec4));
 
   EXPECT_TRUE(glprogram->checkUniformVariables());
+}
+
+TEST_F(GLProgramTest, UniformArrays) {
+  TestEnvironment& env = TestEnvironment::getSingleton();
+  RenderSystem& rsys = RenderSystem::getSingleton();
+
+  std::shared_ptr<Shader> vertexShader = rsys.createShader(
+      Shader::ST_Vertex, env.getFile("sequoia/Render/GL/TestGLProgram/VertexUniformArrays.vert"));
+
+  std::shared_ptr<Program> program = rsys.createProgram({vertexShader});
+  GLProgram* glprogram = dyn_cast<GLProgram>(program.get());
+
+  EXPECT_EQ(glprogram->getUniformVariables().size(), 2);
+
+  UniformVariable u_float_array({1.0f, 2.0f});
+  EXPECT_TRUE(glprogram->setUniformVariable("u_float_array", u_float_array));
+
+  // Invalid type -> throw
+  UniformVariable u_int_array({1, 2});
+  EXPECT_THROW(glprogram->setUniformVariable("u_float_array", u_int_array),
+               render::RenderSystemException);
+
+  // Invalid size -> throw
+  UniformVariable u_float_array_too_big({1.0f, 2.0f, 3.0f});
+  EXPECT_THROW(glprogram->setUniformVariable("u_float_array", u_float_array_too_big),
+               render::RenderSystemException);
+
+  UniformVariable u_fvec3_array({math::vec3(1), math::vec3(2)});
+  EXPECT_TRUE(glprogram->setUniformVariable("u_fvec3_array", u_fvec3_array));
+}
+
+TEST_F(GLProgramTest, UniformStruct) {
+//  TestEnvironment& env = TestEnvironment::getSingleton();
+//  RenderSystem& rsys = RenderSystem::getSingleton();
 }
 
 TEST_F(GLProgramTest, UniformMatrices) {

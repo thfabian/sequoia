@@ -243,7 +243,7 @@ struct UniformVariableSetter {};
   struct UniformVariableSetter<TYPE> {                                                             \
     template <class DataType = typename ComputeValueType<TYPE>::type>                              \
     static bool apply(GLProgram* program, const std::string& name, const DataType* data,           \
-                      std::size_t size) {                                                          \
+                      std::size_t rank) {                                                          \
       auto it = program->getUniformVariables().find(name);                                         \
       if(it == program->getUniformVariables().end()) {                                             \
         program->reportWarningForInvalidUniformVariable(name);                                     \
@@ -254,11 +254,11 @@ struct UniformVariableSetter {};
         SEQUOIA_THROW(RenderSystemException, "failed to set uniform variable '%s' in program "     \
                                              "(ID=%i), cannot convert type '%s' to '%s'",          \
                       name, program->getID(), GLTypeCompat<TYPE>::getTypeName(), info.Type);       \
-      if(info.Size != size)                                                                        \
+      if(info.Rank != rank)                                                                        \
         SEQUOIA_THROW(RenderSystemException, "invalid rank (size of array) '%i' of uniform "       \
                                              "variable '%s' in program (ID=%i), expected '%i'",    \
-                      1, name, program->getID(), info.Size);                                       \
-      FUNC(program->getID(), info.Location, info.Size, data);                                      \
+                      1, name, program->getID(), info.Rank);                                       \
+      FUNC(program->getID(), info.Location, info.Rank, data);                                      \
       info.ValueSet = true;                                                                        \
       return true;                                                                                 \
     }                                                                                              \
@@ -305,7 +305,7 @@ bool GLProgram::setUniformVariable(const std::string& name, const UniformVariabl
     return UniformVariableSetter<Type>::apply(this, name, addressOf(variable.get<Type>()), 1);     \
   case UniformType::VectorOf##Name: {                                                              \
     VectorWrapper<Type> vec(variable.get<std::vector<Type>>());                                    \
-    return UniformVariableSetter<Type>::apply(this, name, vec.data(), vec.size());                 \
+    return UniformVariableSetter<Type>::apply(this, name + "[0]", vec.data(), vec.size());         \
   }
 #include "sequoia/Render/UniformVariable.inc"
 #undef UNIFORM_VARIABLE_TYPE

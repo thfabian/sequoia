@@ -25,7 +25,7 @@
 #     [QUIET]                # Supress output
 #   )
 #
-# This module locates glbinding_.``GLBINDING_FOUND`` will report if an acceptable version 
+# This module locates glbinding_. ``GLBINDING_FOUND`` will report if an acceptable version 
 # of glbinding was found.
 #
 # Result Variables
