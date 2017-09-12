@@ -13,9 +13,9 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
+#include "sequoia/Render/Null/NullRenderSystem.h"
 #include "sequoia/Render/Null/NullInputSystem.h"
 #include "sequoia/Render/Null/NullProgram.h"
-#include "sequoia/Render/Null/NullRenderSystem.h"
 #include "sequoia/Render/Null/NullRenderWindow.h"
 #include "sequoia/Render/Null/NullShader.h"
 #include "sequoia/Render/Null/NullTexture.h"

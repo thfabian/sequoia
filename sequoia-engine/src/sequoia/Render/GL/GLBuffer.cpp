@@ -13,11 +13,11 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
+#include "sequoia/Render/GL/GL.h"
 #include "sequoia/Core/Byte.h"
 #include "sequoia/Core/Format.h"
 #include "sequoia/Core/StringUtil.h"
 #include "sequoia/Core/Unreachable.h"
-#include "sequoia/Render/GL/GL.h"
 #include "sequoia/Render/GL/GLBuffer.h"
 #include <cstring>
 
@@ -90,7 +90,7 @@ void* GLBuffer::lock(Buffer::LockOption option) {
   }
 
   // TODO: allow returning a scratchpad memory for small buffers
-  
+
   // Initiate the DMA
   return glMapBuffer(target_, access);
 }

@@ -79,10 +79,10 @@ public:
   virtual std::shared_ptr<Texture>
   createTexture(const std::shared_ptr<Image>& image,
                 const TextureParameter& param = TextureParameter()) override;
-  
+
   /// @copydoc RenderSystem::createVertexData
   virtual std::shared_ptr<VertexData> createVertexData(const VertexDataParameter& param) override;
-  
+
   /// @copydoc RenderSystem::addKeyboardListener
   virtual void addKeyboardListener(KeyboardListener* listener) override;
 

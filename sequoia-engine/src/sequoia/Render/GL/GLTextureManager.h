@@ -49,7 +49,7 @@ public:
   ///
   /// @param image  Image used as a basis of the texture
   /// @param param  Parameter used for initialization
-  /// @returns Newly created texture which is *not* valid, call GLTexture::makeValid() to convert 
+  /// @returns Newly created texture which is *not* valid, call GLTexture::makeValid() to convert
   ///          it into a valid state
   ///
   /// @remark Thread-safe
@@ -59,7 +59,7 @@ public:
   /// @brief Make the texture valid
   /// @throws RenderSystemExcption  Failed to initialize the texture
   void makeValid(GLTexture* texture);
-  
+
   /// @brief Remove the `texture` (do nothing if the texute does not exist)
   void remove(const std::shared_ptr<GLTexture>& texture) noexcept;
 

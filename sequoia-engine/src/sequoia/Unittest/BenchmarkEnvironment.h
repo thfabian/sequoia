@@ -42,7 +42,7 @@ public:
   virtual void TearDown();
 
 private:
-  /// Manager of the singletons  
+  /// Manager of the singletons
   std::unique_ptr<core::SingletonManager> singletonManager_;
 };
 

@@ -13,8 +13,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Core/StringUtil.h"
 #include "sequoia/Render/DrawCommandList.h"
+#include "sequoia/Core/StringUtil.h"
 #include <sstream>
 
 namespace sequoia {

@@ -13,9 +13,9 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
+#include "sequoia/Render/VertexVisitor.h"
 #include "sequoia/Core/Format.h"
 #include "sequoia/Math/Math.h"
-#include "sequoia/Render/VertexVisitor.h"
 #include <sstream>
 
 namespace sequoia {

@@ -91,7 +91,7 @@ public:
   virtual std::shared_ptr<Texture>
   createTexture(const std::shared_ptr<Image>& image,
                 const TextureParameter& param = TextureParameter()) = 0;
-  
+
   /// @brief Allocate vertex data
   virtual std::shared_ptr<VertexData> createVertexData(const VertexDataParameter& param) = 0;
 

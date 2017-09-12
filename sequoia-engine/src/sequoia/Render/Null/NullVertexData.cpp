@@ -13,10 +13,10 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
+#include "sequoia/Render/Null/NullVertexData.h"
 #include "sequoia/Core/Format.h"
 #include "sequoia/Core/StringUtil.h"
 #include "sequoia/Render/HostBuffer.h"
-#include "sequoia/Render/Null/NullVertexData.h"
 
 namespace sequoia {
 

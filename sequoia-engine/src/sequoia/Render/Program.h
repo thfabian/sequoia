@@ -36,7 +36,7 @@ class Shader;
 ///
 /// Note that once a program is fully assembled (i.e `isValid() == true`), the program is
 /// immutable, hence no shaders can be added or removed.
-/// 
+///
 /// @see RenderSystem::createPogram
 /// @ingroup render
 class SEQUOIA_API Program : public RenderRessource {

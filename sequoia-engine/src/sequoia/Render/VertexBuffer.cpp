@@ -13,9 +13,9 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
+#include "sequoia/Render/VertexBuffer.h"
 #include "sequoia/Core/Format.h"
 #include "sequoia/Core/StringUtil.h"
-#include "sequoia/Render/VertexBuffer.h"
 
 namespace sequoia {
 

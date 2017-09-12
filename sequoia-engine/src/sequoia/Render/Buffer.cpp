@@ -13,9 +13,9 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
+#include "sequoia/Render/Buffer.h"
 #include "sequoia/Core/Format.h"
 #include "sequoia/Core/StringUtil.h"
-#include "sequoia/Render/Buffer.h"
 #include <cstring>
 
 namespace sequoia {

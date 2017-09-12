@@ -47,8 +47,6 @@ void RenderRessource::rethrowException() {
     std::rethrow_exception(exception_);
 }
 
-
-
 } // namespace render
 
 } // namespace sequoia

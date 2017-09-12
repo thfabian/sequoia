@@ -13,11 +13,11 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
+#include "sequoia/Game/Mesh.h"
 #include "sequoia/Core/Format.h"
 #include "sequoia/Core/Logging.h"
 #include "sequoia/Core/Memory.h"
 #include "sequoia/Core/StringUtil.h"
-#include "sequoia/Game/Mesh.h"
 #include "sequoia/Render/VertexVisitor.h"
 
 namespace sequoia {
@@ -38,8 +38,6 @@ std::string MeshParameter::toString() const {
 Mesh::Mesh(const std::string& name, const std::shared_ptr<render::VertexData>& data,
            bool isModifiable)
     : isModifiable_(isModifiable), data_(data), name_(name) {}
-
-
 
 const math::AxisAlignedBox& Mesh::getAxisAlignedBox() const noexcept {
   return data_->getAxisAlignedBox();

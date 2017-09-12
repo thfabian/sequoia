@@ -13,8 +13,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Core/Format.h"
 #include "sequoia/Render/Null/NullIndexBuffer.h"
+#include "sequoia/Core/Format.h"
 
 namespace sequoia {
 

@@ -13,9 +13,9 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Core/Logging.h"
-#include "sequoia/Core/Logging.h"
 #include "sequoia/Render/RenderServer.h"
+#include "sequoia/Core/Logging.h"
+#include "sequoia/Core/Logging.h"
 
 namespace sequoia {
 

@@ -49,7 +49,7 @@ public:
 
   /// @brief Copy constructor
   Exception(const Exception&) = default;
-  
+
   /// @brief Virtual destructor
   virtual ~Exception() noexcept;
 

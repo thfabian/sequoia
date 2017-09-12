@@ -13,13 +13,13 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
+#include "sequoia/Render/VertexData.h"
 #include "sequoia/Core/Byte.h"
 #include "sequoia/Core/Format.h"
 #include "sequoia/Core/Memory.h"
 #include "sequoia/Core/StringUtil.h"
 #include "sequoia/Core/Unreachable.h"
 #include "sequoia/Render/Exception.h"
-#include "sequoia/Render/VertexData.h"
 #include "sequoia/Render/VertexVisitor.h"
 #include <iostream>
 

@@ -13,9 +13,9 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
+#include "sequoia/Render/GlobalRenderState.h"
 #include "sequoia/Core/Format.h"
 #include "sequoia/Core/StringUtil.h"
-#include "sequoia/Render/GlobalRenderState.h"
 
 namespace sequoia {
 

@@ -13,13 +13,13 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
+#include "sequoia/Unittest/TestEnvironment.h"
 #include "sequoia/Core/ErrorHandler.h"
 #include "sequoia/Core/Format.h"
 #include "sequoia/Core/Logging.h"
 #include "sequoia/Core/StringSwitch.h"
 #include "sequoia/Driver/ConsoleLogger.h"
 #include "sequoia/Unittest/Config.h"
-#include "sequoia/Unittest/TestEnvironment.h"
 #include "sequoia/Unittest/TestFile.h"
 #include "sequoia/Unittest/TestOptions.h"
 #include <boost/program_options.hpp>

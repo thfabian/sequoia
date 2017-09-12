@@ -13,10 +13,10 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
+#include "sequoia/Render/UniformVariable.h"
 #include "sequoia/Core/Format.h"
 #include "sequoia/Core/StringUtil.h"
 #include "sequoia/Core/Unreachable.h"
-#include "sequoia/Render/UniformVariable.h"
 #include <boost/preprocessor/stringize.hpp>
 #include <ostream>
 #include <sstream>

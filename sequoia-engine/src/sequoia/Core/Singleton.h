@@ -93,4 +93,3 @@ using Singleton = core::Singleton<Derived>;
   Class* sequoia::core::Singleton<Class>::Instance = nullptr
 
 #endif
-

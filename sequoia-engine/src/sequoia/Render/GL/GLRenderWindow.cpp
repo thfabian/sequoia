@@ -13,9 +13,9 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
+#include "sequoia/Render/GL/GLRenderWindow.h"
 #include "sequoia/Core/Logging.h"
 #include "sequoia/Render/GL/GLRenderSystem.h"
-#include "sequoia/Render/GL/GLRenderWindow.h"
 
 namespace sequoia {
 

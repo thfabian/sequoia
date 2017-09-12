@@ -13,8 +13,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Core/Unreachable.h"
 #include "sequoia/Render/GL/Native.h"
+#include "sequoia/Core/Unreachable.h"
 #include "sequoia/Render/GL/NativeGLFW3.h"
 
 namespace sequoia {

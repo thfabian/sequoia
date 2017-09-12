@@ -58,7 +58,7 @@ public:
 
   /// @brief Draw the vertex-data
   void draw() const noexcept;
-  
+
   /// @brief Get the VAO ID
   unsigned int getVAOID() const noexcept { return vaoID_; }
 

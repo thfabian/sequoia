@@ -13,9 +13,9 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
+#include "sequoia/Game/Drawable.h"
 #include "sequoia/Core/Assert.h"
 #include "sequoia/Core/Format.h"
-#include "sequoia/Game/Drawable.h"
 #include "sequoia/Game/Game.h"
 #include "sequoia/Game/Mesh.h"
 #include "sequoia/Game/SceneNode.h"

@@ -13,9 +13,9 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
+#include "sequoia/Render/HostBuffer.h"
 #include "sequoia/Core/Byte.h"
 #include "sequoia/Core/Memory.h"
-#include "sequoia/Render/HostBuffer.h"
 #include <cstring>
 
 namespace sequoia {

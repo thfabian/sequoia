@@ -76,7 +76,7 @@ public:
 
   AxisAlignedBox(const AxisAlignedBox&) = default;
   AxisAlignedBox(AxisAlignedBox&&) = default;
-  
+
   AxisAlignedBox& operator=(const AxisAlignedBox&) = default;
   AxisAlignedBox& operator=(AxisAlignedBox&&) = default;
 

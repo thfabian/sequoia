@@ -13,12 +13,12 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
+#include "sequoia/Render/RenderState.h"
 #include "sequoia/Core/Format.h"
 #include "sequoia/Core/StringUtil.h"
 #include "sequoia/Core/Unreachable.h"
 #include "sequoia/Render/FrameBuffer.h"
 #include "sequoia/Render/Program.h"
-#include "sequoia/Render/RenderState.h"
 #include "sequoia/Render/Texture.h"
 #include "sequoia/Render/VertexData.h"
 #include <unordered_set>

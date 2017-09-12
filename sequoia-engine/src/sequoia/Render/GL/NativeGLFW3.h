@@ -51,7 +51,7 @@ public:
 
   /// @brief Create a new context using `context` as a parent context
   void init(const std::shared_ptr<NativeGLContext>& context) override;
-  
+
   /// @brief Makes the context current for the calling thread
   virtual void makeCurrent() override;
 
@@ -81,10 +81,10 @@ class glfw3NativeWindow final : public NativeWindow {
 
   /// Is the window focused?
   bool focused_;
-  
+
   /// Singleton instance
   static glfw3NativeWindow* Instance;
-  
+
 public:
   glfw3NativeWindow(const std::shared_ptr<NativeGLContext>& context);
   ~glfw3NativeWindow();
@@ -184,9 +184,7 @@ public:
   void mousePositionCallback(int xpos, int ypos) noexcept;
   /// @}
 
-  inline static glfw3NativeInputSystem* getInstance() {
-    return glfw3NativeInputSystem::Instance;
-  }
+  inline static glfw3NativeInputSystem* getInstance() { return glfw3NativeInputSystem::Instance; }
 
   static bool classof(const NativeWindow* window) {
     return window->getContext()->getKind() == NativeWindowSystemKind::NK_GLFW3;

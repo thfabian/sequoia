@@ -13,12 +13,12 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
+#include "sequoia/Render/GL/GL.h"
 #include "sequoia/Core/Casting.h"
 #include "sequoia/Core/Format.h"
 #include "sequoia/Core/Logging.h"
 #include "sequoia/Core/StringUtil.h"
 #include "sequoia/Core/Unreachable.h"
-#include "sequoia/Render/GL/GL.h"
 #include "sequoia/Render/GL/GLRenderer.h"
 #include "sequoia/Render/GL/GLTexture.h"
 #include "sequoia/Render/GL/GLTextureManager.h"
@@ -58,9 +58,7 @@ unsigned int GLTexture::getID() const { return id_; }
 
 GLenum GLTexture::getTarget() const { return target_; }
 
-void GLTexture::bind() {
-  glBindTexture(target_, id_);
-}
+void GLTexture::bind() { glBindTexture(target_, id_); }
 
 void GLTexture::unbind() { glBindTexture(target_, 0); }
 

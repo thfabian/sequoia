@@ -42,7 +42,7 @@ public:
   template <class Functor>
   auto spawnRessourceTask(Functor&& function) {
     using ReturnType = typename core::function_return_t<decltype(function)>;
-  
+
     auto task = std::make_shared<FutureTask<ReturnType>>(std::move(function));
     ressourceCtx_.Queue.push(std::static_pointer_cast<Task>(task));
     ressourceCtx_.TasksAvailable.notify_all();

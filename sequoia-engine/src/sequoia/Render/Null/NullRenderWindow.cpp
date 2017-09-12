@@ -13,8 +13,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Core/Logging.h"
 #include "sequoia/Render/Null/NullRenderWindow.h"
+#include "sequoia/Core/Logging.h"
 
 namespace sequoia {
 

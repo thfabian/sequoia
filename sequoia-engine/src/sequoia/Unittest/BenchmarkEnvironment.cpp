@@ -13,10 +13,10 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
+#include "sequoia/Unittest/BenchmarkEnvironment.h"
 #include "sequoia/Core/ErrorHandler.h"
 #include "sequoia/Core/Logging.h"
 #include "sequoia/Driver/ConsoleLogger.h"
-#include "sequoia/Unittest/BenchmarkEnvironment.h"
 #include "sequoia/Unittest/TestOptions.h"
 #include <benchmark/benchmark.h>
 #include <boost/program_options.hpp>

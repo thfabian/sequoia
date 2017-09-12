@@ -13,9 +13,9 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
+#include "sequoia/Render/IndexBuffer.h"
 #include "sequoia/Core/Format.h"
 #include "sequoia/Core/Unreachable.h"
-#include "sequoia/Render/IndexBuffer.h"
 
 namespace sequoia {
 

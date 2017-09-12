@@ -46,11 +46,11 @@ public:
     BK_HostBuffer,
     BK_IndexBuffer,
     BK_GLIndexBuffer,
-    BK_NullIndexBuffer,    
+    BK_NullIndexBuffer,
     BK_IndexBufferLast,
     BK_VertexBuffer,
     BK_GLVertexBuffer,
-    BK_NullVertexBuffer,    
+    BK_NullVertexBuffer,
     BK_VertexBufferLast,
   };
 

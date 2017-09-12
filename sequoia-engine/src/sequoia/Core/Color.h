@@ -106,9 +106,7 @@ public:
   Color& operator=(Color&&) = default;
 
   /// @brief Get the number of used channels
-  inline std::uint8_t getNumChannels() const noexcept {
-    return colorFormatGetNumChannels(format_);
-  }
+  inline std::uint8_t getNumChannels() const noexcept { return colorFormatGetNumChannels(format_); }
 
   /// @brief Get format
   inline ColorFormat getFormat() const noexcept { return format_; }

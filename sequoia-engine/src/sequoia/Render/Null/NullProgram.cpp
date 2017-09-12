@@ -13,9 +13,9 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
+#include "sequoia/Render/Null/NullProgram.h"
 #include "sequoia/Core/Format.h"
 #include "sequoia/Core/StringUtil.h"
-#include "sequoia/Render/Null/NullProgram.h"
 #include "sequoia/Render/Shader.h"
 
 namespace sequoia {

@@ -13,10 +13,10 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
+#include "sequoia/Render/GL/GL.h"
 #include "sequoia/Core/Casting.h"
 #include "sequoia/Core/StringUtil.h"
 #include "sequoia/Render/DrawCommand.h"
-#include "sequoia/Render/GL/GL.h"
 #include "sequoia/Render/GL/GLFrameBufferObject.h"
 #include "sequoia/Render/GL/GLProgram.h"
 #include "sequoia/Render/GL/GLStateCacheManager.h"

@@ -121,7 +121,7 @@ public:
 
   /// @brief Set the interal render-state to `state` and call the appropriate methods for every
   /// state change
-  /// 
+  ///
   /// @param state            New RenderState
   /// @returns `true` if the RenderState was successfully updated, `false` otherwise
   bool setRenderState(const RenderState& state) noexcept;

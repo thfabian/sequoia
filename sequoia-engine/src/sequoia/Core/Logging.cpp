@@ -13,8 +13,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Core/Format.h"
 #include "sequoia/Core/Logging.h"
+#include "sequoia/Core/Format.h"
 #include "sequoia/Core/StringSwitch.h"
 #include <chrono>
 #include <ctime>

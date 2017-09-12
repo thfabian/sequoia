@@ -13,11 +13,11 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
+#include "sequoia/Game/MeshManager.h"
 #include "sequoia/Core/AlignedADT.h"
 #include "sequoia/Core/Logging.h"
 #include "sequoia/Game/Exception.h"
 #include "sequoia/Game/Game.h"
-#include "sequoia/Game/MeshManager.h"
 #include "sequoia/Render/RenderSystem.h"
 #include <algorithm>
 #include <tiny_obj_loader.h>

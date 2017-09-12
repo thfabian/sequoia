@@ -13,9 +13,9 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
+#include "sequoia/Render/RenderSystem.h"
 #include "sequoia/Core/Unreachable.h"
 #include "sequoia/Render/Exception.h"
-#include "sequoia/Render/RenderSystem.h"
 
 #include "sequoia/Render/GL/GLRenderSystem.h"
 #include "sequoia/Render/Null/NullRenderSystem.h"

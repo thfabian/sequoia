@@ -55,7 +55,7 @@ protected:
 
   /// @copydoc Buffer::readImpl
   virtual void readImpl(std::size_t offset, std::size_t length, void* dest) override = 0;
-  
+
   /// @copydoc Buffer::lockImpl
   virtual void* lockImpl(LockOption option) override = 0;
 

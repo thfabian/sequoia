@@ -13,9 +13,9 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
+#include "sequoia/Render/GL/GLVertexAttribute.h"
 #include "sequoia/Core/StringRef.h"
 #include "sequoia/Render/Exception.h"
-#include "sequoia/Render/GL/GLVertexAttribute.h"
 
 namespace sequoia {
 
