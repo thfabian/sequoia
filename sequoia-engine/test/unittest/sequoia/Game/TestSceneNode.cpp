@@ -27,7 +27,7 @@ using namespace sequoia::game;
 
 namespace {
 
-class SceneNodeTest : public TestFixture<GameSetup> {};
+SEQUOIA_TESTCASEFIXTURE(SceneNodeTest, GameSetup);
 
 TEST_F(SceneNodeTest, Construction) {
   auto node = SceneNode::allocate("SceneNode");

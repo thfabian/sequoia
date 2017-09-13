@@ -24,7 +24,7 @@ using namespace sequoia::game;
 
 namespace {
 
-class MeshManagerTest : public TestFixture<GameSetup> {};
+SEQUOIA_TESTCASEFIXTURE(MeshManagerTest, GameSetup);
 
 TEST_F(MeshManagerTest, Cube) {
   Game& game = Game::getSingleton();

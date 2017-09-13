@@ -27,7 +27,7 @@ using namespace sequoia::game;
 
 namespace {
 
-class DrawableTest : public TestFixture<GameSetup> {};
+SEQUOIA_TESTCASEFIXTURE(DrawableTest, GameSetup);
 
 TEST_F(DrawableTest, Construction) {
   Game& game = Game::getSingleton();
