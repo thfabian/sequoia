@@ -45,7 +45,7 @@ TEST(UniformStructTest, ToUniformVariable) {
 
   std::unordered_map<std::string, UniformVariable> map;
 
-  s.toUniformVariableMap(map, 0);
+  s.toUniformVariableMap("ScalarStruct", map, 0);
   ASSERT_TRUE(map.count("ScalarStruct[0].a"));
   ASSERT_EQ(map["ScalarStruct[0].a"], 4.1f);
 
@@ -55,7 +55,7 @@ TEST(UniformStructTest, ToUniformVariable) {
   ASSERT_TRUE(map.count("ScalarStruct[0].c"));
   ASSERT_EQ(map["ScalarStruct[0].c"], false);
 
-  v.toUniformVariableMap(map, -1);
+  v.toUniformVariableMap("VectorStruct", map, -1);
   ASSERT_TRUE(map.count("VectorStruct.a"));
   ASSERT_EQ(map["VectorStruct.a"], math::vec3(1));
 

@@ -7,7 +7,5 @@ in vec3 in_Position;
 
 void main() {
   gl_Position.xyz = in_Position;
-  vec3 vec = u_fvec3_array[1];
-  gl_Position.w = vec.x + u_float_array[1];
+  gl_Position.w = u_fvec3_array[0].x + u_fvec3_array[1].x + u_float_array[0] + u_float_array[1];
 }
-

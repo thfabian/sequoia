@@ -67,22 +67,22 @@
 // Generate
 //
 //   if(index == -1)
-//     uniformMap["<StructName>.<name>"] = UniformVariable(this-><name>);
+//     uniformMap["<variableName>.<name>"] = UniformVariable(this-><name>);
 //   else
-//     uniformMap[core::format("<StructName>.<name>[%i]", index] = UniformVariable(this-><name>);
+//     uniformMap[core::format("<variableName>.<name>[%i]", index] = UniformVariable(this-><name>);
 //
 // from a `(type0, name0)...(typeN, nameN)` sequence
-#define SEQUOIA_GENERATE_TO_UNIFORMVARIABLE(r, StructName, Member)                                 \
+#define SEQUOIA_GENERATE_TO_UNIFORMVARIABLE(r, Unused, Member)                                     \
   if(index == -1)                                                                                  \
-    uniformMap[BOOST_PP_STRINGIZE(StructName) "." BOOST_PP_STRINGIZE(SEQUOIA_PARAM_GET_NAME(       \
-        Member))] = ::sequoia::render::UniformVariable(this->SEQUOIA_PARAM_GET_NAME(Member));      \
+    uniformMap[variableName + "." BOOST_PP_STRINGIZE(SEQUOIA_PARAM_GET_NAME(Member))] =            \
+        ::sequoia::render::UniformVariable(this->SEQUOIA_PARAM_GET_NAME(Member));                  \
   else                                                                                             \
-    uniformMap[core::format(                                                                       \
-        BOOST_PP_STRINGIZE(StructName) "[%i]." BOOST_PP_STRINGIZE(SEQUOIA_PARAM_GET_NAME(Member)), \
-        index)] = ::sequoia::render::UniformVariable(this->SEQUOIA_PARAM_GET_NAME(Member));
+    uniformMap[core::format("%s[%i]." BOOST_PP_STRINGIZE(SEQUOIA_PARAM_GET_NAME(Member)),          \
+                            variableName, index)] =                                                \
+        ::sequoia::render::UniformVariable(this->SEQUOIA_PARAM_GET_NAME(Member));
 
-#define SEQUOIA_GENERATE_TO_UNIFORMVARIABLES(Members, Name)                                        \
-  SEQUOIA_GENERATE_MACRO(SEQUOIA_GENERATE_TO_UNIFORMVARIABLE, Name, Members)
+#define SEQUOIA_GENERATE_TO_UNIFORMVARIABLES(Members)                                              \
+  SEQUOIA_GENERATE_MACRO(SEQUOIA_GENERATE_TO_UNIFORMVARIABLE, Unused, Members)
 
 // Generate
 //
@@ -124,9 +124,10 @@
   struct Name {                                                                                    \
     SEQUOIA_GENERATE_MEMBERS(Members)                                                              \
     inline void toUniformVariableMap(                                                              \
+        const std::string& variableName,                                                           \
         std::unordered_map<std::string, ::sequoia::render::UniformVariable>& uniformMap,           \
         int index) const {                                                                         \
-      SEQUOIA_GENERATE_TO_UNIFORMVARIABLES(Members, Name)                                          \
+      SEQUOIA_GENERATE_TO_UNIFORMVARIABLES(Members)                                          \
     }                                                                                              \
     inline std::string toString() const {                                                          \
       std::stringstream ss;                                                                        \

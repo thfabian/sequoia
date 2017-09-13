@@ -96,25 +96,28 @@ public:
     variables_[name] = value;
   }
 
-  /// @brief Set a uniform struct
+  /// @brief Set the uniform struct `name` to `value`
   ///
-  /// @param uniformStruct    Struct to upload to the GPU
-  /// @param index            If the struct is part of an array, the index of this struct otherwise
-  ///                         pass -1 to indicate this is a scalar struct.
+  /// @param name     Name of the uniform variable
+  /// @param value    Struct to upload to the GPU
+  /// @param index    If the struct is part of an array, the index of this struct or -1 to indicate
+  ///                 this is a scalar struct
   ///
   /// This calls `StructType::toUniformVariableMap` to retrive all the uniform variables of the
   /// struct. The synopsis of `StructType::toUniformVariableMap` is:
   ///
   /// @code{.cpp}
-  /// void toUniformVariableMap(std::unordered_map<std::string, UniformVariable>& map, int index)
-  /// const;
+  /// void toUniformVariableMap(
+  ///   const std::string& name,
+  ///   std::unordered_map<std::string, UniformVariable>& map,
+  ///   int index) const;
   /// @endcode
   ///
   /// In general, the struct should be defined via the `SEQUOIA_UNIFORM_STRUCT` macro which
   /// generates the appropriate member function.
   template <class StructType>
-  void setUniformStruct(const StructType& uniformStruct, int index = -1) noexcept {
-    uniformStruct.toUniformVariableMap(variables_, index);
+  void setUniformStruct(const std::string& name, const StructType& value, int index = -1) {
+    value.toUniformVariableMap(name, variables_, index);
   }
 
   /// @brief Convert draw command to string

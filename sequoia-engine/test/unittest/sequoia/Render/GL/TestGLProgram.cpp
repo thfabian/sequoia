@@ -21,8 +21,11 @@
 #include "sequoia/Render/GL/GLRenderer.h"
 #include "sequoia/Render/GL/GLShaderManager.h"
 #include "sequoia/Render/GL/GLVertexAttribute.h"
+#include "sequoia/Render/UniformStruct.h"
+#include "sequoia/Render/UniformVariable.h"
 #include "sequoia/Unittest/GL/GLRenderSetup.h"
 #include "sequoia/Unittest/TestEnvironment.h"
+#include <array>
 #include <gtest/gtest.h>
 
 using namespace sequoia;
@@ -136,6 +139,8 @@ TEST_F(GLProgramTest, UniformArrays) {
   EXPECT_TRUE(glprogram->setUniformVariable("u_fvec3_array", u_fvec3_array));
 }
 
+SEQUOIA_UNIFORM_STRUCT(ScalarStruct, (int, a)(float, b)(math::vec3, c));
+
 TEST_F(GLProgramTest, UniformStruct) {
   TestEnvironment& env = TestEnvironment::getSingleton();
   RenderSystem& rsys = RenderSystem::getSingleton();
@@ -145,6 +150,43 @@ TEST_F(GLProgramTest, UniformStruct) {
 
   std::shared_ptr<Program> program = rsys.createProgram({vertexShader});
   GLProgram* glprogram = dyn_cast<GLProgram>(program.get());
+
+  EXPECT_EQ(glprogram->getUniformVariables().size(), 3);
+
+  ScalarStruct salarStruct{2, 2.1f, math::vec3(2)};
+
+  std::unordered_map<std::string, UniformVariable> map;
+  salarStruct.toUniformVariableMap("u_ScalarStruct", map, -1);
+
+  for(const auto& m : map)
+    EXPECT_TRUE(glprogram->setUniformVariable(m.first, m.second));
+}
+
+TEST_F(GLProgramTest, UniformArrayOfStruct) {
+  TestEnvironment& env = TestEnvironment::getSingleton();
+  RenderSystem& rsys = RenderSystem::getSingleton();
+
+  std::shared_ptr<Shader> vertexShader = rsys.createShader(
+      Shader::ST_Vertex,
+      env.getFile("sequoia/Render/GL/TestGLProgram/VertexUniformArrayOfStruct.vert"));
+
+  std::shared_ptr<Program> program = rsys.createProgram({vertexShader});
+  GLProgram* glprogram = dyn_cast<GLProgram>(program.get());
+
+  EXPECT_EQ(glprogram->getUniformVariables().size(), 9);
+
+  std::array<ScalarStruct, 3> salarStructArray;
+  salarStructArray[0] = ScalarStruct{0, 0.1f, math::vec3(0)};
+  salarStructArray[1] = ScalarStruct{1, 1.1f, math::vec3(1)};
+  salarStructArray[2] = ScalarStruct{2, 2.1f, math::vec3(2)};
+
+  std::unordered_map<std::string, UniformVariable> map;
+  salarStructArray[0].toUniformVariableMap("u_ScalarStruct", map, 0);
+  salarStructArray[1].toUniformVariableMap("u_ScalarStruct", map, 1);
+  salarStructArray[2].toUniformVariableMap("u_ScalarStruct", map, 2);
+
+  for(const auto& m : map)
+    EXPECT_TRUE(glprogram->setUniformVariable(m.first, m.second));
 }
 
 TEST_F(GLProgramTest, UniformMatrices) {
