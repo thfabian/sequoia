@@ -137,6 +137,7 @@ sequoia_add_objects(
           Shader.h
           Texture.cpp
           Texture.h
+          UniformStruct.h
           UniformVariable.cpp
           UniformVariable.h
           UniformVariable.inc

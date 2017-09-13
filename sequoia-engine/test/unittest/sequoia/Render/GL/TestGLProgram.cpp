@@ -137,8 +137,14 @@ TEST_F(GLProgramTest, UniformArrays) {
 }
 
 TEST_F(GLProgramTest, UniformStruct) {
-  //  TestEnvironment& env = TestEnvironment::getSingleton();
-  //  RenderSystem& rsys = RenderSystem::getSingleton();
+  TestEnvironment& env = TestEnvironment::getSingleton();
+  RenderSystem& rsys = RenderSystem::getSingleton();
+
+  std::shared_ptr<Shader> vertexShader = rsys.createShader(
+      Shader::ST_Vertex, env.getFile("sequoia/Render/GL/TestGLProgram/VertexUniformStruct.vert"));
+
+  std::shared_ptr<Program> program = rsys.createProgram({vertexShader});
+  GLProgram* glprogram = dyn_cast<GLProgram>(program.get());
 }
 
 TEST_F(GLProgramTest, UniformMatrices) {

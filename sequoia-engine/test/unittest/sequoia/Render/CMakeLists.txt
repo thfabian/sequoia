@@ -25,6 +25,7 @@ sequoia_add_test(
           TestRenderServer.cpp
           TestRenderState.cpp
           TestTexture.cpp
+          TestUniformStruct.cpp
           TestUniformVariable.cpp
           TestVertex.cpp
   DEPENDS Sequoia
