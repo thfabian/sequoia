@@ -27,6 +27,9 @@ export CC=${C_COMPILER}
 $CC --version
 $CXX --version
 
+python3 --version
+whereis python3
+
 # Build sequoia
 pushd $(pwd)
 mkdir build && cd build
