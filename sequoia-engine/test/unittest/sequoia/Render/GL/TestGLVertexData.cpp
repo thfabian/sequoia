@@ -80,7 +80,7 @@ TYPED_TEST(GLVertexDataTest, VertexAttributes) {
   {
     GLint enabled;
     glGetVertexAttribiv(GLVertexAttribute::Position, GL_VERTEX_ATTRIB_ARRAY_ENABLED, &enabled);
-    EXPECT_EQ(enabled, layout->hasPosition());
+    EXPECT_EQ(enabled, (GLint)layout->hasPosition());
 
     if(layout->hasPosition()) {
 
@@ -96,7 +96,7 @@ TYPED_TEST(GLVertexDataTest, VertexAttributes) {
       GLint normalized;
       glGetVertexAttribiv(GLVertexAttribute::Position, GL_VERTEX_ATTRIB_ARRAY_NORMALIZED,
                           &normalized);
-      EXPECT_EQ(normalized, layout->Position.Normalized);
+      EXPECT_EQ(normalized, (GLint)layout->Position.Normalized);
 
       GLint size;
       glGetVertexAttribiv(GLVertexAttribute::Position, GL_VERTEX_ATTRIB_ARRAY_SIZE, &size);
@@ -117,10 +117,9 @@ TYPED_TEST(GLVertexDataTest, VertexAttributes) {
   {
     GLint enabled;
     glGetVertexAttribiv(GLVertexAttribute::Normal, GL_VERTEX_ATTRIB_ARRAY_ENABLED, &enabled);
-    EXPECT_EQ(enabled, layout->hasNormal());
+    EXPECT_EQ(enabled, (GLint)layout->hasNormal());
 
     if(layout->hasNormal()) {
-
       GLint bufferID;
       glGetVertexAttribiv(GLVertexAttribute::Normal, GL_VERTEX_ATTRIB_ARRAY_BUFFER_BINDING,
                           &bufferID);
@@ -133,7 +132,7 @@ TYPED_TEST(GLVertexDataTest, VertexAttributes) {
       GLint normalized;
       glGetVertexAttribiv(GLVertexAttribute::Normal, GL_VERTEX_ATTRIB_ARRAY_NORMALIZED,
                           &normalized);
-      EXPECT_EQ(normalized, layout->Normal.Normalized);
+      EXPECT_EQ(normalized, (GLint)layout->Normal.Normalized);
 
       GLint size;
       glGetVertexAttribiv(GLVertexAttribute::Normal, GL_VERTEX_ATTRIB_ARRAY_SIZE, &size);
@@ -154,7 +153,7 @@ TYPED_TEST(GLVertexDataTest, VertexAttributes) {
   {
     GLint enabled;
     glGetVertexAttribiv(GLVertexAttribute::TexCoord, GL_VERTEX_ATTRIB_ARRAY_ENABLED, &enabled);
-    EXPECT_EQ(enabled, layout->hasTexCoord());
+    EXPECT_EQ(enabled, (GLint)layout->hasTexCoord());
 
     if(layout->hasTexCoord()) {
 
@@ -170,7 +169,7 @@ TYPED_TEST(GLVertexDataTest, VertexAttributes) {
       GLint normalized;
       glGetVertexAttribiv(GLVertexAttribute::TexCoord, GL_VERTEX_ATTRIB_ARRAY_NORMALIZED,
                           &normalized);
-      EXPECT_EQ(normalized, layout->TexCoord.Normalized);
+      EXPECT_EQ(normalized, (GLint)layout->TexCoord.Normalized);
 
       GLint size;
       glGetVertexAttribiv(GLVertexAttribute::TexCoord, GL_VERTEX_ATTRIB_ARRAY_SIZE, &size);
@@ -191,7 +190,7 @@ TYPED_TEST(GLVertexDataTest, VertexAttributes) {
   {
     GLint enabled;
     glGetVertexAttribiv(GLVertexAttribute::Color, GL_VERTEX_ATTRIB_ARRAY_ENABLED, &enabled);
-    EXPECT_EQ(enabled, layout->hasColor());
+    EXPECT_EQ(enabled, (GLint)layout->hasColor());
 
     if(layout->hasColor()) {
 
@@ -206,7 +205,7 @@ TYPED_TEST(GLVertexDataTest, VertexAttributes) {
 
       GLint normalized;
       glGetVertexAttribiv(GLVertexAttribute::Color, GL_VERTEX_ATTRIB_ARRAY_NORMALIZED, &normalized);
-      EXPECT_EQ(normalized, layout->Color.Normalized);
+      EXPECT_EQ(normalized, (GLint)layout->Color.Normalized);
 
       GLint size;
       glGetVertexAttribiv(GLVertexAttribute::Color, GL_VERTEX_ATTRIB_ARRAY_SIZE, &size);

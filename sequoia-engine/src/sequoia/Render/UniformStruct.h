@@ -127,7 +127,7 @@
         const std::string& variableName,                                                           \
         std::unordered_map<std::string, ::sequoia::render::UniformVariable>& uniformMap,           \
         int index) const {                                                                         \
-      SEQUOIA_GENERATE_TO_UNIFORMVARIABLES(Members)                                          \
+      SEQUOIA_GENERATE_TO_UNIFORMVARIABLES(Members)                                                \
     }                                                                                              \
     inline std::string toString() const {                                                          \
       std::stringstream ss;                                                                        \

@@ -51,7 +51,7 @@ public:
 };
 
 #define SEQUOIA_DEFINE_TESTCASEFIXTURE_IMPL(TestCaseName, FixtureT)                                \
-  class TestCaseName : public testing::Test, public NonCopyable {                                  \
+  class TestCaseName : public ::testing::Test, public ::sequoia::core::NonCopyable {               \
   public:                                                                                          \
     static std::unique_ptr<FixtureT> Fixture;                                                      \
     static void SetUpTestCase() {                                                                  \

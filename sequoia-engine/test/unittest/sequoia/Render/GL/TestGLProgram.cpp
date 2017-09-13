@@ -122,20 +122,20 @@ TEST_F(GLProgramTest, UniformArrays) {
 
   EXPECT_EQ(glprogram->getUniformVariables().size(), 2);
 
-  UniformVariable u_float_array({1.0f, 2.0f});
+  ::sequoia::render::UniformVariable u_float_array({1.0f, 2.0f});
   EXPECT_TRUE(glprogram->setUniformVariable("u_float_array", u_float_array));
 
   // Invalid type -> throw
-  UniformVariable u_int_array({1, 2});
+  ::sequoia::render::UniformVariable u_int_array({1, 2});
   EXPECT_THROW(glprogram->setUniformVariable("u_float_array", u_int_array),
                render::RenderSystemException);
 
   // Invalid size -> throw
-  UniformVariable u_float_array_too_big({1.0f, 2.0f, 3.0f});
+  ::sequoia::render::UniformVariable u_float_array_too_big({1.0f, 2.0f, 3.0f});
   EXPECT_THROW(glprogram->setUniformVariable("u_float_array", u_float_array_too_big),
                render::RenderSystemException);
 
-  UniformVariable u_fvec3_array({math::vec3(1), math::vec3(2)});
+  ::sequoia::render::UniformVariable u_fvec3_array({math::vec3(1), math::vec3(2)});
   EXPECT_TRUE(glprogram->setUniformVariable("u_fvec3_array", u_fvec3_array));
 }
 
@@ -155,7 +155,7 @@ TEST_F(GLProgramTest, UniformStruct) {
 
   ScalarStruct salarStruct{2, 2.1f, math::vec3(2)};
 
-  std::unordered_map<std::string, UniformVariable> map;
+  std::unordered_map<std::string, ::sequoia::render::UniformVariable> map;
   salarStruct.toUniformVariableMap("u_ScalarStruct", map, -1);
 
   for(const auto& m : map)
@@ -180,7 +180,7 @@ TEST_F(GLProgramTest, UniformArrayOfStruct) {
   salarStructArray[1] = ScalarStruct{1, 1.1f, math::vec3(1)};
   salarStructArray[2] = ScalarStruct{2, 2.1f, math::vec3(2)};
 
-  std::unordered_map<std::string, UniformVariable> map;
+  std::unordered_map<std::string, ::sequoia::render::UniformVariable> map;
   salarStructArray[0].toUniformVariableMap("u_ScalarStruct", map, 0);
   salarStructArray[1].toUniformVariableMap("u_ScalarStruct", map, 1);
   salarStructArray[2].toUniformVariableMap("u_ScalarStruct", map, 2);

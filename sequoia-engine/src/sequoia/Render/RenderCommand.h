@@ -19,6 +19,7 @@
 #include "sequoia/Core/Export.h"
 #include "sequoia/Render/RenderFwd.h"
 #include <memory>
+#include <string>
 
 namespace sequoia {
 
