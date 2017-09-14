@@ -13,44 +13,45 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Game/SceneGraph.h"
 #include "sequoia/Core/Format.h"
+#include "sequoia/Game/SceneGraph.h"
 #include "sequoia/Game/SceneNode.h"
 #include <algorithm>
+#include <atomic>
 #include <iostream>
 
 namespace sequoia {
 
 namespace game {
 
+SceneGraph::SceneGraph() { root_ = SceneNode::allocate<SceneNode>("__root__"); }
+
+SceneGraph::~SceneGraph() {}
+
+void SceneGraph::update(const SceneNode::UpdateEvent& event) {
+  // TODO: Maybe do in parallel?
+  apply([&event](SceneNode* node) { node->update(event); });
+}
+
+void SceneGraph::clear() { root_->clearChildren(); }
+
+std::size_t SceneGraph::size() const {
+  std::atomic<std::size_t> s{0};
+  apply([&s](SceneNode * node) noexcept { s++; }, SceneNode::EP_Parallel);
+  return (s.load() - 1);
+}
+
 std::string SceneGraph::toString() const {
   return core::format("SceneGraph[\n"
-                      " nodes = %s\n"
+                      "  nodes = %s\n"
                       "]",
-                      nodes_.size());
+                      size());
 }
 
 std::string SceneGraph::toDot() const { return std::string(); }
 
 void SceneGraph::dump() const {
-  for(const auto& node : nodes_)
-    std::cout << node->toString() << "\n";
-}
-
-void SceneGraph::remove(const std::shared_ptr<SceneNode>& node) {
-  nodes_.erase(std::remove(nodes_.begin(), nodes_.end(), node), nodes_.end());
-}
-
-void SceneGraph::update(const SceneNode::UpdateEvent& event) {
-  apply([&event](SceneNode* node) { node->update(event); });
-}
-
-void SceneGraph::clear() { nodes_.clear(); }
-
-std::size_t SceneGraph::size() const {
-  std::size_t s = 0;
-  apply([&s](SceneNode* node) { ++s; });
-  return s;
+  apply([](SceneNode* node) { std::cout << node->toString() << "\n"; }, SceneNode::EP_Sequential);
 }
 
 } // namespace game

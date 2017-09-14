@@ -26,11 +26,31 @@ namespace {
 
 SEQUOIA_TESTCASEFIXTURE(SceneGraphTest, GameSetup);
 
-TEST_F(SceneGraphTest, Construction) {
+TEST_F(SceneGraphTest, Insert) {
   std::shared_ptr<SceneGraph> graph = std::make_shared<SceneGraph>();
 
-  graph->insert(SceneNode::allocate<SceneNode>("TestNode"));
+  graph->insert(SceneNode::allocate<SceneNode>("TestNode_1"));
   EXPECT_EQ(graph->size(), 1);
+
+  graph->insert(SceneNode::allocate<SceneNode>("TestNode_2"));
+  EXPECT_EQ(graph->size(), 2);
+}
+
+TEST_F(SceneGraphTest, Remove) {
+  std::shared_ptr<SceneGraph> graph = std::make_shared<SceneGraph>();
+
+  graph->insert(SceneNode::allocate<SceneNode>("TestNode_1"));
+  graph->insert(SceneNode::allocate<SceneNode>("TestNode_2"));
+
+  auto node = SceneNode::allocate<SceneNode>("TestNode_3");
+  graph->insert(node);
+  EXPECT_EQ(graph->size(), 3);
+
+  graph->remove(node);
+  EXPECT_EQ(graph->size(), 2);
+
+  graph->clear();
+  EXPECT_EQ(graph->size(), 0);
 }
 
 } // anonymous namespace

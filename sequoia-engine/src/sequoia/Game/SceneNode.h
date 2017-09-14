@@ -20,6 +20,7 @@
 #include "sequoia/Game/SceneNodeAlloc.h"
 #include "sequoia/Game/SceneNodeCapability.h"
 #include "sequoia/Math/Math.h"
+#include <algorithm>
 #include <array>
 #include <functional>
 #include <memory>
@@ -132,6 +133,14 @@ public:
     children_.emplace_back(child);
     children_.back()->setParent(shared_from_this());
   }
+
+  /// @brief Remove a child from the scene node
+  void removeChild(const std::shared_ptr<SceneNode>& child) {
+    children_.erase(std::remove(children_.begin(), children_.end(), child), children_.end());
+  }
+  
+  /// @brief Remove all children
+  void clearChildren() { children_.clear(); }
 
   /// @brief Check if the child has any children
   bool hasChildren() const { return !children_.empty(); }

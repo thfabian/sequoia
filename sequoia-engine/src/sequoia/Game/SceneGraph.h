@@ -30,27 +30,31 @@ namespace game {
 /// nodes
 /// @ingroup game
 class SEQUOIA_API SceneGraph : public NonCopyable {
-
-  /// Top-level nodes
-  std::vector<std::shared_ptr<SceneNode>> nodes_;
+  /// Root node
+  std::shared_ptr<SceneNode> root_;
 
 public:
-  virtual ~SceneGraph() {}
+  SceneGraph();
+  ~SceneGraph();
 
   /// @brief Insert a new scenen `node` into the graph
-  void insert(const std::shared_ptr<SceneNode>& node) { nodes_.emplace_back(node); }
+  void insert(const std::shared_ptr<SceneNode>& node) { root_->addChild(node); }
 
   /// @brief Remove the `node` (and all its children) from the graph
-  void remove(const std::shared_ptr<SceneNode>& node);
+  void remove(const std::shared_ptr<SceneNode>& node) { root_->removeChild(node); }
 
   /// @brief Update all nodes to indicate we moved on to the next time-step
-  virtual void update(const SceneNode::UpdateEvent& event);
+  void update(const SceneNode::UpdateEvent& event);
 
-  /// @brief Apply `functor` to each node of the graph
+  /// @brief Apply `functor` to the node and all its children
+  ///
+  /// @tparam Functor   Function type: `void(SceneNode*)` or `void(SceneNode*) noexcept`
+  /// @param functor    Functor to apply to the node and its children
+  /// @param policy     Executation policy to launch `functor`
   template <class Functor>
-  void apply(Functor&& functor) const {
-    for(const auto& node : nodes_)
-      node->apply(std::forward<Functor>(functor));
+  void apply(Functor&& functor,
+             SceneNode::ExecutionPolicy policy = SceneNode::EP_Sequential) const {
+    root_->apply(std::forward<Functor>(functor), policy);
   }
 
   /// @brief Clear the graph
