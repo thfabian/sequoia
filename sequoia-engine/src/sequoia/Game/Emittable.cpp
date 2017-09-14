@@ -13,29 +13,27 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_GAME_GAMEFWD_H
-#define SEQUOIA_GAME_GAMEFWD_H
+#include "sequoia/Core/Format.h"
+#include "sequoia/Core/StringUtil.h"
+#include "sequoia/Game/Emittable.h"
 
 namespace sequoia {
 
 namespace game {
 
-class AssetManager;
-class CameraController;
-class CameraControllerFree;
-class Drawable;
-class Emittable;
-class Game;
-class Keymap;
-class Mesh;
-class MeshManager;
-class Scene;
-class SceneGraph;
-class SceneNode;
-struct GameOptions;
+Emittable::~Emittable() {}
+
+Emittable::Emittable(SceneNode* node, EmitterKind kind) : Base(node), kind_(kind), active_(true) {}
+
+std::string Emittable::toString() const {
+  auto stringPair = toStringImpl();
+  return core::format("%s[\n  %s]", stringPair.first, core::indent(stringPair.second));
+}
+
+std::pair<std::string, std::string> Emittable::toStringImpl() const {
+  return std::make_pair("Emittable", core::format("active = %s,\n", active_ ? "true" : "false"));
+}
 
 } // namespace game
 
 } // namespace sequoia
-
-#endif

@@ -49,6 +49,12 @@ std::ostream& operator<<(std::ostream& os, const Color& color) {
   return os;
 }
 
+const Color Color::White = Color(ColorFormat::RGBA, 255, 255, 255, 255);
+const Color Color::Black = Color(ColorFormat::RGBA, 0, 0, 0, 255);
+const Color Color::Red = Color(ColorFormat::RGBA, 255, 0, 0, 255);
+const Color Color::Green = Color(ColorFormat::RGBA, 0, 255, 0, 255);
+const Color Color::Blue = Color(ColorFormat::RGBA, 0, 0, 255, 255);
+
 } // namespace core
 
 } // namespace sequoia

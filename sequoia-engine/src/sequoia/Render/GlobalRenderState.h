@@ -60,7 +60,7 @@ public:
   std::string toString() const;
 
 private:
-  /// Presistent uniformvariables of the Program
+  /// Presistent uniform variables of a Program
   std::unordered_map<std::shared_ptr<Program>, std::unordered_map<std::string, UniformVariable>>
       uniformVariables_;
 };

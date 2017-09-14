@@ -139,7 +139,7 @@ TEST_F(GLProgramTest, UniformArrays) {
   EXPECT_TRUE(glprogram->setUniformVariable("u_fvec3_array", u_fvec3_array));
 }
 
-SEQUOIA_UNIFORM_STRUCT(ScalarStruct, (int, a)(float, b)(math::vec3, c));
+SEQUOIA_UNIFORM_STRUCT(TestStruct, (int, a)(float, b)(math::vec3, c));
 
 TEST_F(GLProgramTest, UniformStruct) {
   TestEnvironment& env = TestEnvironment::getSingleton();
@@ -153,10 +153,10 @@ TEST_F(GLProgramTest, UniformStruct) {
 
   EXPECT_EQ(glprogram->getUniformVariables().size(), 3);
 
-  ScalarStruct salarStruct{2, 2.1f, math::vec3(2)};
+  TestStruct testStruct{2, 2.1f, math::vec3(2)};
 
   std::unordered_map<std::string, ::sequoia::render::UniformVariable> map;
-  salarStruct.toUniformVariableMap("u_ScalarStruct", map, -1);
+  testStruct.toUniformVariableMap("u_TestStruct", map, -1);
 
   for(const auto& m : map)
     EXPECT_TRUE(glprogram->setUniformVariable(m.first, m.second));
@@ -175,15 +175,15 @@ TEST_F(GLProgramTest, UniformArrayOfStruct) {
 
   EXPECT_EQ(glprogram->getUniformVariables().size(), 9);
 
-  std::array<ScalarStruct, 3> salarStructArray;
-  salarStructArray[0] = ScalarStruct{0, 0.1f, math::vec3(0)};
-  salarStructArray[1] = ScalarStruct{1, 1.1f, math::vec3(1)};
-  salarStructArray[2] = ScalarStruct{2, 2.1f, math::vec3(2)};
+  std::array<TestStruct, 3> testStructArray;
+  testStructArray[0] = TestStruct{0, 0.1f, math::vec3(0)};
+  testStructArray[1] = TestStruct{1, 1.1f, math::vec3(1)};
+  testStructArray[2] = TestStruct{2, 2.1f, math::vec3(2)};
 
   std::unordered_map<std::string, ::sequoia::render::UniformVariable> map;
-  salarStructArray[0].toUniformVariableMap("u_ScalarStruct", map, 0);
-  salarStructArray[1].toUniformVariableMap("u_ScalarStruct", map, 1);
-  salarStructArray[2].toUniformVariableMap("u_ScalarStruct", map, 2);
+  testStructArray[0].toUniformVariableMap("u_TestStruct", map, 0);
+  testStructArray[1].toUniformVariableMap("u_TestStruct", map, 1);
+  testStructArray[2].toUniformVariableMap("u_TestStruct", map, 2);
 
   for(const auto& m : map)
     EXPECT_TRUE(glprogram->setUniformVariable(m.first, m.second));

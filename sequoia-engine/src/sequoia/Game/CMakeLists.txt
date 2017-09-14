@@ -17,31 +17,34 @@ sequoia_add_objects(
   NAME SequoiaGame
   SOURCES AssetManager.h
           AssetManager.cpp
-          CameraController.h
           CameraController.cpp
-          CameraControllerFree.h
+          CameraController.h
           CameraControllerFree.cpp
-          Drawable.h
+          CameraControllerFree.h
           Drawable.cpp
+          Drawable.h
+          Emittable.cpp
+          Emittable.h
           Exception.h
-          Game.h
           Game.cpp
+          Game.h
           GameFwd.h
-          Mesh.h
-          Mesh.cpp
-          MeshManager.h
-          MeshManager.cpp
-          Keymap.h
           Keymap.cpp
-          Scene.h
+          Keymap.h
+          Mesh.cpp
+          Mesh.h
+          MeshManager.cpp
+          MeshManager.h
+          PointLight.cpp
+          PointLight.h
           Scene.cpp
-          SceneGraph.h
+          Scene.h
           SceneGraph.cpp
-          SceneNode.h
+          SceneGraph.h
           SceneNode.cpp 
+          SceneNode.h
           SceneNodeAlloc.h          
           SceneNodeCapability.h
   DEPENDS SequoiaCore
           SequoiaRender
 )
-

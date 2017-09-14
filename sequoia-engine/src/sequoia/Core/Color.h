@@ -19,8 +19,10 @@
 #include "sequoia/Core/Assert.h"
 #include "sequoia/Core/Byte.h"
 #include "sequoia/Core/Export.h"
+#include <array>
 #include <cstdint>
 #include <iosfwd>
+#include <limits>
 #include <utility>
 
 namespace sequoia {
@@ -60,8 +62,8 @@ SEQUOIA_API extern std::ostream& operator<<(std::ostream& os, ColorFormat format
 ///
 /// @ingroup core
 class Color {
-  Byte data_[4];             ///< 32-bit data
-  const ColorFormat format_; ///< Format of the color (also stores the number of used channels)
+  Byte data_[4];       ///< 32-bit data
+  ColorFormat format_; ///< Format of the color (also stores the number of used channels)
 
 public:
   /// @brief Construct from pixel data (copies `NumChannels` Bytes starting at `data`)
@@ -160,6 +162,23 @@ public:
 
   /// @brief Get alpha value
   Byte a() const noexcept { return data_[3]; }
+
+  /// @brief Commonly used colors
+  /// @{
+  static const Color White;
+  static const Color Black;
+  static const Color Red;
+  static const Color Green;
+  static const Color Blue;
+  /// @}
+
+  /// @brief Normalize the color as RGBA to [0, 1) as a floating point number
+  std::array<float, 4> normalize() const noexcept {
+    return {{float(r()) / std::numeric_limits<Byte>::max(),
+             float(g()) / std::numeric_limits<Byte>::max(),
+             float(b()) / std::numeric_limits<Byte>::max(),
+             float(a()) / std::numeric_limits<Byte>::max()}};
+  }
 
 private:
   template <int Idx, class T, class... Args>

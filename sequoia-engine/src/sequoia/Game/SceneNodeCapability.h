@@ -42,7 +42,11 @@ public:
 
   /// @brief Enum for distinguishing capabilities
   /// @note The name of the enum needs to correspond to the type name of the SceneNodeCapability
-  enum Kind { Drawable = 0, NumCapabilities };
+  enum Kind {
+    Drawable = 0, ///< The SceneNode can be rendered
+    Emittable,    ///< The SceneNode emits some form of lighting
+    NumCapabilities
+  };
 
   /// @brief Virtual destructor
   virtual ~SceneNodeCapability() {}

@@ -76,20 +76,20 @@ render::DrawCommand* Drawable::prepareDrawCommand() {
 
 void Drawable::update(const SceneNodeUpdateEvent& event) {}
 
-std::shared_ptr<SceneNodeCapability> Drawable::clone(SceneNode* node) const {
-  return scene::allocate_shared<Drawable>(node, mesh_, drawCommand_.get().getProgram());
-}
-
-void Drawable::setUniformVariableImpl(const std::string& name, UniformVariable variable) {
-  drawCommand_.get().setUniformVariable(name, variable);
-}
-
 std::string Drawable::toString() const {
   return core::format("Drawable[\n"
                       "  drawCommand = %s,\n"
                       "  mesh = %s,\n"
                       "]",
                       drawCommand_.get().toString(), mesh_ ? mesh_->toString() : "null");
+}
+
+std::shared_ptr<SceneNodeCapability> Drawable::clone(SceneNode* node) const {
+  return scene::allocate_shared<Drawable>(node, mesh_, drawCommand_.get().getProgram());
+}
+
+void Drawable::setUniformVariableImpl(const std::string& name, UniformVariable variable) {
+  drawCommand_.get().setUniformVariable(name, variable);
 }
 
 } // namespace game

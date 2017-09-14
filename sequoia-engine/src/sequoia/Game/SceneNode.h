@@ -254,7 +254,7 @@ private:
                          ExecutionPolicy policy) noexcept;
 
 protected:
-  /// @brief Implementation of `toString` returns stringified members and title
+  /// @brief Implementation of `toString` which returns the class name and stringified members
   virtual std::pair<std::string, std::string> toStringImpl() const;
 
   /// @brief Compute the model matrix

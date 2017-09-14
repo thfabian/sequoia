@@ -17,6 +17,7 @@
 #define SEQUOIA_GAME_DRAWABLE_H
 
 #include "sequoia/Core/DoubleBuffered.h"
+#include "sequoia/Game/GameFwd.h"
 #include "sequoia/Game/SceneNodeCapability.h"
 #include "sequoia/Render/DrawCommand.h"
 #include "sequoia/Render/RenderFwd.h"
@@ -27,8 +28,6 @@
 namespace sequoia {
 
 namespace game {
-
-class Mesh;
 
 /// @brief Add the capability to a SceneNode to be drawn to the screen
 /// @ingroup game

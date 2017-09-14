@@ -14,6 +14,7 @@
 //===------------------------------------------------------------------------------------------===//
 
 #include "sequoia/Core/Color.h"
+#include "sequoia/Unittest/Test.h"
 #include "sequoia/Unittest/TestEnvironment.h"
 #include <gtest/gtest.h>
 
@@ -80,6 +81,14 @@ TEST(ColorTest, Comparison) {
   EXPECT_EQ(core::makeColorRGBA(1, 2, 3, 4), core::makeColorBGRA(3, 2, 1, 4));
   EXPECT_EQ(core::makeColorRGB(1, 2, 3), core::makeColorBGR(3, 2, 1));
   EXPECT_NE(core::makeColorRGB(1, 2, 3), core::makeColorRGBA(1, 2, 3, 4));
+}
+
+TEST(ColorTest, Normalize) {
+  EXPECT_VEC_NEAR(math::make_vec4(core::makeColorRGBA(51, 102, 153, 204).normalize().data()),
+                  math::vec4(0.2, 0.4, 0.6, 0.8), 1e-05f);
+
+  EXPECT_VEC_NEAR(math::make_vec4(core::makeColorBGRA(51, 102, 153, 204).normalize().data()),
+                  math::vec4(0.6, 0.4, 0.2, 0.8), 1e-05f);
 }
 
 } // anonymous namespace
