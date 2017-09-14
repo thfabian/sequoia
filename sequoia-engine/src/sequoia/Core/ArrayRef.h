@@ -68,7 +68,7 @@ public:
   /// @brief Construct an ArrayRef from a std::vector
   template <typename A>
   ArrayRef(const std::vector<T, A>& Vec) : data_(Vec.data()), length_(Vec.size()) {}
-
+  
   /// @brief Construct an ArrayRef from a std::array
   template <size_t N>
   constexpr ArrayRef(const std::array<T, N>& Arr) : data_(Arr.data()), length_(N) {}
@@ -270,7 +270,7 @@ public:
 
   /// @brief Construct a MutableArrayRef from a std::vector
   MutableArrayRef(std::vector<T>& Vec) : ArrayRef<T>(Vec) {}
-
+  
   /// @brief Construct an ArrayRef from a std::array
   template <size_t N>
   constexpr MutableArrayRef(std::array<T, N>& Arr) : ArrayRef<T>(Arr) {}

@@ -30,6 +30,8 @@ std::string Emittable::toString() const {
   return core::format("%s[\n  %s]", stringPair.first, core::indent(stringPair.second));
 }
 
+std::string Emittable::getUniformVariableName() const { return std::string("e_") + getName(); }
+
 std::pair<std::string, std::string> Emittable::toStringImpl() const {
   return std::make_pair("Emittable", core::format("active = %s,\n", active_ ? "true" : "false"));
 }

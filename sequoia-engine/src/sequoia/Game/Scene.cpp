@@ -40,21 +40,31 @@ Scene::Scene() : activeCamera_(nullptr) {
   renderCommand_.first().setDrawCommandList(std::make_shared<render::DrawCommandListDefault>());
   renderCommand_.second().setDrawCommandList(std::make_shared<render::DrawCommandListDefault>());
   drawCommands_.reserve(render::DrawCommandList::DefaultSize);
-
+  
   sceneGraph_ = std::make_shared<SceneGraph>();
 }
 
 void Scene::updateDrawCommandList(render::DrawCommandList* list) {
   SEQUOIA_ASSERT(list);
-
   list->clear();
+
+  // Reset temporaries
   drawCommands_.clear();
+  for(int i = 0; i < Emittable::NumEmitter; ++i)
+    emitters_[i] = 0;
 
   // Extract all DrawCommands
   sceneGraph_->apply([this](SceneNode* node) {
     if(Drawable* draw = node->get<Drawable>()) {
       if(draw->isActive()) {
-        drawCommands_.emplace_back(draw->prepareDrawCommand());
+        drawCommands_.push_back(draw->prepareDrawCommand());
+      }
+    }
+
+    if(Emittable* emittable = node->get<Emittable>()) {
+      if(emittable->isActive()) {
+        int index = std::atomic_fetch_add(&emitters_[emittable->getKind()], 1);
+        (void)index;
       }
     }
   });

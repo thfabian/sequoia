@@ -38,7 +38,7 @@ public:
                                     int index) override;
 
   /// @copydoc Emittable::getUniformVariableName
-  virtual const char* getUniformVariableName() const override;
+  virtual const char* getName() const override;
 
   /// @copydoc SceneNodeCapability::update
   virtual void update(const SceneNodeUpdateEvent& event) override;

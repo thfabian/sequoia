@@ -45,7 +45,7 @@ void PointLight::toUniformVariableMap(std::unordered_map<std::string, UniformVar
   light.toUniformVariableMap(getUniformVariableName(), map, index);
 }
 
-const char* PointLight::getUniformVariableName() const { return "u_PointLight"; }
+const char* PointLight::getName() const { return "PointLight"; }
 
 void PointLight::update(const SceneNodeUpdateEvent& event) {}
 
@@ -54,10 +54,10 @@ std::shared_ptr<SceneNodeCapability> PointLight::clone(SceneNode* node) const {
 }
 
 std::pair<std::string, std::string> PointLight::toStringImpl() const {
-  return std::make_pair("PointLight", core::format("%s"
-                                                   "power = %s,\n"
-                                                   "color = %s\n",
-                                                   Base::toStringImpl().second, power_, color_));
+  return std::make_pair(getName(), core::format("%s"
+                                                "power = %s,\n"
+                                                "color = %s\n",
+                                                Base::toStringImpl().second, power_, color_));
 }
 
 } // namespace game

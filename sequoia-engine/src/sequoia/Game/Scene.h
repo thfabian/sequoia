@@ -16,13 +16,17 @@
 #ifndef SEQUOIA_GAME_SCENE_H
 #define SEQUOIA_GAME_SCENE_H
 
+#include "sequoia/Core/ConcurrentADT.h"
 #include "sequoia/Core/DoubleBuffered.h"
 #include "sequoia/Core/Export.h"
 #include "sequoia/Core/Listenable.h"
 #include "sequoia/Core/NonCopyable.h"
+#include "sequoia/Game/Emittable.h"
 #include "sequoia/Game/GameFwd.h"
 #include "sequoia/Render/RenderCommand.h"
 #include "sequoia/Render/RenderFwd.h"
+#include <array>
+#include <atomic>
 #include <memory>
 #include <vector>
 
@@ -93,7 +97,10 @@ private:
   std::shared_ptr<render::Camera> activeCamera_;
 
   /// Temporary list of draw-commands
-  std::vector<render::DrawCommand*> drawCommands_;
+  concurrent_vector<render::DrawCommand*> drawCommands_;
+
+  /// Temporary list of emitters
+  std::array<std::atomic<int>, Emittable::NumEmitter> emitters_;
 };
 
 } // namespace game

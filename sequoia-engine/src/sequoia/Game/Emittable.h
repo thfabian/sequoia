@@ -21,6 +21,7 @@
 #include "sequoia/Render/RenderFwd.h"
 #include "sequoia/Render/UniformVariable.h"
 #include <memory>
+#include <string>
 #include <unordered_map>
 
 namespace sequoia {
@@ -31,7 +32,7 @@ namespace game {
 /// @ingroup game
 class SEQUOIA_API Emittable : public SceneNodeCapability {
 public:
-  enum EmitterKind { EK_PointLight = 0 };
+  enum EmitterKind { EK_PointLight = 0, NumEmitter };
 
   /// @brief Virtual destructor
   virtual ~Emittable();
@@ -55,8 +56,8 @@ public:
 
   /// @brief Get the name of the emitter
   ///
-  /// This also represents the name of the assocated uniform variable in the GPU programs.
-  virtual const char* getUniformVariableName() const = 0;
+  /// This also serves as the uniform variable name for GPU programs (i.e `"e_" + getName()`)
+  virtual const char* getName() const = 0;
 
   /// @copydoc SceneNodeCapability::toString
   virtual std::string toString() const override final;
@@ -70,6 +71,9 @@ public:
 protected:
   /// @brief Implementation of `toString` which returns the class name and stringified members
   virtual std::pair<std::string, std::string> toStringImpl() const = 0;
+
+  /// @brief Get the uniform variable name of the emitter
+  std::string getUniformVariableName() const;
 
 private:
   using Base = SceneNodeCapability;

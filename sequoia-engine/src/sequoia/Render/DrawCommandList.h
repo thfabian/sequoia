@@ -52,7 +52,8 @@ public:
   /// `commands` are not modified during rendering.
   ///
   /// @param commands   DrawCommands to insert
-  void insert(ArrayRef<DrawCommand*> commands) noexcept {
+  template <class ContainerType>
+  void insert(const ContainerType& commands) noexcept {
     for(std::size_t i = 0; i < commands.size(); ++i)
       commands_.push_back(commands[i]);
   }
