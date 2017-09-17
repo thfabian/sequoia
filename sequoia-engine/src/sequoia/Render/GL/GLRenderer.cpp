@@ -13,7 +13,6 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Render/GL/GL.h"
 #include "sequoia/Core/Casting.h"
 #include "sequoia/Core/Logging.h"
 #include "sequoia/Core/Options.h"
@@ -21,6 +20,7 @@
 #include "sequoia/Math/CoordinateSystem.h"
 #include "sequoia/Render/Camera.h"
 #include "sequoia/Render/DrawCommandList.h"
+#include "sequoia/Render/GL/GL.h"
 #include "sequoia/Render/GL/GLExtensionManager.h"
 #include "sequoia/Render/GL/GLProgramManager.h"
 #include "sequoia/Render/GL/GLRenderSystem.h"
@@ -37,6 +37,7 @@
 #include <glbinding/Version.h>
 #include <glbinding/glbinding-version.h>
 #include <sstream>
+#include <unordered_set>
 
 namespace sequoia {
 
@@ -184,30 +185,41 @@ void GLRenderer::render(RenderCommand* command) {
   // Set the viewport
   stateCacheManager_->setViewport(viewport);
 
-  // Compute projection view matrix
-  math::mat4 matViewProj = camera->getViewProjectionMatrix();
+  // Compute projection-view matrix
+  math::mat4 matVP = camera->getViewProjectionMatrix();
+  UniformVariable u_matP = camera->getProjectionMatrix();
 
   // Clear the screen
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-  auto draw = [&matViewProj, this](DrawCommand* cmd) -> bool {
-    GLProgram* program = dyn_cast<GLProgram>(cmd->getProgram());
-    if(!program->isValid())
-      return false;
+  // Extract a list of all referenced, valid programs
+  std::unordered_set<Program*> programs;
+  for(DrawCommand* drawCommand = drawCommandList->start(); drawCommand != nullptr;
+      drawCommand = drawCommandList->next()) {
+    programs.insert(drawCommand->getProgram());
+  }
 
-    // Compute the full model-view-projection matrix
-    UniformVariable u_ModelViewProjection = matViewProj * cmd->getModelMatrix();
-    program->setUniformVariable("u_ModelViewProjection", u_ModelViewProjection);
+  // Set the uniform variables which are persistent accross the DrawCommands for each program
+  command->forEachUniformVariable(
+      programs, [this](Program* program, const std::string& name, const UniformVariable& variable) {
+        stateCacheManager_->setUniformVariable(program, name, variable);
+      });
+
+  for(DrawCommand* drawCommand = drawCommandList->start(); drawCommand != nullptr;
+      drawCommand = drawCommandList->next()) {
+    GLProgram* program = dyn_cast<GLProgram>(drawCommand->getProgram());
+    if(!program->isValid())
+      continue;
+
+    // Compute the transformation matrices (camera to world space)
+    UniformVariable u_matM = drawCommand->getModelMatrix();
+    UniformVariable u_matMVP = matVP * drawCommand->getModelMatrix();
+    program->setUniformVariable("u_matMVP", u_matMVP);
+    program->setUniformVariable("u_matM", u_matM);
+    program->setUniformVariable("u_matP", u_matP);
 
     // Update the OpenGL state-machine and draw the command
-    return stateCacheManager_->draw(cmd);
-  };
-
-  // Draw the commands
-  DrawCommand* drawCommand = nullptr;
-  for(drawCommand = drawCommandList->start(); drawCommand != nullptr;
-      drawCommand = drawCommandList->next()) {
-    draw(drawCommand);
+    stateCacheManager_->draw(drawCommand);
   }
 
   // Inform everyone that we finished rendering the frame

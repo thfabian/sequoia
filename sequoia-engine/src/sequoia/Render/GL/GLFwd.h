@@ -17,6 +17,7 @@
 #ifndef SEQUOIA_RENDER_GL_GLFWD_H
 #define SEQUOIA_RENDER_GL_GLFWD_H
 
+#include "sequoia/Render/RenderFwd.h"
 #include <glbinding/gl/enum.h>
 #include <glbinding/gl/extension.h>
 #include <glbinding/gl/types.h>

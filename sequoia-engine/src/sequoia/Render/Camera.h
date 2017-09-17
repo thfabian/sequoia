@@ -105,7 +105,7 @@ public:
   void lookAt(const math::vec3& eye, const math::vec3& center,
               const math::vec3& up = math::vec3(0, 1, 0));
 
-  /// @brief Get the view projection matrix
+  /// @brief Compute the view-projection matrix
   ///
   /// This returns `matViewProj = matProj * matView` where `matProj` is the projection matrix and
   /// `matView` is the camera view matrix. This call is formally equivalent to:
@@ -117,6 +117,9 @@ public:
   /// math::mat4 matViewProj = matProj * matView;
   /// @endcode
   math::mat4 getViewProjectionMatrix() const;
+
+  /// @brief Compute the view-projection matrix
+  math::mat4 getProjectionMatrix() const;
 
   /// @brief Set the position of the camera (equivalent to `setEye()`)
   void setPosition(const math::vec3& position);

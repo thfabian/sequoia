@@ -18,6 +18,7 @@
 
 #include "sequoia/Render/Program.h"
 #include "sequoia/Render/UniformVariable.h"
+#include <string>
 #include <unordered_map>
 
 namespace sequoia {
@@ -35,34 +36,54 @@ public:
   GlobalRenderState& operator=(const GlobalRenderState&) = default;
   GlobalRenderState& operator=(GlobalRenderState&&) = default;
 
-  /// @brief Set the global uniform variable `name` to `value` of `progam`
-  ///
-  /// Global uniform variables are *persistent* across the different DrawCommands. However, the
-  /// variables can be overwritten for indivudual DrawCommands via `DrawCommand::setUniformVariable`
+  /// @brief Set the uniform variable `name` to `value` of `progam`
   ///
   /// @param program    Program to apply the uniform variable
+  /// @param name       Name of the uniform variable
   /// @param variable   Uniform variable to set
-  void setUniformVariable(const std::shared_ptr<Program>& program, const std::string& name,
-                          const UniformVariable& value) noexcept {
-    uniformVariables_[program][name] = value;
+  void setPerProgramUniformVariable(Program* program, const std::string& name,
+                                    const UniformVariable& value);
+
+  /// @brief Set global uniform variable, shared by all programs, `name` to `value`
+  ///
+  /// @param name       Name of the uniform variable
+  /// @param variable   Uniform variable to set
+  void setSharedUniformVariable(const std::string& name, const UniformVariable& value);
+
+  /// @brief Get the UniformVariable map exclusive to `program`
+  /// @returns `NULL` if no no variables were registered for `program`
+  const std::unordered_map<std::string, UniformVariable>*
+  getPerProgramUniformVariables(Program* program) const noexcept {
+    auto it = perProgramUniformVariables_.find(program);
+    return (it != perProgramUniformVariables_.end() ? &it->second : nullptr);
   }
 
-  /// @brief Get the uniform variable map of `program`
-  const std::unordered_map<std::string, UniformVariable>&
-  getUniformVariables(const std::shared_ptr<Program>& program) const noexcept;
-
-  /// @brief Check if a uniform variable map exists for `program`
-  bool hasUniformVariables(const std::shared_ptr<Program>& program) const noexcept {
-    return (uniformVariables_.find(program) != uniformVariables_.end());
+  /// @brief Get the UniformVariable map shared by *all* programs
+  const std::unordered_map<std::string, UniformVariable>& getSharedUniformVariables() const
+      noexcept {
+    return sharedUniformVariables_;
   }
+
+  /// @brief Check if `program` has exclusive UniformVariables registered
+  bool hasPerProgramUniformVariables(Program* program) const noexcept {
+    return perProgramUniformVariables_.count(program);
+  }
+
+  /// @brief Reset the state
+  ///
+  /// This clears all registered uniform variables.
+  void reset();
 
   /// @brief Convert to string
   std::string toString() const;
 
 private:
-  /// Presistent uniform variables of a Program
-  std::unordered_map<std::shared_ptr<Program>, std::unordered_map<std::string, UniformVariable>>
-      uniformVariables_;
+  /// Uniform variables shared by *all* programs
+  std::unordered_map<std::string, UniformVariable> sharedUniformVariables_;
+
+  /// Uniform variable per program
+  std::unordered_map<Program*, std::unordered_map<std::string, UniformVariable>>
+      perProgramUniformVariables_;
 };
 
 } // namespace render

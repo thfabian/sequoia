@@ -13,12 +13,12 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Render/GL/GL.h"
 #include "sequoia/Core/Assert.h"
 #include "sequoia/Core/Casting.h"
 #include "sequoia/Core/Logging.h"
 #include "sequoia/Core/StringRef.h"
 #include "sequoia/Render/Exception.h"
+#include "sequoia/Render/GL/GL.h"
 #include "sequoia/Render/GL/GLFragmentData.h"
 #include "sequoia/Render/GL/GLProgramManager.h"
 #include "sequoia/Render/GL/GLRenderSystem.h"
@@ -118,7 +118,6 @@ void GLProgramManager::getUniforms(GLProgram* program) const {
   program->uniformInfoMap_.clear();
   program->textureSamplers_.clear();
   program->allUniformVariablesSet_ = false;
-  program->reportedWarningForInvalidUniformVariable_.clear();
 
   int numActiveUniforms = 0;
   glGetProgramiv(program->id_, GL_ACTIVE_UNIFORMS, &numActiveUniforms);

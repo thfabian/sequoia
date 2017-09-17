@@ -24,7 +24,7 @@ using namespace sequoia::unittest;
 
 namespace {
 
-TEST(GlobalRenderStateTest, UniformVariables) {
+TEST(GlobalRenderStateTest, PerProgramUniformVariables) {
   TestEnvironment& env = TestEnvironment::getSingleton();
   auto ptr = RenderSystem::create(RK_Null, TestOptions::getSingletonPtr());
 
@@ -33,34 +33,66 @@ TEST(GlobalRenderStateTest, UniformVariables) {
   auto shader2 = ptr->createShader(
       Shader::ST_Vertex, env.getFile("sequoia/Render/TestGlobalRenderState/Shader2.vert"));
 
-  auto program1 = ptr->createProgram({shader1});
-  auto program2 = ptr->createProgram({shader2});
+  auto program1Ptr = ptr->createProgram({shader1});
+  auto program1 = program1Ptr.get();
+
+  auto program2Ptr = ptr->createProgram({shader2});
+  auto program2 = program2Ptr.get();
 
   GlobalRenderState gstate;
-  EXPECT_FALSE(gstate.hasUniformVariables(program1));
-  EXPECT_FALSE(gstate.hasUniformVariables(program2));
+  EXPECT_FALSE(gstate.hasPerProgramUniformVariables(program1));
+  EXPECT_FALSE(gstate.hasPerProgramUniformVariables(program2));
 
-  gstate.setUniformVariable(program1, "int2", UniformVariable(int(2)));
-  EXPECT_TRUE(gstate.hasUniformVariables(program1));
-  EXPECT_FALSE(gstate.getUniformVariables(program1).empty());
+  // No variables registered, should return nullptr
+  EXPECT_EQ(gstate.getPerProgramUniformVariables(program1), nullptr);
+  EXPECT_EQ(gstate.getPerProgramUniformVariables(program2), nullptr);
 
-  gstate.setUniformVariable(program1, "float3", UniformVariable(float(3)));
-  EXPECT_EQ(gstate.getUniformVariables(program1).size(), 2);
+  // Set int(2) to program1, size == 1
+  gstate.setPerProgramUniformVariable(program1, "int2", UniformVariable(int(2)));
+  EXPECT_TRUE(gstate.hasPerProgramUniformVariables(program1));
+  EXPECT_EQ(gstate.getPerProgramUniformVariables(program1)->size(), 1);
 
-  gstate.setUniformVariable(program2, "bool1", UniformVariable(bool(1)));
-  EXPECT_TRUE(gstate.hasUniformVariables(program2));
-  EXPECT_FALSE(gstate.getUniformVariables(program2).empty());
+  // Set float(3) to program1, size == 2
+  gstate.setPerProgramUniformVariable(program1, "float3", UniformVariable(float(3)));
+  EXPECT_EQ(gstate.getPerProgramUniformVariables(program1)->size(), 2);
 
-  ASSERT_NE(gstate.getUniformVariables(program1).find("float3"),
-            gstate.getUniformVariables(program1).end());
-  ASSERT_NE(gstate.getUniformVariables(program1).find("int2"),
-            gstate.getUniformVariables(program1).end());
-  ASSERT_NE(gstate.getUniformVariables(program2).find("bool1"),
-            gstate.getUniformVariables(program2).end());
+  // Set bool(1) to program2, size == 1
+  gstate.setPerProgramUniformVariable(program2, "bool1", UniformVariable(bool(1)));
+  EXPECT_TRUE(gstate.hasPerProgramUniformVariables(program2));
+  EXPECT_FALSE(gstate.getPerProgramUniformVariables(program2)->empty());
 
-  EXPECT_EQ(gstate.getUniformVariables(program1).find("float3")->second.get<float>(), float(3));
-  EXPECT_EQ(gstate.getUniformVariables(program1).find("int2")->second.get<int>(), int(2));
-  EXPECT_EQ(gstate.getUniformVariables(program2).find("bool1")->second.get<bool>(), bool(1));
+  // Check maps contain the values
+  ASSERT_NE(gstate.getPerProgramUniformVariables(program1)->find("float3"),
+            gstate.getPerProgramUniformVariables(program1)->end());
+  ASSERT_NE(gstate.getPerProgramUniformVariables(program1)->find("int2"),
+            gstate.getPerProgramUniformVariables(program1)->end());
+  ASSERT_NE(gstate.getPerProgramUniformVariables(program2)->find("bool1"),
+            gstate.getPerProgramUniformVariables(program2)->end());
+
+  // Check the values
+  EXPECT_EQ(gstate.getPerProgramUniformVariables(program1)->find("float3")->second.get<float>(),
+            float(3));
+  EXPECT_EQ(gstate.getPerProgramUniformVariables(program1)->find("int2")->second.get<int>(),
+            int(2));
+  EXPECT_EQ(gstate.getPerProgramUniformVariables(program2)->find("bool1")->second.get<bool>(),
+            bool(1));
+
+  gstate.reset();
+  EXPECT_EQ(gstate.getPerProgramUniformVariables(program1), nullptr);
+  EXPECT_EQ(gstate.getPerProgramUniformVariables(program2), nullptr);
+}
+
+TEST(GlobalRenderStateTest, SharedUniformVariables) {
+  GlobalRenderState gstate;
+  gstate.setSharedUniformVariable("int2", UniformVariable(int(2)));
+
+  EXPECT_EQ(gstate.getSharedUniformVariables().size(), 1);
+  ASSERT_NE(gstate.getSharedUniformVariables().find("int2"),
+            gstate.getSharedUniformVariables().end());
+  EXPECT_EQ(gstate.getSharedUniformVariables().find("int2")->second.get<int>(), int(2));
+
+  gstate.reset();
+  EXPECT_EQ(gstate.getSharedUniformVariables().size(), 0);
 }
 
 } // anonymous namespace

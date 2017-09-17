@@ -13,39 +13,51 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Render/GlobalRenderState.h"
 #include "sequoia/Core/Format.h"
 #include "sequoia/Core/StringUtil.h"
+#include "sequoia/Render/GlobalRenderState.h"
 
 namespace sequoia {
 
 namespace render {
 
-const std::unordered_map<std::string, UniformVariable>&
-GlobalRenderState::getUniformVariables(const std::shared_ptr<Program>& program) const noexcept {
-  auto it = uniformVariables_.find(program);
-  SEQUOIA_ASSERT(it != uniformVariables_.end());
-  return it->second;
+void GlobalRenderState::setPerProgramUniformVariable(Program* program, const std::string& name,
+                                                     const UniformVariable& value) {
+  perProgramUniformVariables_[program][name] = value;
+}
+
+void GlobalRenderState::setSharedUniformVariable(const std::string& name,
+                                                 const UniformVariable& value) {
+  sharedUniformVariables_[name] = value;
+}
+
+void GlobalRenderState::reset() {
+  sharedUniformVariables_.clear();
+  perProgramUniformVariables_.clear();
 }
 
 std::string GlobalRenderState::toString() const {
+  auto varMapToString = [](const auto& varMap) {
+    return core::indent(core::toStringRange(varMap, [](const auto& nameVarPair) {
+      return core::format("name = %s,\n"
+                          "  variable = %s",
+                          nameVarPair.first, core::indent(nameVarPair.second.toString()));
+    }));
+  };
+
   return core::format(
       "GlobalRenderState[\n"
-      "  uniformVariables = %s\n"
+      "  sharedUniformVariables = %s,\n"
+      "  perProgramUniformVariables = %s\n"
       "]",
-      core::indent(core::toStringRange(uniformVariables_, [](const auto& programVarMapPair) {
-        return core::format(
-            "program = %s,\n"
-            "  variables = %s",
-            core::indent(programVarMapPair.first->toString()),
-            core::indent(
-                core::toStringRange(programVarMapPair.second, [](const auto& nameUniformVariable) {
-                  return core::format("name = %s,\n"
-                                      "  variable = %s",
-                                      nameUniformVariable.first,
-                                      core::indent(nameUniformVariable.second.toString()));
-                })));
-      })));
+      varMapToString(sharedUniformVariables_),
+      core::indent(core::toStringRange(
+          perProgramUniformVariables_, [&varMapToString](const auto& programVarMapPair) {
+            return core::format("program = %s,\n"
+                                "  variables = %s",
+                                core::indent(programVarMapPair.first->toString()),
+                                varMapToString(programVarMapPair.second));
+          })));
 }
 
 } // namespace render

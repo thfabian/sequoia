@@ -83,8 +83,8 @@ private:
   /// This is called by the `Game` in the main-loop.
   void updateImpl();
 
-  /// @brief Update the DrawCommandList with the current scene
-  void updateDrawCommandList(render::DrawCommandList* list);
+  /// @brief Populate the RenderCommand by extracting DrawCommands and setting the GlobalRenderState
+  void populateRenderCommand(render::RenderCommand* command);
 
 private:
   /// Double buffered render command

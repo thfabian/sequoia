@@ -13,7 +13,6 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Game/Scene.h"
 #include "sequoia/Core/Casting.h"
 #include "sequoia/Core/Format.h"
 #include "sequoia/Core/Logging.h"
@@ -22,6 +21,7 @@
 #include "sequoia/Game/Drawable.h"
 #include "sequoia/Game/Game.h"
 #include "sequoia/Game/MeshManager.h"
+#include "sequoia/Game/Scene.h"
 #include "sequoia/Game/SceneGraph.h"
 #include "sequoia/Render/Camera.h"
 #include "sequoia/Render/DrawCommandList.h"
@@ -40,37 +40,37 @@ Scene::Scene() : activeCamera_(nullptr) {
   renderCommand_.first().setDrawCommandList(std::make_shared<render::DrawCommandListDefault>());
   renderCommand_.second().setDrawCommandList(std::make_shared<render::DrawCommandListDefault>());
   drawCommands_.reserve(render::DrawCommandList::DefaultSize);
-  
+
   sceneGraph_ = std::make_shared<SceneGraph>();
 }
 
-void Scene::updateDrawCommandList(render::DrawCommandList* list) {
-  SEQUOIA_ASSERT(list);
-  list->clear();
-
+void Scene::populateRenderCommand(render::RenderCommand* command) {
   // Reset temporaries
   drawCommands_.clear();
   for(int i = 0; i < Emittable::NumEmitter; ++i)
     emitters_[i] = 0;
 
-  // Extract all DrawCommands
-  sceneGraph_->apply([this](SceneNode* node) {
-    if(Drawable* draw = node->get<Drawable>()) {
-      if(draw->isActive()) {
-        drawCommands_.push_back(draw->prepareDrawCommand());
-      }
-    }
+  // Traverse SceneGraph and extract DrawCommands and register the Emitters
+  sceneGraph_->apply(
+      [this](SceneNode* node) {
+        if(Drawable* draw = node->get<Drawable>()) {
+          if(draw->isActive()) {
+            drawCommands_.push_back(draw->prepareDrawCommand());
+          }
+        }
 
-    if(Emittable* emittable = node->get<Emittable>()) {
-      if(emittable->isActive()) {
-        int index = std::atomic_fetch_add(&emitters_[emittable->getKind()], 1);
-        (void)index;
-      }
-    }
-  });
+        if(Emittable* emittable = node->get<Emittable>()) {
+          if(emittable->isActive()) {
+            int index = std::atomic_fetch_add(&emitters_[emittable->getKind()], 1);
+            (void) index;
+            //emittable->toUniformVariableMap(, index);
+          }
+        }
+      },
+      SceneNode::EP_Parallel);
 
   // Copy DrawCommands
-  list->insert(drawCommands_);
+  command->getDrawCommandList()->insert(drawCommands_);
 }
 
 void Scene::setActiveCamera(const std::shared_ptr<render::Camera>& camera) {
@@ -84,13 +84,14 @@ const std::shared_ptr<render::Camera>& Scene::getActiveCamera() const { return a
 SceneGraph* Scene::getSceneGraph() const { return sceneGraph_.get(); }
 
 render::RenderCommand* Scene::prepareRenderCommand(render::RenderTarget* target) noexcept {
-  render::RenderCommand* cmd = &renderCommand_.get();
+  render::RenderCommand* command = &renderCommand_.get();
+  command->reset();
 
-  cmd->setRenderTarget(target);
-  updateDrawCommandList(cmd->getDrawCommandList());
+  command->setRenderTarget(target);
+  populateRenderCommand(command);
 
   renderCommand_.nextTimestep(false);
-  return cmd;
+  return command;
 }
 
 void Scene::update() {}
@@ -137,7 +138,7 @@ void Scene::makeDummyScene() {
       auto cube = SceneNode::allocate(core::format("TestCube_%i_%i", i, j));
       cube->addCapability<Drawable>(cubeMesh, game.getDefaultProgram());
       cube->translate(math::vec3((i - N / 2.0f) * dx, 0, (j - N / 2.0f) * dx));
-      cube->setScale(2 * float(i) / N);
+      cube->setScale(0.9 * (2 * float(i) / N));
       cube->get<Drawable>()->setTexture(
           0, game.createTexture(game.getAssetManager()->loadImage("sequoia/texture/Gaben.jpg")));
       sceneGraph_->insert(cube);
@@ -155,29 +156,29 @@ void Scene::makeDummyScene() {
   cornellBox->setScale(0.01f);
   sceneGraph_->insert(cornellBox);
 
-  //
-  // Grid
-  //
-  std::shared_ptr<SceneNode> gridOrigin = SceneNode::allocate("TestGridOrigin");
-  gridOrigin->addCapability<Drawable>(game.getMeshManager()->createGrid("TestGrid", 33));
-  gridOrigin->translate(math::vec3(0.0f, -1.0f, 0.0f));
-  gridOrigin->setScale(50);
-  render::TextureParameter texParam;
-  texParam.Dim1EdgeSampling = texParam.Dim2EdgeSampling =
-      render::TextureParameter::EK_MirroredRepeat;
+//    //
+//    // Grid
+//    //
+//    std::shared_ptr<SceneNode> gridOrigin = SceneNode::allocate("TestGridOrigin");
+//    gridOrigin->addCapability<Drawable>(game.getMeshManager()->createGrid("TestGrid", 33));
+//    gridOrigin->translate(math::vec3(0.0f, -1.0f, 0.0f));
+//    gridOrigin->setScale(50);
+//    render::TextureParameter texParam;
+//    texParam.Dim1EdgeSampling = texParam.Dim2EdgeSampling =
+//        render::TextureParameter::EK_MirroredRepeat;
 
-  gridOrigin->get<Drawable>()->setProgram(game.createProgram(
-      {{render::Shader::ST_Vertex, game.getAssetManager()->load("sequoia/shader/MultiTex.vert")},
-       {render::Shader::ST_Fragment,
-        game.getAssetManager()->load("sequoia/shader/MultiTex.frag")}}));
-  gridOrigin->get<Drawable>()->setTexture(
-      0, game.createTexture(game.getAssetManager()->loadImage("sequoia/texture/SandTex0.png"),
-                            texParam));
-  gridOrigin->get<Drawable>()->setTexture(
-      1, game.createTexture(game.getAssetManager()->loadImage("sequoia/texture/SandTex1.tiff"),
-                            texParam));
-
-  sceneGraph_->insert(gridOrigin);
+//    gridOrigin->get<Drawable>()->setProgram(game.createProgram(
+//        {{render::Shader::ST_Vertex,
+//        game.getAssetManager()->load("sequoia/shader/MultiTex.vert")},
+//         {render::Shader::ST_Fragment,
+//          game.getAssetManager()->load("sequoia/shader/MultiTex.frag")}}));
+//    gridOrigin->get<Drawable>()->setTexture(
+//        0, game.createTexture(game.getAssetManager()->loadImage("sequoia/texture/SandTex0.png"),
+//                              texParam));
+//    gridOrigin->get<Drawable>()->setTexture(
+//        1, game.createTexture(game.getAssetManager()->loadImage("sequoia/texture/SandTex1.tiff"),
+//                              texParam));
+//    sceneGraph_->insert(gridOrigin);
 
   auto controller = SceneNode::allocate<CameraControllerFree>("Camera");
   controller->setCamera(activeCamera_);

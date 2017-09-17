@@ -78,6 +78,14 @@ public:
   /// @returns `true` if the command was successfully drawn, `false` otherwise
   bool draw(DrawCommand* command);
 
+  /// @brief Set the uniform variable `name` of `program` to `value`
+  ///
+  /// @param program   Program to set the uniform variable
+  /// @param name      Name of the uniform variable
+  /// @param value     Uniform variable to set
+  /// @returns `true` if the variable was successfully set, `false` if the program is not valid
+  bool setUniformVariable(Program* program, const std::string& name, const UniformVariable& value);
+
   /// @brief Get the currently active RenderState
   const RenderState& getRenderState() const;
 

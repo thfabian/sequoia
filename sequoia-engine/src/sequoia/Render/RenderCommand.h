@@ -17,15 +17,19 @@
 #define SEQUOIA_RENDER_RENDERCOMMAND_H
 
 #include "sequoia/Core/Export.h"
+#include "sequoia/Render/GlobalRenderState.h"
 #include "sequoia/Render/RenderFwd.h"
+#include "sequoia/Render/UniformVariable.h"
 #include <memory>
 #include <string>
+#include <unordered_map>
+#include <unordered_set>
 
 namespace sequoia {
 
 namespace render {
 
-/// @brief Instructions on how to render to a framebuffer
+/// @brief Instructions on how to render to a RenderTarget
 /// @ingroup render
 class SEQUOIA_API RenderCommand {
 public:
@@ -44,13 +48,34 @@ public:
 
   /// @brief Get/Set the DrawCommandList to draw
   GlobalRenderState* getGlobalRenderState() const noexcept { return globalRenderState_.get(); }
-  void setGlobalRenderState(const std::shared_ptr<GlobalRenderState>& state) noexcept {
-    globalRenderState_ = state;
-  }
 
   /// @brief Get/Set the RenderTarget to render to
   RenderTarget* getRenderTarget() const noexcept { return target_; }
   void setRenderTarget(RenderTarget* target) noexcept { target_ = target; }
+
+  /// @brief For each Program execute `functor` for each referenced UniformVariable for this Program
+  ///
+  /// @tparam Functor   Functor of type `void(Program*, const std::string&, const UniformVariable&)`
+  ///
+  /// @param programs   Programs to set the Uniformvariables
+  /// @param functor    Functor to execture for each UniformVariable
+  template <class Functor>
+  void forEachUniformVariable(const std::unordered_set<Program*>& programs, Functor&& functor) {
+    for(Program* program : programs) {
+      // Set the per program uniform variables
+      auto* perProgramUniformVariables = globalRenderState_->getPerProgramUniformVariables(program);
+      if(perProgramUniformVariables)
+        for(const auto& nameVariablePair : *perProgramUniformVariables)
+          functor(program, nameVariablePair.first, nameVariablePair.second);
+
+      // Set the shared uniform variables
+      for(const auto& nameVariablePair : globalRenderState_->getSharedUniformVariables())
+        functor(program, nameVariablePair.first, nameVariablePair.second);
+    }
+  }
+
+  /// @brief Reset global GlobalRenderState and DrawCommandList
+  void reset();
 
   /// @brief Convert draw command to string
   std::string toString() const;

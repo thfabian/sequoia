@@ -13,9 +13,9 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Render/Camera.h"
 #include "sequoia/Core/Format.h"
 #include "sequoia/Math/CoordinateSystem.h"
+#include "sequoia/Render/Camera.h"
 
 namespace sequoia {
 
@@ -58,33 +58,38 @@ void Camera::lookAt(const math::vec3& eye, const math::vec3& center, const math:
   }
 }
 
-glm::vec3 Camera::getEye() const {
+math::vec3 Camera::getEye() const {
   // modelMat * (0, 0, 0, 1)
   return math::vec3(getModelMatrix()[3]);
 }
 
-glm::vec3 Camera::getCenter() const {
+math::vec3 Camera::getCenter() const {
   // eye + modelMat * (0, 0, -1, 0) * eyeToCenterDistance
   return getEye() + math::vec3(getModelMatrix()[2] * (-eyeToCenterDistance_));
 }
 
-glm::vec3 Camera::getUp() const {
+math::vec3 Camera::getUp() const {
   // modelMat * (0, 1, 0, 0)
   return math::normalize(math::vec3(getModelMatrix()[math::CoordinateSystem::getUpIndex()]));
 }
 
-glm::mat4 Camera::getViewProjectionMatrix() const {
+math::mat4 Camera::getViewProjectionMatrix() const {
   return (math::perspective(math::Degree(getFieldOfViewY()).inRadians(), getAspectRatio(),
                             getZNearClipping(), getZFarClipping()) *
           math::lookAt(getEye(), getCenter(), getUp()));
 }
 
-void Camera::setPosition(const glm::vec3& position) {
+math::mat4 Camera::getProjectionMatrix() const {
+  return math::perspective(math::Degree(getFieldOfViewY()).inRadians(), getAspectRatio(),
+                           getZNearClipping(), getZFarClipping());
+}
+
+void Camera::setPosition(const math::vec3& position) {
   modelMatrixIsDirty_ = true;
   position_ = position;
 }
 
-void Camera::setOrientation(const glm::quat& orientation) {
+void Camera::setOrientation(const math::quat& orientation) {
   modelMatrixIsDirty_ = true;
   orientation_ = orientation;
 }

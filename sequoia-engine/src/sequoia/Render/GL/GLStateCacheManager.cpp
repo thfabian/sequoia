@@ -13,10 +13,10 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Render/GL/GL.h"
 #include "sequoia/Core/Casting.h"
 #include "sequoia/Core/StringUtil.h"
 #include "sequoia/Render/DrawCommand.h"
+#include "sequoia/Render/GL/GL.h"
 #include "sequoia/Render/GL/GLFrameBufferObject.h"
 #include "sequoia/Render/GL/GLProgram.h"
 #include "sequoia/Render/GL/GLStateCacheManager.h"
@@ -26,6 +26,7 @@
 #include "sequoia/Render/RenderState.h"
 #include "sequoia/Render/VertexData.h"
 #include "sequoia/Render/Viewport.h"
+#include <unordered_set>
 
 namespace sequoia {
 
@@ -130,21 +131,19 @@ public:
     GLProgram* glProgram = dyn_cast<GLProgram>(program);
 
     // Only update the variables if they differ
-    for(const auto& nameVariablePair : newUniformVariables) {
+    for(const auto& nameVariablePair : newUniformVariables)
       setUniformVariable(glProgram, nameVariablePair.first, nameVariablePair.second);
-    }
   }
 
   /// @brief Update the uniform variable of `glProgram` if necessary
   inline void setUniformVariable(GLProgram* glProgram, const std::string& name,
                                  const UniformVariable& variable) {
-
-    std::unordered_map<std::string, UniformVariable>& oldUniformVariable =
+    std::unordered_map<std::string, UniformVariable>& oldUniformVariables =
         programUniformMap_[glProgram->getID()];
 
-    auto it = oldUniformVariable.find(name);
+    auto it = oldUniformVariables.find(name);
     bool updateNeeded = false;
-    if(it == oldUniformVariable.end()) {
+    if(it == oldUniformVariables.end()) {
       // Variable does not exist -> update
       updateNeeded = true;
     } else {
@@ -155,12 +154,12 @@ public:
 
     if(updateNeeded) {
       glProgram->setUniformVariable(name, variable);
-      oldUniformVariable[name] = variable;
+      oldUniformVariables[name] = variable;
     }
   }
 
   /// @brief Reset the uniform variables
-  void resetUniformVariables() { programUniformMap_.clear(); }
+  void reset() { programUniformMap_.clear(); }
 
   /// @brief Set the pixel format
   void setPixelFormat(const GLPixelFormat& pixelFormat) {
@@ -310,8 +309,7 @@ bool GLStateCacheManager::draw(DrawCommand* command) {
     return false;
 
   // Set the uniform variables of the program
-  if(!command->getUniformVariables().empty())
-    stateCache_->setUniformVariables(command->getProgram(), command->getUniformVariables());
+  stateCache_->setUniformVariables(command->getProgram(), command->getUniformVariables());
 
   // Update the render-state (including setting the VAO, program, textures etc..)
   if(!stateCache_->setRenderState(command->getRenderState()))
@@ -325,6 +323,16 @@ bool GLStateCacheManager::draw(DrawCommand* command) {
   // Draw the vertex-data
   dyn_cast<GLVertexData>(state.VertexData)->draw();
 
+  return true;
+}
+
+bool GLStateCacheManager::setUniformVariable(Program* program, const std::string& name,
+                                             const UniformVariable& value) {
+  if(!program->isValid())
+    return false;
+
+  GLProgram* glProgram = dyn_cast<GLProgram>(program);
+  stateCache_->setUniformVariable(glProgram, name, value);
   return true;
 }
 
@@ -376,10 +384,10 @@ void GLStateCacheManager::setPixelFormat(const GLPixelFormat& pixelFormat) {
 void GLStateCacheManager::resetPixelFormat() { stateCache_->setPixelFormat(defaultPixelFormat_); }
 
 void GLStateCacheManager::frameListenerRenderingBegin(RenderCommand* command) {
-  stateCache_->resetUniformVariables();
+  stateCache_->reset();
 }
 
-void GLStateCacheManager::frameListenerRenderingEnd(RenderCommand* target) {}
+void GLStateCacheManager::frameListenerRenderingEnd(RenderCommand* command) {}
 
 bool GLStateCacheManager::getImpl(GLenum param, bool) const noexcept {
   GLboolean value;

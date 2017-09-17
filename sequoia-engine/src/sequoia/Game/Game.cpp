@@ -113,6 +113,7 @@ void Game::init(const GameOptions& gameOptions) {
     // -- tmp --
     setScene("TestScene", std::make_shared<Scene>(), true);
     getActiveScene()->makeDummyScene();
+    
     quitKey_ = Keymap::makeDefault(render::Key_Q, render::Mod_Ctrl);
 
   } catch(core::Exception& e) {

@@ -13,11 +13,10 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Render/RenderCommand.h"
 #include "sequoia/Core/Format.h"
 #include "sequoia/Core/StringUtil.h"
 #include "sequoia/Render/DrawCommandList.h"
-#include "sequoia/Render/GlobalRenderState.h"
+#include "sequoia/Render/RenderCommand.h"
 #include "sequoia/Render/RenderTarget.h"
 
 namespace sequoia {
@@ -25,7 +24,13 @@ namespace sequoia {
 namespace render {
 
 RenderCommand::RenderCommand()
-    : drawCommandList_(nullptr), globalRenderState_(nullptr), target_(nullptr) {}
+    : drawCommandList_(nullptr), globalRenderState_(std::make_shared<GlobalRenderState>()),
+      target_(nullptr) {}
+
+void RenderCommand::reset() {
+  drawCommandList_->clear();
+  globalRenderState_->reset();
+}
 
 std::string RenderCommand::toString() const {
   return core::format(

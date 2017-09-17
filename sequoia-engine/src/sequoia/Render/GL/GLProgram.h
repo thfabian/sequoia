@@ -117,9 +117,6 @@ private:
   /// Cache if all uniform variables have been set
   bool allUniformVariablesSet_;
 
-  /// Cache if we already issued a warning for setting a non-existing variable
-  std::unordered_set<std::string> reportedWarningForInvalidUniformVariable_;
-
   /// Shaders compiled into the program
   std::set<std::shared_ptr<Shader>> shaders_;
 };

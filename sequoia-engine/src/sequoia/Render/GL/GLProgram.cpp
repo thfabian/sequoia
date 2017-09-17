@@ -67,7 +67,10 @@ bool GLProgram::checkUniformVariables() {
     if(!nameInfoPair.second.ValueSet) {
       allUniformVariablesSet_ = false;
       LOG(WARNING) << "Unset uniform variable '" << nameInfoPair.first << "' in program (ID=" << id_
-                   << ")";
+                   << ") with shaders "
+                   << core::RangeToString(", ", "{", "}")(shaders_, [](const auto& shader) {
+                        return shader->getFile()->getPath();
+                      });
     }
   }
   return allUniformVariablesSet_;
@@ -115,14 +118,6 @@ std::string GLProgram::toString() const {
           ? core::indent(core::toStringRange(
                 shaders_, [](const auto& shader) { return core::indent(shader->toString()); }))
           : "null");
-}
-
-void GLProgram::reportWarningForInvalidUniformVariable(const std::string& name) {
-  if(reportedWarningForInvalidUniformVariable_.count(name) == 0) {
-    LOG(WARNING) << "Setting non-existing uniform variable '" << name << "' in program (ID=" << id_
-                 << ")";
-    reportedWarningForInvalidUniformVariable_.emplace(name);
-  }
 }
 
 void GLProgram::makeValidImpl() { getGLRenderer().getProgramManager()->makeValid(this); }
@@ -246,7 +241,6 @@ struct UniformVariableSetter {};
                       std::size_t rank) {                                                          \
       auto it = program->getUniformVariables().find(name);                                         \
       if(it == program->getUniformVariables().end()) {                                             \
-        program->reportWarningForInvalidUniformVariable(name);                                     \
         return false;                                                                              \
       }                                                                                            \
       GLProgram::GLUniformInfo& info = it->second;                                                 \
