@@ -1,4 +1,4 @@
-Sequoia  <a target="_blank" href="http://semver.org">![Version][Version.Badge]</a> <a target="_blank" href="https://travis-ci.org/thfabian/sequoia">![Travis status][TravisCI.Badge]</a>
+Sequoia <br/> <a target="_blank" href="http://semver.org">![Version][Version.Badge]</a> <a target="_blank" href="https://travis-ci.org/thfabian/sequoia">![Travis status][TravisCI.Badge]</a>
 =======
 
 ## Introduction
