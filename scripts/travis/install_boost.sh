@@ -20,28 +20,28 @@
 # @param $2   Boost version triple (X.Y.Z)
 # @param $*   Boost components to build (e.g program_options)
 function install_boost() {
-  pushd $(pwd)
+  pushd "$(pwd)"
   local start_time=$(date +%s)
 
   if [[ $# -lt 3 ]]; then
     fatal_error "argument mistmatch: ${FUNCNAME[0]} <install_prefix> <version> <components...>"
   fi
 
-  local install_dir=$1
+  local install_dir="$1"
   shift
   local boost_version=$1
   shift
   
-  local boost_install_dir=$install_dir/boost-$boost_version
+  local boost_install_dir="$install_dir/boost-$boost_version"
   local boost_version_underscore=${boost_version//\./_}
   
   abort_and_cleanup() {
-    rm -rf $boost_install_dir && mkdir -p $boost_install_dir
+    rm -rf "$boost_install_dir" && mkdir -p "$boost_install_dir"
     fatal_error "$1"
   }
 
   NOTICE "${FUNCNAME[0]}: Installing boost $boost_version into \"$boost_install_dir\" ..."
-  mkdir -p ${boost_install_dir}
+  mkdir -p "${boost_install_dir}"
   if [[ ! -z "$(ls -A ${boost_install_dir})" ]]; then
     NOTICE "${FUNCNAME[0]}: Package already installed. Skipping."
   else
@@ -54,7 +54,7 @@ function install_boost() {
       abort_and_cleanup "Failed to download boost from: $boost_url"
     NOTICE "${FUNCNAME[0]}: Successfully downloaded $boost_url"
 
-    cd ${boost_install_dir}
+    cd "${boost_install_dir}"
 
     if [ "$(echo $CXX | grep clang++ -c)" = "1" ]; then
       local toolset="clang"
@@ -69,15 +69,15 @@ function install_boost() {
     NOTICE "${FUNCNAME[0]}: Building boost with toolset $toolset : $toolset_version ..."
     
     NOTICE "${FUNCNAME[0]}: Building components: $*"
-    local boost_components_arg=$*
+    local boost_components_arg=""
     for component in $*; do
       boost_components_arg="$boost_components_arg --with-$component"
     done
 
     NOTICE "${FUNCNAME[0]}: Starting to build boost ..."
     ./bootstrap.sh || abort_and_cleanup "Failed to configure boost"
-    ./b2 -j2 --toolset=${toolset}-${toolset_version} --prefix=${boost_install_dir}                 \
-             --user-config=${boost_install_dir}/user-config.jam                                    \
+    ./b2 -j2 --toolset=${toolset}-${toolset_version} --prefix="${boost_install_dir}"               \
+             --user-config="${boost_install_dir}/user-config.jam"                                  \
              ${boost_components_arg} install || abort_and_cleanup "Failed to build boost"
   fi
   
