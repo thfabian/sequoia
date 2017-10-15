@@ -29,8 +29,6 @@ The project is organized in a couple of subdirectories.
 | Clang 3.8    | RelWithDebInfo |  <a target="_blank" href="https://travis-ci.org/thfabian/sequoia">![Clang 3.8][Clang_38_RelWithDebInfo.Badge]</a> |
 | Clang 4.0    | Release        |  <a target="_blank" href="https://travis-ci.org/thfabian/sequoia">![Clang 4.0][Clang_40_Release.Badge]</a>        |
 | Clang 4.0    | RelWithDebInfo |  <a target="_blank" href="https://travis-ci.org/thfabian/sequoia">![Clang 4.0][Clang_40_RelWithDebInfo.Badge]</a> |
-| Clang 5.0    | Release        |  <a target="_blank" href="https://travis-ci.org/thfabian/sequoia">![Clang 5.0][Clang_50_Release.Badge]</a>        |
-| Clang 5.0    | RelWithDebInfo |  <a target="_blank" href="https://travis-ci.org/thfabian/sequoia">![Clang 5.0][Clang_50_RelWithDebInfo.Badge]</a> |
 
 
 ## License
@@ -51,5 +49,3 @@ This project is licensed under the terms of the **MIT** license.
 [Clang_38_RelWithDebInfo.Badge]: https://travis-matrix-badges.herokuapp.com/repos/thfabian/sequoia/branches/master/8
 [Clang_40_Release.Badge]: https://travis-matrix-badges.herokuapp.com/repos/thfabian/sequoia/branches/master/9
 [Clang_40_RelWithDebInfo.Badge]: https://travis-matrix-badges.herokuapp.com/repos/thfabian/sequoia/branches/master/10
-[Clang_50_Release.Badge]: https://travis-matrix-badges.herokuapp.com/repos/thfabian/sequoia/branches/master/11
-[Clang_50_RelWithDebInfo.Badge]: https://travis-matrix-badges.herokuapp.com/repos/thfabian/sequoia/branches/master/12
