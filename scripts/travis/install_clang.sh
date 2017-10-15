@@ -19,7 +19,7 @@
 # @param $1   Install directory
 # @param $2   Clang version triple (X.Y.Z)
 function install_clang() {
-  pushd "$(pwd)"
+  pushd $(pwd)
   local start_time=$(date +%s)
 
   if [[ $# -lt 2 ]]; then
@@ -60,7 +60,7 @@ function install_clang() {
             ${clang_version} ${clang_version})
     else
       local clang_url=$(printf                                                                     \
-            "http://llvm.org/releases/%s/clang+llvm-%s-x86_64-linux-gnu-ubuntu-14.04.tar.xz"       \
+            "http://releases.llvm.org/%s/clang+llvm-%s-x86_64-linux-gnu-ubuntu-14.04.tar.xz"       \
             ${clang_version} ${clang_version})
     fi
 
