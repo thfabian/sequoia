@@ -16,7 +16,7 @@
 get_filename_component(_self_dir ${CMAKE_CURRENT_LIST_FILE} PATH)
 
 configure_file(
-  "${_self_dir}/gtest.CMakeLists.txt.in"
+  "${_self_dir}/templates/gtest.CMakeLists.txt.in"
   "${CMAKE_CURRENT_BINARY_DIR}/gtest.CMakeLists.txt"
   @ONLY
 )
