@@ -13,8 +13,6 @@
 ##
 ##===------------------------------------------------------------------------------------------===##
 
-include(ExternalProject)
-
 if("${CMAKE_CURRENT_BINARY_DIR}" MATCHES " ")
   message(FATAL_ERROR "cannot use boost bootstrap with a space in the name of the build dir")
 endif()
@@ -79,11 +77,10 @@ ExternalProject_Add(boost
 ExternalProject_Get_Property(boost install_dir)
 set(BOOST_ROOT "${install_dir}" CACHE INTERNAL "")
 
-set(SEQUOIA_EXTERNAL_CMAKE_ARGS 
-  "${SEQUOIA_EXTERNAL_CMAKE_ARGS}" 
+sequoia_append_and_export_variable(
+   SEQUOIA_EXTERNAL_CMAKE_ARGS 
   "-DBOOST_ROOT:PATH=${BOOST_ROOT}"
   "-DBoost_INCLUDE_DIR:PATH=${BOOST_ROOT}/include"
   "-DBOOST_LIBRARYDIR:PATH=${BOOST_ROOT}/lib"
   "-DBoost_NO_SYSTEM_PATHS:BOOL=ON"
-  PARENT_SCOPE
 )

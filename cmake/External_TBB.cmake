@@ -13,8 +13,6 @@
 ##
 ##===------------------------------------------------------------------------------------------===##
 
-include(ExternalProject)
-
 ExternalProject_Add(
   tbb
   DOWNLOAD_DIR "${SEQUOIA_EXTERNAL_DOWNLOAD_DIR}"
@@ -30,8 +28,7 @@ ExternalProject_Add(
 ExternalProject_Get_Property(tbb install_dir)
 set(TBB_ROOT_DIR "${install_dir}" CACHE INTERNAL "")
 
-set(SEQUOIA_EXTERNAL_CMAKE_ARGS 
-  "${SEQUOIA_EXTERNAL_CMAKE_ARGS}" 
+sequoia_append_and_export_variable(
+   SEQUOIA_EXTERNAL_CMAKE_ARGS 
   "-DTBB_ROOT_DIR:PATH=${TBB_ROOT_DIR}" 
-  PARENT_SCOPE
 )

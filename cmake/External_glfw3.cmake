@@ -13,8 +13,6 @@
 ##
 ##===------------------------------------------------------------------------------------------===##
 
-include(ExternalProject)
-
 ExternalProject_Add(
   glfw3
   DOWNLOAD_DIR "${SEQUOIA_EXTERNAL_DOWNLOAD_DIR}"
@@ -33,8 +31,7 @@ ExternalProject_Add(
 ExternalProject_Get_Property(glfw3 install_dir)
 set(glfw3_DIR "${install_dir}/lib/cmake/glfw3" CACHE INTERNAL "")
 
-set(SEQUOIA_EXTERNAL_CMAKE_ARGS 
-  "${SEQUOIA_EXTERNAL_CMAKE_ARGS}" 
+sequoia_append_and_export_variable(
+   SEQUOIA_EXTERNAL_CMAKE_ARGS 
   "-Dglfw3_DIR:PATH=${glfw3_DIR}"
-  PARENT_SCOPE
 )

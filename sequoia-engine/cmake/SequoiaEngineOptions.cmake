@@ -13,27 +13,30 @@
 ##
 ##===------------------------------------------------------------------------------------------===##
 
-include(CMakeDependentOption)
+include(SequoiaExportOptions)
 
-##===---------------------------------- Building ----------------------------------------------===##
-option(BUILD_SHARED_LIBS "Build shared libraries" OFF)
-CMAKE_DEPENDENT_OPTION(SEQUOIA_ENABLE_RPATH 
-                       "Enable rpath support on Linux and Mac" ON "BUILD_SHARED_LIBS" OFF)
-
-set(BUILD_IS_RELEASE OFF)
-set(BUILD_IS_NOT_RELEASE ON)
+set(build_is_not_release ON)
+set(build_is_release OFF)
 if(${CMAKE_BUILD_TYPE} MATCHES "Release")
-  set(BUILD_IS_RELEASE ON)
-  set(BUILD_IS_NOT_RELEASE OFF)
+  set(build_is_not_release OFF)
+  set(build_is_release ON)
 endif()
 
-option(SEQUOIA_ASSERTS "Enable asserts" ${BUILD_IS_NOT_RELEASE})
-option(SEQUOIA_OPTIMIZE "Enable all optimizations" ${BUILD_IS_RELEASE})
-option(SEQUOIA_USE_CCACHE "Use compile cache if available" ON)
+##===---------------------------------- Building ----------------------------------------------===##
+option(SEQUOIA_ENGINE_ASSERTS "Enable asserts" ${build_is_not_release})
+option(SEQUOIA_ENGINE_OPTIMIZE "Enable all optimizations" ${build_is_release})
+option(SEQUOIA_ENGINE_USE_CCACHE "Use compile cache if available" ON)
 
 ##===---------------------------------- Testing -----------------------------------------------===##
-option(SEQUOIA_TESTING "Enable testing" ON)
+option(SEQUOIA_ENGINE_TESTING "Enable testing" ON)
 
 ##===---------------------------------- Documentation -----------------------------------------===##
-option(SEQUOIA_DOCUMENTATION "Enable documentation" OFF)
+option(SEQUOIA_ENGINE_DOCUMENTATION "Enable documentation" OFF)
 
+sequoia_export_options(SEQUOIA_ENGINE
+  SEQUOIA_ENGINE_ASSERTS
+  SEQUOIA_ENGINE_OPTIMIZE
+  SEQUOIA_ENGINE_USE_CCACHE
+  SEQUOIA_ENGINE_TESTING
+  SEQUOIA_ENGINE_DOCUMENTATION
+)

@@ -13,8 +13,6 @@
 ##
 ##===------------------------------------------------------------------------------------------===##
 
-include(ExternalProject)
-
 ExternalProject_Add(
   benchmark
   DOWNLOAD_DIR "${SEQUOIA_EXTERNAL_DOWNLOAD_DIR}"
@@ -31,8 +29,7 @@ ExternalProject_Add(
 ExternalProject_Get_Property(benchmark install_dir)
 set(benchmark_DIR "${install_dir}/lib/cmake/benchmark" CACHE INTERNAL "")
 
-set(SEQUOIA_EXTERNAL_CMAKE_ARGS 
-  "${SEQUOIA_EXTERNAL_CMAKE_ARGS}" 
+sequoia_append_and_export_variable(
+   SEQUOIA_EXTERNAL_CMAKE_ARGS 
   "-Dbenchmark_DIR:PATH=${benchmark_DIR}"
-  PARENT_SCOPE
 )

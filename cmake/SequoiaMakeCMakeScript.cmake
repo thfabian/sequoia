@@ -22,21 +22,24 @@
 #   BUILD_DIR:PATH=<>         - Directory to install the script
 #   ARGN:LIST=<>              - List of arguments used to invoke CMake
 #
-macro(sequoia_make_cmake_script CMAKE_LISTS_DIR BUILD_DIR)
-  set(script_args)
-
+function(sequoia_make_cmake_script CMAKE_LISTS_DIR BUILD_DIR)
   foreach(arg ${ARGN})
     string(REGEX MATCH "^(.*)=+(.*)$" dummy ${arg})
     if(NOT(CMAKE_MATCH_1) AND NOT(CMAKE_MATCH_2))
       set(script_args "${script_args} ${arg}")
     else()
-      # Value of an option should be quoated
+      # Value of the option has to be quoted for Windows
       set(script_args "${script_args} ${CMAKE_MATCH_1}=\"${CMAKE_MATCH_2}\"")
     endif()
   endforeach()
   
   set(script_args "-G \"${CMAKE_GENERATOR}\" ${script_args}")
 
-  file(WRITE ${BUILD_DIR}/rerun-cmake.sh 
+  if(WIN32)
+   file(WRITE ${BUILD_DIR}/rerun-cmake.bat 
+        "\"${CMAKE_COMMAND}\" \"${CMAKE_LISTS_DIR}\" ${script_args}\n")
+  else()
+   file(WRITE ${BUILD_DIR}/rerun-cmake.sh 
        "#!/usr/bin/env bash\n${CMAKE_COMMAND} ${CMAKE_LISTS_DIR} ${script_args}\n")
-endmacro()
+  endif()
+endfunction()

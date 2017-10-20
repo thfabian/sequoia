@@ -44,12 +44,14 @@ include(SequoiaCMakeInit)
 sequoia_cmake_init()
 
 include(SequoiaAddTargetCleanAll)
+include(SequoiaAppendAndExportVariable)
 include(SequoiaCheckInSourceBuild)
 include(SequoiaGetArchitectureInfo)
 include(SequoiaGetCompilerInfo)
 include(SequoiaGetPlatformInfo)
 include(SequoiaMakeStringPair)
 include(SequoiaReportResult)
+include(SequoiaSetAndExportVariable)
 
 # Include all options (from all subprojects)
 include(SequoiaOptions)
@@ -100,5 +102,4 @@ endif()
 add_subdirectory(thirdparty)
 
 # Build the sequoia projects
-#include(External_SequoiaEngine)
-#include(External_GTClang)
+include(External_SequoiaEngine)

@@ -13,8 +13,6 @@
 ##
 ##===------------------------------------------------------------------------------------------===##
 
-include(ExternalProject)
-
 if(NOT(USE_SYSTEM_ZLIB))
   set(build_arg -DBUILD_ZLIB:BOOL=OFF)
 endif()
@@ -142,8 +140,7 @@ else()
   set(OpenCV_DIR "${install_dir}/share/OpenCV" CACHE INTERNAL "")
 endif()
 
-set(SEQUOIA_EXTERNAL_CMAKE_ARGS 
-  "${SEQUOIA_EXTERNAL_CMAKE_ARGS}" 
+sequoia_append_and_export_variable(
+   SEQUOIA_EXTERNAL_CMAKE_ARGS 
   "-DOpenCV_DIR:PATH=${OpenCV_DIR}"
-  PARENT_SCOPE
 )

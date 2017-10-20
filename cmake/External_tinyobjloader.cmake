@@ -13,8 +13,6 @@
 ##
 ##===------------------------------------------------------------------------------------------===##
 
-include(ExternalProject)
-
 ExternalProject_Add(
   tinyobjloader
   DOWNLOAD_DIR "${SEQUOIA_EXTERNAL_DOWNLOAD_DIR}"
@@ -33,8 +31,7 @@ ExternalProject_Add(
 ExternalProject_Get_Property(tinyobjloader install_dir)
 set(tinyobjloader_DIR "${install_dir}/lib/tinyobjloader/cmake" CACHE INTERNAL "")
 
-set(SEQUOIA_EXTERNAL_CMAKE_ARGS 
-  "${SEQUOIA_EXTERNAL_CMAKE_ARGS}" 
+sequoia_append_and_export_variable(
+   SEQUOIA_EXTERNAL_CMAKE_ARGS 
   "-Dtinyobjloader_DIR:PATH=${tinyobjloader_DIR}" 
-  PARENT_SCOPE
 )

@@ -13,6 +13,7 @@
 ##
 ##===------------------------------------------------------------------------------------------===##
 
+include(ExternalProject)
 include(SequoiaFindPackage)
 include(SequoiaBuildPackage)
 
@@ -200,8 +201,8 @@ sequoia_find_package(
   DEPENDS zlib
 )
 
-# Prepare and export CMake variables of the external projects
-set(SEQUIOA_CMAKE_ARGS ${SEQUOIA_CMAKE_ARGS} ${SEQUOIA_THIRDPARTY_CMAKE_ARGS} PARENT_SCOPE)
+# Export the accumulated variables to the parent scope
 set(SEQUOIA_EXTERNAL_PROJECTS ${SEQUOIA_EXTERNAL_PROJECTS} PARENT_SCOPE)
+set(SEQUOIA_EXTERNAL_CMAKE_ARGS ${SEQUOIA_EXTERNAL_CMAKE_ARGS} PARENT_SCOPE)
 
 sequoia_report_result("Package summary" ${SEQUOIA_PACKAGE_INFO})

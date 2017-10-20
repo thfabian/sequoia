@@ -13,8 +13,6 @@
 ##
 ##===------------------------------------------------------------------------------------------===##
 
-include(ExternalProject)
-
 set(cmake_args
     ${SEQUOIA_EXTERNAL_CMAKE_ARGS}
     -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
@@ -36,8 +34,7 @@ ExternalProject_Add(protobuf
 ExternalProject_Get_Property(protobuf install_dir)
 set(Protobuf_DIR "${install_dir}/lib/cmake/protobuf" CACHE INTERNAL "")
 
-set(SEQUOIA_EXTERNAL_CMAKE_ARGS 
-  "${SEQUOIA_EXTERNAL_CMAKE_ARGS}" 
+sequoia_append_and_export_variable(
+   SEQUOIA_EXTERNAL_CMAKE_ARGS 
   "-DProtobuf_DIR:PATH=${Protobuf_DIR}" 
-  PARENT_SCOPE
 )

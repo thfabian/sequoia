@@ -13,8 +13,6 @@
 ##
 ##===------------------------------------------------------------------------------------------===##
 
-include(ExternalProject)
-
 ExternalProject_Add(
   zlib
   DOWNLOAD_DIR "${SEQUOIA_EXTERNAL_DOWNLOAD_DIR}"
@@ -30,8 +28,7 @@ ExternalProject_Add(
 ExternalProject_Get_Property(zlib install_dir)
 set(ZLIB_ROOT "${install_dir}" CACHE INTERNAL "")
 
-set(SEQUOIA_EXTERNAL_CMAKE_ARGS 
-  "${SEQUOIA_EXTERNAL_CMAKE_ARGS}" 
+sequoia_append_and_export_variable(
+   SEQUOIA_EXTERNAL_CMAKE_ARGS 
   "-DZLIB_ROOT:PATH=${ZLIB_ROOT}" 
-  PARENT_SCOPE
 )

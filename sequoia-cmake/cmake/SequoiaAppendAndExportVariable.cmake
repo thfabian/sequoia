@@ -13,20 +13,32 @@
 ##
 ##===------------------------------------------------------------------------------------------===##
 
-set(build_is_not_release ON)
-if(${CMAKE_BUILD_TYPE} MATCHES "Release")
-  set(build_is_not_release OFF)
-endif()
+include(SequoiaIncludeGuard)
+sequoia_include_guard()
 
-set(no_system_libs OFF)
-if(WIN32)
-  set(no_system_libs ON)
-endif()
+include(SequoiaSetAndExportVariable)
 
-# Shared options
-option(SEQUOIA_ASSERTS "Enable asserts in all sequoia projects" ${build_is_not_release})
-option(SEQUOIA_NO_SYSTEM_LIBS "Don't use system libraries" ${no_system_libs})
-
-# sequoia-engine
-set(SEQUOIA_ENGINE_DIR "${CMAKE_SOURCE_DIR}/sequoia-engine" CACHE PATH "Directory of the Engine")
-include("${SEQUOIA_ENGINE_DIR}/cmake/SequoiaEngineOptions.cmake")
+#.rst:
+# sequoia_append_and_export_variable
+# ----------------------------------
+#
+# If the variable ``VAR`` exists, ``VALUE`` is appended and the the new value of ``VAR`` is 
+# exported to all scopes i.e cached internally.
+#
+# .. code-block:: cmake
+#
+#   sequoia_append_and_export_variable(VAR VALUE)
+#
+# ``VAR``
+#   Name of the variable.
+# ``VALUE``
+#   Value to append or, if the variable does not exists, it's new value. 
+#
+macro(sequoia_append_and_export_variable VAR VALUE)
+  unset("__tmp_${VAR}")
+  if(DEFINED ${VAR})
+    set("__tmp_${VAR}" ${${VAR}})
+  endif()
+  list(APPEND "__tmp_${VAR}" ${VALUE})
+  sequoia_set_and_export_variable(${VAR} "${__tmp_${VAR}}")
+endmacro()

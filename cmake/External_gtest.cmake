@@ -13,8 +13,6 @@
 ##
 ##===------------------------------------------------------------------------------------------===##
 
-include(ExternalProject)
-
 get_filename_component(current_dir ${CMAKE_CURRENT_LIST_FILE} PATH)
 
 configure_file(
@@ -43,8 +41,7 @@ ExternalProject_Add(
 ExternalProject_Get_Property(gtest install_dir)
 set(GTEST_ROOT "${install_dir}" CACHE INTERNAL "")
 
-set(SEQUOIA_EXTERNAL_CMAKE_ARGS 
-  "${SEQUOIA_EXTERNAL_CMAKE_ARGS}" 
+sequoia_append_and_export_variable(
+   SEQUOIA_EXTERNAL_CMAKE_ARGS 
   "-DGTEST_ROOT:PATH=${GTEST_ROOT}" 
-  PARENT_SCOPE
 )

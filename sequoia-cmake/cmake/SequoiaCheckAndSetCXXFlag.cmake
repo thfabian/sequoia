@@ -29,9 +29,9 @@ include(SequoiaCheckCXXFlag)
 #   sequoia_check_and_set_cxx_flag(FLAG NAME)
 #
 # ``FLAG``
-#   Compiler flag to check (e.g -O3).
+#   Compiler flag to check (e.g -Wall).
 # ``NAME``
-#   Name of the check (e.g HAVE_GCC_O3).
+#   Name of the check (e.g HAVE_GCC_WALL).
 #
 macro(sequoia_check_and_set_cxx_flag FLAG NAME)
   sequoia_check_cxx_flag("${FLAG}" ${NAME})
