@@ -29,8 +29,8 @@ def update_file(file_dst, file_src, project):
         shutil.copy(file_src, file_dst)
 
 def main():
-    sequoia_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)), '..', '..', '..')
-    sequoia_cmake_init_script = os.path.join(os.path.dirname(os.path.realpath(__file__)), '..', 
+    sequoia_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)), '..', '..')
+    sequoia_cmake_init_script = os.path.join(os.path.dirname(os.path.realpath(__file__)), 
                                              '..', 'cmake', 'SequoiaCMakeInit.cmake')
 
     # Update the main project
