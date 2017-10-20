@@ -13,23 +13,25 @@
 ##
 ##===------------------------------------------------------------------------------------------===##
 
+include(ExternalProject)
+
 ExternalProject_Add(
   zlib
-  DOWNLOAD_DIR ${download_dir}
+  DOWNLOAD_DIR "${SEQUOIA_EXTERNAL_DOWNLOAD_DIR}"
   URL ${zlib_url}
   URL_MD5 ${zlib_md5}
   BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}/zlib"
-  INSTALL_DIR "${Sequoia_INSTALL_PREFIX}/zlib"
+  INSTALL_DIR "${SEQUOIA_EXTERNAL_INSTALL_PREFIX}/zlib"
   CMAKE_CACHE_ARGS
-    ${Sequoia_THIRDPARTY_CMAKE_ARGS}
-    -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
-    -DCMAKE_CONFIGURATION_TYPES:STRING=${CMAKE_CONFIGURATION_TYPES}
-    -DBUILD_SHARED_LIBS:BOOL=${BUILD_SHARED_LIBS}
+    ${SEQUOIA_EXTERNAL_CMAKE_ARGS}
     -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
 )
 
 ExternalProject_Get_Property(zlib install_dir)
 set(ZLIB_ROOT "${install_dir}" CACHE INTERNAL "")
 
-list(APPEND Sequoia_THIRDPARTY_CMAKE_ARGS "-DZLIB_ROOT:PATH=${ZLIB_ROOT}")
-
+set(SEQUOIA_EXTERNAL_CMAKE_ARGS 
+  "${SEQUOIA_EXTERNAL_CMAKE_ARGS}" 
+  "-DZLIB_ROOT:PATH=${ZLIB_ROOT}" 
+  PARENT_SCOPE
+)

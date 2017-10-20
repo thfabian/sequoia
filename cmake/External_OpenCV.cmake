@@ -13,6 +13,8 @@
 ##
 ##===------------------------------------------------------------------------------------------===##
 
+include(ExternalProject)
+
 if(NOT(USE_SYSTEM_ZLIB))
   set(build_arg -DBUILD_ZLIB:BOOL=OFF)
 endif()
@@ -27,16 +29,13 @@ endif()
 
 ExternalProject_Add(
   opencv
-  DOWNLOAD_DIR ${download_dir}
+  DOWNLOAD_DIR "${SEQUOIA_EXTERNAL_DOWNLOAD_DIR}"
   URL ${opencv_url}
   URL_MD5 ${opencv_md5}
   BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}/opencv"
-  INSTALL_DIR "${Sequoia_INSTALL_PREFIX}/opencv"
+  INSTALL_DIR "${SEQUOIA_EXTERNAL_INSTALL_PREFIX}/opencv"
   CMAKE_CACHE_ARGS
-    ${Sequoia_THIRDPARTY_CMAKE_ARGS}
-    -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
-    -DCMAKE_CONFIGURATION_TYPES:STRING=${CMAKE_CONFIGURATION_TYPES}
-    -DBUILD_SHARED_LIBS:BOOL=${BUILD_SHARED_LIBS}
+    ${SEQUOIA_EXTERNAL_CMAKE_ARGS}
     -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
 
     ${build_arg}
@@ -136,11 +135,15 @@ ExternalProject_Add(
 )
 
 ExternalProject_Get_Property(opencv install_dir)
-set(OpenCV_DIR "${install_dir}" CACHE INTERNAL "")
 
 if(WIN32)
-  list(APPEND Sequoia_THIRDPARTY_CMAKE_ARGS "-DOpenCV_DIR:PATH=${OpenCV_DIR}")
+  set(OpenCV_DIR "${install_dir}" CACHE INTERNAL "")
 else()
-  list(APPEND Sequoia_THIRDPARTY_CMAKE_ARGS "-DOpenCV_DIR:PATH=${OpenCV_DIR}/share/OpenCV")
+  set(OpenCV_DIR "${install_dir}/share/OpenCV" CACHE INTERNAL "")
 endif()
 
+set(SEQUOIA_EXTERNAL_CMAKE_ARGS 
+  "${SEQUOIA_EXTERNAL_CMAKE_ARGS}" 
+  "-DOpenCV_DIR:PATH=${OpenCV_DIR}"
+  PARENT_SCOPE
+)

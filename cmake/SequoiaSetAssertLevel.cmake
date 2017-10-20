@@ -13,27 +13,19 @@
 ##
 ##===------------------------------------------------------------------------------------------===##
 
-include(ExternalProject)
-
-ExternalProject_Add(
-  gli
-  DOWNLOAD_DIR "${SEQUOIA_EXTERNAL_DOWNLOAD_DIR}"
-  URL ${gli_url}
-  URL_MD5 ${gli_md5}
-  BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}/gli"
-  INSTALL_DIR "${SEQUOIA_EXTERNAL_INSTALL_PREFIX}/gli"
-  PATCH_COMMAND ""
-  CONFIGURE_COMMAND ""
-  BUILD_COMMAND ""
-  INSTALL_COMMAND ${CMAKE_COMMAND} -E make_directory <INSTALL_DIR>/gli && 
-                  ${CMAKE_COMMAND} -E copy_directory <SOURCE_DIR>/gli/ <INSTALL_DIR>/gli/
-)
-
-ExternalProject_Get_Property(gli install_dir)
-set(GLI_ROOT "${install_dir}" CACHE INTERNAL "")
-
-set(SEQUOIA_EXTERNAL_CMAKE_ARGS 
-  "${SEQUOIA_EXTERNAL_CMAKE_ARGS}" 
-  "-DGLI_ROOT:PATH=${GLI_ROOT}"
-  PARENT_SCOPE
-)
+# sequoia_set_assert_level
+# ------------------------
+#
+# Adjust the CMake options (CMAKE_CXX_FLAGS and CMAKE_C_FLAGS) to enable asserts.
+#
+#    OUT_VAR:STRING=<>      - Variable to append the options
+#
+macro(sequoia_set_assert_level OUT_VAR)
+  if(WIN32)
+    set(ndebug_flag "/UNDEBUG")
+  else()
+    set(ndebug_flag "-UNDEBUG")
+  endif()
+  list(APPEND "${OUT_VAR}" "-DCMAKE_CXX_FLAGS:STRING=${ndebug_flag}" 
+                           "-DCMAKE_C_FLAGS:STRING=${ndebug_flag}")
+endmacro()

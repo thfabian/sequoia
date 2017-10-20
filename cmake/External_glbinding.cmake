@@ -13,18 +13,17 @@
 ##
 ##===------------------------------------------------------------------------------------------===##
 
+include(ExternalProject)
+
 ExternalProject_Add(
   glbinding
-  DOWNLOAD_DIR ${download_dir}
+  DOWNLOAD_DIR "${SEQUOIA_EXTERNAL_DOWNLOAD_DIR}"
   URL ${glbinding_url}
   URL_MD5 ${glbinding_md5}
   BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}/glbinding"
-  INSTALL_DIR "${Sequoia_INSTALL_PREFIX}/glbinding"
+  INSTALL_DIR "${SEQUOIA_EXTERNAL_INSTALL_PREFIX}/glbinding"
   CMAKE_CACHE_ARGS
-    ${Sequoia_THIRDPARTY_CMAKE_ARGS}
-    -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
-    -DCMAKE_CONFIGURATION_TYPES:STRING=${CMAKE_CONFIGURATION_TYPES}
-    -DBUILD_SHARED_LIBS:BOOL=${BUILD_SHARED_LIBS}
+    ${SEQUOIA_EXTERNAL_CMAKE_ARGS}
     -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
     -DOPTION_BUILD_DOCS:BOOL=OFF
     -DOPTION_BUILD_EXAMPLES:BOOL=OFF
@@ -34,5 +33,8 @@ ExternalProject_Add(
 ExternalProject_Get_Property(glbinding install_dir)
 set(GLBINDING_ROOT "${install_dir}" CACHE INTERNAL "")
 
-list(APPEND Sequoia_THIRDPARTY_CMAKE_ARGS "-DGLBINDING_ROOT:PATH=${GLBINDING_ROOT}")
-
+set(SEQUOIA_EXTERNAL_CMAKE_ARGS 
+  "${SEQUOIA_EXTERNAL_CMAKE_ARGS}" 
+  "-DGLBINDING_ROOT:PATH=${GLBINDING_ROOT}"
+  PARENT_SCOPE
+)

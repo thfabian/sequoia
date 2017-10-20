@@ -13,13 +13,15 @@
 ##
 ##===------------------------------------------------------------------------------------------===##
 
+include(ExternalProject)
+
 ExternalProject_Add(
   glm
-  DOWNLOAD_DIR ${download_dir}
+  DOWNLOAD_DIR "${SEQUOIA_EXTERNAL_DOWNLOAD_DIR}"
   URL ${glm_url}
   URL_MD5 ${glm_md5}
   BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}/glm"
-  INSTALL_DIR "${Sequoia_INSTALL_PREFIX}/glm"
+  INSTALL_DIR "${SEQUOIA_EXTERNAL_INSTALL_PREFIX}/glm"
   PATCH_COMMAND ""
   CONFIGURE_COMMAND ""
   BUILD_COMMAND ""
@@ -30,4 +32,8 @@ ExternalProject_Add(
 ExternalProject_Get_Property(glm install_dir)
 set(GLM_ROOT "${install_dir}" CACHE INTERNAL "")
 
-list(APPEND Sequoia_THIRDPARTY_CMAKE_ARGS "-DGLM_ROOT:PATH=${GLM_ROOT}")
+set(SEQUOIA_EXTERNAL_CMAKE_ARGS 
+  "${SEQUOIA_EXTERNAL_CMAKE_ARGS}" 
+  "-DGLM_ROOT:PATH=${GLM_ROOT}"
+  PARENT_SCOPE
+)

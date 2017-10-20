@@ -13,18 +13,17 @@
 ##
 ##===------------------------------------------------------------------------------------------===##
 
+include(ExternalProject)
+
 ExternalProject_Add(
   tinyobjloader
-  DOWNLOAD_DIR ${download_dir}
+  DOWNLOAD_DIR "${SEQUOIA_EXTERNAL_DOWNLOAD_DIR}"
   URL ${tinyobjloader_url}
   URL_MD5 ${tinyobjloader_md5}
   BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}/tinyobjloader"
-  INSTALL_DIR "${Sequoia_INSTALL_PREFIX}/tinyobjloader"
+  INSTALL_DIR "${SEQUOIA_EXTERNAL_INSTALL_PREFIX}/tinyobjloader"
   CMAKE_CACHE_ARGS
-    ${Sequoia_THIRDPARTY_CMAKE_ARGS}
-    -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
-    -DCMAKE_CONFIGURATION_TYPES:STRING=${CMAKE_CONFIGURATION_TYPES}
-    -DBUILD_SHARED_LIBS:BOOL=${BUILD_SHARED_LIBS}
+    ${SEQUOIA_EXTERNAL_CMAKE_ARGS}
     -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
     -DTINYOBJLOADER_COMPILATION_SHARED:BOOL=${BUILD_SHARED_LIBS}
     -DTINYOBJLOADER_BUILD_TEST_LOADER:BOOL=OFF
@@ -34,4 +33,8 @@ ExternalProject_Add(
 ExternalProject_Get_Property(tinyobjloader install_dir)
 set(tinyobjloader_DIR "${install_dir}/lib/tinyobjloader/cmake" CACHE INTERNAL "")
 
-list(APPEND Sequoia_THIRDPARTY_CMAKE_ARGS "-Dtinyobjloader_DIR:PATH=${tinyobjloader_DIR}")
+set(SEQUOIA_EXTERNAL_CMAKE_ARGS 
+  "${SEQUOIA_EXTERNAL_CMAKE_ARGS}" 
+  "-Dtinyobjloader_DIR:PATH=${tinyobjloader_DIR}" 
+  PARENT_SCOPE
+)

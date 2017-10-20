@@ -13,17 +13,17 @@
 ##
 ##===------------------------------------------------------------------------------------------===##
 
+include(ExternalProject)
+
 ExternalProject_Add(
   benchmark
-  DOWNLOAD_DIR ${download_dir}
+  DOWNLOAD_DIR "${SEQUOIA_EXTERNAL_DOWNLOAD_DIR}"
   URL ${benchmark_url}
   URL_MD5 ${benchmark_md5}
   BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}/benchmark"
-  INSTALL_DIR "${Sequoia_INSTALL_PREFIX}/benchmark"
+  INSTALL_DIR "${SEQUOIA_EXTERNAL_INSTALL_PREFIX}/benchmark"
   CMAKE_ARGS
-    -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
-    -DCMAKE_CONFIGURATION_TYPES:STRING=${CMAKE_CONFIGURATION_TYPES}
-    -DBUILD_SHARED_LIBS:BOOL=${BUILD_SHARED_LIBS}
+    ${SEQUOIA_EXTERNAL_CMAKE_ARGS}
     -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
     -DBENCHMARK_ENABLE_TESTING:BOOL=OFF
 )
@@ -31,4 +31,8 @@ ExternalProject_Add(
 ExternalProject_Get_Property(benchmark install_dir)
 set(benchmark_DIR "${install_dir}/lib/cmake/benchmark" CACHE INTERNAL "")
 
-list(APPEND Sequoia_THIRDPARTY_CMAKE_ARGS "-Dbenchmark_DIR:PATH=${benchmark_DIR}")
+set(SEQUOIA_EXTERNAL_CMAKE_ARGS 
+  "${SEQUOIA_EXTERNAL_CMAKE_ARGS}" 
+  "-Dbenchmark_DIR:PATH=${benchmark_DIR}"
+  PARENT_SCOPE
+)

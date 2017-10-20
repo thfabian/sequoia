@@ -13,17 +13,17 @@
 ##
 ##===------------------------------------------------------------------------------------------===##
 
+include(ExternalProject)
+
 ExternalProject_Add(
   backward
-  DOWNLOAD_DIR ${download_dir}
+  DOWNLOAD_DIR "${SEQUOIA_EXTERNAL_DOWNLOAD_DIR}"
   URL ${backward_url}
   URL_MD5 ${backward_md5}
   BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}/backward"
-  INSTALL_DIR "${Sequoia_INSTALL_PREFIX}/backward"
+  INSTALL_DIR "${SEQUOIA_EXTERNAL_INSTALL_PREFIX}/backward"
   CMAKE_ARGS
-    -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
-    -DCMAKE_CONFIGURATION_TYPES:STRING=${CMAKE_CONFIGURATION_TYPES}
-    -DBUILD_SHARED_LIBS:BOOL=${BUILD_SHARED_LIBS}
+    ${SEQUOIA_EXTERNAL_CMAKE_ARGS}
     -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
     -DBACKWARD_SHARED:BOOL=${BUILD_SHARED_LIBS}
     -DBACKWARD_TESTS:BOOL=OFF
@@ -32,5 +32,8 @@ ExternalProject_Add(
 
 ExternalProject_Get_Property(backward install_dir)
 
-list(APPEND Sequoia_THIRDPARTY_CMAKE_ARGS "-DBackward_DIR:PATH=${install_dir}/lib/backward")
-list(APPEND Sequoia_THIRDPARTY_PREFIX_PATH "${install_dir}")
+set(SEQUOIA_EXTERNAL_CMAKE_ARGS 
+  "${SEQUOIA_EXTERNAL_CMAKE_ARGS}" 
+  "-DBackward_DIR:PATH=${install_dir}/lib/backward"
+  PARENT_SCOPE
+)
