@@ -258,7 +258,7 @@ function(sequoia_generate_options)
     message(FATAL_ERROR "invalid argument ${ARG_UNPARSED_ARGUMENTS}")
   endif()
 
-  set(script ${CMAKE_SOURCE_DIR}/tools/opt-gen/opt-gen.py)
+  set(script ${CMAKE_SOURCE_DIR}/scripts/opt-gen/opt-gen.py)
   set(script_path "\"${script}\"")
   set(script_args --input-header="${ARG_INPUT_HEADER}"
                   --input-include="${ARG_INPUT_INCLUDE}"
@@ -302,7 +302,7 @@ function(sequoia_generate_vertices)
     message(FATAL_ERROR "invalid argument ${ARG_UNPARSED_ARGUMENTS}")
   endif()
 
-  set(script ${CMAKE_SOURCE_DIR}/tools/vertex-gen/vertex-gen.py)
+  set(script ${CMAKE_SOURCE_DIR}/scripts/vertex-gen/vertex-gen.py)
   set(script_path "\"${script}\"")
   set(script_args --vertices="${ARG_VERTICES}"
                   --input-header="${ARG_INPUT_HEADER}"
