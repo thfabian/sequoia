@@ -13,20 +13,25 @@
 ##
 ##===------------------------------------------------------------------------------------------===##
 
+include(SequoiaIncludeGuard)
+sequoia_include_guard()
+
 #.rst:
-# sequoia_include_guard
-# ---------------------
+# sequoia_get_architecture_info
+# -----------------------------
 #
-# Prevent frequently-included CMake files from being re-parsed multiple times.
+# Get the identification of the architecture.
 #
 # .. code-block:: cmake
 #
-#   sequoia_include_guard()
+#   sequoia_get_architecture_info()
 #
-macro(sequoia_include_guard)
-  if(DEFINED "__SEQUOIA_INCLUDE_GUARD_${CMAKE_CURRENT_LIST_FILE}")
-    return()
-  endif(DEFINED "__SEQUOIA_INCLUDE_GUARD_${CMAKE_CURRENT_LIST_FILE}")
-
-  set("__SEQUOIA_INCLUDE_GUARD_${CMAKE_CURRENT_LIST_FILE}" 1)
+# The functions defines the following variable:
+#
+# ``SEQUOIA_ARCHITECTURE_STRING``
+#   String of the architecture.
+#
+macro(sequoia_get_architecture_info)
+  set(SEQUOIA_ARCHITECTURE_STRING "${CMAKE_SYSTEM_PROCESSOR}" 
+    CACHE INTERNAL "Architecture string" FORCE)
 endmacro()

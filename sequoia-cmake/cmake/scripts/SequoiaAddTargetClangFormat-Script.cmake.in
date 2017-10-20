@@ -13,20 +13,30 @@
 ##
 ##===------------------------------------------------------------------------------------------===##
 
-#.rst:
-# sequoia_include_guard
-# ---------------------
-#
-# Prevent frequently-included CMake files from being re-parsed multiple times.
-#
-# .. code-block:: cmake
-#
-#   sequoia_include_guard()
-#
-macro(sequoia_include_guard)
-  if(DEFINED "__SEQUOIA_INCLUDE_GUARD_${CMAKE_CURRENT_LIST_FILE}")
-    return()
-  endif(DEFINED "__SEQUOIA_INCLUDE_GUARD_${CMAKE_CURRENT_LIST_FILE}")
+set(executable "@CLANG-FORMAT_EXECUTABLE@")
+set(dirs "@CLANG-FORMAT_DIRECTORIES@")
+set(extensions "@CLANG-FORMAT_EXTENSION@")
 
-  set("__SEQUOIA_INCLUDE_GUARD_${CMAKE_CURRENT_LIST_FILE}" 1)
-endmacro()
+if(NOT(executable))
+  message(FATAL_ERROR "sequoia_add_target_clang_format: clang-format executable not found!")
+endif()
+
+if(NOT(extensions))
+   message(FATAL_ERROR "sequoia_add_target_clang_format: invalid extension \"${extensions}\"")
+endif()
+
+# Glob the files
+foreach(dir ${dirs})
+  foreach(extension ${extensions})
+    list(APPEND pattern "${dir}/*${extension}")
+  endforeach()
+
+  file(GLOB_RECURSE globbed_files RELATIVE ${dir} ${pattern})
+
+  foreach(file ${globbed_files})
+    set(files "${files} ${dir}/${file}")
+  endforeach()
+endforeach()
+
+# Run clang-format
+exec_program(${executable} ${CMAKE_BINARY_DIR} ARGS -style=file -i ${files})

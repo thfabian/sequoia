@@ -13,20 +13,29 @@
 ##
 ##===------------------------------------------------------------------------------------------===##
 
+include(SequoiaIncludeGuard)
+sequoia_include_guard()
+
+include(SequoiaCheckCXXFlag)
+
 #.rst:
-# sequoia_include_guard
-# ---------------------
+# sequoia_check_and_set_cxx_flag
+# ------------------------------
 #
-# Prevent frequently-included CMake files from being re-parsed multiple times.
+# Test if the C++ compiler flag is supported and if so, add it to the ``CMAKE_CXX_FLAGS``.
 #
 # .. code-block:: cmake
 #
-#   sequoia_include_guard()
+#   sequoia_check_and_set_cxx_flag(FLAG NAME)
 #
-macro(sequoia_include_guard)
-  if(DEFINED "__SEQUOIA_INCLUDE_GUARD_${CMAKE_CURRENT_LIST_FILE}")
-    return()
-  endif(DEFINED "__SEQUOIA_INCLUDE_GUARD_${CMAKE_CURRENT_LIST_FILE}")
-
-  set("__SEQUOIA_INCLUDE_GUARD_${CMAKE_CURRENT_LIST_FILE}" 1)
+# ``FLAG``
+#   Compiler flag to check (e.g -O3).
+# ``NAME``
+#   Name of the check (e.g HAVE_GCC_O3).
+#
+macro(sequoia_check_and_set_cxx_flag FLAG NAME)
+  sequoia_check_cxx_flag("${FLAG}" ${NAME})
+  if(${NAME})
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${FLAG}")
+  endif()
 endmacro()

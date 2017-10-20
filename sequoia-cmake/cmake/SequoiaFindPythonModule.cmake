@@ -32,7 +32,8 @@ sequoia_include_guard()
 #   If set, abort with an error if ``MODULE`` was not found.
 #
 # The module makes use of the ``PYTHON_EXECUTABLE`` which needs to be set before calling this 
-# function.
+# function (see 
+# `FindPythonInterp <https://cmake.org/cmake/help/latest/module/FindPythonInterp.html>`_).
 #
 # Variables defined:
 #

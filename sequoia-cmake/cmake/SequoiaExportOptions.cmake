@@ -13,20 +13,28 @@
 ##
 ##===------------------------------------------------------------------------------------------===##
 
+include(SequoiaIncludeGuard)
+sequoia_include_guard()
+
 #.rst:
-# sequoia_include_guard
-# ---------------------
+# sequoia_export_options
+# ----------------------
 #
-# Prevent frequently-included CMake files from being re-parsed multiple times.
-#
+# Export a list of options in the variable ``<NAME>_OPTIONS`` which can be accessed by meta
+# projects.
+# 
 # .. code-block:: cmake
 #
-#   sequoia_include_guard()
+#   sequoia_export_options(NAME ARGN)
 #
-macro(sequoia_include_guard)
-  if(DEFINED "__SEQUOIA_INCLUDE_GUARD_${CMAKE_CURRENT_LIST_FILE}")
-    return()
-  endif(DEFINED "__SEQUOIA_INCLUDE_GUARD_${CMAKE_CURRENT_LIST_FILE}")
-
-  set("__SEQUOIA_INCLUDE_GUARD_${CMAKE_CURRENT_LIST_FILE}" 1)
+# ``NAME``
+#   Prefix of the options list.
+# ``ARGN``
+#   List of option names to export.
+#
+macro(sequoia_export_options NAME)
+  set("${NAME}_OPTIONS" "" CACHE INTERNAL "Options of ${NAME}" FORCE)
+  foreach(arg ${ARGN})
+    list(APPEND "${NAME}_OPTIONS" "${arg}")
+  endforeach()
 endmacro()
