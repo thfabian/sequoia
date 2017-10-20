@@ -24,8 +24,6 @@
 #include <gli/gli.hpp>
 #include <opencv2/opencv.hpp>
 
-#include <iostream>
-
 namespace sequoia {
 
 namespace render {

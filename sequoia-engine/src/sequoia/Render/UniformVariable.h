@@ -30,11 +30,12 @@ namespace render {
 
 /// @brief Type of uniform variables
 /// @ingroup render
-enum class UniformType {
+enum class UniformType : std::uint32_t {
   Invalid = 0,
 #define UNIFORM_VARIABLE_TYPE(Type, Name) Name, VectorOf##Name,
 #include "sequoia/Render/UniformVariable.inc"
 #undef UNIFORM_VARIABLE_TYPE
+  Struct
 };
 
 /// @brief Stream UniformType
@@ -42,6 +43,24 @@ enum class UniformType {
 SEQUOIA_API extern std::ostream& operator<<(std::ostream& os, UniformType type);
 
 namespace internal {
+
+template <class T>
+struct IsUniformType {
+  static constexpr bool value = false;
+};
+
+#define UNIFORM_VARIABLE_TYPE(Type, Name)                                                          \
+  template <>                                                                                      \
+  struct IsUniformType<Type> {                                                                     \
+    static constexpr bool value = true;                                                            \
+  };
+#include "sequoia/Render/UniformVariable.inc"
+#undef UNIFORM_VARIABLE_TYPE
+
+struct InvalidData {
+  inline bool operator==(const InvalidData& other) const noexcept { return true; }
+  inline bool operator!=(const InvalidData& other) const noexcept { return false; }
+};
 
 template <UniformType Enum>
 struct InvalidUniformTypeToType {
@@ -95,16 +114,11 @@ struct TypeToUniformType {
 /// @ingroup render
 class SEQUOIA_API UniformVariable {
 public:
-  struct InvalidData {
-    bool operator==(const InvalidData& other) const noexcept { return true; }
-    bool operator!=(const InvalidData& other) const noexcept { return false; }
-  };
-
   using DataType = boost::variant<
 #define UNIFORM_VARIABLE_TYPE(Type, Name) Type, std::vector<Type>,
 #include "sequoia/Render/UniformVariable.inc"
 #undef UNIFORM_VARIABLE_TYPE
-      InvalidData>;
+      internal::InvalidData>;
 
   /// @brief Construct with `name` and `data`
   /// @param data   Data of the uniform variable
@@ -123,7 +137,7 @@ public:
     this->set(toVec(data));
   }
 
-  UniformVariable() : data_(InvalidData{}), type_(UniformType::Invalid) {}
+  UniformVariable() : data_(internal::InvalidData{}), type_(UniformType::Invalid) {}
   UniformVariable(const UniformVariable&) = default;
   UniformVariable(UniformVariable&&) = default;
 

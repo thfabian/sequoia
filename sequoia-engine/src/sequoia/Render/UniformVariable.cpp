@@ -13,10 +13,10 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Render/UniformVariable.h"
 #include "sequoia/Core/Format.h"
 #include "sequoia/Core/StringUtil.h"
 #include "sequoia/Core/Unreachable.h"
+#include "sequoia/Render/UniformVariable.h"
 #include <boost/preprocessor/stringize.hpp>
 #include <ostream>
 #include <sstream>
@@ -69,6 +69,9 @@ std::ostream& operator<<(std::ostream& os, UniformType type) {
   case UniformType::Invalid:
     os << "Invalid";
     break;
+  case UniformType::Struct:
+    os << "Struct";
+    break;
   default:
     sequoia_unreachable("invalid type");
   }
@@ -88,7 +91,8 @@ bool UniformVariable::operator==(const UniformVariable& other) const noexcept {
 #include "sequoia/Render/UniformVariable.inc"
 #undef UNIFORM_VARIABLE_TYPE
   case UniformType::Invalid:
-    return boost::get<InvalidData>(data_) == boost::get<InvalidData>(other.data_);
+    return boost::get<internal::InvalidData>(data_) ==
+           boost::get<internal::InvalidData>(other.data_);
   default:
     sequoia_unreachable("invalid type");
   }
