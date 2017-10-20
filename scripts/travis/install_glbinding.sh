@@ -19,40 +19,40 @@
 # @param $1   Install directory
 # @param $2   glbinding version triple (X.Y.Z)
 function install_glbinding() {
-  pushd $(pwd)
+  pushd "$(pwd)"
   local start_time=$(date +%s)
 
   if [[ $# -lt 2 ]]; then
     fatal_error "argument mistmatch: ${FUNCNAME[0]} <install_prefix> <version>"
   fi
 
-  local install_dir=$1
+  local install_dir="$1"
   shift
   local glbinding_version=$1
   shift
   
-  local glbinding_install_dir=$install_dir/glbinding-$glbinding_version
+  local glbinding_install_dir="$install_dir/glbinding-$glbinding_version"
 
   abort_and_cleanup() {
-    rm -rf $glbinding_install_dir && mkdir -p $glbinding_install_dir 
+    rm -rf "$glbinding_install_dir" && mkdir -p "$glbinding_install_dir"
     fatal_error "$1"
   }
 
   NOTICE "${FUNCNAME[0]}: Installing glbinding $glbinding_version into \"$glbinding_install_dir\""
-  mkdir -p ${glbinding_install_dir}
+  mkdir -p "${glbinding_install_dir}"
   if [[ ! -z "$(ls -A ${glbinding_install_dir})" ]]; then
     NOTICE "${FUNCNAME[0]}: Package already installed. Skipping."
   else
     local glbinding_url=$(printf "https://github.com/cginternals/glbinding/archive/v%s.tar.gz"     \
-                      ${glbinding_version})
+                        ${glbinding_version})
 
     NOTICE "${FUNCNAME[0]}: Downloading glbinding $glbinding_url ..."
-    { wget --no-check-certificate -O - ${glbinding_url} |                                          \
-      tar --strip-components=1 -xz -C ${glbinding_install_dir}; } ||                               \
+    { wget --no-check-certificate -O - "${glbinding_url}" |                                        \
+      tar --strip-components=1 -xz -C "${glbinding_install_dir}"; } ||                             \
       abort_and_cleanup "failed to download glbinding from: $glbinding_url"
     NOTICE "${FUNCNAME[0]}: Successfully downloaded $glbinding_url"
 
-    cd ${glbinding_install_dir}
+    cd "${glbinding_install_dir}"
     NOTICE "${FUNCNAME[0]}: Starting to build glbinding ..."
     mkdir build && cd build
     cmake .. -DCMAKE_BUILD_TYPE=Release -DOPTION_BUILD_DOCS:BOOL=OFF                               \

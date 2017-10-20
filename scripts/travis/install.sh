@@ -17,14 +17,14 @@
 this_script_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 # Setup logging
-source $this_script_dir/b_log.sh
+source "$this_script_dir/logger.sh"
 LOG_LEVEL_ALL
 
 # @brief Issue an error message to `stderr` and exit with 1
 #
 # @param $1   Message to print
 function fatal_error() {
-  ERROR $1 
+  ERROR "$1" 
   exit 1
 }
 
@@ -63,9 +63,9 @@ EOF
 # @param $2   Package to install
 # @param $*   Additional arguments passed to the install function
 function install_package() {
-  local install_dir=$1
+  local install_dir="$1"
   shift
-  local package=$1
+  local package="$1"
   shift
   local args=$*
   local package_upper=$(echo $package | awk '{print toupper($0)}')
@@ -110,7 +110,7 @@ function install_driver() {
   fi
 
   # Make sure install directory exists
-  mkdir -p ${install_dir}
+  mkdir -p "${install_dir}"
 
   # Export toolchain
   if [ -z ${CXX_COMPILER+x} ]; then
@@ -139,6 +139,7 @@ function install_driver() {
       cmake) install_package ${install_dir} cmake;;
       glbinding) install_package ${install_dir} glbinding;;
       opencv) install_package ${install_dir} opencv;;
+      clang) install_package ${install_dir} clang;;
       *) 
         >&2 echo "$0: error: unknown package '$package'";
         exit 1;;

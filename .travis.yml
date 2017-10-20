@@ -7,7 +7,6 @@ addons:
   apt:
     sources:
       - ubuntu-toolchain-r-test
-      - llvm-toolchain-trusty-4.0
       - deadsnakes
     packages:
       - python3.5
@@ -16,10 +15,9 @@ addons:
       - gcc-5
       - g++-6
       - gcc-6
-      - clang-4.0
-      - clang++-4.0
-
-      - ccache
+      - clang++-3.8
+      - clang-3.8 
+      
       - libtbb-dev
 
       # OpenCV deps
@@ -65,7 +63,7 @@ jobs:
 
     - <<: *prepare_cache_stage
       compiler: clang
-      env: CXX_COMPILER=clang++-4.0 C_COMPILER=clang-4.0
+      env: CXX_COMPILER=clang++-3.8 C_COMPILER=clang-3.8
 
     # Linux GCC 5.4 (Release)
     - &test_stage
@@ -89,15 +87,25 @@ jobs:
       compiler: gcc
       env: CONFIG=RelWithDebInfo CXX_COMPILER=g++-6 C_COMPILER=gcc-6
 
+    # Clang 3.8 (Release)
+    - <<: *test_stage      
+      compiler: clang
+      env: CONFIG=Release CXX_COMPILER=clang++-3.8 C_COMPILER=clang-3.8
+
+    # Clang 3.8 (RelWithDebInfo)
+    - <<: *test_stage      
+      compiler: clang
+      env: CONFIG=RelWithDebInfo CXX_COMPILER=clang++-3.8 C_COMPILER=clang-3.8
+
     # Clang 4.0 (Release)
     - <<: *test_stage      
       compiler: clang
-      env: CONFIG=Release CXX_COMPILER=clang++-4.0 C_COMPILER=clang-4.0
+      env: CONFIG=Release CXX_COMPILER=clang++-3.8 C_COMPILER=clang-3.8 CLANG_VERSION=4.0.0
 
     # Clang 4.0 (RelWithDebInfo)
     - <<: *test_stage      
       compiler: clang
-      env: CONFIG=RelWithDebInfo CXX_COMPILER=clang++-4.0 C_COMPILER=clang-4.0
+      env: CONFIG=RelWithDebInfo CXX_COMPILER=clang++-3.8 C_COMPILER=clang-3.8 CLANG_VERSION=4.0.0
 
 cache:
   directories:

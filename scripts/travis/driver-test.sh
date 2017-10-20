@@ -17,8 +17,12 @@
 this_script_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 # Setup dependencies
-source $this_script_dir/install.sh
-install_driver -i ${CACHE_DIR} -b cmake,boost,glbinding,opencv
+source "$this_script_dir/install.sh"
+install_driver -i "${CACHE_DIR}" -b cmake,boost,glbinding,opencv
+
+if [ ! -z ${CLANG_VERSION+x} ]; then
+  install_driver -i "${CACHE_DIR}" -b clang
+fi
 
 # Make sure C++ and C compilers are set correctly
 export CXX=${CXX_COMPILER}
@@ -29,18 +33,18 @@ $CXX --version
 python3.5 --version
 
 # Build sequoia
-pushd $(pwd)
+pushd "$(pwd)"
 mkdir build && cd build
-cmake .. -DBOOST_ROOT:PATH=$BOOST_ROOT                                                             \
-         -DGLBINDING_ROOT:PATH=$GLBINDING_ROOT                                                     \
-         -DOpenCV_DIR:PATH=$OpenCV_DIR                                                             \
+cmake .. -DBOOST_ROOT:PATH="$BOOST_ROOT"                                                           \
+         -DGLBINDING_ROOT:PATH="$GLBINDING_ROOT"                                                   \
+         -DOpenCV_DIR:PATH="$OpenCV_DIR"                                                           \
          -DCMAKE_BUILD_TYPE=$CONFIG                                                                \
       || fatal_error "failed to configure sequoia"
 make -j2 || fatal_error "failed to build sequoia"
 popd
 
 # Test
-pushd $(pwd)
+pushd "$(pwd)"
 cd build/sequoia-engine
 ctest -C ${CONFIG}  -E "RenderGLTest" --output-on-failure --force-new-ctest-process                \
      || fatal_error "failed to run tests of sequoia"

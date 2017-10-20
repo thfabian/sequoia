@@ -15,5 +15,5 @@
 ##===------------------------------------------------------------------------------------------===##
 
 this_script_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-source $this_script_dir/install.sh
+source "$this_script_dir/install.sh"
 install_driver $*

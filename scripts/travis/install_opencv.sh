@@ -19,22 +19,22 @@
 # @param $1   Install directory
 # @param $2   opencv version triple (X.Y.Z)
 function install_opencv() {
-  pushd $(pwd)
+  pushd "$(pwd)"
   local start_time=$(date +%s)
 
   if [[ $# -lt 2 ]]; then
     fatal_error "argument mistmatch: ${FUNCNAME[0]} <install_prefix> <version>"
   fi
 
-  local install_dir=$1
+  local install_dir="$1"
   shift
   local opencv_version=$1
   shift
   
-  local opencv_install_dir=$install_dir/opencv-$opencv_version
+  local opencv_install_dir="$install_dir/opencv-$opencv_version"
 
   abort_and_cleanup() {
-    rm -rf $opencv_install_dir && mkdir -p $opencv_install_dir 
+    rm -rf "$opencv_install_dir" && mkdir -p "$opencv_install_dir" 
     fatal_error "$1"
   }
 
@@ -47,12 +47,12 @@ function install_opencv() {
                       ${opencv_version})
 
     NOTICE "${FUNCNAME[0]}: Downloading opencv $opencv_url ..."
-    { wget --no-check-certificate -O - ${opencv_url} |                                             \
-      tar --strip-components=1 -xz -C ${opencv_install_dir}; } ||                                  \
+    { wget --no-check-certificate -O - "${opencv_url}" |                                           \
+      tar --strip-components=1 -xz -C "${opencv_install_dir}"; } ||                                \
       abort_and_cleanup "Failed to download opencv from: $opencv_url"
     NOTICE "${FUNCNAME[0]}: Successfully downloaded $opencv_url"
 
-    cd ${opencv_install_dir}
+    cd "${opencv_install_dir}"
     NOTICE "${FUNCNAME[0]}: Starting to build opencv ..."
     mkdir build && cd build
     cmake ..  -DCMAKE_BUILD_TYPE=Release                                                           \

@@ -19,28 +19,28 @@
 # @param $1   Install directory
 # @param $2   CMake version triple (X.Y.Z)
 function install_cmake() {
-  pushd $(pwd)
+  pushd "$(pwd)"
   local start_time=$(date +%s)
 
   if [[ $# -lt 2 ]]; then
     fatal_error "argument mistmatch: ${FUNCNAME[0]} <install_prefix> <version>"
   fi
 
-  local install_dir=$1
+  local install_dir="$1"
   shift
   local cmake_version=$1
   shift
   
-  local cmake_install_dir=$install_dir/cmake-$cmake_version
+  local cmake_install_dir="$install_dir/cmake-$cmake_version"
   local cmake_version_short=${cmake_version%.*}
 
   abort_and_cleanup() {
-    rm -rf $cmake_install_dir && mkdir -p $cmake_install_dir 
+    rm -rf "$cmake_install_dir" && mkdir -p "$cmake_install_dir" 
     fatal_error "$1"
   }
 
   NOTICE "${FUNCNAME[0]}: Installing cmake $cmake_version into \"$cmake_install_dir\" ..."
-  mkdir -p ${cmake_install_dir}
+  mkdir -p "${cmake_install_dir}"
   if [[ ! -z "$(ls -A ${cmake_install_dir})" ]]; then
     NOTICE "${FUNCNAME[0]}: Package already installed. Skipping."
   else
@@ -48,8 +48,8 @@ function install_cmake() {
                       ${cmake_version_short} ${cmake_version})
 
     NOTICE "${FUNCNAME[0]}: Downloading cmake $cmake_url ..."
-    { wget --no-check-certificate -O - ${cmake_url} |                                              \
-      tar --strip-components=1 -xz -C ${cmake_install_dir}; } ||                                   \
+    { wget --no-check-certificate -O - "${cmake_url}" |                                            \
+      tar --strip-components=1 -xz -C "${cmake_install_dir}"; } ||                                 \
       abort_and_cleanup "Failed to download cmake from: $cmake_url"
     NOTICE "${FUNCNAME[0]}: Successfully downloaded $cmake_url"
   fi
