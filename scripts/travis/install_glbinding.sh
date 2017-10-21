@@ -57,7 +57,7 @@ function install_glbinding() {
     mkdir build && cd build
     cmake .. -DCMAKE_BUILD_TYPE=Release -DOPTION_BUILD_DOCS:BOOL=OFF                               \
              -DOPTION_BUILD_EXAMPLES:BOOL=OFF -DOPTION_BUILD_TESTS:BOOL=OFF                        \
-             -DCMAKE_INSTALL_PREFIX=${glbinding_install_dir}                                       \
+             -DCMAKE_INSTALL_PREFIX="${glbinding_install_dir}"                                     \
           || abort_and_cleanup "Failed to configure glbinding"
     make -j2 install || abort_and_cleanup "Failed to build glbinding"
   fi
