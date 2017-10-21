@@ -25,14 +25,9 @@ TEST(VersionTest, Construction) {
   EXPECT_EQ(version.major(), 1);
   EXPECT_EQ(version.minor(), 60);
   EXPECT_EQ(version.patch(), 0);
-
-  Version currentVersion = Version::currentVersion();
-  EXPECT_EQ(currentVersion.major(), SEQUOIA_VERSION_MAJOR);
-  EXPECT_EQ(currentVersion.minor(), SEQUOIA_VERSION_MINOR);
-  EXPECT_EQ(currentVersion.patch(), SEQUOIA_VERSION_PATCH);
 }
 
-TEST(VersionTest, Coversion) {
+TEST(VersionTest, Conversion) {
   Version versionTripple(1, 60, 2);
   EXPECT_EQ(Version::toSingle(versionTripple), 106002);
 
@@ -56,6 +51,13 @@ TEST(VersionTest, ToString) {
   std::stringstream ss;
   ss << Version(1, 60, 2);
   EXPECT_STREQ(ss.str().c_str(), "1.60.2");
+}
+
+TEST(VersionTest, SequoiaEngineVersion) {
+  Version version = getSequoiaEngineVersion();
+  EXPECT_EQ(version.major(), SEQUOIA_ENGINE_VERSION_MAJOR);
+  EXPECT_EQ(version.minor(), SEQUOIA_ENGINE_VERSION_MINOR);
+  EXPECT_EQ(version.patch(), SEQUOIA_ENGINE_VERSION_PATCH);
 }
 
 } // anonymous namespace
