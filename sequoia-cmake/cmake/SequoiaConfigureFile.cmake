@@ -39,8 +39,8 @@ sequoia_include_guard()
 #
 #   sequoia_configure_file(${CMAKE_SOURCE_DIR}/src/sequoia/Config.h.cmake)
 #
-# Ths stores the configured file in ``${CMAKE_BINARY_DIR}/src/sequoia/Config.h`` and, in addition, it 
-# will install it in ``${CMAKE_INSTALL_PREFIX}/include/sequoia/Config.h``" (hence it will strip 
+# Ths stores the configured file in ``${CMAKE_BINARY_DIR}/src/sequoia/Config.h`` and, in addition, 
+# it will install it in ``${CMAKE_INSTALL_PREFIX}/include/sequoia/Config.h``" (hence it will strip 
 # ``"src/"``).
 #
 function(sequoia_configure_file FILE)

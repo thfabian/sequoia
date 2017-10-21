@@ -29,7 +29,7 @@ include(CMakeParseArguments)
 #
 # .. code-block:: cmake
 #
-#   sequoia_combine_libraries(NAME OBJECTS DEPENDS)
+#   sequoia_combine_libraries(NAME OBJECTS INSTALL_DESTINATION [USE_LTO] [DEPENDS])
 #
 # ``NAME``
 #   Name of the library.
@@ -37,11 +37,14 @@ include(CMakeParseArguments)
 #   Object libraries to combine (see :ref:`sequoia_add_library`).
 # ``INSTALL_DESTINATION``
 #   Destition (relative to ``CMAKE_INSTALL_PREFIX``) to install the libraries.
+# ``USE_LTO``
+#   Use link time optimization (LTO) -- this usually requires setting special flags during 
+#   compilation.
 # ``DEPENDS`` [optional]
 #   List of external libraries and/or CMake targets treated as dependencies of the library.
 #
 function(sequoia_combine_libraries)
-  set(options)
+  set(options USE_LTO)
   set(one_value_args NAME INSTALL_DESTINATION)
   set(multi_value_args OBJECTS DEPENDS)
   cmake_parse_arguments(ARG "${options}" "${one_value_args}" "${multi_value_args}" ${ARGN})

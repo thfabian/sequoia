@@ -22,23 +22,23 @@ include(SequoiaSetAndExportVariable)
 # sequoia_append_and_export_variable
 # ----------------------------------
 #
-# If the variable ``VAR`` exists, ``VALUE`` is appended and the the new value of ``VAR`` is 
+# If the variable ``VAR`` exists, ``ARGN`` is appended and the the new value of ``VAR`` is 
 # exported to all scopes i.e cached internally.
 #
 # .. code-block:: cmake
 #
-#   sequoia_append_and_export_variable(VAR VALUE)
+#   sequoia_append_and_export_variable(VAR [ARGN...])
 #
 # ``VAR``
 #   Name of the variable.
-# ``VALUE``
-#   Value to append or, if the variable does not exists, it's new value. 
+# ``ARGN``
+#   Value(s) to append or, if the variable does not exists, it's new value(s). 
 #
-macro(sequoia_append_and_export_variable VAR VALUE)
+macro(sequoia_append_and_export_variable VAR)
   unset("__tmp_${VAR}")
   if(DEFINED ${VAR})
     set("__tmp_${VAR}" ${${VAR}})
   endif()
-  list(APPEND "__tmp_${VAR}" ${VALUE})
+  list(APPEND "__tmp_${VAR}" ${ARGN})
   sequoia_set_and_export_variable(${VAR} "${__tmp_${VAR}}")
 endmacro()

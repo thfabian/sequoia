@@ -71,6 +71,6 @@ function(sequoia_create_package_string NAME PACKAGE_STRING)
     endif()
   endif()
 
-  sequoia_make_string_pair(${NAME} ${info} 20 out_string)
+  sequoia_make_string_pair(${NAME} ${info} 25 out_string)
   set(${PACKAGE_STRING} ${out_string} PARENT_SCOPE)
 endfunction()

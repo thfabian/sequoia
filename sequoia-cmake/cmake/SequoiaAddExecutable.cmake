@@ -22,11 +22,12 @@ include(CMakeParseArguments)
 # sequoia_add_executable
 # ----------------------
 #
-# Compile the given objects into a runnable executable (.exe).
+# Compile the given sources into a runnable executable (.exe).
 #
 # .. code-block:: cmake
 #
-#   sequoia_add_executable(NAME SOURCES DEPENDS [OUTPUT_DIR])
+#   sequoia_add_executable(NAME SOURCES DEPENDS [WIN32_APPLICATION] [OUTPUT_DIR] 
+#                          [INSTALL_DESTINATION])
 #
 # ``NAME``
 #   Name of the exectuable as well as the CMake target to build it.
@@ -34,12 +35,15 @@ include(CMakeParseArguments)
 #   List of source files making up the exectuable.
 # ``DEPENDS``
 #   List of external libraries and/or CMake targets to link against.
+# ``WIN32_APPLICATION`` [optional]
+#   Build an executable with a WinMain entry point on Win32.
 # ``OUTPUT_DIR`` [optional]
 #   Directory to place the exectuable (e.g ``${CMAKE_BINARY_DIR}/bin``).
 # ``INSTALL_DESTINATION`` [optional]
 #   Destition (relative to ``CMAKE_INSTALL_PREFIX``) to install the executable.
 #
 function(sequoia_add_executable)
+  set(options WIN32_APPLICATION)
   set(one_value_args NAME OUTPUT_DIR INSTALL_DESTINATION)
   set(multi_value_args SOURCES DEPENDS)
   cmake_parse_arguments(ARG "${options}" "${one_value_args}" "${multi_value_args}" ${ARGN})
@@ -48,7 +52,26 @@ function(sequoia_add_executable)
     message(FATAL_ERROR "sequoia_add_executable: invalid argument ${ARG_UNPARSED_ARGUMENTS}")
   endif()
   
-  add_executable(${ARG_NAME} ${ARG_SOURCES})
+  if(ARG_WIN32_APPLICATION)
+    add_executable(${ARG_NAME} WIN32 ${ARG_SOURCES})
+  else()
+    add_executable(${ARG_NAME} ${ARG_SOURCES})
+  endif()
+
+  # Use folders in Visual Studio  
+  if(MSVC)
+    set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+    foreach(src ${ARG_SOURCES})
+      get_filename_component(dir ${src} DIRECTORY)
+      if(dir)
+        set(group "Sources\\${dir}")
+        source_group("${group}" FILES ${src})
+      else()
+        source_group("Sources" FILES ${src})
+      endif()
+    endforeach()
+  endif()
+
   target_link_libraries(${ARG_NAME} ${ARG_DEPENDS})
 
   if(ARG_OUTPUT_DIR)

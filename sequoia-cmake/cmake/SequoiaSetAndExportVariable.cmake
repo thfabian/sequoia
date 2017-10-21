@@ -20,17 +20,17 @@ sequoia_include_guard()
 # sequoia_set_and_export_variable
 # -------------------------------
 #
-# Set the variable ``VAR`` to ``VALUE`` and export it to all scopes i.e cache it internally. 
+# Set the variable ``VAR`` to ``ARGN`` and export it to all scopes i.e cache it internally. 
 #
 # .. code-block:: cmake
 #
-#   sequoia_set_and_export_variable(VAR VALUE)
+#   sequoia_set_and_export_variable(VAR [ARGN...])
 #
 # ``VAR``
 #   Name of the variable.
-# ``VALUE``
-#   New value of the variable. 
+# ``ARGN``
+#   New value(s) of the variable. 
 #
-macro(sequoia_set_and_export_variable VAR VALUE)
-  set("${VAR}" "${VALUE}" CACHE INTERNAL "")
+macro(sequoia_set_and_export_variable VAR)
+  set("${VAR}" "${ARGN}" CACHE INTERNAL "")
 endmacro()
