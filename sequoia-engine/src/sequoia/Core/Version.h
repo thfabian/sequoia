@@ -25,7 +25,7 @@ namespace sequoia {
 
 namespace core {
 
-/// @brief Utility to compare Sequoia versions
+/// @brief Utility to compare semantic versions
 ///
 /// @ingroup core
 class SEQUOIA_API Version {
@@ -38,14 +38,6 @@ public:
   Version(Version&&) = default;
   Version& operator=(const Version&) = default;
   Version& operator=(Version&&) = default;
-
-  /// @brief Get current Version
-  static Version currentVersion() noexcept;
-
-  /// @brief Get current full version string
-  ///
-  /// The version string includes the major, minor and patch version and a suffix.
-  static std::string currentFullVersionString() noexcept;
 
   /// @brief Convert version to a single integer
   ///
@@ -87,6 +79,12 @@ public:
   /// @brief Convert to stream
   SEQUOIA_API friend std::ostream& operator<<(std::ostream& stream, const Version& version);
 };
+
+/// @brief Get current version of the Sequoia Engine
+extern SEQUOIA_API Version getSequoiaEngineVersion() noexcept;
+
+/// @brief Get the full version string of the Sequoia Engine
+extern SEQUOIA_API const char* getSequoiaEngineFullVersionString() noexcept;
 
 } // namespace core
 
