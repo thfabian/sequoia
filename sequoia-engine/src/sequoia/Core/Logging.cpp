@@ -43,14 +43,14 @@ std::string LoggerListener::getThreadID() { return core::format("{}", std::this_
 
 internal::LoggerProxy::LoggerProxy(SpinMutex* mutex, LoggingLevel level, std::stringstream* ss,
                                    const char* file, int line)
-    : mutex_(mutex), level_(level), ss_(ss), file_(file), line_(line), isNullLogger_(false) {}
+    : mutex_(mutex), level_(level), ss_(ss), file_(file), line_(line), isNotNullLogger_(true) {}
 
 internal::LoggerProxy::LoggerProxy()
     : mutex_(nullptr), level_(LoggingLevel::Info), ss_(nullptr), file_(nullptr), line_(0),
-      isNullLogger_(true) {}
+      isNotNullLogger_(false) {}
 
 internal::LoggerProxy::~LoggerProxy() {
-  if(!isNullLogger_) {
+  if(isNotNullLogger_) {
     Logger::getSingleton().log(level_, ss_->str(), file_, line_);
     ss_->str("");
     ss_->clear();

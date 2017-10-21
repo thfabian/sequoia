@@ -63,7 +63,7 @@ class SEQUOIA_API LoggerProxy {
   std::stringstream* ss_;    ///< String stream to buffer the logging
   const char* file_;         ///< File from which the logging was issued
   const int line_;           ///< Line in `file` from which the logging was issued
-  const bool isNullLogger_;  ///< Is this a pass trough logging?
+  const bool isNotNullLogger_;  ///< Is this a pass through logging?
 
 public:
   LoggerProxy(const LoggerProxy&) = default;
@@ -76,7 +76,7 @@ public:
 
   template <class StreamableValueType>
   inline LoggerProxy& operator<<(StreamableValueType&& value) {
-    if(!isNullLogger_)
+    if(isNotNullLogger_)
       (*ss_) << value;
     return *this;
   }
