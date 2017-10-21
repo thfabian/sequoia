@@ -13,12 +13,10 @@
 ##
 ##===------------------------------------------------------------------------------------------===##
 
-sequoia_add_test(
+sequoia_engine_add_unittest(
   NAME SequoiaMathTest
   SOURCES TestAxisAlignedBox.cpp
           TestMain.cpp
           TestMath.cpp
-  DEPENDS Sequoia
-          ${SEQUOIA_EXTERNAL_LIBRARIES}
 )
 

@@ -13,7 +13,7 @@
 ##
 ##===------------------------------------------------------------------------------------------===##
 
-sequoia_add_test(
+sequoia_engine_add_unittest(
   NAME SequoiaRenderGLTest
   SOURCES TestMain.cpp
           TestGLBuffer.cpp
@@ -22,7 +22,5 @@ sequoia_add_test(
           TestGLShader.cpp
           TestGLTexture.cpp
           TestGLVertexData.cpp
-  DEPENDS Sequoia
-          ${SEQUOIA_EXTERNAL_LIBRARIES}
 )
 

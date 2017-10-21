@@ -19,6 +19,7 @@
 #include "sequoia/Core/Options.h"
 #include "sequoia/Core/Platform.h"
 #include "sequoia/Core/StringSwitch.h"
+#include "sequoia/Core/Version.h"
 #include "sequoia/Game/AssetManager.h"
 #include "sequoia/Game/Keymap.h"
 #include "sequoia/Game/MeshManager.h"
@@ -86,7 +87,7 @@ void Game::init(const GameOptions& gameOptions) {
 
     // Create the main-window & initialize the OpenGL context
     RenderWindow::WindowHint hint;
-    hint.Title = "Sequoia - " SEQUOIA_VERSION_STRING;
+    hint.Title = std::string("Sequoia - ") + core::getSequoiaEngineFullVersionString();
     hint.Monitor = opt.Render.Monitor;
     using WindowModeKind = render::RenderWindow::WindowHint::WindowModeKind;
     hint.WindowMode = core::StringSwitch<WindowModeKind>(opt.Render.WindowMode)
@@ -103,7 +104,8 @@ void Game::init(const GameOptions& gameOptions) {
 
     // Initialize the object managers
     assetManager_ =
-        std::make_unique<AssetManager>(PLATFORM_STR(SEQUOIA_RESSOURCEPATH), PLATFORM_STR("assets"));
+        std::make_unique<AssetManager>(PLATFORM_STR(SEQUOIA_ENGINE_RESSOURCEPATH), 
+                                       PLATFORM_STR("assets"));
     meshManager_ = std::make_unique<MeshManager>();
 
     // Create default shaders and program

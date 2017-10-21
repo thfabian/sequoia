@@ -13,7 +13,7 @@
 ##
 ##===------------------------------------------------------------------------------------------===##
 
-sequoia_add_test(
+sequoia_engine_add_unittest(
   NAME SequoiaCoreTest
   SOURCES TestAlignedADT.cpp
           TestArrayRef.cpp
@@ -31,7 +31,5 @@ sequoia_add_test(
           TestSTLExtra.cpp
           TestStringRef.cpp
           TestVersion.cpp
-  DEPENDS Sequoia
-          ${SEQUOIA_EXTERNAL_LIBRARIES}
 )
 

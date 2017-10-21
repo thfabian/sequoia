@@ -16,6 +16,7 @@
 #include "sequoia/Unittest/TestEnvironment.h"
 #include "sequoia/Core/ErrorHandler.h"
 #include "sequoia/Core/Format.h"
+#include "sequoia/Core/Version.h"
 #include "sequoia/Core/Logging.h"
 #include "sequoia/Core/StringSwitch.h"
 #include "sequoia/Driver/ConsoleLogger.h"
@@ -63,7 +64,8 @@ TestEnvironment::TestEnvironment(int argc, char* argv[], render::RenderSystemKin
   }
 
   if(vm.count("help")) {
-    std::cout << "\nSequoia Unittests (" << SEQUOIA_VERSION_STRING << ")\n\n" << desc << std::endl;
+    std::cout << "\nSequoia Unittests (" << core::getSequoiaEngineFullVersionString() 
+              << ")\n\n" << desc << std::endl;
     std::exit(EXIT_SUCCESS);
   }
 
@@ -93,7 +95,7 @@ TestEnvironment::TestEnvironment(int argc, char* argv[], render::RenderSystemKin
 
   TestOptions::getSingleton().Core.Debug = !vm.count("no-debug");
 
-  path_ = SEQUOIA_UNITTEST_RESSOURCEPATH;
+  path_ = SEQUOIA_ENGINE_UNITTEST_RESSOURCEPATH;
 
   if(!platform::filesystem::exists(path_))
     ErrorHandler::getSingleton().fatal(PLATFORM_STR("invalid ressource path: '") + path_.native() +

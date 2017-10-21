@@ -33,25 +33,25 @@
 // Define if this is a Linux platform 
 #cmakedefine SEQUOIA_ON_LINUX ${SEQUOIA_ON_LINUX}
 
-// Major version of Sequoia 
-#define SEQUOIA_VERSION_MAJOR ${SEQUOIA_VERSION_MAJOR}
-
-// Minor version of Sequoia 
-#define SEQUOIA_VERSION_MINOR ${SEQUOIA_VERSION_MINOR}
-
-// Patch version of Sequoia 
-#define SEQUOIA_VERSION_PATCH ${SEQUOIA_VERSION_PATCH}
-
-// Sequoia version string 
-#define SEQUOIA_VERSION_STRING "${SEQUOIA_VERSION_STRING}"
-
 // Architecture string
 #define SEQUOIA_ARCHITECTURE_STRING "${SEQUOIA_ARCHITECTURE_STRING}"
 
-// Ressource paths
-#define SEQUOIA_RESSOURCEPATH "${SEQUOIA_RESSOURCEPATH}"
+// Major version of Sequoia Engine 
+#define SEQUOIA_ENGINE_VERSION_MAJOR ${SEQUOIA_ENGINE_VERSION_MAJOR}
 
-// Debug threads?
-#cmakedefine SEQUOIA_DEBUG_THREADS ${SEQUOIA_DEBUG_THREADS}
+// Minor version of Sequoia Engine
+#define SEQUOIA_ENGINE_VERSION_MINOR ${SEQUOIA_ENGINE_VERSION_MINOR}
+
+// Patch version of Sequoia Engine
+#define SEQUOIA_ENGINE_VERSION_PATCH ${SEQUOIA_ENGINE_VERSION_PATCH}
+
+// Sequoia Engine version string 
+#define SEQUOIA_ENGINE_VERSION_STRING "${SEQUOIA_ENGINE_VERSION}"
+
+// Full Sequoia Engine version string 
+#define SEQUOIA_ENGINE_FULL_VERSION_STRING "${SEQUOIA_ENGINE_FULL_VERSION}"
+
+// Ressource paths
+#define SEQUOIA_ENGINE_RESSOURCEPATH "${SEQUOIA_ENGINE_RESSOURCEPATH}"
 
 #endif

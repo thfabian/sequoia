@@ -16,6 +16,7 @@
 #include "sequoia/Unittest/BenchmarkEnvironment.h"
 #include "sequoia/Core/ErrorHandler.h"
 #include "sequoia/Core/Logging.h"
+#include "sequoia/Core/Version.h"
 #include "sequoia/Driver/ConsoleLogger.h"
 #include "sequoia/Unittest/TestOptions.h"
 #include <benchmark/benchmark.h>
@@ -54,7 +55,8 @@ BenchmarkEnvironment::BenchmarkEnvironment(int argc, char* argv[]) {
   }
 
   if(vm.count("help"))
-    std::cout << "\nSequoia Benchmark (" << SEQUOIA_VERSION_STRING << ")\n\n" << desc << std::endl;
+    std::cout << "\nSequoia Benchmark (" << core::getSequoiaEngineFullVersionString() 
+              << ")\n\n" << desc << std::endl;
 
   // Initialize benchmark
   benchmark::Initialize(&argc, argv);

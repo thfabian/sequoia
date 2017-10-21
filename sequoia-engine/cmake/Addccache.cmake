@@ -17,19 +17,19 @@ if(NOT(MSVC))
   find_package(ccache)
 
   if(CCACHE_FOUND)
-    set(SEQUOIA_HAS_CCACHE 1)
+    set(SEQUOIA_ENGINE_HAS_CCACHE 1)
     sequoia_export_package(
       NAME ccache
       FOUND ${CCACHE_FOUND}
       EXECUTABLE ${CCACHE_EXECUTABLE}
     )
 
-    if(SEQUOIA_USE_CCACHE)
+    if(SEQUOIA_ENGINE_USE_CCACHE)
       set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE ${CCACHE_EXECUTABLE})
       set_property(GLOBAL PROPERTY RULE_LAUNCH_LINK ${CCACHE_EXECUTABLE})
     endif()
 
   else()
-    set(SEQUOIA_HAS_CCACHE 0)
+    set(SEQUOIA_ENGINE_HAS_CCACHE 0)
   endif()
 endif()

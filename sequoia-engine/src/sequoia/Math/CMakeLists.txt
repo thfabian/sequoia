@@ -13,7 +13,7 @@
 ##
 ##===------------------------------------------------------------------------------------------===##
 
-sequoia_add_objects(
+sequoia_add_library(
   NAME SequoiaMath
   SOURCES AxisAlignedBox.h
           AxisAlignedBox.cpp
@@ -21,5 +21,6 @@ sequoia_add_objects(
           CoordinateSystem.h
           Math.h
           Math.cpp
-  DEPENDS SequoiaCore
+  DEPENDS SequoiaCoreObjects
+  OBJECT
 )

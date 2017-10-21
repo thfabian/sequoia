@@ -33,4 +33,5 @@ ExternalProject_Get_Property(backward install_dir)
 sequoia_append_and_export_variable(
    SEQUOIA_EXTERNAL_CMAKE_ARGS 
   "-DBackward_DIR:PATH=${install_dir}/lib/backward"
+  "-DBACKWARD_INCLUDE_DIR:PATH=${install_dir}/include"
 )

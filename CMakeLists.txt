@@ -19,6 +19,10 @@ if(NOT CMAKE_BUILD_TYPE)
       "Choose the type of build, options are: Debug Release RelWithDebInfo." FORCE)
 endif()
 
+if(DEFINED CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
+  set(CMAKE_CONFIGURATION_TYPES ${CMAKE_BUILD_TYPE})
+endif()
+
 # Default library mode: static
 if(NOT BUILD_SHARED_LIBS)
   set(BUILD_SHARED_LIBS OFF CACHE BOOL "Build shared libraries." FORCE)
@@ -28,10 +32,6 @@ endif()
 if(NOT CMAKE_INSTALL_PREFIX)
   set(CMAKE_INSTALL_PREFIX "${CMAKE_SOURCE_DIR}/install" CACHE STRING
       "Install path prefix, prepended onto install directories." FORCE)
-endif()
-
-if(DEFINED CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
-  set(CMAKE_CONFIGURATION_TYPES ${CMAKE_BUILD_TYPE})
 endif()
 
 project(Sequoia C CXX)
@@ -74,10 +74,12 @@ macro(make_config_string FIRST SECOND)
   sequoia_make_string_pair(${FIRST} ": ${SECOND}" 20 out)
   list(APPEND config_info ${out})
 endmacro()
+
 make_config_string("Platform" ${SEQUOIA_PLATFORM_STRING})
 make_config_string("Architecture" ${SEQUOIA_ARCHITECTURE_STRING})
 make_config_string("Compiler" ${SEQUOIA_COMPILER_STRING})
 make_config_string("Build type" ${CMAKE_BUILD_TYPE})
+
 sequoia_report_result("Configuration summary" ${config_info})
 
 # Build all dependencies

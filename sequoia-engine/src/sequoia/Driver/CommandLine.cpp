@@ -38,7 +38,7 @@ static void printHelp(const po::options_description& desc) {
 }
 
 static void printVersion() {
-  std::cout << "Sequoia (" << SEQUOIA_VERSION_STRING << ")" << std::endl;
+  std::cout << "Sequoia (" << core::getSequoiaEngineFullVersionString() << ")" << std::endl;
   std::exit(EXIT_SUCCESS);
 }
 

@@ -13,13 +13,19 @@
 ##
 ##===------------------------------------------------------------------------------------------===##
 
+# Default build type: RelWithDebInfo
 if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE "RelWithDebInfo" CACHE STRING 
-      "Choose the type of build, options are: Debug Release RelWithDebInfo MinSizeRel." FORCE)
+      "Choose the type of build, options are: Debug Release RelWithDebInfo." FORCE)
 endif()
 
 if(DEFINED CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
   set(CMAKE_CONFIGURATION_TYPES ${CMAKE_BUILD_TYPE})
+endif()
+
+# Default library mode: static
+if(NOT BUILD_SHARED_LIBS)
+  set(BUILD_SHARED_LIBS OFF CACHE BOOL "Build shared libraries." FORCE)
 endif()
 
 project(SequoiaEngine C CXX)
@@ -31,53 +37,79 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 include(SequoiaCMakeInit)
 sequoia_cmake_init()
 
+include(SequoiaAddExecutable)
+include(SequoiaAddLibrary)
+include(SequoiaAddTargetClangFormat)
 include(SequoiaAddTargetCleanAll)
+include(SequoiaCheckCompiler)
 include(SequoiaCheckInSourceBuild)
+include(SequoiaCombineLibraries)
+include(SequoiaConfigureFile)
 include(SequoiaCreatePackageString)
 include(SequoiaExportPackage)
+include(SequoiaGetArchitectureInfo)
+include(SequoiaGetCompilerInfo)
+include(SequoiaGetGitHeadRevision)
+include(SequoiaGetPlatformInfo)
 include(SequoiaMakeStringPair)
 include(SequoiaReportResult)
+include(SequoiaSetCXXStandard)
 
-include(SequoiaEngineDefinitions)
-include(SequoiaEngineFunctions)
-include(SequoiaEngineMacros)
+sequoia_get_compiler_info()
+sequoia_get_platform_info()
+sequoia_get_architecture_info()
+
 include(SequoiaEngineOptions)
+include(SequoiaEngineDefinitions)
+include(SequoiaEngineSetCXXFlags)
 
 # Prevent in source builds
 sequoia_check_in_source_build()
 
 # Check compliance of compiler
-sequoia_check_compiler()
+sequoia_check_compiler(
+  GCC 5.0
+  CLANG 3.4
+  MSVC 19.0
+  INTEL 17
+)
 
 # Set C++ standard
 sequoia_set_cxx_standard(c++14)
 
 # Set C++ flags
-sequoia_set_cxx_flags()
+sequoia_engine_set_cxx_flags()
 
 # Custom tragets
 sequoia_add_target_clean_all()
-sequoia_add_target_clang_format(${CMAKE_SOURCE_DIR}/src)
+sequoia_add_target_clang_format(
+  DIRECTORIES 
+    ${CMAKE_SOURCE_DIR}/src
+    ${CMAKE_SOURCE_DIR}/test
+  EXTENSIONS ".h;.cpp"
+)
 
 # Output summary of the configuration
 macro(make_config_string FIRST SECOND)
-  sequoia_make_string_pair(${FIRST} ": ${SECOND}" 20 out)
+  sequoia_make_string_pair(${FIRST} ": ${SECOND}" 25 out)
   list(APPEND config_info ${out})
 endmacro()
-make_config_string("Sequoia version" ${SEQUOIA_VERSION_STRING})
+
+make_config_string("SequoiaEngine version" ${SEQUOIA_ENGINE_FULL_VERSION})
 make_config_string("Platform" ${SEQUOIA_PLATFORM_STRING})
 make_config_string("Architecture" ${SEQUOIA_ARCHITECTURE_STRING})
 make_config_string("Compiler" ${SEQUOIA_COMPILER_STRING})
 make_config_string("Build type" ${CMAKE_BUILD_TYPE})
 make_config_string("Build shared" ${BUILD_SHARED_LIBS})
+
 sequoia_report_result("Configuration summary" ${config_info})
 
 # Find the packages
-if(SEQUOIA_TESTING)
+if(SEQUOIA_ENGINE_TESTING)
   set(testing_packages GTest benchmark)
 endif()
 
-foreach(package Backward Boost ccache Cppcheck glbinding glfw3 gli glm OpenCV OpenGL Python3 TBB
+foreach(package Backward Boost ccache glbinding glfw3 gli glm OpenCV OpenGL Python3 TBB
                 tinyobjloader ${testing_packages} Threads)
   include("Add${package}")
   string(TOUPPER ${package} PACKAGE)
@@ -95,20 +127,19 @@ add_definitions(${SEQUOIA_EXTERNAL_DEFINITIONS})
 # Output summary of the packages
 sequoia_report_result("Package summary" ${package_info})
   
-# Sequoia libraries
+# Build sequoia-engine
 include_directories(${CMAKE_SOURCE_DIR}/src)
 include_directories(${CMAKE_BINARY_DIR}/src)
 
 add_subdirectory(src)
-add_subdirectory(ressource)
 
 # Testing
-if(SEQUOIA_TESTING)
+if(SEQUOIA_ENGINE_TESTING)
   enable_testing()
   add_subdirectory(test)
 endif()
 
 # Documentation
-if(SEQUOIA_DOCUMENTATION)
+if(SEQUOIA_ENGINE_DOCUMENTATION)
   add_subdirectory(docs)
 endif()

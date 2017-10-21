@@ -13,6 +13,8 @@
 ##
 ##===------------------------------------------------------------------------------------------===##
 
+include(SequoiaGenerateVertices)
+
 # Generate the Vertex.h and Vertex.cpp
 set(vertex_input_header ${CMAKE_CURRENT_SOURCE_DIR}/Vertex.h.in)
 set(vertex_input_cpp ${CMAKE_CURRENT_SOURCE_DIR}/Vertex.cpp.in)
@@ -93,7 +95,7 @@ set(NULL_SOURCE
   Null/NullVertexData.h
 )
 
-sequoia_add_objects(
+sequoia_add_library(
   NAME SequoiaRender
   SOURCES Buffer.h
           Buffer.cpp
@@ -159,6 +161,6 @@ sequoia_add_objects(
           
           ${GL_SOURCE}
           ${NULL_SOURCE}
-
-  DEPENDS SequoiaCore
+  DEPENDS SequoiaCoreObjects
+  OBJECT
 )

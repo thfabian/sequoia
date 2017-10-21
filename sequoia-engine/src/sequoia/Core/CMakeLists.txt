@@ -13,7 +13,8 @@
 ##
 ##===------------------------------------------------------------------------------------------===##
 
-# Generate Config.h
+include(SequoiaGenerateOptions)
+
 sequoia_configure_file(Config.h.cmake)
 
 # Generate the Options.h and Options.inc
@@ -34,7 +35,7 @@ sequoia_generate_options(
   OPTIONS ${options}
 )
 
-sequoia_add_objects(
+sequoia_add_library(
   NAME SequoiaCore
   SOURCES AlignedADT.h
           ArrayRef.h
@@ -100,5 +101,6 @@ sequoia_add_objects(
           ${option_header}
           ${option_include}
           ${options}
+  OBJECT
 )
 

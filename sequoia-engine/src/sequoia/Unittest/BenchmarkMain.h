@@ -17,6 +17,7 @@
 #define SEQUOIA_UNITTEST_BENCHMARKMAIN_H
 
 #include <benchmark/benchmark.h>
+#include <memory>
 
 /// @brief Define a benchmark main funtion and setup the given `Environment`
 ///

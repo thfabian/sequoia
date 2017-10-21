@@ -13,7 +13,7 @@
 ##
 ##===------------------------------------------------------------------------------------------===##
 
-sequoia_add_objects(
+sequoia_add_library(
   NAME SequoiaGame
   SOURCES AssetManager.h
           AssetManager.cpp
@@ -45,6 +45,7 @@ sequoia_add_objects(
           SceneNode.h
           SceneNodeAlloc.h          
           SceneNodeCapability.h
-  DEPENDS SequoiaCore
-          SequoiaRender
+  DEPENDS SequoiaCoreObjects
+          SequoiaRenderObjects
+  OBJECT
 )

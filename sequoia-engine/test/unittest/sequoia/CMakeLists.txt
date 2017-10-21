@@ -13,6 +13,27 @@
 ##
 ##===------------------------------------------------------------------------------------------===##
 
+include(CMakeParseArguments)
+include(SequoiaAddUnittest)
+
+macro(sequoia_engine_add_unittest)
+  cmake_parse_arguments(ARG "" "NAME" "SOURCES" ${ARGN})
+
+  if(NOT("${ARG_UNPARSED_ARGUMENTS}" STREQUAL ""))
+    message(FATAL_ERROR "sequoia_engine_add_unittest: invalid argument ${ARG_UNPARSED_ARGUMENTS}")
+  endif()
+
+  sequoia_add_unittest(
+    NAME ${ARG_NAME}
+    SOURCES ${ARG_SOURCES}
+    DEPENDS SequoiaUnittestStatic
+            SequoiaStatic
+            ${SEQUOIA_EXTERNAL_LIBRARIES}
+    OUTPUT_DIR ${CMAKE_BINARY_DIR}/bin/unittest
+    GTEST_ARGS --gtest_color=yes
+  )
+endmacro()
+
 add_subdirectory(Core)
 add_subdirectory(Math)
 add_subdirectory(Game)

@@ -13,16 +13,17 @@
 ##
 ##===------------------------------------------------------------------------------------------===##
 
-macro(sequoia_add_benchmark SOURCE)
+macro(sequoia_engine_add_benchmark SOURCE)
   get_filename_component(name ${SOURCE} NAME_WE)
   sequoia_add_executable(
     NAME Sequoia${name}
     SOURCES ${SOURCE}
-    DEPENDS Sequoia
+    DEPENDS SequoiaUnittestStatic
+            SequoiaStatic
             ${SEQUOIA_EXTERNAL_LIBRARIES}
-    OUTPUT_DIR benchmark
+    OUTPUT_DIR ${CMAKE_BINARY_DIR}/bin/benchmark
   )
 endmacro()
 
-sequoia_add_benchmark(BenchmarkUniformVariable.cpp)
-sequoia_add_benchmark(BenchmarkSceneNode.cpp)
+sequoia_engine_add_benchmark(BenchmarkUniformVariable.cpp)
+sequoia_engine_add_benchmark(BenchmarkSceneNode.cpp)

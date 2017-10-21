@@ -20,21 +20,20 @@ add_subdirectory(Render)
 add_subdirectory(Driver)
 add_subdirectory(Game)
 
-if(SEQUOIA_TESTING)
+if(SEQUOIA_ENGINE_TESTING)
   add_subdirectory(Unittest)
-  set(UnittestTarget SequoiaUnittest)
 endif()
 
 # Link objects into a single library
-sequoia_link_objects(
+sequoia_combine_libraries(
   NAME Sequoia
-  SOURCES SequoiaCore
-          SequoiaMath
-          SequoiaRender
-          SequoiaDriver
-          SequoiaGame
-          ${UnittestTarget}
+  OBJECTS SequoiaCoreObjects
+          SequoiaMathObjects
+          SequoiaRenderObjects
+          SequoiaDriverObjects
+          SequoiaGameObjects
   DEPENDS ${SEQUOIA_EXTERNAL_LIBRARIES}
+  INSTALL_DESTINATION ${SEQUOIA_ENGINE_INSTALL_LIB_DIR}
 )
 
 # Compile standalone driver
@@ -42,6 +41,6 @@ sequoia_add_executable(
   NAME SequoiaStandalone
   WIN32_APPLICATION
   SOURCES Driver/Main.cpp
-  DEPENDS Sequoia
+  DEPENDS SequoiaStatic
+  OUTPUT_DIR ${CMAKE_BINARY_DIR}/bin
 )
-

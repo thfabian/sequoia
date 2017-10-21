@@ -13,7 +13,7 @@
 ##
 ##===------------------------------------------------------------------------------------------===##
 
-sequoia_add_test(
+sequoia_engine_add_unittest(
   NAME SequoiaGameTest
   SOURCES TestAssetManager.cpp
           TestCameraController.cpp
@@ -24,7 +24,5 @@ sequoia_add_test(
           TestMain.cpp
           TestSceneGraph.cpp
           TestSceneNode.cpp
-  DEPENDS Sequoia
-          ${SEQUOIA_EXTERNAL_LIBRARIES}
 )
 

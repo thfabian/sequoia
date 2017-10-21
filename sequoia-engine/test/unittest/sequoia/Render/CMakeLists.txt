@@ -15,7 +15,7 @@
 
 add_subdirectory(GL)
 
-sequoia_add_test(
+sequoia_engine_add_unittest(
   NAME SequoiaRenderTest
   SOURCES TestCamera.cpp
           TestGlobalRenderState.cpp
@@ -28,6 +28,4 @@ sequoia_add_test(
           TestUniformStruct.cpp
           TestUniformVariable.cpp
           TestVertex.cpp
-  DEPENDS Sequoia
-          ${SEQUOIA_EXTERNAL_LIBRARIES}
 )
