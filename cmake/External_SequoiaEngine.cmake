@@ -34,7 +34,8 @@ sequoia_add_optional_deps(sequoia_engine_deps "${SEQUOIA_EXTERNAL_PROJECTS}")
 
 ExternalProject_Add(
   SequoiaEngine
-  SOURCE_DIR "${sequoia_engine_build}"
+  SOURCE_DIR "${sequoia_engine_source}"
+  BINARY_DIR "${sequoia_engine_build}"
   INSTALL_DIR "${CMAKE_INSTALL_PREFIX}"
   CMAKE_ARGS
     ${sequoia_engine_cmake_args}
