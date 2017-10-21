@@ -110,7 +110,7 @@ if(SEQUOIA_ENGINE_TESTING)
 endif()
 
 foreach(package Backward Boost ccache glbinding glfw3 gli glm OpenCV OpenGL Python3 TBB
-                tinyobjloader ${testing_packages} Threads)
+                tinyobjloader Protobuf ${testing_packages} Threads)
   include("Add${package}")
   string(TOUPPER ${package} PACKAGE)
   list(APPEND SEQUOIA_EXTERNAL_LIBRARIES ${SEQUOIA_${PACKAGE}_LIBRARIES})
