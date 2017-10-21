@@ -75,6 +75,19 @@ sequoia_find_package(
 )
 
 #
+# Google Benchmark
+#
+list(APPEND SEQUOIA_EXTERNAL_PROJECTS fmt)
+set(fmt_version "4.0.0")
+set(fmt_url "https://github.com/fmtlib/fmt/archive/${fmt_version}.tar.gz")
+set(fmt_md5 "c9be9a37bc85493d1116b0af59a25eba")
+
+sequoia_build_package(
+  PACKAGE fmt
+  BUILD_VERSION ${fmt_version}
+)
+
+#
 # glbinding
 #
 list(APPEND SEQUOIA_EXTERNAL_PROJECTS glbinding)
