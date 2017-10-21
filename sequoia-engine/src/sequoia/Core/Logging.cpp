@@ -13,8 +13,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Core/Logging.h"
 #include "sequoia/Core/Format.h"
+#include "sequoia/Core/Logging.h"
 #include "sequoia/Core/StringSwitch.h"
 #include <chrono>
 #include <ctime>
@@ -35,13 +35,11 @@ std::string LoggerListener::getCurrentTime() {
   std::time_t currentTime = std::chrono::system_clock::to_time_t(now);
   struct tm* localTime = std::localtime(&currentTime);
 
-  return format("%02i:%02i:%02i.%03i", localTime->tm_hour, localTime->tm_min, localTime->tm_sec,
-                tm_ms.count());
+  return core::format("{:02d}:{:02d}:{:02d}.{:02d}", localTime->tm_hour, localTime->tm_min,
+                      localTime->tm_sec, tm_ms.count());
 }
 
-std::string LoggerListener::getThreadID() {
-  return core::format("0x%x", std::this_thread::get_id());
-}
+std::string LoggerListener::getThreadID() { return core::format("{}", std::this_thread::get_id()); }
 
 internal::LoggerProxy::LoggerProxy(SpinMutex* mutex, LoggingLevel level, std::stringstream* ss,
                                    const char* file, int line)

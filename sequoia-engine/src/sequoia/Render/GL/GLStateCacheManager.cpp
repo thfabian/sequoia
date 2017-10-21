@@ -423,10 +423,10 @@ void GLPixelFormat::set(GLenum param, int value) noexcept { format_[param] = val
 
 std::string GLPixelFormat::toString() const {
   return core::format("GLPixelFormat[\n"
-                      "  format = %s\n"
+                      "  format = {}\n"
                       "]",
                       core::indent(core::toStringRange(format_, [](auto pair) {
-                        return core::format("%s = %s", pair.first, pair.second);
+                        return core::format("{} = {}", pair.first, pair.second);
                       })));
 }
 

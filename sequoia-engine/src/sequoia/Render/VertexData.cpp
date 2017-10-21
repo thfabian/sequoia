@@ -88,12 +88,12 @@ void VertexData::dump() const {
 
 std::string VertexData::toString() const {
   auto stringPair = toStringImpl();
-  return core::format("%s[\n  %s]", stringPair.first, core::indent(stringPair.second));
+  return core::format("{}[\n  {}]", stringPair.first, core::indent(stringPair.second));
 }
 
 std::pair<std::string, std::string> VertexData::toStringImpl() const {
   return std::make_pair("VertexData",
-                        core::format("drawMode = %s,\n", drawModeToString(drawMode_)));
+                        core::format("drawMode = {},\n", drawModeToString(drawMode_)));
 }
 
 } // namespace render

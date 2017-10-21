@@ -52,9 +52,9 @@ void NullVertexData::nextTimestep() {}
 
 std::pair<std::string, std::string> NullVertexData::toStringImpl() const {
   return std::make_pair("NullVertexData",
-                        core::format("%s"
-                                     "vertexBuffer = %s,\n",
-                                     "indexBuffer = %s\n", Base::toStringImpl().second,
+                        core::format("{}"
+                                     "vertexBuffer = {},\n",
+                                     "indexBuffer = {}\n", Base::toStringImpl().second,
                                      vertexBuffer_->toString(), indexBuffer_->toString()));
 }
 

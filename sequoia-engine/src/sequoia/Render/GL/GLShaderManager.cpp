@@ -52,12 +52,12 @@ void GLShaderManager::makeValid(GLShader* shader) {
   // Get the shader source
   shader->code_ = shader->file_->getDataAsString();
   if(shader->code_.empty())
-    SEQUOIA_THROW(RenderSystemException, "empty shader source: '%s'", shader->file_->getPath());
+    SEQUOIA_THROW(RenderSystemException, "empty shader source: '{}'", shader->file_->getPath());
 
   // Register the shader within OpenGL
   shader->id_ = glCreateShader(GLShader::getGLShaderType(shader->getType()));
   if(shader->id_ == 0)
-    SEQUOIA_THROW(RenderSystemException, "cannot create shader: '%s'", shader->file_->getPath());
+    SEQUOIA_THROW(RenderSystemException, "cannot create shader: '{}'", shader->file_->getPath());
 
   LOG(DEBUG) << "Created shader (ID=" << shader->id_ << ") from source \""
              << shader->file_->getPath() << "\"";
@@ -93,7 +93,7 @@ void GLShaderManager::makeValid(GLShader* shader) {
     } catch(const boost::bad_lexical_cast&) {
     }
 
-    SEQUOIA_THROW(RenderSystemException, "failed to compile shader: %s", msg);
+    SEQUOIA_THROW(RenderSystemException, "failed to compile shader: {}", msg);
   }
 
   LOG(DEBUG) << "Successfully compiled shader (ID=" << shader->id_ << ")";

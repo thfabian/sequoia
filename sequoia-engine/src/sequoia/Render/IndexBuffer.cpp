@@ -59,8 +59,8 @@ std::size_t IndexBuffer::getSizeOfIndexType() const noexcept { return sizeOfInde
 
 std::pair<std::string, std::string> IndexBuffer::toStringImpl() const {
   return std::make_pair("IndexBuffer",
-                        core::format("%s"
-                                     "type = %s,\n",
+                        core::format("{}"
+                                     "type = {},\n",
                                      Base::toStringImpl().second, indexTypeToString(type_)));
 }
 

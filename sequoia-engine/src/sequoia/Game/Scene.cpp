@@ -135,7 +135,7 @@ void Scene::makeDummyScene() {
   int N = 10;
   for(int i = 0; i < N; ++i) {
     for(int j = 0; j < N; ++j) {
-      auto cube = SceneNode::allocate(core::format("TestCube_%i_%i", i, j));
+      auto cube = SceneNode::allocate(core::format("TestCube_{}_{}", i, j));
       cube->addCapability<Drawable>(cubeMesh, game.getDefaultProgram());
       cube->translate(math::vec3((i - N / 2.0f) * dx, 0, (j - N / 2.0f) * dx));
       cube->setScale(0.9 * (2 * float(i) / N));

@@ -21,6 +21,7 @@
 #include "sequoia/Core/NonCopyable.h"
 #include "sequoia/Core/Optional.h"
 #include "sequoia/Core/Task.h"
+#include "sequoia/Core/Assert.h"
 #include <condition_variable>
 #include <functional>
 #include <memory>

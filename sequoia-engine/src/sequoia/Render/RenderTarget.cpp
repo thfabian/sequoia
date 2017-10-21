@@ -41,8 +41,8 @@ const Viewport* RenderTarget::getViewport() const {
 
 std::string RenderTarget::toString() const {
   return core::format("RenderTarget[\n"
-                      "  viewport = %s,\n"
-                      "  fbo = %s\n"
+                      "  viewport = {},\n"
+                      "  fbo = {}\n"
                       "]",
                       core::indent(viewport_->toString()),
                       core::indent(fbo_ ? fbo_->toString() : "null"));

@@ -69,7 +69,7 @@
 //   if(index == -1)
 //     uniformMap["<variableName>.<name>"] = UniformVariable(this-><name>);
 //   else
-//     uniformMap[core::format("<variableName>.<name>[%i]", index] = UniformVariable(this-><name>);
+//     uniformMap[core::format("<variableName>.<name>[{}]", index] = UniformVariable(this-><name>);
 //
 // from a `(type0, name0)...(typeN, nameN)` sequence
 #define SEQUOIA_GENERATE_TO_UNIFORMVARIABLE(r, Unused, Member)                                     \
@@ -77,7 +77,7 @@
     uniformMap[variableName + "." BOOST_PP_STRINGIZE(SEQUOIA_PARAM_GET_NAME(Member))] =            \
         ::sequoia::render::UniformVariable(this->SEQUOIA_PARAM_GET_NAME(Member));                  \
   else                                                                                             \
-    uniformMap[core::format("%s[%i]." BOOST_PP_STRINGIZE(SEQUOIA_PARAM_GET_NAME(Member)),          \
+    uniformMap[core::format("{}[{}]." BOOST_PP_STRINGIZE(SEQUOIA_PARAM_GET_NAME(Member)),          \
                             variableName, index)] =                                                \
         ::sequoia::render::UniformVariable(this->SEQUOIA_PARAM_GET_NAME(Member));
 

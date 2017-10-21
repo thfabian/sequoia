@@ -22,9 +22,9 @@ namespace render {
 
 std::string FrameBufferParameter::toString() const {
   return core::format("FrameBufferObjectParameter[\n"
-                      "  Width = %s,\n"
-                      "  Height = %s,\n"
-                      "  MSAA = %s\n"
+                      "  Width = {},\n"
+                      "  Height = {},\n"
+                      "  MSAA = {}\n"
                       "]",
                       Width, Height, MSAA);
 }

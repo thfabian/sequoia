@@ -27,7 +27,7 @@ namespace render {
 
 namespace {
 
-static std::string VariantToString(const UniformVariable::DataType& data, UniformType type) {
+static std::string variantToString(const UniformVariable::DataType& data, UniformType type) {
   std::stringstream ss;
   switch(type) {
 #define UNIFORM_VARIABLE_TYPE(Type, Name)                                                          \
@@ -100,10 +100,10 @@ bool UniformVariable::operator==(const UniformVariable& other) const noexcept {
 
 std::string UniformVariable::toString() const {
   return core::format("UniformVariable[\n"
-                      "  type = %s,\n"
-                      "  data = %s\n"
+                      "  type = {},\n"
+                      "  data = {}\n"
                       "]",
-                      type_, VariantToString(data_, type_));
+                      type_, variantToString(data_, type_));
 }
 
 std::ostream& operator<<(std::ostream& os, const UniformVariable& var) {

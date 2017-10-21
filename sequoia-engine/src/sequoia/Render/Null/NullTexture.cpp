@@ -37,8 +37,8 @@ void NullTexture::makeValidImpl() {}
 
 std::string NullTexture::toString() const {
   return core::format("NullTexture[\n"
-                      "  image = %s,\n"
-                      "  param = %s\n"
+                      "  image = {},\n"
+                      "  param = {}\n"
                       "]",
                       image_ ? core::indent(image_->toString()) : "null",
                       core::indent(param_->toString()));

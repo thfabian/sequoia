@@ -49,8 +49,8 @@ void NullIndexBuffer::allocateImpl(std::size_t numBytes, Buffer::UsageHint usage
 
 std::pair<std::string, std::string> NullIndexBuffer::toStringImpl() const {
   return std::make_pair("NullIndexBuffer",
-                        core::format("%s"
-                                     "%s\n",
+                        core::format("{}"
+                                     "{}\n",
                                      Base::toStringImpl().second, buffer_->toString()));
 }
 

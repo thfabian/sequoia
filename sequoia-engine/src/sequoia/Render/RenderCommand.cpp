@@ -35,9 +35,9 @@ void RenderCommand::reset() {
 std::string RenderCommand::toString() const {
   return core::format(
       "RenderCommand[\n"
-      "  numDrawCommands = %s,\n"
-      "  globalRenderState = %s,\n"
-      "  target = %s\n"
+      "  numDrawCommands = {},\n"
+      "  globalRenderState = {},\n"
+      "  target = {}\n"
       "]",
       core::indent(drawCommandList_ ? std::to_string(drawCommandList_->size()) : "null"),
       core::indent(globalRenderState_ ? globalRenderState_->toString() : "null"),

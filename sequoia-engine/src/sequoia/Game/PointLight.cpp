@@ -54,9 +54,9 @@ std::shared_ptr<SceneNodeCapability> PointLight::clone(SceneNode* node) const {
 }
 
 std::pair<std::string, std::string> PointLight::toStringImpl() const {
-  return std::make_pair(getName(), core::format("%s"
-                                                "power = %s,\n"
-                                                "color = %s\n",
+  return std::make_pair(getName(), core::format("{}"
+                                                "power = {},\n"
+                                                "color = {}\n",
                                                 Base::toStringImpl().second, power_, color_));
 }
 

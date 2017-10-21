@@ -118,11 +118,11 @@ void GLFrameBufferObject::unbind() { glBindFramebuffer(GL_FRAMEBUFFER, 0); }
 std::string GLFrameBufferObject::toString() const {
   return core::format(
       "GLFrameBufferObject[\n"
-      "  fboID = %s,\n"
-      "  rboDepthID = %s,\n"
-      "  rboColorID = %s,\n"
-      "  param = %s,\n"
-      "  fragmentDataMap = %s\n"
+      "  fboID = {},\n"
+      "  rboDepthID = {},\n"
+      "  rboColorID = {},\n"
+      "  param = {},\n"
+      "  fragmentDataMap = {}\n"
       "]",
       fboID_, rboDepthID_ == 0 ? "invalid" : std::to_string(rboDepthID_),
       rboColorID_ == 0 ? "invalid" : std::to_string(rboColorID_), core::indent(param_.toString()),

@@ -35,7 +35,7 @@ std::shared_ptr<Mesh> MeshManager::load(const std::string& name,
   case core::FileType::Obj:
     return loadObjMesh(name, objFile, mtlFile, modifiable, param, usage);
   default:
-    SEQUOIA_THROW(GameException, "cannot load mesh %s: unknown format", objFile->getPath());
+    SEQUOIA_THROW(GameException, "cannot load mesh {}: unknown format", objFile->getPath());
     return nullptr;
   }
 }
@@ -95,7 +95,7 @@ std::shared_ptr<Mesh> MeshManager::loadObjMesh(const std::string& name,
         tinyobj::LoadObj(&attrib, &shapes, &materials, &err, objStream.get(), materialReader.get());
 
     if(!ret)
-      SEQUOIA_THROW(GameException, "failed to load obj mesh %s: %s", objFile->getPath(), err);
+      SEQUOIA_THROW(GameException, "failed to load obj mesh {}: {}", objFile->getPath(), err);
 
     if(!err.empty())
       LOG(WARNING) << "obj mesh: " << objFile->getPath() << ": " << err;

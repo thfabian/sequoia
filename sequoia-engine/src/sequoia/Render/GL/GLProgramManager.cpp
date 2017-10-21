@@ -152,8 +152,8 @@ void GLProgramManager::getUniforms(GLProgram* program) const {
     }
 
     LOG(DEBUG) << "Active uniform variable: name=" << name.get() << ", type=" << type
-               << (rank != 1 ? core::format(", size=%i", rank) : "")
-               << (textureUnit != -1 ? core::format(", textureUnit=%i", textureUnit) : "")
+               << (rank != 1 ? core::format(", size={}", rank) : "")
+               << (textureUnit != -1 ? core::format(", textureUnit={}", textureUnit) : "")
                << ", location=" << location;
 
     if(location != -1) {
@@ -205,7 +205,7 @@ bool GLProgramManager::checkVertexAttributes(GLProgram* program) const {
 
     // We don't check attributes which start with `frag_`
     if(!StringRef(name.get()).startswith("frag_") && !GLVertexAttribute::isValid(name.get())) {
-      SEQUOIA_THROW(RenderSystemException, "invalid vertex attribute '%s'", name.get());
+      SEQUOIA_THROW(RenderSystemException, "invalid vertex attribute '{}'", name.get());
     }
   }
 
@@ -248,7 +248,7 @@ bool GLProgramManager::checkFragmentData(GLProgram* program) const {
 
       // We only check variables which are explicitly tagged as `out_*`
       if(StringRef(name).startswith("out_") && !GLFragmentData::isValid(name.c_str()))
-        SEQUOIA_THROW(RenderSystemException, "invalid output fragment data '%s'", name);
+        SEQUOIA_THROW(RenderSystemException, "invalid output fragment data '{}'", name);
     }
 
     LOG(DEBUG) << "Successfully checked fragment data of program (ID=" << program->id_ << ")";

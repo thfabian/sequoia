@@ -242,7 +242,7 @@ private:
 
   void processStop(const std::string& name, const Measurement& measurement) {
     if(name != stack_.back()->Name)
-      SEQUOIA_THROW(Exception, "MicroBenchmaker: stopped '%s' instead of '%s'", name,
+      SEQUOIA_THROW(Exception, "MicroBenchmaker: stopped '{}' instead of '{}'", name,
                     stack_.back()->Name);
 
     for(Node* node : stack_) {

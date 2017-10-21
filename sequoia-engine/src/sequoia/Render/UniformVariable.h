@@ -20,8 +20,7 @@
 #include "sequoia/Math/Math.h"
 #include "sequoia/Render/Exception.h"
 #include <array>
-#include <boost/variant/get.hpp>
-#include <boost/variant/variant.hpp>
+#include <boost/variant.hpp>
 #include <iosfwd>
 
 namespace sequoia {
@@ -174,7 +173,7 @@ public:
   inline const T& get() const {
     if(!isOfType<T>()) {
       UniformType type = internal::TypeToUniformType<T>::value;
-      SEQUOIA_THROW(RenderSystemException, "invalid type '%s' of uniform variable, expected '%s'",
+      SEQUOIA_THROW(RenderSystemException, "invalid type '{}' of uniform variable, expected '{}'",
                     type, type_);
     }
     return boost::get<T>(data_);

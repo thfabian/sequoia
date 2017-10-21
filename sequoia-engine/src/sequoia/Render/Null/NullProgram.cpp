@@ -32,7 +32,7 @@ const std::set<std::shared_ptr<Shader>>& NullProgram::getShaders() const { retur
 std::string NullProgram::toString() const {
   return core::format(
       "NullProgram[\n"
-      "  shaders = %s\n"
+      "  shaders = {}\n"
       "]",
       core::indent(core::toStringRange(shaders_, [](const std::shared_ptr<Shader>& shader) {
         return core::indent(shader->toString());

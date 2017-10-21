@@ -22,9 +22,9 @@ namespace game {
 
 std::string Keymap::toString() const {
   return core::format("Keymap[\n"
-                      "  key = %s,\n"
-                      "  button = %s,\n"
-                      "  mod = %s\n"
+                      "  key = {},\n"
+                      "  button = {},\n"
+                      "  mod = {}\n"
                       "]",
                       key_, button_, mod_);
 }

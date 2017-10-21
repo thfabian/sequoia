@@ -34,7 +34,7 @@ std::string NullShader::getSourceCode() const { return code_; }
 
 std::string NullShader::toString() const {
   return core::format("NullShader[\n"
-                      "  path = \"%s\"\n"
+                      "  path = \"{}\"\n"
                       "]",
                       UtfString(file_->getPath()).toAnsiString());
 }

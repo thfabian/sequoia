@@ -30,7 +30,7 @@ bool MeshParameter::operator==(const MeshParameter& other) const noexcept {
 
 std::string MeshParameter::toString() const {
   return core::format("MeshParameter[\n"
-                      "  TexCoordInvertV = %s\n"
+                      "  TexCoordInvertV = {}\n"
                       "]",
                       TexCoordInvertV ? "true" : "false");
 }
@@ -49,8 +49,8 @@ void Mesh::dump() const { data_->dump(); }
 
 std::string Mesh::toString() const {
   return core::format("Mesh[\n"
-                      "  name = %s,\n"
-                      "  data = %s\n"
+                      "  name = {},\n"
+                      "  data = {}\n"
                       "]",
                       name_, core::indent(data_->toString()));
 }

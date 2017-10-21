@@ -192,20 +192,20 @@ std::shared_ptr<SceneNode> SceneNode::clone() { return SceneNode::allocate<Scene
 
 std::string SceneNode::toString() const {
   auto stringPair = toStringImpl();
-  return core::format("%s[\n  %s]", stringPair.first, core::indent(stringPair.second));
+  return core::format("{}[\n  {}]", stringPair.first, core::indent(stringPair.second));
 }
 
 std::pair<std::string, std::string> SceneNode::toStringImpl() const {
   return std::make_pair(
       "SceneNode",
       core::format(
-          "name = %s,\n"
-          "position = %s,\n"
-          "orientation = %s,\n"
-          "scale = %f,\n"
-          "parent = %s,\n"
-          "capabilities = %s,\n"
-          "children = %s,\n",
+          "name = {},\n"
+          "position = {},\n"
+          "orientation = {},\n"
+          "scale = {},\n"
+          "parent = {},\n"
+          "capabilities = {},\n"
+          "children = {},\n",
           name_, position_, orientation_, scale_, hasParent() ? getParent()->getName() : "null",
 
           // Capabilities

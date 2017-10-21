@@ -154,10 +154,10 @@ unsigned int GLBuffer::getModifyBufferID() const { return bufferIds_[getModifyBu
 
 std::string GLBuffer::toString() const {
   return core::format("GLBuffer[\n"
-                      "  bufferIds = %s,\n"
-                      "  target = %s,\n"
-                      "  hint = %s,\n"
-                      "  numBytes = %s\n"
+                      "  bufferIds = {},\n"
+                      "  target = {},\n"
+                      "  hint = {},\n"
+                      "  numBytes = {}\n"
                       "]",
                       core::RangeToString()(bufferIds_), target_, hint_, numBytes_);
 }

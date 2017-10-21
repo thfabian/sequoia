@@ -231,28 +231,28 @@ std::ostream& operator<<(std::ostream& os, KeyModifier mod) noexcept {
 
 std::string KeyboardEvent::toString() const {
   return core::format("KeyboardEvent[\n"
-                      "  Key = %s,\n"
-                      "  Action = %s,\n"
-                      "  Mods = %s\n"
+                      "  Key = {},\n"
+                      "  Action = {},\n"
+                      "  Mods = {}\n"
                       "]",
                       Key, Action, modToString(Mods));
 }
 
 std::string MouseButtonEvent::toString() const {
   return core::format("MouseButtonEvent[\n"
-                      "  Button = %s,\n"
-                      "  Action = %s,\n"
-                      "  Mods = %s\n"
+                      "  Button = {},\n"
+                      "  Action = {},\n"
+                      "  Mods = {}\n"
                       "]",
                       Button, Action, modToString(Mods));
 }
 
 std::string MousePositionEvent::toString() const {
   return core::format("MousePositionEvent[\n"
-                      "  XPos = %i,\n"
-                      "  YPos = %i,\n"
-                      "  XOffset = %i,\n"
-                      "  YOffset = %i\n"
+                      "  XPos = {},\n"
+                      "  YPos = {},\n"
+                      "  XOffset = {},\n"
+                      "  YOffset = {}\n"
                       "]",
                       XPos, YPos, XOffset, YOffset);
 }

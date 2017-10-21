@@ -40,7 +40,7 @@ GLFragmentData::Data GLFragmentData::data(const char* name) {
     if(nameStr == DataNames[attr])
       return (GLFragmentData::Data)attr;
 
-  SEQUOIA_THROW(RenderSystemException, "invalid fragment data '%s' ", name);
+  SEQUOIA_THROW(RenderSystemException, "invalid fragment data '{}' ", name);
   return NumAttributes;
 }
 

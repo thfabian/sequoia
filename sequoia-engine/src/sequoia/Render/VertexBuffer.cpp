@@ -32,8 +32,8 @@ void VertexBuffer::allocateVertices(std::size_t numVertices, Buffer::UsageHint h
 
 std::pair<std::string, std::string> VertexBuffer::toStringImpl() const {
   return std::make_pair("VertexBuffer",
-                        core::format("%s"
-                                     "layout = %s,\n",
+                        core::format("{}"
+                                     "layout = {},\n",
                                      Base::toStringImpl().second, layout_->toString()));
 }
 

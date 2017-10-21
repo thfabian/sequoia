@@ -177,7 +177,7 @@ RenderState& RenderStateCache::getRenderState() { return state_; }
 
 std::string RenderStateCache::toString() const {
   return core::format("RenderStateCache["
-                      "  state = %s\n"
+                      "  state = {}\n"
                       "]",
                       core::indent(state_.toString()));
 }

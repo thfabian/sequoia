@@ -143,7 +143,7 @@ static void uploadTextureImage(GLenum target, const TextureImage* image) {
   GLenum texTarget = (GLenum)GLTranslator.translate(gliTexture.target());
   if(target != texTarget) {
     SEQUOIA_THROW(RenderSystemException,
-                  "cannot create texture: '%s': expected target '%s', got '%s'",
+                  "cannot create texture: '{}': expected target '{}', got '{}'",
                   image->getFile()->getPath(), target, texTarget);
   }
 
@@ -232,7 +232,7 @@ void GLTextureManager::makeValid(GLTexture* texture) {
   texture->target_ = getGLTarget(texture->param_->Kind);
 
   if(texture->id_ == 0)
-    SEQUOIA_THROW(RenderSystemException, "cannot create texture: '%s'",
+    SEQUOIA_THROW(RenderSystemException, "cannot create texture: '{}'",
                   texture->getImage()->getFile()->getPath());
 
   LOG(DEBUG) << "Created texture (ID=" << texture->id_ << ") from image \""

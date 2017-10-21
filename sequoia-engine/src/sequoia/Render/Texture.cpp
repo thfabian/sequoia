@@ -104,15 +104,15 @@ bool TextureParameter::operator==(const TextureParameter& other) const noexcept 
 std::string TextureParameter::toString() const {
   return core::format(
       "TextureParameter[\n"
-      "  Kind = %s,\n"
-      "  Usage = %s,\n"
-      "  MinFilter = %s,\n"
-      "  MagFilter = %s,\n"
-      "  UseMipmap = %s,\n"
-      "  InterpolateBetweenMipmaps = %s,\n"
-      "  Dim1EdgeSampling = %s,\n"
-      "  Dim2EdgeSampling = %s,\n"
-      "  Dim3EdgeSampling = %s\n"
+      "  Kind = {},\n"
+      "  Usage = {},\n"
+      "  MinFilter = {},\n"
+      "  MagFilter = {},\n"
+      "  UseMipmap = {},\n"
+      "  InterpolateBetweenMipmaps = {},\n"
+      "  Dim1EdgeSampling = {},\n"
+      "  Dim2EdgeSampling = {},\n"
+      "  Dim3EdgeSampling = {}\n"
       "]",
       TextureKindToString(Kind), UsageKindToString(Usage), FilterKindToString(MinFilter),
       FilterKindToString(MagFilter), UseMipmap ? "true" : "false",

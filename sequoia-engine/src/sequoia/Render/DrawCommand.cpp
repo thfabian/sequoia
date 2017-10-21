@@ -25,16 +25,16 @@ std::string DrawCommand::toString() const {
   std::stringstream ss;
   ss << modelMatrix_;
   return core::format("DrawCommand[\n"
-                      "  renderState = %s,\n"
-                      "  modelMatrix = Mat4[%s\n  ],\n"
-                      "  uniformVariables = %s\n"
+                      "  renderState = {},\n"
+                      "  modelMatrix = Mat4[{}\n  ],\n"
+                      "  uniformVariables = {}\n"
                       "]",
                       core::indent(state_.toString()), core::indent(ss.str(), 4),
                       variables_.empty()
                           ? "null"
                           : core::indent(core::toStringRange(variables_, [](const auto& var) {
-                              return core::format("name = %s,\n"
-                                                  "variable = %s\n",
+                              return core::format("name = {},\n"
+                                                  "variable = {}\n",
                                                   var.first, var.second.toString());
                             })));
 }

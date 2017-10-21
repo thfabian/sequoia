@@ -51,8 +51,8 @@ void GLVertexBuffer::allocateImpl(std::size_t numBytes, Buffer::UsageHint usageH
 
 std::pair<std::string, std::string> GLVertexBuffer::toStringImpl() const {
   return std::make_pair("GLVertexBuffer",
-                        core::format("%s"
-                                     "glBuffer = %s,\n",
+                        core::format("{}"
+                                     "glBuffer = {},\n",
                                      Base::toStringImpl().second, glBuffer_.toString()));
 }
 

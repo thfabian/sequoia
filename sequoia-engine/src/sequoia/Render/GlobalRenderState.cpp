@@ -39,22 +39,22 @@ void GlobalRenderState::reset() {
 std::string GlobalRenderState::toString() const {
   auto varMapToString = [](const auto& varMap) {
     return core::indent(core::toStringRange(varMap, [](const auto& nameVarPair) {
-      return core::format("name = %s,\n"
-                          "  variable = %s",
+      return core::format("name = {},\n"
+                          "  variable = {}",
                           nameVarPair.first, core::indent(nameVarPair.second.toString()));
     }));
   };
 
   return core::format(
       "GlobalRenderState[\n"
-      "  sharedUniformVariables = %s,\n"
-      "  perProgramUniformVariables = %s\n"
+      "  sharedUniformVariables = {},\n"
+      "  perProgramUniformVariables = {}\n"
       "]",
       varMapToString(sharedUniformVariables_),
       core::indent(core::toStringRange(
           perProgramUniformVariables_, [&varMapToString](const auto& programVarMapPair) {
-            return core::format("program = %s,\n"
-                                "  variables = %s",
+            return core::format("program = {},\n"
+                                "  variables = {}",
                                 core::indent(programVarMapPair.first->toString()),
                                 varMapToString(programVarMapPair.second));
           })));

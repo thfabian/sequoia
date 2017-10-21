@@ -78,8 +78,8 @@ void Drawable::update(const SceneNodeUpdateEvent& event) {}
 
 std::string Drawable::toString() const {
   return core::format("Drawable[\n"
-                      "  drawCommand = %s,\n"
-                      "  mesh = %s,\n"
+                      "  drawCommand = {},\n"
+                      "  mesh = {},\n"
                       "]",
                       drawCommand_.get().toString(), mesh_ ? mesh_->toString() : "null");
 }

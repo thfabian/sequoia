@@ -62,8 +62,8 @@ void CameraController::cameraListenerRotationChanged(render::Camera* camera) {
 }
 
 std::pair<std::string, std::string> CameraController::toStringImpl() const {
-  return std::make_pair("CameraController", core::format("%s"
-                                                         "camera = %s,\n",
+  return std::make_pair("CameraController", core::format("{}"
+                                                         "camera = {},\n",
                                                          Base::toStringImpl().second,
                                                          camera_ ? camera_->toString() : "null"));
 }

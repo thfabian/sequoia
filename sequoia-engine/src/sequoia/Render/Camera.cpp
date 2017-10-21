@@ -100,13 +100,13 @@ void Camera::viewportGeometryChanged(Viewport* viewport) {
 
 std::string Camera::toString() const {
   return core::format("Camera[\n"
-                      "  fovy = %f,\n"
-                      "  aspect = %f,\n"
-                      "  zNear = %f,\n"
-                      "  zFar = %f,\n"
-                      "  eye = %s,\n"
-                      "  center = %s,\n"
-                      "  up = %s\n"
+                      "  fovy = {},\n"
+                      "  aspect = {},\n"
+                      "  zNear = {},\n"
+                      "  zFar = {},\n"
+                      "  eye = {},\n"
+                      "  center = {},\n"
+                      "  up = {}\n"
                       "]",
                       fovy_, aspect_, zNear_, zFar_, getEye(), getCenter(), getUp());
 }

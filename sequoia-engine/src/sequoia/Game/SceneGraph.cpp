@@ -43,7 +43,7 @@ std::size_t SceneGraph::size() const {
 
 std::string SceneGraph::toString() const {
   return core::format("SceneGraph[\n"
-                      "  nodes = %s\n"
+                      "  nodes = {}\n"
                       "]",
                       size());
 }

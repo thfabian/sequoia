@@ -59,10 +59,10 @@ std::string GLShader::getSourceCode() const { return code_; }
 
 std::string GLShader::toString() const {
   return core::format("GLShader[\n"
-                      "  valid = %s,\n"
-                      "  type = %s,\n"
-                      "  id = %s,\n"
-                      "  path = \"%s\"\n"
+                      "  valid = {},\n"
+                      "  type = {},\n"
+                      "  id = {},\n"
+                      "  path = \"{}\"\n"
                       "]",
                       isValid() ? "true" : "false", shaderTypeToString(getType()), id_,
                       UtfString(file_->getPath()).toAnsiString());

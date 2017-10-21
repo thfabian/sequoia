@@ -51,7 +51,7 @@ void TestFile::load() {
   std::ifstream file(fullPath.c_str(), mode);
 
   if(!file.is_open())
-    SEQUOIA_THROW(core::Exception, "cannot load file: '%s'", path_.c_str());
+    SEQUOIA_THROW(core::Exception, "cannot load file: '{}'", path_.c_str());
 
   // Allocate memory
   file.seekg(0, std::ios_base::end);

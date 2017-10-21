@@ -16,66 +16,14 @@
 #ifndef SEQUOIA_CORE_FORMAT_H
 #define SEQUOIA_CORE_FORMAT_H
 
-#include "sequoia/Core/Assert.h"
-#include "sequoia/Core/ErrorHandler.h"
-#include <boost/format.hpp>
+#include <fmt/format.h>
+#include <fmt/ostream.h>
 
 namespace sequoia {
 
 namespace core {
 
-/// @brief printf-like formatting of a string
-///
-/// @param fmt    Format string
-/// @param args   Variadic sequence used as arguments
-///
-/// @ingroup core
-/// @{
-template <typename... Args>
-std::string format(const char* fmt, Args&&... args) {
-  boost::format f(fmt);
-
-#ifndef NDEBUG
-  try {
-#endif
-
-    int unroll[]{0, (f % std::forward<Args>(args), 0)...};
-    static_cast<void>(unroll);
-
-#ifndef NDEBUG
-  } catch(boost::io::format_error& error) {
-    ErrorHandler::getSingleton().warning(std::string("unhandled 'boost::io::format_error': ") +
-                                         error.what() + " : \"" + fmt + "\"");
-    SEQUOIA_ASSERT_MSG(0, "format excpetion");
-  }
-#endif
-
-  return boost::str(f);
-}
-
-template <typename... Args>
-std::wstring format(const wchar_t* fmt, Args&&... args) {
-  boost::wformat f(fmt);
-
-#ifndef NDEBUG
-  try {
-#endif
-
-    int unroll[]{0, (f % std::forward<Args>(args), 0)...};
-    static_cast<void>(unroll);
-
-#ifndef NDEBUG
-  } catch(boost::io::format_error& error) {
-    ErrorHandler::getSingleton().warning(std::wstring(L"unhandled 'boost::io::format_error': ") +
-                                         UtfString(error.what()).toWideString() + L" : \"" + fmt +
-                                         L"\"");
-    SEQUOIA_ASSERT_MSG(0, "format excpetion");
-  }
-#endif
-
-  return boost::str(f);
-}
-/// @}
+using fmt::format;
 
 } // namespace core
 

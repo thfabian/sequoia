@@ -89,11 +89,11 @@ const std::string& GLProgram::getTextureSampler(int textureUnit) const {
 std::string GLProgram::toString() const {
   return core::format(
       "GLProgram[\n"
-      "  valid = %s,\n"
-      "  id = %s,\n"
-      "  uniformInfoMap = %s,\n"
-      "  textureSamplers = %s,\n"
-      "  shaders = %s\n"
+      "  valid = {},\n"
+      "  id = {},\n"
+      "  uniformInfoMap = {},\n"
+      "  textureSamplers = {},\n"
+      "  shaders = {}\n"
       "]",
       isValid() ? "true" : "false", id_,
       !uniformInfoMap_.empty()
@@ -245,12 +245,12 @@ struct UniformVariableSetter {};
       }                                                                                            \
       GLProgram::GLUniformInfo& info = it->second;                                                 \
       if(!GLTypeCompat<TYPE>::isCompatible(info.Type))                                             \
-        SEQUOIA_THROW(RenderSystemException, "failed to set uniform variable '%s' in program "     \
-                                             "(ID=%i), cannot convert type '%s' to '%s'",          \
+        SEQUOIA_THROW(RenderSystemException, "failed to set uniform variable '{}' in program "     \
+                                             "(ID={}), cannot convert type '{}' to '{}'",          \
                       name, program->getID(), GLTypeCompat<TYPE>::getTypeName(), info.Type);       \
       if(info.Rank != rank)                                                                        \
-        SEQUOIA_THROW(RenderSystemException, "invalid rank (size of array) '%i' of uniform "       \
-                                             "variable '%s' in program (ID=%i), expected '%i'",    \
+        SEQUOIA_THROW(RenderSystemException, "invalid rank (size of array) '{}' of uniform "       \
+                                             "variable '{}' in program (ID={}), expected '{}'",    \
                       1, name, program->getID(), info.Rank);                                       \
       FUNC(program->getID(), info.Location, info.Rank, data);                                      \
       info.ValueSet = true;                                                                        \

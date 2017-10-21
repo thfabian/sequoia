@@ -16,6 +16,7 @@
 #include "sequoia/Unittest/Test.h"
 #include "sequoia/Core/Format.h"
 #include "sequoia/Core/StringUtil.h"
+#include "sequoia/Core/Assert.h"
 #include <cmath>
 #include <sstream>
 
@@ -50,10 +51,10 @@ std::pair<bool, std::string> compareHelper(float expected, float actual, float a
   if(std::abs(expected - actual) > absErr)
     return std::make_pair(false, core::format("  abs(expected - actual) < absErr    FAILED\n"
                                               "\n"
-                                              "  expected = %s\n"
-                                              "  actual = %s\n"
-                                              "  abs(expected - actual) = %f\n"
-                                              "  absErr = %f\n",
+                                              "  expected = {}\n"
+                                              "  actual = {}\n"
+                                              "  abs(expected - actual) = {}\n"
+                                              "  absErr = {}\n",
                                               expected_ss.str(), actual_ss.str(),
                                               std::abs(expected - actual), absErr));
 

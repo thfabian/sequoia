@@ -83,7 +83,7 @@ TestEnvironment::TestEnvironment(int argc, char* argv[], render::RenderSystemKin
 
   if(renderSystemKind_ == render::RK_Invalid)
     ErrorHandler::getSingleton().fatal(
-        core::format("invalid value '%s' of option '--render'", vm["renderer"].as<std::string>()),
+        core::format("invalid value '{}' of option '--render'", vm["renderer"].as<std::string>()),
         false, false);
 
   // Unittesting always runs in debug mode and with logging on

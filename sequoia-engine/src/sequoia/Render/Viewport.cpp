@@ -66,11 +66,11 @@ int Viewport::getHeight() const { return height_; }
 
 std::string Viewport::toString() const {
   return core::format("Viewport[\n"
-                      "  camera = %s,\n"
-                      "  x = %s,\n"
-                      "  y = %s,\n"
-                      "  width = %s,\n"
-                      "  height = %s\n"
+                      "  camera = {},\n"
+                      "  x = {},\n"
+                      "  y = {},\n"
+                      "  width = {},\n"
+                      "  height = {}\n"
                       "]",
                       core::indent(camera_->toString()), x_, y_, width_, height_);
 }

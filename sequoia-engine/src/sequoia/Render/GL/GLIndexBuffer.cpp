@@ -65,8 +65,8 @@ void GLIndexBuffer::allocateImpl(std::size_t numBytes, Buffer::UsageHint usageHi
 
 std::pair<std::string, std::string> GLIndexBuffer::toStringImpl() const {
   return std::make_pair("GLIndexBuffer",
-                        core::format("%s"
-                                     "glBuffer = %s,\n",
+                        core::format("{}"
+                                     "glBuffer = {},\n",
                                      Base::toStringImpl().second, glBuffer_.toString()));
 }
 

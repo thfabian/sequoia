@@ -155,13 +155,13 @@ void CameraControllerFree::mousePositionEvent(const render::MousePositionEvent& 
 
 std::pair<std::string, std::string> CameraControllerFree::toStringImpl() const {
   return std::make_pair("CameraControllerFree",
-                        core::format("%s"
-                                     "forwardKey = %s,\n"
-                                     "backwardKey = %s,\n"
-                                     "leftKey = %s,\n"
-                                     "rightKey = %s,\n"
-                                     "upKey = %s,\n"
-                                     "downKey = %s,\n",
+                        core::format("{}"
+                                     "forwardKey = {},\n"
+                                     "backwardKey = {},\n"
+                                     "leftKey = {},\n"
+                                     "rightKey = {},\n"
+                                     "upKey = {},\n"
+                                     "downKey = {},\n",
                                      Base::toStringImpl().second, forwardKey_->toString(),
                                      backwardKey_->toString(), leftKey_->toString(),
                                      rightKey_->toString(), upKey_->toString(),

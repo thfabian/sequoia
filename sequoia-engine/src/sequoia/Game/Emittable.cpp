@@ -27,13 +27,13 @@ Emittable::Emittable(SceneNode* node, EmitterKind kind) : Base(node), kind_(kind
 
 std::string Emittable::toString() const {
   auto stringPair = toStringImpl();
-  return core::format("%s[\n  %s]", stringPair.first, core::indent(stringPair.second));
+  return core::format("{}[\n  {}]", stringPair.first, core::indent(stringPair.second));
 }
 
 std::string Emittable::getUniformVariableName() const { return std::string("e_") + getName(); }
 
 std::pair<std::string, std::string> Emittable::toStringImpl() const {
-  return std::make_pair("Emittable", core::format("active = %s,\n", active_ ? "true" : "false"));
+  return std::make_pair("Emittable", core::format("active = {},\n", active_ ? "true" : "false"));
 }
 
 } // namespace game

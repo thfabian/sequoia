@@ -61,7 +61,7 @@ void Buffer::read(std::size_t offset, std::size_t length, void* dest) {
 
 std::string Buffer::toString() const {
   auto stringPair = toStringImpl();
-  return core::format("%s[\n  %s]", stringPair.first, core::indent(stringPair.second));
+  return core::format("{}[\n  {}]", stringPair.first, core::indent(stringPair.second));
 }
 
 void Buffer::updateFromShadow() {
@@ -82,9 +82,9 @@ void Buffer::updateFromShadow() {
 }
 
 std::pair<std::string, std::string> Buffer::toStringImpl() const {
-  return std::make_pair("Buffer", core::format("numBytes = %s,\n"
-                                               "usage = %s,\n"
-                                               "shadowBuffer = %s,\n",
+  return std::make_pair("Buffer", core::format("numBytes = {},\n"
+                                               "usage = {},\n"
+                                               "shadowBuffer = {},\n",
                                                numBytes_, usageHintToString(usageHint_),
                                                shadowBuffer_ ? shadowBuffer_->toString() : "null"));
 }

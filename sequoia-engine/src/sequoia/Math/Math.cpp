@@ -23,7 +23,7 @@ namespace math {
 
 std::string Radian::toString() const {
   return core::format("Radian[\n"
-                      "  rad = %f\n"
+                      "  rad = {}\n"
                       "]",
                       rad_);
 }
@@ -32,7 +32,7 @@ std::ostream& operator<<(std::ostream& os, const Radian& rad) { return (os << ra
 
 std::string Degree::toString() const {
   return core::format("Degree[\n"
-                      "  deg = %f\n"
+                      "  deg = {}\n"
                       "]",
                       deg_);
 }

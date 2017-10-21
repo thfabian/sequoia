@@ -37,7 +37,7 @@ GLVertexAttribute::Attribute GLVertexAttribute::attribute(const char* name) {
     if(nameStr == AttributeNames[attr])
       return (GLVertexAttribute::Attribute)attr;
 
-  SEQUOIA_THROW(RenderSystemException, "invalid vertex attribute '%s' ", name);
+  SEQUOIA_THROW(RenderSystemException, "invalid vertex attribute '{}' ", name);
   return NumAttributes;
 }
 

@@ -154,10 +154,10 @@ void GLVertexData::draw() const noexcept {
 
 std::pair<std::string, std::string> GLVertexData::toStringImpl() const {
   return std::make_pair("GLVertexData",
-                        core::format("%s"
-                                     "vertexBuffer = %s,\n"
-                                     "indexBuffer = %s,\n"
-                                     "vaoID = %s\n",
+                        core::format("{}"
+                                     "vertexBuffer = {},\n"
+                                     "indexBuffer = {},\n"
+                                     "vaoID = {}\n",
                                      Base::toStringImpl().second, vertexBuffer_->toString(),
                                      indexBuffer_ ? indexBuffer_->toString() : "null", vaoID_));
 }

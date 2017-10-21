@@ -109,7 +109,7 @@ if(SEQUOIA_ENGINE_TESTING)
   set(testing_packages GTest benchmark)
 endif()
 
-foreach(package Backward Boost ccache glbinding glfw3 gli glm OpenCV OpenGL Python3 TBB
+foreach(package Backward Boost ccache glbinding glfw3 gli glm OpenCV OpenGL Python3 TBB fmt
                 tinyobjloader Protobuf ${testing_packages} Threads)
   include("Add${package}")
   string(TOUPPER ${package} PACKAGE)

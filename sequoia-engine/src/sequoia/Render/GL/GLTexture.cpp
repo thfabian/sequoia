@@ -42,10 +42,10 @@ const std::shared_ptr<TextureParameter>& GLTexture::getParameter() const { retur
 
 std::string GLTexture::toString() const {
   return core::format("GLTexture[\n"
-                      "  valid = %s\n"
-                      "  id = %i,\n"
-                      "  image = %s,\n"
-                      "  param = %s\n"
+                      "  valid = {}\n"
+                      "  id = {},\n"
+                      "  image = {},\n"
+                      "  param = {}\n"
                       "]",
                       isValid() ? "true" : "false", id_,
                       image_ ? core::indent(image_->toString()) : "null",

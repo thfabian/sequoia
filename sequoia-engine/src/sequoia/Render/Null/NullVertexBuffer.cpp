@@ -49,8 +49,8 @@ void NullVertexBuffer::allocateImpl(std::size_t numBytes, Buffer::UsageHint usag
 
 std::pair<std::string, std::string> NullVertexBuffer::toStringImpl() const {
   return std::make_pair("NullVertexBuffer",
-                        core::format("%s"
-                                     "%s\n",
+                        core::format("{}"
+                                     "{}\n",
                                      Base::toStringImpl().second, buffer_->toString()));
 }
 

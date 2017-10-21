@@ -135,7 +135,7 @@ void AssetManager::loadFromDisk(std::unique_ptr<AssetManager::Asset>& asset) {
   std::ifstream file(fullPath.c_str(), mode);
 
   if(!file.is_open())
-    SEQUOIA_THROW(GameException, "cannot load asset: '%s'", asset->Path.c_str());
+    SEQUOIA_THROW(GameException, "cannot load asset: '{}'", asset->Path.c_str());
 
   // Allocate memory
   file.seekg(0, std::ios_base::end);
