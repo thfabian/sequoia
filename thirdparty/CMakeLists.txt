@@ -188,6 +188,7 @@ sequoia_build_package(
 #
 # Protobuf
 #
+list(APPEND SEQUOIA_EXTERNAL_PROJECTS protobuf)
 set(protobuf_version "3.4.0")
 set(protobuf_version_short "3.4")
 set(protobuf_url "https://github.com/google/protobuf/archive/v${protobuf_version}.tar.gz")
