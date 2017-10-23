@@ -94,7 +94,7 @@ macro(sequoia_find_package)
       message(STATUS "Package ${ARG_PACKAGE} not found due to missing: ${missing_required_vars}")    
     endif()
     
-    if(required_vars_ok AND (${${ARG_PACKAGE}_FOUND} OR ${${package_upper}_FOUND})) 
+    if(required_vars_ok AND (${ARG_PACKAGE}_FOUND OR ${package_upper}_FOUND)) 
       set(use_system TRUE)
 
       # Forward arguments
