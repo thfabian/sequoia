@@ -32,7 +32,11 @@ ExternalProject_Add(protobuf
 )
 
 ExternalProject_Get_Property(protobuf install_dir)
-set(Protobuf_DIR "${install_dir}/lib/cmake/protobuf" CACHE INTERNAL "")
+if(WIN32)
+  set(Protobuf_DIR "${install_dir}/cmake" CACHE INTERNAL "")
+else()
+  set(Protobuf_DIR "${install_dir}/lib/cmake/protobuf" CACHE INTERNAL "")
+endif()
 
 sequoia_append_and_export_variable(
    SEQUOIA_EXTERNAL_CMAKE_ARGS 
