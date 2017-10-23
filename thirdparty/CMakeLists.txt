@@ -94,7 +94,7 @@ sequoia_build_package(
 list(APPEND SEQUOIA_EXTERNAL_PROJECTS glbinding)
 set(glbinding_version "2.1.1")
 set(glbinding_url "https://github.com/cginternals/glbinding/archive/v${glbinding_version}.tar.gz")
-set(glbinding_md5 "93dab7f4d64eff5385e3d1915e765695")
+set(glbinding_md5 "a7d03b323c269defda9f22c47c731585")
 
 sequoia_find_package(
  PACKAGE glbinding 
@@ -165,7 +165,6 @@ sequoia_find_package(
 # TBB
 #
 list(APPEND SEQUOIA_EXTERNAL_PROJECTS tbb)
-set(tbb_version "44u4")
 set(tbb_url "https://github.com/thfabian/tbb/archive/tbb${tbb_version}.tar.gz")
 set(tbb_md5 "bfbeb805c91fcd32f858f8d9c26ad0e8")
 
