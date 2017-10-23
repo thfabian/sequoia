@@ -166,7 +166,7 @@ sequoia_find_package(
 #
 list(APPEND SEQUOIA_EXTERNAL_PROJECTS tbb)
 set(tbb_url "https://github.com/thfabian/tbb/archive/tbb44u4.tar.gz")
-set(tbb_md5 "bfbeb805c91fcd32f858f8d9c26ad0e8")
+set(tbb_md5 "df4c96df8352c13bcbc8b642fff257b3")
 
 sequoia_find_package(
   PACKAGE TBB 
