@@ -72,6 +72,7 @@ sequoia_find_package(
   PACKAGE Boost
   PACKAGE_ARGS ${boost_min_version} COMPONENTS ${boost_components}
   FORWARD_VARS BOOST_ROOT Boost_LIBRARY_DIRS Boost_INCLUDE_DIRS BOOST_ROOT
+  BUILD_VERSION ${boost_download_version}
 )
 
 #
@@ -93,7 +94,7 @@ sequoia_build_package(
 list(APPEND SEQUOIA_EXTERNAL_PROJECTS glbinding)
 set(glbinding_version "2.1.1")
 set(glbinding_url "https://github.com/cginternals/glbinding/archive/v${glbinding_version}.tar.gz")
-set(glbinding_md5 "93dab7f4d64eff5385e3d1915e765695")
+set(glbinding_md5 "a7d03b323c269defda9f22c47c731585")
 
 sequoia_find_package(
  PACKAGE glbinding 
@@ -165,7 +166,7 @@ sequoia_find_package(
 #
 list(APPEND SEQUOIA_EXTERNAL_PROJECTS tbb)
 set(tbb_url "https://github.com/thfabian/tbb/archive/tbb44u4.tar.gz")
-set(tbb_md5 "bfbeb805c91fcd32f858f8d9c26ad0e8")
+set(tbb_md5 "df4c96df8352c13bcbc8b642fff257b3")
 
 sequoia_find_package(
   PACKAGE TBB 

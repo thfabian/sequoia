@@ -91,12 +91,10 @@ macro(sequoia_find_package)
     endforeach()
 
     if(missing_required_vars)
-      message(STATUS "Package ${ARG_PACKAGE} not found due to missing:${missing_required_vars}")    
+      message(STATUS "Package ${ARG_PACKAGE} not found due to missing: ${missing_required_vars}")    
     endif()
     
-    if(required_vars_ok AND (${ARG_PACKAGE}_FOUND   OR 
-                             ${package_upper}_FOUND OR
-                             ${ARG_PACKAGE}_DIR)) 
+    if(required_vars_ok AND (${ARG_PACKAGE}_FOUND OR ${package_upper}_FOUND)) 
       set(use_system TRUE)
 
       # Forward arguments
@@ -148,5 +146,8 @@ macro(sequoia_find_package)
     endif()
   endif()
 
+  if("${version}" STREQUAL "")
+    set(version "-")
+  endif()
   sequoia_make_package_info(${ARG_PACKAGE} ${version} ${use_system})
 endmacro()
