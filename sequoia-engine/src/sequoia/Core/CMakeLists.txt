@@ -76,7 +76,6 @@ sequoia_add_library(
           Options.inc.in
           Options2.cpp
           Options2.h
-          OptionsType.inc
           Platform.cpp   
           Platform.h
           PrettyStackTrace.cpp       

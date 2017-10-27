@@ -13,6 +13,7 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
+#include "sequoia/Core/Assert.h"
 #include "sequoia/Core/Exception.h"
 #include "sequoia/Core/Format.h"
 #include "sequoia/Core/Logging.h"
@@ -32,211 +33,68 @@ namespace core {
 
 namespace {
 
-static std::string variantToString(const internal::OptionsData& data, internal::OptionsType type) {
-  std::stringstream ss;
-  switch(type) {
-#define OPTIONS_TYPE(Type, Name)                                                                   \
-  case internal::OptionsType::Name:                                                                \
-    ss << boost::get<Type>(data);                                                                  \
-    break;
-#include "sequoia/Core/OptionsType.inc"
-#undef OPTIONS_TYPE
-  case internal::OptionsType::Invalid:
-    ss << "<invalid>";
-    break;
-  default:
-    sequoia_unreachable("invalid type");
-  }
-  return ss.str();
+template <class... Args>
+bool isOneOf(const std::string& str, Args&&... args) {
+  for(const auto& arg : {args...})
+    if(arg == str)
+      return true;
+  return false;
 }
 
-static const char* optionsTypeToString(internal::OptionsType type) {
-  switch(type) {
-#define OPTIONS_TYPE(Type, Name)                                                                   \
-  case internal::OptionsType::Name:                                                                \
-    return #Name;
-#include "sequoia/Core/OptionsType.inc"
-#undef OPTIONS_TYPE
-  case internal::OptionsType::Invalid:
-    return "<invalid>";
-  default:
-    sequoia_unreachable("invalid type");
+template <class T>
+struct InvalidType {
+  using type = void;
+};
+
+template <class T>
+T convert(const std::string& key, const std::string& value) {
+  static_assert(std::is_same<typename InvalidType<T>::type, void>::value, "invalid type");
+}
+
+template <>
+bool convert<bool>(const std::string& key, const std::string& value) {
+  try {
+    return static_cast<bool>(boost::lexical_cast<float>(value));
+  } catch(const boost::bad_lexical_cast&) {
   }
+
+  if(isOneOf(value, "true", "True", "TRUE"))
+    return true;
+  else if(isOneOf(value, "false", "False", "FALSE"))
+    return false;
+
+  SEQUOIA_THROW(core::Exception, "cannot convert '{}' (\"{}\") to 'bool'", key, value);
+  return bool{};
+}
+
+template <>
+int convert<int>(const std::string& key, const std::string& value) {
+  try {
+    return static_cast<int>(boost::lexical_cast<float>(value));
+  } catch(const boost::bad_lexical_cast& e) {
+    SEQUOIA_THROW(core::Exception, "cannot convert '{}' (\"{}\") to 'int' : {}", key, value,
+                  e.what());
+  }
+  return int{};
+}
+
+template <>
+float convert<float>(const std::string& key, const std::string& value) {
+  try {
+    return boost::lexical_cast<float>(value);
+  } catch(const boost::bad_lexical_cast& e) {
+    SEQUOIA_THROW(core::Exception, "cannot convert '{}' (\"{}\") to 'float' : {}", key, value,
+                  e.what());
+  }
+  return float{};
+}
+
+template <>
+std::string convert<std::string>(const std::string& key, const std::string& value) {
+  return value;
 }
 
 } // anonymous namespace
-
-namespace internal {
-
-template <class... Args>
-bool isOneOf(const std::string& str, Args&&... args) {
-  auto array = {args...};
-  return std::find(std::begin(array), std::end(array), str) != std::end(array);
-}
-
-template <class From, class To>
-struct ConvertImpl {
-  static OptionsData apply(const OptionsData& dataFrom) {
-    SEQUOIA_THROW(core::Exception, "cannot convert type '{}' to '{}'",
-                  optionsTypeToString(internal::TypeToOptionsType<From>::value),
-                  optionsTypeToString(internal::TypeToOptionsType<To>::value));
-    return OptionsData{};
-  }
-};
-
-// Bool
-template <class To>
-struct ConvertImpl<bool, To> {
-  static OptionsData apply(const OptionsData& dataFrom) {
-    return static_cast<To>(boost::get<bool>(dataFrom));
-  }
-};
-
-template <>
-struct ConvertImpl<bool, std::string> {
-  static OptionsData apply(const OptionsData& dataFrom) {
-    return std::to_string(boost::get<bool>(dataFrom));
-  }
-};
-
-// Int
-template <class To>
-struct ConvertImpl<int, To> {
-  static OptionsData apply(const OptionsData& dataFrom) {
-    return static_cast<To>(boost::get<int>(dataFrom));
-  }
-};
-
-template <>
-struct ConvertImpl<int, std::string> {
-  static OptionsData apply(const OptionsData& dataFrom) {
-    return std::to_string(boost::get<int>(dataFrom));
-  }
-};
-
-// Float
-template <class To>
-struct ConvertImpl<float, To> {
-  static OptionsData apply(const OptionsData& dataFrom) {
-    return static_cast<To>(boost::get<float>(dataFrom));
-  }
-};
-
-template <>
-struct ConvertImpl<float, std::string> {
-  static OptionsData apply(const OptionsData& dataFrom) {
-    return std::to_string(boost::get<float>(dataFrom));
-  }
-};
-
-// String
-template <>
-struct ConvertImpl<std::string, bool> {
-  static OptionsData apply(const OptionsData& dataFrom) {
-    auto str = boost::get<std::string>(dataFrom);
-    if(isOneOf(str, "1", "true", "True", "TRUE", "1.0"))
-      return true;
-    else if(isOneOf(str, "0", "false", "False", "FALSE", "0.0"))
-      return true;
-    else
-      SEQUOIA_THROW(core::Exception, "cannot convert type '{}' (\"{}\") to '{}'",
-                    optionsTypeToString(OptionsType::String), str,
-                    optionsTypeToString(OptionsType::Bool));
-  }
-};
-
-template <class To>
-struct ConvertImpl<std::string, To> {
-  static OptionsData apply(const OptionsData& dataFrom) {
-    auto str = boost::get<std::string>(dataFrom);
-    try {
-      return boost::lexical_cast<To>(str);
-    } catch(const boost::bad_lexical_cast& e) {
-      SEQUOIA_THROW(core::Exception, "cannot convert type '{}' (\"{}\") to '{}' : {}",
-                    optionsTypeToString(OptionsType::String), str,
-                    optionsTypeToString(internal::TypeToOptionsType<To>::value), e.what());
-    }
-    return OptionsData{};
-  }
-};
-
-template <>
-struct ConvertImpl<std::string, std::string> {
-  static OptionsData apply(const OptionsData& dataFrom) {
-    return boost::get<std::string>(dataFrom);
-  }
-};
-
-OptionsData convert(OptionsType typeTo, OptionsType typeFrom, const OptionsData& dataFrom) {
-  switch(typeFrom) {
-  case OptionsType::Bool: {
-    switch(typeTo) {
-#define OPTIONS_TYPE(Type, Name)                                                                   \
-  case OptionsType::Name:                                                                          \
-    return ConvertImpl<bool, Type>::apply(dataFrom);
-#include "sequoia/Core/OptionsType.inc"
-#undef OPTIONS_TYPE
-    default:
-      SEQUOIA_THROW(core::Exception, "cannot convert type '{}' to '{}'",
-                    optionsTypeToString(typeFrom), optionsTypeToString(typeFrom));
-    }
-  }
-
-  case OptionsType::Int: {
-    switch(typeTo) {
-#define OPTIONS_TYPE(Type, Name)                                                                   \
-  case OptionsType::Name:                                                                          \
-    return ConvertImpl<int, Type>::apply(dataFrom);
-#include "sequoia/Core/OptionsType.inc"
-#undef OPTIONS_TYPE
-    default:
-      SEQUOIA_THROW(core::Exception, "cannot convert type '{}' to '{}'",
-                    optionsTypeToString(typeFrom), optionsTypeToString(typeFrom));
-    }
-  }
-
-  case OptionsType::Float: {
-    switch(typeTo) {
-#define OPTIONS_TYPE(Type, Name)                                                                   \
-  case OptionsType::Name:                                                                          \
-    return ConvertImpl<float, Type>::apply(dataFrom);
-#include "sequoia/Core/OptionsType.inc"
-#undef OPTIONS_TYPE
-    default:
-      SEQUOIA_THROW(core::Exception, "cannot convert type '{}' to '{}'",
-                    optionsTypeToString(typeFrom), optionsTypeToString(typeFrom));
-    }
-  }
-
-  case OptionsType::String: {
-    switch(typeTo) {
-#define OPTIONS_TYPE(Type, Name)                                                                   \
-  case OptionsType::Name:                                                                          \
-    return ConvertImpl<std::string, Type>::apply(dataFrom);
-#include "sequoia/Core/OptionsType.inc"
-#undef OPTIONS_TYPE
-    default:
-      SEQUOIA_THROW(core::Exception, "cannot convert type '{}' to '{}'",
-                    optionsTypeToString(typeFrom), optionsTypeToString(typeFrom));
-    }
-  }
-
-  default:
-    SEQUOIA_THROW(core::Exception, "cannot convert type '{}' to '{}'",
-                  optionsTypeToString(typeFrom), optionsTypeToString(typeFrom));
-  }
-  sequoia_unreachable("invalid conversion");
-}
-
-} // namespace internal
-
-std::string Option::toString() const {
-  return core::format("Option[\n"
-                      "  type = {}\n"
-                      "  data = {}\n"
-                      "]",
-                      optionsTypeToString(type_), variantToString(data_, type_));
-}
 
 std::string OptionMetaData::toString() const {
   return core::format("OptionMetaData[\n"
@@ -248,38 +106,44 @@ std::string OptionMetaData::toString() const {
                       CommandLine, CommandLineShort, CommandLineMetaVar, DocString);
 }
 
-const Option& Options2::getAsOption(const std::string& name) const {
-  auto it = options_.find(name);
-  if(it == options_.end())
-    SEQUOIA_THROW(core::Exception, "option '{}' does not exists", name);
-  return it->second;
-}
-
-void Options2::write(const platform::Path& file) const {
-  auto path = platform::toAnsiString(file);
-  LOG(INFO) << "Writing Options to \"" << path << "\" ...";
+void Options2::write(const std::string& file) const {
+  LOG(INFO) << "Writing Options to \"" << file << "\" ...";
 
   boost::property_tree::ptree ptree;
   for(const auto& option : options_)
-    ptree.put(option.first, option.second.template get<std::string>());
+    ptree.put(option.first, option.second);
 
   try {
-    boost::property_tree::write_ini(path, ptree);
+    boost::property_tree::write_ini(file, ptree);
   } catch(boost::property_tree::ini_parser_error& e) {
     LOG(WARNING) << "Failed to write Options : " << e.what();
     SEQUOIA_THROW(core::Exception, "failed to write Options : {}", e.what());
   }
 
-  LOG(INFO) << "Successfully wrote Options to \"" << path << "\"";
+  LOG(INFO) << "Successfully wrote Options to \"" << file << "\"";
 }
 
-void Options2::read(const platform::Path& file) {}
+void Options2::read(const std::string& file) {
+  LOG(INFO) << "Reading Options from \"" << file << "\" ...";
 
-Option& Options2::getAsOption(const std::string& name) {
-  auto it = options_.find(name);
-  if(it == options_.end())
-    SEQUOIA_THROW(core::Exception, "option '{}' does not exists", name);
-  return it->second;
+  boost::property_tree::ptree ptree;
+  try {
+    boost::property_tree::read_ini(file, ptree);
+  } catch(boost::property_tree::ini_parser_error& e) {
+    LOG(WARNING) << "Failed to read Options : " << e.what();
+    SEQUOIA_THROW(core::Exception, "failed to read Options : {}", e.what());
+  }
+
+  for(const auto& base : ptree) {
+    std::string baseStr = base.first + ".";
+    for(const auto& option : base.second) {
+      if(option.second.size() != 0)
+        SEQUOIA_THROW(core::Exception, "invalid ini file");
+      options_[baseStr + option.first] = option.second.get_value<std::string>();
+    }
+  }
+
+  LOG(INFO) << "Successfully read Options to \"" << file << "\"";
 }
 
 std::string Options2::toString() const {
@@ -289,18 +153,63 @@ std::string Options2::toString() const {
       "  optionsMetaData = {}\n"
       "]",
       core::indent(core::toStringRange(options_,
-                                       [](const std::pair<std::string, Option>& optionPair) {
-                                         return core::format(
-                                             "{} = {}", optionPair.first,
-                                             core::indent(optionPair.second.toString()));
+                                       [](const auto& optionPair) {
+                                         return core::format("{} = {}", optionPair.first,
+                                                             optionPair.second);
                                        })),
       optionsMetaData_.empty()
           ? "null"
-          : core::indent(core::toStringRange(
-                optionsMetaData_, [](const std::pair<std::string, OptionMetaData>& optionPair) {
-                  return core::format("{} = {}", optionPair.first,
-                                      core::indent(optionPair.second.toString()));
-                })));
+          : core::indent(core::toStringRange(optionsMetaData_, [](const auto& optionMetaDataPair) {
+              return core::format("{} = {}", optionMetaDataPair.first,
+                                  core::indent(optionMetaDataPair.second.toString()));
+            })));
+}
+
+void Options2::setImpl(const std::string& name, bool value) noexcept {
+  SEQUOIA_ASSERT_MSG(std::count(name.begin(), name.end(), '.') == 1,
+                     "Option is not of the form \"X.Y\" i.e contains more (or less) than one dot");
+  options_[name] = std::to_string(value);
+}
+
+void Options2::setImpl(const std::string& name, int value) noexcept {
+  SEQUOIA_ASSERT_MSG(std::count(name.begin(), name.end(), '.') == 1,
+                     "Option is not of the form \"X.Y\" i.e contains more (or less) than one dot");
+  options_[name] = std::to_string(value);
+}
+
+void Options2::setImpl(const std::string& name, float value) noexcept {
+  SEQUOIA_ASSERT_MSG(std::count(name.begin(), name.end(), '.') == 1,
+                     "Option is not of the form \"X.Y\" i.e contains more (or less) than one dot");
+  options_[name] = std::to_string(value);
+}
+
+void Options2::setImpl(const std::string& name, std::string value) noexcept {
+  SEQUOIA_ASSERT_MSG(std::count(name.begin(), name.end(), '.') == 1,
+                     "Option is not of the form \"X.Y\" i.e contains more (or less) than one dot");
+  options_[name] = std::move(value);
+}
+
+const std::string& Options2::getValueImpl(const std::string& name) const {
+  auto it = options_.find(name);
+  if(it == options_.end())
+    SEQUOIA_THROW(core::Exception, "option '{}' does not exist", name);
+  return it->second;
+}
+
+bool Options2::getImpl(const std::string& name, const bool*) const {
+  return convert<bool>(name, getValueImpl(name));
+}
+
+int Options2::getImpl(const std::string& name, const int*) const {
+  return convert<int>(name, getValueImpl(name));
+}
+
+float Options2::getImpl(const std::string& name, const float*) const {
+  return convert<float>(name, getValueImpl(name));
+}
+
+std::string Options2::getImpl(const std::string& name, const std::string*) const {
+  return convert<std::string>(name, getValueImpl(name));
 }
 
 } // namespace core

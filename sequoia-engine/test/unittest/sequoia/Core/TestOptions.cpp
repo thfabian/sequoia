@@ -13,8 +13,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Core/Options2.h"
 #include "sequoia/Core/Exception.h"
+#include "sequoia/Core/Options2.h"
 #include "sequoia/Unittest/TestEnvironment.h"
 #include <gtest/gtest.h>
 
@@ -24,72 +24,84 @@ using namespace sequoia::unittest;
 namespace {
 
 TEST(OptionTest, Invalid) {
-  Option opt{};
-  EXPECT_TRUE(opt.isInvalid());
+  Options2 options;
+  EXPECT_THROW(options.getAsString("Invalid"), Exception);
 }
 
 TEST(OptionTest, Bool) {
-  Option opt{true};
-  EXPECT_TRUE(opt.isOfType<bool>());
-  
-  EXPECT_EQ(opt.get<bool>(), true);
-  EXPECT_EQ(opt.get<int>(), 1);
-  EXPECT_EQ(opt.get<float>(), 1.0f);
-  EXPECT_STREQ(opt.get<std::string>().c_str(), "1");
+  Options2 options;
+  options.set("Foo.Bool1", true);
+
+  EXPECT_EQ(options.get<bool>("Foo.Bool1"), true);
+  EXPECT_EQ(options.get<int>("Foo.Bool1"), 1);
+  EXPECT_EQ(options.get<float>("Foo.Bool1"), 1.0f);
+  EXPECT_EQ(options.get<std::string>("Foo.Bool1"), "1");
+
+  options.set("Foo.Bool2", "True");
+  EXPECT_EQ(options.get<bool>("Foo.Bool2"), true);
+  EXPECT_EQ(options.get<std::string>("Foo.Bool2"), "True");
 }
 
 TEST(OptionTest, Int) {
-  Option opt{3};
-  EXPECT_TRUE(opt.isOfType<int>());
-  
-  EXPECT_EQ(opt.get<bool>(), true);
-  EXPECT_EQ(opt.get<int>(), 3);
-  EXPECT_EQ(opt.get<float>(), 3.0f);
+  Options2 options;
+  options.set("Foo.Int", 2);
+
+  EXPECT_EQ(options.get<bool>("Foo.Int"), true);
+  EXPECT_EQ(options.get<int>("Foo.Int"), 2);
+  EXPECT_EQ(options.get<float>("Foo.Int"), 2.0f);
+  EXPECT_EQ(options.get<std::string>("Foo.Int"), "2");
+
+  options.set("Foo.Bool", 0);
+  EXPECT_EQ(options.get<bool>("Foo.Bool"), false);
 }
 
 TEST(OptionTest, Float) {
-  Option opt{3.2f};
-  EXPECT_TRUE(opt.isOfType<float>());
-  
-  EXPECT_EQ(opt.get<bool>(), true);
-  EXPECT_EQ(opt.get<int>(), 3);
-  EXPECT_EQ(opt.get<float>(), 3.2f);
-}
+  Options2 options;
+  options.set("Foo.Float", 2.2);
 
-TEST(OptionTest, String) {
-  Option opt1{"foo"};
-  EXPECT_TRUE(opt1.isOfType<std::string>());
+  EXPECT_EQ(options.get<bool>("Foo.Float"), true);
+  EXPECT_EQ(options.get<int>("Foo.Float"), 2);
+  EXPECT_EQ(options.get<float>("Foo.Float"), 2.2f);
 
-  EXPECT_THROW(opt1.get<bool>(), Exception);
-  EXPECT_THROW(opt1.get<int>(), Exception);
-  EXPECT_THROW(opt1.get<float>(), Exception);
-  EXPECT_STREQ(opt1.get<std::string>().c_str(), "foo");
-
-  Option opt2{"1"};
-  EXPECT_EQ(opt2.get<bool>(), true);
-  EXPECT_EQ(opt2.get<int>(), 1);
-  EXPECT_EQ(opt2.get<float>(), 1.0f);
-
-  Option opt3{"2"};
-  EXPECT_THROW(opt3.get<bool>(), Exception);
-  EXPECT_EQ(opt3.get<int>(), 2);
-  EXPECT_EQ(opt3.get<float>(), 2.0f);
-
-  Option opt4{"2.2"};
-  EXPECT_THROW(opt4.get<bool>(), Exception);
-  EXPECT_THROW(opt4.get<int>(), Exception);
-  EXPECT_EQ(opt4.get<float>(), 2.2f);
+  options.set("Foo.Bool", 0.0f);
+  EXPECT_EQ(options.get<bool>("Foo.Bool"), false);
 }
 
 TEST(OptionsTest, ReadAndWrite) {
   TestEnvironment& env = TestEnvironment::getSingleton();
   auto file = env.createFile("sequoia/Core/TestOptions/Config.ini");
-  
+
+  Options2 optionsWrite;
+  optionsWrite.set("Foo.Int", 2);
+  optionsWrite.set("Foo.Float", 2.2f);
+  optionsWrite.set("Bar.String", "bar");
+  optionsWrite.set("Bar.Bool", false);
+  optionsWrite.write(file->getPath());
+
+  Options2 optionsRead;
+  optionsRead.read(file->getPath());
+
+  EXPECT_EQ(optionsRead.get<int>("Foo.Int"), optionsWrite.get<int>("Foo.Int"));
+  EXPECT_EQ(optionsRead.get<float>("Foo.Float"), optionsWrite.get<float>("Foo.Float"));
+  EXPECT_EQ(optionsRead.get<std::string>("Bar.String"),
+            optionsWrite.get<std::string>("Bar.String"));
+  EXPECT_EQ(optionsRead.get<bool>("Bar.Bool"), optionsWrite.get<bool>("Bar.Bool"));
+}
+
+TEST(OptionsTest, CopyConstructor) {
   Options2 options;
+  options.set("Foo.Float", 2.2);
   options.set("Foo.Int", 2);
-  options.set("Foo.Float", 2.2f);
-  options.set("Foo.String", "foo");
-  options.write(file->getPath());
+
+  Options2 optionsCopy = options.getCopy();
+
+  options.set("Foo.Int", 3);
+  options.set("Foo.Float", 3.2);
+
+  EXPECT_EQ(optionsCopy.get<int>("Foo.Int"), 2);
+  EXPECT_EQ(optionsCopy.get<float>("Foo.Float"), 2.2f);
+  EXPECT_EQ(options.get<int>("Foo.Int"), 3);
+  EXPECT_EQ(options.get<float>("Foo.Float"), 3.2f);
 }
 
 } // anonymous namespace
