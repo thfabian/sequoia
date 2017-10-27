@@ -63,7 +63,9 @@ set(SEQUOIA_ENGINE_INSTALL_LIB_DIR lib
 set(SEQUOIA_ENGINE_INSTALL_CMAKE_DIR cmake 
     CACHE INTERNAL "Relative path of the cmake install location" FORCE)
 
-# Ressource paths
+# Config.h paths
 set(SEQUOIA_ENGINE_RESSOURCEPATH ${CMAKE_SOURCE_DIR}/ressource)
+
 set(SEQUOIA_ENGINE_UNITTEST_RESSOURCEPATH ${CMAKE_SOURCE_DIR}/test/ressource)
+set(SEQUOIA_ENGINE_UNITTEST_TEMPORARYPATH ${CMAKE_BINARY_DIR}/test/bin)
 

@@ -26,6 +26,7 @@ sequoia_engine_add_unittest(
           TestMain.cpp
           TestMemory.cpp
           TestMutex.cpp
+          TestOptions.cpp
           TestPlatform.cpp
           TestSingletonManager.cpp
           TestSTLExtra.cpp

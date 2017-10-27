@@ -39,8 +39,8 @@ TEST(AssetManagerTest, LoadFromDisk) {
   ss << ifs.rdbuf();
 
   EXPECT_STREQ(file->getDataAsString().c_str(), ss.str().c_str());
-  EXPECT_STREQ(file->getExtension().str().c_str(), ".txt");
-  EXPECT_STREQ(file->getFilename().str().c_str(), "Test.txt");
+  EXPECT_STREQ(file->getExtension().c_str(), ".txt");
+  EXPECT_STREQ(file->getFilename().c_str(), "Test.txt");
 }
 
 TEST(AssetManagerTest, LoadImage) {

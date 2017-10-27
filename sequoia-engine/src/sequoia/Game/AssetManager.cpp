@@ -37,7 +37,7 @@ const Byte* AssetFile::getData() { return manager_->getAsset(id_).Data.data(); }
 
 std::size_t AssetFile::getNumBytes() { return manager_->getAsset(id_).Data.size(); }
 
-const std::string& AssetFile::getPath() const noexcept { return manager_->getPath(id_); }
+std::string AssetFile::getPath() const noexcept { return manager_->getPath(id_); }
 
 std::size_t AssetFile::hash() const noexcept { return std::hash<std::size_t>()(id_); }
 
@@ -45,12 +45,12 @@ bool AssetFile::equals(const File* other) const noexcept {
   return id_ == static_cast<const AssetFile*>(other)->id_;
 }
 
-StringRef AssetFile::getFilename() const noexcept {
+std::string AssetFile::getFilename() const noexcept {
   StringRef str(manager_->getPath(id_));
   return str.substr(str.find_last_of("/\\") + 1);
 }
 
-StringRef AssetFile::getExtension() const noexcept {
+std::string AssetFile::getExtension() const noexcept {
   StringRef str(manager_->getPath(id_));
   return str.substr(str.find_last_of("."));
 }

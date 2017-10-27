@@ -58,23 +58,37 @@ public:
   std::string testName() const;
 
   /// @brief Get the ressource path of the unittest
-  const platform::Path& getRessourcePath() const { return path_; }
+  const platform::Path& getRessourcePath() const { return ressourcePath_; }
+  
+  /// @brief Get the ressource path of the unittest
+  const platform::Path& getTemporaryPath() const { return temporaryPath_; }
 
   /// @brief Get the render-system to use
   render::RenderSystemKind getRenderSystemKind() const { return renderSystemKind_; }
-
-  /// @brief Get the full path of the ressource file specified by `path` relative to the unittest
+  
+  /// @brief Get a **refrence** to the file specified by `path` relative to the unittest
   /// ressource root (i.e `Environment::getRessourcePath()`)
   ///
   /// @param path   Path relative to the unittest ressource root
   std::shared_ptr<File> getFile(const char* path) const;
+  
+  /// @brief **Create** a file specified by `path` relative to the unittest temporary root
+  /// (i.e `Environment::getRessourcePath()`)
+  ///
+  /// This function will create all intermediate directories.
+  ///
+  /// @param path   Path relative to the unittest temporary root
+  std::shared_ptr<File> createFile(const char* path) const;
 
 private:
   /// Stack trace
   core::PrettyStackTrace trace_;
 
   /// Path of the ressources
-  platform::Path path_;
+  platform::Path ressourcePath_;
+  
+  /// Path to the temporary files
+  platform::Path temporaryPath_;
 
   /// Renderer to use
   render::RenderSystemKind renderSystemKind_;

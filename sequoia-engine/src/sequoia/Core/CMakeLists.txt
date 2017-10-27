@@ -40,66 +40,66 @@ sequoia_add_library(
   SOURCES AlignedADT.h
           ArrayRef.h
           Any.h
-          Assert.h
           Assert.cpp
+          Assert.h
           Byte.h
           Casting.h
-          Color.h
           Color.cpp
+          Color.h
           Compiler.h
           ConcurrentADT.h
           DoubleBuffered.h          
-          Export.h
-          ErrorHandler.h
           ErrorHandler.cpp
-          Exception.h
+          ErrorHandler.h
           Exception.cpp
-          File.h
+          Exception.h
+          Export.h
           File.cpp
+          File.h
           FileType.inc
           Format.h
           Future.h
           Hash.h
-          Image.h
           Image.cpp         
+          Image.h
           Listenable.h
-          Logging.h
           Logging.cpp
-          NonCopyable.h
-          MicroBenchmark.h
-          MicroBenchmark.cpp
+          Logging.h
           Memory.h
+          MicroBenchmark.cpp
+          MicroBenchmark.h
           Mutex.h
+          NonCopyable.h
           Optional.h
+          Options.cpp
           Options.h.in
           Options.inc.in
-          Options.cpp
-          OptionsType.inc
-          Options2.h
           Options2.cpp
-          Platform.h
+          Options2.h
+          OptionsType.inc
           Platform.cpp   
-          PrettyStackTrace.h
+          Platform.h
           PrettyStackTrace.cpp       
+          PrettyStackTrace.h
           Singleton.h
-          SingletonManager.h
           SingletonManager.cpp
-          StringSwitch.h
-          StringRef.h
-          StringRef.cpp 
-          StringUtil.h
-          StringUtil.cpp
+          SingletonManager.h
           STLExtras.h
+          StringRef.cpp 
+          StringRef.h
+          StringSwitch.h
+          StringUtil.cpp
+          StringUtil.h
           Task.h
-          Terminal.h
           Terminal.cpp  
-          Unreachable.h
+          Terminal.h
           Unreachable.cpp         
+          Unreachable.h
           Utf.h
-          UtfString.h
           UtfString.cpp
-          Version.h
+          UtfString.h
           Version.cpp
+          Version.h
           
           ${option_header}
           ${option_include}

@@ -16,8 +16,9 @@
 #ifndef SEQUOIA_CORE_OPTIONS2_H
 #define SEQUOIA_CORE_OPTIONS2_H
 
-#include "sequoia/Core/Exception.h"
+#include "sequoia/Core/Assert.h"
 #include "sequoia/Core/Export.h"
+#include "sequoia/Core/Platform.h"
 #include <boost/variant.hpp>
 #include <cstdint>
 #include <string>
@@ -87,8 +88,8 @@ struct TypeToOptionsType {
 #include "sequoia/Core/OptionsType.inc"
 #undef OPTIONS_TYPE
 
-// Conversion
-OptionsData convertTo(OptionsType typeTo, OptionsType typeFrom, const OptionsData& dataFrom);
+/// @brief Performs conversion of `typeTo` to `typeFrom`
+OptionsData convert(OptionsType typeTo, OptionsType typeFrom, const OptionsData& dataFrom);
 
 } // namespace internal
 
@@ -114,6 +115,12 @@ public:
 #include "sequoia/Core/OptionsType.inc"
 #undef OPTIONS_TYPE
 
+  Option(const char* data) : type_(internal::OptionsType::String), data_(std::string(data)) {}
+  Option& operator=(const char* value) {
+    this->set<std::string>(std::string(value));
+    return *this;
+  }
+
   /// @brief Check the options type
   template <class T>
   bool isOfType() const noexcept {
@@ -121,10 +128,11 @@ public:
   }
 
   /// @brief Get a **copy** of the option as type `T` (performs conversion if necessary)
-  /// @throws Exception   Conversion failed
+  /// @throws Exception   Conversion failed (can only happen for string conversions e.g `"foo"` to
+  ///                     `int`)
   template <class T>
   inline T get() const {
-    return boost::get<T>(internal::convertTo(internal::TypeToOptionsType<T>::value, type_, data_));
+    return boost::get<T>(internal::convert(internal::TypeToOptionsType<T>::value, type_, data_));
   }
 
   /// @brief Set data of the variable (this copies the `data`)
@@ -133,6 +141,10 @@ public:
     type_ = internal::TypeToOptionsType<T>::value;
     data_ = data;
   }
+  inline void set(const char* data) noexcept { this->set(std::string(data)); }
+
+  /// @brief Check if option is invalid
+  bool isInvalid() const { return type_ == internal::OptionsType::Invalid; }
 
   /// @brief Convert to string
   std::string toString() const;
@@ -142,34 +154,74 @@ private:
   internal::OptionsData data_; ///< Data of the option
 };
 
+/// @brief Meta data of an option (e.g corresponding command line option)
+struct OptionMetaData {
+  std::string CommandLine;        ///< Command line option (e.g "foo" will create --foo)
+  std::string CommandLineShort;   ///< Short option (e.g "f" will create "-f"
+  std::string CommandLineMetaVar; ///< Meta variable used in the doc string of the option
+  std::string DocString;          ///< Documentation string of the option
+
+  std::string toString() const;
+};
+
 /// @brief Options of the Sequoia Engine
 /// @ingroup core
 class SEQUOIA_API Options2 {
 public:
   /// @brief Set option `name` to `value`
+  ///
+  /// Note that the name of the option should always be of the form "X.Y" (e.g "Window.Fullscreen"
+  /// or "Window.Width") to allow serializing it to an *.ini file.
   template <class T>
   void set(const std::string& name, T&& value) noexcept {
-    set(name, Option{value});
+    SEQUOIA_ASSERT_MSG(
+        std::count(name.begin(), name.end(), '.') == 1,
+        "Option is not of the form \"X.Y\" i.e contains more (or less) than one dot");
+    options_[name] = Option{value};
   }
-
-  /// @brief Set option `name` to `value`
-  void set(const std::string& name, const Option& value) noexcept { options_[name] = value; }
 
   /// @brief Get a **copy** of the option `name` as type `T` (performs conversion if necessary)
   /// @throws Exception   Option `name` does not exist or conversion failed
   template <class T>
-  T get(const std::string& name) {
-    auto it = options_.find(name);
-    if(it == options_.end())
-      SEQUOIA_THROW(core::Exception, "option '{}' does not exists", name);
-    return it->second.get<T>();
+  T get(const std::string& name) const {
+    return this->getAsOption(name).get<T>();
   }
+
+  /// @brief Get a string representation of the option `name`
+  /// @throws Exception   Option `name` does not exist
+  std::string getAsString(const std::string& name) const { return this->get<std::string>(name); }
+
+  /// @brief Get a **reference** to the option of `name`
+  /// @throws Exception   Option `name` does not exist
+  const Option& getAsOption(const std::string& name) const;
+  Option& getAsOption(const std::string& name);
+
+  /// @brief Get the meta data map of the options
+  const std::unordered_map<std::string, OptionMetaData>& getOptionsMetaData() const {
+    return optionsMetaData_;
+  }
+
+  /// @brief Add a meta data to the option `name`
+  void setMetaData(const std::string& name, const OptionMetaData& metaData) {
+    optionsMetaData_[name] = metaData;
+  }
+
+  /// @brief Get a copy of the options
+  Options2 getCopy() const { return Options2{*this}; }
+
+  /// @brief Write options the a config `file`
+  /// Note that the meta-data is *not* serialized
+  void write(const platform::Path& file) const;
+
+  /// @brief Read options from `file`
+  void read(const platform::Path& file);
 
   /// @brief Convert to string
   std::string toString() const;
 
 private:
   std::unordered_map<std::string, Option> options_;
+  std::unordered_map<std::string, OptionMetaData> optionsMetaData_;
 };
 
 } // namespace core

@@ -61,13 +61,13 @@ public:
   std::string getDataAsString() { return std::string((const char*)getData(), getNumBytes()); }
 
   /// @brief Get the path to the file (this may return a relative path)
-  virtual const std::string& getPath() const noexcept = 0;
+  virtual std::string getPath() const noexcept = 0;
 
   /// @brief Get the name to the file
-  virtual StringRef getFilename() const noexcept = 0;
+  virtual std::string getFilename() const noexcept = 0;
 
   /// @brief Get the extension to the file
-  virtual StringRef getExtension() const noexcept = 0;
+  virtual std::string getExtension() const noexcept = 0;
 
   /// @brief Compute hash of the path of the file
   virtual std::size_t hash() const noexcept = 0;

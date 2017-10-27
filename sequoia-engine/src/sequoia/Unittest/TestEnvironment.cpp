@@ -13,14 +13,14 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Unittest/TestEnvironment.h"
 #include "sequoia/Core/ErrorHandler.h"
 #include "sequoia/Core/Format.h"
-#include "sequoia/Core/Version.h"
 #include "sequoia/Core/Logging.h"
 #include "sequoia/Core/StringSwitch.h"
+#include "sequoia/Core/Version.h"
 #include "sequoia/Driver/ConsoleLogger.h"
 #include "sequoia/Unittest/Config.h"
+#include "sequoia/Unittest/TestEnvironment.h"
 #include "sequoia/Unittest/TestFile.h"
 #include "sequoia/Unittest/TestOptions.h"
 #include <boost/program_options.hpp>
@@ -64,8 +64,8 @@ TestEnvironment::TestEnvironment(int argc, char* argv[], render::RenderSystemKin
   }
 
   if(vm.count("help")) {
-    std::cout << "\nSequoia Unittests (" << core::getSequoiaEngineFullVersionString() 
-              << ")\n\n" << desc << std::endl;
+    std::cout << "\nSequoia Unittests (" << core::getSequoiaEngineFullVersionString() << ")\n\n"
+              << desc << std::endl;
     std::exit(EXIT_SUCCESS);
   }
 
@@ -95,11 +95,12 @@ TestEnvironment::TestEnvironment(int argc, char* argv[], render::RenderSystemKin
 
   TestOptions::getSingleton().Core.Debug = !vm.count("no-debug");
 
-  path_ = SEQUOIA_ENGINE_UNITTEST_RESSOURCEPATH;
+  ressourcePath_ = SEQUOIA_ENGINE_UNITTEST_RESSOURCEPATH;
+  temporaryPath_ = SEQUOIA_ENGINE_UNITTEST_TEMPORARYPATH;
 
-  if(!platform::filesystem::exists(path_))
-    ErrorHandler::getSingleton().fatal(PLATFORM_STR("invalid ressource path: '") + path_.native() +
-                                       PLATFORM_STR("'"));
+  if(!platform::filesystem::exists(ressourcePath_))
+    ErrorHandler::getSingleton().fatal(PLATFORM_STR("invalid ressource path: '") +
+                                       ressourcePath_.native() + PLATFORM_STR("'"));
 
   // Take snapshot of the options
   TestOptions::getSingleton().save();
@@ -126,9 +127,14 @@ std::string TestEnvironment::testName() const {
 }
 
 std::shared_ptr<File> TestEnvironment::getFile(const char* path) const {
-  return std::make_shared<TestFile>(path);
+  return std::make_shared<TestFile>(getRessourcePath() / platform::asPath(path));
 }
 
-} // namespace unittest
+std::shared_ptr<File> TestEnvironment::createFile(const char* path) const {
+  auto filepath = getTemporaryPath() / platform::asPath(path);
+  platform::filesystem::create_directories(filepath.parent_path());
+  return std::make_shared<TestFile>(filepath);
+}
 
+} // namespace unittest 
 } // namespace sequoia

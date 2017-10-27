@@ -51,7 +51,7 @@ public:
   std::size_t getNumBytes() override;
 
   /// @copydoc File::getPath
-  const std::string& getPath() const noexcept override;
+  std::string getPath() const noexcept override;
 
   /// @copydoc File::hash
   std::size_t hash() const noexcept override;
@@ -60,10 +60,10 @@ public:
   bool equals(const File* other) const noexcept override;
 
   /// @copydoc File::getFilename
-  StringRef getFilename() const noexcept override;
+  std::string getFilename() const noexcept override;
 
   /// @copydoc File::getExtension
-  StringRef getExtension() const noexcept override;
+  std::string getExtension() const noexcept override;
 
   /// @brief Get the `id`
   std::size_t getID() const noexcept { return id_; }

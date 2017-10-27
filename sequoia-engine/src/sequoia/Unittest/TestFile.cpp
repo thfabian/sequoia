@@ -13,12 +13,12 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Unittest/TestFile.h"
 #include "sequoia/Core/Exception.h"
 #include "sequoia/Core/Memory.h"
 #include "sequoia/Core/StringRef.h"
 #include "sequoia/Core/UtfString.h"
 #include "sequoia/Unittest/TestEnvironment.h"
+#include "sequoia/Unittest/TestFile.h"
 #include <fstream>
 #include <sstream>
 
@@ -26,8 +26,11 @@ namespace sequoia {
 
 namespace unittest {
 
-TestFile::TestFile(const char* path, FileType type)
-    : File(type == FileType::Unknown ? File::TypeFromExtension(path) : type), path_(path) {}
+TestFile::TestFile(const platform::Path& path, FileType type)
+    : File(type == FileType::Unknown
+               ? File::TypeFromExtension(platform::toAnsiString(path.extension()))
+               : type),
+      path_(path) {}
 
 const Byte* TestFile::getData() {
   if(data_.empty())
@@ -42,14 +45,11 @@ std::size_t TestFile::getNumBytes() {
 }
 
 void TestFile::load() {
-  std::string fullPath = platform::toAnsiString(TestEnvironment::getSingleton().getRessourcePath() /
-                                                platform::asPath(path_));
   std::ios_base::openmode mode = std::ios_base::in;
   if(isBinary())
     mode |= std::ios_base::binary;
 
-  std::ifstream file(fullPath.c_str(), mode);
-
+  std::ifstream file(platform::toAnsiString(path_).c_str(), mode);
   if(!file.is_open())
     SEQUOIA_THROW(core::Exception, "cannot load file: '{}'", path_.c_str());
 
@@ -62,7 +62,7 @@ void TestFile::load() {
   file.read(reinterpret_cast<char*>(data_.data()), data_.size());
 }
 
-const std::string& TestFile::getPath() const noexcept { return path_; }
+std::string TestFile::getPath() const noexcept { return platform::toAnsiString(path_); }
 
 std::size_t TestFile::hash() const noexcept { return std::hash<std::string>()(getPath()); }
 
@@ -70,14 +70,12 @@ bool TestFile::equals(const core::File* other) const noexcept {
   return getPath() == other->getPath();
 }
 
-StringRef TestFile::getFilename() const noexcept {
-  StringRef str(path_);
-  return str.substr(str.find_last_of("/\\") + 1);
+std::string TestFile::getFilename() const noexcept {
+  return platform::toAnsiString(path_.filename());
 }
 
-StringRef TestFile::getExtension() const noexcept {
-  StringRef str(path_);
-  return str.substr(str.find_last_of("."));
+std::string TestFile::getExtension() const noexcept {
+  return platform::toAnsiString(path_.extension());
 }
 
 } // namespace unittest

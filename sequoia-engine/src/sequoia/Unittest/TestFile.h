@@ -19,6 +19,7 @@
 #include "sequoia/Core/AlignedADT.h"
 #include "sequoia/Core/Export.h"
 #include "sequoia/Core/File.h"
+#include "sequoia/Core/Platform.h"
 
 namespace sequoia {
 
@@ -27,17 +28,17 @@ namespace unittest {
 /// @brief Simple wrapper to an actual file on disk in `Environment::getRessourcePath()`
 /// @ingroup unittest
 class SEQUOIA_API TestFile : public File {
-  std::string path_;
+  platform::Path path_;
   aligned_vector<Byte> data_;
 
 public:
   /// @brief Set the full path of the ressource file specified by `path` relative to the unittest
-  /// ressource root (i.e `Environment::getRessourcePath()`)
+  /// ressource root (i.e `TestEnvironment::getRessourcePath()`)
   ///
   /// @param path   Path relative to the unittest ressource root
   /// @param type   Type of the file (if `FileType::Unknown` is passed, the type is deduced from the
   ///               extension of `path`
-  TestFile(const char* path, FileType type = FileType::Unknown);
+  TestFile(const platform::Path& path, FileType type = FileType::Unknown);
 
   /// @copydoc File::getData
   const Byte* getData() override;
@@ -46,7 +47,7 @@ public:
   std::size_t getNumBytes() override;
 
   /// @copydoc File::getPath
-  const std::string& getPath() const noexcept override;
+  std::string getPath() const noexcept override;
 
   /// @copydoc File::hash
   std::size_t hash() const noexcept override;
@@ -55,10 +56,10 @@ public:
   bool equals(const File* other) const noexcept override;
 
   /// @copydoc File::getFilename
-  StringRef getFilename() const noexcept override;
+  std::string getFilename() const noexcept override;
 
   /// @copydoc File::getExtension
-  StringRef getExtension() const noexcept override;
+  std::string getExtension() const noexcept override;
 
 private:
   void load();

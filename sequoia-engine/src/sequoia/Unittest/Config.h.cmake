@@ -19,4 +19,7 @@
 // Resource path of the unittests 
 #cmakedefine SEQUOIA_ENGINE_UNITTEST_RESSOURCEPATH "${SEQUOIA_ENGINE_UNITTEST_RESSOURCEPATH}"
 
+// Binary path of the unittests 
+#cmakedefine SEQUOIA_ENGINE_UNITTEST_TEMPORARYPATH "${SEQUOIA_ENGINE_UNITTEST_TEMPORARYPATH}"
+
 #endif
