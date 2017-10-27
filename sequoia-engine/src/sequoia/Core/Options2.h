@@ -29,8 +29,10 @@ namespace core {
 /// @brief Meta data of an option (e.g corresponding command line option)
 struct OptionMetaData {
   std::string CommandLine;        ///< Command line option (e.g "foo" will create --foo)
-  std::string CommandLineShort;   ///< Short option (e.g "f" will create "-f"
-  std::string CommandLineMetaVar; ///< Meta variable used in the doc string of the option
+  std::string CommandLineShort;   ///< Short command option (e.g "f" will create "-f")
+  bool CommandLineHasValue;       ///< Command line options takes a value (e.g --foo=VALUE)
+  std::string CommandLineMetaVar; ///< Name of the meta variable in the help string if the option
+                                  ///  takes a value (e.g <VALUE> in --foo=VALUE)
   std::string DocString;          ///< Documentation string of the option
 
   std::string toString() const;

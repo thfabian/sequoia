@@ -17,6 +17,8 @@ sequoia_add_library(
   NAME SequoiaDriver
   SOURCES Driver.cpp
           Driver.h
+          CommandLine2.h
+          CommandLine2.cpp
           CommandLine.h
           CommandLine.cpp
           ConsoleLogger.h

@@ -100,10 +100,12 @@ std::string OptionMetaData::toString() const {
   return core::format("OptionMetaData[\n"
                       "  CommandLine = {}\n"
                       "  CommandLineShort = {}\n"
+                      "  CommandLineHasValue = {}\n"
                       "  CommandLineMetaVar = {}\n"
                       "  DocString = {}\n"
                       "]",
-                      CommandLine, CommandLineShort, CommandLineMetaVar, DocString);
+                      CommandLine, CommandLineShort, CommandLineHasValue, CommandLineMetaVar,
+                      DocString);
 }
 
 void Options2::write(const std::string& file) const {
