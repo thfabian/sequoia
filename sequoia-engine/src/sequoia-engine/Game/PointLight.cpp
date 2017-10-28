@@ -13,9 +13,9 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
+#include "sequoia-engine/Game/PointLight.h"
 #include "sequoia-engine/Core/Format.h"
 #include "sequoia-engine/Core/StringUtil.h"
-#include "sequoia-engine/Game/PointLight.h"
 #include "sequoia-engine/Game/SceneNode.h"
 #include "sequoia-engine/Game/SceneNodeAlloc.h"
 #include "sequoia-engine/Render/UniformStruct.h"

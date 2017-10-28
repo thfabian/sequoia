@@ -13,6 +13,7 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
+#include "sequoia-engine/Game/Scene.h"
 #include "sequoia-engine/Core/Casting.h"
 #include "sequoia-engine/Core/Format.h"
 #include "sequoia-engine/Core/Logging.h"
@@ -21,7 +22,6 @@
 #include "sequoia-engine/Game/Drawable.h"
 #include "sequoia-engine/Game/Game.h"
 #include "sequoia-engine/Game/MeshManager.h"
-#include "sequoia-engine/Game/Scene.h"
 #include "sequoia-engine/Game/SceneGraph.h"
 #include "sequoia-engine/Render/Camera.h"
 #include "sequoia-engine/Render/DrawCommandList.h"
@@ -62,8 +62,8 @@ void Scene::populateRenderCommand(render::RenderCommand* command) {
         if(Emittable* emittable = node->get<Emittable>()) {
           if(emittable->isActive()) {
             int index = std::atomic_fetch_add(&emitters_[emittable->getKind()], 1);
-            (void) index;
-            //emittable->toUniformVariableMap(, index);
+            (void)index;
+            // emittable->toUniformVariableMap(, index);
           }
         }
       },
@@ -156,29 +156,30 @@ void Scene::makeDummyScene() {
   cornellBox->setScale(0.01f);
   sceneGraph_->insert(cornellBox);
 
-//    //
-//    // Grid
-//    //
-//    std::shared_ptr<SceneNode> gridOrigin = SceneNode::allocate("TestGridOrigin");
-//    gridOrigin->addCapability<Drawable>(game.getMeshManager()->createGrid("TestGrid", 33));
-//    gridOrigin->translate(math::vec3(0.0f, -1.0f, 0.0f));
-//    gridOrigin->setScale(50);
-//    render::TextureParameter texParam;
-//    texParam.Dim1EdgeSampling = texParam.Dim2EdgeSampling =
-//        render::TextureParameter::EK_MirroredRepeat;
+  //    //
+  //    // Grid
+  //    //
+  //    std::shared_ptr<SceneNode> gridOrigin = SceneNode::allocate("TestGridOrigin");
+  //    gridOrigin->addCapability<Drawable>(game.getMeshManager()->createGrid("TestGrid", 33));
+  //    gridOrigin->translate(math::vec3(0.0f, -1.0f, 0.0f));
+  //    gridOrigin->setScale(50);
+  //    render::TextureParameter texParam;
+  //    texParam.Dim1EdgeSampling = texParam.Dim2EdgeSampling =
+  //        render::TextureParameter::EK_MirroredRepeat;
 
-//    gridOrigin->get<Drawable>()->setProgram(game.createProgram(
-//        {{render::Shader::ST_Vertex,
-//        game.getAssetManager()->load("sequoia/shader/MultiTex.vert")},
-//         {render::Shader::ST_Fragment,
-//          game.getAssetManager()->load("sequoia/shader/MultiTex.frag")}}));
-//    gridOrigin->get<Drawable>()->setTexture(
-//        0, game.createTexture(game.getAssetManager()->loadImage("sequoia/texture/SandTex0.png"),
-//                              texParam));
-//    gridOrigin->get<Drawable>()->setTexture(
-//        1, game.createTexture(game.getAssetManager()->loadImage("sequoia/texture/SandTex1.tiff"),
-//                              texParam));
-//    sceneGraph_->insert(gridOrigin);
+  //    gridOrigin->get<Drawable>()->setProgram(game.createProgram(
+  //        {{render::Shader::ST_Vertex,
+  //        game.getAssetManager()->load("sequoia/shader/MultiTex.vert")},
+  //         {render::Shader::ST_Fragment,
+  //          game.getAssetManager()->load("sequoia/shader/MultiTex.frag")}}));
+  //    gridOrigin->get<Drawable>()->setTexture(
+  //        0, game.createTexture(game.getAssetManager()->loadImage("sequoia/texture/SandTex0.png"),
+  //                              texParam));
+  //    gridOrigin->get<Drawable>()->setTexture(
+  //        1,
+  //        game.createTexture(game.getAssetManager()->loadImage("sequoia/texture/SandTex1.tiff"),
+  //                              texParam));
+  //    sceneGraph_->insert(gridOrigin);
 
   auto controller = SceneNode::allocate<CameraControllerFree>("Camera");
   controller->setCamera(activeCamera_);

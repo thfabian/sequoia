@@ -59,19 +59,19 @@ public:
 
   /// @brief Get the ressource path of the unittest
   const platform::Path& getRessourcePath() const { return ressourcePath_; }
-  
+
   /// @brief Get the ressource path of the unittest
   const platform::Path& getTemporaryPath() const { return temporaryPath_; }
 
   /// @brief Get the render-system to use
   render::RenderSystemKind getRenderSystemKind() const { return renderSystemKind_; }
-  
+
   /// @brief Get a **refrence** to the file specified by `path` relative to the unittest
   /// ressource root (i.e `Environment::getRessourcePath()`)
   ///
   /// @param path   Path relative to the unittest ressource root
   std::shared_ptr<File> getFile(const char* path) const;
-  
+
   /// @brief **Create** a file specified by `path` relative to the unittest temporary root
   /// (i.e `Environment::getRessourcePath()`)
   ///
@@ -86,7 +86,7 @@ private:
 
   /// Path of the ressources
   platform::Path ressourcePath_;
-  
+
   /// Path to the temporary files
   platform::Path temporaryPath_;
 

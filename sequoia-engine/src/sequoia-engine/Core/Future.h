@@ -16,12 +16,12 @@
 #ifndef SEQUOIA_ENGINE_CORE_FUTURE_H
 #define SEQUOIA_ENGINE_CORE_FUTURE_H
 
+#include "sequoia-engine/Core/Assert.h"
 #include "sequoia-engine/Core/Exception.h"
 #include "sequoia-engine/Core/Mutex.h"
 #include "sequoia-engine/Core/NonCopyable.h"
 #include "sequoia-engine/Core/Optional.h"
 #include "sequoia-engine/Core/Task.h"
-#include "sequoia-engine/Core/Assert.h"
 #include <condition_variable>
 #include <functional>
 #include <memory>

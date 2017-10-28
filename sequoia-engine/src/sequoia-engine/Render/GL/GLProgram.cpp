@@ -13,6 +13,7 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
+#include "sequoia-engine/Render/GL/GL.h"
 #include "sequoia-engine/Core/Casting.h"
 #include "sequoia-engine/Core/Format.h"
 #include "sequoia-engine/Core/Logging.h"
@@ -20,7 +21,6 @@
 #include "sequoia-engine/Core/StringUtil.h"
 #include "sequoia-engine/Core/Unreachable.h"
 #include "sequoia-engine/Render/Exception.h"
-#include "sequoia-engine/Render/GL/GL.h"
 #include "sequoia-engine/Render/GL/GLProgram.h"
 #include "sequoia-engine/Render/GL/GLProgramManager.h"
 #include "sequoia-engine/Render/GL/GLRenderer.h"

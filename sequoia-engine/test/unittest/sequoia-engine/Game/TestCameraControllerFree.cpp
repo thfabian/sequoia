@@ -13,13 +13,13 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
+#include "sequoia-engine/Unittest/Test.h"
 #include "sequoia-engine/Core/Casting.h"
 #include "sequoia-engine/Game/CameraControllerFree.h"
 #include "sequoia-engine/Game/MeshManager.h"
 #include "sequoia-engine/Game/Scene.h"
 #include "sequoia-engine/Game/SceneGraph.h"
 #include "sequoia-engine/Unittest/GameSetup.h"
-#include "sequoia-engine/Unittest/Test.h"
 
 using namespace sequoia;
 using namespace sequoia::unittest;
@@ -50,7 +50,7 @@ TEST_F(CameraControllerFreeTest, CameraControllerFree) {
   nodeClone->setName("copy");
   EXPECT_EQ(nodeClone->getName(), "copy");
   EXPECT_EQ(node->getName(), "CameraControllerFree");
-  
+
   // Test RTTI
   EXPECT_TRUE(isa<CameraController>(node.get()));
   EXPECT_TRUE(isa<CameraControllerFree>(node.get()));

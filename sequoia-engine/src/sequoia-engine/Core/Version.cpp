@@ -71,7 +71,7 @@ Version getSequoiaEngineVersion() noexcept {
                 "invalid minor version, should be in [0, 100)");
   static_assert(SEQUOIA_ENGINE_VERSION_PATCH < 10 && SEQUOIA_ENGINE_VERSION_PATCH >= 0,
                 "invalid patch version, should be in [0, 10)");
-  return Version(SEQUOIA_ENGINE_VERSION_MAJOR, SEQUOIA_ENGINE_VERSION_MINOR, 
+  return Version(SEQUOIA_ENGINE_VERSION_MAJOR, SEQUOIA_ENGINE_VERSION_MINOR,
                  SEQUOIA_ENGINE_VERSION_PATCH);
 }
 

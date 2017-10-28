@@ -58,12 +58,12 @@ public:
 namespace internal {
 
 class SEQUOIA_API LoggerProxy {
-  SpinMutex* mutex_;         ///< Access mutex
-  const LoggingLevel level_; ///< Logging level
-  std::stringstream* ss_;    ///< String stream to buffer the logging
-  const char* file_;         ///< File from which the logging was issued
-  const int line_;           ///< Line in `file` from which the logging was issued
-  const bool isNotNullLogger_;  ///< Is this a pass through logging?
+  SpinMutex* mutex_;           ///< Access mutex
+  const LoggingLevel level_;   ///< Logging level
+  std::stringstream* ss_;      ///< String stream to buffer the logging
+  const char* file_;           ///< File from which the logging was issued
+  const int line_;             ///< Line in `file` from which the logging was issued
+  const bool isNotNullLogger_; ///< Is this a pass through logging?
 
 public:
   LoggerProxy(const LoggerProxy&) = default;

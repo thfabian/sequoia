@@ -19,8 +19,6 @@
 
 using namespace sequoia;
 
-namespace {
-
-} // anonymous namespace
+namespace {} // anonymous namespace
 
 SEQUOIA_BENCHMARK_MAIN(sequoia::unittest::BenchmarkEnvironment);

@@ -87,7 +87,7 @@ sequoia_add_target_clang_format(
   DIRECTORIES 
     ${CMAKE_SOURCE_DIR}/src
     ${CMAKE_SOURCE_DIR}/test
-  EXTENSIONS ".h;.cpp"
+  EXTENSION ".h;.cpp"
 )
 
 # Output summary of the configuration

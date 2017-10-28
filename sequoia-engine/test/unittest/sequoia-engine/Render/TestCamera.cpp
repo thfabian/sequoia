@@ -13,8 +13,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia-engine/Render/Camera.h"
 #include "sequoia-engine/Unittest/Test.h"
+#include "sequoia-engine/Render/Camera.h"
 
 using namespace sequoia;
 using namespace sequoia::render;

@@ -13,6 +13,7 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
+#include "sequoia-engine/Unittest/TestEnvironment.h"
 #include "sequoia-engine/Core/ErrorHandler.h"
 #include "sequoia-engine/Core/Format.h"
 #include "sequoia-engine/Core/Logging.h"
@@ -20,7 +21,6 @@
 #include "sequoia-engine/Core/Version.h"
 #include "sequoia-engine/Driver/ConsoleLogger.h"
 #include "sequoia-engine/Unittest/Config.h"
-#include "sequoia-engine/Unittest/TestEnvironment.h"
 #include "sequoia-engine/Unittest/TestFile.h"
 #include "sequoia-engine/Unittest/TestOptions.h"
 #include <boost/program_options.hpp>
@@ -136,5 +136,5 @@ std::shared_ptr<File> TestEnvironment::createFile(const char* path) const {
   return std::make_shared<TestFile>(filepath);
 }
 
-} // namespace unittest 
+} // namespace unittest
 } // namespace sequoia

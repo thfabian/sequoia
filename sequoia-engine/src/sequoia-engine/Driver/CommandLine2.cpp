@@ -13,8 +13,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia-engine/Core/ErrorHandler.h"
 #include "sequoia-engine/Driver/CommandLine2.h"
+#include "sequoia-engine/Core/ErrorHandler.h"
 #include <boost/program_options.hpp>
 #include <cstdlib>
 #include <iostream>

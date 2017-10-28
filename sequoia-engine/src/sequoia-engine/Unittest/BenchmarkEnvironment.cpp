@@ -55,8 +55,8 @@ BenchmarkEnvironment::BenchmarkEnvironment(int argc, char* argv[]) {
   }
 
   if(vm.count("help"))
-    std::cout << "\nSequoia Benchmark (" << core::getSequoiaEngineFullVersionString() 
-              << ")\n\n" << desc << std::endl;
+    std::cout << "\nSequoia Benchmark (" << core::getSequoiaEngineFullVersionString() << ")\n\n"
+              << desc << std::endl;
 
   // Initialize benchmark
   benchmark::Initialize(&argc, argv);

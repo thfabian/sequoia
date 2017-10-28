@@ -32,7 +32,8 @@ void Options::reset() {
 void Options::dump() {
 #define OPT(Structure, Name, Type, DefaultValue, CheckFun, Doc, CommandLine, CommandLineShort,     \
             CommandLineMetaVar)                                                                    \
-  std::cout << core::format("%-20s", #Structure "." #Name) << std::boolalpha << DefaultValue << "\n";
+  std::cout << core::format("%-20s", #Structure "." #Name) << std::boolalpha << DefaultValue       \
+            << "\n";
 #include "sequoia-engine/Core/Options.inc"
 #undef OPT
 }

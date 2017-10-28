@@ -138,7 +138,7 @@ public:
   void removeChild(const std::shared_ptr<SceneNode>& child) {
     children_.erase(std::remove(children_.begin(), children_.end(), child), children_.end());
   }
-  
+
   /// @brief Remove all children
   void clearChildren() { children_.clear(); }
 

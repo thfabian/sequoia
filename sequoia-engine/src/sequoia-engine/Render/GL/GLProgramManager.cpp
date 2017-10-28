@@ -13,12 +13,12 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
+#include "sequoia-engine/Render/GL/GL.h"
 #include "sequoia-engine/Core/Assert.h"
 #include "sequoia-engine/Core/Casting.h"
 #include "sequoia-engine/Core/Logging.h"
 #include "sequoia-engine/Core/StringRef.h"
 #include "sequoia-engine/Render/Exception.h"
-#include "sequoia-engine/Render/GL/GL.h"
 #include "sequoia-engine/Render/GL/GLFragmentData.h"
 #include "sequoia-engine/Render/GL/GLProgramManager.h"
 #include "sequoia-engine/Render/GL/GLRenderSystem.h"

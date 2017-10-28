@@ -13,10 +13,10 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
+#include "sequoia-engine/Render/RenderCommand.h"
 #include "sequoia-engine/Core/Format.h"
 #include "sequoia-engine/Core/StringUtil.h"
 #include "sequoia-engine/Render/DrawCommandList.h"
-#include "sequoia-engine/Render/RenderCommand.h"
 #include "sequoia-engine/Render/RenderTarget.h"
 
 namespace sequoia {

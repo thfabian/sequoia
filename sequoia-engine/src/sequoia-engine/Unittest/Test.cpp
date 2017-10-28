@@ -14,9 +14,9 @@
 //===------------------------------------------------------------------------------------------===//
 
 #include "sequoia-engine/Unittest/Test.h"
+#include "sequoia-engine/Core/Assert.h"
 #include "sequoia-engine/Core/Format.h"
 #include "sequoia-engine/Core/StringUtil.h"
-#include "sequoia-engine/Core/Assert.h"
 #include <cmath>
 #include <sstream>
 

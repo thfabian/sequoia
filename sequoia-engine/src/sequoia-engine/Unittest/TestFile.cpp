@@ -13,12 +13,12 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
+#include "sequoia-engine/Unittest/TestFile.h"
 #include "sequoia-engine/Core/Exception.h"
 #include "sequoia-engine/Core/Memory.h"
 #include "sequoia-engine/Core/StringRef.h"
 #include "sequoia-engine/Core/UtfString.h"
 #include "sequoia-engine/Unittest/TestEnvironment.h"
-#include "sequoia-engine/Unittest/TestFile.h"
 #include <fstream>
 #include <sstream>
 

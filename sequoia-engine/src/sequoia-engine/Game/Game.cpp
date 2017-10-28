@@ -103,9 +103,8 @@ void Game::init(const GameOptions& gameOptions) {
     renderSystem_->addMouseListener(this);
 
     // Initialize the object managers
-    assetManager_ =
-        std::make_unique<AssetManager>(PLATFORM_STR(SEQUOIA_ENGINE_RESSOURCEPATH), 
-                                       PLATFORM_STR("assets"));
+    assetManager_ = std::make_unique<AssetManager>(PLATFORM_STR(SEQUOIA_ENGINE_RESSOURCEPATH),
+                                                   PLATFORM_STR("assets"));
     meshManager_ = std::make_unique<MeshManager>();
 
     // Create default shaders and program
@@ -115,7 +114,7 @@ void Game::init(const GameOptions& gameOptions) {
     // -- tmp --
     setScene("TestScene", std::make_shared<Scene>(), true);
     getActiveScene()->makeDummyScene();
-    
+
     quitKey_ = Keymap::makeDefault(render::Key_Q, render::Mod_Ctrl);
 
   } catch(core::Exception& e) {

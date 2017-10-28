@@ -13,8 +13,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia-engine/Core/Color.h"
 #include "sequoia-engine/Unittest/Test.h"
+#include "sequoia-engine/Core/Color.h"
 #include "sequoia-engine/Unittest/TestEnvironment.h"
 #include <gtest/gtest.h>
 

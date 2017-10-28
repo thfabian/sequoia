@@ -13,9 +13,9 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
+#include "sequoia-engine/Game/Emittable.h"
 #include "sequoia-engine/Core/Format.h"
 #include "sequoia-engine/Core/StringUtil.h"
-#include "sequoia-engine/Game/Emittable.h"
 
 namespace sequoia {
 

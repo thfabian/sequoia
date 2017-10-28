@@ -13,6 +13,7 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
+#include "sequoia-engine/Render/GL/GL.h"
 #include "sequoia-engine/Core/Casting.h"
 #include "sequoia-engine/Core/Logging.h"
 #include "sequoia-engine/Core/Options.h"
@@ -20,7 +21,6 @@
 #include "sequoia-engine/Math/CoordinateSystem.h"
 #include "sequoia-engine/Render/Camera.h"
 #include "sequoia-engine/Render/DrawCommandList.h"
-#include "sequoia-engine/Render/GL/GL.h"
 #include "sequoia-engine/Render/GL/GLExtensionManager.h"
 #include "sequoia-engine/Render/GL/GLProgramManager.h"
 #include "sequoia-engine/Render/GL/GLRenderSystem.h"
