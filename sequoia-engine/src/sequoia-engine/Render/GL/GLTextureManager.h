@@ -13,8 +13,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_RENDER_GL_GLTEXTUREMANAGER_H
-#define SEQUOIA_RENDER_GL_GLTEXTUREMANAGER_H
+#ifndef SEQUOIA_ENGINE_RENDER_GL_GLTEXTUREMANAGER_H
+#define SEQUOIA_ENGINE_RENDER_GL_GLTEXTUREMANAGER_H
 
 #include "sequoia-engine/Render/GL/GLTexture.h"
 #include <memory>

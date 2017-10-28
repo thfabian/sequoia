@@ -13,8 +13,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_CORE_DOUBLEBUFFERED_H
-#define SEQUOIA_CORE_DOUBLEBUFFERED_H
+#ifndef SEQUOIA_ENGINE_CORE_DOUBLEBUFFERED_H
+#define SEQUOIA_ENGINE_CORE_DOUBLEBUFFERED_H
 
 #include <array>
 #include <cstdint>

@@ -13,8 +13,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_UNITTEST_BENCHMARKENVIRONMENT_H
-#define SEQUOIA_UNITTEST_BENCHMARKENVIRONMENT_H
+#ifndef SEQUOIA_ENGINE_UNITTEST_BENCHMARKENVIRONMENT_H
+#define SEQUOIA_ENGINE_UNITTEST_BENCHMARKENVIRONMENT_H
 
 #include "sequoia-engine/Core/Export.h"
 #include "sequoia-engine/Core/Singleton.h"

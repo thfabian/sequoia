@@ -13,8 +13,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_GAME_SCENENODECAPABILITY_H
-#define SEQUOIA_GAME_SCENENODECAPABILITY_H
+#ifndef SEQUOIA_ENGINE_GAME_SCENENODECAPABILITY_H
+#define SEQUOIA_ENGINE_GAME_SCENENODECAPABILITY_H
 
 #include "sequoia-engine/Core/Export.h"
 #include <memory>

@@ -13,8 +13,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_RENDER_VERTEXVISITOR_H
-#define SEQUOIA_RENDER_VERTEXVISITOR_H
+#ifndef SEQUOIA_ENGINE_RENDER_VERTEXVISITOR_H
+#define SEQUOIA_ENGINE_RENDER_VERTEXVISITOR_H
 
 #include "sequoia-engine/Core/Assert.h"
 #include "sequoia-engine/Core/Export.h"

@@ -13,8 +13,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_CORE_IMAGE_H
-#define SEQUOIA_CORE_IMAGE_H
+#ifndef SEQUOIA_ENGINE_CORE_IMAGE_H
+#define SEQUOIA_ENGINE_CORE_IMAGE_H
 
 #include "sequoia-engine/Core/Color.h"
 #include "sequoia-engine/Core/Export.h"

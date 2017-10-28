@@ -13,8 +13,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_CORE_SINGLETONMANAGER_H
-#define SEQUOIA_CORE_SINGLETONMANAGER_H
+#ifndef SEQUOIA_ENGINE_CORE_SINGLETONMANAGER_H
+#define SEQUOIA_ENGINE_CORE_SINGLETONMANAGER_H
 
 #include "sequoia-engine/Core/Any.h"
 #include "sequoia-engine/Core/Assert.h"

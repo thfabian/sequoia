@@ -13,8 +13,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_RENDER_RENDERSERVER_H
-#define SEQUOIA_RENDER_RENDERSERVER_H
+#ifndef SEQUOIA_ENGINE_RENDER_RENDERSERVER_H
+#define SEQUOIA_ENGINE_RENDER_RENDERSERVER_H
 
 #include "sequoia-engine/Core/ConcurrentADT.h"
 #include "sequoia-engine/Core/Export.h"

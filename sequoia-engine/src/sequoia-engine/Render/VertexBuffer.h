@@ -13,8 +13,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_RENDER_VERTEXBUFFER_H
-#define SEQUOIA_RENDER_VERTEXBUFFER_H
+#ifndef SEQUOIA_ENGINE_RENDER_VERTEXBUFFER_H
+#define SEQUOIA_ENGINE_RENDER_VERTEXBUFFER_H
 
 #include "sequoia-engine/Render/Buffer.h"
 #include "sequoia-engine/Render/Vertex.h"

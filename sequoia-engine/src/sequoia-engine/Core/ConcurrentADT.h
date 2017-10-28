@@ -13,8 +13,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_CORE_CONCURRENTADT_H
-#define SEQUOIA_CORE_CONCURRENTADT_H
+#ifndef SEQUOIA_ENGINE_CORE_CONCURRENTADT_H
+#define SEQUOIA_ENGINE_CORE_CONCURRENTADT_H
 
 #include <tbb/concurrent_queue.h>
 #include <tbb/concurrent_unordered_map.h>

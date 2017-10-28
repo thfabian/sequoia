@@ -40,8 +40,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_CORE_UTF_H
-#define SEQUOIA_CORE_UTF_H
+#ifndef SEQUOIA_ENGINE_CORE_UTF_H
+#define SEQUOIA_ENGINE_CORE_UTF_H
 
 #include "sequoia-engine/Core/Compiler.h"
 #include <algorithm>

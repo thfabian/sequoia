@@ -13,8 +13,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_UNITTEST_GAMESETUP_H
-#define SEQUOIA_UNITTEST_GAMESETUP_H
+#ifndef SEQUOIA_ENGINE_UNITTEST_GAMESETUP_H
+#define SEQUOIA_ENGINE_UNITTEST_GAMESETUP_H
 
 #include "sequoia-engine/Core/Export.h"
 #include "sequoia-engine/Core/NonCopyable.h"

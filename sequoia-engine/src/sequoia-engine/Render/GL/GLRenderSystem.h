@@ -13,8 +13,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_RENDER_GL_GLRENDERSYSTEM_H
-#define SEQUOIA_RENDER_GL_GLRENDERSYSTEM_H
+#ifndef SEQUOIA_ENGINE_RENDER_GL_GLRENDERSYSTEM_H
+#define SEQUOIA_ENGINE_RENDER_GL_GLRENDERSYSTEM_H
 
 #include "sequoia-engine/Render/RenderSystem.h"
 #include <memory>

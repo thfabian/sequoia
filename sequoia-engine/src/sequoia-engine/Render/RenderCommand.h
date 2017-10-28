@@ -13,8 +13,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_RENDER_RENDERCOMMAND_H
-#define SEQUOIA_RENDER_RENDERCOMMAND_H
+#ifndef SEQUOIA_ENGINE_RENDER_RENDERCOMMAND_H
+#define SEQUOIA_ENGINE_RENDER_RENDERCOMMAND_H
 
 #include "sequoia-engine/Core/Export.h"
 #include "sequoia-engine/Render/GlobalRenderState.h"

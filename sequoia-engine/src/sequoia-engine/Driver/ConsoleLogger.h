@@ -13,8 +13,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_DRIVER_CONSOLELOGGER_H
-#define SEQUOIA_DRIVER_CONSOLELOGGER_H
+#ifndef SEQUOIA_ENGINE_DRIVER_CONSOLELOGGER_H
+#define SEQUOIA_ENGINE_DRIVER_CONSOLELOGGER_H
 
 #include "sequoia-engine/Core/Export.h"
 #include "sequoia-engine/Core/Logging.h"

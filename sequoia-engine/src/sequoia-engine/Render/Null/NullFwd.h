@@ -13,8 +13,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_RENDER_NULL_NULLFWD_H
-#define SEQUOIA_RENDER_NULL_NULLFWD_H
+#ifndef SEQUOIA_ENGINE_RENDER_NULL_NULLFWD_H
+#define SEQUOIA_ENGINE_RENDER_NULL_NULLFWD_H
 
 #ifdef SEQUOIA_DOXYGEN_INVOKED
 /// @defgroup null Null

@@ -13,8 +13,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_GAME_ASSETMANAGER_H
-#define SEQUOIA_GAME_ASSETMANAGER_H
+#ifndef SEQUOIA_ENGINE_GAME_ASSETMANAGER_H
+#define SEQUOIA_ENGINE_GAME_ASSETMANAGER_H
 
 #include "sequoia-engine/Core/AlignedADT.h"
 #include "sequoia-engine/Core/Export.h"

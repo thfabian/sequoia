@@ -13,8 +13,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_CORE_TASK_H
-#define SEQUOIA_CORE_TASK_H
+#ifndef SEQUOIA_ENGINE_CORE_TASK_H
+#define SEQUOIA_ENGINE_CORE_TASK_H
 
 #include "sequoia-engine/Core/NonCopyable.h"
 

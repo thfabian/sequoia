@@ -13,8 +13,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_RENDER_NULL_NULLVERTEXDATA_H
-#define SEQUOIA_RENDER_NULL_NULLVERTEXDATA_H
+#ifndef SEQUOIA_ENGINE_RENDER_NULL_NULLVERTEXDATA_H
+#define SEQUOIA_ENGINE_RENDER_NULL_NULLVERTEXDATA_H
 
 #include "sequoia-engine/Render/Null/NullIndexBuffer.h"
 #include "sequoia-engine/Render/Null/NullVertexBuffer.h"

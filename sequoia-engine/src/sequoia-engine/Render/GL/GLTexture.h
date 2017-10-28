@@ -13,8 +13,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_RENDER_GL_GLTEXTURE_H
-#define SEQUOIA_RENDER_GL_GLTEXTURE_H
+#ifndef SEQUOIA_ENGINE_RENDER_GL_GLTEXTURE_H
+#define SEQUOIA_ENGINE_RENDER_GL_GLTEXTURE_H
 
 #include "sequoia-engine/Core/Hash.h"
 #include "sequoia-engine/Render/GL/GLFwd.h"

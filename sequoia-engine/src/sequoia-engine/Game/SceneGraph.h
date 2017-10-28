@@ -13,8 +13,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_GAME_SCENEGRAPH_H
-#define SEQUOIA_GAME_SCENEGRAPH_H
+#ifndef SEQUOIA_ENGINE_GAME_SCENEGRAPH_H
+#define SEQUOIA_ENGINE_GAME_SCENEGRAPH_H
 
 #include "sequoia-engine/Core/Export.h"
 #include "sequoia-engine/Core/NonCopyable.h"

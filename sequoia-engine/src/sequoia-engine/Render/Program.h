@@ -13,8 +13,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_RENDER_PROGRAM_H
-#define SEQUOIA_RENDER_PROGRAM_H
+#ifndef SEQUOIA_ENGINE_RENDER_PROGRAM_H
+#define SEQUOIA_ENGINE_RENDER_PROGRAM_H
 
 #include "sequoia-engine/Core/Export.h"
 #include "sequoia-engine/Core/NonCopyable.h"

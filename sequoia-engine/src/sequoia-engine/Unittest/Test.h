@@ -13,8 +13,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_UNITTEST_TEST_H
-#define SEQUOIA_UNITTEST_TEST_H
+#ifndef SEQUOIA_ENGINE_UNITTEST_TEST_H
+#define SEQUOIA_ENGINE_UNITTEST_TEST_H
 
 #include "sequoia-engine/Core/Export.h"
 #include "sequoia-engine/Math/Math.h"

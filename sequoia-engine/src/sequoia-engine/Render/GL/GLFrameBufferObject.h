@@ -13,8 +13,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_RENDER_GLFRAMEBUFFEROBJECT_H
-#define SEQUOIA_RENDER_GLFRAMEBUFFEROBJECT_H
+#ifndef SEQUOIA_ENGINE_RENDER_GLFRAMEBUFFEROBJECT_H
+#define SEQUOIA_ENGINE_RENDER_GLFRAMEBUFFEROBJECT_H
 
 #include "sequoia-engine/Render/FrameBuffer.h"
 #include "sequoia-engine/Render/GL/GLFragmentData.h"

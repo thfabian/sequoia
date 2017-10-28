@@ -13,8 +13,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_RENDER_INPUT_H
-#define SEQUOIA_RENDER_INPUT_H
+#ifndef SEQUOIA_ENGINE_RENDER_INPUT_H
+#define SEQUOIA_ENGINE_RENDER_INPUT_H
 
 #include "sequoia-engine/Core/Export.h"
 #include <iosfwd>

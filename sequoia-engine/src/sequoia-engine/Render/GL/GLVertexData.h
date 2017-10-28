@@ -13,8 +13,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_RENDER_GL_GLVERTEXDATA_H
-#define SEQUOIA_RENDER_GL_GLVERTEXDATA_H
+#ifndef SEQUOIA_ENGINE_RENDER_GL_GLVERTEXDATA_H
+#define SEQUOIA_ENGINE_RENDER_GL_GLVERTEXDATA_H
 
 #include "sequoia-engine/Render/GL/GLIndexBuffer.h"
 #include "sequoia-engine/Render/GL/GLVertexBuffer.h"

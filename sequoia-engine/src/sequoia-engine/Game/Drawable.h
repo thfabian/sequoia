@@ -13,8 +13,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_GAME_DRAWABLE_H
-#define SEQUOIA_GAME_DRAWABLE_H
+#ifndef SEQUOIA_ENGINE_GAME_DRAWABLE_H
+#define SEQUOIA_ENGINE_GAME_DRAWABLE_H
 
 #include "sequoia-engine/Core/DoubleBuffered.h"
 #include "sequoia-engine/Game/GameFwd.h"

@@ -13,8 +13,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_GAME_EMITTABLE_H
-#define SEQUOIA_GAME_EMITTABLE_H
+#ifndef SEQUOIA_ENGINE_GAME_EMITTABLE_H
+#define SEQUOIA_ENGINE_GAME_EMITTABLE_H
 
 #include "sequoia-engine/Game/GameFwd.h"
 #include "sequoia-engine/Game/SceneNodeCapability.h"

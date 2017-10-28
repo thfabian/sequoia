@@ -13,8 +13,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_RENDER_DRAWCOMMANDLIST_H
-#define SEQUOIA_RENDER_DRAWCOMMANDLIST_H
+#ifndef SEQUOIA_ENGINE_RENDER_DRAWCOMMANDLIST_H
+#define SEQUOIA_ENGINE_RENDER_DRAWCOMMANDLIST_H
 
 #include "sequoia-engine/Core/ArrayRef.h"
 #include "sequoia-engine/Core/Export.h"

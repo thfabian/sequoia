@@ -13,8 +13,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_MATH_MATH_H
-#define SEQUOIA_MATH_MATH_H
+#ifndef SEQUOIA_ENGINE_MATH_MATH_H
+#define SEQUOIA_ENGINE_MATH_MATH_H
 
 #include "sequoia-engine/Core/Export.h"
 #include "sequoia-engine/Math/Constants.h"

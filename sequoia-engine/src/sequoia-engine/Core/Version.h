@@ -13,8 +13,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_CORE_VERSION_H
-#define SEQUOIA_CORE_VERSION_H
+#ifndef SEQUOIA_ENGINE_CORE_VERSION_H
+#define SEQUOIA_ENGINE_CORE_VERSION_H
 
 #include "sequoia-engine/Core/Config.h"
 #include "sequoia-engine/Core/Export.h"

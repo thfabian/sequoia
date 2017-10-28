@@ -13,8 +13,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_UNITTEST_TESTFILE_H
-#define SEQUOIA_UNITTEST_TESTFILE_H
+#ifndef SEQUOIA_ENGINE_UNITTEST_TESTFILE_H
+#define SEQUOIA_ENGINE_UNITTEST_TESTFILE_H
 
 #include "sequoia-engine/Core/AlignedADT.h"
 #include "sequoia-engine/Core/Export.h"

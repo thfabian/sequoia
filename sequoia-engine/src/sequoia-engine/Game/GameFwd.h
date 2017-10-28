@@ -13,8 +13,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_GAME_GAMEFWD_H
-#define SEQUOIA_GAME_GAMEFWD_H
+#ifndef SEQUOIA_ENGINE_GAME_GAMEFWD_H
+#define SEQUOIA_ENGINE_GAME_GAMEFWD_H
 
 namespace sequoia {
 

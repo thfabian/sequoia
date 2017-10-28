@@ -40,8 +40,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_CORE_UTFSTRING_H
-#define SEQUOIA_CORE_UTFSTRING_H
+#ifndef SEQUOIA_ENGINE_CORE_UTFSTRING_H
+#define SEQUOIA_ENGINE_CORE_UTFSTRING_H
 
 #include "sequoia-engine/Core/Export.h"
 #include "sequoia-engine/Core/Utf.h"

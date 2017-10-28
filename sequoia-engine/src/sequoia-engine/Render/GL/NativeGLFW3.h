@@ -13,8 +13,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_RENDER_GL_NATIVEGLFW3_H
-#define SEQUOIA_RENDER_GL_NATIVEGLFW3_H
+#ifndef SEQUOIA_ENGINE_RENDER_GL_NATIVEGLFW3_H
+#define SEQUOIA_ENGINE_RENDER_GL_NATIVEGLFW3_H
 
 #include "sequoia-engine/Render/GL/Native.h"
 #include <unordered_map>

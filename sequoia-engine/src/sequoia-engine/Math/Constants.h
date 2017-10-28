@@ -13,8 +13,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_MATH_CONSTANTS_H
-#define SEQUOIA_MATH_CONSTANTS_H
+#ifndef SEQUOIA_ENGINE_MATH_CONSTANTS_H
+#define SEQUOIA_ENGINE_MATH_CONSTANTS_H
 
 namespace sequoia {
 

@@ -13,8 +13,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_GAME_SCENENODEALLOC_H
-#define SEQUOIA_GAME_SCENENODEALLOC_H
+#ifndef SEQUOIA_ENGINE_GAME_SCENENODEALLOC_H
+#define SEQUOIA_ENGINE_GAME_SCENENODEALLOC_H
 
 #include "sequoia-engine/Core/Export.h"
 #include "sequoia-engine/Core/Memory.h"

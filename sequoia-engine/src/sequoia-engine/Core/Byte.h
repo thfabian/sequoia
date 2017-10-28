@@ -13,8 +13,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_CORE_BYTE_H
-#define SEQUOIA_CORE_BYTE_H
+#ifndef SEQUOIA_ENGINE_CORE_BYTE_H
+#define SEQUOIA_ENGINE_CORE_BYTE_H
 
 namespace sequoia {
 

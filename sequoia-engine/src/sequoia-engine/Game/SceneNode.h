@@ -13,8 +13,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_GAME_SCENENODE_H
-#define SEQUOIA_GAME_SCENENODE_H
+#ifndef SEQUOIA_ENGINE_GAME_SCENENODE_H
+#define SEQUOIA_ENGINE_GAME_SCENENODE_H
 
 #include "sequoia-engine/Core/Export.h"
 #include "sequoia-engine/Game/SceneNodeAlloc.h"

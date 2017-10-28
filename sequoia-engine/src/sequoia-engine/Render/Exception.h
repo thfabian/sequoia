@@ -13,8 +13,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_RENDER_EXCEPTION_H
-#define SEQUOIA_RENDER_EXCEPTION_H
+#ifndef SEQUOIA_ENGINE_RENDER_EXCEPTION_H
+#define SEQUOIA_ENGINE_RENDER_EXCEPTION_H
 
 #include "sequoia-engine/Core/Exception.h"
 

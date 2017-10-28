@@ -13,8 +13,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_CORE_EXCEPTION_H
-#define SEQUOIA_CORE_EXCEPTION_H
+#ifndef SEQUOIA_ENGINE_CORE_EXCEPTION_H
+#define SEQUOIA_ENGINE_CORE_EXCEPTION_H
 
 #include "sequoia-engine/Core/Export.h"
 #include "sequoia-engine/Core/Format.h"

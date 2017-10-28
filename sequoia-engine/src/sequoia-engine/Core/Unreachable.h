@@ -13,8 +13,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_CORE_UNREACHABLE_H
-#define SEQUOIA_CORE_UNREACHABLE_H
+#ifndef SEQUOIA_ENGINE_CORE_UNREACHABLE_H
+#define SEQUOIA_ENGINE_CORE_UNREACHABLE_H
 
 #include "sequoia-engine/Core/Export.h"
 

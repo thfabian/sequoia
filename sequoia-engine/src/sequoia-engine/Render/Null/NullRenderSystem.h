@@ -13,8 +13,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_RENDER_NULL_NULLRENDERSYSTEM_H
-#define SEQUOIA_RENDER_NULL_NULLRENDERSYSTEM_H
+#ifndef SEQUOIA_ENGINE_RENDER_NULL_NULLRENDERSYSTEM_H
+#define SEQUOIA_ENGINE_RENDER_NULL_NULLRENDERSYSTEM_H
 
 #include "sequoia-engine/Render/Null/NullFwd.h"
 #include "sequoia-engine/Render/RenderSystem.h"

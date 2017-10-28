@@ -13,8 +13,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_RENDER_GL_GLVERTEXATTRIBUTE_H
-#define SEQUOIA_RENDER_GL_GLVERTEXATTRIBUTE_H
+#ifndef SEQUOIA_ENGINE_RENDER_GL_GLVERTEXATTRIBUTE_H
+#define SEQUOIA_ENGINE_RENDER_GL_GLVERTEXATTRIBUTE_H
 
 #include "sequoia-engine/Core/Export.h"
 #include <functional>

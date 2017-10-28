@@ -13,8 +13,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_RENDER_DRAWCOMMAND_H
-#define SEQUOIA_RENDER_DRAWCOMMAND_H
+#ifndef SEQUOIA_ENGINE_RENDER_DRAWCOMMAND_H
+#define SEQUOIA_ENGINE_RENDER_DRAWCOMMAND_H
 
 #include "sequoia-engine/Core/Export.h"
 #include "sequoia-engine/Math/Math.h"

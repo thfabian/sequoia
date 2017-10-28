@@ -13,8 +13,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_GAME_SCENE_H
-#define SEQUOIA_GAME_SCENE_H
+#ifndef SEQUOIA_ENGINE_GAME_SCENE_H
+#define SEQUOIA_ENGINE_GAME_SCENE_H
 
 #include "sequoia-engine/Core/ConcurrentADT.h"
 #include "sequoia-engine/Core/DoubleBuffered.h"

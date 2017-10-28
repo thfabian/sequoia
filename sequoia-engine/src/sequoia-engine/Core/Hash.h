@@ -13,8 +13,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_CORE_HASH_H
-#define SEQUOIA_CORE_HASH_H
+#ifndef SEQUOIA_ENGINE_CORE_HASH_H
+#define SEQUOIA_ENGINE_CORE_HASH_H
 
 #include <functional>
 #include <type_traits>

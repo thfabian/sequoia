@@ -13,8 +13,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_CORE_MEMORY_H
-#define SEQUOIA_CORE_MEMORY_H
+#ifndef SEQUOIA_ENGINE_CORE_MEMORY_H
+#define SEQUOIA_ENGINE_CORE_MEMORY_H
 
 #include "sequoia-engine/Core/Compiler.h"
 #include <boost/align/aligned_alloc.hpp>

@@ -13,8 +13,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_CORE_STLEXTRAS_H
-#define SEQUOIA_CORE_STLEXTRAS_H
+#ifndef SEQUOIA_ENGINE_CORE_STLEXTRAS_H
+#define SEQUOIA_ENGINE_CORE_STLEXTRAS_H
 
 #include "sequoia-engine/Core/Compiler.h"
 #include <algorithm>

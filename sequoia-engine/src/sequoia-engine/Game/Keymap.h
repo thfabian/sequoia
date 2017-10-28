@@ -13,8 +13,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_GAME_KEYMAP_H
-#define SEQUOIA_GAME_KEYMAP_H
+#ifndef SEQUOIA_ENGINE_GAME_KEYMAP_H
+#define SEQUOIA_ENGINE_GAME_KEYMAP_H
 
 #include "sequoia-engine/Core/Export.h"
 #include "sequoia-engine/Render/Input.h"

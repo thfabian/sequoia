@@ -13,8 +13,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_CORE_STRINGUTIL_H
-#define SEQUOIA_CORE_STRINGUTIL_H
+#ifndef SEQUOIA_ENGINE_CORE_STRINGUTIL_H
+#define SEQUOIA_ENGINE_CORE_STRINGUTIL_H
 
 #include "sequoia-engine/Core/Export.h"
 #include <algorithm>

@@ -13,8 +13,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_RENDER_HOSTBUFFER_H
-#define SEQUOIA_RENDER_HOSTBUFFER_H
+#ifndef SEQUOIA_ENGINE_RENDER_HOSTBUFFER_H
+#define SEQUOIA_ENGINE_RENDER_HOSTBUFFER_H
 
 #include "sequoia-engine/Render/Buffer.h"
 

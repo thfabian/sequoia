@@ -13,8 +13,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_RENDER_VERTEXDATA_H
-#define SEQUOIA_RENDER_VERTEXDATA_H
+#ifndef SEQUOIA_ENGINE_RENDER_VERTEXDATA_H
+#define SEQUOIA_ENGINE_RENDER_VERTEXDATA_H
 
 #include "sequoia-engine/Core/NonCopyable.h"
 #include "sequoia-engine/Core/STLExtras.h"

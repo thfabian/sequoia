@@ -13,8 +13,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_RENDER_RENDERSYSTEMOBJECT_H
-#define SEQUOIA_RENDER_RENDERSYSTEMOBJECT_H
+#ifndef SEQUOIA_ENGINE_RENDER_RENDERSYSTEMOBJECT_H
+#define SEQUOIA_ENGINE_RENDER_RENDERSYSTEMOBJECT_H
 
 namespace sequoia {
 

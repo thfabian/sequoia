@@ -13,8 +13,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_DRIVER_COMMANDLINE_H
-#define SEQUOIA_DRIVER_COMMANDLINE_H
+#ifndef SEQUOIA_ENGINE_DRIVER_COMMANDLINE_H
+#define SEQUOIA_ENGINE_DRIVER_COMMANDLINE_H
 
 #include "sequoia-engine/Core/Export.h"
 #include "sequoia-engine/Core/Options.h"

@@ -13,8 +13,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_GAME_MESHMANAGER_H
-#define SEQUOIA_GAME_MESHMANAGER_H
+#ifndef SEQUOIA_ENGINE_GAME_MESHMANAGER_H
+#define SEQUOIA_ENGINE_GAME_MESHMANAGER_H
 
 #include "sequoia-engine/Core/Export.h"
 #include "sequoia-engine/Core/File.h"

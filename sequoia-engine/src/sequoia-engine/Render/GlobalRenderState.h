@@ -13,8 +13,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_RENDER_GLOBALRENDERSTATE_H
-#define SEQUOIA_RENDER_GLOBALRENDERSTATE_H
+#ifndef SEQUOIA_ENGINE_RENDER_GLOBALRENDERSTATE_H
+#define SEQUOIA_ENGINE_RENDER_GLOBALRENDERSTATE_H
 
 #include "sequoia-engine/Render/Program.h"
 #include "sequoia-engine/Render/UniformVariable.h"

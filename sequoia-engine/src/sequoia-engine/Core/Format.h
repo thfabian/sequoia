@@ -13,8 +13,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_CORE_FORMAT_H
-#define SEQUOIA_CORE_FORMAT_H
+#ifndef SEQUOIA_ENGINE_CORE_FORMAT_H
+#define SEQUOIA_ENGINE_CORE_FORMAT_H
 
 #include <fmt/format.h>
 #include <fmt/ostream.h>

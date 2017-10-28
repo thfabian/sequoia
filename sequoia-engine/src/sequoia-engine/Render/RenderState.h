@@ -13,8 +13,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_RENDER_RENDERSTATE_H
-#define SEQUOIA_RENDER_RENDERSTATE_H
+#ifndef SEQUOIA_ENGINE_RENDER_RENDERSTATE_H
+#define SEQUOIA_ENGINE_RENDER_RENDERSTATE_H
 
 #include "sequoia-engine/Core/Export.h"
 #include "sequoia-engine/Render/RenderFwd.h"

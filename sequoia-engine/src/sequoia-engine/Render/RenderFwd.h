@@ -13,8 +13,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_RENDER_RENDERFWD_H
-#define SEQUOIA_RENDER_RENDERFWD_H
+#ifndef SEQUOIA_ENGINE_RENDER_RENDERFWD_H
+#define SEQUOIA_ENGINE_RENDER_RENDERFWD_H
 
 #include "sequoia-engine/Render/RenderSystemObject.h"
 

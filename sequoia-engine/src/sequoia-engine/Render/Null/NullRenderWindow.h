@@ -13,8 +13,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_RENDER_NULL_NULLRENDERWINDOW_H
-#define SEQUOIA_RENDER_NULL_NULLRENDERWINDOW_H
+#ifndef SEQUOIA_ENGINE_RENDER_NULL_NULLRENDERWINDOW_H
+#define SEQUOIA_ENGINE_RENDER_NULL_NULLRENDERWINDOW_H
 
 #include "sequoia-engine/Render/RenderWindow.h"
 

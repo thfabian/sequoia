@@ -13,8 +13,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_CORE_STRINGSWITCH_H
-#define SEQUOIA_CORE_STRINGSWITCH_H
+#ifndef SEQUOIA_ENGINE_CORE_STRINGSWITCH_H
+#define SEQUOIA_ENGINE_CORE_STRINGSWITCH_H
 
 #include "sequoia-engine/Core/Assert.h"
 #include "sequoia-engine/Core/StringRef.h"

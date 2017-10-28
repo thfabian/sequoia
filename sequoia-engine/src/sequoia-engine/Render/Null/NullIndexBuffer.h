@@ -13,8 +13,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_RENDER_NULL_NULLINDEXBUFFER_H
-#define SEQUOIA_RENDER_NULL_NULLINDEXBUFFER_H
+#ifndef SEQUOIA_ENGINE_RENDER_NULL_NULLINDEXBUFFER_H
+#define SEQUOIA_ENGINE_RENDER_NULL_NULLINDEXBUFFER_H
 
 #include "sequoia-engine/Render/HostBuffer.h"
 #include "sequoia-engine/Render/IndexBuffer.h"

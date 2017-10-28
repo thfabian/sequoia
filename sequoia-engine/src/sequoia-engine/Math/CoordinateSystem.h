@@ -13,8 +13,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_MATH_COORDINATESYSTEM_H
-#define SEQUOIA_MATH_COORDINATESYSTEM_H
+#ifndef SEQUOIA_ENGINE_MATH_COORDINATESYSTEM_H
+#define SEQUOIA_ENGINE_MATH_COORDINATESYSTEM_H
 
 #include "sequoia-engine/Math/Math.h"
 

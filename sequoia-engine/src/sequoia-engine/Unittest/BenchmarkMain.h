@@ -13,8 +13,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_UNITTEST_BENCHMARKMAIN_H
-#define SEQUOIA_UNITTEST_BENCHMARKMAIN_H
+#ifndef SEQUOIA_ENGINE_UNITTEST_BENCHMARKMAIN_H
+#define SEQUOIA_ENGINE_UNITTEST_BENCHMARKMAIN_H
 
 #include <benchmark/benchmark.h>
 #include <memory>

@@ -60,8 +60,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_CORE_STRINGREF_H
-#define SEQUOIA_CORE_STRINGREF_H
+#ifndef SEQUOIA_ENGINE_CORE_STRINGREF_H
+#define SEQUOIA_ENGINE_CORE_STRINGREF_H
 
 #include "sequoia-engine/Core/Export.h"
 #include "sequoia-engine/Core/STLExtras.h"

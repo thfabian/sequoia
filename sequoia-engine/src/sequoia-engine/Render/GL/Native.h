@@ -13,8 +13,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_RENDER_GL_NATIVE_H
-#define SEQUOIA_RENDER_GL_NATIVE_H
+#ifndef SEQUOIA_ENGINE_RENDER_GL_NATIVE_H
+#define SEQUOIA_ENGINE_RENDER_GL_NATIVE_H
 
 #include "sequoia-engine/Core/Export.h"
 #include "sequoia-engine/Core/Listenable.h"

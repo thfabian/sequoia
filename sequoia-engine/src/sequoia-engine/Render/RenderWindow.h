@@ -13,8 +13,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_RENDER_RENDERWINDOW_H
-#define SEQUOIA_RENDER_RENDERWINDOW_H
+#ifndef SEQUOIA_ENGINE_RENDER_RENDERWINDOW_H
+#define SEQUOIA_ENGINE_RENDER_RENDERWINDOW_H
 
 #include "sequoia-engine/Render/RenderTarget.h"
 

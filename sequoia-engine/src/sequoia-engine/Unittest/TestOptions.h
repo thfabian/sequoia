@@ -13,8 +13,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_UNITTEST_TESTOPTIONS_H
-#define SEQUOIA_UNITTEST_TESTOPTIONS_H
+#ifndef SEQUOIA_ENGINE_UNITTEST_TESTOPTIONS_H
+#define SEQUOIA_ENGINE_UNITTEST_TESTOPTIONS_H
 
 #include "sequoia-engine/Core/Options.h"
 #include "sequoia-engine/Core/Singleton.h"

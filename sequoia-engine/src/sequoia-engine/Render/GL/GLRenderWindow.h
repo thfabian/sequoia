@@ -13,8 +13,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_RENDER_GL_GLRENDERWINDOW_H
-#define SEQUOIA_RENDER_GL_GLRENDERWINDOW_H
+#ifndef SEQUOIA_ENGINE_RENDER_GL_GLRENDERWINDOW_H
+#define SEQUOIA_ENGINE_RENDER_GL_GLRENDERWINDOW_H
 
 #include "sequoia-engine/Render/GL/Native.h"
 #include "sequoia-engine/Render/Input.h"

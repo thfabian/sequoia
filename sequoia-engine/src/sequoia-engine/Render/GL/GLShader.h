@@ -13,8 +13,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_RENDER_GL_GLSHADER_H
-#define SEQUOIA_RENDER_GL_GLSHADER_H
+#ifndef SEQUOIA_ENGINE_RENDER_GL_GLSHADER_H
+#define SEQUOIA_ENGINE_RENDER_GL_GLSHADER_H
 
 #include "sequoia-engine/Render/GL/GLFwd.h"
 #include "sequoia-engine/Render/Shader.h"

@@ -13,8 +13,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_UNITTEST_GL_GLTESTENVIRONMENT_H
-#define SEQUOIA_UNITTEST_GL_GLTESTENVIRONMENT_H
+#ifndef SEQUOIA_ENGINE_UNITTEST_GL_GLTESTENVIRONMENT_H
+#define SEQUOIA_ENGINE_UNITTEST_GL_GLTESTENVIRONMENT_H
 
 #include "sequoia-engine/Render/GL/GLRenderSystem.h"
 #include "sequoia-engine/Unittest/TestEnvironment.h"

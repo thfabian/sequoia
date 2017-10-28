@@ -13,8 +13,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_RENDER_NULL_NULLINPUTSYSTEM_H
-#define SEQUOIA_RENDER_NULL_NULLINPUTSYSTEM_H
+#ifndef SEQUOIA_ENGINE_RENDER_NULL_NULLINPUTSYSTEM_H
+#define SEQUOIA_ENGINE_RENDER_NULL_NULLINPUTSYSTEM_H
 
 #include "sequoia-engine/Core/Listenable.h"
 #include "sequoia-engine/Render/Input.h"

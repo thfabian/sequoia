@@ -13,8 +13,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_MATH_EXPORT_H
-#define SEQUOIA_MATH_EXPORT_H
+#ifndef SEQUOIA_ENGINE_MATH_EXPORT_H
+#define SEQUOIA_ENGINE_MATH_EXPORT_H
 
 #ifdef SEQUOIA_DOXYGEN_INVOKED
 /// @defgroup math Math

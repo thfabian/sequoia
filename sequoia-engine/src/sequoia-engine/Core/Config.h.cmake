@@ -18,8 +18,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_CORE_CONFIG_H
-#define SEQUOIA_CORE_CONFIG_H
+#ifndef SEQUOIA_ENGINE_CORE_CONFIG_H
+#define SEQUOIA_ENGINE_CORE_CONFIG_H
 
 // Define if this is Unixish platform 
 #cmakedefine SEQUOIA_ON_UNIX ${SEQUOIA_ON_UNIX}

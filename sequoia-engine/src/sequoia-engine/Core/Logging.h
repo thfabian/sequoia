@@ -13,8 +13,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_CORE_LOGGING_H
-#define SEQUOIA_CORE_LOGGING_H
+#ifndef SEQUOIA_ENGINE_CORE_LOGGING_H
+#define SEQUOIA_ENGINE_CORE_LOGGING_H
 
 #include "sequoia-engine/Core/Export.h"
 #include "sequoia-engine/Core/Listenable.h"

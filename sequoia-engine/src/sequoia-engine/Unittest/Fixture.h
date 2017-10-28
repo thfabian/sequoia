@@ -13,8 +13,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_UNITTEST_FIXTURE_H
-#define SEQUOIA_UNITTEST_FIXTURE_H
+#ifndef SEQUOIA_ENGINE_UNITTEST_FIXTURE_H
+#define SEQUOIA_ENGINE_UNITTEST_FIXTURE_H
 
 #include "sequoia-engine/Core/NonCopyable.h"
 #include <benchmark/benchmark.h>

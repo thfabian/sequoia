@@ -13,8 +13,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_RENDER_GL_GLINDEXBUFFER_H
-#define SEQUOIA_RENDER_GL_GLINDEXBUFFER_H
+#ifndef SEQUOIA_ENGINE_RENDER_GL_GLINDEXBUFFER_H
+#define SEQUOIA_ENGINE_RENDER_GL_GLINDEXBUFFER_H
 
 #include "sequoia-engine/Render/GL/GLBuffer.h"
 #include "sequoia-engine/Render/GL/GLFwd.h"

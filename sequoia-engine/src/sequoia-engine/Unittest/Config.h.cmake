@@ -13,8 +13,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_UNITTEST_CONFIG_H
-#define SEQUOIA_UNITTEST_CONFIG_H
+#ifndef SEQUOIA_ENGINE_UNITTEST_CONFIG_H
+#define SEQUOIA_ENGINE_UNITTEST_CONFIG_H
 
 // Resource path of the unittests 
 #cmakedefine SEQUOIA_ENGINE_UNITTEST_RESSOURCEPATH "${SEQUOIA_ENGINE_UNITTEST_RESSOURCEPATH}"

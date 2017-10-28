@@ -13,8 +13,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_RENDER_GL_GLSHADERMANAGER_H
-#define SEQUOIA_RENDER_GL_GLSHADERMANAGER_H
+#ifndef SEQUOIA_ENGINE_RENDER_GL_GLSHADERMANAGER_H
+#define SEQUOIA_ENGINE_RENDER_GL_GLSHADERMANAGER_H
 
 #include "sequoia-engine/Core/Assert.h"
 #include "sequoia-engine/Core/Export.h"

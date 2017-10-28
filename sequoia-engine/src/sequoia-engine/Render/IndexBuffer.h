@@ -13,8 +13,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_RENDER_INDEXBUFFER_H
-#define SEQUOIA_RENDER_INDEXBUFFER_H
+#ifndef SEQUOIA_ENGINE_RENDER_INDEXBUFFER_H
+#define SEQUOIA_ENGINE_RENDER_INDEXBUFFER_H
 
 #include "sequoia-engine/Render/Buffer.h"
 

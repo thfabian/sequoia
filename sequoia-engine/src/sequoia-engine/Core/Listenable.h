@@ -13,8 +13,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_CORE_LISTENABLE_H
-#define SEQUOIA_CORE_LISTENABLE_H
+#ifndef SEQUOIA_ENGINE_CORE_LISTENABLE_H
+#define SEQUOIA_ENGINE_CORE_LISTENABLE_H
 
 #include <algorithm>
 #include <tuple>

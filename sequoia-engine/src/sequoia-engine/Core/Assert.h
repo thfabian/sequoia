@@ -13,8 +13,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_CORE_ASSERT_H
-#define SEQUOIA_CORE_ASSERT_H
+#ifndef SEQUOIA_ENGINE_CORE_ASSERT_H
+#define SEQUOIA_ENGINE_CORE_ASSERT_H
 
 #include "sequoia-engine/Core/Compiler.h"
 #include "sequoia-engine/Core/Export.h"

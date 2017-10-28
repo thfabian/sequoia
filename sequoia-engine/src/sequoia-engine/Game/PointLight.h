@@ -13,8 +13,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_GAME_POINTLIGHT_H
-#define SEQUOIA_GAME_POINTLIGHT_H
+#ifndef SEQUOIA_ENGINE_GAME_POINTLIGHT_H
+#define SEQUOIA_ENGINE_GAME_POINTLIGHT_H
 
 #include "sequoia-engine/Core/Color.h"
 #include "sequoia-engine/Game/Emittable.h"

@@ -13,8 +13,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_GAME_EXCEPTION_H
-#define SEQUOIA_GAME_EXCEPTION_H
+#ifndef SEQUOIA_ENGINE_GAME_EXCEPTION_H
+#define SEQUOIA_ENGINE_GAME_EXCEPTION_H
 
 #include "sequoia-engine/Core/Exception.h"
 

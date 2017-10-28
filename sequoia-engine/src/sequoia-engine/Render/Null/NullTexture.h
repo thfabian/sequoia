@@ -13,8 +13,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_RENDER_NULL_NULLTEXTURE_H
-#define SEQUOIA_RENDER_NULL_NULLTEXTURE_H
+#ifndef SEQUOIA_ENGINE_RENDER_NULL_NULLTEXTURE_H
+#define SEQUOIA_ENGINE_RENDER_NULL_NULLTEXTURE_H
 
 #include "sequoia-engine/Render/Texture.h"
 

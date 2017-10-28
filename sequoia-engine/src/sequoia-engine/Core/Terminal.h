@@ -13,8 +13,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_CORE_TERMINAL_H
-#define SEQUOIA_CORE_TERMINAL_H
+#ifndef SEQUOIA_ENGINE_CORE_TERMINAL_H
+#define SEQUOIA_ENGINE_CORE_TERMINAL_H
 
 #include "sequoia-engine/Core/Export.h"
 #include <iosfwd>

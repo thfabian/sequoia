@@ -13,8 +13,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_MATH_AXISALIGNEDBOX_H
-#define SEQUOIA_MATH_AXISALIGNEDBOX_H
+#ifndef SEQUOIA_ENGINE_MATH_AXISALIGNEDBOX_H
+#define SEQUOIA_ENGINE_MATH_AXISALIGNEDBOX_H
 
 #include "sequoia-engine/Core/Assert.h"
 #include "sequoia-engine/Core/Export.h"

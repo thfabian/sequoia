@@ -13,8 +13,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_CORE_FUTURE_H
-#define SEQUOIA_CORE_FUTURE_H
+#ifndef SEQUOIA_ENGINE_CORE_FUTURE_H
+#define SEQUOIA_ENGINE_CORE_FUTURE_H
 
 #include "sequoia-engine/Core/Exception.h"
 #include "sequoia-engine/Core/Mutex.h"

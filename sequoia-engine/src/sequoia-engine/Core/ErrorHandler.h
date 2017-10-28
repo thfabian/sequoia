@@ -13,8 +13,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_CORE_ERRORHANDLER_H
-#define SEQUOIA_CORE_ERRORHANDLER_H
+#ifndef SEQUOIA_ENGINE_CORE_ERRORHANDLER_H
+#define SEQUOIA_ENGINE_CORE_ERRORHANDLER_H
 
 #include "sequoia-engine/Core/Export.h"
 #include "sequoia-engine/Core/Singleton.h"

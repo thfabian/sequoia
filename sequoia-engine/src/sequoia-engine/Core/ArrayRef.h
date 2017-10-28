@@ -13,8 +13,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_CORE_ARRAYREF_H
-#define SEQUOIA_CORE_ARRAYREF_H
+#ifndef SEQUOIA_ENGINE_CORE_ARRAYREF_H
+#define SEQUOIA_ENGINE_CORE_ARRAYREF_H
 
 #include "sequoia-engine/Core/Assert.h"
 #include "sequoia-engine/Core/STLExtras.h"

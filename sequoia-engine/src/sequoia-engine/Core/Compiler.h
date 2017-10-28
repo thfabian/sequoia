@@ -13,8 +13,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_CORE_COMPILER_H
-#define SEQUOIA_CORE_COMPILER_H
+#ifndef SEQUOIA_ENGINE_CORE_COMPILER_H
+#define SEQUOIA_ENGINE_CORE_COMPILER_H
 
 #include "sequoia-engine/Core/Config.h"
 

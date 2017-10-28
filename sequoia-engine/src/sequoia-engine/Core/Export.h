@@ -13,8 +13,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_CORE_EXPORT_H
-#define SEQUOIA_CORE_EXPORT_H
+#ifndef SEQUOIA_ENGINE_CORE_EXPORT_H
+#define SEQUOIA_ENGINE_CORE_EXPORT_H
 
 #ifdef SEQUOIA_DOXYGEN_INVOKED
 
