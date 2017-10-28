@@ -107,13 +107,13 @@ sequoia_report_result("Configuration summary" ${config_info})
 
 # Find the packages
 if(SEQUOIA_ENGINE_TESTING)
-  set(testing_packages GTest benchmark)
+  set(sequoia_engine_testing_packages GTest benchmark)
 endif()
 
-set(sequoia_engine_packages Backward Boost ccache glbinding glfw3 gli glm OpenCV OpenGL Python3 
-                            TBB fmt tinyobjloader Protobuf Threads)
+set(sequoia_engine_packages Backward Boost glbinding glfw3 gli glm OpenCV OpenGL Python3 
+                            TBB fmt tinyobjloader Protobuf Threads ccache clang-format)
 
-foreach(package ${testing_packages} ${sequoia_engine_packages})
+foreach(package ${sequoia_engine_testing_packages} ${sequoia_engine_packages})
   include("Add${package}")
   string(TOUPPER ${package} PACKAGE)
 
