@@ -26,13 +26,13 @@ endif()
 
 # Link objects into a single library
 sequoia_combine_libraries(
-  NAME Sequoia
-  OBJECTS SequoiaCoreObjects
-          SequoiaMathObjects
-          SequoiaRenderObjects
-          SequoiaDriverObjects
-          SequoiaGameObjects
-  DEPENDS ${SEQUOIA_EXTERNAL_LIBRARIES}
+  NAME SequoiaEngine
+  OBJECTS SequoiaEngineCoreObjects
+          SequoiaEngineMathObjects
+          SequoiaEngineRenderObjects
+          SequoiaEngineDriverObjects
+          SequoiaEngineGameObjects
+  DEPENDS ${SEQUOIA_ENGINE_EXTERNAL_LIBRARIES}
   INSTALL_DESTINATION ${SEQUOIA_ENGINE_INSTALL_LIB_DIR}
 )
 
@@ -41,6 +41,6 @@ sequoia_add_executable(
   NAME SequoiaStandalone
   WIN32_APPLICATION
   SOURCES Driver/Main.cpp
-  DEPENDS SequoiaStatic
+  DEPENDS SequoiaEngineStatic
   OUTPUT_DIR ${CMAKE_BINARY_DIR}/bin
 )

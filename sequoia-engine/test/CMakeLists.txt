@@ -14,5 +14,7 @@
 ##===------------------------------------------------------------------------------------------===##
 
 add_subdirectory(unittest)
-add_subdirectory(benchmark)
 
+if(SEQUOIA_ENGINE_BENCHMARKING)
+  add_subdirectory(benchmark)
+endif()

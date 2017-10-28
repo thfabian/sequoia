@@ -96,7 +96,7 @@ set(NULL_SOURCE
 )
 
 sequoia_add_library(
-  NAME SequoiaRender
+  NAME SequoiaEngineRender
   SOURCES Buffer.h
           Buffer.cpp
           Camera.cpp
@@ -161,6 +161,6 @@ sequoia_add_library(
           
           ${GL_SOURCE}
           ${NULL_SOURCE}
-  DEPENDS SequoiaCoreObjects
+  DEPENDS SequoiaEngineCoreObjects
   OBJECT
 )

@@ -16,7 +16,7 @@
 sequoia_configure_file(Config.h.cmake)
 
 sequoia_add_library(
-  NAME SequoiaUnittest
+  NAME SequoiaEngineUnittest
   SOURCES BenchmarkEnvironment.h
           BenchmarkEnvironment.cpp
           BenchmarkMain.h
@@ -38,8 +38,8 @@ sequoia_add_library(
           GL/GLBenchmarkEnvironment.cpp
           GL/GLRenderSetup.h
           GL/GLRenderSetup.cpp
-  DEPENDS SequoiaCoreObjects
-          SequoiaRenderObjects
+  DEPENDS SequoiaEngineCoreObjects
+          SequoiaEngineRenderObjects
   ARCHIVE
 )
 

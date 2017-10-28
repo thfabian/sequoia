@@ -14,7 +14,7 @@
 ##===------------------------------------------------------------------------------------------===##
 
 sequoia_engine_add_unittest(
-  NAME SequoiaCoreTest
+  NAME SequoiaEngineCoreTest
   SOURCES TestAlignedADT.cpp
           TestArrayRef.cpp
           TestColor.cpp

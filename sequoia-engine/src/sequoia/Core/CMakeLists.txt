@@ -36,7 +36,7 @@ sequoia_generate_options(
 )
 
 sequoia_add_library(
-  NAME SequoiaCore
+  NAME SequoiaEngineCore
   SOURCES AlignedADT.h
           ArrayRef.h
           Any.h

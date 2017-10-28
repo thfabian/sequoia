@@ -14,7 +14,7 @@
 ##===------------------------------------------------------------------------------------------===##
 
 sequoia_engine_add_unittest(
-  NAME SequoiaRenderGLTest
+  NAME SequoiaEngineRenderGLTest
   SOURCES TestMain.cpp
           TestGLBuffer.cpp
           TestGLProgram.cpp

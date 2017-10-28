@@ -14,13 +14,13 @@
 ##===------------------------------------------------------------------------------------------===##
 
 sequoia_add_library(
-  NAME SequoiaMath
+  NAME SequoiaEngineMath
   SOURCES AxisAlignedBox.h
           AxisAlignedBox.cpp
           Constants.h 
           CoordinateSystem.h
           Math.h
           Math.cpp
-  DEPENDS SequoiaCoreObjects
+  DEPENDS SequoiaEngineCoreObjects
   OBJECT
 )

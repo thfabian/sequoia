@@ -14,7 +14,7 @@
 ##===------------------------------------------------------------------------------------------===##
 
 sequoia_engine_add_unittest(
-  NAME SequoiaGameTest
+  NAME SequoiaEngineGameTest
   SOURCES TestAssetManager.cpp
           TestCameraController.cpp
           TestCameraControllerFree.cpp

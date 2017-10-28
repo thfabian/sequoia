@@ -14,7 +14,7 @@
 ##===------------------------------------------------------------------------------------------===##
 
 sequoia_add_library(
-  NAME SequoiaDriver
+  NAME SequoiaEngineDriver
   SOURCES Driver.cpp
           Driver.h
           CommandLine2.h
@@ -25,6 +25,6 @@ sequoia_add_library(
           ConsoleLogger.cpp
           Win32Console.h
           Win32Console.cpp
-  DEPENDS SequoiaCoreObjects
+  DEPENDS SequoiaEngineCoreObjects
   OBJECT
 )

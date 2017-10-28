@@ -14,7 +14,7 @@
 ##===------------------------------------------------------------------------------------------===##
 
 sequoia_engine_add_unittest(
-  NAME SequoiaMathTest
+  NAME SequoiaEngineMathTest
   SOURCES TestAxisAlignedBox.cpp
           TestMain.cpp
           TestMath.cpp

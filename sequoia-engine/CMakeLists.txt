@@ -110,20 +110,23 @@ if(SEQUOIA_ENGINE_TESTING)
   set(testing_packages GTest benchmark)
 endif()
 
-foreach(package Backward Boost ccache glbinding glfw3 gli glm OpenCV OpenGL Python3 TBB fmt
-                tinyobjloader Protobuf ${testing_packages} Threads)
+set(sequoia_engine_packages Backward Boost ccache glbinding glfw3 gli glm OpenCV OpenGL Python3 
+                            TBB fmt tinyobjloader Protobuf Threads)
+
+foreach(package ${testing_packages} ${sequoia_engine_packages})
   include("Add${package}")
   string(TOUPPER ${package} PACKAGE)
-  list(APPEND SEQUOIA_EXTERNAL_LIBRARIES ${SEQUOIA_${PACKAGE}_LIBRARIES})
-  list(APPEND SEQUOIA_EXTERNAL_INCLUDE_DIRS ${SEQUOIA_${PACKAGE}_INCLUDE_DIRS})
-  list(APPEND SEQUOIA_EXTERNAL_DEFINITIONS ${SEQUOIA_${PACKAGE}_DEFINITIONS})
+
+  list(APPEND SEQUOIA_ENGINE_EXTERNAL_LIBRARIES ${SEQUOIA_${PACKAGE}_LIBRARIES})
+  list(APPEND SEQUOIA_ENGINE_EXTERNAL_INCLUDE_DIRS ${SEQUOIA_${PACKAGE}_INCLUDE_DIRS})
+  list(APPEND SEQUOIA_ENGINE_EXTERNAL_DEFINITIONS ${SEQUOIA_${PACKAGE}_DEFINITIONS})
   
   sequoia_create_package_string(${package} info)
   list(APPEND package_info ${info})
 endforeach()
 
-include_directories(SYSTEM ${SEQUOIA_EXTERNAL_INCLUDE_DIRS})
-add_definitions(${SEQUOIA_EXTERNAL_DEFINITIONS})
+include_directories(SYSTEM ${SEQUOIA_ENGINE_EXTERNAL_INCLUDE_DIRS})
+add_definitions(${SEQUOIA_ENGINE_EXTERNAL_DEFINITIONS})
 
 # Output summary of the packages
 sequoia_report_result("Package summary" ${package_info})
@@ -145,10 +148,13 @@ if(SEQUOIA_ENGINE_DOCUMENTATION)
   add_subdirectory(docs)
 endif()
 
-# Install headers & CMake config
+# Install headers
 install(
   DIRECTORY src/ 
   DESTINATION ${SEQUOIA_ENGINE_INSTALL_INCLUDE_DIR} 
   FILES_MATCHING PATTERN "*.h" PATTERN "*.inc" PATTERN "*.hpp"
+  EXCLUDE PATTERN "Unittest/*"
 )
+
+# Install CMake configuration
 sequoia_engine_generate_config()

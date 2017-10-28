@@ -16,7 +16,7 @@
 macro(sequoia_engine_add_benchmark SOURCE)
   get_filename_component(name ${SOURCE} NAME_WE)
   sequoia_add_executable(
-    NAME Sequoia${name}
+    NAME SequoiaEngine${name}
     SOURCES ${SOURCE}
     DEPENDS SequoiaUnittestStatic
             SequoiaStatic

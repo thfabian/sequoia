@@ -14,7 +14,7 @@
 ##===------------------------------------------------------------------------------------------===##
 
 sequoia_add_library(
-  NAME SequoiaGame
+  NAME SequoiaEngineGame
   SOURCES AssetManager.h
           AssetManager.cpp
           CameraController.cpp
@@ -45,7 +45,7 @@ sequoia_add_library(
           SceneNode.h
           SceneNodeAlloc.h          
           SceneNodeCapability.h
-  DEPENDS SequoiaCoreObjects
-          SequoiaRenderObjects
+  DEPENDS SequoiaEngineCoreObjects
+          SequoiaEngineRenderObjects
   OBJECT
 )

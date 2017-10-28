@@ -29,6 +29,7 @@ option(SEQUOIA_ENGINE_USE_CCACHE "Use compile cache if available" ON)
 
 ##===---------------------------------- Testing -----------------------------------------------===##
 option(SEQUOIA_ENGINE_TESTING "Enable testing" ON)
+option(SEQUOIA_ENGINE_BENCHMARKING "Enable benchmarking" OFF)
 
 ##===---------------------------------- Documentation -----------------------------------------===##
 option(SEQUOIA_ENGINE_DOCUMENTATION "Enable documentation" OFF)
@@ -38,5 +39,6 @@ sequoia_export_options(SEQUOIA_ENGINE
   SEQUOIA_ENGINE_OPTIMIZE
   SEQUOIA_ENGINE_USE_CCACHE
   SEQUOIA_ENGINE_TESTING
+  SEQUOIA_ENGINE_BENCHMARKING
   SEQUOIA_ENGINE_DOCUMENTATION
 )
