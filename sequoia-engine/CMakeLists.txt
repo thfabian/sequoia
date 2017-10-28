@@ -82,7 +82,16 @@ sequoia_set_cxx_standard(c++14)
 sequoia_engine_set_cxx_flags()
 
 # Custom tragets
-sequoia_add_target_clean_all()
+sequoia_add_target_clean_all(
+  ${CMAKE_BINARY_DIR}/bin
+  ${CMAKE_BINARY_DIR}/cmake
+  ${CMAKE_BINARY_DIR}/docs
+  ${CMAKE_BINARY_DIR}/lib
+  ${CMAKE_BINARY_DIR}/ressource
+  ${CMAKE_BINARY_DIR}/sequoia-cmake
+  ${CMAKE_BINARY_DIR}/src
+  ${CMAKE_BINARY_DIR}/test
+)
 sequoia_add_target_clang_format(
   DIRECTORIES 
     ${CMAKE_SOURCE_DIR}/src
@@ -106,27 +115,28 @@ make_config_string("Build shared" ${BUILD_SHARED_LIBS})
 sequoia_report_result("Configuration summary" ${config_info})
 
 # Find the packages
-if(SEQUOIA_ENGINE_TESTING)
-  set(sequoia_engine_testing_packages GTest benchmark)
-endif()
+macro(find_packages NAME)
+  foreach(package ${ARGN})
+    include("Add${package}")
+    string(TOUPPER ${package} PACKAGE)
 
-set(sequoia_engine_packages Backward Boost glbinding glfw3 gli glm OpenCV OpenGL Python3 
-                            TBB fmt tinyobjloader Protobuf Threads ccache clang-format)
-
-foreach(package ${sequoia_engine_testing_packages} ${sequoia_engine_packages})
-  include("Add${package}")
-  string(TOUPPER ${package} PACKAGE)
-
-  list(APPEND SEQUOIA_ENGINE_EXTERNAL_LIBRARIES ${SEQUOIA_${PACKAGE}_LIBRARIES})
-  list(APPEND SEQUOIA_ENGINE_EXTERNAL_INCLUDE_DIRS ${SEQUOIA_${PACKAGE}_INCLUDE_DIRS})
-  list(APPEND SEQUOIA_ENGINE_EXTERNAL_DEFINITIONS ${SEQUOIA_${PACKAGE}_DEFINITIONS})
+    list(APPEND SEQUOIA_ENGINE_${NAME}_LIBRARIES ${SEQUOIA_${PACKAGE}_LIBRARIES})
+    list(APPEND SEQUOIA_ENGINE_${NAME}_INCLUDE_DIRS ${SEQUOIA_${PACKAGE}_INCLUDE_DIRS})
+    list(APPEND SEQUOIA_ENGINE_${NAME}_DEFINITIONS ${SEQUOIA_${PACKAGE}_DEFINITIONS})
+    
+    sequoia_create_package_string(${package} info)
+    list(APPEND package_info ${info})
+  endforeach()
   
-  sequoia_create_package_string(${package} info)
-  list(APPEND package_info ${info})
-endforeach()
+  include_directories(SYSTEM ${SEQUOIA_ENGINE_${NAME}_INCLUDE_DIRS})
+  add_definitions(${SEQUOIA_ENGINE_${NAME}_DEFINITIONS})
+endmacro()
 
-include_directories(SYSTEM ${SEQUOIA_ENGINE_EXTERNAL_INCLUDE_DIRS})
-add_definitions(${SEQUOIA_ENGINE_EXTERNAL_DEFINITIONS})
+find_packages(EXTERNAL Backward Boost glbinding glfw3 gli glm OpenCV OpenGL Python3 TBB fmt 
+                       tinyobjloader Protobuf Threads ccache clang-format)
+if(SEQUOIA_ENGINE_TESTING)
+  find_packages(TESTING GTest benchmark)
+endif()
 
 # Output summary of the packages
 sequoia_report_result("Package summary" ${package_info})

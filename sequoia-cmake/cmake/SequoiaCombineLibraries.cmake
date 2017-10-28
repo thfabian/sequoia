@@ -37,15 +37,13 @@ include(CMakeParseArguments)
 #   Object libraries to combine (see :ref:`sequoia_add_library`).
 # ``INSTALL_DESTINATION``
 #   Destition (relative to ``CMAKE_INSTALL_PREFIX``) to install the libraries.
-# ``USE_LTO``
-#   Use link time optimization (LTO) -- this usually requires setting special flags during 
-#   compilation.
+# ``VERSION``
+#   Version of the library (only used for shared objects).
 # ``DEPENDS`` [optional]
 #   List of external libraries and/or CMake targets treated as dependencies of the library.
 #
 function(sequoia_combine_libraries)
-  set(options USE_LTO)
-  set(one_value_args NAME INSTALL_DESTINATION)
+  set(one_value_args NAME INSTALL_DESTINATION VERSION)
   set(multi_value_args OBJECTS DEPENDS)
   cmake_parse_arguments(ARG "${options}" "${one_value_args}" "${multi_value_args}" ${ARGN})
   
@@ -65,7 +63,10 @@ function(sequoia_combine_libraries)
   target_link_libraries(${ARG_NAME}Static PUBLIC ${ARG_DEPENDS})
 
   set_target_properties(${ARG_NAME}Static PROPERTIES OUTPUT_NAME ${ARG_NAME})
-  set_target_properties(${ARG_NAME}Static PROPERTIES VERSION ${SEQUOIA_VERSION})
+
+  if(ARG_VERSION)
+    set_target_properties(${ARG_NAME}Static PROPERTIES VERSION ${ARG_VERSION})
+  endif()
 
   install(TARGETS ${ARG_NAME}Static 
           DESTINATION ${ARG_INSTALL_DESTINATION} 
@@ -77,8 +78,11 @@ function(sequoia_combine_libraries)
     target_link_libraries(${ARG_NAME}Shared PUBLIC ${ARG_DEPENDS})
     
     set_target_properties(${ARG_NAME}Shared PROPERTIES OUTPUT_NAME ${ARG_NAME})
-    set_target_properties(${ARG_NAME}Shared PROPERTIES VERSION ${SEQUOIA_VERSION})
-    set_target_properties(${ARG_NAME}Shared PROPERTIES SOVERSION ${SEQUOIA_VERSION})
+
+    if(ARG_VERSION)
+      set_target_properties(${ARG_NAME}Shared PROPERTIES VERSION ${ARG_VERSION})
+      set_target_properties(${ARG_NAME}Shared PROPERTIES SOVERSION ${ARG_VERSION})
+    endif()
 
     install(TARGETS ${ARG_NAME}Shared 
             DESTINATION ${ARG_INSTALL_DESTINATION} 

@@ -15,6 +15,15 @@
 
 sequoia_configure_file(Config.h.cmake)
 
+set(GL_SOURCE
+  GL/GLTestEnvironment.h
+  GL/GLTestEnvironment.cpp
+  GL/GLBenchmarkEnvironment.h
+  GL/GLBenchmarkEnvironment.cpp
+  GL/GLRenderSetup.h
+  GL/GLRenderSetup.cpp
+)
+
 sequoia_add_library(
   NAME SequoiaEngineUnittest
   SOURCES BenchmarkEnvironment.h
@@ -31,15 +40,9 @@ sequoia_add_library(
           TestFile.cpp
           TestOptions.h
           TestOptions.cpp
-          
-          GL/GLTestEnvironment.h
-          GL/GLTestEnvironment.cpp
-          GL/GLBenchmarkEnvironment.h
-          GL/GLBenchmarkEnvironment.cpp
-          GL/GLRenderSetup.h
-          GL/GLRenderSetup.cpp
-  DEPENDS SequoiaEngineCoreObjects
-          SequoiaEngineRenderObjects
+
+          ${GL_SOURCE}
+  DEPENDS SequoiaEngineRenderObjects
+          SequoiaEngineCoreObjects
   ARCHIVE
 )
-

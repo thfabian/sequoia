@@ -58,6 +58,5 @@ sequoia_export_package(
   VERSION "${TBB_VERSION}"
   LIBRARIES ${tbb_libs}
   INCLUDE_DIRS ${TBB_INCLUDE_DIRS}
-  DEFINTIONS ${tbb_definitions}
+  DEFINITIONS ${tbb_definitions}
 )
-

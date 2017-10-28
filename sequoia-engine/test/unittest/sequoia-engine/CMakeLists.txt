@@ -28,7 +28,7 @@ macro(sequoia_engine_add_unittest)
     SOURCES ${ARG_SOURCES}
     DEPENDS SequoiaEngineUnittestStatic
             SequoiaEngineStatic
-            ${SEQUOIA_EXTERNAL_LIBRARIES}
+            ${SEQUOIA_ENGINE_TESTING_LIBRARIES}
     OUTPUT_DIR ${CMAKE_BINARY_DIR}/bin/unittest
     GTEST_ARGS --gtest_color=yes
   )

@@ -20,10 +20,6 @@ add_subdirectory(Render)
 add_subdirectory(Driver)
 add_subdirectory(Game)
 
-if(SEQUOIA_ENGINE_TESTING)
-  add_subdirectory(Unittest)
-endif()
-
 # Link objects into a single library
 sequoia_combine_libraries(
   NAME SequoiaEngine
@@ -32,11 +28,22 @@ sequoia_combine_libraries(
           SequoiaEngineRenderObjects
           SequoiaEngineDriverObjects
           SequoiaEngineGameObjects
+  VERSION ${SEQUOIA_ENGINE_VERSION}
   DEPENDS ${SEQUOIA_ENGINE_EXTERNAL_LIBRARIES}
   INSTALL_DESTINATION ${SEQUOIA_ENGINE_INSTALL_LIB_DIR}
 )
 
-# Compile standalone driver
+install(
+  EXPORT SequoiaEngineTargets 
+  NAMESPACE sequoia:: 
+  DESTINATION ${SEQUOIA_ENGINE_INSTALL_CMAKE_DIR}
+)
+
+if(SEQUOIA_ENGINE_TESTING)
+  add_subdirectory(Unittest)
+endif()
+
+# TODO: remove 
 sequoia_add_executable(
   NAME SequoiaStandalone
   WIN32_APPLICATION

@@ -22,7 +22,7 @@ endforeach()
 sequoia_export_package(
   NAME backward 
   FOUND ${Backward_FOUND} 
-  LIBRARIES ${BACKWARD_LIBRARIES}
+  LIBRARIES Backward::Backward
   INCLUDE_DIRS ${BACKWARD_INCLUDE_DIRS}
   DEFINITIONS ${backward_definitions}
 )
