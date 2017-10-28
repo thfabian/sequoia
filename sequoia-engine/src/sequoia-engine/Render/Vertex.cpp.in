@@ -1,0 +1,104 @@
+//===--------------------------------------------------------------------------------*- C++ -*-===//
+//                         _____                        _
+//                        / ____|                      (_)
+//                       | (___   ___  __ _ _   _  ___  _  __ _
+//                        \___ \ / _ \/ _` | | | |/ _ \| |/ _` |
+//                        ____) |  __/ (_| | |_| | (_) | | (_| |
+//                       |_____/ \___|\__, |\__,_|\___/|_|\__,_| - Game Engine (2016-2017)
+//                                       | |
+//                                       |_|
+//
+// This file is distributed under the MIT License (MIT).
+// See LICENSE.txt for details.
+//
+//===------------------------------------------------------------------------------------------===//
+
+#include "sequoia-engine/Core/Format.h"
+#include "sequoia-engine/Core/StringUtil.h"
+#include "sequoia-engine/Core/Unreachable.h"
+#include "sequoia-engine/Render/Vertex.h"
+#include "sequoia-engine/Render/VertexVisitor.h"
+#include <memory>
+#include <mutex>
+#include <sstream>
+#include <utility>
+
+namespace sequoia {
+
+namespace render {
+
+namespace {
+
+static const char* typeToString(VertexLayout::Type type) {
+  switch(type) {
+  case VertexLayout::Invalid:
+    return "Invalid";
+  case VertexLayout::UInt8:
+    return "Uint8";
+  case VertexLayout::Float32:
+    return "Float32";
+  default:
+    sequoia_unreachable("invalid type");
+  }
+}
+
+template <class T>
+std::string elementToString(const T& value) {
+  return std::to_string(value);
+}
+
+template <>
+std::string elementToString<std::uint8_t>(const std::uint8_t& value) {
+  return std::to_string(static_cast<int>(value));
+}
+
+template <class T, std::size_t N>
+std::string arrayToString(const T (&vec)[N]) {
+  std::stringstream ss;
+  ss << "[ ";
+  for(int i = 0; i < N; ++i)
+    ss << elementToString(vec[i]) << (i != N - 1 ? ", " : "");
+  ss << " ]";
+  return ss.str();
+}
+
+} // anonymous namespace
+
+VertexLayout::~VertexLayout() {}
+
+std::string VertexLayout::toString() const {
+  std::stringstream ss;
+  ss << "VertexLayout[\n";
+
+  auto attributeToString = [&ss](const char* name, const Attribute& attrib) {
+    ss << "  " << name << " = Attribute[\n";
+    ss << "    Type = " << typeToString(attrib.Type) << ",\n";
+    ss << "    Offset = " << attrib.Offset << ",\n";
+    ss << "    NumElements = " << attrib.NumElements << ",\n";
+    ss << "    Normalized = " << attrib.Normalized << "\n";
+    ss << "  ]\n";
+  };
+
+  if(hasPosition())
+    attributeToString("Position", Position);
+
+  if(hasNormal())
+    attributeToString("Normal", Normal);
+
+  if(hasTexCoord())
+    attributeToString("TexCoord", TexCoord);
+
+  if(hasColor())
+    attributeToString("Color", Color);
+
+  ss << "]";
+  return ss.str();
+}
+
+} // namespace render
+
+} // namespace sequoia
+
+// clang-format off
+${SEQUOIA_DECL_CPP_VERTICES}
+// clang-format on

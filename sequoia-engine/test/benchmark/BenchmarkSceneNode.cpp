@@ -13,9 +13,9 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Game/SceneNode.h"
-#include "sequoia/Unittest/BenchmarkEnvironment.h"
-#include "sequoia/Unittest/BenchmarkMain.h"
+#include "sequoia-engine/Game/SceneNode.h"
+#include "sequoia-engine/Unittest/BenchmarkEnvironment.h"
+#include "sequoia-engine/Unittest/BenchmarkMain.h"
 
 using namespace sequoia;
 

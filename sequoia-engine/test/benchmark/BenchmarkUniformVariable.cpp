@@ -13,10 +13,10 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia/Core/Any.h"
-#include "sequoia/Render/UniformVariable.h"
-#include "sequoia/Unittest/BenchmarkEnvironment.h"
-#include "sequoia/Unittest/BenchmarkMain.h"
+#include "sequoia-engine/Core/Any.h"
+#include "sequoia-engine/Render/UniformVariable.h"
+#include "sequoia-engine/Unittest/BenchmarkEnvironment.h"
+#include "sequoia-engine/Unittest/BenchmarkMain.h"
 
 using namespace sequoia;
 
