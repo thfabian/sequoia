@@ -62,6 +62,7 @@ sequoia_get_architecture_info()
 include(SequoiaEngineOptions)
 include(SequoiaEngineDefinitions)
 include(SequoiaEngineSetCXXFlags)
+include(SequoiaEngineGenerateConfig)
 
 # Prevent in source builds
 sequoia_check_in_source_build()
@@ -143,3 +144,11 @@ endif()
 if(SEQUOIA_ENGINE_DOCUMENTATION)
   add_subdirectory(docs)
 endif()
+
+# Install headers & CMake config
+install(
+  DIRECTORY src/ 
+  DESTINATION ${SEQUOIA_ENGINE_INSTALL_INCLUDE_DIR} 
+  FILES_MATCHING PATTERN "*.h" PATTERN "*.inc" PATTERN "*.hpp"
+)
+sequoia_engine_generate_config()

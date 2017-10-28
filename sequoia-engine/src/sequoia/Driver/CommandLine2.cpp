@@ -56,8 +56,7 @@ void CommandLine2::parse(const std::vector<std::string>& args, Options2* options
     const std::string& option = optionPair.first;
     const core::OptionMetaData& metaData = optionPair.second;
 
-    std::size_t idx = option.find_first_of('.');
-    std::string base = option.substr(0, idx);
+    std::string base = option.substr(0, option.find_first_of('.'));
 
     if(!optionDescMap.count(base))
       optionDescMap.emplace(base, po::options_description(base + " options", MaxLineLen));
@@ -77,7 +76,7 @@ void CommandLine2::parse(const std::vector<std::string>& args, Options2* options
       optionsDesc.add_options()(cl.c_str(), value, docStr.c_str());
     }
 
-    commandLineToOptionMap[option] = metaData.CommandLine;
+    commandLineToOptionMap[metaData.CommandLine] = option;
   }
 
   po::options_description desc("General options");
@@ -105,6 +104,7 @@ void CommandLine2::parse(const std::vector<std::string>& args, Options2* options
   if(vm.count("version"))
     printVersion(tool_, version_);
 
+  // Update options
   for(const auto& nameValuePair : vm) {
     const std::string& optionName = commandLineToOptionMap[nameValuePair.first];
     options->set(optionName, nameValuePair.second.as<std::string>());
