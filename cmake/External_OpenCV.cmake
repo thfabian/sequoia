@@ -13,16 +13,18 @@
 ##
 ##===------------------------------------------------------------------------------------------===##
 
+# Pass location of zlib if we build it
+sequoia_extract_cmake_package_args(zlib cmake_args)
 if(NOT(USE_SYSTEM_ZLIB))
-  set(build_arg -DBUILD_ZLIB:BOOL=OFF)
+  list(APPEND cmake_args -DBUILD_ZLIB:BOOL=OFF)
 endif()
 
 if(UNIX)
   # Add GTK+ support for showing images
-  set(platform_arg -DWITH_GTK:BOOL=ON -DWITH_GTK_2_X:BOOL=ON)
+  list(APPEND cmake_args -DWITH_GTK:BOOL=ON -DWITH_GTK_2_X:BOOL=ON)
 elseif(WIN32)
   # We always build with dynamic runtime (/MD)
-  set(platform_arg -DBUILD_WITH_STATIC_CRT:BOOL=OFF -DWITH_WIN32UI:BOOL=ON)
+  list(APPEND cmake_args -DBUILD_WITH_STATIC_CRT:BOOL=OFF -DWITH_WIN32UI:BOOL=ON)
 endif()
 
 ExternalProject_Add(
@@ -34,11 +36,9 @@ ExternalProject_Add(
   INSTALL_DIR "${SEQUOIA_EXTERNAL_INSTALL_PREFIX}/opencv"
   CMAKE_CACHE_ARGS
     ${SEQUOIA_EXTERNAL_CMAKE_ARGS}
-    ${SEQUOIA_EXTERNAL_PROJECTS_CMAKE_ARGS}
     -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
 
-    ${build_arg}
-    ${platform_arg}
+    ${cmake_args}
     -DBUILD_DOCS:BOOL=OFF 
     -DBUILD_EXAMPLES:BOOL=OFF 
     -DBUILD_PACKAGE:BOOL=OFF 
@@ -141,7 +141,8 @@ else()
   set(OpenCV_DIR "${install_dir}/share/OpenCV" CACHE INTERNAL "")
 endif()
 
-sequoia_append_and_export_variable(
-   SEQUOIA_EXTERNAL_PROJECTS_CMAKE_ARGS 
-  "-DOpenCV_DIR:PATH=${OpenCV_DIR}"
+sequoia_export_package(
+  PACKAGE opencv 
+  CMAKE_ARGS 
+    "-DOpenCV_DIR:PATH=${OpenCV_DIR}"
 )

@@ -14,8 +14,9 @@
 ##===------------------------------------------------------------------------------------------===##
 
 include(CMakeParseArguments)
-include(SequoiaAddOptionalDeps)
+include(SequoiaComputeOptionalDependency)
 include(SequoiaMakePackageInfo)
+include(SequoiaExportPackage)
 
 # sequoia_find_package
 # --------------------
@@ -31,10 +32,7 @@ include(SequoiaMakePackageInfo)
 #    PACKAGE:STRING=<>        - Name of the package (has to be the same name as used in 
 #                               find_package).
 #    PACKAGE_ARGS:LIST=<>     - Arguments passed to find_package.
-#    FORWARD_VARS:LIST=<>     - List of variables which are appended (if defined) to the 
-#                               SEQUOIA_THIRDPARTY_CMAKE_ARGS. This are usually the variables 
-#                               which have an effect on the find_package call. For example, we may 
-#                               want to forward BOOST_ROOT if it was supplied by the user. 
+#    FORWARD_VARS:LIST=<>     - List of variables which will be exported if defined. 
 #    REQUIRED_VARS:LIST=<>    - Variables which need to be TRUE to consider the package as 
 #                               found. By default we check that <PACKAGE>_FOUND is TRUE.
 #    VERSION_VAR:STRING=<>    - Name of the variable which is defined by the find_package command
@@ -43,7 +41,7 @@ include(SequoiaMakePackageInfo)
 #    BUILD_VERSION:STRING=<>  - Version of the package which is built (if required)
 #    DEPENDS:LIST=<>          - Dependencies of this package.
 #
-macro(sequoia_find_package)
+function(sequoia_find_package)
   set(options)
   set(one_value_args PACKAGE BUILD_VERSION VERSION_VAR)
   set(multi_value_args PACKAGE_ARGS FORWARD_VARS REQUIRED_VARS DEPENDS)
@@ -100,7 +98,7 @@ macro(sequoia_find_package)
       # Forward arguments
       foreach(var ${ARG_FORWARD_VARS})
         if(DEFINED ${var})
-          set(SEQUOIA_EXTERNAL_CMAKE_ARGS "${SEQUOIA_EXTERNAL_CMAKE_ARGS};-D${var}:PATH=${${var}}")
+          sequoia_export_package(PACKAGE ${ARG_PACKAGE} CMAKE_ARGS "-D${var}:PATH=${${var}}")
         endif()
       endforeach()
 
@@ -108,8 +106,8 @@ macro(sequoia_find_package)
       if(DEFINED ARG_VERSION_VAR)
         # Try the user variable
         set(version "${${ARG_VERSION_VAR}}")
-      elseif(DEFINED ${ARG_PACKAGE}_VERSION_MAJOR AND 
-             DEFINED ${ARG_PACKAGE}_VERSION_MINOR AND 
+      elseif(DEFINED ${ARG_PACKAGE}_VERSION_MAJOR AND
+             DEFINED ${ARG_PACKAGE}_VERSION_MINOR AND
              DEFINED ${ARG_PACKAGE}_VERSION_PATCH)
         # SemVer (X.Y.Z)
         set(version 
@@ -139,10 +137,12 @@ macro(sequoia_find_package)
 
   # Set the dependencies if we build
   if(NOT(use_system) AND ARG_DEPENDS)
-    set(deps)
-    sequoia_add_optional_deps(deps ${ARG_DEPENDS})
-    if(deps)
-      add_dependencies(${target} ${deps})
+    foreach(dep ${ARG_DEPENDS})
+      sequoia_compute_optional_dependency(${dep} package_dependencies)
+    endforeach()
+
+    if(package_dependencies)
+      add_dependencies(${target} ${package_dependencies})
     endif()
   endif()
 
@@ -150,4 +150,4 @@ macro(sequoia_find_package)
     set(version "-")
   endif()
   sequoia_make_package_info(${ARG_PACKAGE} ${version} ${use_system})
-endmacro()
+endfunction()

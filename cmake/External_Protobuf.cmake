@@ -15,13 +15,13 @@
 
 set(cmake_args
     ${SEQUOIA_EXTERNAL_CMAKE_ARGS}
-    ${SEQUOIA_EXTERNAL_PROJECTS_CMAKE_ARGS}
     -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
     -Dprotobuf_BUILD_EXAMPLES=OFF
     -Dprotobuf_BUILD_SHARED_LIBS=${BUILD_SHARED_LIBS}
     -Dprotobuf_BUILD_TESTS=OFF
     -Dprotobuf_INSTALL_EXAMPLES=OFF
 )
+sequoia_extract_cmake_package_args(zlib cmake_args)
 
 ExternalProject_Add(protobuf
   DOWNLOAD_DIR "${SEQUOIA_EXTERNAL_DOWNLOAD_DIR}"
@@ -39,7 +39,8 @@ else()
   set(Protobuf_DIR "${install_dir}/lib/cmake/protobuf" CACHE INTERNAL "")
 endif()
 
-sequoia_append_and_export_variable(
-   SEQUOIA_EXTERNAL_PROJECTS_CMAKE_ARGS 
-  "-DProtobuf_DIR:PATH=${Protobuf_DIR}" 
+sequoia_export_package(
+  PACKAGE protobuf 
+  CMAKE_ARGS 
+    "-DProtobuf_DIR:PATH=${Protobuf_DIR}" 
 )

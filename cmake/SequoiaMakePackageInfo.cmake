@@ -13,6 +13,9 @@
 ##
 ##===------------------------------------------------------------------------------------------===##
 
+include(SequoiaAppendAndExportVariable)
+include(SequoiaPrependAndExportVariable)
+
 # sequoia_make_package_info
 # -------------------------
 #
@@ -22,7 +25,7 @@
 #    PACKAGE_VERSION:STRING=<>   - Version of the package
 #    USE_SYSTEM:BOOL=<>          - Do we use the system version of the package?
 #
-macro(sequoia_make_package_info PACKAGE_NAME PACKAGE_VERSION USE_SYSTEM)
+function(sequoia_make_package_info PACKAGE_NAME PACKAGE_VERSION USE_SYSTEM)
   string(LENGTH ${PACKAGE_NAME} package_name_length)
   math(EXPR indent_length "20 - ${package_name_length}")
 
@@ -35,10 +38,12 @@ macro(sequoia_make_package_info PACKAGE_NAME PACKAGE_VERSION USE_SYSTEM)
   endif()
 
   if(${USE_SYSTEM})
-    set(SEQUOIA_PACKAGE_INFO 
-      "${PACKAGE_NAME}${indent}: found    ${version_str};${SEQUOIA_PACKAGE_INFO}")
+    sequoia_prepend_and_export_variable(
+      SEQUOIA_PACKAGE_INFO "${PACKAGE_NAME}${indent}: found    ${version_str}"
+    )
   else()
-    set(SEQUOIA_PACKAGE_INFO 
-      "${SEQUOIA_PACKAGE_INFO};${PACKAGE_NAME}${indent}: building ${version_str}")
+    sequoia_append_and_export_variable(
+      SEQUOIA_PACKAGE_INFO "${PACKAGE_NAME}${indent}: building ${version_str}"
+    )
   endif()
-endmacro()
+endfunction()

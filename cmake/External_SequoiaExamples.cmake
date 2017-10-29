@@ -19,7 +19,7 @@ include(SequoiaMakeCMakeScript)
 
 set(sequoia_examples_cmake_args ${SEQUOIA_EXTERNAL_CMAKE_ARGS})
 
-message("${sequoia_examples_cmake_args}")
+#message("${sequoia_examples_cmake_args}")
 
 # if(SEQUOIA_ASSERTS)
 #   set(SEQUOIA_ENGINE_ASSERTS ON)

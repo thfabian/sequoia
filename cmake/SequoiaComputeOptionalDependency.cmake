@@ -13,22 +13,18 @@
 ##
 ##===------------------------------------------------------------------------------------------===##
 
-# sequoia_add_optional_deps
-# -----------------------------
+# sequoia_compute_optional_dependency
+# -----------------------------------
 #
-# Convenience macro for adding dependencies optionally if not using system libraries. This function 
-# takes a list of external projects targets ARGN, looks for a variable of the form 
-# USE_SYSTEM_<ARG> for each ARG in ARGN, if this does not exist or is set to FALSE the supplied 
-# taget name will be added to DEP_VAR as a dependency.
+# Convenience macro for computing optional dependencies dependening on whether USE_SYSTEM_<PACKAGE> 
+# is ON.
 #
+#    PACKAGE:STRING=<>      - Package to depend on
 #    DEP_VAR:STRING=<>      - Output variable containing the resolved dependencies
-#    ARGN                   - Dependencies to append
 #
-macro(sequoia_add_optional_deps DEP_VAR)
-  foreach(dep ${ARGN})
-    string(TOUPPER "${dep}" dependency)
-    if(NOT USE_SYSTEM_${dependency})
-      list(APPEND ${DEP_VAR} ${dep})
-    endif()
-  endforeach()
+macro(sequoia_compute_optional_dependency PACKAGE DEP_VAR)
+  string(TOUPPER "${PACKAGE}" package_upper)
+  if(NOT USE_SYSTEM_${package_upper})
+    list(APPEND ${DEP_VAR} ${PACKAGE})
+  endif()
 endmacro()

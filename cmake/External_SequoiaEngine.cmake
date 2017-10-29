@@ -14,13 +14,14 @@
 ##===------------------------------------------------------------------------------------------===##
 
 include(ExternalProject)
-include(SequoiaAddOptionalDeps)
+include(SequoiaComputeOptionalDependency)
+include(SequoiaExtractCMakePackageArgs)
 include(SequoiaMakeCMakeScript)
 
+# Set CMake arguments
 set(sequoia_engine_cmake_args 
-    ${SEQUOIA_EXTERNAL_CMAKE_ARGS} 
-    ${SEQUOIA_EXTERNAL_PROJECTS_CMAKE_ARGS}
-    -DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}
+  ${SEQUOIA_EXTERNAL_CMAKE_ARGS} 
+  -DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}
 )
 
 if(SEQUOIA_ASSERTS)
@@ -28,13 +29,18 @@ if(SEQUOIA_ASSERTS)
 endif()
 
 foreach(option ${SEQUOIA_ENGINE_OPTIONS})
-  list(APPEND sequoia_engine_cmake_args "-D${option}=${${option}}")  
+  list(APPEND sequoia_engine_cmake_args "-D${option}=${${option}}") 
+endforeach()
+
+# Compute dependencies
+foreach(project zlib backward benchmark boost fmt glbinding glfw3 gli glm opencv tbb tinyobjloader 
+                gtest protobuf)
+  sequoia_compute_optional_dependency(${project} sequoia_engine_deps) 
+  sequoia_extract_cmake_package_args(${project} sequoia_engine_cmake_args)
 endforeach()
 
 set(sequoia_engine_source "${SEQUOIA_ENGINE_DIR}")
 set(sequoia_engine_build "${CMAKE_BINARY_DIR}/sequoia-engine")
-
-sequoia_add_optional_deps(sequoia_engine_deps "${SEQUOIA_EXTERNAL_PROJECTS}")
 
 ExternalProject_Add(
   SequoiaEngine
@@ -45,6 +51,7 @@ ExternalProject_Add(
   DEPENDS ${sequoia_engine_deps}
 )
 
+# Create script to rerun CMake
 sequoia_make_cmake_script(
   ${sequoia_engine_source}
   ${sequoia_engine_build} 

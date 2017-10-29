@@ -30,7 +30,8 @@ ExternalProject_Add(
 ExternalProject_Get_Property(glm install_dir)
 set(GLM_ROOT "${install_dir}" CACHE INTERNAL "")
 
-sequoia_append_and_export_variable(
-   SEQUOIA_EXTERNAL_PROJECTS_CMAKE_ARGS 
-  "-DGLM_ROOT:PATH=${GLM_ROOT}"
+sequoia_export_package(
+  PACKAGE glm 
+  CMAKE_ARGS 
+    "-DGLM_ROOT:PATH=${GLM_ROOT}"
 )

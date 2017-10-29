@@ -68,6 +68,9 @@ sequoia_add_target_clean_all(
   "${CMAKE_BINARY_DIR}/prefix"  
   "${CMAKE_BINARY_DIR}/thirdparty"
   "${CMAKE_BINARY_DIR}/install"
+  "${CMAKE_BINARY_DIR}/sequoia-cmake"
+  "${CMAKE_BINARY_DIR}/sequoia-engine"
+  "${CMAKE_BINARY_DIR}/SequoiaEngine-prefix"
 )
 
 # Output summary of the configuration
@@ -107,4 +110,4 @@ add_subdirectory(thirdparty)
 
 # Build the sequoia projects
 include(External_SequoiaEngine)
-include(External_SequoiaExamples)
+#include(External_SequoiaExamples)

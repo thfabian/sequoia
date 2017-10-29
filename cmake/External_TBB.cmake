@@ -22,14 +22,14 @@ ExternalProject_Add(
   INSTALL_DIR "${SEQUOIA_EXTERNAL_INSTALL_PREFIX}/tbb"
   CMAKE_ARGS
     ${SEQUOIA_EXTERNAL_CMAKE_ARGS}
-    ${SEQUOIA_EXTERNAL_PROJECTS_CMAKE_ARGS}
     -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
 )
 
 ExternalProject_Get_Property(tbb install_dir)
 set(TBB_ROOT_DIR "${install_dir}" CACHE INTERNAL "")
 
-sequoia_append_and_export_variable(
-   SEQUOIA_EXTERNAL_PROJECTS_CMAKE_ARGS 
-  "-DTBB_ROOT_DIR:PATH=${TBB_ROOT_DIR}" 
+sequoia_export_package(
+  PACKAGE tbb 
+  CMAKE_ARGS 
+    "-DTBB_ROOT_DIR:PATH=${TBB_ROOT_DIR}" 
 )

@@ -22,14 +22,13 @@ ExternalProject_Add(
   INSTALL_DIR "${SEQUOIA_EXTERNAL_INSTALL_PREFIX}/zlib"
   CMAKE_CACHE_ARGS
     ${SEQUOIA_EXTERNAL_CMAKE_ARGS}
-    ${SEQUOIA_EXTERNAL_PROJECTS_CMAKE_ARGS}
     -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
 )
 
 ExternalProject_Get_Property(zlib install_dir)
 set(ZLIB_ROOT "${install_dir}" CACHE INTERNAL "")
 
-sequoia_append_and_export_variable(
-   SEQUOIA_EXTERNAL_PROJECTS_CMAKE_ARGS 
-  "-DZLIB_ROOT:PATH=${ZLIB_ROOT}" 
+sequoia_export_package(
+  PACKAGE zlib 
+  CMAKE_ARGS "-DZLIB_ROOT:PATH=${ZLIB_ROOT}"
 )

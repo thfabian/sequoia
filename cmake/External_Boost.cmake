@@ -77,10 +77,11 @@ ExternalProject_Add(boost
 ExternalProject_Get_Property(boost install_dir)
 set(BOOST_ROOT "${install_dir}" CACHE INTERNAL "")
 
-sequoia_append_and_export_variable(
-   SEQUOIA_EXTERNAL_PROJECTS_CMAKE_ARGS 
-  "-DBOOST_ROOT:PATH=${BOOST_ROOT}"
-  "-DBoost_INCLUDE_DIR:PATH=${BOOST_ROOT}/include"
-  "-DBOOST_LIBRARYDIR:PATH=${BOOST_ROOT}/lib"
-  "-DBoost_NO_SYSTEM_PATHS:BOOL=ON"
+sequoia_export_package(
+  PACKAGE boost 
+  CMAKE_ARGS 
+    "-DBOOST_ROOT:PATH=${BOOST_ROOT}"
+    "-DBoost_INCLUDE_DIR:PATH=${BOOST_ROOT}/include"
+    "-DBOOST_LIBRARYDIR:PATH=${BOOST_ROOT}/lib"
+    "-DBoost_NO_SYSTEM_PATHS:BOOL=ON"
 )

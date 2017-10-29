@@ -13,25 +13,17 @@
 ##
 ##===------------------------------------------------------------------------------------------===##
 
-ExternalProject_Add(
-  benchmark
-  DOWNLOAD_DIR "${SEQUOIA_EXTERNAL_DOWNLOAD_DIR}"
-  URL ${benchmark_url}
-  URL_MD5 ${benchmark_md5}
-  BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}/benchmark"
-  INSTALL_DIR "${SEQUOIA_EXTERNAL_INSTALL_PREFIX}/benchmark"
-  CMAKE_ARGS
-    ${SEQUOIA_EXTERNAL_CMAKE_ARGS}
-    ${SEQUOIA_EXTERNAL_PROJECTS_CMAKE_ARGS}
-    -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
-    -DBENCHMARK_ENABLE_TESTING:BOOL=OFF
-)
-
-ExternalProject_Get_Property(benchmark install_dir)
-set(benchmark_DIR "${install_dir}/lib/cmake/benchmark" CACHE INTERNAL "")
-
-sequoia_export_package(
-  PACKAGE benchmark 
-  CMAKE_ARGS 
-    "-Dbenchmark_DIR:PATH=${benchmark_DIR}"
-)
+# sequoia_extract_cmake_package_args
+# ----------------------------------
+#
+# Extract the CMake arguments of the <PACKAGE> and append it to <CMAKE_ARGS>.
+#
+#    PACKAGE:STRING=<>      - Name of the package
+#    CMAKE_ARGS:STRING=<>   - Append the CMake arguments of <PACKGE> to this variable.
+#
+macro(sequoia_extract_cmake_package_args PACKAGE CMAKE_ARGS)
+  string(TOUPPER ${PACKAGE} package_upper)
+  if(DEFINED SEQUOIA_${package_upper}_CMAKE_ARGS)
+    list(APPEND ${CMAKE_ARGS} ${SEQUOIA_${package_upper}_CMAKE_ARGS})
+  endif()
+endmacro()
