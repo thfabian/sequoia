@@ -20,7 +20,7 @@ get_property(benchmark_INCLUDE_DIRS TARGET benchmark::benchmark PROPERTY INTERFA
 sequoia_export_package(
   NAME benchmark
   FOUND ${benchmark_FOUND} 
-  LIBRARIES "benchmark::benchmark"
+  LIBRARIES benchmark::benchmark
   INCLUDE_DIRS ${benchmark_INCLUDE_DIRS}
 )
 
