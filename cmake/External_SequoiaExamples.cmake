@@ -14,41 +14,46 @@
 ##===------------------------------------------------------------------------------------------===##
 
 include(ExternalProject)
-include(SequoiaAddOptionalDeps)
+include(SequoiaComputeOptionalDependency)
+include(SequoiaExtractCMakePackageArgs)
 include(SequoiaMakeCMakeScript)
 
-set(sequoia_examples_cmake_args ${SEQUOIA_EXTERNAL_CMAKE_ARGS})
+# Set CMake arguments
+set(sequoia_examples_cmake_args 
+  ${SEQUOIA_EXTERNAL_CMAKE_ARGS} 
+  -DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}
+)
 
-#message("${sequoia_examples_cmake_args}")
+if(SEQUOIA_ASSERTS)
+  set(SEQUOIA_EXAMPLES_ASSERTS ON)
+endif()
 
-# if(SEQUOIA_ASSERTS)
-#   set(SEQUOIA_ENGINE_ASSERTS ON)
-# endif()
+foreach(option ${SEQUOIA_EXAMPLES})
+  list(APPEND sequoia_examples_cmake_args "-D${option}=${${option}}") 
+endforeach()
 
-# foreach(option ${SEQUOIA_ENGINE_OPTIONS})
-#   list(APPEND sequoia_engine_cmake_args "-D${option}=${${option}}")  
-# endforeach()
-# list(APPEND sequoia_engine_cmake_args "-DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}")
+# Compute dependencies
+foreach(project SequoiaEngine)
+  sequoia_compute_optional_dependency(${project} sequoia_examples_deps) 
+  sequoia_extract_cmake_package_args(${project} sequoia_examples_cmake_args)
+endforeach()
 
-# set(sequoia_engine_source "${SEQUOIA_ENGINE_DIR}")
-# set(sequoia_engine_build "${CMAKE_BINARY_DIR}/sequoia-engine")
+set(sequoia_examples_source "${SEQUOIA_EXAMPLES_DIR}")
+set(sequoia_examples_build "${CMAKE_BINARY_DIR}/sequoia-examples")
 
-# sequoia_add_optional_deps(sequoia_engine_deps "${SEQUOIA_EXTERNAL_PROJECTS}")
+ExternalProject_Add(
+  SequoiaExamples
+  SOURCE_DIR "${sequoia_examples_source}"
+  BINARY_DIR "${sequoia_examples_build}"
+  INSTALL_DIR "${CMAKE_INSTALL_PREFIX}"
+  INSTALL_COMMAND ""
+  CMAKE_ARGS ${sequoia_examples_cmake_args}
+  DEPENDS ${sequoia_examples_deps}
+)
 
-# ExternalProject_Add(
-#   SequoiaEngine
-#   SOURCE_DIR "${sequoia_engine_source}"
-#   BINARY_DIR "${sequoia_engine_build}"
-#   INSTALL_DIR "${CMAKE_INSTALL_PREFIX}"
-#   CMAKE_ARGS ${sequoia_engine_cmake_args}
-#   DEPENDS ${sequoia_engine_deps}
-# )
-
-# sequoia_make_cmake_script(
-#   ${sequoia_engine_source}
-#   ${sequoia_engine_build} 
-#   ${sequoia_engine_cmake_args}
-# )
-
-# ExternalProject_Get_Property(SequoiaEngine install_dir)
-# set(SequoiaEngine_DIR "${install_dir}/cmake/sequoia-engine" CACHE INTERNAL "")
+# Create script to rerun CMake
+sequoia_make_cmake_script(
+  ${sequoia_examples_source}
+  ${sequoia_examples_build} 
+  ${sequoia_examples_cmake_args}
+)

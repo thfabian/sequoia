@@ -38,7 +38,7 @@ def main():
                 sequoia_cmake_init_script, 'sequoia')
 
     # Update sub-projects
-    for project in ['sequoia-docs', 'sequoia-engine']:
+    for project in ['sequoia-docs', 'sequoia-engine', 'sequoia-examples']:
         if not os.path.exists(os.path.join(sequoia_dir, project)):
             print("WARNING: %s not checked out - cannot update 'SequoiaCMakeInit.cmake'" % project)
 

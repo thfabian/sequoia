@@ -28,5 +28,12 @@ option(SEQUOIA_ASSERTS "Enable asserts in all sequoia projects" ${build_is_not_r
 option(SEQUOIA_NO_SYSTEM_LIBS "Don't use system libraries" ${no_system_libs})
 
 # sequoia-engine
-set(SEQUOIA_ENGINE_DIR "${CMAKE_SOURCE_DIR}/sequoia-engine" CACHE PATH "Directory of the Engine")
+set(SEQUOIA_ENGINE_DIR "${CMAKE_SOURCE_DIR}/sequoia-engine" 
+    CACHE PATH "Directory of the Engine")
 include("${SEQUOIA_ENGINE_DIR}/cmake/SequoiaEngineOptions.cmake")
+
+# sequoia-examples
+set(SEQUOIA_EXAMPLES_DIR "${CMAKE_SOURCE_DIR}/sequoia-examples" 
+    CACHE PATH "Directory of the Examples")
+include("${SEQUOIA_EXAMPLES_DIR}/cmake/SequoiaExamplesOptions.cmake")
+

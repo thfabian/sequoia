@@ -17,6 +17,7 @@ include(ExternalProject)
 include(SequoiaComputeOptionalDependency)
 include(SequoiaExtractCMakePackageArgs)
 include(SequoiaMakeCMakeScript)
+include(SequoiaExportPackage)
 
 # Set CMake arguments
 set(sequoia_engine_cmake_args 
@@ -60,3 +61,9 @@ sequoia_make_cmake_script(
 
 ExternalProject_Get_Property(SequoiaEngine install_dir)
 set(SequoiaEngine_DIR "${install_dir}/cmake/sequoia-engine" CACHE INTERNAL "")
+
+sequoia_export_package(
+  PACKAGE SequoiaEngine 
+  CMAKE_ARGS 
+    "-DSequoiaEngine_DIR:PATH=${SequoiaEngine_DIR}" 
+)

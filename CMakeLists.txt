@@ -110,4 +110,4 @@ add_subdirectory(thirdparty)
 
 # Build the sequoia projects
 include(External_SequoiaEngine)
-#include(External_SequoiaExamples)
+include(External_SequoiaExamples)
