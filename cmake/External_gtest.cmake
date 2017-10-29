@@ -34,6 +34,7 @@ ExternalProject_Add(
     "<SOURCE_DIR>/CMakeLists.txt"
   CMAKE_CACHE_ARGS
     ${SEQUOIA_EXTERNAL_CMAKE_ARGS}
+    ${SEQUOIA_EXTERNAL_PROJECTS_CMAKE_ARGS}
     -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
     -Dgtest_force_shared_crt:BOOL=ON
 )
@@ -42,6 +43,6 @@ ExternalProject_Get_Property(gtest install_dir)
 set(GTEST_ROOT "${install_dir}" CACHE INTERNAL "")
 
 sequoia_append_and_export_variable(
-   SEQUOIA_EXTERNAL_CMAKE_ARGS 
+   SEQUOIA_EXTERNAL_PROJECTS_CMAKE_ARGS 
   "-DGTEST_ROOT:PATH=${GTEST_ROOT}" 
 )

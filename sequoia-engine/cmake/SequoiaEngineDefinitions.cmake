@@ -60,7 +60,7 @@ set(SEQUOIA_ENGINE_INSTALL_INCLUDE_DIR include
     CACHE INTERNAL "Relative path of the include install location" FORCE)
 set(SEQUOIA_ENGINE_INSTALL_LIB_DIR lib 
     CACHE INTERNAL "Relative path of the library install location " FORCE)
-set(SEQUOIA_ENGINE_INSTALL_CMAKE_DIR cmake
+set(SEQUOIA_ENGINE_INSTALL_CMAKE_DIR cmake/sequoia-engine
     CACHE INTERNAL "Relative path of the cmake install location" FORCE)
 
 # Config.h paths

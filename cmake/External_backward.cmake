@@ -22,6 +22,7 @@ ExternalProject_Add(
   INSTALL_DIR "${SEQUOIA_EXTERNAL_INSTALL_PREFIX}/backward"
   CMAKE_ARGS
     ${SEQUOIA_EXTERNAL_CMAKE_ARGS}
+    ${SEQUOIA_EXTERNAL_PROJECTS_CMAKE_ARGS}
     -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
     -DBACKWARD_SHARED:BOOL=${BUILD_SHARED_LIBS}
     -DBACKWARD_TESTS:BOOL=OFF
@@ -31,7 +32,7 @@ ExternalProject_Add(
 ExternalProject_Get_Property(backward install_dir)
 
 sequoia_append_and_export_variable(
-   SEQUOIA_EXTERNAL_CMAKE_ARGS 
+   SEQUOIA_EXTERNAL_PROJECTS_CMAKE_ARGS
   "-DBackward_DIR:PATH=${install_dir}/lib/backward"
   "-DBACKWARD_INCLUDE_DIR:PATH=${install_dir}/include"
 )

@@ -15,6 +15,7 @@
 
 set(cmake_args
     ${SEQUOIA_EXTERNAL_CMAKE_ARGS}
+    ${SEQUOIA_EXTERNAL_PROJECTS_CMAKE_ARGS}
     -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
     -Dprotobuf_BUILD_EXAMPLES=OFF
     -Dprotobuf_BUILD_SHARED_LIBS=${BUILD_SHARED_LIBS}
@@ -39,6 +40,6 @@ else()
 endif()
 
 sequoia_append_and_export_variable(
-   SEQUOIA_EXTERNAL_CMAKE_ARGS 
+   SEQUOIA_EXTERNAL_PROJECTS_CMAKE_ARGS 
   "-DProtobuf_DIR:PATH=${Protobuf_DIR}" 
 )

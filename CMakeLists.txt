@@ -28,9 +28,9 @@ if(NOT BUILD_SHARED_LIBS)
   set(BUILD_SHARED_LIBS OFF CACHE BOOL "Build shared libraries." FORCE)
 endif()
 
-# Default installation path: install/
+# Default installation path: <build-dir>/install
 if(NOT CMAKE_INSTALL_PREFIX)
-  set(CMAKE_INSTALL_PREFIX "${CMAKE_SOURCE_DIR}/install" CACHE STRING
+  set(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/install" CACHE STRING
       "Install path prefix, prepended onto install directories." FORCE)
 endif()
 
@@ -67,6 +67,7 @@ sequoia_check_in_source_build()
 sequoia_add_target_clean_all(
   "${CMAKE_BINARY_DIR}/prefix"  
   "${CMAKE_BINARY_DIR}/thirdparty"
+  "${CMAKE_BINARY_DIR}/install"
 )
 
 # Output summary of the configuration
@@ -79,6 +80,7 @@ make_config_string("Platform" ${SEQUOIA_PLATFORM_STRING})
 make_config_string("Architecture" ${SEQUOIA_ARCHITECTURE_STRING})
 make_config_string("Compiler" ${SEQUOIA_COMPILER_STRING})
 make_config_string("Build type" ${CMAKE_BUILD_TYPE})
+make_config_string("Install directory" ${CMAKE_INSTALL_PREFIX})
 
 sequoia_report_result("Configuration summary" ${config_info})
 
@@ -105,3 +107,4 @@ add_subdirectory(thirdparty)
 
 # Build the sequoia projects
 include(External_SequoiaEngine)
+include(External_SequoiaExamples)

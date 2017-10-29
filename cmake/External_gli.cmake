@@ -33,6 +33,6 @@ ExternalProject_Get_Property(gli install_dir)
 set(GLI_ROOT "${install_dir}" CACHE INTERNAL "")
 
 sequoia_append_and_export_variable(
-   SEQUOIA_EXTERNAL_CMAKE_ARGS 
+   SEQUOIA_EXTERNAL_PROJECTS_CMAKE_ARGS 
   "-DGLI_ROOT:PATH=${GLI_ROOT}"
 )

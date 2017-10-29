@@ -22,6 +22,7 @@ ExternalProject_Add(
   INSTALL_DIR "${SEQUOIA_EXTERNAL_INSTALL_PREFIX}/benchmark"
   CMAKE_ARGS
     ${SEQUOIA_EXTERNAL_CMAKE_ARGS}
+    ${SEQUOIA_EXTERNAL_PROJECTS_CMAKE_ARGS}
     -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
     -DBENCHMARK_ENABLE_TESTING:BOOL=OFF
 )
@@ -30,6 +31,6 @@ ExternalProject_Get_Property(benchmark install_dir)
 set(benchmark_DIR "${install_dir}/lib/cmake/benchmark" CACHE INTERNAL "")
 
 sequoia_append_and_export_variable(
-   SEQUOIA_EXTERNAL_CMAKE_ARGS 
+   SEQUOIA_EXTERNAL_PROJECTS_CMAKE_ARGS 
   "-Dbenchmark_DIR:PATH=${benchmark_DIR}"
 )

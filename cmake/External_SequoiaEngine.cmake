@@ -17,7 +17,11 @@ include(ExternalProject)
 include(SequoiaAddOptionalDeps)
 include(SequoiaMakeCMakeScript)
 
-set(sequoia_engine_cmake_args ${SEQUOIA_EXTERNAL_CMAKE_ARGS})
+set(sequoia_engine_cmake_args 
+    ${SEQUOIA_EXTERNAL_CMAKE_ARGS} 
+    ${SEQUOIA_EXTERNAL_PROJECTS_CMAKE_ARGS}
+    -DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}
+)
 
 if(SEQUOIA_ASSERTS)
   set(SEQUOIA_ENGINE_ASSERTS ON)
@@ -25,7 +29,7 @@ endif()
 
 foreach(option ${SEQUOIA_ENGINE_OPTIONS})
   list(APPEND sequoia_engine_cmake_args "-D${option}=${${option}}")  
-endforeach() 
+endforeach()
 
 set(sequoia_engine_source "${SEQUOIA_ENGINE_DIR}")
 set(sequoia_engine_build "${CMAKE_BINARY_DIR}/sequoia-engine")
@@ -37,11 +41,8 @@ ExternalProject_Add(
   SOURCE_DIR "${sequoia_engine_source}"
   BINARY_DIR "${sequoia_engine_build}"
   INSTALL_DIR "${CMAKE_INSTALL_PREFIX}"
-  CMAKE_ARGS
-    ${sequoia_engine_cmake_args}
-    -DCMAKE_INSTALL_PREFIX=<INSTALL_DIR>
-  DEPENDS
-    ${sequoia_engine_deps}
+  CMAKE_ARGS ${sequoia_engine_cmake_args}
+  DEPENDS ${sequoia_engine_deps}
 )
 
 sequoia_make_cmake_script(
@@ -49,3 +50,6 @@ sequoia_make_cmake_script(
   ${sequoia_engine_build} 
   ${sequoia_engine_cmake_args}
 )
+
+ExternalProject_Get_Property(SequoiaEngine install_dir)
+set(SequoiaEngine_DIR "${install_dir}/cmake/sequoia-engine" CACHE INTERNAL "")

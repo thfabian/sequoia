@@ -22,6 +22,7 @@ ExternalProject_Add(
   INSTALL_DIR "${SEQUOIA_EXTERNAL_INSTALL_PREFIX}/glfw3"
   CMAKE_CACHE_ARGS
     ${SEQUOIA_EXTERNAL_CMAKE_ARGS}
+    ${SEQUOIA_EXTERNAL_PROJECTS_CMAKE_ARGS}
     -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
     -DGLFW_BUILD_DOCS:BOOL=OFF
     -DGLFW_BUILD_EXAMPLES:BOOL=OFF
@@ -32,6 +33,6 @@ ExternalProject_Get_Property(glfw3 install_dir)
 set(glfw3_DIR "${install_dir}/lib/cmake/glfw3" CACHE INTERNAL "")
 
 sequoia_append_and_export_variable(
-   SEQUOIA_EXTERNAL_CMAKE_ARGS 
+   SEQUOIA_EXTERNAL_PROJECTS_CMAKE_ARGS 
   "-Dglfw3_DIR:PATH=${glfw3_DIR}"
 )

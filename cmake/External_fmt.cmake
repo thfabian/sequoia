@@ -22,6 +22,7 @@ ExternalProject_Add(
   INSTALL_DIR "${SEQUOIA_EXTERNAL_INSTALL_PREFIX}/fmt"
   CMAKE_ARGS
     ${SEQUOIA_EXTERNAL_CMAKE_ARGS}
+    ${SEQUOIA_EXTERNAL_PROJECTS_CMAKE_ARGS}
     -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
     -DFMT_TEST:BOOL=OFF
     -DFMT_USE_CPP11:BOOL=ON
@@ -31,6 +32,6 @@ ExternalProject_Get_Property(fmt install_dir)
 set(fmt_DIR "${install_dir}/lib/cmake/fmt" CACHE INTERNAL "")
 
 sequoia_append_and_export_variable(
-   SEQUOIA_EXTERNAL_CMAKE_ARGS 
+   SEQUOIA_EXTERNAL_PROJECTS_CMAKE_ARGS 
   "-Dfmt_DIR:PATH=${fmt_DIR}"
 )

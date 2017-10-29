@@ -111,6 +111,7 @@ make_config_string("Architecture" ${SEQUOIA_ARCHITECTURE_STRING})
 make_config_string("Compiler" ${SEQUOIA_COMPILER_STRING})
 make_config_string("Build type" ${CMAKE_BUILD_TYPE})
 make_config_string("Build shared" ${BUILD_SHARED_LIBS})
+make_config_string("Install directory" ${CMAKE_INSTALL_PREFIX})
 
 sequoia_report_result("Configuration summary" ${config_info})
 
