@@ -188,20 +188,4 @@ sequoia_build_package(
   BUILD_VERSION ${gtest_version}
 )
 
-#
-# Protobuf
-#
-set(protobuf_version "3.4.0")
-set(protobuf_version_short "3.4")
-set(protobuf_url "https://github.com/google/protobuf/archive/v${protobuf_version}.tar.gz")
-set(protobuf_md5 "1d077a7d4db3d75681f5c333f2de9b1a")
-
-sequoia_find_package(
-  PACKAGE Protobuf
-  PACKAGE_ARGS ${protobuf_version_short} NO_MODULE QUIET
-  FORWARD_VARS Protobuf_DIR
-  BUILD_VERSION ${protobuf_version}
-  DEPENDS zlib
-)
-
 sequoia_report_result("Package summary" ${SEQUOIA_PACKAGE_INFO})
