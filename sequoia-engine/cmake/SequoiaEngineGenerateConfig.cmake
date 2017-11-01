@@ -32,7 +32,29 @@ function(sequoia_engine_generate_config)
 
   set(SEQUOIA_ENGINE_INSTALL_ROOT "")
 
-  # Export configuration
+  # Export relevant options options
+  set(CONFIG_SEQUOIA_ENGINE_OPTIONS 
+      "${CONFIG_SEQUOIA_ENGINE_OPTIONS}set(SEQUOIA_ENGINE_ASSERTS ${SEQUOIA_ENGINE_ASSERTS})\n")
+  set(CONFIG_SEQUOIA_ENGINE_OPTIONS 
+      "${CONFIG_SEQUOIA_ENGINE_OPTIONS}set(SEQUOIA_ENGINE_OPTIMIZE ${SEQUOIA_ENGINE_OPTIMIZE})")
+
+  # Export include directories
+  set(include_dirs "${SEQUOIA_ENGINE_EXTERNAL_INCLUDE_DIRS}")
+  list(REMOVE_DUPLICATES include_dirs)
+  set(CONFIG_SEQUOIA_ENGINE_INCLUDE_DIRS "set(SEQUOIA_ENGINE_INCLUDE_DIRS ${include_dirs})")
+
+  # Export definitions
+  set(definitions "${SEQUOIA_ENGINE_EXTERNAL_DEFINITIONS}")
+  list(REMOVE_DUPLICATES definitions)
+  set(CONFIG_SEQUOIA_ENGINE_DEFINITIONS "set(SEQUOIA_ENGINE_DEFINITIONS ${definitions})")
+
+  # Export compile definitions
+  set(compile_definitions "${CMAKE_CXX_FLAGS}")
+  list(REMOVE_DUPLICATES compile_definitions)
+  set(CONFIG_SEQUOIA_ENGINE_COMPILE_DEFINITIONS 
+      "set(SEQUOIA_ENGINE_COMPILE_DEFINITIONS ${compile_definitions})")
+
+  # Generate configuration
   set(config_file 
      "${CMAKE_BINARY_DIR}/${SEQUOIA_ENGINE_INSTALL_CMAKE_DIR}/SequoiaEngineConfig.cmake")
   configure_package_config_file(
@@ -47,6 +69,6 @@ function(sequoia_engine_generate_config)
       SEQUOIA_ENGINE_INSTALL_ROOT
   )
 
-  # Install cmake scripts
+  # Install the generated CMake files
   install(FILES ${version_file} ${config_file} DESTINATION ${SEQUOIA_ENGINE_INSTALL_CMAKE_DIR})
 endfunction()

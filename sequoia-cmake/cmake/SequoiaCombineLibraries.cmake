@@ -24,12 +24,13 @@ include(CMakeParseArguments)
 #
 # Combine multiple object libraries to a single static and, if ``BUILD_SHARED_LIBS`` is ON, shared 
 # library. The CMake target of the library is ``<NAME>Static`` and ``<NAME>Shared`` respectively.
-# This will also provide an install traget for the libraries as well as an export via 
-# ``<NAME>Targets``.
+# This will also provide an install traget for the libraries as well as a package export via 
+# ``<NAME>Targets``. However, the exported targets are *not* installed -- this needs to be done 
+# manaully via ``install(EXPORT <NAME>Targets ...)``.
 #
 # .. code-block:: cmake
 #
-#   sequoia_combine_libraries(NAME OBJECTS INSTALL_DESTINATION [USE_LTO] [DEPENDS])
+#   sequoia_combine_libraries(NAME OBJECTS INSTALL_DESTINATION [DEPENDS])
 #
 # ``NAME``
 #   Name of the library.
@@ -60,12 +61,13 @@ function(sequoia_combine_libraries)
 
   # Add static library
   add_library(${ARG_NAME}Static STATIC ${object_sources})
-  target_link_libraries(${ARG_NAME}Static PUBLIC ${ARG_DEPENDS})
+  target_link_libraries(${ARG_NAME}Static LINK_PUBLIC ${ARG_DEPENDS})
 
-  set_target_properties(${ARG_NAME}Static PROPERTIES OUTPUT_NAME ${ARG_NAME})
+  set_target_properties(${ARG_NAME}Static PROPERTIES OUTPUT_NAME "${ARG_NAME}")
+  set_target_properties(${ARG_NAME}Static PROPERTIES LINK_INTERFACE_LIBRARIES "${ARG_DEPENDS}")
 
   if(ARG_VERSION)
-    set_target_properties(${ARG_NAME}Static PROPERTIES VERSION ${ARG_VERSION})
+    set_target_properties(${ARG_NAME}Static PROPERTIES VERSION "${ARG_VERSION}")
   endif()
 
   install(TARGETS ${ARG_NAME}Static 
@@ -75,13 +77,14 @@ function(sequoia_combine_libraries)
   # Add shared library
   if(BUILD_SHARED_LIBS)
     add_library(${ARG_NAME}Shared SHARED ${object_sources})
-    target_link_libraries(${ARG_NAME}Shared PUBLIC ${ARG_DEPENDS})
-    
-    set_target_properties(${ARG_NAME}Shared PROPERTIES OUTPUT_NAME ${ARG_NAME})
+    target_link_libraries(${ARG_NAME}Shared LINK_PUBLIC ${ARG_DEPENDS})
+
+    set_target_properties(${ARG_NAME}Shared PROPERTIES OUTPUT_NAME "${ARG_NAME}")
+    set_target_properties(${ARG_NAME}Shared PROPERTIES LINK_INTERFACE_LIBRARIES "${ARG_DEPENDS}")
 
     if(ARG_VERSION)
-      set_target_properties(${ARG_NAME}Shared PROPERTIES VERSION ${ARG_VERSION})
-      set_target_properties(${ARG_NAME}Shared PROPERTIES SOVERSION ${ARG_VERSION})
+      set_target_properties(${ARG_NAME}Shared PROPERTIES VERSION "${ARG_VERSION}")
+      set_target_properties(${ARG_NAME}Shared PROPERTIES SOVERSION "${ARG_VERSION}")
     endif()
 
     install(TARGETS ${ARG_NAME}Shared 

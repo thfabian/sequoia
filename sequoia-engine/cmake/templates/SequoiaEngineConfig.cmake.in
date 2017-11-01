@@ -14,3 +14,24 @@
 ##===------------------------------------------------------------------------------------------===##
 
 @PACKAGE_INIT@
+
+# Expose the options of SequoiaEngine that were used for compilation
+@CONFIG_SEQUOIA_ENGINE_OPTIONS@
+
+# Define required include directories
+@CONFIG_SEQUOIA_ENGINE_INCLUDE_DIRS@
+
+foreach(dir ${SEQUOIA_ENGINE_INCLUDE_DIRS})
+  if(NOT EXISTS "${dir}")
+    message(FATAL_ERROR "include directory \"${dir}\" does not exist!")
+  endif()
+endforeach()
+
+# Define required definitions
+@CONFIG_SEQUOIA_ENGINE_DEFINITIONS@
+
+# Define required compile definitions
+@CONFIG_SEQUOIA_ENGINE_COMPILE_DEFINITIONS@
+
+# Import SequoiaEngine library (SequoiaEngineStatic and possibly SequoiaEngineShared)
+include("@PACKAGE_SEQUOIA_ENGINE_INSTALL_CMAKE_DIR@/SequoiaEngineTargets.cmake")
