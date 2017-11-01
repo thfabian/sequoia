@@ -15,10 +15,14 @@
 
 find_package(tinyobjloader NO_MODULE REQUIRED)
 
+get_property(tinyobjloader_INCLUDE_DIRS TARGET tinyobjloader PROPERTY INTERFACE_INCLUDE_DIRECTORIES)
+get_property(tinyobjloader_EXTERNAL_LIBRARIES TARGET tinyobjloader PROPERTY INTERFACE_LINK_LIBRARIES)
+get_property(tinyobjloader_LIBRARY TARGET tinyobjloader PROPERTY LOCATION)
+
 sequoia_export_package(
   NAME tinyobjloader
   FOUND ${tinyobjloader_FOUND} 
-  VERSION "${TINYOBJLOADER_VERSION}" 
-  LIBRARIES ${TINYOBJLOADER_LIBRARIES}
-  INCLUDE_DIRS ${TINYOBJLOADER_INCLUDE_DIRS}
+  VERSION ${tinyobjloader_VERSION}
+  LIBRARIES ${tinyobjloader_LIBRARY} ${tinyobjloader_EXTERNAL_LIBRARIES}
+  INCLUDE_DIRS ${tinyobjloader_INCLUDE_DIRS}
 )

@@ -16,11 +16,12 @@
 find_package(benchmark NO_MODULE REQUIRED)
 
 get_property(benchmark_INCLUDE_DIRS TARGET benchmark::benchmark PROPERTY INTERFACE_INCLUDE_DIRECTORIES)
+get_property(benchmark_EXTERNAL_LIBRARIES TARGET benchmark::benchmark PROPERTY INTERFACE_LINK_LIBRARIES)
+get_property(benchmark_LIBRARY TARGET benchmark::benchmark PROPERTY LOCATION)
 
 sequoia_export_package(
   NAME benchmark
   FOUND ${benchmark_FOUND} 
-  LIBRARIES benchmark::benchmark
+  LIBRARIES ${benchmark_LIBRARY} ${benchmark_EXTERNAL_LIBRARIES}
   INCLUDE_DIRS ${benchmark_INCLUDE_DIRS}
 )
-
