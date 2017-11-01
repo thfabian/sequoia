@@ -74,6 +74,18 @@ sequoia_find_package(
 )
 
 #
+# cereal
+#
+set(cereal_version "1.2.2")
+set(cereal_url "https://github.com/USCiLab/cereal/archive/v${cereal_version}.tar.gz")
+set(cereal_md5 "4c56c7b9499dba79404250ef9a040481")
+
+sequoia_build_package(
+  PACKAGE cereal
+  BUILD_VERSION ${cereal_version}
+)
+
+#
 # fmt
 #
 set(fmt_version "4.0.0")
