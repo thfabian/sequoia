@@ -35,8 +35,8 @@ macro(sequoia_enable_rpath LIB_PREFIX)
   # Use, i.e. don't skip the full RPATH for the build tree
   set(CMAKE_SKIP_BUILD_RPATH FALSE)
 
-  # When building, don't use the install RPATH already (but later on when installing)
-  set(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE) 
+  # If this is not enabled, some libraries are not found in the build directory
+  set(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE) 
 
   set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/${LIB_PREFIX}")
   set(CMAKE_MACOSX_RPATH "${CMAKE_INSTALL_RPATH}")

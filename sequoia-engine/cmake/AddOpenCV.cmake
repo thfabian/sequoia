@@ -45,7 +45,16 @@ foreach(lib ${opencv_libraries})
   else()
     list(APPEND opencv_libraries_resolved ${lib})
   endif()
+
+  # If OpenCV was built as a shared library we have to make sure the RPATH is set correctly
+  if(${lib} MATCHES "^.*(opencv_).*$")
+    get_filename_component(rpath ${lib} DIRECTORY)
+    list(APPEND rpaths ${rpath})
+  endif()
 endforeach()
+
+list(REMOVE_DUPLICATES rpaths)
+list(APPEND CMAKE_INSTALL_RPATH ${rpaths})
 
 sequoia_export_package(
   NAME OpenCV
