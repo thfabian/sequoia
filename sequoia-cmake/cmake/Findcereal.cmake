@@ -68,7 +68,7 @@ endif()
 #   Find cereal headers
 #====--------------------------------------------------------------------------------------------===
 if(NOT(CEREAL_INCLUDE_DIRS))
-  find_path(CEREAL_INCLUDE_DIRS NAMES cereal/cereal.hpp HINTS ${CEREAL_ROOT})
+  find_path(CEREAL_INCLUDE_DIRS NAMES cereal/cereal.hpp HINTS ${CEREAL_ROOT}/include)
 endif()
 
 #===---------------------------------------------------------------------------------------------===
