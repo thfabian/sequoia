@@ -33,7 +33,7 @@ foreach(option ${SEQUOIA_EXAMPLES})
 endforeach()
 
 # Compute dependencies
-foreach(project SequoiaEngine)
+foreach(project SequoiaEngine gtest)
   sequoia_compute_optional_dependency(${project} sequoia_examples_deps) 
   sequoia_extract_cmake_package_args(${project} sequoia_examples_cmake_args)
 endforeach()

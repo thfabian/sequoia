@@ -46,6 +46,7 @@ include(SequoiaCheckInSourceBuild)
 include(SequoiaCombineLibraries)
 include(SequoiaConfigureFile)
 include(SequoiaCreatePackageString)
+include(SequoiaEnableRPATH)
 include(SequoiaExportPackage)
 include(SequoiaGetArchitectureInfo)
 include(SequoiaGetCompilerInfo)
@@ -63,6 +64,9 @@ include(SequoiaEngineOptions)
 include(SequoiaEngineDefinitions)
 include(SequoiaEngineSetCXXFlags)
 include(SequoiaEngineGenerateConfig)
+
+# Enable full RPATH support
+sequoia_enable_rpath(${SEQUOIA_ENGINE_INSTALL_LIB_DIR})
 
 # Prevent in source builds
 sequoia_check_in_source_build()
