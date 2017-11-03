@@ -15,10 +15,11 @@
 
 #include "sequoia-engine/Core/CommandLine.h"
 #include "sequoia-engine/Core/ErrorHandler.h"
+#include "sequoia-engine/Core/Options2.h"
+#include "sequoia-engine/Core/UtfString.h"
 #include <boost/program_options.hpp>
 #include <cstdlib>
 #include <iostream>
-#include <string>
 #include <unordered_map>
 
 namespace po = boost::program_options;
@@ -39,11 +40,28 @@ static void printVersion(const std::string& tool, const std::string& version) {
   std::exit(EXIT_SUCCESS);
 }
 
-CommandLine::CommandLine(const std::string& program, const std::string& tool,
-                         const std::string& version)
-    : program_(program), tool_(tool), version_(version) {}
+CommandLine::CommandLine(const std::string& tool, const std::string& version)
+    : tool_(tool), version_(version) {}
 
-void CommandLine::parse(const std::vector<std::string>& args, Options2* options) {
+void CommandLine::parse(Options2* options, int argc, char* argv[]) {
+  std::string program(argc > 0 ? argv[0] : "Unknown Program");
+  std::vector<std::string> arguments(argv + 1, argv + argc);
+  parseImpl(options, program, arguments);
+}
+
+#ifdef SEQUOIA_ON_WIN32
+void CommandLine::parse(Options2* options, HINSTANCE hInstance, HINSTANCE hPrevInstance,
+                        LPSTR lpCmdLine, int nCmdShow) {
+
+  TCHAR program[MAX_PATH];
+  GetModuleFileName(NULL, program, MAX_PATH);
+  UtfString programStr(program);
+  parseImpl(options, programStr.toAnsiString(), po::split_winmain(lpCmdLine));
+}
+#endif
+
+void CommandLine::parseImpl(Options2* options, const std::string& program,
+                            const std::vector<std::string>& args) {
   const int MaxLineLen = 80;
 
   const std::unordered_map<std::string, core::OptionMetaData>& optionMetaDataMap =
@@ -81,6 +99,7 @@ void CommandLine::parse(const std::vector<std::string>& args, Options2* options)
   }
 
   po::options_description desc("General options");
+  // Add builtin-options
   desc.add_options()
       // --help
       ("help", "Display this information.")
@@ -96,11 +115,11 @@ void CommandLine::parse(const std::vector<std::string>& args, Options2* options)
     po::store(po::command_line_parser(args).options(desc).run(), vm);
     po::notify(vm);
   } catch(std::exception& e) {
-    ErrorHandler::fatal(program_ + ": " + e.what(), false);
+    ErrorHandler::fatal(program + ": " + e.what(), false);
   }
 
   if(vm.count("help"))
-    printHelp(program_, tool_, desc);
+    printHelp(program, tool_, desc);
 
   if(vm.count("version"))
     printVersion(tool_, version_);

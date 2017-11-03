@@ -17,13 +17,18 @@
 #define SEQUOIA_ENGINE_CORE_COMMANDLINE_H
 
 #include "sequoia-engine/Core/Export.h"
-#include "sequoia-engine/Core/Options2.h"
 #include <string>
 #include <vector>
+
+#ifdef SEQUOIA_ON_WIN32
+#include "sequoia-engine/Core/Platform.h"
+#endif
 
 namespace sequoia {
 
 namespace core {
+
+class Options2;
 
 /// @brief Parse command-line arguments and update the `Options`
 /// @ingroup core
@@ -31,10 +36,9 @@ class SEQUOIA_API CommandLine {
 public:
   /// @brief Set the command-line meta-data
   ///
-  /// @param program    Name (or path) to the program
   /// @param tool       Name of the tool
   /// @param version    Version string of the tool
-  CommandLine(const std::string& program, const std::string& tool, const std::string& version);
+  CommandLine(const std::string& tool, const std::string& version);
 
   /// @brief Parse arguments and update the options
   ///
@@ -43,12 +47,23 @@ public:
   /// version string respectively and exit the program with `EXIT_SUCCESS`.
   /// Note that `core::ErrorHandler::fatal` is called in case an error occurs.
   ///
-  /// @param args       Arguments to parse
   /// @param options    Options to update
-  void parse(const std::vector<std::string>& args, Options2* options);
+  /// @param argc       Number of arguments (length of `argv`)
+  /// @param argv       String of arguments (as passed to `main()` - note that the first arguments
+  ///                   is treated as the *name* of the program)
+  void parse(Options2* options, int argc, char* argv[]);
+
+#ifdef SEQUOIA_ON_WIN32
+  /// @brief Parse arguments and update the options (Win32 entry point version)
+  void parse(Options2* options, HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine,
+             int nCmdShow);
+#endif
 
 private:
-  std::string program_; ///< Name of the program
+  void parseImpl(Options2* options, const std::string& program,
+                 const std::vector<std::string>& arguments);
+
+private:
   std::string tool_;    ///< Name of the tool
   std::string version_; ///< Version string
 };
