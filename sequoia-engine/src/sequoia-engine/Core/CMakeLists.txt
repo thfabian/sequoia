@@ -38,18 +38,18 @@ sequoia_generate_options(
 sequoia_add_library(
   NAME SequoiaEngineCore
   SOURCES AlignedADT.h
-          ArrayRef.h
           Any.h
+          ArrayRef.h
           Assert.cpp
           Assert.h
           Byte.h
           Casting.h
           Color.cpp
           Color.h
+          CommandLine.cpp
+          CommandLine.h
           Compiler.h
           ConcurrentADT.h
-          CommandLine.h
-          CommandLine.cpp
           DoubleBuffered.h          
           ErrorHandler.cpp
           ErrorHandler.h
@@ -101,6 +101,8 @@ sequoia_add_library(
           UtfString.h
           Version.cpp
           Version.h
+          Win32Console.cpp
+          Win32Console.h
           
           ${option_header}
           ${option_include}
