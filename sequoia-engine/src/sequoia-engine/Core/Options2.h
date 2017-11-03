@@ -35,6 +35,7 @@ struct OptionMetaData {
                                   ///  takes a value (e.g <VALUE> in --foo=VALUE)
   std::string DocString;          ///< Documentation string of the option
 
+  /// @brief Convert to string
   std::string toString() const;
 };
 

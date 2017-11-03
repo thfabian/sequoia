@@ -63,7 +63,7 @@ int Driver::run(int argc, char* argv[]) {
   auto singletonManager = std::make_unique<SingletonManager>();
 
   // Allocate OS specific Singletons
-  singletonManager->allocateSingleton<ErrorHandler>(argc > 0 ? argv[0] : "unknown");
+  //singletonManager->allocateSingleton<ErrorHandler>(argc > 0 ? argv[0] : "unknown");
 
   // Initialize options, parse config file and parse command-line
   auto options = std::make_unique<Options>();

@@ -36,20 +36,20 @@ ConsoleLogger::ConsoleLogger(std::string file) : stream_(nullptr), file_(nullptr
     file_ = std::make_unique<std::ofstream>(file);
 
     if(!file_->is_open()) {
-      ErrorHandler::getSingleton().warning("failed to open log file: \"" + file + "\"");
+      //ErrorHandler::getSingleton().warning("failed to open log file: \"" + file + "\"");
       file_.release();
 
       // ... failed log to temporary file instead
       platform::Path path =
           platform::filesystem::temp_directory_path() / platform::filesystem::unique_path();
       auto tempFile = UtfString(path.native()).toAnsiString();
-      ErrorHandler::getSingleton().warning(PLATFORM_STR("logging to file: \"") + path.native() +
-                                           PLATFORM_STR("\" instead"));
+      //ErrorHandler::getSingleton().warning(PLATFORM_STR("logging to file: \"") + path.native() +
+      //                                     PLATFORM_STR("\" instead"));
 
       // Opening temporary file failed as well... we give up!
       file_ = std::make_unique<std::ofstream>(tempFile.c_str());
       if(!file_->is_open()) {
-        ErrorHandler::getSingleton().warning("failed to open temp log file: \"" + tempFile + "\"");
+        //ErrorHandler::getSingleton().warning("failed to open temp log file: \"" + tempFile + "\"");
         return;
       }
     }

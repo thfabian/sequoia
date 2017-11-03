@@ -118,7 +118,7 @@ void Game::init(const GameOptions& gameOptions) {
     quitKey_ = Keymap::makeDefault(render::Key_Q, render::Mod_Ctrl);
 
   } catch(core::Exception& e) {
-    ErrorHandler::getSingleton().fatal(e.what());
+    ErrorHandler::fatal(e.what());
   }
 
   LOG(INFO) << "Done initializing " << name_;

@@ -48,6 +48,8 @@ sequoia_add_library(
           Color.h
           Compiler.h
           ConcurrentADT.h
+          CommandLine.h
+          CommandLine.cpp
           DoubleBuffered.h          
           ErrorHandler.cpp
           ErrorHandler.h

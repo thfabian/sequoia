@@ -17,8 +17,7 @@
 #define SEQUOIA_ENGINE_CORE_ERRORHANDLER_H
 
 #include "sequoia-engine/Core/Export.h"
-#include "sequoia-engine/Core/Singleton.h"
-#include "sequoia-engine/Core/UtfString.h"
+#include <string>
 
 namespace sequoia {
 
@@ -26,35 +25,36 @@ namespace core {
 
 /// @brief Global error handler
 /// @ingroup core
-class SEQUOIA_API ErrorHandler : public Singleton<ErrorHandler> {
-  UtfString program_;
-
+class SEQUOIA_API ErrorHandler {
 public:
-  /// @brief Setup ErrorHandler
-  ///
-  /// @param program    Name/Path of the program. If a full path is provided, the filename (
-  ///                   without the extension) will be used as program name.
-  ErrorHandler(UtfString program);
+  ErrorHandler() = delete;
 
-  /// @brief Report a fatal error and exit with `EXIT_FAILURE` (or crash)
+  /// @brief Function pointer type of the fatal error handler
   ///
-  /// @param message      Message to display
-  /// @param messagebox   If `true`, display the message in a popup GUI (Win32 only), otherwise
-  ///                     write to console (`stderr`).
-  /// @param crash        Call `std::abort` instead of `std::exit`.
-  SEQUOIA_ATTRIBUTE_NORETURN void fatal(std::wstring message, bool messagebox = true,
-                                        bool crash = false) noexcept;
-  SEQUOIA_ATTRIBUTE_NORETURN void fatal(std::string message, bool messagebox = true,
-                                        bool crash = false) noexcept;
+  /// @param message    Message of the error
+  /// @param crash      Indicate whether this is a crash (e.g from an assert) or an error
+  /// @{
+  using FatalErrorHandler = void (*)(std::string, bool);
+  using FatalErrorHandlerW = void (*)(std::wstring, bool);
+  /// @}
 
-  /// @brief Report warning to stderr
+  /// @brief Set the fatal error handler which is invoked when calling `fatal`
   ///
-  /// @param message      Message to display
-  void warning(std::wstring message) noexcept;
-  void warning(std::string message) noexcept;
+  /// The default error handler will report to `stderr` and, depending if this is a crash, will call
+  /// `std::exit(1)` or `std::abort` respectively.
+  /// @{
+  static void setFatalErrorHandler(FatalErrorHandler handler);
+  static void setFatalErrorHandler(FatalErrorHandlerW handler);
+  /// @}
 
-  /// @brief Get program name
-  UtfString program() const noexcept;
+  /// @brief Issue a fatal, usually unrecoverable, error
+  ///
+  /// Use `ErrorHandler::setFatalErrorHandler()` to change the the error handler.
+  ///
+  /// @param message  Message to display
+  /// @param crash    Indicate whether this is a crash (e.g from an assert) or an error
+  static void fatal(std::string message, bool crash = false);
+  static void fatal(std::wstring message, bool crash = false);
 };
 
 } // namespace core

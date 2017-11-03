@@ -13,11 +13,11 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia-engine/Driver/CommandLine.h"
 #include "sequoia-engine/Core/ErrorHandler.h"
 #include "sequoia-engine/Core/Options.h"
 #include "sequoia-engine/Core/StringRef.h"
 #include "sequoia-engine/Core/Version.h"
+#include "sequoia-engine/Driver/CommandLine.h"
 #include <boost/program_options.hpp>
 #include <functional>
 #include <iostream>
@@ -31,9 +31,9 @@ namespace sequoia {
 namespace driver {
 
 static void printHelp(const po::options_description& desc) {
-  auto program = ErrorHandler::getSingleton().program().toAnsiString();
+  //  auto program = ErrorHandler::getSingleton().program().toAnsiString();
   std::cout << "OVERVIEW: Sequoia - 3D game engine\n\n";
-  std::cout << "USAGE: " << program << " [options] \n\n" << desc << "\n" << std::endl;
+  std::cout << "USAGE: <program> [options] \n\n" << desc << "\n" << std::endl;
   std::exit(EXIT_SUCCESS);
 }
 
@@ -123,7 +123,7 @@ void CommandLine::parse(const std::vector<std::string>& args, Options* options) 
     po::store(po::command_line_parser(args).options(desc).run(), vm);
     po::notify(vm);
   } catch(std::exception& e) {
-    ErrorHandler::getSingleton().fatal(e.what(), false, false);
+    ErrorHandler::fatal(e.what(), false);
   }
 
   // Adjust options
@@ -143,9 +143,9 @@ void CommandLine::parse(const std::vector<std::string>& args, Options* options) 
 #define OPT(Structure, Name, Type, DefaultValue, CheckFun, Doc, CommandLine, CommandLineShort,     \
             CommandLineMetaVar)                                                                    \
   if(!CheckFun(opt.Structure.Name))                                                                \
-    ErrorHandler::getSingleton().fatal(std::string("value '") + toString(opt.Structure.Name) +     \
-                                           "' of option '--" + CommandLine + "' is invalid",       \
-                                       false);
+    ErrorHandler::fatal(std::string("value '") + toString(opt.Structure.Name) +                    \
+                            "' of option '--" + CommandLine + "' is invalid",                      \
+                        false);
 #include "sequoia-engine/Core/Options.inc"
 #undef OPT
 }

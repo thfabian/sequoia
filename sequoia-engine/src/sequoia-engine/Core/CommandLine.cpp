@@ -13,7 +13,7 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia-engine/Driver/CommandLine2.h"
+#include "sequoia-engine/Core/CommandLine.h"
 #include "sequoia-engine/Core/ErrorHandler.h"
 #include <boost/program_options.hpp>
 #include <cstdlib>
@@ -25,10 +25,10 @@ namespace po = boost::program_options;
 
 namespace sequoia {
 
-namespace driver {
+namespace core {
 
-static void printHelp(const std::string& tool, const po::options_description& desc) {
-  auto program = ErrorHandler::getSingleton().program().toAnsiString();
+static void printHelp(const std::string& program, const std::string& tool,
+                      const po::options_description& desc) {
   std::cout << "OVERVIEW: " << tool << "\n\n";
   std::cout << "USAGE: " << program << " [options] \n\n" << desc << "\n" << std::endl;
   std::exit(EXIT_SUCCESS);
@@ -39,10 +39,11 @@ static void printVersion(const std::string& tool, const std::string& version) {
   std::exit(EXIT_SUCCESS);
 }
 
-CommandLine2::CommandLine2(const std::string& tool, const std::string& version)
-    : tool_(tool), version_(version) {}
+CommandLine::CommandLine(const std::string& program, const std::string& tool,
+                         const std::string& version)
+    : program_(program), tool_(tool), version_(version) {}
 
-void CommandLine2::parse(const std::vector<std::string>& args, Options2* options) {
+void CommandLine::parse(const std::vector<std::string>& args, Options2* options) {
   const int MaxLineLen = 80;
 
   const std::unordered_map<std::string, core::OptionMetaData>& optionMetaDataMap =
@@ -95,22 +96,22 @@ void CommandLine2::parse(const std::vector<std::string>& args, Options2* options
     po::store(po::command_line_parser(args).options(desc).run(), vm);
     po::notify(vm);
   } catch(std::exception& e) {
-    ErrorHandler::getSingleton().fatal(e.what(), false, false);
+    ErrorHandler::fatal(program_ + ": " + e.what(), false);
   }
 
   if(vm.count("help"))
-    printHelp(tool_, desc);
+    printHelp(program_, tool_, desc);
 
   if(vm.count("version"))
     printVersion(tool_, version_);
 
-  // Update options
+  // Update options (we always store strings)
   for(const auto& nameValuePair : vm) {
     const std::string& optionName = commandLineToOptionMap[nameValuePair.first];
     options->set(optionName, nameValuePair.second.as<std::string>());
   }
 }
 
-} // namespace driver
+} // namespace core
 
 } // namespace sequoia

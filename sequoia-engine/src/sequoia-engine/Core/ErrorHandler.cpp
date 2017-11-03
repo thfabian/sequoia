@@ -20,60 +20,38 @@
 
 namespace sequoia {
 
-SEQUOIA_DECLARE_SINGLETON(core::ErrorHandler);
-
 namespace core {
 
-ErrorHandler::ErrorHandler(UtfString program) {
-  platform::String programStr = program;
-  platform::Path p(programStr);
-  program_ = p.stem().native();
-}
-
-void ErrorHandler::fatal(std::string message, bool messagebox, bool crash) noexcept {
-  (void)messagebox;
-#ifdef SEQUOIA_ON_WIN32
-  if(messagebox) {
-    MessageBoxW(NULL, UtfString(message).toWideString().c_str(), L"Fatal Error",
-                MB_OK | MB_ICONERROR | MB_TASKMODAL);
-  } else
-    std::cerr << program_.toAnsiString() << ": error: " << message << std::endl;
-#else
-  std::cerr << program_.toAnsiString() << ": error: " << message << std::endl;
-#endif
-
+static void defaultFatalErrorHandler(std::string message, bool crash) {
+  std::cerr << "error: " << message << std::endl;
   if(crash)
     std::abort();
   else
     std::exit(EXIT_FAILURE);
 }
 
-void ErrorHandler::fatal(std::wstring message, bool messagebox, bool crash) noexcept {
-  (void)messagebox;
-#ifdef SEQUOIA_ON_WIN32
-  if(messagebox)
-    MessageBoxW(NULL, message.c_str(), L"Fatal Error", MB_OK | MB_ICONERROR | MB_TASKMODAL);
-  else
-    std::wcerr << program_.toWideString() << L": error: " << message << std::endl;
-#else
-  std::wcerr << program_.toWideString() << L": error: " << message << std::endl;
-#endif
-
+static void defaultFatalErrorHandlerW(std::wstring message, bool crash) {
+  std::wcerr << L"error: " << message << std::endl;
   if(crash)
     std::abort();
   else
     std::exit(EXIT_FAILURE);
 }
 
-void ErrorHandler::warning(std::string message) noexcept {
-  std::cerr << program_.toAnsiString() << ": warning: " << message << std::endl;
+static ErrorHandler::FatalErrorHandler fatalErrorHandler = &defaultFatalErrorHandler;
+static ErrorHandler::FatalErrorHandlerW fatalErrorHandlerW = &defaultFatalErrorHandlerW;
+
+void ErrorHandler::fatal(std::string message, bool crash) { fatalErrorHandler(message, crash); }
+
+void ErrorHandler::fatal(std::wstring message, bool crash) { fatalErrorHandlerW(message, crash); }
+
+void ErrorHandler::setFatalErrorHandler(ErrorHandler::FatalErrorHandler handler) {
+  fatalErrorHandler = handler ? handler : &defaultFatalErrorHandler;
 }
 
-void ErrorHandler::warning(std::wstring message) noexcept {
-  std::wcerr << program_.toWideString() << L": warning: " << message << std::endl;
+void ErrorHandler::setFatalErrorHandler(ErrorHandler::FatalErrorHandlerW handler) {
+  fatalErrorHandlerW = handler ? handler : &defaultFatalErrorHandlerW;
 }
-
-UtfString ErrorHandler::program() const noexcept { return program_; }
 
 } // namespace core
 

@@ -13,11 +13,11 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia-engine/Core/Options2.h"
 #include "sequoia-engine/Core/Assert.h"
 #include "sequoia-engine/Core/Exception.h"
 #include "sequoia-engine/Core/Format.h"
 #include "sequoia-engine/Core/Logging.h"
+#include "sequoia-engine/Core/Options2.h"
 #include "sequoia-engine/Core/StringSwitch.h"
 #include "sequoia-engine/Core/StringUtil.h"
 #include "sequoia-engine/Core/Unreachable.h"
@@ -75,7 +75,7 @@ int convert<int>(const std::string& key, const std::string& value) {
     SEQUOIA_THROW(core::Exception, "cannot convert '{}' (\"{}\") to 'int' : {}", key, value,
                   e.what());
   }
-  return int{};
+  return int{}; // unreachable
 }
 
 template <>
@@ -86,7 +86,7 @@ float convert<float>(const std::string& key, const std::string& value) {
     SEQUOIA_THROW(core::Exception, "cannot convert '{}' (\"{}\") to 'float' : {}", key, value,
                   e.what());
   }
-  return float{};
+  return float{}; // unreachable
 }
 
 template <>

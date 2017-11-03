@@ -36,7 +36,7 @@ namespace unittest {
 TestEnvironment::TestEnvironment(int argc, char* argv[], render::RenderSystemKind kind)
     : trace_(), renderSystemKind_(kind) {
   singletonManager_ = std::make_unique<core::SingletonManager>();
-  singletonManager_->allocateSingleton<ErrorHandler>(argc > 0 ? argv[0] : "SequoiaTest");
+  //singletonManager_->allocateSingleton<ErrorHandler>(argc > 0 ? argv[0] : "SequoiaTest");
 
   // Initialize test options
   singletonManager_->allocateSingleton<TestOptions>();
@@ -60,7 +60,7 @@ TestEnvironment::TestEnvironment(int argc, char* argv[], render::RenderSystemKin
     po::store(po::parse_command_line(argc, argv, desc), vm);
     po::notify(vm);
   } catch(std::exception& e) {
-    ErrorHandler::getSingleton().fatal(e.what(), false, false);
+    ErrorHandler::fatal(e.what(), false);
   }
 
   if(vm.count("help")) {
@@ -80,11 +80,11 @@ TestEnvironment::TestEnvironment(int argc, char* argv[], render::RenderSystemKin
     else
       renderSystemKind_ = render::RK_Null;
   }
-
+  
   if(renderSystemKind_ == render::RK_Invalid)
-    ErrorHandler::getSingleton().fatal(
-        core::format("invalid value '{}' of option '--render'", vm["renderer"].as<std::string>()),
-        false, false);
+    ErrorHandler::fatal(core::format("invalid value '{}' of option '--render'",
+                                     vm["renderer"].as<std::string>()),
+                        false);
 
   // Unittesting always runs in debug mode and with logging on
   singletonManager_->allocateSingleton<core::Logger>(
@@ -99,8 +99,8 @@ TestEnvironment::TestEnvironment(int argc, char* argv[], render::RenderSystemKin
   temporaryPath_ = SEQUOIA_ENGINE_UNITTEST_TEMPORARYPATH;
 
   if(!platform::filesystem::exists(ressourcePath_))
-    ErrorHandler::getSingleton().fatal(PLATFORM_STR("invalid ressource path: '") +
-                                       ressourcePath_.native() + PLATFORM_STR("'"));
+    ErrorHandler::fatal(PLATFORM_STR("invalid ressource path: '") +
+                                     ressourcePath_.native() + PLATFORM_STR("'"));
 
   // Take snapshot of the options
   TestOptions::getSingleton().save();

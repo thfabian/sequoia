@@ -33,7 +33,7 @@ namespace unittest {
 
 BenchmarkEnvironment::BenchmarkEnvironment(int argc, char* argv[]) {
   singletonManager_ = std::make_unique<core::SingletonManager>();
-  singletonManager_->allocateSingleton<ErrorHandler>(argc > 0 ? argv[0] : "SequoiaBenchmark");
+//  singletonManager_->allocateSingleton<ErrorHandler>(argc > 0 ? argv[0] : "SequoiaBenchmark");
 
   // Initialize test options
   singletonManager_->allocateSingleton<TestOptions>();
@@ -51,7 +51,7 @@ BenchmarkEnvironment::BenchmarkEnvironment(int argc, char* argv[]) {
     po::store(po::command_line_parser(argc, argv).options(desc).allow_unregistered().run(), vm);
     po::notify(vm);
   } catch(std::exception& e) {
-    ErrorHandler::getSingleton().fatal(e.what(), false, false);
+    ErrorHandler::fatal(e.what(), false);
   }
 
   if(vm.count("help"))

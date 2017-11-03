@@ -13,8 +13,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_ENGINE_DRIVER_COMMANDLINE_H
-#define SEQUOIA_ENGINE_DRIVER_COMMANDLINE_H
+#ifndef SEQUOIA_ENGINE_CORE_COMMANDLINE_H
+#define SEQUOIA_ENGINE_CORE_COMMANDLINE_H
 
 #include "sequoia-engine/Core/Export.h"
 #include "sequoia-engine/Core/Options2.h"
@@ -23,28 +23,37 @@
 
 namespace sequoia {
 
-namespace driver {
+namespace core {
 
 /// @brief Parse command-line arguments and update the `Options`
-/// @ingroup driver
-class SEQUOIA_API CommandLine2 {
+/// @ingroup core
+class SEQUOIA_API CommandLine {
 public:
-  CommandLine2(const std::string& tool, const std::string& version);
-
-  /// @brief Parse arguments and exit on error
+  /// @brief Set the command-line meta-data
   ///
-  /// Note that the `core::ErrorHandler` needs to be set up to handle failures correctly.
+  /// @param program    Name (or path) to the program
+  /// @param tool       Name of the tool
+  /// @param version    Version string of the tool
+  CommandLine(const std::string& program, const std::string& tool, const std::string& version);
+
+  /// @brief Parse arguments and update the options
+  ///
+  /// In addition to the options defined in `core::Options::getOptionsMetaData()`, there are two
+  /// builtin command-line options "--help" and "--version" which display the help string and
+  /// version string respectively and exit the program with `EXIT_SUCCESS`.
+  /// Note that `core::ErrorHandler::fatal` is called in case an error occurs.
   ///
   /// @param args       Arguments to parse
   /// @param options    Options to update
   void parse(const std::vector<std::string>& args, Options2* options);
 
 private:
+  std::string program_; ///< Name of the program
   std::string tool_;    ///< Name of the tool
   std::string version_; ///< Version string
 };
 
-} // namespace driver
+} // namespace core
 
 } // namespace sequoia
 
