@@ -166,6 +166,18 @@ sequoia_find_package(
 )
 
 #
+# spdlog
+#
+set(spdlog_version "0.14.0")
+set(spdlog_url "https://github.com/gabime/spdlog/archive/v0.14.0.tar.gz")
+set(spdlog_md5 "e8c83f739e0172b4687d625bb1da1aac")
+
+sequoia_build_package(
+  PACKAGE spdlog
+  BUILD_VERSION ${spdlog_version}
+)
+
+#
 # TBB
 #
 set(tbb_url "https://github.com/thfabian/tbb/archive/tbb44u4.tar.gz")

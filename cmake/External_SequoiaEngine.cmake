@@ -35,7 +35,7 @@ endforeach()
 
 # Compute dependencies
 foreach(project zlib backward benchmark boost fmt glbinding glfw3 gli glm opencv tbb tinyobjloader 
-                gtest cereal)
+                gtest cereal spdlog)
   sequoia_compute_optional_dependency(${project} sequoia_engine_deps) 
   sequoia_extract_cmake_package_args(${project} sequoia_engine_cmake_args)
 endforeach()
