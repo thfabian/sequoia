@@ -22,7 +22,7 @@ namespace sequoia {
 
 namespace render {
 
-/// @class RenderSystemException
+/// @class sequoia::render::RenderSystemException
 /// @brief Exception thrown on render related errors
 /// @ingroup render
 SEQUOIA_DECLARE_EXCPETION(RenderSystemException)

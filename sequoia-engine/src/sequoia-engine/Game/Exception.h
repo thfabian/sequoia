@@ -22,7 +22,7 @@ namespace sequoia {
 
 namespace game {
 
-/// @class GameExceptin
+/// @class sequoia::game::GameException
 /// @brief Exception thrown on game related errors
 /// @ingroup game
 SEQUOIA_DECLARE_EXCPETION(GameException)
