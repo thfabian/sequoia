@@ -28,10 +28,23 @@ endif()
 # Iterate all OpenCV targets and glob the location of the library and the dependencies
 foreach(target ${OpenCV_LIBS})
   get_property(${target}_INCLUDE_DIRS TARGET ${target} PROPERTY INTERFACE_INCLUDE_DIRECTORIES)
-  get_property(${target}_EXTERNAL_LIBRARIES TARGET  ${target} 
+  get_property(${target}_LIBRARY TARGET  ${target} PROPERTY IMPORTED_LOCATION_${config})
+
+  # Newer version of OpenCV set the INTERFACE_LINK_LIBRARIES while older set 
+  # IMPORTED_LINK_INTERFACE_LIBRARIES_<CONFIG> and as we don't want to export targets, we have to 
+  # resolve all the libraries to get the paths.
+  get_property(${target}_imported_link_interface_libraries TARGET ${target} 
                PROPERTY IMPORTED_LINK_INTERFACE_LIBRARIES_${config})
-  get_property(${target}_LIBRARY TARGET  ${target} 
-               PROPERTY IMPORTED_LOCATION_${config})
+  get_property(${target}_interface_link_libraries TARGET ${target} 
+               PROPERTY INTERFACE_LINK_LIBRARIES)
+  foreach(ext ${${target}_interface_link_libraries} ${${target}_imported_link_interface_libraries})
+    # Resolve lib in $<LINK_ONLY:"lib">
+    if("${ext}" MATCHES "\\$<LINK_ONLY:(.*)>")
+      list(APPEND ${target}_EXTERNAL_LIBRARIES "${CMAKE_MATCH_1}")
+    else()
+      list(APPEND ${target}_EXTERNAL_LIBRARIES "${ext}")
+    endif()  
+  endforeach()
 
   list(APPEND opencv_includes ${${target}_INCLUDE_DIRS})
   list(APPEND opencv_libraries ${${target}_LIBRARY} ${${target}_EXTERNAL_LIBRARIES})
