@@ -152,9 +152,9 @@ sequoia_build_package(
 #
 # OpenCV
 #
-set(opencv_version "3.2.0")
+set(opencv_version "3.3.1")
 set(opencv_url "https://github.com/opencv/opencv/archive/${opencv_version}.tar.gz")
-set(opencv_md5 "a43b65488124ba33dde195fea9041b70")
+set(opencv_md5 "b1ed9aea030bb5bd9df28524d97de84c")
 
 sequoia_find_package(
   PACKAGE OpenCV
