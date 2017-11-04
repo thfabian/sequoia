@@ -17,13 +17,14 @@
 #define SEQUOIA_ENGINE_UNITTEST_TESTENVIRONMENT_H
 
 #include "sequoia-engine/Core/Export.h"
+#include "sequoia-engine/Core/Options.h"
 #include "sequoia-engine/Core/Platform.h"
 #include "sequoia-engine/Core/PrettyStackTrace.h"
 #include "sequoia-engine/Core/Singleton.h"
-#include "sequoia-engine/Core/SingletonManager.h"
 #include "sequoia-engine/Render/RenderSystemObject.h"
 #include "sequoia-engine/Unittest/TestFile.h"
 #include <gtest/gtest.h>
+#include <stack>
 #include <string>
 #include <vector>
 
@@ -80,6 +81,15 @@ public:
   /// @param path   Path relative to the unittest temporary root
   std::shared_ptr<File> createFile(const char* path) const;
 
+  /// @brief Get the current options
+  Options& getOption();
+
+  /// @brief Push a clone of the current options to the stack
+  void pushOptions();
+
+  /// @brief Pop the most recently stored options of the stack
+  void popOptions();
+
 private:
   /// Stack trace
   core::PrettyStackTrace trace_;
@@ -93,8 +103,8 @@ private:
   /// Renderer to use
   render::RenderSystemKind renderSystemKind_;
 
-  /// Manager of the singletons
-  std::unique_ptr<core::SingletonManager> singletonManager_;
+  /// Options stack
+  std::stack<Options> options_;
 };
 
 } // namespace unittest

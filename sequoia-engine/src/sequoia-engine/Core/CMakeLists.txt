@@ -13,27 +13,7 @@
 ##
 ##===------------------------------------------------------------------------------------------===##
 
-include(SequoiaGenerateOptions)
-
 sequoia_configure_file(Config.h.cmake)
-
-# Generate the Options.h and Options.inc
-set(option_header ${CMAKE_CURRENT_BINARY_DIR}/Options.h)
-set(option_include ${CMAKE_CURRENT_BINARY_DIR}/Options.inc)
-set(options
-  ${CMAKE_SOURCE_DIR}/src/sequoia-engine/Core/Options.json
-  ${CMAKE_SOURCE_DIR}/src/sequoia-engine/Render/Options.json
-  ${CMAKE_SOURCE_DIR}/src/sequoia-engine/Driver/Options.json
-  ${CMAKE_SOURCE_DIR}/src/sequoia-engine/Math/Options.json
-)
-
-sequoia_generate_options(
-  INPUT_HEADER ${CMAKE_CURRENT_SOURCE_DIR}/Options.h.in
-  INPUT_INCLUDE ${CMAKE_CURRENT_SOURCE_DIR}/Options.inc.in
-  OUTPUT_HEADER ${option_header}
-  OUTPUT_INCLUDE ${option_include}
-  OPTIONS ${options}
-)
 
 sequoia_add_library(
   NAME SequoiaEngineCore
@@ -74,17 +54,12 @@ sequoia_add_library(
           NonCopyable.h
           Optional.h
           Options.cpp
-          Options.h.in
-          Options.inc.in
-          Options2.cpp
-          Options2.h
+          Options.h
           Platform.cpp   
           Platform.h
           PrettyStackTrace.cpp       
           PrettyStackTrace.h
           Singleton.h
-          SingletonManager.cpp
-          SingletonManager.h
           STLExtras.h
           StringRef.cpp 
           StringRef.h
@@ -103,10 +78,6 @@ sequoia_add_library(
           Version.h
           Win32Console.cpp
           Win32Console.h
-          
-          ${option_header}
-          ${option_include}
-          ${options}
   OBJECT
 )
 

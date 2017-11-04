@@ -15,7 +15,7 @@
 
 #include "sequoia-engine/Core/CommandLine.h"
 #include "sequoia-engine/Core/ErrorHandler.h"
-#include "sequoia-engine/Core/Options2.h"
+#include "sequoia-engine/Core/Options.h"
 #include "sequoia-engine/Core/UtfString.h"
 #include <boost/program_options.hpp>
 #include <cstdlib>
@@ -36,14 +36,14 @@ static void printHelp(const std::string& program, const std::string& tool,
 }
 
 static void printVersion(const std::string& tool, const std::string& version) {
-  std::cout << tool << "(" << version << ")" << std::endl;
+  std::cout << tool << " (" << version << ")" << std::endl;
   std::exit(EXIT_SUCCESS);
 }
 
 CommandLine::CommandLine(const std::string& tool, const std::string& version)
     : tool_(tool), version_(version) {}
 
-void CommandLine::parse(Options2* options, int argc, char* argv[]) {
+void CommandLine::parse(Options* options, int argc, char* argv[]) {
   std::string program(argc > 0 ? argv[0] : "Unknown Program");
   std::vector<std::string> arguments(argv + 1, argv + argc);
   parseImpl(options, program, arguments);
@@ -60,7 +60,7 @@ void CommandLine::parse(Options2* options, HINSTANCE hInstance, HINSTANCE hPrevI
 }
 #endif
 
-void CommandLine::parseImpl(Options2* options, const std::string& program,
+void CommandLine::parseImpl(Options* options, const std::string& program,
                             const std::vector<std::string>& args) {
   const int MaxLineLen = 80;
 
@@ -86,7 +86,7 @@ void CommandLine::parseImpl(Options2* options, const std::string& program,
 
     po::options_description& optionsDesc = optionDescMap[base];
 
-    if(metaData.CommandLineHasValue) {
+    if(!metaData.CommandLineHasValue) {
       optionsDesc.add_options()(cl.c_str(), docStr.c_str());
     } else {
       auto value = po::value<std::string>();
@@ -127,7 +127,10 @@ void CommandLine::parseImpl(Options2* options, const std::string& program,
   // Update options (we always store strings)
   for(const auto& nameValuePair : vm) {
     const std::string& optionName = commandLineToOptionMap[nameValuePair.first];
-    options->set(optionName, nameValuePair.second.as<std::string>());
+    std::string value = nameValuePair.second.as<std::string>();
+    if(value.empty())
+      value = "1";
+    options->setString(optionName, std::move(value));
   }
 }
 

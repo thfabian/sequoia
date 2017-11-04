@@ -100,7 +100,7 @@ GLRenderer::GLRenderer(GLRenderWindow* window) : window_(window) {
   glbinding::Binding::initialize(false);
 
   // Set debugging callbacks
-  if(getGLRenderSystem().getOptions().Core.Debug) {
+  if(getGLRenderSystem().getOptions().get<bool>("Core.Debug")) {
 
     // Enable error checking
     using namespace glbinding;
@@ -123,7 +123,7 @@ GLRenderer::GLRenderer(GLRenderWindow* window) : window_(window) {
   LOG(INFO) << "GL renderer: " << glbinding::ContextInfo::renderer();
 
   // Enable VSync?
-  if(getGLRenderSystem().getOptions().Render.VSync)
+  if(getGLRenderSystem().getOptions().get<bool>("Render.VSync"))
     window_->getContext()->enableVSync();
 
   // Register as Viewport listener

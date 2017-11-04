@@ -14,7 +14,9 @@
 //===------------------------------------------------------------------------------------------===//
 
 #include "sequoia-engine/Unittest/GL/GLBenchmarkEnvironment.h"
-#include "sequoia-engine/Unittest/TestOptions.h"
+
+#include <cstdlib>
+#include <iostream>
 
 namespace sequoia {
 
@@ -24,7 +26,11 @@ GLBenchmarkEnvironment::GLBenchmarkEnvironment(int argc, char* argv[])
     : BenchmarkEnvironment(argc, argv) {}
 
 void GLBenchmarkEnvironment::SetUp() {
-  renderSystem_ = render::RenderSystem::create(render::RK_OpenGL, TestOptions::getSingletonPtr());
+  std::cout << "NOT YET IMPLEMENTED!" << std::endl;
+  std::abort();
+
+  //  renderSystem_ =
+  //      render::RenderSystem::create(render::RK_OpenGL, &TestOptions::getSingleton().get());
 }
 
 void GLBenchmarkEnvironment::TearDown() { renderSystem_.reset(); }

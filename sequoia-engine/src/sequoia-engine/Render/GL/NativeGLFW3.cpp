@@ -13,12 +13,12 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia-engine/Render/GL/NativeGLFW3.h"
 #include "sequoia-engine/Core/Casting.h"
 #include "sequoia-engine/Core/Logging.h"
 #include "sequoia-engine/Core/Options.h"
 #include "sequoia-engine/Core/Unreachable.h"
 #include "sequoia-engine/Render/Exception.h"
+#include "sequoia-engine/Render/GL/NativeGLFW3.h"
 #include "sequoia-engine/Render/RenderSystem.h"
 
 #define GLFW_INCLUDE_NONE
@@ -80,10 +80,11 @@ void glfw3NativeGLContext::init(const RenderWindow::WindowHint& windowHints, Opt
   }
 
   // Set Antialiasing
-  glfwWindowHint(GLFW_SAMPLES, opt.Render.MSAA);
-  LOG(INFO) << "Using MSAA: " << opt.Render.MSAA;
+  int msaa = opt.get<int>("Render.MSAA");
+  glfwWindowHint(GLFW_SAMPLES, msaa);
+  LOG(INFO) << "Using MSAA: " << msaa;
 
-  if(opt.Core.Debug) {
+  if(opt.get<bool>("Core.Debug")) {
     glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, true);
   }
 
@@ -151,7 +152,8 @@ void glfw3NativeGLContext::init(const RenderWindow::WindowHint& windowHints, Opt
                    << minor << ") " << (forwardCompatible ? "" : "non-") << "forward compatible";
   };
 
-  createWindow(false, opt.Render.GLMajorVersion, opt.Render.GLMinorVersion, true);
+  createWindow(false, opt.get<int>("Render.GLMajorVersion"), opt.get<int>("Render.GLMinorVersion"),
+               true);
   if(!window_) {
     // Try OpenGL 3.3 Core with forward compatibility
     createWindow(false, 3, 3, true);

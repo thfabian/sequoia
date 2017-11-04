@@ -18,7 +18,6 @@
 
 #include "sequoia-engine/Core/Export.h"
 #include "sequoia-engine/Core/Singleton.h"
-#include "sequoia-engine/Core/SingletonManager.h"
 #include <memory>
 
 namespace sequoia {
@@ -40,10 +39,6 @@ public:
 
   /// @brief Tear-down test environment
   virtual void TearDown();
-
-private:
-  /// Manager of the singletons
-  std::unique_ptr<core::SingletonManager> singletonManager_;
 };
 
 } // namespace unittest

@@ -33,7 +33,7 @@ class PrettyStackTrace::Impl {
 };
 
 PrettyStackTrace::PrettyStackTrace()
-#if defined(SEQUOIA_DISABLE_ASSERTS) || defined(NDEBUG)
+#ifdef SEQUOIA_DISABLE_ASSERTS
     : impl_(nullptr) {
 }
 #else

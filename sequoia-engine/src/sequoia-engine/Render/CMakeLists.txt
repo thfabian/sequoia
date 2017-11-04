@@ -161,6 +161,5 @@ sequoia_add_library(
           
           ${GL_SOURCE}
           ${NULL_SOURCE}
-  DEPENDS SequoiaEngineCoreObjects
   OBJECT
 )

@@ -38,11 +38,9 @@ sequoia_add_library(
           TestEnvironment.cpp
           TestFile.h
           TestFile.cpp
-          TestOptions.h
-          TestOptions.cpp
 
           ${GL_SOURCE}
+          
   DEPENDS SequoiaEngineRenderObjects
-          SequoiaEngineCoreObjects
   ARCHIVE
 )

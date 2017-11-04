@@ -28,7 +28,7 @@ namespace sequoia {
 
 namespace core {
 
-class Options2;
+class Options;
 
 /// @brief Parse command-line arguments and update the `Options`
 /// @ingroup core
@@ -51,7 +51,7 @@ public:
   /// @param argc       Number of arguments (length of `argv`)
   /// @param argv       String of arguments (as passed to `main()` - note that the first arguments
   ///                   is treated as the *name* of the program)
-  void parse(Options2* options, int argc, char* argv[]);
+  void parse(Options* options, int argc, char* argv[]);
 
 #ifdef SEQUOIA_ON_WIN32
   /// @brief Parse arguments and update the options (Win32 entry point version)
@@ -60,7 +60,7 @@ public:
 #endif
 
 private:
-  void parseImpl(Options2* options, const std::string& program,
+  void parseImpl(Options* options, const std::string& program,
                  const std::vector<std::string>& arguments);
 
 private:

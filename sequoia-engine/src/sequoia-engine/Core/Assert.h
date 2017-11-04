@@ -34,7 +34,7 @@ SEQUOIA_API extern void assertionFailedMsg(char const* expr, wchar_t* msg, char 
 
 } // namespace sequoia
 
-#if defined(SEQUOIA_DISABLE_ASSERTS) || defined(NDEBUG)
+#ifdef SEQUOIA_DISABLE_ASSERTS
 
 #define SEQUOIA_ENABLE_ASSERTS 0
 

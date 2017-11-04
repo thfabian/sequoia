@@ -16,7 +16,6 @@
 #include "sequoia-engine/Render/GlobalRenderState.h"
 #include "sequoia-engine/Render/RenderSystem.h"
 #include "sequoia-engine/Unittest/TestEnvironment.h"
-#include "sequoia-engine/Unittest/TestOptions.h"
 #include <gtest/gtest.h>
 
 using namespace sequoia::render;
@@ -26,7 +25,7 @@ namespace {
 
 TEST(GlobalRenderStateTest, PerProgramUniformVariables) {
   TestEnvironment& env = TestEnvironment::getSingleton();
-  auto ptr = RenderSystem::create(RK_Null, TestOptions::getSingletonPtr());
+  auto ptr = RenderSystem::create(RK_Null, &env.getOption());
 
   auto shader1 = ptr->createShader(
       Shader::ST_Vertex, env.getFile("sequoia-engine/Render/TestGlobalRenderState/Shader1.vert"));

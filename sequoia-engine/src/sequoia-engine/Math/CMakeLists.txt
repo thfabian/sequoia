@@ -21,6 +21,5 @@ sequoia_add_library(
           CoordinateSystem.h
           Math.h
           Math.cpp
-  DEPENDS SequoiaEngineCoreObjects
   OBJECT
 )

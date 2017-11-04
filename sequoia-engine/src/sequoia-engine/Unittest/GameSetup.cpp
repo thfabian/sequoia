@@ -15,16 +15,16 @@
 
 #include "sequoia-engine/Unittest/GameSetup.h"
 #include "sequoia-engine/Unittest/TestEnvironment.h"
-#include "sequoia-engine/Unittest/TestOptions.h"
 
 namespace sequoia {
 
 namespace unittest {
 
 void GameSetup::SetUp() {
+  auto& env = TestEnvironment::getSingleton();
+
   game_ = std::make_unique<game::Game>();
-  game::GameOptions options(TestOptions::getSingletonPtr(),
-                            TestEnvironment::getSingleton().getRenderSystemKind());
+  game::GameOptions options(&env.getOption(), env.getRenderSystemKind());
   options.HideWindow = true;
   options.Name = "GameUnittest";
   game_->init(options);

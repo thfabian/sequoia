@@ -14,7 +14,6 @@
 //===------------------------------------------------------------------------------------------===//
 
 #include "sequoia-engine/Unittest/GL/GLTestEnvironment.h"
-#include "sequoia-engine/Unittest/TestOptions.h"
 
 namespace sequoia {
 
@@ -25,7 +24,7 @@ GLTestEnvironment::GLTestEnvironment(int argc, char* argv[])
 
 void GLTestEnvironment::SetUp() {
   TestEnvironment::SetUp();
-  renderSystem_ = render::RenderSystem::create(render::RK_OpenGL, TestOptions::getSingletonPtr());
+  renderSystem_ = render::RenderSystem::create(render::RK_OpenGL, &getOption());
 }
 
 void GLTestEnvironment::TearDown() { renderSystem_.reset(); }

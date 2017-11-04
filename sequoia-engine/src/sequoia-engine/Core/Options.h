@@ -13,8 +13,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_ENGINE_CORE_OPTIONS2_H
-#define SEQUOIA_ENGINE_CORE_OPTIONS2_H
+#ifndef SEQUOIA_ENGINE_CORE_OPTIONS_H
+#define SEQUOIA_ENGINE_CORE_OPTIONS_H
 
 #include "sequoia-engine/Core/Export.h"
 #include <cstdint>
@@ -41,8 +41,11 @@ struct OptionMetaData {
 
 /// @brief Options of the Sequoia Engine
 /// @ingroup core
-class SEQUOIA_API Options2 {
+class SEQUOIA_API Options {
 public:
+  /// @brief Initialize the Options with the default options of the sequoia engine
+  Options();
+
   /// @brief Set option `name` to `value`
   ///
   /// Note that the name of the option should always be of the form "X.Y" (e.g "Window.Fullscreen"
@@ -51,16 +54,12 @@ public:
   /// @param name   Name of the option
   /// @param value  Value of the option
   /// @{
-  void set(const std::string& name, bool value) noexcept { setImpl(name, value); }
-  void set(const std::string& name, int value) noexcept { setImpl(name, value); }
-  void set(const std::string& name, float value) noexcept { setImpl(name, value); }
-  void set(const std::string& name, double value) noexcept {
-    setImpl(name, static_cast<float>(value));
+  void setBool(const std::string& name, bool value) noexcept { setImpl(name, value); }
+  void setInt(const std::string& name, int value) noexcept { setImpl(name, value); }
+  void setFloat(const std::string& name, float value) noexcept { setImpl(name, value); }
+  void setString(const std::string& name, std::string value) noexcept {
+    setImpl(name, std::move(value));
   }
-  void set(const std::string& name, const char* value) noexcept {
-    setImpl(name, std::string(value));
-  }
-  void set(const std::string& name, std::string value) noexcept { setImpl(name, std::move(value)); }
   /// @}
 
   /// @brief Get a **copy** of the option `name` as type `T` (performs conversion if necessary)
@@ -88,8 +87,12 @@ public:
     optionsMetaData_[name] = metaData;
   }
 
-  /// @brief Get a copy of the options
-  Options2 getCopy() const { return Options2{*this}; }
+  /// @brief Add a meta data to the option `name`
+  /// @throws Exception   meta data of option `name` does not exist
+  OptionMetaData& getMetaData(const std::string& name);
+
+  /// @brief Clone the current options by copy constructing a new one
+  Options clone() const { return Options{*this}; }
 
   /// @brief Write options the a config `file`
   /// Note that the meta-data is *not* serialized
@@ -121,7 +124,7 @@ private:
 
 } // namespace core
 
-using Options2 = core::Options2;
+using Options = core::Options;
 
 } // namespace sequoia
 

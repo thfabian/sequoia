@@ -45,7 +45,6 @@ sequoia_add_library(
           SceneNode.h
           SceneNodeAlloc.h          
           SceneNodeCapability.h
-  DEPENDS SequoiaEngineCoreObjects
-          SequoiaEngineRenderObjects
+  DEPENDS SequoiaEngineRenderObjects
   OBJECT
 )

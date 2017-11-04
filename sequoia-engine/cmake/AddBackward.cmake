@@ -22,6 +22,8 @@ endforeach()
 get_property(Backward_INCLUDE_DIRS TARGET Backward::Backward PROPERTY INTERFACE_INCLUDE_DIRECTORIES)
 get_property(Backward_LIBRARIES TARGET Backward::Backward PROPERTY INTERFACE_LINK_LIBRARIES)
 
+message("${Backward_LIBRARIES}")
+
 sequoia_export_package(
   NAME backward 
   FOUND ${Backward_FOUND} 

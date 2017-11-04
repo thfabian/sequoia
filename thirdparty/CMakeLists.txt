@@ -35,9 +35,9 @@ sequoia_find_package(
 #
 # backward
 #
-set(backward_version "1.4.1")
+set(backward_version "1.4.2")
 set(backward_url "https://github.com/thfabian/backward-cpp/archive/v${backward_version}.tar.gz")
-set(backward_md5 "72df0103f0eec84f23bdeacd31488f31")
+set(backward_md5 "5fabf457255d57f1c01da96ce583b657")
 
 sequoia_build_package(
   PACKAGE backward
