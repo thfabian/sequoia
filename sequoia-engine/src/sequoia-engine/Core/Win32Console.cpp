@@ -13,7 +13,7 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia-engine/Driver/Win32Console.h"
+#include "sequoia-engine/Core/Win32Console.h"
 
 #ifdef SEQUOIA_ON_WIN32
 

@@ -42,7 +42,7 @@ int Driver::run(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, i
   // Allocate OS specific Singletons
   TCHAR program[MAX_PATH];
   GetModuleFileName(NULL, program, MAX_PATH);
-  singletonManager->allocateSingleton<ErrorHandler>(program);
+  //singletonManager->allocateSingleton<ErrorHandler>(program);
 
   // Initialize options, parse config file and parse command-line
   auto options = std::make_unique<Options>();
