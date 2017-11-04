@@ -25,14 +25,29 @@ else()
   set(Boost_USE_STATIC_RUNTIME OFF)
 endif()
 
-set(SEQUOIA_BOOST_COMPONENTS filesystem system program_options)
-find_package(Boost 1.58 COMPONENTS ${SEQUOIA_BOOST_COMPONENTS} REQUIRED)
+set(boost_components filesystem system program_options)
+find_package(Boost 1.58 COMPONENTS ${boost_components} REQUIRED)
+
+if(WIN32)
+  # We filter the libraries manually as we want to export these libraries in the CMake install
+  # config and ```Boost_LIBRARIES`` contains optimized/debug keywords.
+  foreach(component ${boost_components})
+    string(TOUPPER ${component} component_upper)
+    if("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
+      list(APPEND boost_libs ${Boost_${component_upper}_LIBRARY_DEBUG})
+    else()
+      list(APPEND boost_libs ${Boost_${component_upper}_LIBRARY_RELEASE})
+    endif()
+  endforeach()
+else()
+  set(boost_libs ${Boost_LIBRARIES})
+endif()
 
 sequoia_export_package(
   NAME Boost
   FOUND ${Boost_FOUND} 
   VERSION "${Boost_MAJOR_VERSION}.${Boost_MINOR_VERSION}.${Boost_SUBMINOR_VERSION}" 
-  LIBRARIES ${Boost_LIBRARIES}
+  LIBRARIES ${boost_libs}
   INCLUDE_DIRS ${Boost_INCLUDE_DIRS}
   DEFINITIONS -DBOOST_ALL_NO_LIB
 )
