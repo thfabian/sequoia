@@ -49,9 +49,10 @@ void TestFile::load() {
   if(isBinary())
     mode |= std::ios_base::binary;
 
-  std::ifstream file(platform::toAnsiString(path_).c_str(), mode);
+  std::string pathStr = platform::toAnsiString(path_);
+  std::ifstream file(pathStr.c_str(), mode);
   if(!file.is_open())
-    SEQUOIA_THROW(core::Exception, "cannot load file: '{}'", path_.c_str());
+    SEQUOIA_THROW(core::Exception, "cannot load file: '{}'", pathStr.c_str());
 
   // Allocate memory
   file.seekg(0, std::ios_base::end);
