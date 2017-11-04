@@ -23,7 +23,7 @@ configure_file(
 
 ExternalProject_Add(
   gtest
-  DOWNLOAD_DIR "${SEQUOIA_EXTERNAL_DOWNLOAD_DIR}"
+  DOWNLOAD_DIR "${SEQUOIA_EXTERNAL_DOWNLOAD_DIR}/gtest"
   DOWNLOAD_NAME "gtest-${gtest_version}.tar.gz"
   URL ${gtest_url}
   URL_MD5 ${gtest_md5}

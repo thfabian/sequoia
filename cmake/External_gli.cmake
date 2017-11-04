@@ -17,7 +17,7 @@ include(ExternalProject)
 
 ExternalProject_Add(
   gli
-  DOWNLOAD_DIR "${SEQUOIA_EXTERNAL_DOWNLOAD_DIR}"
+  DOWNLOAD_DIR "${SEQUOIA_EXTERNAL_DOWNLOAD_DIR}/gli"
   URL ${gli_url}
   URL_MD5 ${gli_md5}
   BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}/gli"

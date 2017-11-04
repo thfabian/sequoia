@@ -15,7 +15,7 @@
 
 ExternalProject_Add(
   zlib
-  DOWNLOAD_DIR "${SEQUOIA_EXTERNAL_DOWNLOAD_DIR}"
+  DOWNLOAD_DIR "${SEQUOIA_EXTERNAL_DOWNLOAD_DIR}/zlib"
   URL ${zlib_url}
   URL_MD5 ${zlib_md5}
   BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}/zlib"

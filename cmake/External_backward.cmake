@@ -15,7 +15,7 @@
 
 ExternalProject_Add(
   backward
-  DOWNLOAD_DIR "${SEQUOIA_EXTERNAL_DOWNLOAD_DIR}"
+  DOWNLOAD_DIR "${SEQUOIA_EXTERNAL_DOWNLOAD_DIR}/backward"
   URL ${backward_url}
   URL_MD5 ${backward_md5}
   BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}/backward"

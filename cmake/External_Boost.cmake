@@ -65,7 +65,7 @@ else()
 endif()
 
 ExternalProject_Add(boost
-  DOWNLOAD_DIR "${SEQUOIA_EXTERNAL_DOWNLOAD_DIR}"
+  DOWNLOAD_DIR "${SEQUOIA_EXTERNAL_DOWNLOAD_DIR}/boost"
   URL ${boost_url}
   URL_MD5 ${boost_md5}
   SOURCE_DIR "${CMAKE_CURRENT_BINARY_DIR}/boost"

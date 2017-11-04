@@ -15,7 +15,7 @@
 
 ExternalProject_Add(
   tinyobjloader
-  DOWNLOAD_DIR "${SEQUOIA_EXTERNAL_DOWNLOAD_DIR}"
+  DOWNLOAD_DIR "${SEQUOIA_EXTERNAL_DOWNLOAD_DIR}/tinyobjloader"
   URL ${tinyobjloader_url}
   URL_MD5 ${tinyobjloader_md5}
   BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}/tinyobjloader"

@@ -15,7 +15,7 @@
 
 ExternalProject_Add(
   cereal
-  DOWNLOAD_DIR "${SEQUOIA_EXTERNAL_DOWNLOAD_DIR}"
+  DOWNLOAD_DIR "${SEQUOIA_EXTERNAL_DOWNLOAD_DIR}/cereal"
   URL ${cereal_url}
   URL_MD5 ${cereal_md5}
   BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}/cereal"

@@ -15,7 +15,7 @@
 
 ExternalProject_Add(
   spdlog
-  DOWNLOAD_DIR "${SEQUOIA_EXTERNAL_DOWNLOAD_DIR}"
+  DOWNLOAD_DIR "${SEQUOIA_EXTERNAL_DOWNLOAD_DIR}/spdlog"
   URL ${spdlog_url}
   URL_MD5 ${spdlog_md5}
   BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}/spdlog"

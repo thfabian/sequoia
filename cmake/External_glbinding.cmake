@@ -17,7 +17,7 @@ include(ExternalProject)
 
 ExternalProject_Add(
   glbinding
-  DOWNLOAD_DIR "${SEQUOIA_EXTERNAL_DOWNLOAD_DIR}"
+  DOWNLOAD_DIR "${SEQUOIA_EXTERNAL_DOWNLOAD_DIR}/glbinding"
   URL ${glbinding_url}
   URL_MD5 ${glbinding_md5}
   BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}/glbinding"

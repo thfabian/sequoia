@@ -15,7 +15,7 @@
 
 ExternalProject_Add(
   benchmark
-  DOWNLOAD_DIR "${SEQUOIA_EXTERNAL_DOWNLOAD_DIR}"
+  DOWNLOAD_DIR "${SEQUOIA_EXTERNAL_DOWNLOAD_DIR}/benchmark"
   URL ${benchmark_url}
   URL_MD5 ${benchmark_md5}
   BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}/benchmark"

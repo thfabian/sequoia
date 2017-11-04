@@ -29,7 +29,7 @@ endif()
 
 ExternalProject_Add(
   opencv
-  DOWNLOAD_DIR "${SEQUOIA_EXTERNAL_DOWNLOAD_DIR}"
+  DOWNLOAD_DIR "${SEQUOIA_EXTERNAL_DOWNLOAD_DIR}/opencv"
   URL ${opencv_url}
   URL_MD5 ${opencv_md5}
   BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}/opencv"
