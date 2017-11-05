@@ -17,6 +17,7 @@
 #define SEQUOIA_ENGINE_UNITTEST_TESTENVIRONMENT_H
 
 #include "sequoia-engine/Core/Export.h"
+#include "sequoia-engine/Core/Logging.h"
 #include "sequoia-engine/Core/Options.h"
 #include "sequoia-engine/Core/Platform.h"
 #include "sequoia-engine/Core/PrettyStackTrace.h"
@@ -91,6 +92,9 @@ public:
   void popOptions();
 
 private:
+  /// Unittest logger
+  std::unique_ptr<core::Logger2> logger_;
+
   /// Stack trace
   core::PrettyStackTrace trace_;
 

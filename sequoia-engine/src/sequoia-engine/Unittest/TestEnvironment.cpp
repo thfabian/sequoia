@@ -17,6 +17,7 @@
 #include "sequoia-engine/Core/ErrorHandler.h"
 #include "sequoia-engine/Core/Format.h"
 #include "sequoia-engine/Core/StringSwitch.h"
+#include "sequoia-engine/Core/Unreachable.h"
 #include "sequoia-engine/Core/Version.h"
 #include "sequoia-engine/Unittest/Config.h"
 #include "sequoia-engine/Unittest/TestEnvironment.h"
@@ -35,20 +36,21 @@ TestEnvironment::TestEnvironment(int argc, char* argv[], render::RenderSystemKin
   options_.push(Options{});
   Options& opt = options_.top();
 
-  // Unittests are *always* in debug mode and with logging
+  // Unittests are *always* in debug mode and with logging enabled
   opt.setBool("Unittest.NoDebug", false);
   opt.setMetaData("Unittest.NoDebug",
                   core::OptionMetaData{"no-debug", "", false, "", "Disable debug mode"});
+  
   opt.setBool("Unittest.NoLogging", false);
   opt.setMetaData("Unittest.NoLogging",
                   core::OptionMetaData{"no-log", "", false, "", "Disable logging"});
 
-  // Parse command-line
   opt.setString("Unittest.Renderer", "null");
   opt.setMetaData("Unittest.Renderer",
                   core::OptionMetaData{"render", "r", true, "RENDERER",
                                        "Renderer to use, where RENDERER is one of [gl, null]"});
 
+  // Parse command-line
   core::CommandLine cl("Sequoia Unittest", core::getSequoiaEngineFullVersionString());
   cl.parse(&opt, argc, argv);
 
@@ -56,11 +58,20 @@ TestEnvironment::TestEnvironment(int argc, char* argv[], render::RenderSystemKin
   opt.setBool("Core.Debug", !opt.get<bool>("Unittest.NoDebug"));
 
   // Set logging
+  spdlog::sink_ptr sink =
+      opt.getBool("Unittest.NoLogging") ? nullptr : core::Logger2::makeStdoutSink();
+  logger_ = std::make_unique<core::Logger2>(spdlog::level::trace, sink);
 
+  Log::trace("hello {}", "world");  
+  Log::debug("hello {}", "world");  
+  Log::info("hello {}", "world");
+  Log::warn("hello {}", "world");
+  Log::error("hello {}", "world");
+  
   // Set the preferred RenderSystem
   if(renderSystemKind_ == render::RK_Invalid) {
     renderSystemKind_ =
-        core::StringSwitch<render::RenderSystemKind>(opt.getAsString("Unittest.Renderer"))
+        core::StringSwitch<render::RenderSystemKind>(opt.getString("Unittest.Renderer"))
             .Case("gl", render::RK_OpenGL)
             .Case("null", render::RK_Null)
             .Default(render::RK_Invalid);
@@ -72,6 +83,8 @@ TestEnvironment::TestEnvironment(int argc, char* argv[], render::RenderSystemKin
   if(!platform::filesystem::exists(ressourcePath_))
     ErrorHandler::fatal(PLATFORM_STR("invalid ressource path: '") + ressourcePath_.native() +
                         PLATFORM_STR("'"));
+  
+  std::exit(0);
 }
 
 TestEnvironment::~TestEnvironment() {}
@@ -84,14 +97,14 @@ std::string TestEnvironment::testCaseName() const {
   const ::testing::TestInfo* testInfo = ::testing::UnitTest::GetInstance()->current_test_info();
   if(testInfo)
     return testInfo->test_case_name();
-  return "";
+  sequoia_unreachable("testCaseName() called outside test");
 }
 
 std::string TestEnvironment::testName() const {
   const ::testing::TestInfo* testInfo = ::testing::UnitTest::GetInstance()->current_test_info();
   if(testInfo)
     return testInfo->name();
-  return "";
+  sequoia_unreachable("testName() called outside test");
 }
 
 std::shared_ptr<File> TestEnvironment::getFile(const char* path) const {

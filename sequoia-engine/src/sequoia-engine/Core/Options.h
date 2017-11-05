@@ -65,17 +65,16 @@ public:
   /// @brief Get a **copy** of the option `name` as type `T` (performs conversion if necessary)
   /// @param name   Name of the option
   /// @throws Exception   Option `name` does not exist or conversion failed
+  /// @{
   template <class T>
   T get(const std::string& name) const {
     return getImpl(name, static_cast<T*>(nullptr));
   }
-
-  /// @brief Get a **copy** of the option `name` as a string
-  /// @param name   Name of the option
-  /// @throws Exception   Option `name` does not exist
-  std::string getAsString(const std::string& name) const {
-    return getImpl(name, static_cast<std::string*>(nullptr));
-  }
+  bool getBool(const std::string& name) const { return get<bool>(name); }
+  int getInt(const std::string& name) const { return get<int>(name); }
+  float getFloat(const std::string& name) const { return get<float>(name); }
+  std::string getString(const std::string& name) const { return get<std::string>(name); }
+  /// @}
 
   /// @brief Get the meta data map of the options
   const std::unordered_map<std::string, OptionMetaData>& getOptionsMetaData() const {

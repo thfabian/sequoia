@@ -13,16 +13,20 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia-engine/Core/Logging.h"
 #include "sequoia-engine/Core/Format.h"
 #include "sequoia-engine/Core/StringSwitch.h"
 #include <chrono>
 #include <ctime>
 #include <thread>
 
+#include "sequoia-engine/Core/Exception.h"
+#include "sequoia-engine/Core/Logging.h"
+
 namespace sequoia {
 
 SEQUOIA_DECLARE_SINGLETON(core::Logger);
+
+SEQUOIA_DECLARE_SINGLETON(core::Logger2);
 
 namespace core {
 
@@ -93,6 +97,53 @@ internal::LoggerProxy Logger::logImpl(const char* file, int line, LoggingLevel l
 void Logger::log(LoggingLevel level, const std::string& message, const char* file, int line) {
   for(auto* listeners : getListeners<LoggerListener>())
     listeners->loggerLog(level, message, file, line);
+}
+
+Logger2::Logger2(spdlog::level::level_enum level, const spdlog::sink_ptr& sink)
+    : level_(level), logger_(nullptr) {
+  if(sink)
+    sinks_.emplace("default", sink);
+  makeLogger();
+}
+
+void Logger2::addSink(const std::string& name, const spdlog::sink_ptr& sink) {
+  SEQUOIA_LOCK_GUARD(mutex_);
+  sinks_[name] = sink;
+  makeLogger();
+}
+
+void Logger2::removeSink(const std::string& name, const spdlog::sink_ptr& sink) {
+  SEQUOIA_LOCK_GUARD(mutex_);
+  sinks_.erase(name);
+  makeLogger();
+}
+
+void Logger2::makeLogger() {
+  if(logger_)
+    spdlog::drop("sequoia");
+
+  std::vector<spdlog::sink_ptr> sinkVec;
+  for(const auto& sink : sinks_)
+    sinkVec.emplace_back(sink.second);
+
+  try {
+    logger_ = std::make_shared<spdlog::logger>("sequoia", sinkVec.begin(), sinkVec.end());
+    logger_->set_level(level_);
+    logger_->set_pattern("[%H:%M:%S.%e] [%t] [%l] %v");
+    spdlog::register_logger(logger_);
+  } catch(const spdlog::spdlog_ex& ex) {
+    SEQUOIA_THROW(Exception, "cannot create logger: {}", ex.what());
+  }
+}
+
+Logger2::~Logger2() { spdlog::drop_all(); }
+
+std::shared_ptr<Logger2::StdoutSink> Logger2::makeStdoutSink() {
+  auto sink = std::make_shared<StdoutSink>();
+  sink->set_color(spdlog::level::trace, sink->reset);
+  sink->set_color(spdlog::level::debug, sink->reset);
+  sink->set_color(spdlog::level::warn, sink->magenta + sink->bold);
+  return sink;
 }
 
 } // namespace core

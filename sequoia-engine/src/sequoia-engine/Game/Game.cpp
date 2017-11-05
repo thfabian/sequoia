@@ -90,7 +90,7 @@ void Game::init(const GameOptions& gameOptions) {
     hint.Title = std::string("Sequoia - ") + core::getSequoiaEngineFullVersionString();
     hint.Monitor = opt.get<int>("Render.Monitor");
     using WindowModeKind = render::RenderWindow::WindowHint::WindowModeKind;
-    hint.WindowMode = core::StringSwitch<WindowModeKind>(opt.getAsString("Render.WindowMode"))
+    hint.WindowMode = core::StringSwitch<WindowModeKind>(opt.getString("Render.WindowMode"))
                           .Case("fullscreen", WindowModeKind::WK_Fullscreen)
                           .Case("windowed-fullscreen", WindowModeKind::WK_WindowedFullscreen)
                           .Default(WindowModeKind::WK_Window);

@@ -25,7 +25,7 @@ namespace {
 
 TEST(OptionTest, Invalid) {
   Options options;
-  EXPECT_THROW(options.getAsString("Invalid"), Exception);
+  EXPECT_THROW(options.getString("Invalid"), Exception);
 }
 
 TEST(OptionTest, Bool) {

@@ -24,6 +24,14 @@
 #include <string>
 #include <vector>
 
+#include "sequoia-engine/Core/Export.h"
+#include "sequoia-engine/Core/Mutex.h"
+#include "sequoia-engine/Core/Singleton.h"
+#include <memory>
+#include <spdlog/spdlog.h>
+#include <string>
+#include <unordered_map>
+
 namespace sequoia {
 
 namespace core {
@@ -153,7 +161,98 @@ protected:
   internal::LoggerProxy logImpl(const char* file, int line, LoggingLevel level) noexcept;
 };
 
+/// @brief Logger of the sequoia-engine
+///
+/// @ingroup core
+class SEQUOIA_API Logger2 : public Singleton<Logger2> {
+public:
+  friend class Log;
+  ~Logger2();
+
+  /// @brief Log to file
+  using FileSink = spdlog::sinks::simple_file_sink_mt;
+
+/// @brief Log to stdout
+#ifdef SEQUOIA_ON_WIN32
+  using StdoutSink = spdlog::sinks::wincolor_stdout_sink_mt;
+#else
+  using StdoutSink = spdlog::sinks::ansicolor_stderr_sink_mt;
+#endif
+
+  /// @brief Create an stdout color sink with customized colors
+  static std::shared_ptr<StdoutSink> makeStdoutSink();
+
+  /// @brief Initialize the Logger with a level at which logging will be performed and a default
+  /// sink which logs to `stdout`
+  ///
+  /// @param level    Logging will be performed if the level of the message is `>=` to `level`
+  /// @param sink     Default sink (if `nullptr` is passed or `level` is `off` no sink will be
+  ///                 registered). Note this should be a multi-threaded i.e **thread-safe** sink.
+  Logger2(spdlog::level::level_enum level = spdlog::level::info,
+          const spdlog::sink_ptr& sink = makeStdoutSink());
+
+  /// @brief Register the sink `name`
+  void addSink(const std::string& name, const spdlog::sink_ptr& sink);
+
+  /// @brief Unregister the sink `name`
+  void removeSink(const std::string& name, const spdlog::sink_ptr& sink);
+
+private:
+  /// @brief
+  inline std::shared_ptr<spdlog::logger>& getLogger() noexcept { return logger_; }
+
+  /// @brief Register the `logger_` with `sinks_`
+  void makeLogger();
+
+private:
+  SpinMutex mutex_;                                         ///< Mutex for state changes
+  spdlog::level::level_enum level_;                         ///< Logging threshold
+  std::unordered_map<std::string, spdlog::sink_ptr> sinks_; ///< Registered sinks
+  std::shared_ptr<spdlog::logger> logger_;                  ///< Currently active logger
+};
+
+/// @brief Logging interface of the sequoia-engine
+///
+/// @note The `Logger` needs to be instantiated to use these logging methods.
+/// @ingroup core
+class Log {
+public:
+  Log() = delete;
+
+  /// @brief Log a trace message
+  template <class... Args>
+  inline static void trace(const char* format, Args&&... args) {
+    Logger2::getSingleton().getLogger()->trace(format, std::forward<Args>(args)...);
+  }
+
+  /// @brief Log a debug message
+  template <class... Args>
+  inline static void debug(const char* format, Args&&... args) {
+    Logger2::getSingleton().getLogger()->debug(format, std::forward<Args>(args)...);
+  }
+
+  /// @brief Log an info message
+  template <class... Args>
+  inline static void info(const char* format, Args&&... args) {
+    Logger2::getSingleton().getLogger()->info(format, std::forward<Args>(args)...);
+  }
+
+  /// @brief Log a warning message
+  template <class... Args>
+  inline static void warn(const char* format, Args&&... args) {
+    Logger2::getSingleton().getLogger()->warn(format, std::forward<Args>(args)...);
+  }
+
+  /// @brief Log an error message
+  template <class... Args>
+  inline static void error(const char* format, Args&&... args) {
+    Logger2::getSingleton().getLogger()->error(format, std::forward<Args>(args)...);
+  }
+};
+
 } // namespace core
+
+using Log = core::Log;
 
 /// @brief Loggging macro
 /// @threadsafe Logging is thread-safe
