@@ -49,7 +49,7 @@ std::shared_ptr<Mesh> MeshManager::loadObjMesh(const std::string& name,
                                                const std::shared_ptr<File>& mtlFile,
                                                bool modifiable, const MeshParameter& param,
                                                render::Buffer::UsageHint usage) {
-  LOG(DEBUG) << "Loading obj mesh \"" << name << "\" from \"" << objFile->getPath() << "\" ...";
+  Log::debug("Loading obj mesh \"{}\" from \"{}\" ...", name, objFile->getPath());
 
   std::shared_ptr<render::VertexData> vertexData = nullptr;
   VertexDataAccessRecord* record = nullptr;
@@ -98,7 +98,7 @@ std::shared_ptr<Mesh> MeshManager::loadObjMesh(const std::string& name,
       SEQUOIA_THROW(GameException, "failed to load obj mesh {}: {}", objFile->getPath(), err);
 
     if(!err.empty())
-      LOG(WARNING) << "obj mesh: " << objFile->getPath() << ": " << err;
+      Log::warn("obj mesh: {}: {}", objFile->getPath(), err);
 
     // Append `default` material
     materials.push_back(tinyobj::material_t());
@@ -262,8 +262,7 @@ std::shared_ptr<Mesh> MeshManager::loadObjMesh(const std::string& name,
 
   // TODO: Copy for modifieable
 
-  LOG(DEBUG) << "Successfully loaded obj mesh \"" << name << "\" from \"" << objFile->getPath()
-             << "\"";
+  Log::debug("Successfully loaded obj mesh \"{}\" from \"{}\"", name, objFile->getPath());
   return std::make_shared<Mesh>(name, vertexData, modifiable);
 }
 
@@ -330,7 +329,7 @@ static unsigned int CubeIndices[]  = {   0, 1, 2,   2, 3, 0,                    
 std::shared_ptr<Mesh> MeshManager::createCube(const std::string& name, bool modifiable,
                                               const MeshParameter& param,
                                               render::Buffer::UsageHint usage) {
-  LOG(DEBUG) << "Creating cube mesh \"" << name << "\" ...";
+  Log::debug("Creating cube mesh \"{}\" ...", name);
 
   std::shared_ptr<render::VertexData> vertexData = nullptr;
   VertexDataAccessRecord* record = nullptr;
@@ -415,7 +414,7 @@ std::shared_ptr<Mesh> MeshManager::createCube(const std::string& name, bool modi
 
   // TODO: Copy for modifieable
 
-  LOG(DEBUG) << "Successfully created cube mesh \"" << name << "\"";
+  Log::debug("Successfully created cube mesh \"{}\"", name);
   return std::make_shared<Mesh>(name, vertexData, modifiable);
 }
 
@@ -426,7 +425,7 @@ std::shared_ptr<Mesh> MeshManager::createCube(const std::string& name, bool modi
 std::shared_ptr<Mesh> MeshManager::createGrid(const std::string& name, unsigned int N,
                                               bool modifiable, const MeshParameter& param,
                                               render::Buffer::UsageHint usage) {
-  LOG(DEBUG) << "Creating grid mesh \"" << name << "\" ...";
+  Log::debug("Creating grid mesh \"{}\" ...", name);
 
   std::shared_ptr<render::VertexData> vertexData = nullptr;
   VertexDataAccessRecord* record = nullptr;
@@ -534,7 +533,7 @@ std::shared_ptr<Mesh> MeshManager::createGrid(const std::string& name, unsigned 
 
   // TODO: Copy for modifieable
 
-  LOG(DEBUG) << "Successfully created grid mesh \"" << name << "\"";
+  Log::debug("Successfully created grid mesh \"{}\"", name);
   return std::make_shared<Mesh>(name, vertexData, modifiable);
 }
 
@@ -548,7 +547,7 @@ void MeshManager::freeUnusedMeshes() {
       [](const std::shared_ptr<render::VertexData>& meshPtr) { return meshPtr.use_count() == 1; });
 
   if(it != vertexData_.end()) {
-    LOG(INFO) << "Removing " << std::distance(it, vertexData_.end()) << " unused meshes";
+    Log::info("Removing {} unused meshes", std::distance(it, vertexData_.end()));
     vertexData_.erase(it, vertexData_.end());
   }
 }

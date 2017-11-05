@@ -42,9 +42,9 @@ void GLProgramManager::makeValid(GLProgram* program) {
   if(program->id_ == 0)
     SEQUOIA_THROW(RenderSystemException, "failed to create program");
 
-  LOG(DEBUG) << "Created program (ID=" << program->id_ << ")";
+  Log::debug("Created program (ID={})", program->id_);
 
-  LOG(DEBUG) << "Linking program (ID=" << program->id_ << ") ...";
+  Log::debug("Linking program (ID={}) ...", program->id_);
 
   for(const std::shared_ptr<Shader>& shader : program->getShaders()) {
     auto glshader = dyn_pointer_cast<GLShader>(shader);
@@ -52,8 +52,7 @@ void GLProgramManager::makeValid(GLProgram* program) {
     // TODO: if at some point we have multiple ressource threads, we need to wait here
     SEQUOIA_ASSERT_MSG(glshader->isValid(), "shader not valid");
 
-    LOG(DEBUG) << "Attaching shader (ID=" << glshader->getID()
-               << ") to program (ID=" << program->id_ << ")";
+    Log::debug("Attaching shader (ID={}) to program (ID={})", glshader->getID(), program->id_);
     glAttachShader(program->id_, glshader->getID());
   }
 
@@ -78,7 +77,7 @@ void GLProgramManager::makeValid(GLProgram* program) {
   SEQUOIA_ASSERT(checkVertexAttributes(program));
   SEQUOIA_ASSERT(checkFragmentData(program));
 
-  LOG(DEBUG) << "Successfully linked program (ID=" << program->id_ << ")";
+  Log::debug("Successfully linked program (ID={})", program->id_);
 }
 
 std::shared_ptr<GLProgram>
@@ -113,7 +112,7 @@ std::size_t GLProgramManager::hash(const std::set<std::shared_ptr<Shader>>& shad
 }
 
 void GLProgramManager::getUniforms(GLProgram* program) const {
-  LOG(DEBUG) << "Getting uniform variables of program (ID=" << program->id_ << ") ...";
+  Log::debug("Getting uniform variables of program (ID={}) ...", program->id_);
 
   program->uniformInfoMap_.clear();
   program->textureSamplers_.clear();
@@ -121,7 +120,7 @@ void GLProgramManager::getUniforms(GLProgram* program) const {
 
   int numActiveUniforms = 0;
   glGetProgramiv(program->id_, GL_ACTIVE_UNIFORMS, &numActiveUniforms);
-  LOG(DEBUG) << "Program has " << numActiveUniforms << " active uniform variables";
+  Log::debug("Program has {} active uniform variables", numActiveUniforms);
 
   int activeUniformMaxLength = 0;
   glGetProgramiv(program->id_, GL_ACTIVE_UNIFORM_MAX_LENGTH, &activeUniformMaxLength);
@@ -145,16 +144,12 @@ void GLProgramManager::getUniforms(GLProgram* program) const {
       try {
         textureUnit = std::stoi(textureUnitStr.c_str());
       } catch(std::invalid_argument& e) {
-        LOG(WARNING) << "Failed to extract texture unit from uniform variable \"" << name.get()
-                     << "\": " << e.what();
+        Log::warn("Failed to extract texture unit from uniform variable \"{}\": {}", name.get(), e.what());
         textureUnit = -1;
       }
     }
 
-    LOG(DEBUG) << "Active uniform variable: name=" << name.get() << ", type=" << type
-               << (rank != 1 ? core::format(", size={}", rank) : "")
-               << (textureUnit != -1 ? core::format(", textureUnit={}", textureUnit) : "")
-               << ", location=" << location;
+    Log::debug("Active uniform variable: name={}, type={}{}{}, location={}", name.get(), type, (rank != 1 ? core::format(", size={}", rank) : ""), (textureUnit != -1 ? core::format(", textureUnit={}", textureUnit) : ""), location);
 
     if(location != -1) {
       program->uniformInfoMap_.emplace(
@@ -163,32 +158,30 @@ void GLProgramManager::getUniforms(GLProgram* program) const {
       if(textureUnit != -1) {
         auto ret = program->textureSamplers_.emplace(textureUnit, name.get());
         if(!ret.second)
-          LOG(WARNING) << "Texture sampler \"" << name.get()
-                       << "\" mapped to already existing texture unit '" << textureUnit
-                       << "' which is mapped to \"" << ret.first->second << "\"";
+          Log::warn("Texture sampler \"{}\" mapped to already existing texture unit '{}' which is mapped to \"{}\"", name.get(), textureUnit, ret.first->second);
       }
     }
   }
 
-  LOG(DEBUG) << "Successfully got uniform variables of program (ID=" << program->id_ << ")";
+  Log::debug("Successfully got uniform variables of program (ID={})", program->id_);
 }
 
 void GLProgramManager::setVertexAttributes(GLProgram* program) const {
-  LOG(DEBUG) << "Setting vertex attributes of program (ID=" << program->id_ << ") ...";
+  Log::debug("Setting vertex attributes of program (ID={}) ...", program->id_);
 
   GLVertexAttribute::forEach([&program](unsigned int index, const char* name) {
     glBindAttribLocation(program->id_, index, name);
   });
 
-  LOG(DEBUG) << "Successfully set vertex attributes of program (ID=" << program->id_ << ")";
+  Log::debug("Successfully set vertex attributes of program (ID={})", program->id_);
 }
 
 bool GLProgramManager::checkVertexAttributes(GLProgram* program) const {
-  LOG(DEBUG) << "Checking vertex attributes of program (ID=" << program->id_ << ") ...";
+  Log::debug("Checking vertex attributes of program (ID={}) ...", program->id_);
 
   int numActiveAttrs = 0;
   glGetProgramiv(program->id_, GL_ACTIVE_ATTRIBUTES, &numActiveAttrs);
-  LOG(DEBUG) << "Program has " << numActiveAttrs << " active vertex attributes";
+  Log::debug("Program has {} active vertex attributes", numActiveAttrs);
 
   int activeAttrMaxLength = 0;
   glGetProgramiv(program->id_, GL_ACTIVE_ATTRIBUTE_MAX_LENGTH, &activeAttrMaxLength);
@@ -200,8 +193,7 @@ bool GLProgramManager::checkVertexAttributes(GLProgram* program) const {
     glGetActiveAttrib(program->id_, index, activeAttrMaxLength, &length, &rank, &type, name.get());
     GLint location = glGetAttribLocation(program->id_, name.get());
 
-    LOG(DEBUG) << "Active vertex attribute: name=" << name.get() << ", type=" << type
-               << ", location=" << location;
+    Log::debug("Active vertex attribute: name={}, type={}, location={}", name.get(), type, location);
 
     // We don't check attributes which start with `frag_`
     if(!StringRef(name.get()).startswith("frag_") && !GLVertexAttribute::isValid(name.get())) {
@@ -209,27 +201,27 @@ bool GLProgramManager::checkVertexAttributes(GLProgram* program) const {
     }
   }
 
-  LOG(DEBUG) << "Successfully checked vertex attributes of program (ID=" << program->id_ << ")";
+  Log::debug("Successfully checked vertex attributes of program (ID={})", program->id_);
   return true;
 }
 
 void GLProgramManager::setFragmentData(GLProgram* program) const {
-  LOG(DEBUG) << "Setting fragment data of program (ID=" << program->id_ << ") ...";
+  Log::debug("Setting fragment data of program (ID={}) ...", program->id_);
 
   GLFragmentData::forEach([&program](unsigned int index, const char* name) {
     glBindFragDataLocation(program->id_, index, name);
   });
 
-  LOG(DEBUG) << "Successfully set fragment data of program (ID=" << program->id_ << ")";
+  Log::debug("Successfully set fragment data of program (ID={})", program->id_);
 }
 
 bool GLProgramManager::checkFragmentData(GLProgram* program) const {
   if(getGLRenderer().isExtensionSupported(GLextension::GL_ARB_program_interface_query)) {
-    LOG(DEBUG) << "Checking fragment data of program (ID=" << program->id_ << ") ...";
+    Log::debug("Checking fragment data of program (ID={}) ...", program->id_);
 
     int numFragData = 0;
     glGetProgramInterfaceiv(program->id_, GL_PROGRAM_OUTPUT, GL_ACTIVE_RESOURCES, &numFragData);
-    LOG(DEBUG) << "Program has " << numFragData << " ouput fragment data";
+    Log::debug("Program has {} ouput fragment data", numFragData);
 
     std::array<GLenum, 2> properties = {{GL_NAME_LENGTH, GL_LOCATION}};
     std::array<GLint, 2> values;
@@ -244,14 +236,14 @@ bool GLProgramManager::checkFragmentData(GLProgram* program) const {
       std::string name(nameData.begin(), nameData.end() - 1);
       GLint location = values[1];
 
-      LOG(DEBUG) << "Output fragment data: name=" << name << ", location=" << location;
+      Log::debug("Output fragment data: name={}, location={}", name, location);
 
       // We only check variables which are explicitly tagged as `out_*`
       if(StringRef(name).startswith("out_") && !GLFragmentData::isValid(name.c_str()))
         SEQUOIA_THROW(RenderSystemException, "invalid output fragment data '{}'", name);
     }
 
-    LOG(DEBUG) << "Successfully checked fragment data of program (ID=" << program->id_ << ")";
+    Log::debug("Successfully checked fragment data of program (ID={})", program->id_);
   }
   return true;
 }

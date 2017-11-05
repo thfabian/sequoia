@@ -66,16 +66,16 @@ static void GLDebugLogging(GLenum source, GLenum type, GLuint id, GLenum severit
                            const GLchar* message, const void* userParam) {
   switch(severity) {
   case GL_DEBUG_SEVERITY_LOW:
-    LOG(INFO) << "GL_" << getGLType(type) << ": " << message;
+    Log::trace("GL_{}: {}", getGLType(type), message);
     return;
   case GL_DEBUG_SEVERITY_MEDIUM:
-    LOG(WARNING) << "GL_" << getGLType(type) << ": " << message;
+    Log::warn("GL_{}: {}", getGLType(type), message);
     return;
   case GL_DEBUG_SEVERITY_HIGH:
-    LOG(ERROR) << "GL_" << getGLType(type) << ": " << message;
+    Log::error("GL_{}: {}", getGLType(type), message);
     return;
   default:
-    LOG(DEBUG) << "GL_" << getGLType(type) << ": " << message;
+    Log::trace("GL_{}: {}", getGLType(type), message);
     return;
   }
 }
@@ -91,7 +91,7 @@ static std::string functionCallToString(const glbinding::FunctionCall& call) {
 }
 
 GLRenderer::GLRenderer(GLRenderWindow* window) : window_(window) {
-  LOG(INFO) << "Creating OpenGL renderer " << this << " ...";
+  Log::info("Creating OpenGL renderer {} ...", core::ptrToStr(this));
 
   // Bind the context to the current thread
   window_->getContext()->makeCurrent();
@@ -109,7 +109,7 @@ GLRenderer::GLRenderer(GLRenderWindow* window) : window_(window) {
     setAfterCallback([](const FunctionCall& call) {
       const auto error = glGetError();
       if(error != GL_NO_ERROR)
-        LOG(ERROR) << "GL_ERROR: " << error << ": " << functionCallToString(call);
+        Log::error("GL_ERROR: {}: {}", error, functionCallToString(call));
     });
 
     // Enable logging
@@ -117,10 +117,10 @@ GLRenderer::GLRenderer(GLRenderWindow* window) : window_(window) {
     glDebugMessageCallback(GLDebugLogging, nullptr);
   }
 
-  LOG(INFO) << "glbinding: " << GLBINDING_VERSION;
-  LOG(INFO) << "GL version: " << glbinding::ContextInfo::version().toString();
-  LOG(INFO) << "GL vendor: " << glbinding::ContextInfo::vendor();
-  LOG(INFO) << "GL renderer: " << glbinding::ContextInfo::renderer();
+  Log::info("glbinding: {}", GLBINDING_VERSION);
+  Log::info("GL version: {}", glbinding::ContextInfo::version().toString());
+  Log::info("GL vendor: {}", glbinding::ContextInfo::vendor());
+  Log::info("GL renderer: {}", glbinding::ContextInfo::renderer());
 
   // Enable VSync?
   if(getGLRenderSystem().getOptions().get<bool>("Render.VSync"))
@@ -137,11 +137,11 @@ GLRenderer::GLRenderer(GLRenderWindow* window) : window_(window) {
   textureManager_ = std::make_unique<GLTextureManager>();
   extensionManager_ = std::make_unique<GLExtensionManager>();
 
-  LOG(INFO) << "Successfully created OpenGL renderer " << this;
+  Log::info("Successfully created OpenGL renderer {}", core::ptrToStr(this));
 }
 
 GLRenderer::~GLRenderer() {
-  LOG(INFO) << "Terminating OpenGL renderer " << this << " ... ";
+  Log::info("Terminating OpenGL renderer {} ... ", core::ptrToStr(this));
 
   window_->getContext()->makeCurrent();
 
@@ -158,7 +158,7 @@ GLRenderer::~GLRenderer() {
 
   glbinding::Binding::releaseCurrentContext();
 
-  LOG(INFO) << "Done terminating OpenGL renderer " << this << " ... ";
+  Log::info("Done terminating OpenGL renderer {} ... ", core::ptrToStr(this));
 }
 
 void GLRenderer::render(RenderCommand* command) {

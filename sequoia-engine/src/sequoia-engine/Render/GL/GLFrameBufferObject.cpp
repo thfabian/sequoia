@@ -34,25 +34,25 @@ static void checkFramebufferStatus(unsigned int id) {
   if(status != GL_FRAMEBUFFER_COMPLETE) {
     switch(status) {
     case GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT:
-      LOG(ERROR) << "Framebuffer (ID=" << id << ") incomplete: Attachment is NOT complete";
+      Log::error("Framebuffer (ID={}) incomplete: Attachment is NOT complete", id);
       break;
     case GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT:
-      LOG(ERROR) << "Framebuffer (ID=" << id << ") incomplete: No image is attached to FBO";
+      Log::error("Framebuffer (ID={}) incomplete: No image is attached to FBO", id);
       break;
     case GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER:
-      LOG(ERROR) << "Framebuffer (ID=" << id << ") incomplete: Draw buffer";
+      Log::error("Framebuffer (ID={}) incomplete: Draw buffer", id);
       break;
     case GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER:
-      LOG(ERROR) << "Framebuffer (ID=" << id << ") incomplete: Read buffer";
+      Log::error("Framebuffer (ID={}) incomplete: Read buffer", id);
       break;
     case GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE:
-      LOG(ERROR) << "Framebuffer (ID=" << id << ") incomplete: Multisample";
+      Log::error("Framebuffer (ID={}) incomplete: Multisample", id);
       break;
     case GL_FRAMEBUFFER_UNSUPPORTED:
-      LOG(ERROR) << "Framebuffer (ID=" << id << ") incomplete: Unsupported by FBO implementation";
+      Log::error("Framebuffer (ID={}) incomplete: Unsupported by FBO implementation", id);
       break;
     default:
-      LOG(ERROR) << "Framebuffer (ID=" << id << ") incomplete: Unknown error";
+      Log::error("Framebuffer (ID={}) incomplete: Unknown error", id);
       break;
     }
   }

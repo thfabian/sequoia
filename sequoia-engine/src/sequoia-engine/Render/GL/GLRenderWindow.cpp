@@ -13,9 +13,10 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia-engine/Render/GL/GLRenderWindow.h"
 #include "sequoia-engine/Core/Logging.h"
+#include "sequoia-engine/Core/StringUtil.h"
 #include "sequoia-engine/Render/GL/GLRenderSystem.h"
+#include "sequoia-engine/Render/GL/GLRenderWindow.h"
 
 namespace sequoia {
 
@@ -23,7 +24,7 @@ namespace render {
 
 GLRenderWindow::GLRenderWindow(std::shared_ptr<NativeGLContext> context)
     : RenderWindow(RK_GLRenderWindow), nativeWindow_(nullptr), nativeInputSystem_(nullptr) {
-  LOG(INFO) << "Initializing OpenGL window " << this << " ...";
+  Log::info("Initializing OpenGL window {} ...", core::ptrToStr(this));
 
   nativeWindow_ = NativeWindow::create(context);
   nativeWindow_->addListener<NativeWindowListener>(this);
@@ -35,16 +36,16 @@ GLRenderWindow::GLRenderWindow(std::shared_ptr<NativeGLContext> context)
   // Register the window as an input event listener
   getGLRenderSystem().addListener<InputEventListener>(this);
 
-  LOG(INFO) << "Successfully initialized OpenGL window " << this;
+  Log::info("Successfully initialized OpenGL window {}", core::ptrToStr(this));
 }
 
 GLRenderWindow::~GLRenderWindow() {
-  LOG(INFO) << "Terminating OpenGL window " << this << " ...";
+  Log::info("Terminating OpenGL window {} ...", core::ptrToStr(this));
 
   nativeInputSystem_.reset();
   nativeWindow_.reset();
 
-  LOG(INFO) << "Done terminating OpenGL window " << this;
+  Log::info("Done terminating OpenGL window {}", core::ptrToStr(this));
 }
 
 bool GLRenderWindow::isHidden() { return nativeWindow_->isHidden(); }
@@ -75,8 +76,8 @@ void GLRenderWindow::inputEventStop() {
 }
 
 void GLRenderWindow::nativeWindowGeometryChanged(NativeWindow* window) {
-  LOG(INFO) << "Resizing window " << this << " to " << window->getWidth() << " x "
-            << window->getHeight();
+  Log::info("Resizing window {} to {} x {}", core::ptrToStr(this), window->getWidth(),
+            window->getHeight());
   Viewport* viewport = getViewport();
   viewport->updateGeometry(viewport->getX(), viewport->getY(), window->getWidth(),
                            window->getHeight());

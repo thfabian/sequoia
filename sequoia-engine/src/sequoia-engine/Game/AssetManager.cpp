@@ -74,13 +74,13 @@ std::shared_ptr<File> AssetManager::load(const std::string& path, FileType type)
     type = File::TypeFromExtension(path);
 
   if(type == FileType::Unknown)
-    LOG(WARNING) << "Cannot deduce extension for '" << path << "'";
+    Log::warn("Cannot deduce extension for '{}'", path);
 
   auto it = pathLookupMap_.find(path);
   std::size_t id = std::size_t(-1);
 
   if(it == pathLookupMap_.end()) {
-    LOG(INFO) << "Loading asset \"" << path << "\" (" << File::TypeToString(type) << ") ...";
+    Log::info("Loading asset \"{}\" ({}) ...", path, File::TypeToString(type));
     id = assets_.size();
 
     // Register new asset
@@ -145,7 +145,7 @@ void AssetManager::loadFromDisk(std::unique_ptr<AssetManager::Asset>& asset) {
   // Read ASCII file
   file.read(reinterpret_cast<char*>(asset->Data.data()), asset->Data.size());
 
-  LOG(INFO) << "Successfully loaded asset \"" << asset->Path << "\"";
+  Log::info("Successfully loaded asset \"{}\"", asset->Path);
 }
 
 } // namespace game

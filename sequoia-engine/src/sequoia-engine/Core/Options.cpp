@@ -144,7 +144,7 @@ OptionMetaData& Options::getMetaData(const std::string& name) {
 }
 
 void Options::write(const std::string& file) const {
-  LOG(INFO) << "Writing Options to \"" << file << "\" ...";
+  Log::info("Writing Options to \"{}\" ...", file);
 
   boost::property_tree::ptree ptree;
   for(const auto& option : options_)
@@ -153,21 +153,21 @@ void Options::write(const std::string& file) const {
   try {
     boost::property_tree::write_ini(file, ptree);
   } catch(boost::property_tree::ini_parser_error& e) {
-    LOG(WARNING) << "Failed to write Options : " << e.what();
+    Log::warn("Failed to write Options : {}", e.what());
     SEQUOIA_THROW(core::Exception, "failed to write Options : {}", e.what());
   }
 
-  LOG(INFO) << "Successfully wrote Options to \"" << file << "\"";
+  Log::info("Successfully wrote Options to \"{}\"", file);
 }
 
 void Options::read(const std::string& file) {
-  LOG(INFO) << "Reading Options from \"" << file << "\" ...";
+  Log::info("Reading Options from \"{}\" ...", file);
 
   boost::property_tree::ptree ptree;
   try {
     boost::property_tree::read_ini(file, ptree);
   } catch(boost::property_tree::ini_parser_error& e) {
-    LOG(WARNING) << "Failed to read Options : " << e.what();
+    Log::warn("Failed to read Options : {}", e.what());
     SEQUOIA_THROW(core::Exception, "failed to read Options : {}", e.what());
   }
 
@@ -180,7 +180,7 @@ void Options::read(const std::string& file) {
     }
   }
 
-  LOG(INFO) << "Successfully read Options to \"" << file << "\"";
+  Log::info("Successfully read Options to \"{}\"", file);
 }
 
 std::string Options::toString() const {

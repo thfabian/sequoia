@@ -46,7 +46,7 @@ Game::~Game() { cleanup(); }
 void Game::run() {
   SEQUOIA_ASSERT_MSG(renderSystem_, "Game not initialized, did you call init()?");
 
-  LOG(INFO) << "Starting main-loop ...";
+  Log::info("Starting main-loop ...");
 
   // Start main-loop
   while(!mainWindow_->isClosed() && !shouldClose_) {
@@ -67,7 +67,7 @@ void Game::run() {
     renderSystem_->pollEvents();
   }
 
-  LOG(INFO) << "Done with main-loop";
+  Log::info("Done with main-loop");
 }
 
 void Game::setQuitKey(const std::shared_ptr<Keymap>& key) { quitKey_ = key; }
@@ -78,7 +78,7 @@ void Game::init(const GameOptions& gameOptions) {
 
   Options& opt = *options_;
 
-  LOG(INFO) << "Initializing " << name_ << " ...";
+  Log::info("Initializing {} ...", name_);
   using namespace render;
 
   try {
@@ -121,11 +121,11 @@ void Game::init(const GameOptions& gameOptions) {
     ErrorHandler::fatal(e.what());
   }
 
-  LOG(INFO) << "Done initializing " << name_;
+  Log::info("Done initializing {}", name_);
 }
 
 void Game::cleanup() {
-  LOG(INFO) << "Terminating " << name_ << " ...";
+  Log::info("Terminating {} ...", name_);
 
   // Free all the scenes
   sceneMap_.clear();
@@ -137,7 +137,7 @@ void Game::cleanup() {
   // Free all RenderSystem objects
   renderSystem_.reset();
 
-  LOG(INFO) << "Done terminating " << name_;
+  Log::info("Done terminating {}", name_);
 }
 
 void Game::keyboardEvent(const render::KeyboardEvent& event) {
@@ -206,7 +206,7 @@ const std::shared_ptr<render::Program>& Game::getDefaultProgram() const {
 Scene* Game::getActiveScene() const { return activeScene_; }
 
 void Game::setScene(const std::string& name, const std::shared_ptr<Scene>& scene, bool makeActive) {
-  LOG(INFO) << "Inserting new scene \"" << name << "\" into game ";
+  Log::info("Inserting new scene \"{}\" into game ", name);
   sceneMap_.emplace(name, scene);
   if(makeActive)
     makeSceneActive(name);
@@ -219,7 +219,7 @@ Scene* Game::getScene(const std::string& name) const {
 }
 
 void Game::removeScene(const std::string& name) {
-  LOG(INFO) << "Removing scene \"" << name << "\" from game ";
+  Log::info("Removing scene \"{}\" from game ", name);
   sceneMap_.erase(name);
 }
 

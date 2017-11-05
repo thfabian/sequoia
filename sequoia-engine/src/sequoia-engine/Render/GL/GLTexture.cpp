@@ -68,7 +68,7 @@ void destroyGLTexture(GLTexture* texture) noexcept {
   if(!texture->isValid())
     return;
 
-  LOG(DEBUG) << "Deleting texture (ID=" << texture->id_ << ")";
+  Log::debug("Deleting texture (ID={})", texture->id_);
   glDeleteTextures(1, &texture->id_);
   texture->id_ = 0;
 }

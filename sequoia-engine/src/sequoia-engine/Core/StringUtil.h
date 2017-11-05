@@ -17,6 +17,7 @@
 #define SEQUOIA_ENGINE_CORE_STRINGUTIL_H
 
 #include "sequoia-engine/Core/Export.h"
+#include "sequoia-engine/Core/Format.h"
 #include <algorithm>
 #include <iterator>
 #include <sstream>
@@ -29,6 +30,14 @@ namespace core {
 /// @brief Indent a string by the specified number of spaces
 /// @ingroup core
 SEQUOIA_API extern std::string indent(const std::string& string, int amount = 2);
+
+/// @brief Convert a pointer to string
+/// @ingroup core
+template <class T>
+inline std::string ptrToStr(const T& ptr) noexcept {
+  static_assert(std::is_pointer<T>::value, "T is not a poitner type");
+  return core::format("{:p}", static_cast<const void*>(ptr));
+}
 
 namespace internal {
 

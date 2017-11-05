@@ -235,10 +235,9 @@ void GLTextureManager::makeValid(GLTexture* texture) {
     SEQUOIA_THROW(RenderSystemException, "cannot create texture: '{}'",
                   texture->getImage()->getFile()->getPath());
 
-  LOG(DEBUG) << "Created texture (ID=" << texture->id_ << ") from image \""
-             << texture->getImage()->getFile()->getPath() << "\"";
+  Log::debug("Created texture (ID={}) from image \"{}\"", texture->id_, texture->getImage()->getFile()->getPath());
 
-  LOG(DEBUG) << "Loading texture (ID=" << texture->id_ << ") ...";
+  Log::debug("Loading texture (ID={}) ...", texture->id_);
 
   TextureParameter& param = *texture->getParameter();
 
@@ -286,7 +285,7 @@ void GLTextureManager::makeValid(GLTexture* texture) {
   // set the sampler of the program.
   manager->unbindTexture(0);
 
-  LOG(DEBUG) << "Successfully uploaded texture (ID=" << texture->id_ << ")";
+  Log::debug("Successfully uploaded texture (ID={})", texture->id_);
 }
 
 std::shared_ptr<GLTexture>

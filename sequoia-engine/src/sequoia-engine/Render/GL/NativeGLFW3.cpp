@@ -16,6 +16,7 @@
 #include "sequoia-engine/Core/Casting.h"
 #include "sequoia-engine/Core/Logging.h"
 #include "sequoia-engine/Core/Options.h"
+#include "sequoia-engine/Core/StringUtil.h"
 #include "sequoia-engine/Core/Unreachable.h"
 #include "sequoia-engine/Render/Exception.h"
 #include "sequoia-engine/Render/GL/NativeGLFW3.h"
@@ -33,7 +34,7 @@ namespace render {
 //===------------------------------------------------------------------------------------------===//
 
 static void CallbackError(int error, const char* description) {
-  LOG(ERROR) << "glfw3 error: " << description;
+  Log::error("glfw3 error: {}", description);
 }
 
 int glfw3NativeGLContext::NumContexts = 0;
@@ -41,13 +42,13 @@ int glfw3NativeGLContext::NumContexts = 0;
 glfw3NativeGLContext::glfw3NativeGLContext()
     : NativeGLContext(NativeWindowSystemKind::NK_GLFW3), window_(nullptr), parent_(nullptr) {
   if(glfw3NativeGLContext::NumContexts == 0) {
-    LOG(INFO) << "Initializing glfw3 ... ";
+    Log::info("Initializing glfw3 ... ");
     glfwSetErrorCallback(CallbackError);
 
     if(glfwInit() != GLFW_TRUE)
       SEQUOIA_THROW(RenderSystemException, "failed to initialize glfw3");
 
-    LOG(INFO) << "Successfully initialized glfw3: " << glfwGetVersionString();
+    Log::info("Successfully initialized glfw3: {}", glfwGetVersionString());
   }
   glfw3NativeGLContext::NumContexts++;
 }
@@ -56,12 +57,12 @@ glfw3NativeGLContext::~glfw3NativeGLContext() {
   glfw3NativeGLContext::NumContexts--;
 
   if(window_) {
-    LOG(INFO) << "Destroying glfw3 OpenGL context " << this;
+    Log::info("Destroying glfw3 OpenGL context {}", core::ptrToStr(this));
     glfwDestroyWindow(window_);
   }
 
   if(glfw3NativeGLContext::NumContexts == 0) {
-    LOG(INFO) << "Terminating glfw3";
+    Log::info("Terminating glfw3");
     glfwTerminate();
   }
 }
@@ -69,22 +70,22 @@ glfw3NativeGLContext::~glfw3NativeGLContext() {
 void glfw3NativeGLContext::init(const RenderWindow::WindowHint& windowHints, Options* options) {
   Options& opt = *options;
 
-  LOG(INFO) << "Initializing glfw3 OpenGL context " << this << " ...";
+  Log::info("Initializing glfw3 OpenGL context {} ...", core::ptrToStr(this));
 
-  LOG(INFO) << "Setting window hints ...";
+  Log::info("Setting window hints ...");
 
   // Open the window hidden?
   if(windowHints.HideWindow) {
-    LOG(INFO) << "Using hidden window";
+    Log::info("Using hidden window");
     glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
   }
 
   // Set Antialiasing
-  int msaa = opt.get<int>("Render.MSAA");
+  int msaa = opt.getInt("Render.MSAA");
   glfwWindowHint(GLFW_SAMPLES, msaa);
-  LOG(INFO) << "Using MSAA: " << msaa;
+  Log::info("Using MSAA: {}", msaa);
 
-  if(opt.get<bool>("Core.Debug")) {
+  if(opt.getBool("Core.Debug")) {
     glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, true);
   }
 
@@ -98,18 +99,18 @@ void glfw3NativeGLContext::init(const RenderWindow::WindowHint& windowHints, Opt
     SEQUOIA_ASSERT(monitors);
 
     if(windowHints.Monitor >= numMonitors) {
-      LOG(WARNING) << "invalid monitor '" << windowHints.Monitor << "' (max number of monitors is "
-                   << numMonitors << ")";
+      Log::warn("invalid monitor '{}' (max number of monitors is {})", windowHints.Monitor,
+                numMonitors);
       monitor = glfwGetPrimaryMonitor();
     } else {
       monitor = monitors[windowHints.Monitor];
     }
   }
 
-  LOG(INFO) << "Using monitor: " << glfwGetMonitorName(monitor);
+  Log::info("Using monitor: {}", glfwGetMonitorName(monitor));
   const GLFWvidmode* mode = glfwGetVideoMode(monitor);
 
-  LOG(INFO) << "Using window mode: " << windowHints.WindowMode;
+  Log::info("Using window mode: {}", windowHints.WindowMode);
 
   // Select the window-mode
   auto createWindow = [&](bool throwOnError, int major, int minor, bool forwardCompatible) {
@@ -121,8 +122,7 @@ void glfw3NativeGLContext::init(const RenderWindow::WindowHint& windowHints, Opt
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, forwardCompatible);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    LOG(INFO) << "Attempting to initialize glfw3 window, requesting OpenGL (" << major << "."
-              << minor << ")";
+    Log::info("Attempting to initialize glfw3 window, requesting OpenGL ({}.{})", major, minor);
 
     if(windowHints.WindowMode == RenderWindow::WindowHint::WK_Fullscreen) {
       window_ =
@@ -148,11 +148,11 @@ void glfw3NativeGLContext::init(const RenderWindow::WindowHint& windowHints, Opt
                     "failed to initialize glfw3 window, required atleast OpenGL Core (>= 3.3)");
 
     if(!window_)
-      LOG(WARNING) << "Failed to initialize glfw3 window, requested OpenGL (" << major << "."
-                   << minor << ") " << (forwardCompatible ? "" : "non-") << "forward compatible";
+      Log::warn("Failed to initialize glfw3 window, requested OpenGL ({}.{}) {}forward compatible",
+                major, minor, (forwardCompatible ? "" : "non-"));
   };
 
-  createWindow(false, opt.get<int>("Render.GLMajorVersion"), opt.get<int>("Render.GLMinorVersion"),
+  createWindow(false, opt.getInt("Render.GLMajorVersion"), opt.getInt("Render.GLMinorVersion"),
                true);
   if(!window_) {
     // Try OpenGL 3.3 Core with forward compatibility
@@ -177,7 +177,7 @@ void glfw3NativeGLContext::init(const RenderWindow::WindowHint& windowHints, Opt
     }
   }
 
-  LOG(INFO) << "Successfully initialized glfw3 OpenGL context " << this;
+  Log::info("Successfully initialized glfw3 OpenGL context {}", core::ptrToStr(this));
 }
 
 void glfw3NativeGLContext::init(const std::shared_ptr<NativeGLContext>& context) {}
@@ -207,13 +207,13 @@ glfw3NativeWindow::glfw3NativeWindow(const std::shared_ptr<NativeGLContext>& con
   SEQUOIA_ASSERT_MSG(isa<glfw3NativeGLContext>(context.get()), "expected 'glfw3NativeGLContext'");
   context_ = dyn_pointer_cast<glfw3NativeGLContext>(context);
 
-  LOG(INFO) << "Initializing glfw3 window " << this << " ...";
+  Log::info("Initializing glfw3 window {} ...", core::ptrToStr(this));
 
   SEQUOIA_ASSERT_MSG(getGLFWwindow(), "invalid context - not initialized?");
 
   // Query window geometry
   glfwGetWindowSize(getGLFWwindow(), &width_, &height_);
-  LOG(INFO) << "Setting window geometry: " << width_ << " x " << height_;
+  Log::info("Setting window geometry: {} x {}", width_, height_);
 
   // Query focus status
   focused_ = glfwGetWindowAttrib(getGLFWwindow(), GLFW_FOCUSED);
@@ -222,11 +222,11 @@ glfw3NativeWindow::glfw3NativeWindow(const std::shared_ptr<NativeGLContext>& con
   glfwSetWindowSizeCallback(context_->getGLFWwindow(), CallbackResized);
   glfwSetWindowFocusCallback(context_->getGLFWwindow(), CallbackFocused);
 
-  LOG(INFO) << "Successfully initialized glfw3 window " << this;
+  Log::info("Successfully initialized glfw3 window {}", core::ptrToStr(this));
 }
 
 glfw3NativeWindow::~glfw3NativeWindow() {
-  LOG(INFO) << "Destroying glfw3 window " << this;
+  Log::info("Destroying glfw3 window {}", core::ptrToStr(this));
   glfw3NativeWindow::Instance = nullptr;
 }
 
@@ -296,7 +296,7 @@ glfw3NativeInputSystem::glfw3NativeInputSystem(const std::shared_ptr<NativeWindo
   SEQUOIA_ASSERT_MSG(isa<glfw3NativeWindow>(window.get()), "expected 'glfw3NativeWindow'");
   window_ = dyn_pointer_cast<glfw3NativeWindow>(window);
 
-  LOG(INFO) << "Initializing glfw3 input system " << this << " ...";
+  Log::info("Initializing glfw3 input system {} ...", core::ptrToStr(this));
 
   SEQUOIA_ASSERT_MSG(getGLFWwindow(), "invalid context - not initialized?");
 
@@ -314,11 +314,11 @@ glfw3NativeInputSystem::glfw3NativeInputSystem(const std::shared_ptr<NativeWindo
   glfwSetCursorPosCallback(getGLFWwindow(), CallbackCursorPos);
   glfwSetCursorEnterCallback(getGLFWwindow(), CallbackCursorEnter);
 
-  LOG(INFO) << "Successfully initialized glfw3 input system " << this;
+  Log::info("Successfully initialized glfw3 input system {}", core::ptrToStr(this));
 }
 
 glfw3NativeInputSystem::~glfw3NativeInputSystem() {
-  LOG(INFO) << "Destroying glfw3 input system " << this;
+  Log::info("Destroying glfw3 input system {}", core::ptrToStr(this));
   glfw3NativeInputSystem::Instance = nullptr;
 }
 

@@ -66,13 +66,13 @@ std::shared_ptr<T> createRessource(ManagerType* manager, Args&&... args) {
 GLRenderSystem::GLRenderSystem(Options* options)
     : RenderSystem(RK_OpenGL, options), mainContext_(nullptr), mainWindow_(nullptr),
       renderer_(nullptr) {
-  LOG(INFO) << "Initializing OpenGL RenderSystem ...";
+  Log::info("Initializing OpenGL RenderSystem ...");
 }
 
 GLRenderSystem::~GLRenderSystem() {
-  LOG(INFO) << "Terminating OpenGL RenderSystem ...";
+  Log::info("Terminating OpenGL RenderSystem ...");
   destroyMainWindow();
-  LOG(INFO) << "Done terminating OpenGL RenderSystem";
+  Log::info("Done terminating OpenGL RenderSystem");
 }
 
 RenderWindow* GLRenderSystem::createMainWindow(const RenderWindow::WindowHint& hints) {

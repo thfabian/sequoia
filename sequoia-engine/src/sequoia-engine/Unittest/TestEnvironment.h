@@ -93,7 +93,7 @@ public:
 
 private:
   /// Unittest logger
-  std::unique_ptr<core::Logger2> logger_;
+  std::unique_ptr<core::Logger> logger_;
 
   /// Stack trace
   core::PrettyStackTrace trace_;

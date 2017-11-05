@@ -113,7 +113,7 @@ void RegularImage::show() const {
     cv::imshow(winName, *image_);
     cv::waitKey(0);
   } catch(cv::Exception& e) {
-    LOG(ERROR) << "Failed to to show image \"" << winName << "\": " << e.what();
+    Log::error("Failed to to show image \"{}\": {}", winName, e.what());
   }
 }
 
@@ -190,7 +190,7 @@ int TextureImage::getWidth() const noexcept { return image_->extent()[0]; }
 int TextureImage::getHeight() const noexcept { return image_->extent()[1]; }
 
 void TextureImage::show() const {
-  LOG(ERROR) << "Failed to to show image \"" << file_->getPath() << "\": DDS images can't be shown";
+  Log::error("Failed to to show image \"{}\": DDS images can't be shown", file_->getPath());
 }
 
 const gli::texture& TextureImage::getTexture() const { return *image_; }

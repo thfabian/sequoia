@@ -66,11 +66,10 @@ bool GLProgram::checkUniformVariables() {
   for(const auto& nameInfoPair : uniformInfoMap_) {
     if(!nameInfoPair.second.ValueSet) {
       allUniformVariablesSet_ = false;
-      LOG(WARNING) << "Unset uniform variable '" << nameInfoPair.first << "' in program (ID=" << id_
-                   << ") with shaders "
-                   << core::RangeToString(", ", "{", "}")(shaders_, [](const auto& shader) {
-                        return shader->getFile()->getPath();
-                      });
+      Log::warn("Unset uniform variable '{}' in program (ID={}) with shaders {}",
+                nameInfoPair.first, id_,
+                core::RangeToString(", ", "{", "}")(
+                    shaders_, [](const auto& shader) { return shader->getFile()->getPath(); }));
     }
   }
   return allUniformVariablesSet_;
@@ -313,7 +312,7 @@ void destroyGLProgram(GLProgram* program) noexcept {
   if(!program->isValid())
     return;
 
-  LOG(DEBUG) << "Deleting program (ID=" << program->id_ << ")";
+  Log::debug("Deleting program (ID={})", program->id_);
   glDeleteProgram(program->id_);
   program->id_ = 0;
 }

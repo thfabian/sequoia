@@ -74,7 +74,7 @@ void destroyGLShader(GLShader* shader) noexcept {
   if(!shader->isValid())
     return;
 
-  LOG(DEBUG) << "Deleting shader (ID=" << shader->id_ << ")";
+  Log::debug("Deleting shader (ID={})", shader->id_);
 
   SEQUOIA_ASSERT(shader->id_ != 0);
   glDeleteShader(shader->id_);

@@ -15,7 +15,6 @@
 
 #include "sequoia-engine/Render/RenderServer.h"
 #include "sequoia-engine/Core/Logging.h"
-#include "sequoia-engine/Core/Logging.h"
 
 namespace sequoia {
 
@@ -33,7 +32,7 @@ RenderServer::~RenderServer() {
 }
 
 void RenderServer::initRessourceThread(std::function<void()> initFunction) {
-  LOG(INFO) << "Initializing ressource thread " << core::LoggerListener::getThreadID() << " ... ";
+  //Log::info("Initializing ressource thread {} ... ", core::LoggerListener::getThreadID());
 
   ressourceCtx_.Thread = std::thread([this, &initFunction]() {
     // Initialize the thread
@@ -55,7 +54,7 @@ void RenderServer::initRessourceThread(std::function<void()> initFunction) {
     }
   });
 
-  LOG(INFO) << "Successfully initialized ressource thread " << core::LoggerListener::getThreadID();
+  //Log::info("Successfully initialized ressource thread {}", core::LoggerListener::getThreadID());
 }
 
 } // namespace render

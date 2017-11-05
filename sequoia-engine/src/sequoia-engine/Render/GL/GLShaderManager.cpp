@@ -47,7 +47,7 @@ GLShaderManager::~GLShaderManager() {}
 void GLShaderManager::makeValid(GLShader* shader) {
   SEQUOIA_ASSERT_MSG(!shader->isValid(), "shader already initialized");
 
-  LOG(DEBUG) << "Loading shader from disk \"" << shader->file_->getPath() << "\"";
+  Log::debug("Loading shader from disk \"{}\"", shader->file_->getPath());
 
   // Get the shader source
   shader->code_ = shader->file_->getDataAsString();
@@ -59,10 +59,9 @@ void GLShaderManager::makeValid(GLShader* shader) {
   if(shader->id_ == 0)
     SEQUOIA_THROW(RenderSystemException, "cannot create shader: '{}'", shader->file_->getPath());
 
-  LOG(DEBUG) << "Created shader (ID=" << shader->id_ << ") from source \""
-             << shader->file_->getPath() << "\"";
+  Log::debug("Created shader (ID={}) from source \"{}\"", shader->id_, shader->file_->getPath());
 
-  LOG(DEBUG) << "Compiling shader (ID=" << shader->id_ << ") ...";
+  Log::debug("Compiling shader (ID={}) ...", shader->id_);
 
   // Compile shader
   const char* code = shader->code_.c_str();
@@ -96,7 +95,7 @@ void GLShaderManager::makeValid(GLShader* shader) {
     SEQUOIA_THROW(RenderSystemException, "failed to compile shader: {}", msg);
   }
 
-  LOG(DEBUG) << "Successfully compiled shader (ID=" << shader->id_ << ")";
+  Log::debug("Successfully compiled shader (ID={})", shader->id_);
 }
 
 std::shared_ptr<GLShader> GLShaderManager::create(GLShader::ShaderType type,

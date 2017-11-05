@@ -40,7 +40,7 @@ TestEnvironment::TestEnvironment(int argc, char* argv[], render::RenderSystemKin
   opt.setBool("Unittest.NoDebug", false);
   opt.setMetaData("Unittest.NoDebug",
                   core::OptionMetaData{"no-debug", "", false, "", "Disable debug mode"});
-  
+
   opt.setBool("Unittest.NoLogging", false);
   opt.setMetaData("Unittest.NoLogging",
                   core::OptionMetaData{"no-log", "", false, "", "Disable logging"});
@@ -59,15 +59,9 @@ TestEnvironment::TestEnvironment(int argc, char* argv[], render::RenderSystemKin
 
   // Set logging
   spdlog::sink_ptr sink =
-      opt.getBool("Unittest.NoLogging") ? nullptr : core::Logger2::makeStdoutSink();
-  logger_ = std::make_unique<core::Logger2>(spdlog::level::trace, sink);
+      opt.getBool("Unittest.NoLogging") ? nullptr : core::Logger::makeStdoutSink();
+  logger_ = std::make_unique<core::Logger>(spdlog::level::trace, sink);
 
-  Log::trace("hello {}", "world");  
-  Log::debug("hello {}", "world");  
-  Log::info("hello {}", "world");
-  Log::warn("hello {}", "world");
-  Log::error("hello {}", "world");
-  
   // Set the preferred RenderSystem
   if(renderSystemKind_ == render::RK_Invalid) {
     renderSystemKind_ =
@@ -83,8 +77,6 @@ TestEnvironment::TestEnvironment(int argc, char* argv[], render::RenderSystemKin
   if(!platform::filesystem::exists(ressourcePath_))
     ErrorHandler::fatal(PLATFORM_STR("invalid ressource path: '") + ressourcePath_.native() +
                         PLATFORM_STR("'"));
-  
-  std::exit(0);
 }
 
 TestEnvironment::~TestEnvironment() {}

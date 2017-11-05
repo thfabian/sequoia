@@ -13,8 +13,9 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia-engine/Render/Null/NullRenderWindow.h"
 #include "sequoia-engine/Core/Logging.h"
+#include "sequoia-engine/Core/StringUtil.h"
+#include "sequoia-engine/Render/Null/NullRenderWindow.h"
 
 namespace sequoia {
 
@@ -22,7 +23,7 @@ namespace render {
 
 NullRenderWindow::NullRenderWindow(const RenderWindow::WindowHint& hints)
     : RenderWindow(RK_NullRenderWindow) {
-  LOG(INFO) << "Initializing Null window " << this << " ...";
+  Log::info("Initializing Null window {} ...", core::ptrToStr(this));
 
   isHidden_ = hints.HideWindow;
   isFullscreen_ = hints.WindowMode == RenderWindow::WindowHint::WK_Fullscreen;
@@ -34,12 +35,12 @@ NullRenderWindow::NullRenderWindow(const RenderWindow::WindowHint& hints)
   // Set a default view-port
   setViewport(std::make_shared<Viewport>(this, 0, 0, width_, height_));
 
-  LOG(INFO) << "Successfully initialized Null window " << this;
+  Log::info("Successfully initialized Null window {}", core::ptrToStr(this));
 }
 
 NullRenderWindow::~NullRenderWindow() {
-  LOG(INFO) << "Terminating Null window " << this << " ...";
-  LOG(INFO) << "Done terminating Null window " << this;
+  Log::info("Terminating Null window {} ...", core::ptrToStr(this));
+  Log::info("Done terminating Null window {}", core::ptrToStr(this));
 }
 
 bool NullRenderWindow::isHidden() { return isHidden_; }
