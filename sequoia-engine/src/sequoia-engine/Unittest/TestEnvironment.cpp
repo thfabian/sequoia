@@ -55,7 +55,7 @@ TestEnvironment::TestEnvironment(int argc, char* argv[], render::RenderSystemKin
   cl.parse(&opt, argc, argv);
 
   // Update debug mode
-  opt.setBool("Core.Debug", !opt.get<bool>("Unittest.NoDebug"));
+  opt.setBool("Core.Debug", !opt.getBool("Unittest.NoDebug"));
 
   // Set logging
   spdlog::sink_ptr sink =

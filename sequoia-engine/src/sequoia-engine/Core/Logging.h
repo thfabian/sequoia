@@ -37,13 +37,13 @@ public:
   ~Logger();
 
   /// @brief Log to file
-  using FileSink = spdlog::sinks::simple_file_sink_mt;
+  using FileSink = spdlog::sinks::simple_file_sink<SpinMutex>;
 
 /// @brief Log to stdout
 #ifdef SEQUOIA_ON_WIN32
-  using StdoutSink = spdlog::sinks::wincolor_stdout_sink_mt;
+  using StdoutSink = spdlog::sinks::wincolor_stdout_sink<SpinMutex>;
 #else
-  using StdoutSink = spdlog::sinks::ansicolor_stderr_sink_mt;
+  using StdoutSink = spdlog::sinks::ansicolor_stderr_sink<SpinMutex>;
 #endif
 
   /// @brief Create an stdout color sink with customized colors
