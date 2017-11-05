@@ -13,10 +13,10 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
+#include "sequoia-engine/Render/GL/GLRenderWindow.h"
 #include "sequoia-engine/Core/Logging.h"
 #include "sequoia-engine/Core/StringUtil.h"
 #include "sequoia-engine/Render/GL/GLRenderSystem.h"
-#include "sequoia-engine/Render/GL/GLRenderWindow.h"
 
 namespace sequoia {
 

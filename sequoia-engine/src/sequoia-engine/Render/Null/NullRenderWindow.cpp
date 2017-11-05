@@ -13,9 +13,9 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
+#include "sequoia-engine/Render/Null/NullRenderWindow.h"
 #include "sequoia-engine/Core/Logging.h"
 #include "sequoia-engine/Core/StringUtil.h"
-#include "sequoia-engine/Render/Null/NullRenderWindow.h"
 
 namespace sequoia {
 

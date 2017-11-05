@@ -13,6 +13,7 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
+#include "sequoia-engine/Unittest/TestEnvironment.h"
 #include "sequoia-engine/Core/CommandLine.h"
 #include "sequoia-engine/Core/ErrorHandler.h"
 #include "sequoia-engine/Core/Format.h"
@@ -20,7 +21,6 @@
 #include "sequoia-engine/Core/Unreachable.h"
 #include "sequoia-engine/Core/Version.h"
 #include "sequoia-engine/Unittest/Config.h"
-#include "sequoia-engine/Unittest/TestEnvironment.h"
 #include "sequoia-engine/Unittest/TestFile.h"
 
 namespace sequoia {

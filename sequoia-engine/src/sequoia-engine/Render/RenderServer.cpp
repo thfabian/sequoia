@@ -32,7 +32,7 @@ RenderServer::~RenderServer() {
 }
 
 void RenderServer::initRessourceThread(std::function<void()> initFunction) {
-  //Log::info("Initializing ressource thread {} ... ", core::LoggerListener::getThreadID());
+  // Log::info("Initializing ressource thread {} ... ", core::LoggerListener::getThreadID());
 
   ressourceCtx_.Thread = std::thread([this, &initFunction]() {
     // Initialize the thread
@@ -54,7 +54,7 @@ void RenderServer::initRessourceThread(std::function<void()> initFunction) {
     }
   });
 
-  //Log::info("Successfully initialized ressource thread {}", core::LoggerListener::getThreadID());
+  // Log::info("Successfully initialized ressource thread {}", core::LoggerListener::getThreadID());
 }
 
 } // namespace render

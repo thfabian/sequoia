@@ -13,8 +13,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia-engine/Core/Exception.h"
 #include "sequoia-engine/Core/Logging.h"
+#include "sequoia-engine/Core/Exception.h"
 
 namespace sequoia {
 

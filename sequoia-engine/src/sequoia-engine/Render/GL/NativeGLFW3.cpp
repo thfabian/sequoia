@@ -13,13 +13,13 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
+#include "sequoia-engine/Render/GL/NativeGLFW3.h"
 #include "sequoia-engine/Core/Casting.h"
 #include "sequoia-engine/Core/Logging.h"
 #include "sequoia-engine/Core/Options.h"
 #include "sequoia-engine/Core/StringUtil.h"
 #include "sequoia-engine/Core/Unreachable.h"
 #include "sequoia-engine/Render/Exception.h"
-#include "sequoia-engine/Render/GL/NativeGLFW3.h"
 #include "sequoia-engine/Render/RenderSystem.h"
 
 #define GLFW_INCLUDE_NONE

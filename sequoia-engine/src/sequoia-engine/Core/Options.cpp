@@ -13,11 +13,11 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
+#include "sequoia-engine/Core/Options.h"
 #include "sequoia-engine/Core/Assert.h"
 #include "sequoia-engine/Core/Exception.h"
 #include "sequoia-engine/Core/Format.h"
 #include "sequoia-engine/Core/Logging.h"
-#include "sequoia-engine/Core/Options.h"
 #include "sequoia-engine/Core/StringSwitch.h"
 #include "sequoia-engine/Core/StringUtil.h"
 #include "sequoia-engine/Core/Unreachable.h"

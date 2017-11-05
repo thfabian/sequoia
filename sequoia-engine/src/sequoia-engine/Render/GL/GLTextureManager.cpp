@@ -235,7 +235,8 @@ void GLTextureManager::makeValid(GLTexture* texture) {
     SEQUOIA_THROW(RenderSystemException, "cannot create texture: '{}'",
                   texture->getImage()->getFile()->getPath());
 
-  Log::debug("Created texture (ID={}) from image \"{}\"", texture->id_, texture->getImage()->getFile()->getPath());
+  Log::debug("Created texture (ID={}) from image \"{}\"", texture->id_,
+             texture->getImage()->getFile()->getPath());
 
   Log::debug("Loading texture (ID={}) ...", texture->id_);
 

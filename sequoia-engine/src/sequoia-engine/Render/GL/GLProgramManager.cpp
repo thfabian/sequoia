@@ -144,12 +144,15 @@ void GLProgramManager::getUniforms(GLProgram* program) const {
       try {
         textureUnit = std::stoi(textureUnitStr.c_str());
       } catch(std::invalid_argument& e) {
-        Log::warn("Failed to extract texture unit from uniform variable \"{}\": {}", name.get(), e.what());
+        Log::warn("Failed to extract texture unit from uniform variable \"{}\": {}", name.get(),
+                  e.what());
         textureUnit = -1;
       }
     }
 
-    Log::debug("Active uniform variable: name={}, type={}{}{}, location={}", name.get(), type, (rank != 1 ? core::format(", size={}", rank) : ""), (textureUnit != -1 ? core::format(", textureUnit={}", textureUnit) : ""), location);
+    Log::debug("Active uniform variable: name={}, type={}{}{}, location={}", name.get(), type,
+               (rank != 1 ? core::format(", size={}", rank) : ""),
+               (textureUnit != -1 ? core::format(", textureUnit={}", textureUnit) : ""), location);
 
     if(location != -1) {
       program->uniformInfoMap_.emplace(
@@ -158,7 +161,9 @@ void GLProgramManager::getUniforms(GLProgram* program) const {
       if(textureUnit != -1) {
         auto ret = program->textureSamplers_.emplace(textureUnit, name.get());
         if(!ret.second)
-          Log::warn("Texture sampler \"{}\" mapped to already existing texture unit '{}' which is mapped to \"{}\"", name.get(), textureUnit, ret.first->second);
+          Log::warn("Texture sampler \"{}\" mapped to already existing texture unit '{}' which is "
+                    "mapped to \"{}\"",
+                    name.get(), textureUnit, ret.first->second);
       }
     }
   }
@@ -193,7 +198,8 @@ bool GLProgramManager::checkVertexAttributes(GLProgram* program) const {
     glGetActiveAttrib(program->id_, index, activeAttrMaxLength, &length, &rank, &type, name.get());
     GLint location = glGetAttribLocation(program->id_, name.get());
 
-    Log::debug("Active vertex attribute: name={}, type={}, location={}", name.get(), type, location);
+    Log::debug("Active vertex attribute: name={}, type={}, location={}", name.get(), type,
+               location);
 
     // We don't check attributes which start with `frag_`
     if(!StringRef(name.get()).startswith("frag_") && !GLVertexAttribute::isValid(name.get())) {

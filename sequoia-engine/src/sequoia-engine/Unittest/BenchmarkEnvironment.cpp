@@ -29,43 +29,43 @@ SEQUOIA_DECLARE_SINGLETON(unittest::BenchmarkEnvironment);
 namespace unittest {
 
 BenchmarkEnvironment::BenchmarkEnvironment(int argc, char* argv[]) {
-//  singletonManager_ = std::make_unique<core::SingletonManager>();
-//  singletonManager_->allocateSingleton<ErrorHandler>(argc > 0 ? argv[0] : "SequoiaBenchmark");
+  //  singletonManager_ = std::make_unique<core::SingletonManager>();
+  //  singletonManager_->allocateSingleton<ErrorHandler>(argc > 0 ? argv[0] : "SequoiaBenchmark");
 
-//  // Initialize test options
-//  singletonManager_->allocateSingleton<TestOptions>();
+  //  // Initialize test options
+  //  singletonManager_->allocateSingleton<TestOptions>();
 
-//  // Parse command-line
-//  po::options_description desc("Benchmark options");
-//  desc.add_options()
-//      // --help
-//      ("help", "Display this information.")
-//      // --debug
-//      ("debug", "Enable debug mode.");
+  //  // Parse command-line
+  //  po::options_description desc("Benchmark options");
+  //  desc.add_options()
+  //      // --help
+  //      ("help", "Display this information.")
+  //      // --debug
+  //      ("debug", "Enable debug mode.");
 
-//  po::variables_map vm;
-//  try {
-//    po::store(po::command_line_parser(argc, argv).options(desc).allow_unregistered().run(), vm);
-//    po::notify(vm);
-//  } catch(std::exception& e) {
-//    ErrorHandler::fatal(e.what(), false);
-//  }
+  //  po::variables_map vm;
+  //  try {
+  //    po::store(po::command_line_parser(argc, argv).options(desc).allow_unregistered().run(), vm);
+  //    po::notify(vm);
+  //  } catch(std::exception& e) {
+  //    ErrorHandler::fatal(e.what(), false);
+  //  }
 
-//  if(vm.count("help"))
-//    std::cout << "\nSequoia Benchmark (" << core::getSequoiaEngineFullVersionString() << ")\n\n"
-//              << desc << std::endl;
+  //  if(vm.count("help"))
+  //    std::cout << "\nSequoia Benchmark (" << core::getSequoiaEngineFullVersionString() << ")\n\n"
+  //              << desc << std::endl;
 
-//  // Initialize benchmark
-//  benchmark::Initialize(&argc, argv);
+  //  // Initialize benchmark
+  //  benchmark::Initialize(&argc, argv);
 
-//  if(vm.count("help"))
-//    std::exit(EXIT_SUCCESS);
+  //  if(vm.count("help"))
+  //    std::exit(EXIT_SUCCESS);
 
   // Benchmarking by default disables logging and debugging
-//  singletonManager_->allocateSingleton<core::Logger>(
-//      vm.count("debug") ? core::LoggingLevel::Debug : core::LoggingLevel::Disabled);
-//  if(vm.count("debug"))
-//    singletonManager_->allocateSingleton<driver::ConsoleLogger>();
+  //  singletonManager_->allocateSingleton<core::Logger>(
+  //      vm.count("debug") ? core::LoggingLevel::Debug : core::LoggingLevel::Disabled);
+  //  if(vm.count("debug"))
+  //    singletonManager_->allocateSingleton<driver::ConsoleLogger>();
 }
 
 BenchmarkEnvironment::~BenchmarkEnvironment() {}
