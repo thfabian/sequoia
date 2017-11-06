@@ -13,7 +13,6 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia-engine/Unittest/TestEnvironment.h"
 #include "sequoia-engine/Core/CommandLine.h"
 #include "sequoia-engine/Core/ErrorHandler.h"
 #include "sequoia-engine/Core/Format.h"
@@ -21,6 +20,7 @@
 #include "sequoia-engine/Core/Unreachable.h"
 #include "sequoia-engine/Core/Version.h"
 #include "sequoia-engine/Unittest/Config.h"
+#include "sequoia-engine/Unittest/TestEnvironment.h"
 #include "sequoia-engine/Unittest/TestFile.h"
 
 namespace sequoia {
@@ -37,18 +37,15 @@ TestEnvironment::TestEnvironment(int argc, char* argv[], render::RenderSystemKin
   Options& opt = options_.top();
 
   // Unittests are *always* in debug mode and with logging enabled
-  opt.setBool("Unittest.NoDebug", false);
-  opt.setMetaData("Unittest.NoDebug",
-                  core::OptionMetaData{"no-debug", "", false, "", "Disable debug mode"});
+  opt.setBool("Unittest.NoDebug", false,
+              core::OptionMetaData{"no-debug", "", false, "", "Disable debug mode"});
 
-  opt.setBool("Unittest.NoLogging", false);
-  opt.setMetaData("Unittest.NoLogging",
-                  core::OptionMetaData{"no-log", "", false, "", "Disable logging"});
+  opt.setBool("Unittest.NoLogging", false,
+              core::OptionMetaData{"no-log", "", false, "", "Disable logging"});
 
-  opt.setString("Unittest.Renderer", "null");
-  opt.setMetaData("Unittest.Renderer",
-                  core::OptionMetaData{"render", "r", true, "RENDERER",
-                                       "Renderer to use, where RENDERER is one of [gl, null]"});
+  opt.setString("Unittest.Renderer", "null",
+                core::OptionMetaData{"render", "r", true, "RENDERER",
+                                     "Renderer to use, where RENDERER is one of [gl, null]"});
 
   // Parse command-line
   core::CommandLine cl("Sequoia Unittest", core::getSequoiaEngineFullVersionString());

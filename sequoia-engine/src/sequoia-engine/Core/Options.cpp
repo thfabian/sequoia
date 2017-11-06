@@ -111,25 +111,20 @@ std::string OptionMetaData::toString() const {
 
 Options::Options() {
   // Core
-  setBool("Core.Debug", false);
-  setMetaData(
-      "Core.Debug",
-      OptionMetaData{
-          "debug", "d", false, "",
-          "Enable rigorous error checking and logging, especially of the rendering API calls"});
+  setBool("Core.Debug", false,
+          OptionMetaData{
+              "debug", "d", false, "",
+              "Enable rigorous error checking and logging, especially of the rendering API calls"});
 
   // Render
-  setString("Render.WindowMode", "window");
-  setMetaData("Render.WindowMode",
-              OptionMetaData{"window-mode", "", true, "MODE",
-                             "Set the window mode to MODE, where MODE is one of "
-                             "[window,fullscreen,windowed-fullscreen]"});
-
-  setInt("Render.Monitor", -1);
-  setMetaData("Render.Monitor",
-              OptionMetaData{"monitor", "", true, "MONITOR", "Set the MONITOR to use, -1 indicates "
-                                                             "the primary monitor should be used "
-                                                             "which is the default behaviour"});
+  setString("Render.WindowMode", "window",
+            OptionMetaData{"window-mode", "", true, "MODE",
+                           "Set the window mode to MODE, where MODE is one of "
+                           "[window,fullscreen,windowed-fullscreen]"});
+  setInt("Render.Monitor", -1,
+         OptionMetaData{"monitor", "", true, "MONITOR", "Set the MONITOR to use, -1 indicates "
+                                                        "the primary monitor should be used "
+                                                        "which is the default behaviour"});
   setInt("Render.MSAA", 0);
   setBool("Render.VSync", true);
   setInt("Render.GLMajorVersion", 4);

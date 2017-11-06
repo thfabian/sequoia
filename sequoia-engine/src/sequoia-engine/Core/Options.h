@@ -60,6 +60,27 @@ public:
   void setString(const std::string& name, std::string value) noexcept {
     setImpl(name, std::move(value));
   }
+
+  void setBool(const std::string& name, bool value, const OptionMetaData& metaData) noexcept {
+    setBool(name, value);
+    setMetaData(name, metaData);
+  }
+
+  void setInt(const std::string& name, int value, const OptionMetaData& metaData) noexcept {
+    setInt(name, value);
+    setMetaData(name, metaData);
+  }
+
+  void setFloat(const std::string& name, float value, const OptionMetaData& metaData) noexcept {
+    setFloat(name, value);
+    setMetaData(name, metaData);
+  }
+
+  void setString(const std::string& name, std::string value,
+                 const OptionMetaData& metaData) noexcept {
+    setString(name, std::move(value));
+    setMetaData(name, metaData);
+  }
   /// @}
 
   /// @brief Get a **copy** of the option `name` as type `T` (performs conversion if necessary)
