@@ -18,7 +18,7 @@ this_script_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 # Setup dependencies
 source "$this_script_dir/install.sh"
-install_driver -i ${CACHE_DIR} -b cmake,boost,glbinding,opencv,protobuf                            \
+install_driver -i ${CACHE_DIR} -b cmake,boost,glbinding,opencv                                     \
                -c boost:atomic,chrono,date_time,filesystem,program_options,thread
 
 if [ ! -z ${CLANG_VERSION+x} ]; then
