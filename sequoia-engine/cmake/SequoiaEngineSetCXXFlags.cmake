@@ -155,6 +155,10 @@ macro(sequoia_engine_set_cxx_flags)
     sequoia_check_and_set_cxx_flag("-pthread" HAVE_GCC_PTHREAD)
 
     # Warnings
+    if(SEQUOIA_ENGINE_WERROR)
+      sequoia_check_and_set_cxx_flag("-Werror" HAVE_GCC_WERROR)
+    endif()
+
     sequoia_check_and_set_cxx_flag("-Wall" HAVE_GCC_WALL)
     sequoia_check_and_set_cxx_flag("-W" HAVE_GCC_W)
     sequoia_check_and_set_cxx_flag("-Wformat" HAVE_GCC_WFORMAT)

@@ -26,6 +26,7 @@ endif()
 option(SEQUOIA_ENGINE_ASSERTS "Enable asserts" ${build_is_not_release})
 option(SEQUOIA_ENGINE_OPTIMIZE "Enable all optimizations" ${build_is_release})
 option(SEQUOIA_ENGINE_USE_CCACHE "Use compile cache if available" ON)
+option(SEQUOIA_ENGINE_WERROR "Treat warning as errors" OFF)
 
 ##===---------------------------------- Testing -----------------------------------------------===##
 option(SEQUOIA_ENGINE_TESTING "Enable testing" ON)
@@ -38,6 +39,7 @@ sequoia_export_options(SEQUOIA_ENGINE
   SEQUOIA_ENGINE_ASSERTS
   SEQUOIA_ENGINE_OPTIMIZE
   SEQUOIA_ENGINE_USE_CCACHE
+  SEQUOIA_ENGINE_WERROR
   SEQUOIA_ENGINE_TESTING
   SEQUOIA_ENGINE_BENCHMARKING
   SEQUOIA_ENGINE_DOCUMENTATION

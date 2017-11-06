@@ -127,7 +127,7 @@ sequoia_report_result("Package summary" ${package_info})
 include_directories(${CMAKE_SOURCE_DIR}/src)
 include_directories(${CMAKE_BINARY_DIR}/src)
 
-#add_subdirectory(src)
+add_subdirectory(src)
 
 # # Testing
 # if(SEQUOIA_ENGINE_TESTING)
