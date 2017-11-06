@@ -204,8 +204,9 @@ glfw3NativeWindow::glfw3NativeWindow(const std::shared_ptr<NativeGLContext>& con
   SEQUOIA_ASSERT_MSG(!glfw3NativeWindow::Instance, "glfw3 window already initialized");
   glfw3NativeWindow::Instance = this;
 
-  SEQUOIA_ASSERT_MSG(isa<glfw3NativeGLContext>(context.get()), "expected 'glfw3NativeGLContext'");
-  context_ = dyn_pointer_cast<glfw3NativeGLContext>(context);
+  SEQUOIA_ASSERT_MSG(core::isa<glfw3NativeGLContext>(context.get()),
+                     "expected 'glfw3NativeGLContext'");
+  context_ = core::dyn_pointer_cast<glfw3NativeGLContext>(context);
 
   Log::info("Initializing glfw3 window {} ...", core::ptrToStr(this));
 
@@ -293,8 +294,8 @@ glfw3NativeInputSystem::glfw3NativeInputSystem(const std::shared_ptr<NativeWindo
   SEQUOIA_ASSERT_MSG(!glfw3NativeInputSystem::Instance, "glfw3 input system already initialized");
   glfw3NativeInputSystem::Instance = this;
 
-  SEQUOIA_ASSERT_MSG(isa<glfw3NativeWindow>(window.get()), "expected 'glfw3NativeWindow'");
-  window_ = dyn_pointer_cast<glfw3NativeWindow>(window);
+  SEQUOIA_ASSERT_MSG(core::isa<glfw3NativeWindow>(window.get()), "expected 'glfw3NativeWindow'");
+  window_ = core::dyn_pointer_cast<glfw3NativeWindow>(window);
 
   Log::info("Initializing glfw3 input system {} ...", core::ptrToStr(this));
 

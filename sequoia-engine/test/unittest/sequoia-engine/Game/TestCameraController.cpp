@@ -63,7 +63,7 @@ TEST_F(CameraControllerTest, CameraController) {
   EXPECT_EQ(node->getName(), "CameraController");
 
   // Test RTTI
-  EXPECT_TRUE(isa<CameraController>(node.get()));
+  EXPECT_TRUE(core::isa<CameraController>(node.get()));
 }
 
 } // anonymous namespace

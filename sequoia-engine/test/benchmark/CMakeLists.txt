@@ -18,9 +18,9 @@ macro(sequoia_engine_add_benchmark SOURCE)
   sequoia_add_executable(
     NAME SequoiaEngine${name}
     SOURCES ${SOURCE}
-    DEPENDS SequoiaUnittestStatic
-            SequoiaStatic
-            ${SEQUOIA_EXTERNAL_LIBRARIES}
+    DEPENDS SequoiaEngineUnittestStatic
+            SequoiaEngineStatic
+            ${SEQUOIA_ENGINE_TESTING_LIBRARIES}
     OUTPUT_DIR ${CMAKE_BINARY_DIR}/bin/benchmark
   )
 endmacro()

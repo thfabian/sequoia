@@ -17,8 +17,11 @@
 #define SEQUOIA_ENGINE_UNITTEST_BENCHMARKENVIRONMENT_H
 
 #include "sequoia-engine/Core/Export.h"
+#include "sequoia-engine/Core/Logging.h"
+#include "sequoia-engine/Core/Options.h"
 #include "sequoia-engine/Core/Singleton.h"
 #include <memory>
+#include <stack>
 
 namespace sequoia {
 
@@ -39,6 +42,22 @@ public:
 
   /// @brief Tear-down test environment
   virtual void TearDown();
+
+  /// @brief Get the current options
+  Options& getOptions();
+
+  /// @brief Push a clone of the current options to the stack
+  void pushOptions();
+
+  /// @brief Pop the most recently stored options of the stack
+  void popOptions();
+
+private:
+  /// Benchmark logger
+  std::unique_ptr<core::Logger> logger_;
+
+  /// Options stack
+  std::stack<Options> options_;
 };
 
 } // namespace unittest

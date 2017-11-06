@@ -55,7 +55,7 @@ std::shared_ptr<GLVertexData> makeVertexData(std::size_t numVertices, std::size_
                             numVertices, numIndices, Buffer::UH_StaticWriteOnly);
   param.UseVertexShadowBuffer = useVertexShadowBuffer;
   param.UseIndexShadowBuffer = useIndexShadowBuffer;
-  return dyn_pointer_cast<GLVertexData>(rsys.createVertexData(param));
+  return core::dyn_pointer_cast<GLVertexData>(rsys.createVertexData(param));
 }
 
 TYPED_TEST(GLVertexDataTest, Allocation) {

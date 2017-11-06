@@ -70,7 +70,7 @@ TEST_F(SceneNodeTest, Construction) {
   EXPECT_EQ(nodeClone->getParent(), node);
 
   // Test RTTI
-  EXPECT_TRUE(isa<SceneNode>(node.get()));
+  EXPECT_TRUE(core::isa<SceneNode>(node.get()));
 }
 
 TEST_F(SceneNodeTest, Clone) {

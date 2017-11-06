@@ -207,7 +207,7 @@ void GLRenderer::render(RenderCommand* command) {
 
   for(DrawCommand* drawCommand = drawCommandList->start(); drawCommand != nullptr;
       drawCommand = drawCommandList->next()) {
-    GLProgram* program = dyn_cast<GLProgram>(drawCommand->getProgram());
+    GLProgram* program = core::dyn_cast<GLProgram>(drawCommand->getProgram());
     if(!program->isValid())
       continue;
 

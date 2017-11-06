@@ -13,10 +13,10 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia-engine/Render/GL/GL.h"
 #include "sequoia-engine/Core/Casting.h"
 #include "sequoia-engine/Core/StringUtil.h"
 #include "sequoia-engine/Render/DrawCommand.h"
+#include "sequoia-engine/Render/GL/GL.h"
 #include "sequoia-engine/Render/GL/GLFrameBufferObject.h"
 #include "sequoia-engine/Render/GL/GLProgram.h"
 #include "sequoia-engine/Render/GL/GLStateCacheManager.h"
@@ -92,7 +92,7 @@ public:
   /// @brief Bind the given `FBO`
   void bindFrameBufferObject(FrameBuffer* fbo) {
     if(fbo)
-      dyn_cast<GLFrameBufferObject>(fbo)->bind();
+      core::dyn_cast<GLFrameBufferObject>(fbo)->bind();
   }
 
   /// @brief Unbind any `FBO`
@@ -109,7 +109,7 @@ public:
       // Force the binding
       setActiveTextureUnit(textureUnit);
       getRenderState().TextureMap[textureUnit] = texture;
-      dyn_cast<GLTexture>(texture)->bind();
+      core::dyn_cast<GLTexture>(texture)->bind();
     }
   }
 
@@ -119,7 +119,7 @@ public:
 
     if(it != getRenderState().TextureMap.end()) {
       setActiveTextureUnit(textureUnit);
-      dyn_cast<GLTexture>(it->second)->unbind();
+      core::dyn_cast<GLTexture>(it->second)->unbind();
       getRenderState().TextureMap.erase(it);
     }
   }
@@ -128,7 +128,7 @@ public:
   void
   setUniformVariables(Program* program,
                       const std::unordered_map<std::string, UniformVariable>& newUniformVariables) {
-    GLProgram* glProgram = dyn_cast<GLProgram>(program);
+    GLProgram* glProgram = core::dyn_cast<GLProgram>(program);
 
     // Only update the variables if they differ
     for(const auto& nameVariablePair : newUniformVariables)
@@ -232,7 +232,7 @@ protected:
   virtual bool ProgramChanged(Program* program) override {
     SEQUOIA_ASSERT(program);
 
-    GLProgram* glprogram = dyn_cast<GLProgram>(program);
+    GLProgram* glprogram = core::dyn_cast<GLProgram>(program);
     if(!glprogram->isValid())
       return false;
 
@@ -244,7 +244,7 @@ protected:
     SEQUOIA_ASSERT(data);
 
     vertexBindKind_ = bindForDrawing ? GLBuffer::BK_Draw : GLBuffer::BK_Modify;
-    GLVertexData* gldata = dyn_cast<GLVertexData>(data);
+    GLVertexData* gldata = core::dyn_cast<GLVertexData>(data);
 
     switch(vertexBindKind_) {
     case GLBuffer::BK_Modify:
@@ -263,7 +263,7 @@ protected:
   virtual bool TextureChanged(int textureUnit, Texture* texture, bool enable) override {
     SEQUOIA_ASSERT(texture);
 
-    GLTexture* gltexture = dyn_cast<GLTexture>(texture);
+    GLTexture* gltexture = core::dyn_cast<GLTexture>(texture);
 
     // Bind texture
     setActiveTextureUnit(textureUnit);
@@ -277,12 +277,12 @@ protected:
       // Bind assoicated sampler if we already have a program
       Program* program = getRenderState().Program;
       if(program) {
-        GLProgram* glProgram = dyn_cast<GLProgram>(program);
+        GLProgram* glProgram = core::dyn_cast<GLProgram>(program);
         const std::string& name = glProgram->getTextureSampler(textureUnit);
         setUniformVariable(glProgram, name, UniformVariable(textureUnit));
       }
     } else {
-      dyn_cast<GLTexture>(texture)->unbind();
+      core::dyn_cast<GLTexture>(texture)->unbind();
     }
 
     return true;
@@ -318,10 +318,10 @@ bool GLStateCacheManager::draw(DrawCommand* command) {
   const RenderState& state = getRenderState();
 
   // Check that all uniform variables are set correctly
-  dyn_cast<GLProgram>(state.Program)->checkUniformVariables();
+  core::dyn_cast<GLProgram>(state.Program)->checkUniformVariables();
 
   // Draw the vertex-data
-  dyn_cast<GLVertexData>(state.VertexData)->draw();
+  core::dyn_cast<GLVertexData>(state.VertexData)->draw();
 
   return true;
 }
@@ -331,7 +331,7 @@ bool GLStateCacheManager::setUniformVariable(Program* program, const std::string
   if(!program->isValid())
     return false;
 
-  GLProgram* glProgram = dyn_cast<GLProgram>(program);
+  GLProgram* glProgram = core::dyn_cast<GLProgram>(program);
   stateCache_->setUniformVariable(glProgram, name, value);
   return true;
 }

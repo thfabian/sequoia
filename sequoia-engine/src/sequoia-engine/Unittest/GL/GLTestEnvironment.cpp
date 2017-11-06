@@ -24,7 +24,7 @@ GLTestEnvironment::GLTestEnvironment(int argc, char* argv[])
 
 void GLTestEnvironment::SetUp() {
   TestEnvironment::SetUp();
-  renderSystem_ = render::RenderSystem::create(render::RK_OpenGL, &getOption());
+  renderSystem_ = render::RenderSystem::create(render::RK_OpenGL, &getOptions());
 }
 
 void GLTestEnvironment::TearDown() { renderSystem_.reset(); }

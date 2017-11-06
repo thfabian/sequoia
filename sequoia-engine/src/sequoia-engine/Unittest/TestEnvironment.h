@@ -83,7 +83,7 @@ public:
   std::shared_ptr<File> createFile(const char* path) const;
 
   /// @brief Get the current options
-  Options& getOption();
+  Options& getOptions();
 
   /// @brief Push a clone of the current options to the stack
   void pushOptions();

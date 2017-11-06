@@ -33,9 +33,9 @@ TEST(ImageTest, PNGImage) {
   EXPECT_EQ(file->getNumBytes(), 193);
 
   std::shared_ptr<Image> loadedImage = Image::load(file);
-  ASSERT_TRUE(isa<RegularImage>(loadedImage.get()));
+  ASSERT_TRUE(core::isa<RegularImage>(loadedImage.get()));
 
-  const RegularImage* image = dyn_cast<RegularImage>(loadedImage.get());
+  const RegularImage* image = core::dyn_cast<RegularImage>(loadedImage.get());
 
   EXPECT_EQ(image->getHeight(), 32);
   EXPECT_EQ(image->getWidth(), 32);
@@ -63,9 +63,9 @@ TEST(ImageTest, JPEGImage) {
   EXPECT_EQ(file->getNumBytes(), 905);
 
   std::shared_ptr<Image> loadedImage = Image::load(file);
-  ASSERT_TRUE(isa<RegularImage>(loadedImage.get()));
+  ASSERT_TRUE(core::isa<RegularImage>(loadedImage.get()));
 
-  const RegularImage* image = dyn_cast<RegularImage>(loadedImage.get());
+  const RegularImage* image = core::dyn_cast<RegularImage>(loadedImage.get());
 
   EXPECT_EQ(image->getHeight(), 32);
   EXPECT_EQ(image->getWidth(), 32);
@@ -83,9 +83,9 @@ TEST(ImageTest, BMPImage) {
   EXPECT_EQ(file->getNumBytes(), 714);
 
   std::shared_ptr<Image> loadedImage = Image::load(file);
-  ASSERT_TRUE(isa<RegularImage>(loadedImage.get()));
+  ASSERT_TRUE(core::isa<RegularImage>(loadedImage.get()));
 
-  const RegularImage* image = dyn_cast<RegularImage>(loadedImage.get());
+  const RegularImage* image = core::dyn_cast<RegularImage>(loadedImage.get());
 
   EXPECT_EQ(image->getHeight(), 32);
   EXPECT_EQ(image->getWidth(), 32);
@@ -113,9 +113,9 @@ TEST(ImageTest, TiffImage) {
   EXPECT_EQ(file->getNumBytes(), 878);
 
   std::shared_ptr<Image> loadedImage = Image::load(file);
-  ASSERT_TRUE(isa<RegularImage>(loadedImage.get()));
+  ASSERT_TRUE(core::isa<RegularImage>(loadedImage.get()));
 
-  const RegularImage* image = dyn_cast<RegularImage>(loadedImage.get());
+  const RegularImage* image = core::dyn_cast<RegularImage>(loadedImage.get());
 
   EXPECT_EQ(image->getHeight(), 32);
   EXPECT_EQ(image->getWidth(), 32);
@@ -141,9 +141,9 @@ TEST(ImageTest, DDSImage) {
   auto file = env.getFile("sequoia-engine/Core/TestImage/Test.dds");
 
   std::shared_ptr<Image> loadedImage = Image::load(file);
-  ASSERT_TRUE(isa<TextureImage>(loadedImage.get()));
+  ASSERT_TRUE(core::isa<TextureImage>(loadedImage.get()));
 
-  const TextureImage* image = dyn_cast<TextureImage>(loadedImage.get());
+  const TextureImage* image = core::dyn_cast<TextureImage>(loadedImage.get());
 
   const gli::texture& texture = image->getTexture();
   EXPECT_TRUE(gli::is_compressed(texture.format()));

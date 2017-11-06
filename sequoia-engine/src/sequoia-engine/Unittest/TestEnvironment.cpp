@@ -106,7 +106,7 @@ std::shared_ptr<File> TestEnvironment::createFile(const char* path) const {
   return std::make_shared<TestFile>(filepath);
 }
 
-Options& TestEnvironment::getOption() {
+Options& TestEnvironment::getOptions() {
   SEQUOIA_ASSERT_MSG(!options_.empty(), "options are empty");
   return options_.top();
 }

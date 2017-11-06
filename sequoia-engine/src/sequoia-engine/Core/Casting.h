@@ -22,9 +22,13 @@
 
 namespace sequoia {
 
+namespace core {
+
 //===------------------------------------------------------------------------------------------===//
 //     isa<x> Support Templates
 //===------------------------------------------------------------------------------------------===//
+
+namespace internal {
 
 // Define a template that can be specialized by smart pointers to reflect the fact that they are
 // automatically dereferenced, and are not involved with the template selection process...  the
@@ -119,6 +123,8 @@ struct isa_impl_wrap<To, FromTy, FromTy> {
   static bool doit(const FromTy& Val) { return isa_impl_cl<To, FromTy>::doit(Val); }
 };
 
+} // namespace internal
+
 /// @brief Return true if the parameter to the template is an instance of the template type argument
 ///
 /// Used like this:
@@ -129,12 +135,15 @@ struct isa_impl_wrap<To, FromTy, FromTy> {
 /// @ingroup core
 template <class X, class Y>
 inline bool isa(const Y& Val) {
-  return isa_impl_wrap<X, const Y, typename simplify_type<const Y>::SimpleType>::doit(Val);
+  return internal::isa_impl_wrap<X, const Y,
+                                 typename internal::simplify_type<const Y>::SimpleType>::doit(Val);
 }
 
 //===------------------------------------------------------------------------------------------===//
 //     cast<x> Support Templates
 //===------------------------------------------------------------------------------------------===//
+
+namespace internal {
 
 template <class To, class From>
 struct cast_retty;
@@ -210,6 +219,8 @@ struct is_simple_type {
   static const bool value = std::is_same<X, typename simplify_type<X>::SimpleType>::value;
 };
 
+} // namespace internal
+
 /// @brief Return the argument parameter cast to the specified type.
 ///
 /// This casting operator asserts that the type is correct, so it does not return null on failure.
@@ -222,31 +233,32 @@ struct is_simple_type {
 ///
 /// @ingroup core
 template <class X, class Y>
-inline typename std::enable_if<!is_simple_type<Y>::value,
-                               typename cast_retty<X, const Y>::ret_type>::type
+inline typename std::enable_if<!internal::is_simple_type<Y>::value,
+                               typename internal::cast_retty<X, const Y>::ret_type>::type
 cast(const Y& Val) {
   SEQUOIA_ASSERT_MSG(isa<X>(Val), "cast<Ty>() argument of incompatible type!");
-  return cast_convert_val<X, const Y, typename simplify_type<const Y>::SimpleType>::doit(Val);
+  return internal::cast_convert_val<
+      X, const Y, typename internal::simplify_type<const Y>::SimpleType>::doit(Val);
 }
 
 template <class X, class Y>
-inline typename cast_retty<X, Y>::ret_type cast(Y& Val) {
+inline typename internal::cast_retty<X, Y>::ret_type cast(Y& Val) {
   SEQUOIA_ASSERT_MSG(isa<X>(Val), "cast<Ty>() argument of incompatible type!");
-  return cast_convert_val<X, Y, typename simplify_type<Y>::SimpleType>::doit(Val);
+  return internal::cast_convert_val<X, Y, typename internal::simplify_type<Y>::SimpleType>::doit(
+      Val);
 }
 
 template <class X, class Y>
-inline typename cast_retty<X, Y*>::ret_type cast(Y* Val) {
+inline typename internal::cast_retty<X, Y*>::ret_type cast(Y* Val) {
   SEQUOIA_ASSERT_MSG(isa<X>(Val), "cast<Ty>() argument of incompatible type!");
-  return cast_convert_val<X, Y*, typename simplify_type<Y*>::SimpleType>::doit(Val);
+  return internal::cast_convert_val<X, Y*, typename internal::simplify_type<Y*>::SimpleType>::doit(
+      Val);
 }
 
-// cast_or_null<X> - Functionally identical to cast, except that a null value is
-// accepted.
-//
+// cast_or_null<X> - Functionally identical to cast, except that a null value is accepted
 template <class X, class Y>
-inline typename std::enable_if<!is_simple_type<Y>::value,
-                               typename cast_retty<X, const Y>::ret_type>::type
+inline typename std::enable_if<!internal::is_simple_type<Y>::value,
+                               typename internal::cast_retty<X, const Y>::ret_type>::type
 cast_or_null(const Y& Val) {
   if(!Val)
     return nullptr;
@@ -255,7 +267,8 @@ cast_or_null(const Y& Val) {
 }
 
 template <class X, class Y>
-inline typename std::enable_if<!is_simple_type<Y>::value, typename cast_retty<X, Y>::ret_type>::type
+inline typename std::enable_if<!internal::is_simple_type<Y>::value,
+                               typename internal::cast_retty<X, Y>::ret_type>::type
 cast_or_null(Y& Val) {
   if(!Val)
     return nullptr;
@@ -264,7 +277,7 @@ cast_or_null(Y& Val) {
 }
 
 template <class X, class Y>
-inline typename cast_retty<X, Y*>::ret_type cast_or_null(Y* Val) {
+inline typename internal::cast_retty<X, Y*>::ret_type cast_or_null(Y* Val) {
   if(!Val)
     return nullptr;
   SEQUOIA_ASSERT_MSG(isa<X>(Val), "cast_or_null<Ty>() argument of incompatible type!");
@@ -283,38 +296,39 @@ inline typename cast_retty<X, Y*>::ret_type cast_or_null(Y* Val) {
 ///
 /// @ingroup core
 template <class X, class Y>
-inline typename std::enable_if<!is_simple_type<Y>::value,
-                               typename cast_retty<X, const Y>::ret_type>::type
+inline typename std::enable_if<!internal::is_simple_type<Y>::value,
+                               typename internal::cast_retty<X, const Y>::ret_type>::type
 dyn_cast(const Y& Val) {
   return isa<X>(Val) ? cast<X>(Val) : nullptr;
 }
 
 template <class X, class Y>
-inline typename cast_retty<X, Y>::ret_type dyn_cast(Y& Val) {
+inline typename internal::cast_retty<X, Y>::ret_type dyn_cast(Y& Val) {
   return isa<X>(Val) ? cast<X>(Val) : nullptr;
 }
 
 template <class X, class Y>
-inline typename cast_retty<X, Y*>::ret_type dyn_cast(Y* Val) {
+inline typename internal::cast_retty<X, Y*>::ret_type dyn_cast(Y* Val) {
   return isa<X>(Val) ? cast<X>(Val) : nullptr;
 }
 
 // dyn_cast_or_null<X> - Functionally identical to dyn_cast, except that a null value is accepted.
 template <class X, class Y>
-inline typename std::enable_if<!is_simple_type<Y>::value,
-                               typename cast_retty<X, const Y>::ret_type>::type
+inline typename std::enable_if<!internal::is_simple_type<Y>::value,
+                               typename internal::cast_retty<X, const Y>::ret_type>::type
 dyn_cast_or_null(const Y& Val) {
   return (Val && isa<X>(Val)) ? cast<X>(Val) : nullptr;
 }
 
 template <class X, class Y>
-inline typename std::enable_if<!is_simple_type<Y>::value, typename cast_retty<X, Y>::ret_type>::type
+inline typename std::enable_if<!internal::is_simple_type<Y>::value,
+                               typename internal::cast_retty<X, Y>::ret_type>::type
 dyn_cast_or_null(Y& Val) {
   return (Val && isa<X>(Val)) ? cast<X>(Val) : nullptr;
 }
 
 template <class X, class Y>
-inline typename cast_retty<X, Y*>::ret_type dyn_cast_or_null(Y* Val) {
+inline typename internal::cast_retty<X, Y*>::ret_type dyn_cast_or_null(Y* Val) {
   return (Val && isa<X>(Val)) ? cast<X>(Val) : nullptr;
 }
 
@@ -324,6 +338,8 @@ template <class T, class U>
 inline std::shared_ptr<T> dyn_pointer_cast(const std::shared_ptr<U>& ptr) noexcept {
   return std::shared_ptr<T>(ptr, dyn_cast<T>(ptr.get()));
 }
+
+} // namespace core
 
 } // namespace sequoia
 

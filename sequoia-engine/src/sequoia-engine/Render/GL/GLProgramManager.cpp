@@ -47,7 +47,7 @@ void GLProgramManager::makeValid(GLProgram* program) {
   Log::debug("Linking program (ID={}) ...", program->id_);
 
   for(const std::shared_ptr<Shader>& shader : program->getShaders()) {
-    auto glshader = dyn_pointer_cast<GLShader>(shader);
+    auto glshader = core::dyn_pointer_cast<GLShader>(shader);
 
     // TODO: if at some point we have multiple ressource threads, we need to wait here
     SEQUOIA_ASSERT_MSG(glshader->isValid(), "shader not valid");
@@ -66,7 +66,7 @@ void GLProgramManager::makeValid(GLProgram* program) {
     SEQUOIA_THROW(RenderSystemException, "failed to link program");
 
   for(const auto& shader : program->getShaders()) {
-    GLShader* glshader = dyn_cast<GLShader>(shader.get());
+    GLShader* glshader = core::dyn_cast<GLShader>(shader.get());
     glDetachShader(program->id_, glshader->getID());
   }
 

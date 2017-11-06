@@ -190,7 +190,7 @@ GLStateCacheManager* GLRenderSystem::getStateCacheManager() {
 GLRenderSystem& getGLRenderSystem() noexcept { return *getGLRenderSystemPtr(); }
 
 GLRenderSystem* getGLRenderSystemPtr() noexcept {
-  return dyn_cast<GLRenderSystem>(RenderSystem::getSingletonPtr());
+  return core::dyn_cast<GLRenderSystem>(RenderSystem::getSingletonPtr());
 }
 
 } // namespace render

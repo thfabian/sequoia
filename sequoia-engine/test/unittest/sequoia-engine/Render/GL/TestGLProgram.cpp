@@ -49,7 +49,7 @@ TEST_F(GLProgramTest, LinkingSuccess) {
       env.getFile("sequoia-engine/Render/GL/TestGLProgram/FragmentLinkSuccess.frag"));
 
   std::shared_ptr<Program> program = rsys.createProgram({vertexShader, fragmentShader});
-  GLProgram* glprogram = dyn_cast<GLProgram>(program.get());
+  GLProgram* glprogram = core::dyn_cast<GLProgram>(program.get());
 
   EXPECT_TRUE(glprogram->isValid());
   EXPECT_NE(glprogram->getID(), 0);
@@ -73,7 +73,7 @@ TEST_F(GLProgramTest, UniformScalars) {
       env.getFile("sequoia-engine/Render/GL/TestGLProgram/VertexUniformScalars.vert"));
 
   std::shared_ptr<Program> program = rsys.createProgram({vertexShader});
-  GLProgram* glprogram = dyn_cast<GLProgram>(program.get());
+  GLProgram* glprogram = core::dyn_cast<GLProgram>(program.get());
 
   EXPECT_EQ(glprogram->getUniformVariables().size(), 2);
 
@@ -95,7 +95,7 @@ TEST_F(GLProgramTest, UniformVectors) {
       env.getFile("sequoia-engine/Render/GL/TestGLProgram/VertexUniformVectors.vert"));
 
   std::shared_ptr<Program> program = rsys.createProgram({vertexShader});
-  GLProgram* glprogram = dyn_cast<GLProgram>(program.get());
+  GLProgram* glprogram = core::dyn_cast<GLProgram>(program.get());
 
   EXPECT_EQ(glprogram->getUniformVariables().size(), 3);
 
@@ -123,7 +123,7 @@ TEST_F(GLProgramTest, UniformArrays) {
       env.getFile("sequoia-engine/Render/GL/TestGLProgram/VertexUniformArrays.vert"));
 
   std::shared_ptr<Program> program = rsys.createProgram({vertexShader});
-  GLProgram* glprogram = dyn_cast<GLProgram>(program.get());
+  GLProgram* glprogram = core::dyn_cast<GLProgram>(program.get());
 
   EXPECT_EQ(glprogram->getUniformVariables().size(), 2);
 
@@ -155,7 +155,7 @@ TEST_F(GLProgramTest, UniformStruct) {
       env.getFile("sequoia-engine/Render/GL/TestGLProgram/VertexUniformStruct.vert"));
 
   std::shared_ptr<Program> program = rsys.createProgram({vertexShader});
-  GLProgram* glprogram = dyn_cast<GLProgram>(program.get());
+  GLProgram* glprogram = core::dyn_cast<GLProgram>(program.get());
 
   EXPECT_EQ(glprogram->getUniformVariables().size(), 3);
 
@@ -177,7 +177,7 @@ TEST_F(GLProgramTest, UniformArrayOfStruct) {
       env.getFile("sequoia-engine/Render/GL/TestGLProgram/VertexUniformArrayOfStruct.vert"));
 
   std::shared_ptr<Program> program = rsys.createProgram({vertexShader});
-  GLProgram* glprogram = dyn_cast<GLProgram>(program.get());
+  GLProgram* glprogram = core::dyn_cast<GLProgram>(program.get());
 
   EXPECT_EQ(glprogram->getUniformVariables().size(), 9);
 
@@ -204,7 +204,7 @@ TEST_F(GLProgramTest, UniformMatrices) {
       env.getFile("sequoia-engine/Render/GL/TestGLProgram/VertexUniformMatrices.vert"));
 
   std::shared_ptr<Program> program = rsys.createProgram({vertexShader});
-  GLProgram* glprogram = dyn_cast<GLProgram>(program.get());
+  GLProgram* glprogram = core::dyn_cast<GLProgram>(program.get());
 
   EXPECT_EQ(glprogram->getUniformVariables().size(), 3);
 
@@ -229,7 +229,7 @@ TEST_F(GLProgramTest, VertexAttributesAll) {
       env.getFile("sequoia-engine/Render/GL/TestGLProgram/VertexAttributesAll.vert"));
 
   std::shared_ptr<Program> program = rsys.createProgram({vertexShader});
-  GLProgram* glprogram = dyn_cast<GLProgram>(program.get());
+  GLProgram* glprogram = core::dyn_cast<GLProgram>(program.get());
 
   // Check the locations
   GLVertexAttribute::forEach([&glprogram](unsigned int index, const char* name) {
@@ -260,7 +260,7 @@ TEST_F(GLProgramTest, TextureSamplers) {
                         env.getFile("sequoia-engine/Render/GL/TestGLProgram/TextureSamplers.frag"));
 
   std::shared_ptr<Program> program = rsys.createProgram({fragmentShader});
-  GLProgram* glprogram = dyn_cast<GLProgram>(program.get());
+  GLProgram* glprogram = core::dyn_cast<GLProgram>(program.get());
 
   EXPECT_TRUE(glprogram->isTextureSampler("tex0_SamplerFor2DTexture"));
   EXPECT_TRUE(glprogram->isTextureSampler("tex5_SamplerFor2DTexture"));
