@@ -101,11 +101,6 @@ set(SEQUOIA_EXTERNAL_PREFIX_PATH "${CMAKE_PREFIX_PATH}")
 include(SequoiaSetDownloadDir)
 sequoia_set_download_dir(SEQUOIA_EXTERNAL_DOWNLOAD_DIR)
 
-if(SEQUOIA_ASSERTS)
-  include(SequoiaSetAssertLevel)
-  sequoia_set_assert_level(SEQUOIA_EXTERNAL_CMAKE_ARGS)
-endif()
-
 add_subdirectory(thirdparty)
 
 # Build the sequoia projects
