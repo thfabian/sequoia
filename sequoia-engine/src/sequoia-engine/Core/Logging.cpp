@@ -67,9 +67,15 @@ Logger::~Logger() {
 
 std::shared_ptr<Logger::StdoutSink> Logger::makeStdoutSink() {
   auto sink = std::make_shared<StdoutSink>();
+#ifdef SEQUOIA_ON_WIN32
+  sink->setColor(spdlog::level::trace, sink->WHITE | sink->BOLD);
+  sink->setColor(spdlog::level::debug, sink->WHITE | sink->BOLD);
+  sink->setColor(spdlog::level::warn, sink->CYAN | sink->BOLD);
+#else
   sink->set_color(spdlog::level::trace, sink->reset);
   sink->set_color(spdlog::level::debug, sink->reset);
   sink->set_color(spdlog::level::warn, sink->magenta + sink->bold);
+#endif
   return sink;
 }
 

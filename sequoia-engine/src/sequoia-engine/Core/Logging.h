@@ -28,6 +28,23 @@ namespace sequoia {
 
 namespace core {
 
+namespace internal {
+
+#ifdef SEQUOIA_ON_WIN32
+
+template <class MutexT>
+class WinStdoutSink : public spdlog::sinks::wincolor_stdout_sink<MutexT> {
+public:
+  using base = spdlog::sinks::wincolor_stdout_sink<MutexT>;
+
+  /// @brief Wrapper to set the level as it is declared protected in the base class
+  void setColor(spdlog::level::level_enum level, WORD color) { base::set_color(level, color); }
+};
+
+#endif
+
+} // namespace internal
+
 /// @brief Logger of the sequoia-engine
 ///
 /// @ingroup core
@@ -41,7 +58,7 @@ public:
 
 /// @brief Log to stdout
 #ifdef SEQUOIA_ON_WIN32
-  using StdoutSink = spdlog::sinks::wincolor_stdout_sink<SpinMutex>;
+  using StdoutSink = internal::WinStdoutSink<SpinMutex>;
 #else
   using StdoutSink = spdlog::sinks::ansicolor_stderr_sink<SpinMutex>;
 #endif
