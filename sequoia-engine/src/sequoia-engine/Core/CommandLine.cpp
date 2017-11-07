@@ -50,7 +50,7 @@ void CommandLine::parse(Options* options, int argc, char* argv[]) {
 }
 
 #ifdef SEQUOIA_ON_WIN32
-void CommandLine::parse(Options2* options, HINSTANCE hInstance, HINSTANCE hPrevInstance,
+void CommandLine::parse(Options* options, HINSTANCE hInstance, HINSTANCE hPrevInstance,
                         LPSTR lpCmdLine, int nCmdShow) {
 
   TCHAR program[MAX_PATH];
@@ -99,7 +99,6 @@ void CommandLine::parseImpl(Options* options, const std::string& program,
   }
 
   po::options_description desc("General options");
-  // Add builtin-options
   desc.add_options()
       // --help
       ("help", "Display this information.")

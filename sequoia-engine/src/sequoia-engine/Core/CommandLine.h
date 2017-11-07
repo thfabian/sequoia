@@ -55,7 +55,7 @@ public:
 
 #ifdef SEQUOIA_ON_WIN32
   /// @brief Parse arguments and update the options (Win32 entry point version)
-  void parse(Options2* options, HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine,
+  void parse(Options* options, HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine,
              int nCmdShow);
 #endif
 
