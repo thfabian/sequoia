@@ -29,13 +29,13 @@ Logger::Logger(spdlog::level::level_enum level, const spdlog::sink_ptr& sink)
   makeLogger();
 }
 
-void Logger::addSink(const std::string& name, const spdlog::sink_ptr& sink) {
+void Logger::addSink(const std::string& name, const std::shared_ptr<LogSink>& sink) {
   SEQUOIA_LOCK_GUARD(mutex_);
   sinks_[name] = sink;
   makeLogger();
 }
 
-void Logger::removeSink(const std::string& name, const spdlog::sink_ptr& sink) {
+void Logger::removeSink(const std::string& name) {
   SEQUOIA_LOCK_GUARD(mutex_);
   sinks_.erase(name);
   makeLogger();
@@ -65,7 +65,7 @@ Logger::~Logger() {
   spdlog::drop_all();
 }
 
-std::shared_ptr<Logger::StdoutSink> Logger::makeStdoutSink() {
+std::shared_ptr<Logger::LogSink> Logger::makeStdoutSink() {
   auto sink = std::make_shared<StdoutSink>();
 #ifdef SEQUOIA_ON_WIN32
   sink->setColor(spdlog::level::trace, sink->WHITE | sink->BOLD);

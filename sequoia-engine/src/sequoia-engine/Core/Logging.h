@@ -53,6 +53,9 @@ public:
   friend class Log;
   ~Logger();
 
+  /// @brief Base-class
+  using LogSink = spdlog::sinks::sink;
+
   /// @brief Log to file
   using FileSink = spdlog::sinks::simple_file_sink<SpinMutex>;
 
@@ -64,7 +67,7 @@ public:
 #endif
 
   /// @brief Create an stdout color sink with customized colors
-  static std::shared_ptr<StdoutSink> makeStdoutSink();
+  static std::shared_ptr<LogSink> makeStdoutSink();
 
   /// @brief Initialize the Logger with a level at which logging will be performed and a default
   /// sink which logs to `stdout`
@@ -73,13 +76,13 @@ public:
   /// @param sink     Default sink (if `nullptr` is passed or `level` is `off` no sink will be
   ///                 registered). Note this should be a multi-threaded i.e **thread-safe** sink.
   Logger(spdlog::level::level_enum level = spdlog::level::info,
-         const spdlog::sink_ptr& sink = makeStdoutSink());
+         const std::shared_ptr<LogSink>& sink = makeStdoutSink());
 
   /// @brief Register the sink `name`
-  void addSink(const std::string& name, const spdlog::sink_ptr& sink);
+  void addSink(const std::string& name, const std::shared_ptr<LogSink>& sink);
 
   /// @brief Unregister the sink `name`
-  void removeSink(const std::string& name, const spdlog::sink_ptr& sink);
+  void removeSink(const std::string& name);
 
 private:
   /// @brief
