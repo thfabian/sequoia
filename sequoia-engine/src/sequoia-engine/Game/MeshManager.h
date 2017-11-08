@@ -25,29 +25,22 @@
 #include <unordered_map>
 #include <vector>
 
+namespace Assimp {
+class Importer;
+}
+
 namespace sequoia {
 
 namespace game {
 
 namespace internal {
 
-struct ObjInfo {
-  std::shared_ptr<core::File> ObjFile;
-  std::shared_ptr<core::File> MtlFile;
+struct MeshInfo {
+  std::shared_ptr<core::File> File;
   MeshParameter Param;
 
-  bool operator==(const ObjInfo& other) const noexcept {
-    return *ObjFile == *other.ObjFile && MtlFile && other.MtlFile && *MtlFile == *other.MtlFile &&
-           Param == other.Param;
-  }
-
-  static std::size_t hashFiles(const std::shared_ptr<core::File>& objFile,
-                               const std::shared_ptr<core::File>& matFile) noexcept {
-    std::size_t hash = 0;
-    core::hashCombine(hash, *objFile);
-    if(matFile)
-      core::hashCombine(hash, *matFile);
-    return hash;
+  bool operator==(const MeshInfo& other) const noexcept {
+    return *File == *other.File && Param == other.Param;
   }
 };
 
@@ -72,9 +65,7 @@ struct GridInfo {
 
 } // namespace sequoia
 
-SEQUOIA_DECLARE_STD_HASH(sequoia::game::internal::ObjInfo, value,
-                         sequoia::game::internal::ObjInfo::hashFiles(value.ObjFile, value.MtlFile),
-                         value.Param)
+SEQUOIA_DECLARE_STD_HASH(sequoia::game::internal::MeshInfo, value, value.File, value.Param)
 SEQUOIA_DECLARE_STD_HASH(sequoia::game::internal::CubeInfo, value, value.Param)
 SEQUOIA_DECLARE_STD_HASH(sequoia::game::internal::GridInfo, value, value.N, value.Param)
 
@@ -86,11 +77,12 @@ namespace game {
 /// @ingroup game
 class SEQUOIA_API MeshManager : public NonCopyable {
 public:
+  MeshManager();
+
   /// @brief Load mesh from disk
   ///
   /// @param name         Name of the mesh
-  /// @param objFile      Path to the object file
-  /// @param mtlFile      Path to the material file (may be `NULL`)
+  /// @param file         Path to the object file
   /// @param modifiable   Request a copy of the mesh which allows to modify the vertex data
   /// @param param        Parameter used to initialize the mesh
   /// @param usage        Buffer usage of the hardware vertex buffers
@@ -98,8 +90,7 @@ public:
   /// @throws GameException   Unable to load the mesh (invalid format)
   ///
   /// @remark Thread-safe
-  std::shared_ptr<Mesh> load(const std::string& name, const std::shared_ptr<File>& objFile,
-                             const std::shared_ptr<File>& mtlFile = nullptr,
+  std::shared_ptr<Mesh> load(const std::string& name, const std::shared_ptr<File>& file,
                              bool modifiable = false, const MeshParameter& param = MeshParameter(),
                              render::Buffer::UsageHint usage = render::Buffer::UH_StaticWriteOnly);
 
@@ -172,12 +163,6 @@ public:
   /// @remark Thread-safe
   void freeUnusedMeshes();
 
-protected:
-  /// Load a Wavefront OBJ mesh from file
-  std::shared_ptr<Mesh> loadObjMesh(const std::string& name, const std::shared_ptr<File>& objFile,
-                                    const std::shared_ptr<File>& mtlFile, bool modifiable,
-                                    const MeshParameter& param, render::Buffer::UsageHint usage);
-
 private:
   /// @brief Access record of a VertexData
   ///
@@ -188,17 +173,24 @@ private:
     core::Mutex Mutex; ///< Access mutex for modifying the vertex-data
   };
 
-  /// Access mutex to `objMeshLookupMap`
+private:
+  /// Access mutex to `importer`
+  Mutex importerMutex_;
+
+  /// Assimp context
+  std::shared_ptr<Assimp::Importer> importer_;
+
+  /// Access mutex to `vertexData`
   ReadWriteMutex vertexDataMutex_;
 
   /// Record of all the loaded meshes (use count of 1 implies the mesh is *not* in use)
   std::vector<std::shared_ptr<render::VertexData>> vertexData_;
 
-  /// Access mutex to `objMeshLookupMap`
-  Mutex objMutex_;
+  /// Access mutex to `meshLookupMap`
+  Mutex meshMutex_;
 
-  /// OBJ mesh record
-  std::unordered_map<internal::ObjInfo, std::unique_ptr<VertexDataAccessRecord>> objMeshLookupMap_;
+  /// Loaded mesh record
+  std::unordered_map<internal::MeshInfo, std::unique_ptr<VertexDataAccessRecord>> meshLookupMap_;
 
   /// Access mutex to `cubeMeshLookupMap`
   Mutex cubeMutex_;

@@ -148,13 +148,13 @@ void Scene::makeDummyScene() {
   //
   // Cornell box
   //
-  std::shared_ptr<SceneNode> cornellBox = SceneNode::allocate("CornellBox");
-  cornellBox->addCapability<Drawable>(game.getMeshManager()->load(
-      "CornellBox", game.getAssetManager()->load("sequoia/mesh/CornellBox.obj"),
-      game.getAssetManager()->load("sequoia/mesh/CornellBox.mtl")));
-  cornellBox->translate(math::vec3(13.0f, 0.0f, 13.0f));
-  cornellBox->setScale(0.01f);
-  sceneGraph_->insert(cornellBox);
+//  std::shared_ptr<SceneNode> cornellBox = SceneNode::allocate("CornellBox");
+//  cornellBox->addCapability<Drawable>(game.getMeshManager()->load(
+//      "CornellBox", game.getAssetManager()->load("sequoia/mesh/CornellBox.obj"),
+//      game.getAssetManager()->load("sequoia/mesh/CornellBox.mtl")));
+//  cornellBox->translate(math::vec3(13.0f, 0.0f, 13.0f));
+//  cornellBox->setScale(0.01f);
+//  sceneGraph_->insert(cornellBox);
 
   //    //
   //    // Grid

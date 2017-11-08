@@ -15,15 +15,23 @@
 
 find_package(assimp NO_MODULE REQUIRED)
 
+# assimp
 find_library(assimp_lib ${ASSIMP_LIBRARIES} HINTS ${ASSIMP_LIBRARY_DIRS})
 if(NOT assimp_lib)
   message(FATAL_ERROR "cannot find assimp library in ${ASSIMP_LIBRARY_DIRS}")
 endif()
 
+## IrrXML (uncomment once IrrXML is installed with Assimp (upstream works) and reenable all the 
+## formats which depend on it)
+#find_library(irrXML_lib IrrXML HINTS ${ASSIMP_LIBRARY_DIRS})
+#if(NOT IrrXML_lib)
+#  message(FATAL_ERROR "cannot find IrrXML library in ${ASSIMP_LIBRARY_DIRS}")
+#endif()
+
 sequoia_export_package(
   NAME assimp
   FOUND ${assimp_FOUND} 
-  LIBRARIES ${assimp_lib} 
+  LIBRARIES ${assimp_lib} ${IrrXML_lib}
   VERSION ${assimp_VERSION}
   INCLUDE_DIRS ${ASSIMP_INCLUDE_DIRS}
 )
