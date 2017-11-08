@@ -33,6 +33,21 @@ sequoia_find_package(
 )
 
 #
+# assimp
+#
+set(assimp_version "4.0.1")
+set(assimp_url "https://github.com/assimp/assimp/archive/v${assimp_version}.tar.gz")
+set(assimp_md5 "23a6301c728a413aafbfa1cca19ba91f")
+
+sequoia_find_package(
+  PACKAGE assimp
+  PACKAGE_ARGS ${assimp_version} NO_MODULE QUIET
+  FORWARD_VARS assimp_DIR
+  BUILD_VERSION ${assimp_version}
+  DEPENDS zlib
+)
+
+#
 # backward
 #
 set(backward_version "1.4.2")
