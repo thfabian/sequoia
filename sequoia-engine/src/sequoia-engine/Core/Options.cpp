@@ -13,18 +13,18 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia-engine/Core/Options.h"
 #include "sequoia-engine/Core/Assert.h"
 #include "sequoia-engine/Core/Exception.h"
 #include "sequoia-engine/Core/Format.h"
 #include "sequoia-engine/Core/Logging.h"
+#include "sequoia-engine/Core/Options.h"
 #include "sequoia-engine/Core/StringSwitch.h"
 #include "sequoia-engine/Core/StringUtil.h"
 #include "sequoia-engine/Core/Unreachable.h"
 #include <algorithm>
 #include <boost/lexical_cast.hpp>
-#include <boost/property_tree/ini_parser.hpp>
 #include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/xml_parser.hpp>
 #include <ostream>
 #include <sstream>
 
@@ -109,27 +109,7 @@ std::string OptionMetaData::toString() const {
                       DocString);
 }
 
-Options::Options() {
-  // Core
-  setBool("Core.Debug", false,
-          OptionMetaData{
-              "debug", "d", false, "",
-              "Enable rigorous error checking and logging, especially of the rendering API calls"});
-
-  // Render
-  setString("Render.WindowMode", "window",
-            OptionMetaData{"window-mode", "", true, "MODE",
-                           "Set the window mode to MODE, where MODE is one of "
-                           "[window,fullscreen,windowed-fullscreen]"});
-  setInt("Render.Monitor", -1,
-         OptionMetaData{"monitor", "", true, "MONITOR", "Set the MONITOR to use, -1 indicates "
-                                                        "the primary monitor should be used "
-                                                        "which is the default behaviour"});
-  setInt("Render.MSAA", 0);
-  setBool("Render.VSync", true);
-  setInt("Render.GLMajorVersion", 4);
-  setInt("Render.GLMinorVersion", 5);
-}
+Options::Options() {}
 
 OptionMetaData& Options::getMetaData(const std::string& name) {
   auto it = optionsMetaData_.find(name);
@@ -146,8 +126,10 @@ void Options::write(const std::string& file) const {
     ptree.put(option.first, option.second);
 
   try {
-    boost::property_tree::write_ini(file, ptree);
-  } catch(boost::property_tree::ini_parser_error& e) {
+    boost::property_tree::xml_writer_settings<std::string> settings;
+    settings.indent_count = 2;
+    boost::property_tree::write_xml(file, ptree, std::locale(), settings);
+  } catch(boost::property_tree::xml_parser_error& e) {
     Log::warn("Failed to write Options : {}", e.what());
     SEQUOIA_THROW(core::Exception, "failed to write Options : {}", e.what());
   }
@@ -155,26 +137,29 @@ void Options::write(const std::string& file) const {
   Log::info("Successfully wrote Options to \"{}\"", file);
 }
 
+static void parsePtree(const boost::property_tree::ptree& pt, std::string key,
+                       std::unordered_map<std::string, std::string>& options) {
+  if(!key.empty()) {
+    options[key] = pt.get_value<std::string>();
+    key += ".";
+  }
+
+  for(auto it = pt.begin(), end = pt.end(); it != end; ++it)
+    parsePtree(it->second, key + it->first, options);
+}
+
 void Options::read(const std::string& file) {
   Log::info("Reading Options from \"{}\" ...", file);
 
   boost::property_tree::ptree ptree;
   try {
-    boost::property_tree::read_ini(file, ptree);
-  } catch(boost::property_tree::ini_parser_error& e) {
+    boost::property_tree::read_xml(file, ptree);
+  } catch(boost::property_tree::xml_parser_error& e) {
     Log::warn("Failed to read Options : {}", e.what());
     SEQUOIA_THROW(core::Exception, "failed to read Options : {}", e.what());
   }
 
-  for(const auto& base : ptree) {
-    std::string baseStr = base.first + ".";
-    for(const auto& option : base.second) {
-      if(option.second.size() != 0)
-        SEQUOIA_THROW(core::Exception, "invalid ini file");
-      options_[baseStr + option.first] = option.second.get_value<std::string>();
-    }
-  }
-
+  parsePtree(ptree, "", options_);
   Log::info("Successfully read Options to \"{}\"", file);
 }
 
@@ -203,28 +188,32 @@ std::string Options::toString() const {
             })));
 }
 
-void Options::setImpl(const std::string& name, bool value) noexcept {
-  SEQUOIA_ASSERT_MSG(std::count(name.begin(), name.end(), '.') == 1,
-                     "Option is not of the form \"X.Y\" i.e contains more (or less) than one dot");
-  options_[name] = std::to_string(value);
+void Options::setImpl(const std::string& name, bool value, bool isDefault) noexcept {
+  if(isDefault)
+    options_.emplace(name, std::to_string(value));
+  else
+    options_[name] = std::to_string(value);
 }
 
-void Options::setImpl(const std::string& name, int value) noexcept {
-  SEQUOIA_ASSERT_MSG(std::count(name.begin(), name.end(), '.') == 1,
-                     "Option is not of the form \"X.Y\" i.e contains more (or less) than one dot");
-  options_[name] = std::to_string(value);
+void Options::setImpl(const std::string& name, int value, bool isDefault) noexcept {
+  if(isDefault)
+    options_.emplace(name, std::to_string(value));
+  else
+    options_[name] = std::to_string(value);
 }
 
-void Options::setImpl(const std::string& name, float value) noexcept {
-  SEQUOIA_ASSERT_MSG(std::count(name.begin(), name.end(), '.') == 1,
-                     "Option is not of the form \"X.Y\" i.e contains more (or less) than one dot");
-  options_[name] = std::to_string(value);
+void Options::setImpl(const std::string& name, float value, bool isDefault) noexcept {
+  if(isDefault)
+    options_.emplace(name, std::to_string(value));
+  else
+    options_[name] = std::to_string(value);
 }
 
-void Options::setImpl(const std::string& name, std::string value) noexcept {
-  SEQUOIA_ASSERT_MSG(std::count(name.begin(), name.end(), '.') == 1,
-                     "Option is not of the form \"X.Y\" i.e contains more (or less) than one dot");
-  options_[name] = std::move(value);
+void Options::setImpl(const std::string& name, std::string value, bool isDefault) noexcept {
+  if(isDefault)
+    options_.emplace(name, std::move(value));
+  else
+    options_[name] = std::move(value);
 }
 
 const std::string& Options::getValueImpl(const std::string& name) const {
@@ -248,6 +237,14 @@ float Options::getImpl(const std::string& name, const float*) const {
 
 std::string Options::getImpl(const std::string& name, const std::string*) const {
   return convert<std::string>(name, getValueImpl(name));
+}
+
+void setDefaultOptions(const std::shared_ptr<Options>& options) {
+  options->setDefaultBool(
+      "Core.Debug", false,
+      OptionMetaData{
+          "debug", "d", false, "",
+          "Enable rigorous error checking and logging, especially of the rendering API calls"});
 }
 
 } // namespace core

@@ -18,6 +18,7 @@
 
 #include "sequoia-engine/Core/Export.h"
 #include <cstdint>
+#include <memory>
 #include <string>
 #include <unordered_map>
 #include <utility>
@@ -39,26 +40,41 @@ struct OptionMetaData {
   std::string toString() const;
 };
 
-/// @brief Options of the Sequoia Engine
+/// @brief Generic options class which stores a `key` : `value` pair
+///
+/// The Options class stores everything as a string and provides implicit conversions between
+/// strings and numerical types. Options can be parsed from command-line using `CommandLine` and
+/// setting the appropriate `OptionMetaData` or read from an XML file.
+///
+/// @code{.cpp}
+///   Options opt;
+///
+///   opt.setInt("foo", 2);
+///   assert(opt.getInt("foo"), 2);
+///   assert(opt.getString("foo"), "2");
+///
+///   opt.setString("bar", "2");
+///   assert(opt.getInt("foo") == opt.getInt("bar"));
+/// @endcode
+///
 /// @ingroup core
 class SEQUOIA_API Options {
 public:
-  /// @brief Initialize the Options with the default options of the sequoia engine
+  /// @brief Initialize empty options
+  ///
+  /// Various classes provide default options. See for example: `GameOptions`.
   Options();
 
   /// @brief Set option `name` to `value`
   ///
-  /// Note that the name of the option should always be of the form "X.Y" (e.g "Window.Fullscreen"
-  /// or "Window.Width") to allow serializing it to an `*.ini` file.
-  ///
   /// @param name   Name of the option
   /// @param value  Value of the option
   /// @{
-  void setBool(const std::string& name, bool value) noexcept { setImpl(name, value); }
-  void setInt(const std::string& name, int value) noexcept { setImpl(name, value); }
-  void setFloat(const std::string& name, float value) noexcept { setImpl(name, value); }
+  void setBool(const std::string& name, bool value) noexcept { setImpl(name, value, false); }
+  void setInt(const std::string& name, int value) noexcept { setImpl(name, value, false); }
+  void setFloat(const std::string& name, float value) noexcept { setImpl(name, value, false); }
   void setString(const std::string& name, std::string value) noexcept {
-    setImpl(name, std::move(value));
+    setImpl(name, std::move(value), false);
   }
 
   void setBool(const std::string& name, bool value, const OptionMetaData& metaData) noexcept {
@@ -83,6 +99,45 @@ public:
   }
   /// @}
 
+  /// @brief Set option `name` to `value` if the option does **not** yet exists, otherwise nothing
+  /// will be done
+  ///
+  /// @param name   Name of the option
+  /// @param value  Value of the option
+  /// @{
+  void setDefaultBool(const std::string& name, bool value) noexcept { setImpl(name, value, true); }
+  void setDefaultInt(const std::string& name, int value) noexcept { setImpl(name, value, true); }
+  void setDefaultFloat(const std::string& name, float value) noexcept {
+    setImpl(name, value, true);
+  }
+  void setDefaultString(const std::string& name, std::string value) noexcept {
+    setImpl(name, std::move(value), true);
+  }
+
+  void setDefaultBool(const std::string& name, bool value,
+                      const OptionMetaData& metaData) noexcept {
+    setDefaultBool(name, value);
+    setMetaData(name, metaData);
+  }
+
+  void setDefaultInt(const std::string& name, int value, const OptionMetaData& metaData) noexcept {
+    setDefaultInt(name, value);
+    setMetaData(name, metaData);
+  }
+
+  void setDefaultFloat(const std::string& name, float value,
+                       const OptionMetaData& metaData) noexcept {
+    setDefaultFloat(name, value);
+    setMetaData(name, metaData);
+  }
+
+  void setDefaultString(const std::string& name, std::string value,
+                        const OptionMetaData& metaData) noexcept {
+    setDefaultString(name, std::move(value));
+    setMetaData(name, metaData);
+  }
+  /// @}
+
   /// @brief Get a **copy** of the option `name` as type `T` (performs conversion if necessary)
   /// @param name   Name of the option
   /// @throws Exception   Option `name` does not exist or conversion failed
@@ -96,6 +151,14 @@ public:
   float getFloat(const std::string& name) const { return get<float>(name); }
   std::string getString(const std::string& name) const { return get<std::string>(name); }
   /// @}
+
+  /// @brief Get a **copy** of the option `name` as an integer statically casted to `Enum`
+  /// @param name   Name of the option
+  /// @throws Exception   Option `name` does not exist or conversion failed
+  template <class Enum>
+  Enum getEnum(const std::string& name) const {
+    return static_cast<Enum>(get<int>(name));
+  }
 
   /// @brief Get the meta data map of the options
   const std::unordered_map<std::string, OptionMetaData>& getOptionsMetaData() const {
@@ -111,24 +174,21 @@ public:
   /// @throws Exception   meta data of option `name` does not exist
   OptionMetaData& getMetaData(const std::string& name);
 
-  /// @brief Clone the current options by copy constructing a new one
-  Options clone() const { return Options{*this}; }
-
-  /// @brief Write options the a config `file`
+  /// @brief Write options the a XML config `file`
   /// Note that the meta-data is *not* serialized
   void write(const std::string& file) const;
 
-  /// @brief Read options from `file`
+  /// @brief Read options from a XML config `file`
   void read(const std::string& file);
 
   /// @brief Convert to string
   std::string toString() const;
 
 private:
-  void setImpl(const std::string& name, bool value) noexcept;
-  void setImpl(const std::string& name, int value) noexcept;
-  void setImpl(const std::string& name, float value) noexcept;
-  void setImpl(const std::string& name, std::string value) noexcept;
+  void setImpl(const std::string& name, bool value, bool isDefault) noexcept;
+  void setImpl(const std::string& name, int value, bool isDefault) noexcept;
+  void setImpl(const std::string& name, float value, bool isDefault) noexcept;
+  void setImpl(const std::string& name, std::string value, bool isDefault) noexcept;
 
   bool getImpl(const std::string& name, const bool*) const;
   int getImpl(const std::string& name, const int*) const;
@@ -142,9 +202,14 @@ private:
   std::unordered_map<std::string, OptionMetaData> optionsMetaData_;
 };
 
+/// @brief Set the options for the core library
+/// @ingroup core
+extern SEQUOIA_API void setDefaultOptions(const std::shared_ptr<Options>& options);
+
 } // namespace core
 
 using Options = core::Options;
+using OptionMetaData = core::OptionMetaData;
 
 } // namespace sequoia
 
