@@ -139,6 +139,7 @@ sequoia_add_library(
           Shader.h
           Texture.cpp
           Texture.h
+          UniformBlock.h
           UniformStruct.h
           UniformVariable.cpp
           UniformVariable.h
