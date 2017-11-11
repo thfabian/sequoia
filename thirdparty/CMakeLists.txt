@@ -204,18 +204,6 @@ sequoia_find_package(
 )
 
 #
-# tinyobjloader
-#
-set(tinyobjloader_version "1.0.6")
-set(tinyobjloader_url "https://github.com/syoyo/tinyobjloader/archive/v${tinyobjloader_version}.tar.gz")
-set(tinyobjloader_md5 "ef3198fdbd98171d43d3cc703015be33")
-
-sequoia_build_package(
-  PACKAGE tinyobjloader
-  BUILD_VERSION ${tinyobjloader_version}
-)
-
-#
 # GTest
 #
 set(gtest_version "1.7.0")

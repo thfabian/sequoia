@@ -138,13 +138,19 @@ macro(find_packages NAME)
 endmacro()
 
 find_packages(EXTERNAL Backward Boost glbinding glfw3 gli glm OpenCV OpenGL Python3 TBB fmt 
-                       tinyobjloader cereal spdlog Threads ccache clang-format assimp)
+                       cereal spdlog assimp Threads)
 if(SEQUOIA_ENGINE_TESTING)
   find_packages(TESTING GTest benchmark)
 endif()
-
-# Output summary of the packages
 sequoia_report_result("Package summary" ${package_info})
+
+# Find tools
+foreach(tool ccache clang-format)
+  include("Add${tool}")
+  sequoia_create_package_string(${tool} info)
+  list(APPEND tool_info ${info})
+endforeach()
+sequoia_report_result("Tool summary" ${tool_info})
   
 # Build sequoia-engine
 include_directories(${CMAKE_SOURCE_DIR}/src)

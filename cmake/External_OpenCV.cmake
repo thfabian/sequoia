@@ -83,6 +83,7 @@ ExternalProject_Add(
     -DBUILD_opencv_world:BOOL=OFF
     -DBUILD_opencv_python3:BOOL=OFF
     -DBUILD_opencv_java:BOOL=OFF
+    -DBUILD_opencv_dnn:BOOL=OFF
 
     # External library support
     -DWITH_PNG:BOOL=ON
