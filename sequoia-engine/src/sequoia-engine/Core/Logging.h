@@ -47,13 +47,26 @@ public:
 
 /// @brief Logger of the sequoia-engine
 ///
+/// Note that all these methods are thread-safe.
+///
+/// @see Log
 /// @ingroup core
 class SEQUOIA_API Logger : public Singleton<Logger> {
 public:
   friend class Log;
   ~Logger();
 
-  /// @brief Base-class
+  /// @brief Logging levels
+  enum Level {
+    Trace = spdlog::level::trace,
+    Debug = spdlog::level::debug,
+    Info = spdlog::level::info,
+    Warn = spdlog::level::warn,
+    Error = spdlog::level::err,
+    Disabled = spdlog::level::off
+  };
+
+  /// @brief Base-class of all sinks
   using LogSink = spdlog::sinks::sink;
 
   /// @brief Log to file
@@ -75,8 +88,7 @@ public:
   /// @param level    Logging will be performed if the level of the message is `>=` to `level`
   /// @param sink     Default sink (if `nullptr` is passed or `level` is `off` no sink will be
   ///                 registered). Note this should be a multi-threaded i.e **thread-safe** sink.
-  Logger(spdlog::level::level_enum level = spdlog::level::info,
-         const std::shared_ptr<LogSink>& sink = makeStdoutSink());
+  Logger(Level level = Info, const std::shared_ptr<LogSink>& sink = makeStdoutSink());
 
   /// @brief Register the sink `name`
   void addSink(const std::string& name, const std::shared_ptr<LogSink>& sink);
@@ -84,15 +96,21 @@ public:
   /// @brief Unregister the sink `name`
   void removeSink(const std::string& name);
 
+  /// @brief Readjust the logging level
+  void setLevel(Level level) noexcept;
+
+  /// @brief Get the current logging level
+  Level getLevel() const noexcept;
+
 private:
-  /// @brief
+  /// @brief Get the underlying spd-logger
   inline std::shared_ptr<spdlog::logger>& getLogger() noexcept { return logger_; }
 
   /// @brief Register the `logger_` with `sinks_`
   void makeLogger();
 
 private:
-  SpinMutex mutex_;                                         ///< Mutex for state changes
+  mutable SpinMutex mutex_;                                 ///< Mutex for state changes
   spdlog::level::level_enum level_;                         ///< Logging threshold
   std::unordered_map<std::string, spdlog::sink_ptr> sinks_; ///< Registered sinks
   std::shared_ptr<spdlog::logger> logger_;                  ///< Currently active logger
@@ -100,7 +118,23 @@ private:
 
 /// @brief Logging interface of the sequoia-engine
 ///
-/// @note The `Logger` needs to be instantiated to use these logging methods.
+/// To use the `Log` interface, a `Logger` needs to be instantiated and kept alive for the duration
+/// of the logging. The `Log` interface accesses this logger via a Singleton pattern.
+///
+/// A minimal working example is shown below.
+///
+/// @code{.cpp}
+///   // Create a logger which logs everything above and including warnings to stdout
+///   auto logger = std::make_unique<Logger>(Logger::Warn, Logger::makeStdoutSink());
+///
+///   // Log a warning message
+///   Log::warn("hello world!");
+///
+///   // Log an info message (not displayes as the info level is below the warning)
+///   Log::info("the answer is {}", 42);
+/// @endcode
+///
+/// @see Logger
 /// @ingroup core
 class Log {
 public:

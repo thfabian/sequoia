@@ -57,7 +57,7 @@ TestEnvironment::TestEnvironment(int argc, char* argv[], render::RenderSystemKin
   // Set logging
   spdlog::sink_ptr sink =
       opt.getBool("Unittest.NoLogging") ? nullptr : core::Logger::makeStdoutSink();
-  logger_ = std::make_unique<core::Logger>(spdlog::level::trace, sink);
+  logger_ = std::make_unique<core::Logger>(core::Logger::Trace, sink);
 
   // Set the preferred RenderSystem
   if(renderSystemKind_ == render::RK_Invalid) {

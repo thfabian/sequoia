@@ -38,8 +38,8 @@ BenchmarkEnvironment::BenchmarkEnvironment(int argc, char* argv[]) {
   benchmark::Initialize(&argc, argv);
 
   // By default only log warnings and errors
-  logger_ = std::make_unique<core::Logger>(opt.getBool("Core.Debug") ? spdlog::level::trace
-                                                                     : spdlog::level::warn,
+  logger_ = std::make_unique<core::Logger>(opt.getBool("Core.Debug") ? core::Logger::Trace
+                                                                     : core::Logger::Warn,
                                            core::Logger::makeStdoutSink());
 }
 

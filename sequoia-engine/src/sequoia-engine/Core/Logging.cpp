@@ -13,8 +13,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia-engine/Core/Logging.h"
 #include "sequoia-engine/Core/Exception.h"
+#include "sequoia-engine/Core/Logging.h"
 
 namespace sequoia {
 
@@ -22,8 +22,8 @@ SEQUOIA_DECLARE_SINGLETON(core::Logger);
 
 namespace core {
 
-Logger::Logger(spdlog::level::level_enum level, const spdlog::sink_ptr& sink)
-    : level_(level), logger_(nullptr) {
+Logger::Logger(Level level, const spdlog::sink_ptr& sink) : logger_(nullptr) {
+  setLevel(level);
   if(sink)
     sinks_.emplace("default", sink);
   makeLogger();
@@ -39,6 +39,17 @@ void Logger::removeSink(const std::string& name) {
   SEQUOIA_LOCK_GUARD(mutex_);
   sinks_.erase(name);
   makeLogger();
+}
+
+void Logger::setLevel(Logger::Level level) noexcept {
+  SEQUOIA_LOCK_GUARD(mutex_);
+  level_ = static_cast<spdlog::level::level_enum>(level);
+  makeLogger();
+}
+
+Logger::Level Logger::getLevel() const noexcept {
+  SEQUOIA_LOCK_GUARD(mutex_);
+  return static_cast<Level>(level_);
 }
 
 void Logger::makeLogger() {
