@@ -101,7 +101,7 @@ private:
   /// Renderer to use
   render::RenderSystemKind renderSystemKind_;
 
-  /// Options stack
+  /// Options
   std::shared_ptr<Options> options_;
 };
 

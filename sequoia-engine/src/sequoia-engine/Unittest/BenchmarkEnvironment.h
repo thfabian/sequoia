@@ -43,21 +43,15 @@ public:
   /// @brief Tear-down test environment
   virtual void TearDown();
 
-  /// @brief Get the current options
-  Options& getOptions();
-
-  /// @brief Push a clone of the current options to the stack
-  void pushOptions();
-
-  /// @brief Pop the most recently stored options of the stack
-  void popOptions();
+  /// @brief Get a **clone** of the current options
+  std::shared_ptr<Options> getOptions();
 
 private:
   /// Benchmark logger
   std::unique_ptr<core::Logger> logger_;
-
-  /// Options stack
-  std::stack<Options> options_;
+  
+  /// Options
+  std::shared_ptr<Options> options_;
 };
 
 } // namespace unittest

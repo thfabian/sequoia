@@ -26,20 +26,19 @@ SEQUOIA_DECLARE_SINGLETON(unittest::BenchmarkEnvironment);
 namespace unittest {
 
 BenchmarkEnvironment::BenchmarkEnvironment(int argc, char* argv[]) {
-  // Push the main options
-  options_.push(Options{});
-  Options& opt = options_.top();
+  options_ = std::make_shared<Options>();
+  core::setDefaultOptions(options_);
 
   // Parse command-line
   core::CommandLine cl("Sequoia Benchmark", core::getSequoiaEngineFullVersionString());
-  cl.parse(&opt, argc, argv);
+  cl.parse(options_.get(), argc, argv);
 
   // Initialize benchmark
   benchmark::Initialize(&argc, argv);
 
   // By default only log warnings and errors
-  logger_ = std::make_unique<core::Logger>(opt.getBool("Core.Debug") ? core::Logger::Trace
-                                                                     : core::Logger::Warn,
+  logger_ = std::make_unique<core::Logger>(options_->getBool("Core.Debug") ? core::Logger::Trace
+                                                                           : core::Logger::Warn,
                                            core::Logger::makeStdoutSink());
 }
 
@@ -48,6 +47,10 @@ BenchmarkEnvironment::~BenchmarkEnvironment() {}
 void BenchmarkEnvironment::SetUp() {}
 
 void BenchmarkEnvironment::TearDown() {}
+
+std::shared_ptr<Options> BenchmarkEnvironment::getOptions() {
+  return std::make_shared<Options>(*options_);
+}
 
 } // namespace unittest
 
