@@ -32,37 +32,35 @@ namespace unittest {
 TestEnvironment::TestEnvironment(int argc, char* argv[], render::RenderSystemKind kind)
     : trace_(), renderSystemKind_(kind) {
 
-  // Push the main options
-  options_.push(Options{});
-  Options& opt = options_.top();
+  options_ = std::make_shared<Options>();
 
   // Unittests are *always* in debug mode and with logging enabled
-  opt.setBool("Unittest.NoDebug", false,
-              core::OptionMetaData{"no-debug", "", false, "", "Disable debug mode"});
+  options_->setBool("Unittest.NoDebug", false,
+                    core::OptionMetaData{"no-debug", "", false, "", "Disable debug mode"});
 
-  opt.setBool("Unittest.NoLogging", false,
-              core::OptionMetaData{"no-log", "", false, "", "Disable logging"});
+  options_->setBool("Unittest.NoLogging", false,
+                    core::OptionMetaData{"no-log", "", false, "", "Disable logging"});
 
-  opt.setString("Unittest.Renderer", "null",
-                core::OptionMetaData{"render", "r", true, "RENDERER",
-                                     "Renderer to use, where RENDERER is one of [gl, null]"});
+  options_->setString("Unittest.Renderer", "null",
+                      core::OptionMetaData{"render", "r", true, "RENDERER",
+                                           "Renderer to use, where RENDERER is one of [gl, null]"});
 
   // Parse command-line
   core::CommandLine cl("Sequoia Unittest", core::getSequoiaEngineFullVersionString());
-  cl.parse(&opt, argc, argv);
+  cl.parse(options_.get(), argc, argv);
 
-  // Update debug mode
-  opt.setBool("Core.Debug", !opt.getBool("Unittest.NoDebug"));
+  // Set debug mode
+  options_->setBool("Core.Debug", !options_->getBool("Unittest.NoDebug"));
 
   // Set logging
   spdlog::sink_ptr sink =
-      opt.getBool("Unittest.NoLogging") ? nullptr : core::Logger::makeStdoutSink();
+      options_->getBool("Unittest.NoLogging") ? nullptr : core::Logger::makeStdoutSink();
   logger_ = std::make_unique<core::Logger>(core::Logger::Trace, sink);
 
   // Set the preferred RenderSystem
   if(renderSystemKind_ == render::RK_Invalid) {
     renderSystemKind_ =
-        core::StringSwitch<render::RenderSystemKind>(opt.getString("Unittest.Renderer"))
+        core::StringSwitch<render::RenderSystemKind>(options_->getString("Unittest.Renderer"))
             .Case("gl", render::RK_OpenGL)
             .Case("null", render::RK_Null)
             .Default(render::RK_Invalid);
@@ -78,9 +76,9 @@ TestEnvironment::TestEnvironment(int argc, char* argv[], render::RenderSystemKin
 
 TestEnvironment::~TestEnvironment() {}
 
-void TestEnvironment::SetUp() { pushOptions(); }
+void TestEnvironment::SetUp() {}
 
-void TestEnvironment::TearDown() { popOptions(); }
+void TestEnvironment::TearDown() {}
 
 std::string TestEnvironment::testCaseName() const {
   const ::testing::TestInfo* testInfo = ::testing::UnitTest::GetInstance()->current_test_info();
@@ -106,17 +104,8 @@ std::shared_ptr<File> TestEnvironment::createFile(const char* path) const {
   return std::make_shared<TestFile>(filepath);
 }
 
-Options& TestEnvironment::getOptions() {
-  SEQUOIA_ASSERT_MSG(!options_.empty(), "options are empty");
-  return options_.top();
-}
-
-void TestEnvironment::pushOptions() { options_.push(options_.top().clone()); }
-
-void TestEnvironment::popOptions() {
-  if(options_.size() == 1)
-    return;
-  options_.pop();
+std::shared_ptr<Options> TestEnvironment::getOptions() {
+  return std::make_shared<Options>(*options_);
 }
 
 } // namespace unittest

@@ -69,7 +69,7 @@ TEST(OptionTest, Float) {
 
 TEST(OptionsTest, ReadAndWrite) {
   TestEnvironment& env = TestEnvironment::getSingleton();
-  auto file = env.createFile("sequoia/Core/TestOptions/Config.ini");
+  auto file = env.createFile("sequoia/Core/TestOptions/Config.xml");
 
   Options optionsWrite;
   optionsWrite.setInt("Foo.Int", 2);
@@ -93,7 +93,7 @@ TEST(OptionsTest, Clone) {
   options.setFloat("Foo.Float", 2.2);
   options.setInt("Foo.Int", 2);
 
-  Options optionsCopy = options.clone();
+  Options optionsCopy = options;
 
   options.setInt("Foo.Int", 3);
   options.setFloat("Foo.Float", 3.2);

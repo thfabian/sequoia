@@ -40,7 +40,7 @@ class SEQUOIA_API NullRenderSystem final : public RenderSystem {
   std::shared_ptr<Program> defaultProgram_;
 
 public:
-  NullRenderSystem(Options* options);
+  NullRenderSystem(const std::shared_ptr<Options>& options);
 
   /// @copydoc RenderSystem::NullRenderSystem
   virtual ~NullRenderSystem();

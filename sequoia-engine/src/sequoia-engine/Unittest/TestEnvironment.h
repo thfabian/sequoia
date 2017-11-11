@@ -82,14 +82,8 @@ public:
   /// @param path   Path relative to the unittest temporary root
   std::shared_ptr<File> createFile(const char* path) const;
 
-  /// @brief Get the current options
-  Options& getOptions();
-
-  /// @brief Push a clone of the current options to the stack
-  void pushOptions();
-
-  /// @brief Pop the most recently stored options of the stack
-  void popOptions();
+  /// @brief Get a **clone** of the current options
+  std::shared_ptr<Options> getOptions();
 
 private:
   /// Unittest logger
@@ -108,7 +102,7 @@ private:
   render::RenderSystemKind renderSystemKind_;
 
   /// Options stack
-  std::stack<Options> options_;
+  std::shared_ptr<Options> options_;
 };
 
 } // namespace unittest

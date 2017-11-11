@@ -24,9 +24,10 @@ void GameSetup::SetUp() {
   auto& env = TestEnvironment::getSingleton();
 
   game_ = std::make_unique<game::Game>();
-  game::GameOptions options(&env.getOptions(), env.getRenderSystemKind());
-  options.HideWindow = true;
-  options.Name = "GameUnittest";
+  auto options = env.getOptions();
+  options->setBool("Game.HideWindow", true);
+  options->setString("Game.Name", "GameTest");
+  options->setInt("Game.RenderSystem", env.getRenderSystemKind());
   game_->init(options);
 }
 

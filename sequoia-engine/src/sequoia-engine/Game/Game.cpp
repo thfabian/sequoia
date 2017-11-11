@@ -13,7 +13,6 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia-engine/Game/Game.h"
 #include "sequoia-engine/Core/ErrorHandler.h"
 #include "sequoia-engine/Core/Logging.h"
 #include "sequoia-engine/Core/Options.h"
@@ -21,6 +20,7 @@
 #include "sequoia-engine/Core/StringSwitch.h"
 #include "sequoia-engine/Core/Version.h"
 #include "sequoia-engine/Game/AssetManager.h"
+#include "sequoia-engine/Game/Game.h"
 #include "sequoia-engine/Game/Keymap.h"
 #include "sequoia-engine/Game/MeshManager.h"
 #include "sequoia-engine/Game/Scene.h"
@@ -42,6 +42,12 @@ Game::Game()
       options_(nullptr) {}
 
 Game::~Game() { cleanup(); }
+
+std::shared_ptr<Options> Game::makeOptions() {
+  auto options = std::make_shared<Options>();
+  Game::setDefaultOptions(options);
+  return options;
+}
 
 void Game::run() {
   SEQUOIA_ASSERT_MSG(renderSystem_, "Game not initialized, did you call init()?");
@@ -72,29 +78,30 @@ void Game::run() {
 
 void Game::setQuitKey(const std::shared_ptr<Keymap>& key) { quitKey_ = key; }
 
-void Game::init(const GameOptions& gameOptions) {
-  name_ = gameOptions.Name;
-  options_ = gameOptions.Options;
+void Game::init(const std::shared_ptr<Options>& gameOptions) {
+  options_ = gameOptions;
+  Game::setDefaultOptions(options_);
 
-  Options& opt = *options_;
+  name_ = options_->getString("Game.Name");
 
   Log::info("Initializing {} ...", name_);
   using namespace render;
 
   try {
     // Initialize the RenderSystem
-    renderSystem_ = RenderSystem::create(gameOptions.RenderSystemKind, options_);
+  renderSystem_ = RenderSystem::create(
+      options_->getEnum<render::RenderSystemKind>("Game.RenderSystem"), options_);
 
     // Create the main-window & initialize the OpenGL context
     RenderWindow::WindowHint hint;
     hint.Title = std::string("Sequoia - ") + core::getSequoiaEngineFullVersionString();
-    hint.Monitor = opt.get<int>("Render.Monitor");
+    hint.Monitor = options_->get<int>("Render.Monitor");
     using WindowModeKind = render::RenderWindow::WindowHint::WindowModeKind;
-    hint.WindowMode = core::StringSwitch<WindowModeKind>(opt.getString("Render.WindowMode"))
+    hint.WindowMode = core::StringSwitch<WindowModeKind>(options_->getString("Render.WindowMode"))
                           .Case("fullscreen", WindowModeKind::WK_Fullscreen)
                           .Case("windowed-fullscreen", WindowModeKind::WK_WindowedFullscreen)
                           .Default(WindowModeKind::WK_Window);
-    hint.HideWindow = gameOptions.HideWindow;
+    hint.HideWindow = options_->getBool("Game.HideWindow");
 
     mainWindow_ = renderSystem_->createMainWindow(hint);
 
@@ -107,6 +114,7 @@ void Game::init(const GameOptions& gameOptions) {
                                                    PLATFORM_STR("assets"));
     meshManager_ = std::make_unique<MeshManager>();
 
+    // TODO: Remove
     // Create default shaders and program
     renderSystem_->loadDefaultShaders(assetManager_->load("sequoia/shader/Default.vert"),
                                       assetManager_->load("sequoia/shader/Default.frag"));
@@ -121,7 +129,7 @@ void Game::init(const GameOptions& gameOptions) {
     ErrorHandler::fatal(e.what());
   }
 
-  Log::info("Done initializing {}", name_);
+  Log::info("Done initializing {} (took )", name_);
 }
 
 void Game::cleanup() {
@@ -234,6 +242,19 @@ void Game::makeSceneActive(const std::string& name) {
 void Game::sceneListenerActiveCameraChanged(Scene* scene) {
   // Inform the view port of the main-window about the changed camera
   mainWindow_->getViewport()->setCamera(scene->getActiveCamera().get());
+}
+
+void Game::setDefaultOptions(const std::shared_ptr<Options>& options) {
+  // Core
+  core::setDefaultOptions(options);
+
+  // Game
+  options->setDefaultBool("Game.HideWindow", false);
+  options->setDefaultString("Game.Name", "Game");
+  options->setDefaultInt("Game.RenderSystem", render::RK_OpenGL);
+
+  // Render
+  render::RenderSystem::setDefaultOptions(options);
 }
 
 } // namespace game

@@ -35,29 +35,6 @@ namespace sequoia {
 
 namespace game {
 
-/// @brief Options used to initialize the Game
-/// @ingroup game
-struct GameOptions {
-
-  /// Name of the Game
-  std::string Name = "Game";
-
-  /// Hide the main-window of the Game
-  bool HideWindow = false;
-
-  /// RenderSystem to use
-  render::RenderSystemKind RenderSystemKind;
-
-  /// Reference to the general options
-  core::Options* Options;
-
-  GameOptions(core::Options* options, render::RenderSystemKind renderSystemKind)
-      : RenderSystemKind(renderSystemKind), Options(options) {}
-
-  GameOptions(const GameOptions&) = default;
-  GameOptions(GameOptions&&) = default;
-};
-
 /// @brief Main class holding all game and rendering related objects and running the main-loop
 /// @ingroup game
 class SEQUOIA_API Game final : public Singleton<Game>,
@@ -89,8 +66,8 @@ class SEQUOIA_API Game final : public Singleton<Game>,
   /// Name of the game
   std::string name_;
 
-  /// Reference to the used options
-  Options* options_;
+  /// Options of the game
+  std::shared_ptr<Options> options_;
 
 public:
   Game();
@@ -98,8 +75,13 @@ public:
   /// @brief Cleanup all allocted objects
   ~Game();
 
-  /// @brief Initialize the game
-  void init(const GameOptions& gameOptions);
+  /// @brief Create the Options with default values for the sequoia-engine
+  static std::shared_ptr<Options> makeOptions();
+
+  /// @brief Initialize the game with `gameOptions`
+  ///
+  /// To construct the options, use `Game::makeOptions()`.
+  void init(const std::shared_ptr<Options>& gameOptions = Game::makeOptions());
 
   /// @brief Frees all allocated resources
   void cleanup();
@@ -180,6 +162,9 @@ public:
   void mouseButtonEvent(const render::MouseButtonEvent& event) override;
   void mousePositionEvent(const render::MousePositionEvent& event) override;
   void keyboardEvent(const render::KeyboardEvent& event) override;
+
+private:
+  static void setDefaultOptions(const std::shared_ptr<Options>& options);
 };
 
 } // namespace game

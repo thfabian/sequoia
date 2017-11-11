@@ -22,7 +22,7 @@ namespace render {
 
 /// @brief Enumeration of all RenderSystems
 /// @ingroup render
-enum RenderSystemKind {
+enum RenderSystemKind : int {
   RK_Invalid = 0,
   RK_Null,  ///< Null implementation
   RK_OpenGL ///< OpenGL implementation

@@ -25,7 +25,7 @@ namespace {
 
 TEST(GlobalRenderStateTest, PerProgramUniformVariables) {
   TestEnvironment& env = TestEnvironment::getSingleton();
-  auto ptr = RenderSystem::create(RK_Null, &env.getOptions());
+  auto ptr = RenderSystem::create(RK_Null, env.getOptions());
 
   auto shader1 = ptr->createShader(
       Shader::ST_Vertex, env.getFile("sequoia-engine/Render/TestGlobalRenderState/Shader1.vert"));

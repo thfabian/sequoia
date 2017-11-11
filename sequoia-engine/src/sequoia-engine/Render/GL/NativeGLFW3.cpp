@@ -13,13 +13,13 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia-engine/Render/GL/NativeGLFW3.h"
 #include "sequoia-engine/Core/Casting.h"
 #include "sequoia-engine/Core/Logging.h"
 #include "sequoia-engine/Core/Options.h"
 #include "sequoia-engine/Core/StringUtil.h"
 #include "sequoia-engine/Core/Unreachable.h"
 #include "sequoia-engine/Render/Exception.h"
+#include "sequoia-engine/Render/GL/NativeGLFW3.h"
 #include "sequoia-engine/Render/RenderSystem.h"
 
 #define GLFW_INCLUDE_NONE
@@ -152,7 +152,7 @@ void glfw3NativeGLContext::init(const RenderWindow::WindowHint& windowHints, Opt
                 major, minor, (forwardCompatible ? "" : "non-"));
   };
 
-  createWindow(false, opt.getInt("Render.GLMajorVersion"), opt.getInt("Render.GLMinorVersion"),
+  createWindow(false, opt.getInt("Render.GL.MajorVersion"), opt.getInt("Render.GL.MinorVersion"),
                true);
   if(!window_) {
     // Try OpenGL 3.3 Core with forward compatibility

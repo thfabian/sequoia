@@ -38,6 +38,12 @@
 
 namespace sequoia {
 
+namespace game {
+
+class Game;
+
+} // namespace game
+
 namespace render {
 
 /// @brief Currently active render-system
@@ -52,9 +58,15 @@ class SEQUOIA_API RenderSystem : public Singleton<RenderSystem>,
                                  public Listenable<InputEventListener, FrameListener>,
                                  public RenderSystemObject {
 public:
+  friend class sequoia::game::Game;
+
+  /// @brief Create the Options with default values for all RenderSystem related options
+  static std::shared_ptr<Options> makeOptions();
+
   /// @brief Create the RenderSystem of the given `kind`
   /// @remark Terminates the program on failure
-  static std::unique_ptr<RenderSystem> create(RenderSystemKind kind, Options* options);
+  static std::unique_ptr<RenderSystem> create(RenderSystemKind kind,
+                                              const std::shared_ptr<Options>& options);
 
   /// @brief Terminate the render-system
   virtual ~RenderSystem();
@@ -125,17 +137,19 @@ public:
 
   /// @brief Set if we run in debug-mode
   Options& getOptions() const { return *options_; }
-  Options* getOptionsPtr() const { return options_; }
+  Options* getOptionsPtr() const { return options_.get(); }
 
   void frameListenerRenderingBegin(RenderCommand* command) override;
   void frameListenerRenderingEnd(RenderCommand* command) override;
 
 protected:
-  RenderSystem(RenderSystemKind kind, Options* options);
+  RenderSystem(RenderSystemKind kind, const std::shared_ptr<Options>& options);
 
 private:
-  /// Reference to the options
-  Options* options_;
+  std::shared_ptr<Options> options_;
+
+private:
+  static void setDefaultOptions(const std::shared_ptr<Options>& options);
 };
 
 } // namespace render

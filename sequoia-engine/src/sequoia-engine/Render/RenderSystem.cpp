@@ -13,9 +13,9 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia-engine/Render/RenderSystem.h"
 #include "sequoia-engine/Core/Unreachable.h"
 #include "sequoia-engine/Render/Exception.h"
+#include "sequoia-engine/Render/RenderSystem.h"
 
 #include "sequoia-engine/Render/GL/GLRenderSystem.h"
 #include "sequoia-engine/Render/Null/NullRenderSystem.h"
@@ -26,7 +26,16 @@ SEQUOIA_DECLARE_SINGLETON(render::RenderSystem);
 
 namespace render {
 
-std::unique_ptr<RenderSystem> RenderSystem::create(RenderSystemKind kind, Options* options) {
+std::shared_ptr<Options> RenderSystem::makeOptions() {
+  auto options = std::make_shared<Options>();
+  RenderSystem::setDefaultOptions(options);
+  return options;
+}
+
+std::unique_ptr<RenderSystem> RenderSystem::create(RenderSystemKind kind,
+                                                   const std::shared_ptr<Options>& options) {
+  RenderSystem::setDefaultOptions(options);
+
   switch(kind) {
   case RK_OpenGL:
     return std::make_unique<GLRenderSystem>(options);
@@ -38,9 +47,32 @@ std::unique_ptr<RenderSystem> RenderSystem::create(RenderSystemKind kind, Option
   return nullptr;
 }
 
-RenderSystem::RenderSystem(RenderSystemKind kind, Options* options)
+RenderSystem::RenderSystem(RenderSystemKind kind, const std::shared_ptr<Options>& options)
     : RenderSystemObject(kind), options_(options) {
   SEQUOIA_ASSERT_MSG(options_, "invalid options");
+}
+
+void RenderSystem::setDefaultOptions(const std::shared_ptr<Options>& options) {
+  // Core
+  core::setDefaultOptions(options);
+
+  // Shared
+  options->setDefaultString("Render.WindowMode", "window",
+                            OptionMetaData{"window-mode", "", true, "MODE",
+                                           "Set the window mode to MODE, where MODE is one of "
+                                           "[window,fullscreen,windowed-fullscreen]"});
+  options->setDefaultInt("Render.Monitor", -1,
+                         OptionMetaData{"monitor", "", true, "MONITOR",
+                                        "Set the MONITOR to use, -1 indicates "
+                                        "the primary monitor should be used "
+                                        "which is the default behaviour"});
+
+  options->setDefaultInt("Render.MSAA", 0);
+  options->setDefaultBool("Render.VSync", true);
+
+  // OpenGL
+  options->setDefaultInt("Render.GL.MajorVersion", 4);
+  options->setDefaultInt("Render.GL.MinorVersion", 5);
 }
 
 RenderSystem::~RenderSystem() {}

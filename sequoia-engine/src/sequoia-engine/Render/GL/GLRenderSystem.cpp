@@ -13,12 +13,12 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia-engine/Render/GL/GL.h"
 #include "sequoia-engine/Core/Casting.h"
 #include "sequoia-engine/Core/ErrorHandler.h"
 #include "sequoia-engine/Core/Logging.h"
 #include "sequoia-engine/Core/Unreachable.h"
 #include "sequoia-engine/Render/Exception.h"
+#include "sequoia-engine/Render/GL/GL.h"
 #include "sequoia-engine/Render/GL/GLProgramManager.h"
 #include "sequoia-engine/Render/GL/GLRenderSystem.h"
 #include "sequoia-engine/Render/GL/GLRenderWindow.h"
@@ -63,7 +63,7 @@ std::shared_ptr<T> createRessource(ManagerType* manager, Args&&... args) {
 
 } // anonymous namespace
 
-GLRenderSystem::GLRenderSystem(Options* options)
+GLRenderSystem::GLRenderSystem(const std::shared_ptr<Options>& options)
     : RenderSystem(RK_OpenGL, options), mainContext_(nullptr), mainWindow_(nullptr),
       renderer_(nullptr) {
   Log::info("Initializing OpenGL RenderSystem ...");

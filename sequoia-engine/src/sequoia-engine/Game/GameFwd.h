@@ -26,13 +26,13 @@ class CameraControllerFree;
 class Drawable;
 class Emittable;
 class Game;
+class GameOptions;
 class Keymap;
 class Mesh;
 class MeshManager;
 class Scene;
 class SceneGraph;
 class SceneNode;
-struct GameOptions;
 
 } // namespace game
 

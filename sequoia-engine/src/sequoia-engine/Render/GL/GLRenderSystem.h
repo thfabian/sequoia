@@ -44,7 +44,7 @@ class SEQUOIA_API GLRenderSystem final : public RenderSystem {
   std::unique_ptr<GLRenderer> renderer_;
 
 public:
-  GLRenderSystem(Options* options);
+  GLRenderSystem(const std::shared_ptr<Options>& options);
 
   /// @brief Terminates GLFW
   virtual ~GLRenderSystem();
