@@ -87,19 +87,17 @@ sequoia_engine_set_cxx_flags()
 
 # Custom tragets
 sequoia_add_target_clean_all(
-  ${CMAKE_BINARY_DIR}/bin
-  ${CMAKE_BINARY_DIR}/cmake
-  ${CMAKE_BINARY_DIR}/docs
-  ${CMAKE_BINARY_DIR}/lib
-  ${CMAKE_BINARY_DIR}/ressource
-  ${CMAKE_BINARY_DIR}/sequoia-cmake
-  ${CMAKE_BINARY_DIR}/src
-  ${CMAKE_BINARY_DIR}/test
+  "${CMAKE_BINARY_DIR}/bin"
+  "${CMAKE_BINARY_DIR}/cmake"
+  "${CMAKE_BINARY_DIR}/ressource"
+  "${CMAKE_BINARY_DIR}/sequoia-cmake"
+  "${CMAKE_BINARY_DIR}/src"
+  "${CMAKE_BINARY_DIR}/test"
 )
 sequoia_add_target_clang_format(
   DIRECTORIES 
-    ${CMAKE_SOURCE_DIR}/src
-    ${CMAKE_SOURCE_DIR}/test
+    "${CMAKE_SOURCE_DIR}/src"
+    "${CMAKE_SOURCE_DIR}/test"
   EXTENSION ".h;.cpp"
 )
 

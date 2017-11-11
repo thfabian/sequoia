@@ -13,15 +13,18 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia-engine/Core/Platform.h"
-#include "sequoia-engine/Driver/Driver.h"
-#include "sequoia-engine/Driver/Win32Console.h"
+#include "sequoia-engine/Core/CommandLine.h"
+#include "sequoia-engine/Game/Game.h"
+#include <iostream>
 
-#ifdef SEQUOIA_ON_WIN32
-int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
-  sequoia::Win32Console win32Console;
-  return sequoia::Driver::run(hInstance, hPrevInstance, lpCmdLine, nCmdShow);
+using namespace sequoia;
+
+int main(int argc, char* argv[]) {
+  std::shared_ptr<Options> options = Game::makeOptions();
+  
+  std::cout << options->toString() << std::endl;
+//  core::CommandLine cl("sandbox", SANDBOX_VERSION);
+  
+  return 0;
 }
-#else
-int main(int argc, char* argv[]) { return sequoia::Driver::run(argc, argv); }
-#endif
+

@@ -15,7 +15,10 @@
 
 find_package(SequoiaEngine NO_MODULE REQUIRED)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${SequoiaEngine_COMPILE_DEFINITIONS}")
+set(compile_definitions "${SequoiaEngine_COMPILE_DEFINITIONS}")
+string(REPLACE ";" " " compile_definitions "${compile_definitions}")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${compile_definitions}")
+
 sequoia_export_package(
   NAME SequoiaEngine
   FOUND ${SequoiaEngine_FOUND} 

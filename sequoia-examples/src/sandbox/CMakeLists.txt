@@ -13,4 +13,9 @@
 ##
 ##===------------------------------------------------------------------------------------------===##
 
-#sequoia_add_executable(sandbox )
+sequoia_add_executable( 
+  NAME sandbox
+  SOURCES sandbox.cpp
+  DEPENDS ${SEQUOIA_EXAMPLES_LIBRARIES}
+  OUTPUT_DIR ${CMAKE_BINARY_DIR}/bin/
+)

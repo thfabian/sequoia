@@ -99,11 +99,11 @@ std::string convert<std::string>(const std::string& key, const std::string& valu
 
 std::string OptionMetaData::toString() const {
   return core::format("OptionMetaData[\n"
-                      "  CommandLine = {}\n"
-                      "  CommandLineShort = {}\n"
+                      "  CommandLine = \"{}\"\n"
+                      "  CommandLineShort = \"{}\"\n"
                       "  CommandLineHasValue = {}\n"
-                      "  CommandLineMetaVar = {}\n"
-                      "  DocString = {}\n"
+                      "  CommandLineMetaVar = \"{}\"\n"
+                      "  DocString = \"{}\"\n"
                       "]",
                       CommandLine, CommandLineShort, CommandLineHasValue, CommandLineMetaVar,
                       DocString);

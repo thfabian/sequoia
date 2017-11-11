@@ -74,19 +74,15 @@ sequoia_check_compiler(
 
 # Custom tragets
 sequoia_add_target_clean_all(
-  ${CMAKE_BINARY_DIR}/bin
-  ${CMAKE_BINARY_DIR}/cmake
-  ${CMAKE_BINARY_DIR}/docs
-  ${CMAKE_BINARY_DIR}/lib
-  ${CMAKE_BINARY_DIR}/ressource
-  ${CMAKE_BINARY_DIR}/sequoia-cmake
-  ${CMAKE_BINARY_DIR}/src
-  ${CMAKE_BINARY_DIR}/test
+  "${CMAKE_BINARY_DIR}/bin"
+  "${CMAKE_BINARY_DIR}/sequoia-cmake"
+  "${CMAKE_BINARY_DIR}/src"
+  "${CMAKE_BINARY_DIR}/test"
 )
 sequoia_add_target_clang_format(
   DIRECTORIES 
-    ${CMAKE_SOURCE_DIR}/src
-    ${CMAKE_SOURCE_DIR}/test
+    "${CMAKE_SOURCE_DIR}/src"
+    "${CMAKE_SOURCE_DIR}/test"
   EXTENSION ".h;.cpp"
 )
 
@@ -109,16 +105,16 @@ foreach(package SequoiaEngine GTest)
   include("Add${package}")
   string(TOUPPER ${package} PACKAGE)
 
-  list(APPEND SEQUOIA_ENGINE_${NAME}_LIBRARIES ${SEQUOIA_${PACKAGE}_LIBRARIES})
-  list(APPEND SEQUOIA_ENGINE_${NAME}_INCLUDE_DIRS ${SEQUOIA_${PACKAGE}_INCLUDE_DIRS})
-  list(APPEND SEQUOIA_ENGINE_${NAME}_DEFINITIONS ${SEQUOIA_${PACKAGE}_DEFINITIONS})
+  list(APPEND SEQUOIA_EXAMPLES_LIBRARIES ${SEQUOIA_${PACKAGE}_LIBRARIES})
+  list(APPEND SEQUOIA_EXAMPLES_INCLUDE_DIRS ${SEQUOIA_${PACKAGE}_INCLUDE_DIRS})
+  list(APPEND SEQUOIA_EXAMPLES_DEFINITIONS ${SEQUOIA_${PACKAGE}_DEFINITIONS})
   
   sequoia_create_package_string(${package} info)
   list(APPEND package_info ${info})
 endforeach()
 
-include_directories(SYSTEM ${SEQUOIA_ENGINE_${NAME}_INCLUDE_DIRS})
-add_definitions(${SEQUOIA_ENGINE_${NAME}_DEFINITIONS})
+include_directories(SYSTEM ${SEQUOIA_EXAMPLES_INCLUDE_DIRS})
+add_definitions(${SEQUOIA_EXAMPLES_DEFINITIONS})
 
 # Output summary of the packages
 sequoia_report_result("Package summary" ${package_info})
@@ -128,14 +124,3 @@ include_directories(${CMAKE_SOURCE_DIR}/src)
 include_directories(${CMAKE_BINARY_DIR}/src)
 
 add_subdirectory(src)
-
-# # Testing
-# if(SEQUOIA_ENGINE_TESTING)
-#   enable_testing()
-#   add_subdirectory(test)
-# endif()
-
-# # Documentation
-# if(SEQUOIA_ENGINE_DOCUMENTATION)
-#   add_subdirectory(docs)
-# endif()
