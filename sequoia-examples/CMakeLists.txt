@@ -82,7 +82,6 @@ sequoia_add_target_clean_all(
 sequoia_add_target_clang_format(
   DIRECTORIES 
     "${CMAKE_SOURCE_DIR}/src"
-    "${CMAKE_SOURCE_DIR}/test"
   EXTENSION ".h;.cpp"
 )
 

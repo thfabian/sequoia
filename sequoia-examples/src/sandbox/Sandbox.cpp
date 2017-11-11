@@ -13,6 +13,7 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
+#include "sandbox/Config.h"
 #include "sequoia-engine/Core/CommandLine.h"
 #include "sequoia-engine/Game/Game.h"
 #include <iostream>
@@ -21,10 +22,10 @@ using namespace sequoia;
 
 int main(int argc, char* argv[]) {
   std::shared_ptr<Options> options = Game::makeOptions();
-  
+
   std::cout << options->toString() << std::endl;
-//  core::CommandLine cl("sandbox", SANDBOX_VERSION);
-  
+  core::CommandLine cl("sandbox-example", SEQUOIA_EXAMPLES_SANDBOX_VERSION);
+  cl.parse(options.get(), argc, argv);
+
   return 0;
 }
-

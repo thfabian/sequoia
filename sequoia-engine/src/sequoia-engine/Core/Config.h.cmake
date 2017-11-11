@@ -12,11 +12,6 @@
 // See LICENSE.txt for details.
 //
 //===------------------------------------------------------------------------------------------===//
-//
-/// @file
-/// Define platform specific definitions.
-//
-//===------------------------------------------------------------------------------------------===//
 
 #ifndef SEQUOIA_ENGINE_CORE_CONFIG_H
 #define SEQUOIA_ENGINE_CORE_CONFIG_H
