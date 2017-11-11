@@ -57,6 +57,7 @@ sequoia_add_library(
           Options.h
           Platform.cpp   
           Platform.h
+          PreprocessorUtil.h
           PrettyStackTrace.cpp       
           PrettyStackTrace.h
           Singleton.h

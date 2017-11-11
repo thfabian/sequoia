@@ -16,87 +16,86 @@
 #ifndef SEQUOIA_ENGINE_RENDER_UNIFORMSTRUCT_H
 #define SEQUOIA_ENGINE_RENDER_UNIFORMSTRUCT_H
 
-#include "sequoia-engine/Core/Export.h"
 #include "sequoia-engine/Core/Format.h"
+#include "sequoia-engine/Core/PreprocessorUtil.h"
 #include "sequoia-engine/Render/UniformVariable.h"
-#include <boost/preprocessor/cat.hpp>
-#include <boost/preprocessor/seq/for_each.hpp>
-#include <boost/preprocessor/stringize.hpp>
 #include <boost/preprocessor/tuple/elem.hpp>
 #include <sstream>
 #include <unordered_map>
 
-#define SEQUOIA_SEQ_FILLER_0(X, Y) ((X, Y)) SEQUOIA_SEQ_FILLER_1
-#define SEQUOIA_SEQ_FILLER_1(X, Y) ((X, Y)) SEQUOIA_SEQ_FILLER_0
-#define SEQUOIA_SEQ_FILLER_0_END
-#define SEQUOIA_SEQ_FILLER_1_END
+/// @brief Get the `type` of a `(type, name)` tuple
+#define SEQUOIA_PP_US_PARAM_GET_TYPE(Param) BOOST_PP_TUPLE_ELEM(2, 0, Param)
 
-// Instead of using `Sequence` directly, we use `BOOST_PP_CAT(SEQUOIA_SEQ_FILLER_0 Sequence, _END)`.
-// This is a clever trick to force the double parentheses. It works like this (assuming Sequence is
-// `(int, x)(float, y)`:
-//
-// - Start with: `SEQUOIA_SEQ_FILLER_0(int,x)(float,y)_END`
-// - Expand `SEQUOIA_SEQ_FILLER_0(A,B)` to `((A,B))SEQUOIA_SEQ_FILLER_1`
-//   yielding `((int,x))SEQUOIA_SEQ_FILLER_1(float,y)_END`
-// - Expand `SEQUOIA_SEQ_FILLER_1(A,B)` to `((A,B))SEQUOIA_SEQ_FILLER_0`
-//   yielding `((int,x))((float,y))CREATE_MY_MACRO_PLACEHOLDER_FILLER_0_END`
-// - Expand `SEQUOIA_SEQ_FILLER_0_END` to ``
-//   yielding `((int,x))((float,y))`
-//
-// This is inspired by BOOST_FUSION_ADAPT_STRUCT and friends.
-#define SEQUOIA_GENERATE_MACRO(Macro, Data, Sequence)                                              \
-  BOOST_PP_SEQ_FOR_EACH(Macro, Data, BOOST_PP_CAT(SEQUOIA_SEQ_FILLER_0 Sequence, _END))
+/// @brief Get the `name` of a `(type, name)` tuple
+///@ingroup render
+#define SEQUOIA_PP_US_PARAM_GET_NAME(Param) BOOST_PP_TUPLE_ELEM(2, 1, Param)
 
-// Get the `type` of a `(type, name)` tuple
-#define SEQUOIA_PARAM_GET_TYPE(Param) BOOST_PP_TUPLE_ELEM(2, 0, Param)
+/// @brief Generate data members of a struct or class
+///
+/// From a `(type0, name0)...(typeN, nameN)` sequence, generate
+///
+/// @code{.cpp}
+///
+///  <type0> <name0>;
+///  ...
+///  <typeN> <nameN>;
+///
+/// @endcode
+///@ingroup render
+#define SEQUOIA_PP_US_GENERATE_MEMBERS(Members)                                                    \
+  SEQUOIA_PP_SEQ_2_FOR_EACH(SEQUOIA_PP_US_GENERATE_MEMBER, Unused, Members)
 
-// Get the `name` of a `(type, name)` tuple
-#define SEQUOIA_PARAM_GET_NAME(Param) BOOST_PP_TUPLE_ELEM(2, 1, Param)
+#define SEQUOIA_PP_US_GENERATE_MEMBER(r, Data, Member)                                             \
+  SEQUOIA_PP_US_PARAM_GET_TYPE(Member) SEQUOIA_PP_US_PARAM_GET_NAME(Member);
 
-// Generate
-//
-//  <type> <name>;
-//
-// from a `(type0, name0)...(typeN, nameN)` sequence
-#define SEQUOIA_GENERATE_MEMBER(r, Data, Member)                                                   \
-  SEQUOIA_PARAM_GET_TYPE(Member) SEQUOIA_PARAM_GET_NAME(Member);
+/// @brief Generate conversion to `UniformVariable`
+///
+/// From a `(type0, name0)...(typeN, nameN)` sequence, generate
+///
+/// @code{.cpp}
+///
+///   if(index == -1)
+///     uniformMap[variableName + ".<name0>"] = UniformVariable(this-> <name0>);
+///   else
+///     uniformMap[core::format("%s[%i].<name0>", variableName, index]
+///       = UniformVariable(this-> <name0>);
+///
+/// @endcode
+///@ingroup render
+#define SEQUOIA_PP_US_GENERATE_TO_UNIFORMVARIABLES(Members)                                        \
+  SEQUOIA_PP_SEQ_2_FOR_EACH(SEQUOIA_PP_US_GENERATE_TO_UNIFORMVARIABLE, Unused, Members)
 
-#define SEQUOIA_GENERATE_MEMBERS(Members)                                                          \
-  SEQUOIA_GENERATE_MACRO(SEQUOIA_GENERATE_MEMBER, Unused, Members)
-
-// Generate
-//
-//   if(index == -1)
-//     uniformMap["<variableName>.<name>"] = UniformVariable(this-><name>);
-//   else
-//     uniformMap[core::format("<variableName>.<name>[{}]", index] = UniformVariable(this-><name>);
-//
-// from a `(type0, name0)...(typeN, nameN)` sequence
-#define SEQUOIA_GENERATE_TO_UNIFORMVARIABLE(r, Unused, Member)                                     \
+#define SEQUOIA_PP_US_GENERATE_TO_UNIFORMVARIABLE(r, Unused, Member)                               \
   if(index == -1)                                                                                  \
-    uniformMap[variableName + "." BOOST_PP_STRINGIZE(SEQUOIA_PARAM_GET_NAME(Member))] =            \
-        ::sequoia::render::UniformVariable(this->SEQUOIA_PARAM_GET_NAME(Member));                  \
+    uniformMap[variableName + "." BOOST_PP_STRINGIZE(SEQUOIA_PP_US_PARAM_GET_NAME(Member))] =      \
+        ::sequoia::render::UniformVariable(this->SEQUOIA_PP_US_PARAM_GET_NAME(Member));            \
   else                                                                                             \
-    uniformMap[core::format("{}[{}]." BOOST_PP_STRINGIZE(SEQUOIA_PARAM_GET_NAME(Member)),          \
-                            variableName, index)] =                                                \
-        ::sequoia::render::UniformVariable(this->SEQUOIA_PARAM_GET_NAME(Member));
+    uniformMap[ ::sequoia::core::format(                                                           \
+        "{}[{}]." BOOST_PP_STRINGIZE(SEQUOIA_PP_US_PARAM_GET_NAME(Member)), variableName,          \
+        index)] = ::sequoia::render::UniformVariable(this->SEQUOIA_PP_US_PARAM_GET_NAME(Member));
 
-#define SEQUOIA_GENERATE_TO_UNIFORMVARIABLES(Members)                                              \
-  SEQUOIA_GENERATE_MACRO(SEQUOIA_GENERATE_TO_UNIFORMVARIABLE, Unused, Members)
+/// @brief Generate to string
+///
+/// From a `(type0, name0)...(typeN, nameN)` sequence, generate
+///
+/// @code{.cpp}
+///
+///   ss << "  <name0> = " << this-> <name0> << "\n";
+///   ...
+///   ss << "  <nameN> = " << this-> <nameN> << "\n";
+///
+/// @endcode
+///@ingroup render
+#define SEQUOIA_PP_US_GENERATE_TO_STRINGS(Members)                                                 \
+  SEQUOIA_PP_SEQ_2_FOR_EACH(SEQUOIA_PP_US_GENERATE_TO_STRING, Unused, Members)
 
-// Generate
-//
-//   ss << "  <name> = " << this-><name> << "\n";
-//
-// from a `(type0, name0)...(typeN, nameN)` sequence
-#define SEQUOIA_GENERATE_TO_STRING(r, Data, Member)                                                \
-  ss << "  " BOOST_PP_STRINGIZE(SEQUOIA_PARAM_GET_NAME(Member)) " = "                              \
-     << this->SEQUOIA_PARAM_GET_NAME(Member) << "\n";
-
-#define SEQUOIA_GENERATE_TO_STRINGS(Members)                                                       \
-  SEQUOIA_GENERATE_MACRO(SEQUOIA_GENERATE_TO_STRING, Unused, Members)
+#define SEQUOIA_PP_US_GENERATE_TO_STRING(r, Data, Member)                                          \
+  ss << "  " BOOST_PP_STRINGIZE(SEQUOIA_PP_US_PARAM_GET_NAME(Member)) " = "                        \
+     << this->SEQUOIA_PP_US_PARAM_GET_NAME(Member) << "\n";
 
 /// @brief Define a struct which matches an equivalent declaration in a GPU Program
+///
+/// For structs which are persistent accross all programs, use `SEQUOIA_UNIFORM_BLOCK`.
 ///
 /// @param Name        Name of the generated struct
 /// @param Members     A sequence of `(type0, name0)...(typeN, nameN)` pairs which declares the type
@@ -119,20 +118,23 @@
 /// @endcode
 ///
 /// @see sequoia::render::DrawCommand::setUniformStruct
-/// @ingroup render
+///@ingroup render
 #define SEQUOIA_UNIFORM_STRUCT(Name, Members)                                                      \
   struct Name {                                                                                    \
-    SEQUOIA_GENERATE_MEMBERS(Members)                                                              \
+                                                                                                   \
+    SEQUOIA_PP_US_GENERATE_MEMBERS(Members)                                                        \
+                                                                                                   \
     inline void toUniformVariableMap(                                                              \
         const std::string& variableName,                                                           \
         std::unordered_map<std::string, ::sequoia::render::UniformVariable>& uniformMap,           \
         int index) const {                                                                         \
-      SEQUOIA_GENERATE_TO_UNIFORMVARIABLES(Members)                                                \
+      SEQUOIA_PP_US_GENERATE_TO_UNIFORMVARIABLES(Members)                                          \
     }                                                                                              \
+                                                                                                   \
     inline std::string toString() const {                                                          \
       std::stringstream ss;                                                                        \
       ss << BOOST_PP_STRINGIZE(Name) "[\n";                                                        \
-      SEQUOIA_GENERATE_TO_STRINGS(Members)                                                         \
+      SEQUOIA_PP_US_GENERATE_TO_STRINGS(Members)                                                   \
       ss << "]";                                                                                   \
       return ss.str();                                                                             \
     }                                                                                              \
