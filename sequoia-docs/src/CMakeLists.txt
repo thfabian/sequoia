@@ -14,9 +14,10 @@
 ##===------------------------------------------------------------------------------------------===##
 
 # sequoia-engine (doxygen)
+include("${SEQUOIA_DOCS_ENGINE_DIR}/cmake/SequoiaEngineVersion.cmake")
 set(SEQUOIA_ENGINE_DIR ${SEQUOIA_DOCS_ENGINE_DIR})
 set(SEQUOIA_ENGINE_DOC_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
-set(SEQUOIA_ENGINE_VERSION "0.0.1")
+set(SEQUOIA_ENGINE_VERSION ${SEQUOIA_ENGINE_VERSION})
 
 set(sequoia_engine_doxyfile_in ${CMAKE_CURRENT_SOURCE_DIR}/sequoia-engine-doxyfile.in)
 set(sequoia_engine_doxyfile ${CMAKE_CURRENT_BINARY_DIR}/sequoia-engine-doxyfile)
@@ -39,7 +40,7 @@ add_custom_target(sequoia-cmake
 )
 
 # sphinx
-add_custom_target(sphinx ALL
+add_custom_target(sphinx
   COMMAND ${SPHINX_EXECUTABLE} -b html -d ${CMAKE_BINARY_DIR}/sphinx/doctrees 
          ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_BINARY_DIR}/sphinx/html
   WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
@@ -48,7 +49,7 @@ add_custom_target(sphinx ALL
 )
 
 # Copy HTML
-add_custom_target(docs
+add_custom_target(docs ALL
  # sphinx
  COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_BINARY_DIR}/sphinx/html 
                                             ${CMAKE_SOURCE_DIR}/html

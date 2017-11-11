@@ -13,27 +13,8 @@
 ##
 ##===------------------------------------------------------------------------------------------===##
 
-# Versions
-if(NOT DEFINED SEQUOIA_ENGINE_VERSION_MAJOR)
-  set(SEQUOIA_ENGINE_VERSION_MAJOR 0 CACHE INTERNAL "Major version of Sequoia" FORCE)
-endif()
-
-if(NOT DEFINED SEQUOIA_ENGINE_VERSION_MINOR)
-  set(SEQUOIA_ENGINE_VERSION_MINOR 0 CACHE INTERNAL "Minor version of Sequoia" FORCE)
-endif()
-
-if(NOT DEFINED SEQUOIA_ENGINE_VERSION_PATCH)
-  set(SEQUOIA_ENGINE_VERSION_PATCH 1 CACHE INTERNAL "Patch version of Sequoia" FORCE)
-endif()
-
-if(NOT DEFINED SEQUOIA_ENGINE_VERSION_SUFFIX)
-  set(SEQUOIA_ENGINE_VERSION_SUFFIX "dev" CACHE INTERNAL "Suffix of the Sequoia version" FORCE)
-endif()
-
-set(SEQUOIA_ENGINE_VERSION 
-    ${SEQUOIA_ENGINE_VERSION_MAJOR}.${SEQUOIA_ENGINE_VERSION_MINOR}.${SEQUOIA_ENGINE_VERSION_PATCH}
-    CACHE STRING "Version of Sequoia" FORCE)
-mark_as_advanced(SEQUOIA_ENGINE_VERSION)
+# Version
+include(SequoiaEngineVersion)
 
 # Git version string
 sequoia_get_git_head_revision(git_refspec git_hash)
