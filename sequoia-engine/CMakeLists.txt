@@ -142,6 +142,7 @@ find_packages(EXTERNAL Backward Boost glbinding glfw3 gli glm OpenCV OpenGL Pyth
 if(SEQUOIA_ENGINE_TESTING)
   find_packages(TESTING GTest benchmark)
 endif()
+
 sequoia_report_result("Package summary" ${package_info})
 
 # Find tools
@@ -150,6 +151,7 @@ foreach(tool ccache clang-format)
   sequoia_create_package_string(${tool} info)
   list(APPEND tool_info ${info})
 endforeach()
+
 sequoia_report_result("Tool summary" ${tool_info})
   
 # Build sequoia-engine
@@ -162,11 +164,6 @@ add_subdirectory(src)
 if(SEQUOIA_ENGINE_TESTING)
   enable_testing()
   add_subdirectory(test)
-endif()
-
-# Documentation
-if(SEQUOIA_ENGINE_DOCUMENTATION)
-  add_subdirectory(docs)
 endif()
 
 # Install headers

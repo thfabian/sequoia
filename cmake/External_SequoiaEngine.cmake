@@ -29,6 +29,10 @@ if(SEQUOIA_ASSERTS)
   set(SEQUOIA_ENGINE_ASSERTS ON)
 endif()
 
+if(SEQUOIA_DOCS)
+  set(SEQUOIA_ENGINE_DOCS ON)
+endif()
+
 foreach(option ${SEQUOIA_ENGINE_OPTIONS})
   list(APPEND sequoia_engine_cmake_args "-D${option}=${${option}}") 
 endforeach()

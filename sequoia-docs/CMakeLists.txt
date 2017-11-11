@@ -13,7 +13,7 @@
 ##
 ##===------------------------------------------------------------------------------------------===##
 
-project(sequoia-docs)
+project(SequoiaDocs)
 cmake_minimum_required(VERSION 3.5)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
@@ -28,20 +28,21 @@ sequoia_check_in_source_build()
 
 # Add clean-all target
 include(SequoiaAddTargetCleanAll)
-sequoia_add_target_clean_all(${CMAKE_BINARY_DIR}/sphinx 
-                             ${CMAKE_BINARY_DIR}/sequoia-cmake 
-                             ${CMAKE_SOURCE_DIR}/sphinx/sequoia-cmake)
+sequoia_add_target_clean_all(
+  "${CMAKE_BINARY_DIR}/src" 
+  "${CMAKE_BINARY_DIR}/sequoia-cmake"
+)
 
 # Include the packages
 include(SequoiaCreatePackageString)
 include(SequoiaExportPackage)
 include(SequoiaReportResult)
 
-foreach(package Python3 Sphinx)
+foreach(package Python3 Sphinx Doxygen)
   include("Add${package}")
   sequoia_create_package_string(${package} info)
   list(APPEND package_info ${info})
 endforeach()
 sequoia_report_result("Package summary" ${package_info})
 
-add_subdirectory(sphinx)
+add_subdirectory(src)

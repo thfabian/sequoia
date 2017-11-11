@@ -17,14 +17,14 @@
 # the source tree and generates a corresponding .rst file
 
 set(sequoia_cmake_dir @SEQUOIA_CMAKE_DIR@)
-set(sphinx_root @SPHINX_ROOT@)
+set(source_dir @SEQUOIA_CMAKE_DOC_SOURCE_DIR@)
 
 if("${sequoia_cmake_dir}" STREQUAL "")
   message(WARNING "sequoia-cmake not available - documentation incomplete!")
 else()
   # Copy the scripts from <sequoia-cmake>/cmake
-  file(COPY ${sequoia_cmake_dir}/cmake/ DESTINATION ${sphinx_root}/sequoia-cmake)
-  file(GLOB scripts "${sphinx_root}/sequoia-cmake/*.cmake")
+  file(COPY ${sequoia_cmake_dir}/cmake/ DESTINATION ${source_dir}/sequoia-cmake)
+  file(GLOB scripts "${source_dir}/sequoia-cmake/*.cmake")
   list(SORT scripts)
 
   # Generate the *.rst
@@ -48,7 +48,7 @@ else()
     endif()
 
     # Generate the corresponding *.rst file
-    file(WRITE "${sphinx_root}/sequoia-cmake/${script_name}.rst"
+    file(WRITE "${source_dir}/sequoia-cmake/${script_name}.rst"
   "
 .. toctree::
   :hidden:
@@ -61,7 +61,7 @@ endif()
 
 # Configure sequoia-cmake.rst (we can't use configure file as this would not detect new files 
 # in the sequoia-cmake/cmake directory)
-file(READ ${sphinx_root}/sequoia-cmake.rst.in file_content)
+file(READ ${source_dir}/sequoia-cmake.rst.in file_content)
 string(REPLACE "__function_and_macros__" "${function_and_macros}" file_content ${file_content})
 string(REPLACE "__modules__" "${modules}" file_content ${file_content})
-file(WRITE ${sphinx_root}/sequoia-cmake.rst ${file_content})
+file(WRITE ${source_dir}/sequoia-cmake.rst ${file_content})

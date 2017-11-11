@@ -15,7 +15,7 @@
 
 #.rst:
 # Findcereal
-# -------
+# ----------
 #
 # .. code-block:: cmake
 #

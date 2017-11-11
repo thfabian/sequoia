@@ -25,15 +25,20 @@ endif()
 
 # Shared options
 option(SEQUOIA_ASSERTS "Enable asserts in all sequoia projects" ${build_is_not_release})
+option(SEQUOIA_DOCS "Build documentation" OFF)
 option(SEQUOIA_NO_SYSTEM_LIBS "Don't use system libraries" ${no_system_libs})
 
 # sequoia-engine
 set(SEQUOIA_ENGINE_DIR "${CMAKE_SOURCE_DIR}/sequoia-engine" 
-    CACHE PATH "Directory of the Engine")
+    CACHE PATH "Directory of the engine")
 include("${SEQUOIA_ENGINE_DIR}/cmake/SequoiaEngineOptions.cmake")
 
 # sequoia-examples
 set(SEQUOIA_EXAMPLES_DIR "${CMAKE_SOURCE_DIR}/sequoia-examples" 
-    CACHE PATH "Directory of the Examples")
+    CACHE PATH "Directory of the examples")
 include("${SEQUOIA_EXAMPLES_DIR}/cmake/SequoiaExamplesOptions.cmake")
 
+# sequoia-docs
+set(SEQUOIA_DOCS_DIR "${CMAKE_SOURCE_DIR}/sequoia-docs" 
+    CACHE PATH "Directory of the examples")
+include("${SEQUOIA_DOCS_DIR}/cmake/SequoiaDocsOptions.cmake")

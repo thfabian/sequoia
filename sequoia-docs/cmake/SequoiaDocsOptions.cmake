@@ -22,19 +22,15 @@ if(${CMAKE_BUILD_TYPE} MATCHES "Release")
   set(build_is_release ON)
 endif()
 
-option(SEQUOIA_ENGINE_ASSERTS "Enable asserts" ${build_is_not_release})
-option(SEQUOIA_ENGINE_OPTIMIZE "Enable all optimizations" ${build_is_release})
-option(SEQUOIA_ENGINE_USE_CCACHE "Use compile cache if available" ON)
-option(SEQUOIA_ENGINE_WERROR "Treat warning as errors" OFF)
+# sequoia-engine
+set(SEQUOIA_DOCS_CMAKE_DIR "${SEQUOIA_CMAKE_DIR}" 
+    CACHE PATH "Directory of the sequoia-cmake")
 
-option(SEQUOIA_ENGINE_TESTING "Enable testing" ON)
-option(SEQUOIA_ENGINE_BENCHMARKING "Enable benchmarking" OFF)
+# sequoia-docs
+set(SEQUOIA_DOCS_ENGINE_DIR "${CMAKE_SOURCE_DIR}/../sequoia-engine" 
+    CACHE PATH "Directory of the sequoia-engine")
 
-sequoia_export_options(SEQUOIA_ENGINE
-  SEQUOIA_ENGINE_ASSERTS
-  SEQUOIA_ENGINE_OPTIMIZE
-  SEQUOIA_ENGINE_USE_CCACHE
-  SEQUOIA_ENGINE_WERROR
-  SEQUOIA_ENGINE_TESTING
-  SEQUOIA_ENGINE_BENCHMARKING
+sequoia_export_options(SEQUOIA_DOCS
+  SEQUOIA_DOCS_CMAKE_DIR
+  SEQUOIA_DOCS_ENGINE_DIR
 )
