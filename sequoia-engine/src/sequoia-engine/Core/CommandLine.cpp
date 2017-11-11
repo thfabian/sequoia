@@ -17,6 +17,7 @@
 #include "sequoia-engine/Core/ErrorHandler.h"
 #include "sequoia-engine/Core/Options.h"
 #include "sequoia-engine/Core/UtfString.h"
+#include "sequoia-engine/Core/Platform.h"
 #include <boost/program_options.hpp>
 #include <cstdlib>
 #include <iostream>
@@ -44,7 +45,10 @@ CommandLine::CommandLine(const std::string& tool, const std::string& version)
     : tool_(tool), version_(version) {}
 
 void CommandLine::parse(Options* options, int argc, char* argv[]) {
-  std::string program(argc > 0 ? argv[0] : "Unknown Program");
+  std::string program;
+  if(argc > 0)
+    program = platform::toAnsiString(platform::Path(argv[0]).filename());
+  
   std::vector<std::string> arguments(argv + 1, argv + argc);
   parseImpl(options, program, arguments);
 }

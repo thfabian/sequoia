@@ -179,7 +179,8 @@ public:
   void write(const std::string& file) const;
 
   /// @brief Read options from a XML config `file`
-  void read(const std::string& file);
+  /// @returns `true` on success, `false` on error
+  bool read(const std::string& file);
 
   /// @brief Convert to string
   std::string toString() const;

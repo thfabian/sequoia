@@ -128,6 +128,7 @@ void Options::write(const std::string& file) const {
   try {
     boost::property_tree::xml_writer_settings<std::string> settings;
     settings.indent_count = 2;
+    settings.indent_char = ' ';
     boost::property_tree::write_xml(file, ptree, std::locale(), settings);
   } catch(boost::property_tree::xml_parser_error& e) {
     Log::warn("Failed to write Options : {}", e.what());
@@ -136,7 +137,7 @@ void Options::write(const std::string& file) const {
 
   Log::info("Successfully wrote Options to \"{}\"", file);
 }
-
+  
 static void parsePtree(const boost::property_tree::ptree& pt, std::string key,
                        std::unordered_map<std::string, std::string>& options) {
   if(!key.empty()) {
@@ -148,19 +149,20 @@ static void parsePtree(const boost::property_tree::ptree& pt, std::string key,
     parsePtree(it->second, key + it->first, options);
 }
 
-void Options::read(const std::string& file) {
+bool Options::read(const std::string& file) {
   Log::info("Reading Options from \"{}\" ...", file);
 
   boost::property_tree::ptree ptree;
   try {
-    boost::property_tree::read_xml(file, ptree);
+    boost::property_tree::read_xml(file, ptree, boost::property_tree::xml_parser::trim_whitespace);
   } catch(boost::property_tree::xml_parser_error& e) {
     Log::warn("Failed to read Options : {}", e.what());
-    SEQUOIA_THROW(core::Exception, "failed to read Options : {}", e.what());
+    return false;
   }
 
   parsePtree(ptree, "", options_);
   Log::info("Successfully read Options to \"{}\"", file);
+  return true;
 }
 
 std::string Options::toString() const {
