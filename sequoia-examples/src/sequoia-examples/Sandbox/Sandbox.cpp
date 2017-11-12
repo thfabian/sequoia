@@ -13,11 +13,12 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia-examples/Sandbox/Config.h"
 #include "sequoia-engine/Core/CommandLine.h"
+#include "sequoia-engine/Core/ErrorHandler.h"
 #include "sequoia-engine/Core/Logging.h"
 #include "sequoia-engine/Core/PrettyStackTrace.h"
 #include "sequoia-engine/Game/Game.h"
+#include "sequoia-examples/Sandbox/Config.h"
 #include <iostream>
 
 using namespace sequoia;
@@ -34,10 +35,23 @@ int main(int argc, char* argv[]) {
   options->read("Sandbox-Config.xml");
 
   core::CommandLine cl("Sequoia Sandbox Example", SEQUOIA_EXAMPLES_SANDBOX_VERSION);
-  cl.parse(options.get(), argc, argv);
+  cl.parse(options, argc, argv);
+
+  if(options->getBool("Core.Debug"))
+    logger->setLevel(core::Logger::Trace);
+
+  // Run the game
+  options->setString("Game.Name", "Sequoia Sandbox Example");
+  try {
+    auto sandbox = std::make_unique<Game>();
+    sandbox->init(options);
+    sandbox->run();
+  } catch(core::Exception& exception) {
+    core::ErrorHandler::fatal(exception.what());
+  }
 
   // Write options to file
-  options->write("Sandbox-Config.xml");
-  
+  // options->write("Sandbox-Config.xml");
+
   return 0;
 }
