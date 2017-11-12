@@ -21,10 +21,21 @@
 #include "sequoia-engine/Render/RenderSystem.h"
 #include <algorithm>
 #include <assimp/Importer.hpp>
+#include <assimp/postprocess.h>
+#include <assimp/scene.h>
+
+#include <iostream>
 
 namespace sequoia {
 
 namespace game {
+
+/// TODO:
+///   - Rename the whole class to "ShapeManager"
+///   - A shape contains "Mesh" and "Material" vectors.
+///   - Implement Vritual FS to allow loading files from memory
+///   - Provide our logger to Assimp
+/// 
 
 MeshManager::MeshManager() { importer_ = std::make_shared<Assimp::Importer>(); }
 
@@ -54,7 +65,91 @@ std::shared_ptr<Mesh> MeshManager::load(const std::string& name, const std::shar
     vertexData = vertexData_[record->Index];
     vertexDataMutex_.unlock();
   } else {
+    
+#if 0
+    // Default flags
+    int flags = aiProcessPreset_TargetRealtime_Quality;
+  
+    // Optional flags
+    flags = param.TexCoordInvertV ? flags | aiProcess_FlipUVs : flags;
+    
+    // Load mesh
+    const aiScene* scene = importer_->ReadFile(
+        "/home/thfabian/Desktop/sequoia/sequoia-engine/test/ressource/sequoia-engine/"
+        "Game/TestMeshManager/Cube.obj",
+        flags);
 
+    if(!scene)
+      SEQUOIA_THROW(GameException, "failed to load mesh {}: {}", file->getPath(),
+                    importer_->GetErrorString());
+    
+    std::vector<std::shared_ptr<Mesh>> meshes(scene->mNumMeshes);
+//    std::vector<std::shared_ptr<Material>> materials(pScene->mNumMaterials);    
+    
+    core::aligned_vector<unsigned int> indexBuffer;
+    core::aligned_vector<render::Vertex3D> vertexBuffer;
+    
+    std::cout << scene->mNumMeshes << std::endl;
+    
+    for(int meshIdx = 0 ; meshIdx < meshes.size(); meshIdx++) {
+      indexBuffer.clear();
+      vertexBuffer.clear();
+
+      const aiMesh* mesh = scene->mMeshes[meshIdx];
+      
+      const int numVertices = mesh->mNumVertices;
+      const int mumFaces = mesh->mNumFaces;
+
+      vertexBuffer.reserve(numVertices);
+      indexBuffer.reserve(3 * mumFaces);
+      
+      // Vertices
+      for(int vertexIdx = 0; vertexIdx < numVertices; ++vertexIdx) {
+        render::Vertex3D vertex;
+        
+        // Position
+        const aiVector3D& position = mesh->mVertices[vertexIdx];
+        for(int j = 0; j < 3; ++j)
+          vertex.Position[j] = position[j];
+
+        // Normal
+        const aiVector3D& normal = mesh->mNormals[vertexIdx];
+        for(int j = 0; j < 3; ++j)
+          vertex.Normal[j] = normal[j];
+        
+        // UV
+        if(mesh->HasTextureCoords(0)) {
+          const aiVector3D& texCoord = mesh->mTextureCoords[0][vertexIdx];
+          for(int j = 0; j < 2; ++j)
+            vertex.TexCoord[j] = texCoord[j];
+        } else {
+          for(int j = 0; j < 2; ++j)
+            vertex.TexCoord[0] = 0;
+        }
+        
+        // Color
+        constexpr auto maxRGBValue = std::numeric_limits<render::Vertex3D::ColorType>::max();
+        for(int j = 0; j < 3; ++j)
+          vertex.Color[j] = 0;
+        vertex.Color[3] = maxRGBValue;
+        
+        vertexBuffer.emplace_back(std::move(vertex));
+      }
+      
+      // Indices
+      for(int faceIDx = 0; faceIDx < mumFaces; ++faceIDx) {
+        const aiFace& face = mesh->mFaces[faceIDx];
+        SEQUOIA_ASSERT_MSG(face.mNumIndices == 3, "more than 3 vertices per face");
+      
+        indexBuffer.push_back(face.mIndices[0]);
+        indexBuffer.push_back(face.mIndices[1]);
+        indexBuffer.push_back(face.mIndices[2]);
+      }
+      
+//      for(auto v : vertexBuffer)
+//        std::cout << render::Vertex3D::toString(v) << std::endl;
+    }
+      
     //    tinyobj::attrib_t attrib;
     //    std::vector<tinyobj::shape_t> shapes;
     //    std::vector<tinyobj::material_t> materials;
@@ -241,6 +336,7 @@ std::shared_ptr<Mesh> MeshManager::load(const std::string& name, const std::shar
     //    vertexData_.emplace_back(vertexData);
     //    record->Index = vertexData_.size() - 1;
     //    vertexDataMutex_.unlock();
+#endif
   }
 
   record->Mutex.unlock();

@@ -285,7 +285,7 @@ class VertexCodeGen(object):
             cxx_cpp_def += "  return core::format(\n"
             cxx_cpp_def += "    \"%s[\\n\"\n" % vertex_name
             for i in range(len(attributes)):
-                cxx_cpp_def += "    \"   %%-10s = %%s%s\\n\"\n" % (
+                cxx_cpp_def += "    \"   {:<10} = {}%s\\n\"\n" % (
                     "," if i != len(attributes) - 1 else "")
             cxx_cpp_def += "    \"]\",\n"
 
