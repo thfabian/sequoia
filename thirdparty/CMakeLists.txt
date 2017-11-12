@@ -165,6 +165,18 @@ sequoia_build_package(
 )
 
 #
+# PugiXML
+#
+set(pugixml_version "1.8.2")
+set(pugixml_url "https://github.com/thfabian/pugixml/archive/${pugixml_version}.tar.gz")
+set(pugixml_md5 "293168d0a21d79a79adadc2dee120068")
+
+sequoia_build_package(
+  PACKAGE pugixml
+  BUILD_VERSION ${pugixml_version}
+)
+
+#
 # OpenCV
 #
 set(opencv_version "3.3.1")

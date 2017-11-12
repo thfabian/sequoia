@@ -136,7 +136,7 @@ macro(find_packages NAME)
 endmacro()
 
 find_packages(EXTERNAL Backward Boost glbinding glfw3 gli glm OpenCV OpenGL Python3 TBB fmt 
-                       cereal spdlog assimp Threads)
+                       cereal spdlog assimp pugixml Threads)
 if(SEQUOIA_ENGINE_TESTING)
   find_packages(TESTING GTest benchmark)
 endif()
