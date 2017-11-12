@@ -17,6 +17,7 @@
 #define SEQUOIA_ENGINE_CORE_COMMANDLINE_H
 
 #include "sequoia-engine/Core/Export.h"
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -52,11 +53,18 @@ public:
   /// @param argv       String of arguments (as passed to `main()` - note that the first arguments
   ///                   is treated as the *name* of the program)
   void parse(Options* options, int argc, char* argv[]);
+  void parse(const std::shared_ptr<Options>& options, int argc, char* argv[]) {
+    parse(options.get(), argc, argv);
+  }
 
 #ifdef SEQUOIA_ON_WIN32
   /// @brief Parse arguments and update the options (Win32 entry point version)
   void parse(Options* options, HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine,
              int nCmdShow);
+  void parse(const std::shared_ptr<Options>& options, HINSTANCE hInstance, HINSTANCE hPrevInstance,
+             LPSTR lpCmdLine, int nCmdShow) {
+    parse(options.get(), hInstance, hPrevInstance, lpCmdLine, nCmdShow);
+  }
 #endif
 
 private:
