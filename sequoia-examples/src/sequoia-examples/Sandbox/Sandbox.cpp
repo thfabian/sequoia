@@ -13,7 +13,7 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sandbox/Config.h"
+#include "sequoia-examples/Sandbox/Config.h"
 #include "sequoia-engine/Core/CommandLine.h"
 #include "sequoia-engine/Core/Logging.h"
 #include "sequoia-engine/Core/PrettyStackTrace.h"
