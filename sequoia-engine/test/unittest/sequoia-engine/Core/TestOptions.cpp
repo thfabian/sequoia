@@ -75,6 +75,7 @@ TEST(OptionsTest, ReadAndWrite) {
   optionsWrite.setInt("Foo.Int", 2);
   optionsWrite.setFloat("Foo.Float", 2.2f);
   optionsWrite.setString("Bar.String", "bar");
+  optionsWrite.setString("Bar.AnotherOne.String", "bar2");
   optionsWrite.setBool("Bar.Bool", false);
   optionsWrite.write(file->getPath());
 
@@ -85,6 +86,8 @@ TEST(OptionsTest, ReadAndWrite) {
   EXPECT_EQ(optionsRead.get<float>("Foo.Float"), optionsWrite.get<float>("Foo.Float"));
   EXPECT_EQ(optionsRead.get<std::string>("Bar.String"),
             optionsWrite.get<std::string>("Bar.String"));
+  EXPECT_EQ(optionsRead.get<std::string>("Bar.AnotherOne.String"),
+            optionsWrite.get<std::string>("Bar.AnotherOne.String"));
   EXPECT_EQ(optionsRead.get<bool>("Bar.Bool"), optionsWrite.get<bool>("Bar.Bool"));
 }
 

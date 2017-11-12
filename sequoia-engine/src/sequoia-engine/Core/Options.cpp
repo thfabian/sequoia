@@ -21,12 +21,14 @@
 #include "sequoia-engine/Core/StringSwitch.h"
 #include "sequoia-engine/Core/StringUtil.h"
 #include "sequoia-engine/Core/Unreachable.h"
+#include "sequoia-engine/Core/Xml.h"
 #include <algorithm>
 #include <boost/lexical_cast.hpp>
 #include <boost/property_tree/ptree.hpp>
-#include <boost/property_tree/xml_parser.hpp>
-#include <ostream>
+#include <fstream>
 #include <sstream>
+
+#include <iostream>
 
 namespace sequoia {
 
@@ -118,6 +120,14 @@ OptionMetaData& Options::getMetaData(const std::string& name) {
   return it->second;
 }
 
+static void writeXML(const boost::property_tree::ptree& children, xml_node node) {
+  if(children.empty())
+    xml_set_value(node, children.get_value<std::string>());
+  else
+    for(auto it = children.begin(), end = children.end(); it != end; ++it)
+      writeXML(it->second, node.append_child(it->first.c_str()));
+}
+
 void Options::write(const std::string& file) const {
   Log::info("Writing Options to \"{}\" ...", file);
 
@@ -125,42 +135,38 @@ void Options::write(const std::string& file) const {
   for(const auto& option : options_)
     ptree.put(option.first, option.second);
 
-  try {
-    boost::property_tree::xml_writer_settings<std::string> settings;
-    settings.indent_count = 2;
-    settings.indent_char = ' ';
-    boost::property_tree::write_xml(file, ptree, std::locale(), settings);
-  } catch(boost::property_tree::xml_parser_error& e) {
-    Log::warn("Failed to write Options : {}", e.what());
-    SEQUOIA_THROW(core::Exception, "failed to write Options : {}", e.what());
-  }
+  // The XML writer of property_tree is broken..
+  xml_document doc;
+  writeXML(ptree, doc.append_child("Config"));
 
+  std::ofstream fout(file);
+  if(!fout.is_open())
+    SEQUOIA_THROW(core::Exception, "failed to open file: {}", file);
+
+  doc.save(fout, xml_indent());
   Log::info("Successfully wrote Options to \"{}\"", file);
 }
-  
-static void parsePtree(const boost::property_tree::ptree& pt, std::string key,
-                       std::unordered_map<std::string, std::string>& options) {
-  if(!key.empty()) {
-    options[key] = pt.get_value<std::string>();
-    key += ".";
-  }
 
-  for(auto it = pt.begin(), end = pt.end(); it != end; ++it)
-    parsePtree(it->second, key + it->first, options);
+static void parseXML(std::string key, xml_node node,
+                     std::unordered_map<std::string, std::string>& options) {
+  if(!node.text().empty()) {
+    options[key] = node.text().as_string();
+  } else {
+    for(auto it = node.begin(), end = node.end(); it != end; ++it) {
+      xml_node child = *it;
+      std::string newKey = (key.empty() ? "" : key + ".") + child.name();
+      parseXML(std::move(newKey), child, options);
+    }
+  }
 }
 
 bool Options::read(const std::string& file) {
   Log::info("Reading Options from \"{}\" ...", file);
 
-  boost::property_tree::ptree ptree;
-  try {
-    boost::property_tree::read_xml(file, ptree, boost::property_tree::xml_parser::trim_whitespace);
-  } catch(boost::property_tree::xml_parser_error& e) {
-    Log::warn("Failed to read Options : {}", e.what());
-    return false;
-  }
+  xml_document doc;
+  doc.load_file(file.c_str());
+  parseXML("", doc.child("Config"), options_);
 
-  parsePtree(ptree, "", options_);
   Log::info("Successfully read Options to \"{}\"", file);
   return true;
 }

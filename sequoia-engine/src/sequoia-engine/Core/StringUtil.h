@@ -58,6 +58,13 @@ struct StdToString<const char*> {
 
 } // namespace internal
 
+/// @brief Wrapper for `std::to_string` which is able to deal with `const char*` and `std::string`
+/// arguments
+template <class T>
+inline std::string toString(const T& value) {
+  return internal::StdToString<T>()(value);
+}
+
 /// @brief Converts range based containers to string
 ///
 /// @b Example:
