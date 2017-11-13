@@ -21,7 +21,6 @@
 #include "sequoia-engine/Unittest/GameSetup.h"
 #include <gtest/gtest.h>
 
-using namespace sequoia;
 using namespace sequoia::unittest;
 using namespace sequoia::game;
 

@@ -31,7 +31,7 @@ int main(int argc, char* argv[]) {
   auto logger = std::make_unique<core::Logger>();
 
   // Parse options from config file and command-line
-  std::shared_ptr<Options> options = Game::makeOptions();
+  std::shared_ptr<Options> options = game::Game::makeOptions();
   options->read("Sandbox-Config.xml");
 
   core::CommandLine cl("Sequoia Sandbox Example", SEQUOIA_EXAMPLES_SANDBOX_VERSION);
@@ -43,7 +43,7 @@ int main(int argc, char* argv[]) {
   // Run the game
   options->setString("Game.Name", "Sequoia Sandbox Example");
   try {
-    auto sandbox = std::make_unique<Game>();
+    auto sandbox = std::make_unique<game::Game>();
     sandbox->init(options);
     sandbox->run();
   } catch(core::Exception& exception) {

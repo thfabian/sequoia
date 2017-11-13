@@ -169,8 +169,6 @@ private:
 
 } // namespace game
 
-using Game = game::Game;
-
 } // namespace sequoia
 
 #endif
