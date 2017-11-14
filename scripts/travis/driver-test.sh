@@ -18,7 +18,7 @@ this_script_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 # Setup dependencies
 source "$this_script_dir/install.sh"
-install_driver -i ${CACHE_DIR} -b cmake,boost,glbinding,opencv                                     \
+install_driver -i ${CACHE_DIR} -b cmake,boost,glbinding,opencv,assimp                              \
                -c boost:atomic,chrono,date_time,filesystem,program_options,thread
 
 if [ ! -z ${CLANG_VERSION+x} ]; then
@@ -39,6 +39,7 @@ mkdir build && cd build
 cmake .. -DBOOST_ROOT:PATH="$BOOST_ROOT"                                                           \
          -DGLBINDING_ROOT:PATH="$GLBINDING_ROOT"                                                   \
          -DOpenCV_DIR:PATH="$OpenCV_DIR"                                                           \
+         -Dassimp_DIR:PATH="$assimp_DIR"                                                           \
          -DCMAKE_BUILD_TYPE=$CONFIG                                                                \
       || fatal_error "failed to configure sequoia"
 make -j2 || fatal_error "failed to build sequoia"

@@ -50,6 +50,7 @@ env:
     - CMAKE_VERSION=3.8.1
     - GLBINDING_VERSION=2.1.1
     - OPENCV_VERSION=3.3.1
+    - ASSIMP_VERSION=4.0.1
 
 jobs:
   include:
@@ -59,7 +60,7 @@ jobs:
       env: CXX_COMPILER=g++-5 C_COMPILER=gcc-5
       script: |
         bash ${SCRIPT_DIR}/driver-install.sh -i ${CACHE_DIR}                                       \
-             -b cmake,boost,glbinding,opencv                                                       \
+             -b cmake,boost,glbinding,opencv,assimp                                                \
              -c boost:atomic,chrono,date_time,filesystem,program_options,thread
 
     - <<: *prepare_cache_stage
@@ -113,6 +114,7 @@ cache:
     - ${CACHE_DIR}/boost-${BOOST_VERSION}
     - ${CACHE_DIR}/glbinding-${GLBINDING_VERSION}
     - ${CACHE_DIR}/opencv-${OPENCV_VERSION}
+    - ${CACHE_DIR}/assimp-${ASSIMP_VERSION}
 
 branches:
   only:
