@@ -141,7 +141,7 @@ sequoia_build_package(
 #
 # gli
 #
-set(gli_version "0.8")
+set(gli_version "0.8.2")
 set(gli_download_version "0.8.2.0")
 set(gli_url "https://github.com/g-truc/gli/archive/${gli_download_version}.tar.gz")
 set(gli_md5 "163bf765271cb036b2408ce2171b9e37")
@@ -154,7 +154,7 @@ sequoia_build_package(
 #
 # glm
 #
-set(glm_version "0.9")
+set(glm_version "0.9.8")
 set(glm_download_version "0.9.8.4")
 set(glm_url "https://github.com/g-truc/glm/archive/${glm_download_version}.tar.gz")
 set(glm_md5 "26ca8792038da90f67301fa0a3d5b693")

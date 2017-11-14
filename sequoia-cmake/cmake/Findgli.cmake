@@ -20,13 +20,12 @@
 # .. code-block:: cmake
 #
 #   find_package(gli 
-#     [version] [EXACT]      # Minimum or EXACT version e.g. 0.8
+#     [version] [EXACT]      # Minimum or EXACT version e.g. 0.8.2
 #     [REQUIRED]             # Fail with error if gli is not found
 #     [QUIET]                # Supress output
 #   )
 #
-# This module locates gli_. ``GLI_FOUND`` will report if an acceptable version of
-# gli was found.
+# This module locates gli_. ``GLI_FOUND`` will report if an acceptable version of gli was found.
 #
 # Result Variables
 # ^^^^^^^^^^^^^^^^
@@ -67,17 +66,24 @@ else()
 endif()
 
 #
-# Default version is 0.8
+# Default version is 0.8.2
 #
 if(NOT gli_FIND_VERSION)
   if(NOT gli_FIND_VERSION_MAJOR)
     set(gli_FIND_VERSION_MAJOR 0)
-  endif(NOT gli_FIND_VERSION_MAJOR)
+  endif()
+
   if(NOT gli_FIND_VERSION_MINOR)
     set(gli_FIND_VERSION_MINOR 8)
-  endif(NOT gli_FIND_VERSION_MINOR)
-  set(gli_FIND_VERSION "${gli_FIND_VERSION_MAJOR}.${gli_FIND_VERSION_MINOR}")
-endif(NOT gli_FIND_VERSION)
+  endif()
+
+  if(NOT gli_FIND_VERSION_PATCH)
+    set(gli_FIND_VERSION_PATCH 2)
+  endif()
+
+  set(gli_FIND_VERSION 
+      "${gli_FIND_VERSION_MAJOR}.${gli_FIND_VERSION_MINOR}.${gli_FIND_VERSION_PATCH}")
+endif()
 
 #
 # Find gli headers
@@ -99,7 +105,10 @@ if(GLI_INCLUDE_DIRS AND NOT(GLI_VERSION))
   string(REGEX MATCH "define[ \t]+GLI_VERSION_MINOR[ \t]+([0-9]+)" _MINOR "${_CONFIG_FILE}")
   set(GLI_VERSION_MINOR "${CMAKE_MATCH_1}")
 
-  set(GLI_VERSION "${GLI_VERSION_MAJOR}.${GLI_VERSION_MINOR}")
+  string(REGEX MATCH "define[ \t]+GLI_VERSION_PATCH[ \t]+([0-9]+)" _PATCH "${_CONFIG_FILE}")
+  set(GLI_VERSION_PATCH "${CMAKE_MATCH_1}")
+
+  set(GLI_VERSION "${GLI_VERSION_MAJOR}.${GLI_VERSION_MINOR}.${GLI_VERSION_PATCH}")
 endif()
 
 #
@@ -111,7 +120,8 @@ find_package_handle_standard_args(
   REQUIRED_VARS  
     GLI_ROOT
     GLI_INCLUDE_DIRS
-  VERSION_VAR GLI_VERSION
+  VERSION_VAR 
+    GLI_VERSION
 )
 
 if(NOT(GLI_FOUND) AND gli_FIND_REQUIRED EQUAL 1)

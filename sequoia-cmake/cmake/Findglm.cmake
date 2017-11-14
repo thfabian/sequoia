@@ -20,7 +20,7 @@
 # .. code-block:: cmake
 #
 #   find_package(glm 
-#     [version] [EXACT]      # Minimum or EXACT version e.g. 0.9
+#     [version] [EXACT]      # Minimum or EXACT version e.g. 0.9.8
 #     [REQUIRED]             # Fail with error if glm is not found
 #     [QUIET]                # Supress output
 #   )
@@ -66,17 +66,24 @@ else()
 endif()
 
 #
-# Default version is 0.9
+# Default version is 0.9.8
 #
 if(NOT glm_FIND_VERSION)
   if(NOT glm_FIND_VERSION_MAJOR)
     set(glm_FIND_VERSION_MAJOR 0)
-  endif(NOT glm_FIND_VERSION_MAJOR)
+  endif()
+
   if(NOT glm_FIND_VERSION_MINOR)
     set(glm_FIND_VERSION_MINOR 9)
-  endif(NOT glm_FIND_VERSION_MINOR)
-  set(glm_FIND_VERSION "${glm_FIND_VERSION_MAJOR}.${glm_FIND_VERSION_MINOR}")
-endif(NOT glm_FIND_VERSION)
+  endif()
+
+  if(NOT glm_FIND_VERSION_PATCH)
+    set(glm_FIND_VERSION_PATCH 8)
+  endif()
+
+  set(glm_FIND_VERSION 
+      "${glm_FIND_VERSION_MAJOR}.${glm_FIND_VERSION_MINOR}.${glm_FIND_VERSION_PATCH}")
+endif()
 
 #===---------------------------------------------------------------------------------------------===
 #   Find glm headers
@@ -98,7 +105,10 @@ if(GLM_INCLUDE_DIRS AND NOT(GLM_VERSION))
   string(REGEX MATCH "define[ \t]+GLM_VERSION_MINOR[ \t]+([0-9]+)" _MINOR "${_CONFIG_FILE}")
   set(GLM_VERSION_MINOR "${CMAKE_MATCH_1}")
 
-  set(GLM_VERSION "${GLM_VERSION_MAJOR}.${GLM_VERSION_MINOR}")
+  string(REGEX MATCH "define[ \t]+GLM_VERSION_PATCH[ \t]+([0-9]+)" _PATCH "${_CONFIG_FILE}")
+  set(GLM_VERSION_PATCH "${CMAKE_MATCH_1}")
+
+  set(GLM_VERSION "${GLM_VERSION_MAJOR}.${GLM_VERSION_MINOR}.${GLM_VERSION_PATCH}")
 endif()
 
 #===---------------------------------------------------------------------------------------------===
@@ -110,7 +120,8 @@ find_package_handle_standard_args(
   REQUIRED_VARS  
     GLM_ROOT
     GLM_INCLUDE_DIRS
-  VERSION_VAR GLM_VERSION
+  VERSION_VAR 
+    GLM_VERSION
 )
 
 if(NOT(GLM_FOUND) AND glm_FIND_REQUIRED EQUAL 1)
