@@ -122,6 +122,7 @@ std::shared_ptr<Mesh> MeshManager::load(const std::string& name, const std::shar
     vertexData = vertexData_[record->Index];
     vertexDataMutex_.unlock();
   } else {
+#if 0
     
     // Default flags
     int flags = aiProcessPreset_TargetRealtime_Quality;
@@ -399,6 +400,7 @@ std::shared_ptr<Mesh> MeshManager::load(const std::string& name, const std::shar
     //    vertexData_.emplace_back(vertexData);
     //    record->Index = vertexData_.size() - 1;
     //    vertexDataMutex_.unlock();
+#endif
   }
 
   record->Mutex.unlock();
