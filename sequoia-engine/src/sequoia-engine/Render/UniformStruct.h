@@ -24,6 +24,7 @@
 #include <unordered_map>
 
 /// @brief Get the `type` of a `(type, name)` tuple
+/// @ingroup render
 #define SEQUOIA_PP_US_PARAM_GET_TYPE(Param) BOOST_PP_TUPLE_ELEM(2, 0, Param)
 
 /// @brief Get the `name` of a `(type, name)` tuple
