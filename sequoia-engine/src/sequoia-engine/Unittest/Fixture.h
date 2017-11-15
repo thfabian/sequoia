@@ -62,6 +62,10 @@ public:
       Fixture->TearDown();                                                                         \
       Fixture.release();                                                                           \
     }                                                                                              \
+                                                                                                   \
+  protected:                                                                                       \
+    virtual void SetUp() override {}                                                               \
+    virtual void TearDown() override {}                                                            \
   };
 
 /// @brief Sets up the stuff shared by *all* tests in a test case
