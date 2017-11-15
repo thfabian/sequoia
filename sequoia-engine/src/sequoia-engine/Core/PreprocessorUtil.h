@@ -29,8 +29,13 @@
 #define SEQUOIA_PP_SEQ_3_FILLER_0_END
 #define SEQUOIA_PP_SEQ_3_FILLER_1_END
 
-/// @brief The `SEQUOIA_PP_SEQ_2_FOR_EACH` macro repeats a macro for each element in a seq of tuples
-/// of size 2
+#define SEQUOIA_PP_SEQ_4_FILLER_0(X, Y, Z, W) ((X, Y, Z, W)) SEQUOIA_PP_SEQ_4_FILLER_1
+#define SEQUOIA_PP_SEQ_4_FILLER_1(X, Y, Z, W) ((X, Y, Z, W)) SEQUOIA_PP_SEQ_4_FILLER_0
+#define SEQUOIA_PP_SEQ_4_FILLER_0_END
+#define SEQUOIA_PP_SEQ_4_FILLER_1_END
+
+/// @brief The `SEQUOIA_PP_SEQ_X_FOR_EACH` macro repeats a macro for each element in a seq of tuples
+/// of size X where X is one of 2, 3 or 4
 ///
 /// This uses a clever trick to force the double parentheses arround a sequence. Given the sequence
 /// `(int, x)(float, y)`, this produces `((int, x))((float, y))` and works the following:
@@ -50,6 +55,9 @@
 
 #define SEQUOIA_PP_SEQ_3_FOR_EACH(Macro, Data, Sequence)                                           \
   BOOST_PP_SEQ_FOR_EACH(Macro, Data, BOOST_PP_CAT(SEQUOIA_PP_SEQ_3_FILLER_0 Sequence, _END))
+
+#define SEQUOIA_PP_SEQ_4_FOR_EACH(Macro, Data, Sequence)                                           \
+  BOOST_PP_SEQ_FOR_EACH(Macro, Data, BOOST_PP_CAT(SEQUOIA_PP_SEQ_4_FILLER_0 Sequence, _END))
 /// @}
 
 #endif
