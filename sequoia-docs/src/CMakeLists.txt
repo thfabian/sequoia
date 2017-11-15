@@ -52,11 +52,14 @@ add_custom_target(sphinx
 add_custom_target(docs ALL
  # sphinx
  COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_BINARY_DIR}/sphinx/html 
-                                            ${CMAKE_SOURCE_DIR}/html
+                                            ${CMAKE_BINARY_DIR}/html
  # sequoia-engine (doxygen)
  COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_BINARY_DIR}/sequoia-engine/html 
-                                            ${CMAKE_SOURCE_DIR}/html/doxygen/sequoia-engine
+                                            ${CMAKE_BINARY_DIR}/html/doxygen/sequoia-engine
  WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
  COMMENT "Generating HTML documentation" VERBATIM
  DEPENDS sphinx sequoia-engine-doxygen
 )
+
+# Provide an install target
+install(FILES ${CMAKE_BINARY_DIR}/html DESTINATION docs)
