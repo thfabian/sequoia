@@ -38,7 +38,7 @@ TEST_F(MeshManagerTest, Cube) {
               math::AxisAlignedBox(math::vec3(-0.5, -0.5, -0.5), math::vec3(0.5, 0.5, 0.5)));
 }
 
-TEST_F(MeshManagerTest, Load) {
+TEST_F(MeshManagerTest, Obj) {
   Game& game = Game::getSingleton();
   TestEnvironment& env = TestEnvironment::getSingleton();
 

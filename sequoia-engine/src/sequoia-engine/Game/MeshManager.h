@@ -78,6 +78,7 @@ namespace game {
 class SEQUOIA_API MeshManager : public NonCopyable {
 public:
   MeshManager();
+  ~MeshManager();
 
   /// @brief Load mesh from disk
   ///

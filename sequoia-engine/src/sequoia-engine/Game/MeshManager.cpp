@@ -14,13 +14,16 @@
 //===------------------------------------------------------------------------------------------===//
 
 #include "sequoia-engine/Core/AlignedADT.h"
+#include "sequoia-engine/Core/Assert.h"
 #include "sequoia-engine/Core/Logging.h"
 #include "sequoia-engine/Game/Exception.h"
 #include "sequoia-engine/Game/Game.h"
 #include "sequoia-engine/Game/MeshManager.h"
 #include "sequoia-engine/Render/RenderSystem.h"
 #include <algorithm>
+#include <assimp/DefaultLogger.hpp>
 #include <assimp/Importer.hpp>
+#include <assimp/LogStream.hpp>
 #include <assimp/postprocess.h>
 #include <assimp/scene.h>
 
@@ -30,6 +33,38 @@ namespace sequoia {
 
 namespace game {
 
+namespace {
+
+class AssimpLogStream : public Assimp::LogStream {
+  Assimp::Logger::ErrorSeverity sevritiy_;
+
+public:
+  AssimpLogStream(Assimp::Logger::ErrorSeverity sevritiy) : sevritiy_(sevritiy) {}
+
+  void write(const char* message) {
+    std::string msg(message);
+    msg.pop_back();
+    switch(sevritiy_) {
+    case Assimp::Logger::Info:
+      Log::info("Assimp: {}", msg);
+      break;
+    case Assimp::Logger::Warn:
+      Log::warn("Assimp: {}", msg);
+      break;
+    case Assimp::Logger::Err:
+      Log::error("Assimp: {}", msg);
+      break;
+    case Assimp::Logger::Debugging:
+      Log::debug("Assimp: {}", msg);
+      break;
+    default:
+      sequoia_unreachable("invalid sevritiy");
+    }
+  }
+};
+
+} // anonymous namespace
+
 /// TODO:
 ///   - Rename the whole class to "ShapeManager"
 ///   - A shape contains "Mesh" and "Material" vectors.
@@ -37,7 +72,29 @@ namespace game {
 ///   - Provide our logger to Assimp
 /// 
 
-MeshManager::MeshManager() { importer_ = std::make_shared<Assimp::Importer>(); }
+MeshManager::MeshManager() {
+  // Create Assimp logger
+  Assimp::DefaultLogger::create("", core::Logger::getSingleton().getLevel() <= core::Logger::Debug
+                                        ? Assimp::Logger::VERBOSE
+                                        : Assimp::Logger::NORMAL);
+
+  // Attach a stream for each sevritiy
+  Assimp::DefaultLogger::get()->attachStream(new AssimpLogStream(Assimp::Logger::Info),
+                                             Assimp::Logger::Info);
+  Assimp::DefaultLogger::get()->attachStream(new AssimpLogStream(Assimp::Logger::Warn),
+                                             Assimp::Logger::Warn);
+  Assimp::DefaultLogger::get()->attachStream(new AssimpLogStream(Assimp::Logger::Err),
+                                             Assimp::Logger::Err);
+  Assimp::DefaultLogger::get()->attachStream(new AssimpLogStream(Assimp::Logger::Debugging),
+                                             Assimp::Logger::Debugging);
+
+  importer_ = std::make_shared<Assimp::Importer>();
+}
+
+MeshManager::~MeshManager() {
+  importer_.reset();
+  Assimp::DefaultLogger::kill();
+}
 
 std::shared_ptr<Mesh> MeshManager::load(const std::string& name, const std::shared_ptr<File>& file,
                                         bool modifiable, const MeshParameter& param,
@@ -66,9 +123,9 @@ std::shared_ptr<Mesh> MeshManager::load(const std::string& name, const std::shar
     vertexDataMutex_.unlock();
   } else {
     
-#if 0
     // Default flags
     int flags = aiProcessPreset_TargetRealtime_Quality;
+    //int flags = aiProcessPreset_TargetRealtime_Fast;    
   
     // Optional flags
     flags = param.TexCoordInvertV ? flags | aiProcess_FlipUVs : flags;
@@ -88,8 +145,6 @@ std::shared_ptr<Mesh> MeshManager::load(const std::string& name, const std::shar
     
     core::aligned_vector<unsigned int> indexBuffer;
     core::aligned_vector<render::Vertex3D> vertexBuffer;
-    
-    std::cout << scene->mNumMeshes << std::endl;
     
     for(int meshIdx = 0 ; meshIdx < meshes.size(); meshIdx++) {
       indexBuffer.clear();
@@ -129,10 +184,15 @@ std::shared_ptr<Mesh> MeshManager::load(const std::string& name, const std::shar
         
         // Color
         constexpr auto maxRGBValue = std::numeric_limits<render::Vertex3D::ColorType>::max();
-        for(int j = 0; j < 3; ++j)
-          vertex.Color[j] = 0;
-        vertex.Color[3] = maxRGBValue;
-        
+        if(mesh->HasVertexColors(0)) {
+          const aiColor4D& color = mesh->mColors[0][vertexIdx];
+          for(int j = 0; j < 4; ++j)
+            vertex.Color[j] = maxRGBValue * color[j];
+        } else {
+          for(int j = 0; j < 3; ++j)
+            vertex.Color[j] = 0;
+          vertex.Color[3] = maxRGBValue;
+        }
         vertexBuffer.emplace_back(std::move(vertex));
       }
       
@@ -145,6 +205,9 @@ std::shared_ptr<Mesh> MeshManager::load(const std::string& name, const std::shar
         indexBuffer.push_back(face.mIndices[1]);
         indexBuffer.push_back(face.mIndices[2]);
       }
+      
+//      for(auto i : indexBuffer)
+//        std::cout << i << std::endl;
       
 //      for(auto v : vertexBuffer)
 //        std::cout << render::Vertex3D::toString(v) << std::endl;
@@ -336,7 +399,6 @@ std::shared_ptr<Mesh> MeshManager::load(const std::string& name, const std::shar
     //    vertexData_.emplace_back(vertexData);
     //    record->Index = vertexData_.size() - 1;
     //    vertexDataMutex_.unlock();
-#endif
   }
 
   record->Mutex.unlock();
