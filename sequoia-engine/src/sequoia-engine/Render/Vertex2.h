@@ -39,6 +39,7 @@ struct SEQUOIA_API VertexLayout2 {
   };
 
   /// @brief Vertex attribute (4 Bytes)
+  /// 
   /// Each attribute is described by an array of the form `T Attribute[N]`.
   struct Attribute {
     TypeID Type = Invalid;        ///< Type `T` of the attribute given as a `TypeID`
@@ -214,7 +215,9 @@ struct TypeToTypeID<float> {
 ///                       - rank      : Rank or array size of the attribute
 ///                       - normalize : Boolean which indicates if the attribute needs to be
 ///                                     normalized to `[0, 1]` when uploading it to the GPU
+/// 
 /// @b Example
+/// 
 /// The following
 ///
 /// @code{.cpp}
@@ -240,7 +243,8 @@ struct TypeToTypeID<float> {
 /// };
 /// @endcode
 ///
-/// where the code for populating the `VertexLayout` will be generated automatically.
+/// where the code for populating the `VertexLayout` in `getLayout()` will be generated 
+/// automatically.
 ///
 /// @ingroup render
 #define SEQUOIA_VERTEX(Name, Attributes)                                                           \
