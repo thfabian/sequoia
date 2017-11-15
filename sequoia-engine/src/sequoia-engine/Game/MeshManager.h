@@ -175,37 +175,27 @@ private:
   };
 
 private:
-  /// Access mutex to `importer`
-  Mutex importerMutex_;
-
   /// Assimp context
   std::shared_ptr<Assimp::Importer> importer_;
-
-  /// Access mutex to `vertexData`
-  ReadWriteMutex vertexDataMutex_;
+  Mutex importerMutex_;
 
   /// Record of all the loaded meshes (use count of 1 implies the mesh is *not* in use)
   std::vector<std::shared_ptr<render::VertexData>> vertexData_;
-
-  /// Access mutex to `meshLookupMap`
-  Mutex meshMutex_;
+  ReadWriteMutex vertexDataMutex_;
 
   /// Loaded mesh record
   std::unordered_map<internal::MeshInfo, std::unique_ptr<VertexDataAccessRecord>> meshLookupMap_;
-
-  /// Access mutex to `cubeMeshLookupMap`
-  Mutex cubeMutex_;
+  Mutex meshMutex_;
 
   /// Cube mesh record
   std::unordered_map<internal::CubeInfo, std::unique_ptr<VertexDataAccessRecord>>
       cubeMeshLookupMap_;
-
-  /// Access mutex to `gridMeshLookupMap`
-  Mutex gridMutex_;
+  Mutex cubeMutex_;
 
   /// Grid mesh record
   std::unordered_map<internal::GridInfo, std::unique_ptr<VertexDataAccessRecord>>
       gridMeshLookupMap_;
+  Mutex gridMutex_;
 };
 
 } // namespace game
