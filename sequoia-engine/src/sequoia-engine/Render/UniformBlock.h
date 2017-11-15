@@ -21,6 +21,7 @@
 #include "sequoia-engine/Render/UniformVariable.h"
 #include <boost/preprocessor/comparison/equal.hpp>
 #include <boost/preprocessor/empty.hpp>
+#include <boost/preprocessor/if.hpp>
 #include <boost/preprocessor/tuple/elem.hpp>
 #include <sstream>
 #include <vector>
