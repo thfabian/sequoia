@@ -148,18 +148,18 @@ private:
   template <class FunctorType>
   void modifyImpl(Buffer::LockOption option, FunctorType&& functor) const {
     using FirstArgType = core::function_first_argument_t<FunctorType>;
-
+  
     // First argument has to be `Vertex*` or `const Vertex*`
     static_assert(std::is_pointer<FirstArgType>::value,
                   "invalid functor: type of first argument has to be a pointer");
     using VertexType = typename std::remove_pointer<FirstArgType>::type;
-
+  
     // Check if vertex type is supported
     static_assert(
         core::tuple_has_type<typename std::remove_cv<VertexType>::type, VertexTypeList>::value,
         "invalid functor: invalid 'VertexType' for first argument ");
     std::function<void(VertexType*)> func = functor;
-
+  
     // Run functor
     VertexVisitorRunFunctor<VertexType> visitor(func);
     accept(option, visitor);
