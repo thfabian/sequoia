@@ -38,9 +38,6 @@ addons:
 
       # backward deps
       - libdw-dev
-
-      - gdb
-
 os:
   - linux
 
