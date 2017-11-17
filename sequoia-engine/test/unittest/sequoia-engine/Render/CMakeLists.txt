@@ -27,7 +27,7 @@ sequoia_engine_add_unittest(
           TestTexture.cpp
           TestUniformStruct.cpp
           TestUniformVariable.cpp
-          TestVertex.cpp
+          #TestVertex.cpp
           TestVertexAdapter.cpp
           TestVertexFactory.cpp
 )
