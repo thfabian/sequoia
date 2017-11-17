@@ -73,7 +73,9 @@ void Logger::makeLogger() {
 Logger::~Logger() {
   sinks_.clear();
   logger_.reset();
-  spdlog::drop_all();
+  
+  // This causes write to uninitialized memory according to valgrind
+  //spdlog::drop_all();
 }
 
 std::shared_ptr<Logger::LogSink> Logger::makeStdoutSink() {

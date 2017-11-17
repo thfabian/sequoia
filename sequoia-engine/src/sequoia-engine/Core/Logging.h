@@ -112,8 +112,8 @@ private:
 private:
   mutable SpinMutex mutex_;                                 ///< Mutex for state changes
   spdlog::level::level_enum level_;                         ///< Logging threshold
-  std::unordered_map<std::string, spdlog::sink_ptr> sinks_; ///< Registered sinks
   std::shared_ptr<spdlog::logger> logger_;                  ///< Currently active logger
+  std::unordered_map<std::string, spdlog::sink_ptr> sinks_; ///< Registered sinks
 };
 
 /// @brief Logging interface of the sequoia-engine
