@@ -48,6 +48,8 @@ popd
 # Test
 pushd "$(pwd)"
 cd build/sequoia-engine
-ctest -C ${CONFIG}  -E "RenderGLTest" --output-on-failure --force-new-ctest-process                \
-     || fatal_error "failed to run tests of sequoia"
+echo -e "run\nbt" > test.txt
+gdb ./bin/unittest/SequoiaEngineRenderTest < test.txt
+# ctest -C ${CONFIG}  -E "RenderGLTest" --output-on-failure --force-new-ctest-process                \
+#      || fatal_error "failed to run tests of sequoia"
 popd
