@@ -27,6 +27,9 @@ option(SEQUOIA_ENGINE_OPTIMIZE "Enable all optimizations" ${build_is_release})
 option(SEQUOIA_ENGINE_USE_CCACHE "Use compile cache if available" ON)
 option(SEQUOIA_ENGINE_WERROR "Treat warning as errors" OFF)
 
+option(SEQUOIA_ENGINE_MSAN "Enable Clang's memory sanitizer (msan)" OFF)
+option(SEQUOIA_ENGINE_ASAN "Enable Clang's address sanitizer (asan)" OFF)
+
 option(SEQUOIA_ENGINE_TESTING "Enable testing" ON)
 option(SEQUOIA_ENGINE_BENCHMARKING "Enable benchmarking" OFF)
 
@@ -35,6 +38,8 @@ sequoia_export_options(SEQUOIA_ENGINE
   SEQUOIA_ENGINE_OPTIMIZE
   SEQUOIA_ENGINE_USE_CCACHE
   SEQUOIA_ENGINE_WERROR
+  SEQUOIA_ENGINE_MSAN
+  SEQUOIA_ENGINE_ASAN
   SEQUOIA_ENGINE_TESTING
   SEQUOIA_ENGINE_BENCHMARKING
 )
