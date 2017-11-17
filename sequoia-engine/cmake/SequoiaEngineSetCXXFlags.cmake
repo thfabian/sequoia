@@ -13,8 +13,10 @@
 ##
 ##===------------------------------------------------------------------------------------------===##
 
-include(SequoiaCheckAndSetCXXFlag)
 include(CheckCXXSourceRuns)
+include(SequoiaCheckAndSetCXXFlag)
+include(SequoiaEnableClangMSan)
+include(SequoiaEnableClangASan)
 
 # sequoia_engine_set_msvc_arch_flag
 # ---------------------------------
@@ -165,6 +167,18 @@ macro(sequoia_engine_set_cxx_flags)
       sequoia_check_and_set_cxx_flag("-Werror" HAVE_GCC_WERROR)
     endif()
 
+    # Clang sanitizers    
+    if(SEQUOIA_ENGINE_MSAN)
+      sequoia_enable_clang_msan(
+        BLACKLIST_SRC
+          "/usr/lib/*"
+      )
+    endif()
+
+    if(SEQUOIA_ENGINE_ASAN)
+      sequoia_enable_clang_asan()
+    endif()
+
     sequoia_check_and_set_cxx_flag("-Wall" HAVE_GCC_WALL)
     sequoia_check_and_set_cxx_flag("-W" HAVE_GCC_W)
     sequoia_check_and_set_cxx_flag("-Wformat" HAVE_GCC_WFORMAT)
@@ -183,6 +197,8 @@ macro(sequoia_engine_set_cxx_flags)
     sequoia_check_and_set_cxx_flag("-Wno-sign-promo" HAVE_GCC_WNO_SIGN_PROMO)
     sequoia_check_and_set_cxx_flag("-Wno-sign-compare" HAVE_GCC_WNO_SIGN_COMPARE)
     sequoia_check_and_set_cxx_flag("-Wno-unused-parameter" HAVE_GCC_WNO_UNUSDED_PARAMETER)
+    sequoia_check_and_set_cxx_flag("-Wno-undefined-var-template" 
+                                   HAVE_CLANG_WNO_UNDEFINED_VAR_TEMPLATE)
     
     if(BUILD_SHARED_LIBS)
       sequoia_check_and_set_cxx_flag("-fPIC" HAVE_GCC_PIC)
@@ -192,8 +208,6 @@ macro(sequoia_engine_set_cxx_flags)
       if(SEQUOIA_COMPILER_CLANG)
         sequoia_check_and_set_cxx_flag("-Qunused-arguments" HAVE_CLANG_UNUSED_ARGUMENTS)
         sequoia_check_and_set_cxx_flag("-fcolor-diagnostics" HAVE_CLANG_COLOR_DIAGNOSTICS)
-        sequoia_check_and_set_cxx_flag("-Wno-undefined-var-template" 
-                                       HAVE_CLANG_WNO_UNDEFINED_VAR_TEMPLATE)
       endif()
 
       if(SEQUOIA_COMPILER_GNU)
