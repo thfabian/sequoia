@@ -37,7 +37,6 @@ ExternalProject_Add(
   SOURCE_DIR "${sequoia_docs_source}"
   BINARY_DIR "${sequoia_docs_build}"
   INSTALL_DIR "${CMAKE_INSTALL_PREFIX}"
-  INSTALL_COMMAND ""
   CMAKE_ARGS ${sequoia_docs_cmake_args}
 )
 
