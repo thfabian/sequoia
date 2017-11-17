@@ -13,19 +13,17 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia-engine/Core/Image.h"
 #include "sequoia-engine/Core/Casting.h"
 #include "sequoia-engine/Core/Exception.h"
 #include "sequoia-engine/Core/Format.h"
 #include "sequoia-engine/Core/Hash.h"
+#include "sequoia-engine/Core/Image.h"
 #include "sequoia-engine/Core/Logging.h"
 #include "sequoia-engine/Core/StringSwitch.h"
 #include "sequoia-engine/Core/Unreachable.h"
 #include <gli/gli.hpp>
 #include <memory>
 #include <opencv2/opencv.hpp>
-
-#include <iostream>
 
 namespace sequoia {
 

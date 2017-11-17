@@ -46,9 +46,6 @@ TEST(UniformStructTest, ToUniformVariable) {
   std::unordered_map<std::string, UniformVariable> map;
 
   s.toUniformVariableMap("ScalarStruct", map, 0);
-  for(auto m : map)
-    std::cout << m.first << std::endl;
-    
   ASSERT_TRUE(map.count("ScalarStruct[0].a"));
   ASSERT_EQ(map["ScalarStruct[0].a"], 4.1f);
 
