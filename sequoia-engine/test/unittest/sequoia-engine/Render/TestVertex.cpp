@@ -17,23 +17,15 @@
 #include "sequoia-engine/Render/Vertex2.h"
 #include <gtest/gtest.h>
 
+#include "sequoia-engine/Render/VertexAdapter.h"
+
 using namespace sequoia::render;
 
 namespace {
 
-// clang-format off
-
-SEQUOIA_VERTEX(TestVertex, 
-               (float, Position, 3, false)
-               (float, Normal, 3, false)
-               (float, TexCoord, 2, false)
-               (std::uint8_t, Color, 4, true));
-
-// clang-format on
-
 TEST(VertexLayoutTest, Test) {
-  VertexLayout2 layout = TestVertex::getLayout();
-  EXPECT_EQ(layout.SizeOf, sizeof(TestVertex));
+  VertexLayout2 layout = Vertex_posf3_norf3_texf2_colu4::getLayout();
+  EXPECT_EQ(layout.SizeOf, sizeof(Vertex_posf3_norf3_texf2_colu4));
 
   // float Position[3];
   EXPECT_EQ(layout.Position.Type, VertexLayout::Float32);
@@ -102,6 +94,5 @@ TEST(VertexTest, Vertex3DLayout) {
   EXPECT_EQ(Vertex3D::getLayout()->Color.NumElements, 4);
   EXPECT_EQ(Vertex3D::getLayout()->Color.Offset, 32);
 }
-
 
 } // anonymous namespace

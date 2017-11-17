@@ -145,8 +145,12 @@ sequoia_add_library(
           UniformVariable.h
           UniformVariable.inc
           Vertex2.h
+          VertexAdapter.h
           VertexBuffer.cpp
           VertexBuffer.h
+          VertexDef.h
+          VertexLayout.cpp
+          VertexLayout.h
           VertexData.cpp
           VertexData.h
           VertexVisitor.cpp
