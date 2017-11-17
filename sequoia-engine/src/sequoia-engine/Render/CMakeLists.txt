@@ -148,11 +148,12 @@ sequoia_add_library(
           VertexAdapter.h
           VertexBuffer.cpp
           VertexBuffer.h
-          VertexDef.h
-          VertexLayout.cpp
-          VertexLayout.h
           VertexData.cpp
           VertexData.h
+          VertexDef.h
+          VertexFactory.h
+          VertexLayout.cpp
+          VertexLayout.h
           VertexVisitor.cpp
           VertexVisitor.h
           ViewFrustum.h

@@ -28,4 +28,6 @@ sequoia_engine_add_unittest(
           TestUniformStruct.cpp
           TestUniformVariable.cpp
           TestVertex.cpp
+          TestVertexAdapter.cpp
+          TestVertexFactory.cpp
 )
