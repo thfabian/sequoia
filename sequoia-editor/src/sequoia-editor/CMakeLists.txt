@@ -13,18 +13,16 @@
 ##
 ##===------------------------------------------------------------------------------------------===##
 
-macro(sequoia_engine_add_benchmark SOURCE)
-  get_filename_component(name ${SOURCE} NAME_WE)
-  sequoia_add_executable(
-    NAME SequoiaEngine${name}
-    SOURCES ${SOURCE}
-    DEPENDS SequoiaEngineUnittestStatic
-            SequoiaEngineStatic
-            ${SEQUOIA_ENGINE_TESTING_LIBRARIES}
-    OUTPUT_DIR ${CMAKE_BINARY_DIR}/bin/benchmark
-  )
-endmacro()
+add_subdirectory(Core)
+add_subdirectory(Driver)
 
-sequoia_engine_add_benchmark(BenchmarkUniformVariable.cpp)
-sequoia_engine_add_benchmark(BenchmarkSceneNode.cpp)
-sequoia_engine_add_benchmark(BenchmarkVertexAdapter.cpp)
+# Link SequoiaEditor
+sequoia_add_executable(
+  NAME SequoiaEditor
+  SOURCES Driver/Main.cpp
+  DEPENDS SequoiaEditorCoreObjects
+          ${SEQUOIA_EDITOR_LIBRARIES}
+  OUTPUT_DIR ${CMAKE_BINARY_DIR}/bin
+  INSTALL_DESTINATION ${SEQUOIA_EDITOR_INSTALL_BIN_DIR}
+  WIN32_APPLICATION
+)

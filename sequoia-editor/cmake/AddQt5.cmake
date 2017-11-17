@@ -13,18 +13,24 @@
 ##
 ##===------------------------------------------------------------------------------------------===##
 
-macro(sequoia_engine_add_benchmark SOURCE)
-  get_filename_component(name ${SOURCE} NAME_WE)
-  sequoia_add_executable(
-    NAME SequoiaEngine${name}
-    SOURCES ${SOURCE}
-    DEPENDS SequoiaEngineUnittestStatic
-            SequoiaEngineStatic
-            ${SEQUOIA_ENGINE_TESTING_LIBRARIES}
-    OUTPUT_DIR ${CMAKE_BINARY_DIR}/bin/benchmark
-  )
-endmacro()
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+set(CMAKE_AUTOMOC ON)
 
-sequoia_engine_add_benchmark(BenchmarkUniformVariable.cpp)
-sequoia_engine_add_benchmark(BenchmarkSceneNode.cpp)
-sequoia_engine_add_benchmark(BenchmarkVertexAdapter.cpp)
+set(qt5_modules Widgets)
+find_package(Qt5 5.9 REQUIRED COMPONENTS ${qt5_modules})
+
+foreach(module ${qt5_modules})
+  set(module_name "Qt5${module}")
+  list(APPEND libraries ${${module_name}_LIBRARIES})
+  list(APPEND include_dirs ${${module_name}_INCLUDE_DIRS})
+  list(APPEND definitions ${${module_name}_DEFINITIONS})
+endforeach()
+
+sequoia_export_package(
+  NAME Qt5
+  FOUND ON 
+  LIBRARIES ${libraries}
+  VERSION ${Qt5_VERSION}
+  DEFINITIONS ${definitions}
+  INCLUDE_DIRS ${include_dirs}
+)

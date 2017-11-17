@@ -13,11 +13,22 @@
 ##
 ##===------------------------------------------------------------------------------------------===##
 
-set(SEQUOIA_ENGINE_VERSION_MAJOR 0 CACHE INTERNAL "Major version of the sequoia-engine" FORCE)
-set(SEQUOIA_ENGINE_VERSION_MINOR 0 CACHE INTERNAL "Minor version of the sequoia-engine" FORCE)
-set(SEQUOIA_ENGINE_VERSION_PATCH 1 CACHE INTERNAL "Patch version of the sequoia-engine" FORCE)
-set(SEQUOIA_ENGINE_VERSION_SUFFIX "dev" CACHE INTERNAL "Suffix of the sequoia-engine version" FORCE)
+include(SequoiaExportOptions)
 
-set(SEQUOIA_ENGINE_VERSION 
-  "${SEQUOIA_ENGINE_VERSION_MAJOR}.${SEQUOIA_ENGINE_VERSION_MINOR}.${SEQUOIA_ENGINE_VERSION_PATCH}"
-  CACHE INTERNAL "Version of sequoia-engine" FORCE)
+set(build_is_not_release ON)
+set(build_is_release OFF)
+if(${CMAKE_BUILD_TYPE} MATCHES "Release")
+  set(build_is_not_release OFF)
+  set(build_is_release ON)
+endif()
+
+##===---------------------------------- Building ----------------------------------------------===##
+option(SEQUOIA_EDITOR_ASSERTS "Enable asserts" ${build_is_not_release})
+option(SEQUOIA_EDITOR_OPTIMIZE "Enable all optimizations" ${build_is_release})
+option(SEQUOIA_EDITOR_USE_CCACHE "Use compile cache if available" ON)
+
+sequoia_export_options(SEQUOIA_EXAMPLES
+  SEQUOIA_EDITOR_ASSERTS
+  SEQUOIA_EDITOR_OPTIMIZE
+  SEQUOIA_EDITOR_USE_CCACHE
+)

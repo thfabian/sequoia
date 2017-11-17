@@ -38,6 +38,11 @@ set(SEQUOIA_EXAMPLES_DIR "${CMAKE_SOURCE_DIR}/sequoia-examples"
     CACHE PATH "Directory of the examples")
 include("${SEQUOIA_EXAMPLES_DIR}/cmake/SequoiaExamplesOptions.cmake")
 
+# sequoia-editor
+set(SEQUOIA_EDITOR_DIR "${CMAKE_SOURCE_DIR}/sequoia-editor" 
+    CACHE PATH "Directory of the editor")
+include("${SEQUOIA_EDITOR_DIR}/cmake/SequoiaEditorOptions.cmake")
+
 # sequoia-docs
 set(SEQUOIA_DOCS_DIR "${CMAKE_SOURCE_DIR}/sequoia-docs" 
     CACHE PATH "Directory of the examples")

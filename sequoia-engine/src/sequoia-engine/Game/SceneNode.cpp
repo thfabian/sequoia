@@ -42,7 +42,6 @@ public:
   ApplyParallelTask(const ApplyParallelTask&) = default;
 
   tbb::task* execute() override {
-
     // The ref count needs to be initialized with 1 as we wait in the end
     this->set_ref_count(1);
 

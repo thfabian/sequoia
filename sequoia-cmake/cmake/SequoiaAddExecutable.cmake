@@ -51,11 +51,28 @@ function(sequoia_add_executable)
   if(NOT("${ARG_UNPARSED_ARGUMENTS}" STREQUAL ""))
     message(FATAL_ERROR "sequoia_add_executable: invalid argument ${ARG_UNPARSED_ARGUMENTS}")
   endif()
+
+  # Object libraries are trated as sources
+  set(depends)
+  set(sources ${ARG_SOURCES})
+  foreach(lib ${ARG_DEPENDS})
+    if(TARGET ${lib})
+      get_target_property(type ${lib} TYPE)
+      if("${type}" STREQUAL "OBJECT_LIBRARY")
+        list(APPEND sources $<TARGET_OBJECTS:${lib}>)
+      else()
+        list(APPEND depends ${lib})
+      endif()
+    else()
+      list(APPEND depends ${lib})
+    endif()
+  endforeach()
   
+  # Create executable
   if(ARG_WIN32_APPLICATION)
-    add_executable(${ARG_NAME} WIN32 ${ARG_SOURCES})
+    add_executable(${ARG_NAME} WIN32 ${sources})
   else()
-    add_executable(${ARG_NAME} ${ARG_SOURCES})
+    add_executable(${ARG_NAME} ${sources})
   endif()
 
   # Use folders in Visual Studio  
@@ -72,7 +89,8 @@ function(sequoia_add_executable)
     endforeach()
   endif()
 
-  target_link_libraries(${ARG_NAME} ${ARG_DEPENDS})
+  # Link executable
+  target_link_libraries(${ARG_NAME} ${depends})
 
   if(ARG_OUTPUT_DIR)
     set_target_properties(${ARG_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${ARG_OUTPUT_DIR}")

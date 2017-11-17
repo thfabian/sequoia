@@ -28,13 +28,7 @@ if(NOT BUILD_SHARED_LIBS)
   set(BUILD_SHARED_LIBS OFF CACHE BOOL "Build shared libraries." FORCE)
 endif()
 
-# Default installation path: <build-dir>/install
-if(NOT CMAKE_INSTALL_PREFIX)
-  set(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/install" CACHE STRING
-      "Install path prefix, prepended onto install directories." FORCE)
-endif()
-
-project(Sequoia C CXX)
+project(SequoiaEditor C CXX)
 cmake_minimum_required(VERSION 3.5)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
@@ -43,43 +37,57 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 include(SequoiaCMakeInit)
 sequoia_cmake_init()
 
+include(SequoiaAddExecutable)
+include(SequoiaAddLibrary)
+include(SequoiaAddTargetClangFormat)
 include(SequoiaAddTargetCleanAll)
-include(SequoiaAppendAndExportVariable)
+include(SequoiaCheckCompiler)
 include(SequoiaCheckInSourceBuild)
+include(SequoiaCombineLibraries)
+include(SequoiaConfigureFile)
+include(SequoiaCreatePackageString)
+include(SequoiaExportPackage)
 include(SequoiaGetArchitectureInfo)
 include(SequoiaGetCompilerInfo)
+include(SequoiaGetGitHeadRevision)
 include(SequoiaGetPlatformInfo)
 include(SequoiaMakeStringPair)
 include(SequoiaReportResult)
-include(SequoiaSetAndExportVariable)
-
-# Include all options (from all subprojects)
-include(SequoiaOptions)
+include(SequoiaSetCXXStandard)
 
 sequoia_get_compiler_info()
 sequoia_get_platform_info()
 sequoia_get_architecture_info()
 
+include(SequoiaEditorOptions)
+
 # Prevent in source builds
 sequoia_check_in_source_build()
 
-# Add custom targets
+# Check compliance of compiler
+sequoia_check_compiler(
+  GCC 5.0
+  CLANG 3.4
+  MSVC 19.0
+  INTEL 17
+)
+
+# Custom tragets
 sequoia_add_target_clean_all(
-  "${CMAKE_BINARY_DIR}/install"
-  "${CMAKE_BINARY_DIR}/prefix"  
+  "${CMAKE_BINARY_DIR}/bin"
   "${CMAKE_BINARY_DIR}/sequoia-cmake"
-  "${CMAKE_BINARY_DIR}/sequoia-docs"
-  "${CMAKE_BINARY_DIR}/sequoia-engine"
-  "${CMAKE_BINARY_DIR}/sequoia-examples"
-  "${CMAKE_BINARY_DIR}/SequoiaEngine-prefix"
-  "${CMAKE_BINARY_DIR}/SequoiaExamples-prefix"
-  "${CMAKE_BINARY_DIR}/SequoiaDocs-prefix"
-  "${CMAKE_BINARY_DIR}/thirdparty"
+  "${CMAKE_BINARY_DIR}/src"
+  "${CMAKE_BINARY_DIR}/test"
+)
+sequoia_add_target_clang_format(
+  DIRECTORIES 
+    "${CMAKE_SOURCE_DIR}/src"
+  EXTENSION ".h;.cpp"
 )
 
 # Output summary of the configuration
 macro(make_config_string FIRST SECOND)
-  sequoia_make_string_pair(${FIRST} ": ${SECOND}" 20 out)
+  sequoia_make_string_pair(${FIRST} ": ${SECOND}" 25 out)
   list(APPEND config_info ${out})
 endmacro()
 
@@ -87,31 +95,31 @@ make_config_string("Platform" ${SEQUOIA_PLATFORM_STRING})
 make_config_string("Architecture" ${SEQUOIA_ARCHITECTURE_STRING})
 make_config_string("Compiler" ${SEQUOIA_COMPILER_STRING})
 make_config_string("Build type" ${CMAKE_BUILD_TYPE})
+make_config_string("Build shared" ${BUILD_SHARED_LIBS})
 make_config_string("Install directory" ${CMAKE_INSTALL_PREFIX})
 
 sequoia_report_result("Configuration summary" ${config_info})
 
-# Build all dependencies
-set(SEQUOIA_EXTERNAL_CMAKE_ARGS 
-  "-DBUILD_SHARED_LIBS:BOOL=${BUILD_SHARED_LIBS}"
-  "-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}"
-  "-DCMAKE_CONFIGURATION_TYPES:STRING=${CMAKE_CONFIGURATION_TYPES}"
-  "-DCMAKE_CXX_COMPILER:PATH=${CMAKE_CXX_COMPILER}"
-  "-DCMAKE_C_COMPILER:PATH=${CMAKE_C_COMPILER}"
-)
-set(SEQUOIA_EXTERNAL_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/prefix")
-set(SEQUOIA_EXTERNAL_PREFIX_PATH "${CMAKE_PREFIX_PATH}")
+foreach(package Qt5 SequoiaEngine GTest)
+  include("Add${package}")
+  string(TOUPPER ${package} PACKAGE)
 
-include(SequoiaSetDownloadDir)
-sequoia_set_download_dir(SEQUOIA_EXTERNAL_DOWNLOAD_DIR)
+  list(APPEND SEQUOIA_EDITOR_LIBRARIES ${SEQUOIA_${PACKAGE}_LIBRARIES})
+  list(APPEND SEQUOIA_EDITOR_INCLUDE_DIRS ${SEQUOIA_${PACKAGE}_INCLUDE_DIRS})
+  list(APPEND SEQUOIA_EDITOR_DEFINITIONS ${SEQUOIA_${PACKAGE}_DEFINITIONS})
+  
+  sequoia_create_package_string(${package} info)
+  list(APPEND package_info ${info})
+endforeach()
 
-add_subdirectory(thirdparty)
+include_directories(SYSTEM ${SEQUOIA_EDITOR_INCLUDE_DIRS})
+add_definitions(${SEQUOIA_EDITOR_DEFINITIONS})
 
-# Build the sequoia projects
-include(External_SequoiaEngine)
-include(External_SequoiaExamples)
-#include(External_SequoiaEditor)
+# Output summary of the packages
+sequoia_report_result("Package summary" ${package_info})
+  
+# Build sequoia-editor
+include_directories(${CMAKE_SOURCE_DIR}/src)
+include_directories(${CMAKE_BINARY_DIR}/src)
 
-if(SEQUOIA_DOCS)
-  include(External_SequoiaDocs)
-endif()
+add_subdirectory(src)

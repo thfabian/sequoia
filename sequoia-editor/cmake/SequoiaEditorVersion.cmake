@@ -13,11 +13,11 @@
 ##
 ##===------------------------------------------------------------------------------------------===##
 
-set(SEQUOIA_ENGINE_VERSION_MAJOR 0 CACHE INTERNAL "Major version of the sequoia-engine" FORCE)
-set(SEQUOIA_ENGINE_VERSION_MINOR 0 CACHE INTERNAL "Minor version of the sequoia-engine" FORCE)
-set(SEQUOIA_ENGINE_VERSION_PATCH 1 CACHE INTERNAL "Patch version of the sequoia-engine" FORCE)
-set(SEQUOIA_ENGINE_VERSION_SUFFIX "dev" CACHE INTERNAL "Suffix of the sequoia-engine version" FORCE)
+set(SEQUOIA_EDITOR_VERSION_MAJOR 0 CACHE INTERNAL "Major version of the sequoia-editor" FORCE)
+set(SEQUOIA_EDITOR_VERSION_MINOR 0 CACHE INTERNAL "Minor version of the sequoia-editor" FORCE)
+set(SEQUOIA_EDITOR_VERSION_PATCH 1 CACHE INTERNAL "Patch version of the sequoia-editor" FORCE)
+set(SEQUOIA_EDITOR_VERSION_SUFFIX "dev" CACHE INTERNAL "Suffix of the sequoia-editor version" FORCE)
 
-set(SEQUOIA_ENGINE_VERSION 
-  "${SEQUOIA_ENGINE_VERSION_MAJOR}.${SEQUOIA_ENGINE_VERSION_MINOR}.${SEQUOIA_ENGINE_VERSION_PATCH}"
-  CACHE INTERNAL "Version of sequoia-engine" FORCE)
+set(SEQUOIA_EDITOR_VERSION 
+  "${SEQUOIA_EDITOR_VERSION_MAJOR}.${SEQUOIA_EDITOR_VERSION_MINOR}.${SEQUOIA_EDITOR_VERSION_PATCH}"
+  CACHE INTERNAL "Version of sequoia-editor" FORCE)

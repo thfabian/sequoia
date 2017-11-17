@@ -13,18 +13,17 @@
 ##
 ##===------------------------------------------------------------------------------------------===##
 
-macro(sequoia_engine_add_benchmark SOURCE)
-  get_filename_component(name ${SOURCE} NAME_WE)
-  sequoia_add_executable(
-    NAME SequoiaEngine${name}
-    SOURCES ${SOURCE}
-    DEPENDS SequoiaEngineUnittestStatic
-            SequoiaEngineStatic
-            ${SEQUOIA_ENGINE_TESTING_LIBRARIES}
-    OUTPUT_DIR ${CMAKE_BINARY_DIR}/bin/benchmark
-  )
-endmacro()
+find_package(SequoiaEngine NO_MODULE REQUIRED)
 
-sequoia_engine_add_benchmark(BenchmarkUniformVariable.cpp)
-sequoia_engine_add_benchmark(BenchmarkSceneNode.cpp)
-sequoia_engine_add_benchmark(BenchmarkVertexAdapter.cpp)
+set(compile_definitions "${SequoiaEngine_COMPILE_DEFINITIONS}")
+string(REPLACE ";" " " compile_definitions "${compile_definitions}")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${compile_definitions}")
+
+sequoia_export_package(
+  NAME SequoiaEngine
+  FOUND ${SequoiaEngine_FOUND} 
+  VERSION ${SequoiaEngine_VERSION} 
+  LIBRARIES sequoia::SequoiaEngineStatic
+  INCLUDE_DIRS ${SequoiaEngine_INCLUDE_DIRS}
+  DEFINITIONS ${SequoiaEngine_DEFINITIONS}
+)

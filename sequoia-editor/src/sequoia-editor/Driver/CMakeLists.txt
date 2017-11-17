@@ -12,19 +12,3 @@
 ## See LICENSE.txt for details.
 ##
 ##===------------------------------------------------------------------------------------------===##
-
-macro(sequoia_engine_add_benchmark SOURCE)
-  get_filename_component(name ${SOURCE} NAME_WE)
-  sequoia_add_executable(
-    NAME SequoiaEngine${name}
-    SOURCES ${SOURCE}
-    DEPENDS SequoiaEngineUnittestStatic
-            SequoiaEngineStatic
-            ${SEQUOIA_ENGINE_TESTING_LIBRARIES}
-    OUTPUT_DIR ${CMAKE_BINARY_DIR}/bin/benchmark
-  )
-endmacro()
-
-sequoia_engine_add_benchmark(BenchmarkUniformVariable.cpp)
-sequoia_engine_add_benchmark(BenchmarkSceneNode.cpp)
-sequoia_engine_add_benchmark(BenchmarkVertexAdapter.cpp)
