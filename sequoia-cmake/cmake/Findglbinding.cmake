@@ -112,7 +112,7 @@ endif()
 # Find glbinding library
 #
 if(NOT(GLBINDING_LIBRARIES))
-  find_library(GLBINDING_LIBRARIES NAMES glbinding HINTS ${GLBINDING_ROOT}/lib)
+  find_library(GLBINDING_LIBRARIES NAMES glbinding glbindingd HINTS ${GLBINDING_ROOT}/lib)
 endif()
 
 #
