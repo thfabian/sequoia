@@ -101,21 +101,24 @@ macro(sequoia_engine_set_cxx_flags)
     if(SEQUOIA_ENGINE_OPTIMIZE)
       # TODO: figure out the LTO flags etc...
     endif()
+
+    # C4018 - signed/unsigned mismatch
+    sequoia_check_and_set_cxx_flag("/wd4018" HAVE_MSVC_WD4018)
     
     # C4244 - conversion from 'type1' to 'type2', possible loss of data
     sequoia_check_and_set_cxx_flag("/wd4244" HAVE_MSVC_WD4244)
 
-    # C4305: 'initializing': truncation from 'double' to 'const float
+    # C4267 - 'var' : conversion from 'size_t' to 'type', possible loss of data
+    sequoia_check_and_set_cxx_flag("/wd4267" HAVE_MSVC_WD4267)
+
+    # C4305 - 'initializing': truncation from 'double' to 'const float
     sequoia_check_and_set_cxx_flag("/wd4305" HAVE_MSVC_WD4305)
-    
-    # C4800:  'unsigned __int64': forcing value to bool 'true' or 'false' (performance warning)
-    sequoia_check_and_set_cxx_flag("/wd4800" HAVE_MSVC_WD4800)
     
     # C4661 - 'function' : no prototype provided; assumed no parameters
     sequoia_check_and_set_cxx_flag("/wd4661" HAVE_MSVC_WD4661)
-    
-    # C4267 - 'var' : conversion from 'size_t' to 'type', possible loss of data
-    sequoia_check_and_set_cxx_flag("/wd4267" HAVE_MSVC_WD4267)
+
+    # C4800 - 'unsigned __int64': forcing value to bool 'true' or 'false' (performance warning)
+    sequoia_check_and_set_cxx_flag("/wd4800" HAVE_MSVC_WD4800)
     
   #
   # GCC/Clang/Intel
