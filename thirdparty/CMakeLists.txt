@@ -75,10 +75,10 @@ sequoia_build_package(
 # Boost
 #
 set(boost_min_version 1.58.0)
-set(_v 63)
+set(_v 65)
 set(boost_download_version 1.${_v}.0)
 set(boost_url "http://sourceforge.net/projects/boost/files/boost/1.${_v}.0/boost_1_${_v}_0.tar.gz/download")
-set(boost_md5 "7b493c08bc9557bbde7e29091f28b605")
+set(boost_md5 "d75a27ad1a34cfc7c9b5cb92594410c3")
 set(boost_components thread date_time system atomic chrono filesystem program_options)
 
 sequoia_find_package(
