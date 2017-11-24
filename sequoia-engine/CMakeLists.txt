@@ -73,9 +73,9 @@ sequoia_check_in_source_build()
 
 # Check compliance of compiler
 sequoia_check_compiler(
-  GCC 5.0
-  CLANG 3.4
-  MSVC 19.0
+  GCC 5.4
+  CLANG 3.8
+  MSVC 19.1
   INTEL 17
 )
 
