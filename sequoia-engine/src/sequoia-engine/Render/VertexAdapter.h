@@ -20,7 +20,7 @@
 #include "sequoia-engine/Core/Unreachable.h"
 #include "sequoia-engine/Math/Math.h"
 #include "sequoia-engine/Render/Vertex2.h"
-#include <cmath>
+#include <algorithm>
 #include <cstring>
 
 namespace sequoia {

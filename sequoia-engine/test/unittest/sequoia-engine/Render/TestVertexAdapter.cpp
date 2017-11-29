@@ -16,6 +16,7 @@
 #include "sequoia-engine/Render/VertexAdapter.h"
 #include "sequoia-engine/Render/VertexFactory.h"
 #include <gtest/gtest.h>
+#include <array>
 
 using namespace sequoia::render;
 using namespace sequoia;
