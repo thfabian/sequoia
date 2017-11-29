@@ -48,9 +48,9 @@ public:
   /// @brief Allocate memory for a vertex with the given `layout`
   VertexAdapter(VertexLayout2 layout) : layout_(std::move(layout)), vertexData_{0} {}
 
-  /// @brief Set `data` as the new attribute
+  /// @brief Set `data` as the new Position data
   ///
-  /// If the vertex does not contain the attribute, this function does nothing.
+  /// If the vertex does not contain a position attribute, this function does nothing.
   ///
   /// @param data    Pointer to `size` elements.
   /// @param size    Number of elements to set. If the vertex attribute contains less than `size`
@@ -67,39 +67,18 @@ public:
   void setPosition(const math::vec2& data) noexcept {
     setPosition(math::value_ptr(data), data.length());
   }
-
-  void setNormal(const float* data, int numElements) noexcept {
-    setAttribute(layout_.Normal, data, numElements);
-  }
-  void setNormal(const math::vec3& data) noexcept {
-    setNormal(math::value_ptr(data), data.length());
-  }
-  void setNormal(const math::vec2& data) noexcept {
-    setNormal(math::value_ptr(data), data.length());
-  }
-
-  void setTexCoord(const float* data, int numElements) noexcept {
-    setAttribute(layout_.TexCoord, data, numElements);
-  }
-  void setTexCoord(const math::vec3& data) noexcept {
-    setTexCoord(math::value_ptr(data), data.length());
-  }
-  void setTexCoord(const math::vec2& data) noexcept {
-    setTexCoord(math::value_ptr(data), data.length());
-  }
   /// @}
 
   /// @brief Copy the vertex data to `dest`
   ///
-  /// Note that sufficient memory (i.e `[dest, dest + getLayout().SizeOf)` needs to be allocated
-  /// starting at `dest`.
+  /// Note that sufficient memory (i.e `[dest, dest + getLayout().SizeOf)` needs to be allocated.
   void copyTo(void* dest) const noexcept { std::memcpy(dest, vertexData_, layout_.SizeOf); }
 
   /// @brief Get the vertex data layout
   const VertexLayout2& getLayout() const noexcept { return layout_; }
 
 private:
-  /// @brief Set the `attribute` to be equal to the array `data` of size `numElements`
+  ///
   template <class T>
   inline void setAttribute(const VertexLayout2::Attribute& attribute, const T* data,
                            const int numElements) noexcept {
@@ -122,12 +101,12 @@ private:
     }
   }
 
-  /// @brief Interpret `vertexNumElements` starting at `vertexData` as of type `TypeID` and set it
-  /// to be equal to the array `data` of size `numElements`
+  ///
   template <VertexLayout2::TypeID TypeID, class DataType>
   inline static void setArray(Byte* vertexData, const int vertexNumElements, const DataType* data,
                               const int numElements) noexcept {
     using VertexDataType = typename internal::TypeIDToType<TypeID>::type;
+
     const int numElementsToCopy = std::min(vertexNumElements, numElements);
 
     for(int i = 0; i < numElementsToCopy; ++i, vertexData += sizeof(VertexDataType))
@@ -137,14 +116,14 @@ private:
       setToZero<VertexDataType>(vertexData);
   }
 
-  /// @brief Interpret `vertexData` as type `T` and set it to be equal to `value`
+  ///
   template <class T, class U>
-  inline static void set(Byte* vertexData, const U& value) noexcept {
+  inline static void set(Byte* vertexData, const U& right) noexcept {
     T& left = *reinterpret_cast<T*>(vertexData);
-    left = static_cast<T>(value);
+    left = static_cast<T>(right);
   }
 
-  /// @brief Interpret `vertexData` as type `T` and set it to 0
+  ///
   template <class T>
   inline static void setToZero(Byte* vertexData) noexcept {
     T& left = *reinterpret_cast<T*>(vertexData);
