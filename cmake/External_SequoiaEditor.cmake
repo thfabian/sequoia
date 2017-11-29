@@ -33,7 +33,7 @@ foreach(option ${SEQUOIA_EDITOR})
 endforeach()
 
 # Compute dependencies
-foreach(project SequoiaEngine gtest)
+foreach(project SequoiaEngine gtest Qt5)
   sequoia_compute_optional_dependency(${project} sequoia_editor_deps) 
   sequoia_extract_cmake_package_args(${project} sequoia_editor_cmake_args)
 endforeach()

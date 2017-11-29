@@ -227,4 +227,16 @@ sequoia_build_package(
   BUILD_VERSION ${gtest_version}
 )
 
+#
+# Qt5
+#
+set(qt5_version "5.9")
+set(qt5_components Widgets)
+sequoia_find_package(
+  PACKAGE Qt5
+  PACKAGE_ARGS ${qt5_version} COMPONENTS ${qt5_components} NO_MODULE QUIET
+  FORWARD_VARS BOOST_ROOT Qt5_DIR
+  NO_BUILD
+)
+
 sequoia_report_result("Package summary" ${SEQUOIA_PACKAGE_INFO})

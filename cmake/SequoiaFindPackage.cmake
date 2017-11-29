@@ -29,6 +29,9 @@ include(SequoiaExportPackage)
 # supplied by the system. Note that USE_SYSTEM_<PACKAGE> does not honor the user setting if 
 # the package cannot be found (i.e it will build it regardlessly).
 #
+# The variable SEQUOIA_<PACKAGE>_FOUND will be set to indiacte if the package has been found (or is 
+# going to be built).
+#
 #    PACKAGE:STRING=<>        - Name of the package (has to be the same name as used in 
 #                               find_package).
 #    PACKAGE_ARGS:LIST=<>     - Arguments passed to find_package.
@@ -39,10 +42,11 @@ include(SequoiaExportPackage)
 #                               to provide the version. By default we use <PACKAGE>_VERSION (or a 
 #                               variation thereof).
 #    BUILD_VERSION:STRING=<>  - Version of the package which is built (if required)
+#    NO_BUILD:BOOL            - Don't build the package if not found.
 #    DEPENDS:LIST=<>          - Dependencies of this package.
 #
 function(sequoia_find_package)
-  set(options)
+  set(options NO_BUILD)
   set(one_value_args PACKAGE BUILD_VERSION VERSION_VAR)
   set(multi_value_args PACKAGE_ARGS FORWARD_VARS REQUIRED_VARS DEPENDS)
   cmake_parse_arguments(ARG "${options}" "${one_value_args}" "${multi_value_args}" ${ARGN})
@@ -73,7 +77,12 @@ function(sequoia_find_package)
   set(use_system FALSE)
   if(NOT(USE_SYSTEM_${package_upper}))
     set(USE_SYSTEM_${package_upper} OFF CACHE BOOL ${doc} FORCE)
-    include(${external_file})
+    if(NOT(DEFINED ARG_NO_BUILD AND ARG_NO_BUILD))
+      include(${external_file})
+      set(found ON)
+    else()
+      set(found OFF)
+    endif()
   else()
     # Check if the system has the package
     find_package(${ARG_PACKAGE} ${ARG_PACKAGE_ARGS})
@@ -129,9 +138,15 @@ function(sequoia_find_package)
         set(version "unknown")
       endif()
 
+      set(found ON)
     else()
       set(USE_SYSTEM_${package_upper} OFF CACHE BOOL ${doc} FORCE)
-      include(${external_file})
+      if(NOT(DEFINED ARG_NO_BUILD AND ARG_NO_BUILD))
+        include(${external_file})
+        set(found ON)
+      else()
+        set(found OFF)
+      endif()
     endif()
   endif()
 
@@ -149,5 +164,7 @@ function(sequoia_find_package)
   if("${version}" STREQUAL "")
     set(version "-")
   endif()
-  sequoia_make_package_info(${ARG_PACKAGE} ${version} ${use_system})
+
+  set(SEQUOIA_${package_upper}_FOUND ${found} CACHE BOOL "Was ${package} found" FORCE)
+  sequoia_make_package_info(${ARG_PACKAGE} ${version} ${use_system} ${found})
 endfunction()

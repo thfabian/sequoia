@@ -110,7 +110,10 @@ add_subdirectory(thirdparty)
 # Build the sequoia projects
 include(External_SequoiaEngine)
 include(External_SequoiaExamples)
-#include(External_SequoiaEditor)
+
+if(SEQUOIA_QT5_FOUND)
+  include(External_SequoiaEditor)
+endif()
 
 if(SEQUOIA_DOCS)
   include(External_SequoiaDocs)
