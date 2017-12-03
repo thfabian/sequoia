@@ -40,20 +40,18 @@ TEST(ImageTest, PNGImage) {
   EXPECT_EQ(image->getHeight(), 32);
   EXPECT_EQ(image->getWidth(), 32);
   EXPECT_EQ(image->getNumChannels(), 3);
-  EXPECT_EQ(image->getColorFormat(), core::ColorFormat::BGR);
 
   // Top left is blue
-  EXPECT_EQ(image->at(0, 0), core::makeColorRGB(0, 0, 255));
+  EXPECT_EQ(image->at(0, 0), Color(0, 0, 255));
 
   // Bottom left is red
-  EXPECT_EQ(image->at(image->getHeight() - 1, 0), core::makeColorRGB(255, 0, 0));
+  EXPECT_EQ(image->at(image->getHeight() - 1, 0), Color(255, 0, 0));
 
   // Bottom right is blue
-  EXPECT_EQ(image->at(image->getHeight() - 1, image->getWidth() - 1),
-            core::makeColorRGB(0, 0, 255));
+  EXPECT_EQ(image->at(image->getHeight() - 1, image->getWidth() - 1), Color(0, 0, 255));
 
   // Top right is green
-  EXPECT_EQ(image->at(0, image->getWidth() - 1), core::makeColorRGB(0, 255, 0));
+  EXPECT_EQ(image->at(0, image->getWidth() - 1), Color(0, 255, 0));
 }
 
 TEST(ImageTest, JPEGImage) {
@@ -70,7 +68,6 @@ TEST(ImageTest, JPEGImage) {
   EXPECT_EQ(image->getHeight(), 32);
   EXPECT_EQ(image->getWidth(), 32);
   EXPECT_EQ(image->getNumChannels(), 3);
-  EXPECT_EQ(image->getColorFormat(), core::ColorFormat::BGR);
 
   // JPEG is a lossy format so we don't check the colors.. they are not even the same for
   // Win32/Linux..
@@ -90,20 +87,18 @@ TEST(ImageTest, BMPImage) {
   EXPECT_EQ(image->getHeight(), 32);
   EXPECT_EQ(image->getWidth(), 32);
   EXPECT_EQ(image->getNumChannels(), 3);
-  EXPECT_EQ(image->getColorFormat(), core::ColorFormat::BGR);
 
   // Top left is blue
-  EXPECT_EQ(image->at(0, 0), core::makeColorRGB(0, 0, 255));
+  EXPECT_EQ(image->at(0, 0), Color(0, 0, 255));
 
   // Bottom left is red
-  EXPECT_EQ(image->at(image->getHeight() - 1, 0), core::makeColorRGB(255, 0, 0));
+  EXPECT_EQ(image->at(image->getHeight() - 1, 0), Color(255, 0, 0));
 
   // Bottom right is blue
-  EXPECT_EQ(image->at(image->getHeight() - 1, image->getWidth() - 1),
-            core::makeColorRGB(0, 0, 255));
+  EXPECT_EQ(image->at(image->getHeight() - 1, image->getWidth() - 1), Color(0, 0, 255));
 
   // Top right is green
-  EXPECT_EQ(image->at(0, image->getWidth() - 1), core::makeColorRGB(0, 255, 0));
+  EXPECT_EQ(image->at(0, image->getWidth() - 1), Color(0, 255, 0));
 }
 
 TEST(ImageTest, TiffImage) {
@@ -120,20 +115,18 @@ TEST(ImageTest, TiffImage) {
   EXPECT_EQ(image->getHeight(), 32);
   EXPECT_EQ(image->getWidth(), 32);
   EXPECT_EQ(image->getNumChannels(), 3);
-  EXPECT_EQ(image->getColorFormat(), core::ColorFormat::BGR);
 
   // Top left is blue
-  EXPECT_EQ(image->at(0, 0), core::makeColorRGB(0, 0, 255));
+  EXPECT_EQ(image->at(0, 0), Color(0, 0, 255));
 
   // Bottom left is red
-  EXPECT_EQ(image->at(image->getHeight() - 1, 0), core::makeColorRGB(255, 0, 0));
+  EXPECT_EQ(image->at(image->getHeight() - 1, 0), Color(255, 0, 0));
 
   // Bottom right is blue
-  EXPECT_EQ(image->at(image->getHeight() - 1, image->getWidth() - 1),
-            core::makeColorRGB(0, 0, 255));
+  EXPECT_EQ(image->at(image->getHeight() - 1, image->getWidth() - 1), Color(0, 0, 255));
 
   // Top right is green
-  EXPECT_EQ(image->at(0, image->getWidth() - 1), core::makeColorRGB(0, 255, 0));
+  EXPECT_EQ(image->at(0, image->getWidth() - 1), Color(0, 255, 0));
 }
 
 TEST(ImageTest, DDSImage) {

@@ -38,7 +38,7 @@ PointLight::PointLight(SceneNode* node, math::vec3 power, Color color)
 
 void PointLight::toUniformVariableMap(std::unordered_map<std::string, UniformVariable>& map,
                                       int index) {
-  auto normalizedColor = color_.normalize();
+  auto normalizedColor = color_.toRGBA32f();
   math::vec4 color = math::make_vec4(normalizedColor.data());
 
   PointLightStruct light{getNode()->getPosition(), power_, color};

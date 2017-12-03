@@ -21,39 +21,19 @@ namespace sequoia {
 
 namespace core {
 
-std::ostream& operator<<(std::ostream& os, ColorFormat format) {
-  switch(format) {
-  case ColorFormat::RGB:
-    return (os << "RGB");
-  case ColorFormat::BGR:
-    return (os << "BGR");
-  case ColorFormat::RGBA:
-    return (os << "RGBA");
-  case ColorFormat::BGRA:
-    return (os << "BGRA");
-  default:
-    sequoia_unreachable("invalid format");
-  }
-}
-
 std::ostream& operator<<(std::ostream& os, const Color& color) {
-  os << "[ ";
-  os << static_cast<int>(color[0]) << ", ";
-  os << static_cast<int>(color[1]) << ", ";
-  os << static_cast<int>(color[2]);
-
-  if(color.getNumChannels() > 3)
-    os << ", " << static_cast<int>(color[3]);
-
-  os << " ] (" << color.getFormat() << ")";
+  os << "[ " << static_cast<int>(color.r) << ", " << static_cast<int>(color.g) << ", "
+     << static_cast<int>(color.b) << ", " << static_cast<int>(color.a) << " ]";
   return os;
 }
 
-const Color Color::White = Color(ColorFormat::RGBA, 255, 255, 255, 255);
-const Color Color::Black = Color(ColorFormat::RGBA, 0, 0, 0, 255);
-const Color Color::Red = Color(ColorFormat::RGBA, 255, 0, 0, 255);
-const Color Color::Green = Color(ColorFormat::RGBA, 0, 255, 0, 255);
-const Color Color::Blue = Color(ColorFormat::RGBA, 0, 0, 255, 255);
+static_assert(Color::Uint8Max == 255, "inconsistent color definitions");
+
+const Color Color::White = Color(255, 255, 255, 255);
+const Color Color::Black = Color(0, 0, 0, 255);
+const Color Color::Red = Color(255, 0, 0, 255);
+const Color Color::Green = Color(0, 255, 0, 255);
+const Color Color::Blue = Color(0, 0, 255, 255);
 
 } // namespace core
 
