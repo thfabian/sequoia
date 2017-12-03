@@ -33,8 +33,9 @@ struct SEQUOIA_API VertexLayout2 {
   /// @brief Type identifier
   enum TypeID : std::uint8_t {
     Invalid = 0,
-    UInt8,  ///< 8-bit unsigned integer
-    Float32 ///< 32-bit floating point number
+#define VERTEX_LAYOUT_TYPE(Type, Name) Name,
+#include "sequoia-engine/Render/VertexLayout.inc"
+#undef VERTEX_LAYOUT_TYPE
   };
 
   /// @brief Vertex attribute (4 Bytes)
@@ -99,27 +100,17 @@ struct TypeToTypeID {
   static_assert(value != VertexLayout2::Invalid, "invalid type (no match in VertexLayout::TypeID)");
 };
 
-// std::uint8_t
-template <>
-struct TypeIDToType<VertexLayout2::UInt8> {
-  using type = std::uint8_t;
-};
-
-template <>
-struct TypeToTypeID<std::uint8_t> {
-  static constexpr VertexLayout2::TypeID value = VertexLayout2::UInt8;
-};
-
-// float
-template <>
-struct TypeIDToType<VertexLayout2::Float32> {
-  using type = float;
-};
-
-template <>
-struct TypeToTypeID<float> {
-  static constexpr VertexLayout2::TypeID value = VertexLayout2::Float32;
-};
+#define VERTEX_LAYOUT_TYPE(Type, Name)                                                             \
+  template <>                                                                                      \
+  struct TypeIDToType<VertexLayout2::Name> {                                                       \
+    using type = Type;                                                                             \
+  };                                                                                               \
+  template <>                                                                                      \
+  struct TypeToTypeID<Type> {                                                                      \
+    static constexpr VertexLayout2::TypeID value = VertexLayout2::Name;                            \
+  };
+#include "sequoia-engine/Render/VertexLayout.inc"
+#undef VERTEX_LAYOUT_TYPE
 
 } // namespace internal
 

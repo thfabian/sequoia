@@ -40,11 +40,13 @@ struct Color {
   /// Access to the color data
   union {
     Byte data[4];
-    struct { Byte r, g, b, a; };
+    struct {
+      Byte r, g, b, a;
+    };
   };
 
   /// @brief Number of color channels
-  static const int NumChannels = 4;
+  static const int NumChannels;
 
   /// @brief Construct from RGB(A) sequence
   Color(Byte red = 0, Byte green = 0, Byte blue = 0, Byte alpha = Color::Uint8Max) {
@@ -110,8 +112,7 @@ struct Color {
 
   /// @brief Set the color channel by copying `min(numChannels, Color::NumChannels)` Bytes
   inline void setChannels(const Byte* dataPtr, int numChannels) noexcept {
-    const int maxNumChannels = Color::NumChannels;
-    const int channelsToCopy = std::min(numChannels, maxNumChannels);
+    const int channelsToCopy = std::min(numChannels, Color::NumChannels);
     for(int i = 0; i < channelsToCopy; ++i)
       this->data[i] = dataPtr[i];
   }

@@ -27,6 +27,8 @@ std::ostream& operator<<(std::ostream& os, const Color& color) {
   return os;
 }
 
+const int Color::NumChannels = 4;
+
 static_assert(Color::Uint8Max == 255, "inconsistent color definitions");
 
 const Color Color::White = Color(255, 255, 255, 255);
