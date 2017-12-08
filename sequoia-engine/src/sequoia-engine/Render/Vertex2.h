@@ -33,11 +33,11 @@ namespace render {
   Vertex_posf2_texf2_colu4                                                                         \
 )
 
+SEQUOIA_DEFINE_VERTEX_ID_ENUM(SERUOIA_VERTICES)
+
 //===------------------------------------------------------------------------------------------===//
 //    Define all vertices below:
 //===------------------------------------------------------------------------------------------===//
-
-SEQUOIA_DEFINE_VERTEX_ID_ENUM(SERUOIA_VERTICES)
 
 // Standard 3D vertex
 SEQUOIA_DEFINE_VERTEX(Vertex_posf3_norf3_texf2_colu4, 

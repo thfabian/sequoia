@@ -143,7 +143,7 @@ public:
   /// Note that sufficient memory (i.e `[dest, dest + getLayout().SizeOf)` needs to be allocated
   /// starting at `dest`.
   void copyTo(void* dest) const noexcept { std::memcpy(dest, vertexData_.data(), layout_.SizeOf); }
-
+  
   /// @brief Copy the vertex data from `src`
   void copyFrom(const void* src) noexcept { std::memcpy(vertexData_.data(), src, layout_.SizeOf); }
 
