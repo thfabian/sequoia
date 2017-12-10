@@ -21,7 +21,7 @@
 #include "sequoia-engine/Core/Color.h"
 #include "sequoia-engine/Core/Unreachable.h"
 #include "sequoia-engine/Math/Math.h"
-#include "sequoia-engine/Render/Vertex2.h"
+#include "sequoia-engine/Render/Vertex.h"
 #include <algorithm>
 #include <array>
 #include <cstring>
@@ -61,7 +61,7 @@ public:
   /// @brief Allocate memory for a vertex with the given `layout`
   ///
   /// To fill the adapter with an existing vertex pointer, use `VertexAdapter::copyFrom()`.
-  VertexAdapter(VertexLayout2 layout) : layout_(std::move(layout)) { vertexData_.fill(0); }
+  VertexAdapter(VertexLayout2 layout) : layout_(std::move(layout)) { clear(); }
 
   /// @brief Set `data` as the new attribute
   ///
@@ -76,30 +76,39 @@ public:
   inline void setPosition(const float* data, int numElements) noexcept {
     setAttribute(layout_.Position, data, numElements);
   }
+  inline void setPosition(const math::vec2& data) noexcept {
+    setPosition(math::value_ptr(data), data.length());
+  }
   inline void setPosition(const math::vec3& data) noexcept {
     setPosition(math::value_ptr(data), data.length());
   }
-  inline void setPosition(const math::vec2& data) noexcept {
+  inline void setPosition(const math::vec4& data) noexcept {
     setPosition(math::value_ptr(data), data.length());
   }
 
   inline void setNormal(const float* data, int numElements) noexcept {
     setAttribute(layout_.Normal, data, numElements);
   }
+  inline void setNormal(const math::vec2& data) noexcept {
+    setNormal(math::value_ptr(data), data.length());
+  }
   inline void setNormal(const math::vec3& data) noexcept {
     setNormal(math::value_ptr(data), data.length());
   }
-  inline void setNormal(const math::vec2& data) noexcept {
+  inline void setNormal(const math::vec4& data) noexcept {
     setNormal(math::value_ptr(data), data.length());
   }
 
   inline void setTexCoord(const float* data, int numElements) noexcept {
     setAttribute(layout_.TexCoord, data, numElements);
   }
+  inline void setTexCoord(const math::vec2& data) noexcept {
+    setTexCoord(math::value_ptr(data), data.length());
+  }
   inline void setTexCoord(const math::vec3& data) noexcept {
     setTexCoord(math::value_ptr(data), data.length());
   }
-  inline void setTexCoord(const math::vec2& data) noexcept {
+  inline void setTexCoord(const math::vec4& data) noexcept {
     setTexCoord(math::value_ptr(data), data.length());
   }
 
@@ -143,9 +152,12 @@ public:
   /// Note that sufficient memory (i.e `[dest, dest + getLayout().SizeOf)` needs to be allocated
   /// starting at `dest`.
   void copyTo(void* dest) const noexcept { std::memcpy(dest, vertexData_.data(), layout_.SizeOf); }
-  
+
   /// @brief Copy the vertex data from `src`
   void copyFrom(const void* src) noexcept { std::memcpy(vertexData_.data(), src, layout_.SizeOf); }
+
+  /// @brief Clear the internal buffer
+  void clear() noexcept { vertexData_.fill(0); }
 
   /// @brief Get the vertex data layout
   const VertexLayout2& getLayout() const noexcept { return layout_; }

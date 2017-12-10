@@ -13,12 +13,11 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia-engine/Game/Mesh.h"
 #include "sequoia-engine/Core/Format.h"
 #include "sequoia-engine/Core/Logging.h"
 #include "sequoia-engine/Core/Memory.h"
 #include "sequoia-engine/Core/StringUtil.h"
-#include "sequoia-engine/Render/VertexVisitor.h"
+#include "sequoia-engine/Game/Mesh.h"
 
 namespace sequoia {
 

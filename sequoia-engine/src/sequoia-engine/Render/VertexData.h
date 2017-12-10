@@ -23,8 +23,6 @@
 #include "sequoia-engine/Render/RenderSystemObject.h"
 #include "sequoia-engine/Render/Vertex.h"
 #include "sequoia-engine/Render/VertexBuffer.h"
-#include "sequoia-engine/Render/VertexVisitor.h"
-#include <functional>
 
 namespace sequoia {
 
@@ -48,7 +46,7 @@ public:
   DrawModeKind getDrawMode() const noexcept { return drawMode_; }
 
   /// @brief Get the layout of the vertices
-  const VertexLayout* getLayout() const noexcept { return getVertexBuffer()->getLayout(); }
+  const VertexLayout2& getLayout() const noexcept { return getVertexBuffer()->getLayout(); }
 
   /// @brief Get the axis aligned bounding box
   const math::AxisAlignedBox& getAxisAlignedBox() const noexcept {
@@ -75,55 +73,31 @@ public:
     return getIndexBuffer() ? getIndexBuffer()->getNumIndices() : 0;
   }
 
-  /// @brief Accept a VertexVisitor to write vertex data
-  ///
-  /// @param option   Option used to lock the buffer
-  /// @param visitor  Visitor to run
-  void accept(Buffer::LockOption option, VertexVisitor& visitor) const;
+//  /// @brief Write `numVertices`, stored at `vertices`, to the vertex buffer
+//  template <class T>
+//  void writeVertex(const void* vertices, std::size_t numVertices) {
+//    SEQUOIA_ASSERT_MSG((getLayout().SizeOf * numVertices) <= getIndexBuffer()->getNumBytes(),
+//                       "writing past the end");
+//    getIndexBuffer()->write(static_cast<const void*>(vertices), 0, getIndexBuffer()->getNumBytes(),
+//                            true);
+//  }
 
-  /// @brief Obtain the vertex data for reading/writing
-  ///
-  /// @tparam FunctorType   (lambda) function of type `void(VertexType*)` where `VertexType` is one
-  ///                       of `{Vertex2D, Vertex3D}`
-  /// @param option         Option used to lock the buffer
-  /// @param functor        Functor to run on the vertex data
-  ///
-  /// @b Example
-  /// @code{.cpp}
-  ///   VertexData data(...);
-  ///   data.writeVertex(Buffer::LO_Discard, [&data](Vertex3D* vertices) {
-  ///     for(int i = 0; i < data.getNumVertices(); ++i) {
-  ///       Vertex3D& vertex = vertices[i];
-  ///       // Do something ...
-  ///     }
-  ///   });
-  /// @endcode
-  /// @{
-  template <class FunctorType>
-  void writeVertex(Buffer::LockOption option, FunctorType&& functor) const {
-    modifyImpl(option, std::forward<FunctorType>(functor));
-  }
-  template <class FunctorType>
-  void readVertex(Buffer::LockOption option, FunctorType&& functor) const {
-    modifyImpl(option, std::forward<FunctorType>(functor));
-  }
-  /// @}
+//  /// @brief Write `numIndices` of type `T` to the index buffer
+//  template <class T>
+//  void writeIndex(const T* indices, std::size_t numIndices) {
+//    SEQUOIA_ASSERT_MSG((sizeof(T) * numIndices) <= getIndexBuffer()->getNumBytes(),
+//                       "writing past the end");
+//    getIndexBuffer()->write(static_cast<const void*>(indices), 0, getIndexBuffer()->getNumBytes(),
+//                            true);
+//  }
 
-  /// @brief Write `numIndices` of type `T` to the index buffer
-  template <class T>
-  void writeIndex(T* indices, std::size_t numIndices) {
-    SEQUOIA_ASSERT_MSG((sizeof(T) * numIndices) == getIndexBuffer()->getNumBytes(),
-                       "size missmatch");
-    getIndexBuffer()->write(static_cast<void*>(indices), 0, getIndexBuffer()->getNumBytes(), true);
-  }
-
-  /// @brief Read `numIndices` of type `T` to the index buffer
-  template <class T>
-  void readIndex(T* indices, std::size_t numIndices) {
-    SEQUOIA_ASSERT_MSG((sizeof(T) * numIndices) == getIndexBuffer()->getNumBytes(),
-                       "size missmatch");
-    getIndexBuffer()->read(0, getIndexBuffer()->getNumBytes(), static_cast<void*>(indices));
-  }
+//  /// @brief Read `numIndices` of type `T` to the index buffer
+//  template <class T>
+//  void readIndex(T* indices, std::size_t numIndices) {
+//    SEQUOIA_ASSERT_MSG((sizeof(T) * numIndices) <= getIndexBuffer()->getNumBytes(),
+//                       "reading past the end");
+//    getIndexBuffer()->read(0, getIndexBuffer()->getNumBytes(), static_cast<void*>(indices));
+//  }
 
   /// @brief Get the VertexBuffer
   virtual VertexBuffer* getVertexBuffer() const = 0;
@@ -145,27 +119,6 @@ protected:
   virtual std::pair<std::string, std::string> toStringImpl() const;
 
 private:
-  template <class FunctorType>
-  void modifyImpl(Buffer::LockOption option, FunctorType&& functor) const {
-    using FirstArgType = core::function_first_argument_t<FunctorType>;
-  
-    // First argument has to be `Vertex*` or `const Vertex*`
-    static_assert(std::is_pointer<FirstArgType>::value,
-                  "invalid functor: type of first argument has to be a pointer");
-    using VertexType = typename std::remove_pointer<FirstArgType>::type;
-  
-    // Check if vertex type is supported
-    static_assert(
-        core::tuple_has_type<typename std::remove_cv<VertexType>::type, VertexTypeList>::value,
-        "invalid functor: invalid 'VertexType' for first argument ");
-    std::function<void(VertexType*)> func = functor;
-  
-    // Run functor
-    VertexVisitorRunFunctor<VertexType> visitor(func);
-    accept(option, visitor);
-  }
-
-private:
   /// Axis aligned bounding box of the mesh
   std::unique_ptr<math::AxisAlignedBox> bbox_;
 
@@ -181,7 +134,7 @@ struct VertexDataParameter {
   VertexData::DrawModeKind DrawMode;
 
   /// Layout of the vertices
-  const VertexLayout* Layout;
+  VertexLayout2 Layout;
 
   /// Number of vertices to allocate
   std::size_t NumVertices;
@@ -204,11 +157,11 @@ struct VertexDataParameter {
   /// Type of indices
   IndexBuffer::IndexType IndexType = IndexBuffer::IT_UInt32;
 
-  VertexDataParameter(VertexData::DrawModeKind drawMode, const VertexLayout* layout,
+  VertexDataParameter(VertexData::DrawModeKind drawMode, VertexLayout2 layout,
                       std::size_t numVertices, std::size_t numIndices,
                       Buffer::UsageHint vertexBufferUsageHint)
-      : DrawMode(drawMode), Layout(layout), NumVertices(numVertices), NumIndices(numIndices),
-        VertexBufferUsageHint(vertexBufferUsageHint) {}
+      : DrawMode(drawMode), Layout(std::move(layout)), NumVertices(numVertices),
+        NumIndices(numIndices), VertexBufferUsageHint(vertexBufferUsageHint) {}
 
   VertexDataParameter(const VertexDataParameter&) = default;
   VertexDataParameter(VertexDataParameter&&) = default;

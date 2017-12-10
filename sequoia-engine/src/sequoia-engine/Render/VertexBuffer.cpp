@@ -13,28 +13,28 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia-engine/Render/VertexBuffer.h"
 #include "sequoia-engine/Core/Format.h"
 #include "sequoia-engine/Core/StringUtil.h"
+#include "sequoia-engine/Render/VertexBuffer.h"
 
 namespace sequoia {
 
 namespace render {
 
-VertexBuffer::VertexBuffer(BufferKind kind, const VertexLayout* layout)
+VertexBuffer::VertexBuffer(BufferKind kind, const VertexLayout2& layout)
     : Buffer(kind), layout_(layout) {}
 
 VertexBuffer::~VertexBuffer() {}
 
 void VertexBuffer::allocateVertices(std::size_t numVertices, Buffer::UsageHint hint) {
-  allocate(numVertices * layout_->SizeOf, hint);
+  allocate(numVertices * layout_.SizeOf, hint);
 }
 
 std::pair<std::string, std::string> VertexBuffer::toStringImpl() const {
   return std::make_pair("VertexBuffer",
                         core::format("{}"
                                      "layout = {},\n",
-                                     Base::toStringImpl().second, layout_->toString()));
+                                     Base::toStringImpl().second, layout_.toString()));
 }
 
 } // namespace render

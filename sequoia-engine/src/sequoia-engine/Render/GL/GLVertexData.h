@@ -16,6 +16,7 @@
 #ifndef SEQUOIA_ENGINE_RENDER_GL_GLVERTEXDATA_H
 #define SEQUOIA_ENGINE_RENDER_GL_GLVERTEXDATA_H
 
+#include "sequoia-engine/Render/GL/GLFwd.h"
 #include "sequoia-engine/Render/GL/GLIndexBuffer.h"
 #include "sequoia-engine/Render/GL/GLVertexBuffer.h"
 #include "sequoia-engine/Render/VertexData.h"
@@ -61,6 +62,9 @@ public:
 
   /// @brief Get the VAO ID
   unsigned int getVAOID() const noexcept { return vaoID_; }
+
+  /// @brief Get the corresponding enum of VertexLayout type
+  static GLenum getGLType(VertexLayout2::TypeID type);
 
   SEQUOIA_GL_OBJECT(VertexData)
 

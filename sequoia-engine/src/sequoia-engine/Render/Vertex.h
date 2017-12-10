@@ -13,8 +13,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_ENGINE_RENDER_VERTEX2_H // TODO: remove 2
-#define SEQUOIA_ENGINE_RENDER_VERTEX2_H
+#ifndef SEQUOIA_ENGINE_RENDER_VERTEX_H
+#define SEQUOIA_ENGINE_RENDER_VERTEX_H
 
 #include "sequoia-engine/Render/VertexDef.h"
 
@@ -40,14 +40,14 @@ SEQUOIA_DEFINE_VERTEX_ID_ENUM(SERUOIA_VERTICES)
 //===------------------------------------------------------------------------------------------===//
 
 // Standard 3D vertex
-SEQUOIA_DEFINE_VERTEX(Vertex_posf3_norf3_texf2_colu4, 
+SEQUOIA_DEFINE_VERTEX(Vertex_posf3_norf3_texf2_colu4,
                      (float, Position, 3, false)
                      (float, Normal, 3, false)
                      (float, TexCoord, 2, false)
                      (std::uint8_t, Color, 4, true));
 
 // Standard 2D vertex
-SEQUOIA_DEFINE_VERTEX(Vertex_posf2_texf2_colu4, 
+SEQUOIA_DEFINE_VERTEX(Vertex_posf2_texf2_colu4,
                      (float, Position, 2, false)
                      (float, TexCoord, 2, false)
                      (std::uint8_t, Color, 4, true));
