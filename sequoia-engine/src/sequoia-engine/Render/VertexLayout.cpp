@@ -16,7 +16,10 @@
 #include "sequoia-engine/Core/Format.h"
 #include "sequoia-engine/Core/StringUtil.h"
 #include "sequoia-engine/Core/Unreachable.h"
+#include "sequoia-engine/Render/Vertex.h"
 #include "sequoia-engine/Render/VertexLayout.h"
+#include <boost/preprocessor/seq/for_each.hpp>
+#include <boost/preprocessor/stringize.hpp>
 #include <memory>
 #include <sstream>
 #include <utility>
@@ -29,18 +32,33 @@ static const char* typeToString(VertexLayout::TypeID typeID) {
   switch(typeID) {
   case VertexLayout::Invalid:
     return "Invalid";
-  case VertexLayout::UInt8:
-    return "Uint8";
-  case VertexLayout::Float32:
-    return "Float32";
+#define VERTEX_LAYOUT_TYPE(Type, Name)                                                             \
+  case VertexLayout::Name:                                                                         \
+    return BOOST_PP_STRINGIZE(Name);
+#include "sequoia-engine/Render/VertexLayout.inc"
+#undef VERTEX_LAYOUT_TYPE
   default:
     sequoia_unreachable("invalid type");
+  }
+}
+
+#define SEQUOIA_PP_VL_GET_NAME(r, Data, Vertex)                                                    \
+  case VertexID::Vertex:                                                                           \
+    return BOOST_PP_STRINGIZE(Vertex);
+
+const char* VertexLayout::getName() const noexcept {
+  auto id = static_cast<VertexID>(ID);
+  switch(id) {
+    BOOST_PP_SEQ_FOR_EACH(SEQUOIA_PP_VL_GET_NAME, Data, SEQUOIA_VERTICES)
+  default:
+    sequoia_unreachable("invalid vertex ID");
   }
 }
 
 std::string VertexLayout::toString() const {
   std::stringstream ss;
   ss << "VertexLayout[\n";
+  ss << "  ID = " << getName() << "\n";
 
   auto attributeToString = [&ss](const char* name, const Attribute& attrib) {
     ss << "  " << name << " = Attribute[\n";

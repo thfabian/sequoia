@@ -28,12 +28,12 @@ namespace render {
 //     Register all vertices below:
 //===------------------------------------------------------------------------------------------===//
 
-#define SERUOIA_VERTICES SEQUOIA_REGSTER_VERTICES(                                                 \
+#define SEQUOIA_VERTICES SEQUOIA_REGSTER_VERTICES(                                                 \
   Vertex_posf3_norf3_texf2_colu4,                                                                  \
   Vertex_posf2_texf2_colu4                                                                         \
 )
 
-SEQUOIA_DEFINE_VERTEX_ID_ENUM(SERUOIA_VERTICES)
+SEQUOIA_DEFINE_VERTEX_ID_ENUM(SEQUOIA_VERTICES)
 
 //===------------------------------------------------------------------------------------------===//
 //    Define all vertices below:

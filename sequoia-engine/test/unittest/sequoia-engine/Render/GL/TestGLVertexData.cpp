@@ -32,7 +32,7 @@ namespace {
 
 SEQUOIA_TESTCASEFIXTURE_TEMPLATE(GLVertexDataTest, GLRenderSetup);
 
-using VertexTypes = testing::Types<BOOST_PP_SEQ_ENUM(SERUOIA_VERTICES)>;
+using VertexTypes = testing::Types<BOOST_PP_SEQ_ENUM(SEQUOIA_VERTICES)>;
 TYPED_TEST_CASE(GLVertexDataTest, VertexTypes);
 
 /// @brief Create a GLVertexData and allocate space for `numVertices` and `numIndices`

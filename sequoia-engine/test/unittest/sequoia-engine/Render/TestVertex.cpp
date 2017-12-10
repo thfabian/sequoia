@@ -47,6 +47,8 @@ TEST(VertexLayoutTest, Vertex_posf3_norf3_texf2_colu4) {
   EXPECT_EQ(layout.Color.NumElements, 4);
   EXPECT_EQ(layout.Color.Offset, 32);
   EXPECT_EQ(layout.Color.Normalize, true);
+
+  EXPECT_STREQ(layout.getName(), "Vertex_posf3_norf3_texf2_colu4");
 }
 
 TEST(VertexLayoutTest, Vertex_posf2_texf2_colu4) {
@@ -70,6 +72,8 @@ TEST(VertexLayoutTest, Vertex_posf2_texf2_colu4) {
   EXPECT_EQ(layout.Color.NumElements, 4);
   EXPECT_EQ(layout.Color.Offset, 16);
   EXPECT_EQ(layout.Color.Normalize, true);
+
+  EXPECT_STREQ(layout.getName(), "Vertex_posf2_texf2_colu4");
 }
 
 } // anonymous namespace

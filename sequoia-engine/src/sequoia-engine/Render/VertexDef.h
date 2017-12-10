@@ -142,7 +142,7 @@
       VertexLayout layout;                                                                         \
       SEQUOIA_PP_VERTEX_GENERATE_LAYOUTS(Attributes, Name)                                         \
       layout.SizeOf = sizeof(Name);                                                                \
-      layout.VertexID = static_cast<decltype(layout.VertexID)>(VertexID::Name);                    \
+      layout.ID = static_cast<decltype(layout.ID)>(VertexID::Name);                                \
       return layout;                                                                               \
     }                                                                                              \
   }

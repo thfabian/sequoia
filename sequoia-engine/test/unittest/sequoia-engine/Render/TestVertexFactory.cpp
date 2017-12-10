@@ -22,7 +22,7 @@ namespace {
 
 TEST(VertexFactoryTest, Create) {
   auto adapter = VertexFactory::create("Vertex_posf3_norf3_texf2_colu4");
-  EXPECT_EQ(static_cast<VertexID>(adapter.getLayout().VertexID),
+  EXPECT_EQ(static_cast<VertexID>(adapter.getLayout().ID),
             VertexID::Vertex_posf3_norf3_texf2_colu4);
 }
 

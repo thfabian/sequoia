@@ -52,12 +52,12 @@ struct SEQUOIA_API VertexLayout {
 
   /// @name Attribute description
   /// @{
-  std::uint8_t SizeOf = 0;   ///< Total size (in bytes) of one vertex
-  std::uint8_t VertexID = 0; ///< Identifier of the vertex `VertexID`
-  Attribute Position;        ///< Positional attribute
-  Attribute Normal;          ///< Normal attribute
-  Attribute TexCoord;        ///< Texture coordinate attribute
-  Attribute Color;           ///< Color attribute
+  std::uint8_t SizeOf = 0; ///< Total size (in bytes) of one vertex
+  std::uint8_t ID = 0;     ///< Identifier of the vertex `VertexID`
+  Attribute Position;      ///< Positional attribute
+  Attribute Normal;        ///< Normal attribute
+  Attribute TexCoord;      ///< Texture coordinate attribute
+  Attribute Color;         ///< Color attribute
   /// @}
 
   /// @brief Check if `Position` attribute is available
@@ -71,6 +71,9 @@ struct SEQUOIA_API VertexLayout {
 
   /// @brief Check if `Color` attribute is available
   bool hasColor() const { return Color.NumElements > 0; }
+
+  /// @brief Return the name of the underlying vertex
+  const char* getName() const noexcept;
 
   /// @brief Convert to string
   std::string toString() const;

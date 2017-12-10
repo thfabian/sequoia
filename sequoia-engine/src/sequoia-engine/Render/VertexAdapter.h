@@ -39,7 +39,7 @@ namespace internal {
 /// @brief Compute the maximum size (in bytes) of any Vertex
 inline constexpr std::size_t computeMaxVertexSize() {
   std::size_t maxSize = 0;
-  BOOST_PP_SEQ_FOR_EACH(SEQUOIA_PP_VA_MAX_SIZEOF, Data, SERUOIA_VERTICES);
+  BOOST_PP_SEQ_FOR_EACH(SEQUOIA_PP_VA_MAX_SIZEOF, Data, SEQUOIA_VERTICES);
   return maxSize;
 }
 

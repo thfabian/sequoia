@@ -26,7 +26,7 @@ namespace render {
 std::string VertexAdapter::toString() const {
   std::stringstream ss;
 
-  ss << "VertexAdapter[\n";
+  ss << layout_.getName() << "[\n";
   auto attributeToString = [&ss](const char* name, const VertexLayout::Attribute& attrib,
                                  const auto& data) {
     ss << "  " << name << " = [";
