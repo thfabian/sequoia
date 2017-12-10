@@ -27,7 +27,7 @@ namespace render {
 /// @ingroup render
 class SEQUOIA_API VertexBuffer : public Buffer {
 public:
-  VertexBuffer(BufferKind kind, const VertexLayout2& layout);
+  VertexBuffer(BufferKind kind, const VertexLayout& layout);
 
   /// @brief Free all memory
   virtual ~VertexBuffer();
@@ -42,7 +42,7 @@ public:
   std::size_t getNumVertices() const { return getNumBytes() / layout_.SizeOf; }
 
   /// @brief Get the layout of the vertices
-  const VertexLayout2& getLayout() const { return layout_; }
+  const VertexLayout& getLayout() const { return layout_; }
 
   static bool classof(const Buffer* buffer) {
     return buffer->getKind() >= BK_VertexBuffer && buffer->getKind() < BK_VertexBufferLast;
@@ -70,7 +70,7 @@ protected:
 
 private:
   /// Layout of each individual vertex
-  VertexLayout2 layout_;
+  VertexLayout layout_;
 
 private:
   using Base = Buffer;

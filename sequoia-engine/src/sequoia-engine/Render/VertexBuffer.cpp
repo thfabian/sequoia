@@ -21,7 +21,7 @@ namespace sequoia {
 
 namespace render {
 
-VertexBuffer::VertexBuffer(BufferKind kind, const VertexLayout2& layout)
+VertexBuffer::VertexBuffer(BufferKind kind, const VertexLayout& layout)
     : Buffer(kind), layout_(layout) {}
 
 VertexBuffer::~VertexBuffer() {}

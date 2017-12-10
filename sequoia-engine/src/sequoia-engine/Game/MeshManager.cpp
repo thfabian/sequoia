@@ -505,7 +505,7 @@ std::shared_ptr<Mesh> MeshManager::createCube(const std::string& name, bool modi
     std::size_t numVertices = 24;
     std::size_t numIndices = 36;
 
-    render::VertexLayout2 layout = render::Vertex_posf3_norf3_texf2_colu4::getLayout();
+    render::VertexLayout layout = render::Vertex_posf3_norf3_texf2_colu4::getLayout();
     render::VertexDataParameter vertexParam(render::VertexData::DM_Triangles, layout, numVertices,
                                             numIndices, usage);
     
@@ -606,7 +606,7 @@ std::shared_ptr<Mesh> MeshManager::createGrid(const std::string& name, unsigned 
     unsigned int numVertices = N * N;
     unsigned int numIndices = 6 * (N - 1) * (N - 1);
 
-    render::VertexLayout2 layout = render::Vertex_posf3_norf3_texf2_colu4::getLayout();
+    render::VertexLayout layout = render::Vertex_posf3_norf3_texf2_colu4::getLayout();
     render::VertexDataParameter vertexParam(render::VertexData::DM_Triangles, layout, numVertices,
                                             numIndices, usage);
 

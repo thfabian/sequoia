@@ -25,20 +25,20 @@ namespace sequoia {
 
 namespace render {
 
-static const char* typeToString(VertexLayout2::TypeID typeID) {
+static const char* typeToString(VertexLayout::TypeID typeID) {
   switch(typeID) {
-  case VertexLayout2::Invalid:
+  case VertexLayout::Invalid:
     return "Invalid";
-  case VertexLayout2::UInt8:
+  case VertexLayout::UInt8:
     return "Uint8";
-  case VertexLayout2::Float32:
+  case VertexLayout::Float32:
     return "Float32";
   default:
     sequoia_unreachable("invalid type");
   }
 }
 
-std::string VertexLayout2::toString() const {
+std::string VertexLayout::toString() const {
   std::stringstream ss;
   ss << "VertexLayout[\n";
 

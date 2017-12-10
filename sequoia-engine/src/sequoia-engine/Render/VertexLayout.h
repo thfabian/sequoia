@@ -27,8 +27,8 @@ namespace render {
 
 /// @brief Layout description of vertices
 /// @ingroup render
-struct SEQUOIA_API VertexLayout2 {
-  constexpr VertexLayout2() = default;
+struct SEQUOIA_API VertexLayout {
+  constexpr VertexLayout() = default;
 
   /// @brief Type identifier
   enum TypeID : std::uint8_t {
@@ -78,17 +78,17 @@ struct SEQUOIA_API VertexLayout2 {
 
 namespace internal {
 
-template <VertexLayout2::TypeID ID>
+template <VertexLayout::TypeID ID>
 struct InvalidTypeIDToType {
   using type = void;
 };
 
 template <class T>
 struct InvalidTypeToTypeID {
-  static constexpr VertexLayout2::TypeID value = VertexLayout2::Invalid;
+  static constexpr VertexLayout::TypeID value = VertexLayout::Invalid;
 };
 
-template <VertexLayout2::TypeID ID>
+template <VertexLayout::TypeID ID>
 struct TypeIDToType {
   using type = typename InvalidTypeIDToType<ID>::type;
   static_assert(!std::is_same<void, type>::value, "invalid VertexLayout::TypeID");
@@ -96,18 +96,18 @@ struct TypeIDToType {
 
 template <class T>
 struct TypeToTypeID {
-  static constexpr VertexLayout2::TypeID value = InvalidTypeToTypeID<T>::value;
-  static_assert(value != VertexLayout2::Invalid, "invalid type (no match in VertexLayout::TypeID)");
+  static constexpr VertexLayout::TypeID value = InvalidTypeToTypeID<T>::value;
+  static_assert(value != VertexLayout::Invalid, "invalid type (no match in VertexLayout::TypeID)");
 };
 
 #define VERTEX_LAYOUT_TYPE(Type, Name)                                                             \
   template <>                                                                                      \
-  struct TypeIDToType<VertexLayout2::Name> {                                                       \
+  struct TypeIDToType<VertexLayout::Name> {                                                        \
     using type = Type;                                                                             \
   };                                                                                               \
   template <>                                                                                      \
   struct TypeToTypeID<Type> {                                                                      \
-    static constexpr VertexLayout2::TypeID value = VertexLayout2::Name;                            \
+    static constexpr VertexLayout::TypeID value = VertexLayout::Name;                              \
   };
 #include "sequoia-engine/Render/VertexLayout.inc"
 #undef VERTEX_LAYOUT_TYPE

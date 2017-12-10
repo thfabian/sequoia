@@ -27,7 +27,7 @@ std::string VertexAdapter::toString() const {
   std::stringstream ss;
 
   ss << "VertexAdapter[\n";
-  auto attributeToString = [&ss](const char* name, const VertexLayout2::Attribute& attrib,
+  auto attributeToString = [&ss](const char* name, const VertexLayout::Attribute& attrib,
                                  const auto& data) {
     ss << "  " << name << " = [";
     for(int i = 0; i < attrib.NumElements; ++i)

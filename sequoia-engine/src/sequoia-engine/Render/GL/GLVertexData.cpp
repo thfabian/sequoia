@@ -29,24 +29,24 @@ namespace render {
 
 namespace {
 
-template <VertexLayout2::TypeID ID>
+template <VertexLayout::TypeID ID>
 struct InvalidTypeIDToGLEnum {
   static constexpr GLenum value = GL_INVALID_ENUM;
 };
 
-template <VertexLayout2::TypeID ID>
+template <VertexLayout::TypeID ID>
 struct TypeIDToGLEnum {
   static constexpr GLenum value = InvalidTypeIDToGLEnum<ID>::value;
   static_assert(value != GL_INVALID_ENUM, "invalid VertexLayout::TypeID");
 };
 
 template <>
-struct TypeIDToGLEnum<VertexLayout2::UInt8> {
+struct TypeIDToGLEnum<VertexLayout::UInt8> {
   static constexpr GLenum value = GL_UNSIGNED_BYTE;
 };
 
 template <>
-struct TypeIDToGLEnum<VertexLayout2::Float32> {
+struct TypeIDToGLEnum<VertexLayout::Float32> {
   static constexpr GLenum value = GL_FLOAT;
 };
 
@@ -62,11 +62,11 @@ static GLenum getGLDrawMode(VertexData::DrawModeKind mode) {
   }
 }
 
-GLenum GLVertexData::getGLType(VertexLayout2::TypeID type) {
+GLenum GLVertexData::getGLType(VertexLayout::TypeID type) {
   switch(type) {
 #define VERTEX_LAYOUT_TYPE(Type, Name)                                                             \
-  case VertexLayout2::Name:                                                                        \
-    return TypeIDToGLEnum<VertexLayout2::Name>::value;
+  case VertexLayout::Name:                                                                         \
+    return TypeIDToGLEnum<VertexLayout::Name>::value;
 #include "sequoia-engine/Render/VertexLayout.inc"
 #undef VERTEX_LAYOUT_TYPE
   default:
@@ -82,7 +82,7 @@ GLVertexData::GLVertexData(const VertexDataParameter& param)
   SEQUOIA_ASSERT_MSG(param.NumVertexBuffers <= 1 || param.UseVertexShadowBuffer,
                      "multiple vertex buffers require shadow buffering");
 
-  const VertexLayout2& layout = param.Layout;
+  const VertexLayout& layout = param.Layout;
 
   // Generate VAO, VBO and VEO
   glGenVertexArrays(1, &vaoID_);
@@ -99,21 +99,21 @@ GLVertexData::GLVertexData(const VertexDataParameter& param)
                           getGLType(layout.Position.Type), layout.Position.Normalize, layout.SizeOf,
                           reinterpret_cast<void*>(layout.Position.Offset));
   }
-  
+
   if(layout.hasNormal()) {
     glEnableVertexAttribArray(GLVertexAttribute::Normal);
     glVertexAttribPointer(GLVertexAttribute::Normal, layout.Normal.NumElements,
                           getGLType(layout.Normal.Type), layout.Normal.Normalize, layout.SizeOf,
                           reinterpret_cast<void*>(layout.Normal.Offset));
   }
-  
+
   if(layout.hasTexCoord()) {
     glEnableVertexAttribArray(GLVertexAttribute::TexCoord);
     glVertexAttribPointer(GLVertexAttribute::TexCoord, layout.TexCoord.NumElements,
                           getGLType(layout.TexCoord.Type), layout.TexCoord.Normalize, layout.SizeOf,
                           reinterpret_cast<void*>(layout.TexCoord.Offset));
   }
-  
+
   if(layout.hasColor()) {
     glEnableVertexAttribArray(GLVertexAttribute::Color);
     glVertexAttribPointer(GLVertexAttribute::Color, layout.Color.NumElements,

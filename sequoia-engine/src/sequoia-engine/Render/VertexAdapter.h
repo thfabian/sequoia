@@ -53,7 +53,7 @@ inline constexpr std::size_t computeMaxVertexSize() {
 class SEQUOIA_API VertexAdapter {
 public:
   /// @brief Initialize the adapter by copying the data of `vertex`
-  template <class T, class = std::enable_if_t<!std::is_same<T, VertexLayout2>::type>>
+  template <class T, class = std::enable_if_t<!std::is_same<T, VertexLayout>::type>>
   VertexAdapter(const T& vertex) : layout_(vertex.getLayout()) {
     copyFrom(&vertex);
   }
@@ -61,7 +61,7 @@ public:
   /// @brief Allocate memory for a vertex with the given `layout`
   ///
   /// To fill the adapter with an existing vertex pointer, use `VertexAdapter::copyFrom()`.
-  VertexAdapter(VertexLayout2 layout) : layout_(std::move(layout)) { clear(); }
+  VertexAdapter(VertexLayout layout) : layout_(std::move(layout)) { clear(); }
 
   /// @brief Set `data` as the new attribute
   ///
@@ -160,7 +160,7 @@ public:
   void clear() noexcept { vertexData_.fill(0); }
 
   /// @brief Get the vertex data layout
-  const VertexLayout2& getLayout() const noexcept { return layout_; }
+  const VertexLayout& getLayout() const noexcept { return layout_; }
 
   /// @brief Check if `Position` attribute is available
   bool hasPosition() const { return layout_.hasPosition(); }
@@ -180,7 +180,7 @@ public:
 private:
   /// @brief Set the `attribute` to be equal to the array `data` of size `numElements`
   template <class T>
-  inline void setAttribute(const VertexLayout2::Attribute& attribute, const T* data,
+  inline void setAttribute(const VertexLayout::Attribute& attribute, const T* data,
                            const int numElements) noexcept {
     if(attribute.NumElements == 0)
       return;
@@ -191,12 +191,12 @@ private:
     switch(attribute.Type) {
 
 #define VERTEX_LAYOUT_TYPE(Type, Name)                                                             \
-  case VertexLayout2::Name:                                                                        \
-    setArray<VertexLayout2::Name>(vertexData, vertexNumElements, data, numElements);               \
+  case VertexLayout::Name:                                                                         \
+    setArray<VertexLayout::Name>(vertexData, vertexNumElements, data, numElements);                \
     break;
 #include "sequoia-engine/Render/VertexLayout.inc"
 #undef VERTEX_LAYOUT_TYPE
-    case VertexLayout2::Invalid:
+    case VertexLayout::Invalid:
     default:
       sequoia_unreachable("invalid type");
     }
@@ -204,7 +204,7 @@ private:
 
   /// @brief Interpret `vertexNumElements` starting at `vertexData` as of type `TypeID` and set it
   /// to be equal to the array `data` of size `numElements`
-  template <VertexLayout2::TypeID TypeID, class DataType>
+  template <VertexLayout::TypeID TypeID, class DataType>
   inline void setArray(Byte* vertexData, const int vertexNumElements, const DataType* data,
                        const int numElements) noexcept {
     using VertexDataType = typename internal::TypeIDToType<TypeID>::type;
@@ -233,7 +233,7 @@ private:
 
   /// @brief Copy the the `attribute` to the array `data` of size `numElements`
   template <class T>
-  inline void getAttribute(const VertexLayout2::Attribute& attribute, T* data,
+  inline void getAttribute(const VertexLayout::Attribute& attribute, T* data,
                            const int numElements) const noexcept {
     if(attribute.NumElements == 0)
       return;
@@ -243,12 +243,12 @@ private:
 
     switch(attribute.Type) {
 #define VERTEX_LAYOUT_TYPE(Type, Name)                                                             \
-  case VertexLayout2::Name:                                                                        \
-    getArray<VertexLayout2::Name>(vertexData, vertexNumElements, data, numElements);               \
+  case VertexLayout::Name:                                                                         \
+    getArray<VertexLayout::Name>(vertexData, vertexNumElements, data, numElements);                \
     break;
 #include "sequoia-engine/Render/VertexLayout.inc"
 #undef VERTEX_LAYOUT_TYPE
-    case VertexLayout2::Invalid:
+    case VertexLayout::Invalid:
     default:
       sequoia_unreachable("invalid type");
     }
@@ -256,7 +256,7 @@ private:
 
   /// @brief Interpret `vertexNumElements` starting at `vertexData` as of type `TypeID` and copy it
   /// to the array `data` of size `numElements`
-  template <VertexLayout2::TypeID TypeID, class DataType>
+  template <VertexLayout::TypeID TypeID, class DataType>
   inline static void getArray(const Byte* vertexData, const int vertexNumElements, DataType* data,
                               const int numElements) noexcept {
     using VertexDataType = typename internal::TypeIDToType<TypeID>::type;
@@ -274,7 +274,7 @@ private:
   }
 
 private:
-  VertexLayout2 layout_; ///< Layout description of the vertex
+  VertexLayout layout_; ///< Layout description of the vertex
   std::array<Byte, internal::computeMaxVertexSize()> vertexData_; ///< Vertex data
 };
 

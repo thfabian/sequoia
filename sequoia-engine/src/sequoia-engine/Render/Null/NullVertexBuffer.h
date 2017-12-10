@@ -32,7 +32,7 @@ class SEQUOIA_API NullVertexBuffer final : public VertexBuffer {
   std::unique_ptr<HostBuffer> buffer_; ///< Mock data
 
 public:
-  NullVertexBuffer(const VertexLayout2& layout, int numBuffers);
+  NullVertexBuffer(const VertexLayout& layout, int numBuffers);
 
   /// @brief Free all memory
   ~NullVertexBuffer();

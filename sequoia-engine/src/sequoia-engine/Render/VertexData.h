@@ -46,7 +46,7 @@ public:
   DrawModeKind getDrawMode() const noexcept { return drawMode_; }
 
   /// @brief Get the layout of the vertices
-  const VertexLayout2& getLayout() const noexcept { return getVertexBuffer()->getLayout(); }
+  const VertexLayout& getLayout() const noexcept { return getVertexBuffer()->getLayout(); }
 
   /// @brief Get the axis aligned bounding box
   const math::AxisAlignedBox& getAxisAlignedBox() const noexcept {
@@ -134,7 +134,7 @@ struct VertexDataParameter {
   VertexData::DrawModeKind DrawMode;
 
   /// Layout of the vertices
-  VertexLayout2 Layout;
+  VertexLayout Layout;
 
   /// Number of vertices to allocate
   std::size_t NumVertices;
@@ -157,7 +157,7 @@ struct VertexDataParameter {
   /// Type of indices
   IndexBuffer::IndexType IndexType = IndexBuffer::IT_UInt32;
 
-  VertexDataParameter(VertexData::DrawModeKind drawMode, VertexLayout2 layout,
+  VertexDataParameter(VertexData::DrawModeKind drawMode, VertexLayout layout,
                       std::size_t numVertices, std::size_t numIndices,
                       Buffer::UsageHint vertexBufferUsageHint)
       : DrawMode(drawMode), Layout(std::move(layout)), NumVertices(numVertices),

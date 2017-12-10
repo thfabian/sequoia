@@ -20,7 +20,7 @@ namespace sequoia {
 
 namespace render {
 
-NullVertexBuffer::NullVertexBuffer(const VertexLayout2& layout, int numBuffers)
+NullVertexBuffer::NullVertexBuffer(const VertexLayout& layout, int numBuffers)
     : VertexBuffer(BK_NullVertexBuffer, layout) {
   buffer_ = std::make_unique<HostBuffer>();
 }

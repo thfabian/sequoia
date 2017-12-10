@@ -62,7 +62,7 @@ TYPED_TEST(GLVertexDataTest, Allocation) {
 
 TYPED_TEST(GLVertexDataTest, VertexAttributes) {
   std::shared_ptr<GLVertexData> gldata = makeVertexData<TypeParam>(8, 8);
-  const VertexLayout2& layout = gldata->getVertexBuffer()->getLayout();
+  const VertexLayout& layout = gldata->getVertexBuffer()->getLayout();
 
   gldata->bindForModify();
 
@@ -213,7 +213,7 @@ TYPED_TEST(GLVertexDataTest, VertexAttributes) {
 static void writeVertex(VertexBuffer* buffer) {
   BufferGuard guard(buffer, Buffer::LO_Discard);
 
-  const VertexLayout2& layout = buffer->getLayout();
+  const VertexLayout& layout = buffer->getLayout();
   const std::size_t numVertices = buffer->getNumVertices();
 
   VertexAdapter adapter(layout);
@@ -235,7 +235,7 @@ static void writeVertex(VertexBuffer* buffer) {
 static void readVertex(VertexBuffer* buffer) {
   BufferGuard guard(buffer, Buffer::LO_ReadOnly);
 
-  const VertexLayout2& layout = buffer->getLayout();
+  const VertexLayout& layout = buffer->getLayout();
   const std::size_t numVertices = buffer->getNumVertices();
 
   VertexAdapter adapter(layout);

@@ -43,7 +43,7 @@ class RenderCommand;
 class UniformVariable;
 struct RenderState;
 struct TextureParameter;
-struct VertexLayout2;
+struct VertexLayout;
 
 } // namespace render
 

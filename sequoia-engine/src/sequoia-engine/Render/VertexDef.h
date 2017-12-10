@@ -138,8 +138,8 @@
   struct Name {                                                                                    \
     SEQUOIA_PP_VERTEX_GENERATE_MEMBERS(Attributes)                                                 \
                                                                                                    \
-    constexpr static VertexLayout2 getLayout() noexcept {                                          \
-      VertexLayout2 layout;                                                                        \
+    constexpr static VertexLayout getLayout() noexcept {                                           \
+      VertexLayout layout;                                                                         \
       SEQUOIA_PP_VERTEX_GENERATE_LAYOUTS(Attributes, Name)                                         \
       layout.SizeOf = sizeof(Name);                                                                \
       layout.VertexID = static_cast<decltype(layout.VertexID)>(VertexID::Name);                    \

@@ -21,7 +21,7 @@ namespace sequoia {
 
 namespace render {
 
-GLVertexBuffer::GLVertexBuffer(const VertexLayout2& layout, int numBuffers)
+GLVertexBuffer::GLVertexBuffer(const VertexLayout& layout, int numBuffers)
     : VertexBuffer(BK_GLVertexBuffer, layout), glBuffer_(GL_ARRAY_BUFFER, numBuffers) {}
 
 GLVertexBuffer::~GLVertexBuffer() {}

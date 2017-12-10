@@ -64,7 +64,7 @@ public:
   unsigned int getVAOID() const noexcept { return vaoID_; }
 
   /// @brief Get the corresponding enum of VertexLayout type
-  static GLenum getGLType(VertexLayout2::TypeID type);
+  static GLenum getGLType(VertexLayout::TypeID type);
 
   SEQUOIA_GL_OBJECT(VertexData)
 

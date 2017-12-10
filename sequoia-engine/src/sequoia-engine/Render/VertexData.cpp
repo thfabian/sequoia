@@ -64,7 +64,7 @@ void VertexData::dump() const {
     Byte* data = static_cast<Byte*>(guard.get());
 
     const std::size_t numVertices = getNumVertices();
-    const VertexLayout2& layout = getLayout();
+    const VertexLayout& layout = getLayout();
     VertexAdapter adapter(layout);
 
     for(std::size_t i = 0; i < numVertices; ++i, data += layout.SizeOf) {
