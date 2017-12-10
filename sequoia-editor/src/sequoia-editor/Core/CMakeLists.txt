@@ -18,6 +18,8 @@ sequoia_configure_file(Config.h.cmake)
 sequoia_add_library(
   NAME SequoiaEditorCore
   SOURCES Config.h
-          Test.cpp
+          Export.h
+          QtErrorHandler.h
+          QtErrorHandler.cpp
   OBJECT
 )

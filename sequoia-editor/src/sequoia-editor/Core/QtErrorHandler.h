@@ -13,41 +13,40 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_ENGINE_CORE_PRETTYSTACKTRACE_H
-#define SEQUOIA_ENGINE_CORE_PRETTYSTACKTRACE_H
+#ifndef SEQUOIA_EDITOR_CORE_QTERRORHANDLER_H
+#define SEQUOIA_EDITOR_CORE_QTERRORHANDLER_H
 
-#include "sequoia-engine/Core/Export.h"
+#include "sequoia-editor/Core/Export.h"
 #include "sequoia-engine/Core/Singleton.h"
-#include <memory>
+#include <string>
 
-namespace sequoia {
+namespace sequoia_editor {
 
 namespace core {
 
-/// @brief PrettyStackTrace is used to make crashes give more contextual information about what the
-/// program was doing when it crashed
-///
-/// The stack trace may be incomplete if the program was compiled without debug symbols. To disable
-/// the stack trace mechanism define `NDEBUG` or `SEQUOIA_DISABLE_ASSERTS`.
-///
-/// @note
-/// Stack traces are only supported on Linux, it will compile fine under other platforms but will
-/// not do anything.
-///
+/// @brief Global error handler
 /// @ingroup core
-class SEQUOIA_API PrettyStackTrace : public Singleton<PrettyStackTrace> {
-  class Impl;
-  Impl* impl_;
-
+class SEQUOIA_EDITOR_API QtErrorHandler : public sequoia::Singleton<QtErrorHandler> {
 public:
-  PrettyStackTrace();
-  ~PrettyStackTrace();
+  /// @brief Install the Qt error handler
+  QtErrorHandler();
+
+  /// @brief Restore the default error handlers
+  ~QtErrorHandler();
+
+  /// @brief Issue a fatal, unrecoverable error in a separate window
+  ///
+  /// @param message  Message to display
+  /// @param crash    Indicate whether this is a crash (e.g from an assert) or an error (a crash
+  ///                 will call `std::abort` while an error will call `std::exit(1)`).
+  void fatal(std::string message, bool crash = false);
+  void fatal(std::wstring message, bool crash = false);
 };
 
 } // namespace core
 
-using PrettyStackTrace = core::PrettyStackTrace;
+using QtErrorHandler = core::QtErrorHandler;
 
-} // namespace sequoia
+} // namespace sequoia_editor
 
 #endif

@@ -16,13 +16,10 @@
 #ifndef SEQUOIA_ENGINE_CORE_EXPORT_H
 #define SEQUOIA_ENGINE_CORE_EXPORT_H
 
-#ifdef SEQUOIA_DOXYGEN_INVOKED
+#ifdef SEQUOIA_ENGINE_DOXYGEN_INVOKED
 
 /// @defgroup core Core
 /// @brief Core infrastructure of Sequoia.
-
-/// @defgroup driver Driver
-/// @brief Driver infrastructure of Sequoia.
 
 /// @defgroup game Game
 /// @brief Main game infrastructure of Sequoia.
@@ -48,10 +45,6 @@ namespace core {}
 /// @brief Platform specific implementations and typedefs
 namespace platform {}
 
-/// @namespace driver
-/// @brief Namespace containing the driver library.
-namespace driver {}
-
 /// @namespace game
 /// @brief Namespace containing the driver library.
 namespace game {}
@@ -70,7 +63,7 @@ namespace unittest {}
 
 #include "sequoia-engine/Core/Compiler.h"
 
-#if defined(SEQUOIA_SHARED_LIBRARIES)
+#if defined(SEQUOIA_ENGINE_SHARED_LIBRARIES)
 #define SEQUOIA_API SEQUOIA_API_EXPORT
 #else
 #define SEQUOIA_API

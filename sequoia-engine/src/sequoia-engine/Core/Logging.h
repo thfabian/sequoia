@@ -174,6 +174,7 @@ public:
 } // namespace core
 
 using Log = core::Log;
+using Logger = core::Logger;
 
 } // namespace sequoia
 

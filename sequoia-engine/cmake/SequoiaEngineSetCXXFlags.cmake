@@ -80,6 +80,11 @@ endmacro()
 # Set C++ flags.
 #
 macro(sequoia_engine_set_cxx_flags)
+  # Add definitions to build shared libs
+  if(BUILD_SHARED_LIBS)
+    add_definitions(-DSEQUOIA_ENGINE_SHARED_LIBRARIES)
+  endif()
+
   if(NOT(SEQUOIA_ENGINE_ASSERTS))
     add_definitions(-DNDEBUG)
     add_definitions(-DSEQUOIA_DISABLE_ASSERTS)

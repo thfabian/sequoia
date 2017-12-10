@@ -60,6 +60,8 @@ sequoia_get_platform_info()
 sequoia_get_architecture_info()
 
 include(SequoiaEditorOptions)
+include(SequoiaEditorDefinitions)
+include(SequoiaEditorSetCXXFlags)
 
 # Prevent in source builds
 sequoia_check_in_source_build()
@@ -85,12 +87,16 @@ sequoia_add_target_clang_format(
   EXTENSION ".h;.cpp"
 )
 
+# Set editor specific C++ flags
+sequoia_editor_set_cxx_flags()
+
 # Output summary of the configuration
 macro(make_config_string FIRST SECOND)
   sequoia_make_string_pair(${FIRST} ": ${SECOND}" 25 out)
   list(APPEND config_info ${out})
 endmacro()
 
+make_config_string("SequoiaEditor version" ${SEQUOIA_EDITOR_FULL_VERSION})
 make_config_string("Platform" ${SEQUOIA_PLATFORM_STRING})
 make_config_string("Architecture" ${SEQUOIA_ARCHITECTURE_STRING})
 make_config_string("Compiler" ${SEQUOIA_COMPILER_STRING})
