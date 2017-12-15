@@ -13,12 +13,19 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include <iostream>
+// clang-format off
 
-namespace sequoia_editor {
+#if !defined(VERTEX_LAYOUT_TYPE)
+#error "VERTEX_LAYOUT_TYPE not defined"
+#endif
 
-namespace core {
+// VERTEX_LAYOUT_TYPE(Type, Name)
+//
+//  - Type  = C++ type
+//  - Name  = Name of the type
+//
+ 
+VERTEX_LAYOUT_TYPE(std::uint8_t, UInt8)
+VERTEX_LAYOUT_TYPE(float, Float32)
 
-} // namespace core
-
-} // namespace sequoia_editor
+// clang-format on

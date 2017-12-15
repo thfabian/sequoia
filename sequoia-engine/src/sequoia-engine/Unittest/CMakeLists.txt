@@ -40,7 +40,5 @@ sequoia_add_library(
           TestFile.cpp
 
           ${GL_SOURCE}
-          
-  DEPENDS SequoiaEngineRenderObjects
   ARCHIVE
 )

@@ -51,14 +51,14 @@ public:
   /// @threadsafe This function is thread-safe
   static std::shared_ptr<Image> load(const std::shared_ptr<File>& file);
 
-  /// @brief Allocate an empty image of size `width x height`
+  /// @brief Allocate an empty image of size `width x height x numChannels`
   ///
-  /// @param width    Height of the allocated image
-  /// @param height   Wdith of the allocated image
-  /// @param format   Color format of the allocated image
+  /// @param width        Height of the allocated image
+  /// @param height       Wdith of the allocated image
+  /// @param numChannels  Number of color channels
   ///
   /// @threadsafe This function is thread-safe
-  static std::shared_ptr<Image> allocate(int width, int height, ColorFormat format);
+  static std::shared_ptr<Image> allocate(int width, int height, int numChannels);
 
   Image(ImageKind kind, const std::shared_ptr<File>& file);
   virtual ~Image();
@@ -116,15 +116,15 @@ protected:
   /// Image data
   std::unique_ptr<cv::Mat> image_;
 
-  /// Format of the color
-  ColorFormat colorFormat_;
+  /// Number of color channels
+  int numChannels_;
 
 public:
   /// @brief Load image from `file`
   RegularImage(const std::shared_ptr<File>& file);
 
-  /// @brief Allocate image of size `width x height`
-  RegularImage(int width, int height, ColorFormat format);
+  /// @brief Allocate image of size `width x height x numChannels`
+  RegularImage(int width, int height, int numChannels);
 
   /// @brief Deallocate image
   virtual ~RegularImage();
@@ -139,7 +139,7 @@ public:
   Byte* getPixelData();
 
   /// @brief Get number of interleaved 8-bit components of each pixel
-  inline int getNumChannels() const { return colorFormatGetNumChannels(colorFormat_); }
+  inline int getNumChannels() const { return numChannels_; }
 
   /// @brief Get a copy of the pixel at position `(i, j)`
   ///
@@ -156,9 +156,6 @@ public:
   ///
   /// @note This function should be merely used for debugging purposes.
   Color at(int i, int j) const;
-
-  /// @brief Get the color format
-  inline ColorFormat getColorFormat() const { return colorFormat_; }
 
   /// @copydoc Image::getHash
   virtual std::size_t hash() const noexcept override;

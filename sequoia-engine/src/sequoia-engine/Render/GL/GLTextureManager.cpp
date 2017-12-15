@@ -13,11 +13,11 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia-engine/Render/GL/GL.h"
 #include "sequoia-engine/Core/Casting.h"
 #include "sequoia-engine/Core/Logging.h"
 #include "sequoia-engine/Core/Unreachable.h"
 #include "sequoia-engine/Render/Exception.h"
+#include "sequoia-engine/Render/GL/GL.h"
 #include "sequoia-engine/Render/GL/GLRenderer.h"
 #include "sequoia-engine/Render/GL/GLStateCacheManager.h"
 #include "sequoia-engine/Render/GL/GLTextureManager.h"
@@ -42,21 +42,6 @@ static GLenum getGLTarget(TextureParameter::TextureKind kind) {
     return GL_TEXTURE_CUBE_MAP;
   default:
     sequoia_unreachable("invalid TextureParameter::TextureKind");
-  }
-}
-
-static GLenum getGLColorFormat(core::ColorFormat format) {
-  switch(format) {
-  case core::ColorFormat::RGB:
-    return GL_RGB;
-  case core::ColorFormat::BGR:
-    return GL_BGR;
-  case core::ColorFormat::RGBA:
-    return GL_RGBA;
-  case core::ColorFormat::BGRA:
-    return GL_BGRA;
-  default:
-    sequoia_unreachable("invalid format");
   }
 }
 
@@ -117,10 +102,13 @@ static void uploadRegularImage(GLenum target, const RegularImage* image) {
   format.set(GL_UNPACK_ROW_LENGTH, imageFlipped.step[0] / imageFlipped.elemSize());
   manager->setPixelFormat(format);
 
+  // OpenCV images are BGR(A)
+  GLenum colorFormat = image->getNumChannels() == 4 ? GL_BGRA : GL_BGR;
+
   switch(target) {
   case GL_TEXTURE_2D:
-    glTexImage2D(target, 0, GL_RGBA, imageFlipped.cols, imageFlipped.rows, 0,
-                 getGLColorFormat(image->getColorFormat()), GL_UNSIGNED_BYTE, imageFlipped.ptr());
+    glTexImage2D(target, 0, GL_RGBA, imageFlipped.cols, imageFlipped.rows, 0, colorFormat,
+                 GL_UNSIGNED_BYTE, imageFlipped.ptr());
     break;
   case GL_TEXTURE_1D:
   case GL_TEXTURE_3D:

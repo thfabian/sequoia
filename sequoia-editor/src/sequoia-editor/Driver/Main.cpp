@@ -13,14 +13,31 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
+#include "sequoia-editor/Core/Config.h"
+#include "sequoia-editor/Core/QtErrorHandler.h"
+#include "sequoia-engine/Core/Logging.h"
+#include "sequoia-engine/Core/PrettyStackTrace.h"
 #include <QApplication>
-#include <QPushButton>
+#include <memory>
 
 int main(int argc, char* argv[]) {
   QApplication app(argc, argv);
+  QCoreApplication::setOrganizationName("Sequoia");
+  QCoreApplication::setApplicationName("Sequoia Editor");
+  QCoreApplication::setApplicationVersion(SEQUOIA_EDITOR_FULL_VERSION_STRING);
 
-  QPushButton button("Hello world !");
-  button.show();
+  // Create engine singletons
+  sequoia::PrettyStackTrace trace;
+  sequoia::Logger logger;
+
+  // Create editor singletons
+  sequoia_editor::QtErrorHandler handler;
+
+  // TODO: this doesn't work as it doesn't show the GUI, maybe we need to call this inside the show
+  // QtMainWindow?
+  handler.fatal("fuck!");
+
+  // Create mainwindow
 
   return app.exec();
 }

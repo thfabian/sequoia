@@ -40,9 +40,9 @@ public:
   /// @param identifier     Type name of the Vertex
   /// @throws RenderSystemException   unknown vertex identifier
   static VertexAdapter create(const std::string& identifier) {
-    BOOST_PP_SEQ_FOR_EACH(SEQUOIA_PP_VF_MAKE_LAYOUT, Data, SERUOIA_VERTICES);
+    BOOST_PP_SEQ_FOR_EACH(SEQUOIA_PP_VF_MAKE_LAYOUT, Data, SEQUOIA_VERTICES);
     SEQUOIA_THROW(RenderSystemException, "unknown vertex identifier '{}'", identifier);
-    return VertexAdapter(VertexLayout2{});
+    return VertexAdapter(VertexLayout{});
   }
 };
 

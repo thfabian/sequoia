@@ -57,8 +57,8 @@ Image::Image(Image::ImageKind kind, const std::shared_ptr<File>& file) : kind_(k
 //    RegularImage
 //===------------------------------------------------------------------------------------------===//
 
-RegularImage::RegularImage(int width, int height, ColorFormat format)
-    : Image(IK_RegularImage, nullptr) {}
+RegularImage::RegularImage(int width, int height, int numChannels)
+    : Image(IK_RegularImage, nullptr), numChannels_(numChannels) {}
 
 RegularImage::RegularImage(const std::shared_ptr<File>& file) : Image(IK_RegularImage, file) {
   try {
@@ -72,17 +72,7 @@ RegularImage::RegularImage(const std::shared_ptr<File>& file) : Image(IK_Regular
   if(image_->empty())
     SEQUOIA_THROW(core::Exception, "failed to load image from file: {}", file_->getPath());
 
-  // OpenCV images are *always* BGR(A)
-  switch(image_->channels()) {
-  case 3:
-    colorFormat_ = ColorFormat::BGR;
-    break;
-  case 4:
-    colorFormat_ = ColorFormat::BGRA;
-    break;
-  default:
-    sequoia_unreachable("invalid color format");
-  }
+  numChannels_ = image_->channels();
 }
 
 RegularImage::~RegularImage() {}
@@ -92,7 +82,18 @@ const Byte* RegularImage::getPixelData() const { return image_->ptr(); }
 Byte* RegularImage::getPixelData() { return image_->ptr(); }
 
 Color RegularImage::at(int i, int j) const {
-  return Color(colorFormat_, image_->ptr() + image_->channels() * (i * image_->rows + j));
+  Color color;
+
+  // OpenCV uses BGR(A)
+  const Byte* colorPtr = image_->ptr() + image_->channels() * (i * image_->rows + j);
+  color.b = *(colorPtr + 0);
+  color.g = *(colorPtr + 1);
+  color.r = *(colorPtr + 2);
+
+  if(numChannels_ > 3)
+    color.a = *(colorPtr + 3);
+
+  return color;
 }
 
 int RegularImage::getWidth() const noexcept { return image_->cols; }

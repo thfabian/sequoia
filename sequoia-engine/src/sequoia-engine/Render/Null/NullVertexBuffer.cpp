@@ -13,14 +13,14 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia-engine/Render/Null/NullVertexBuffer.h"
 #include "sequoia-engine/Core/Format.h"
+#include "sequoia-engine/Render/Null/NullVertexBuffer.h"
 
 namespace sequoia {
 
 namespace render {
 
-NullVertexBuffer::NullVertexBuffer(const VertexLayout* layout, int numBuffers)
+NullVertexBuffer::NullVertexBuffer(const VertexLayout& layout, int numBuffers)
     : VertexBuffer(BK_NullVertexBuffer, layout) {
   buffer_ = std::make_unique<HostBuffer>();
 }

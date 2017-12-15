@@ -82,7 +82,7 @@ sequoia_check_compiler(
 # Set C++ standard
 sequoia_set_cxx_standard(c++14)
 
-# Set C++ flags
+# Set engine specific C++ flags
 sequoia_engine_set_cxx_flags()
 
 # Custom tragets

@@ -17,6 +17,7 @@
 #define SEQUOIA_ENGINE_RENDER_BUFFER_H
 
 #include "sequoia-engine/Core/Assert.h"
+#include "sequoia-engine/Core/Byte.h"
 #include "sequoia-engine/Core/Export.h"
 #include "sequoia-engine/Core/NonCopyable.h"
 #include <memory>
@@ -261,7 +262,7 @@ private:
   BufferKind kind_;
 };
 
-/// @brief Locks the `buffer` on construction and unlocks it again on destruction
+/// @brief Locks the `buffer` on construction and unlocks it again on destruction (RAII)
 ///
 /// Instead of using
 ///
@@ -298,6 +299,15 @@ public:
 
   /// @brief Get the currently locked data pointer
   void* get() noexcept { return buffer_->get(); }
+
+  /// @brief Get the currently locked data pointer as pointer to a Byte
+  Byte* getAsByte() noexcept { return static_cast<Byte*>(buffer_->get()); }
+
+  /// @brief Get the currently locked data pointer interpreted as type `T`
+  template <class T>
+  T* getAs() noexcept {
+    return static_cast<T*>(buffer_->get());
+  }
 
   /// @brief Unlock the buffer
   ~BufferGuard() { buffer_->unlock(); }

@@ -13,27 +13,35 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_ENGINE_MATH_EXPORT_H
-#define SEQUOIA_ENGINE_MATH_EXPORT_H
+#ifndef SEQUOIA_EDITOR_CORE_EXPORT_H
+#define SEQUOIA_EDITOR_CORE_EXPORT_H
 
-#ifdef SEQUOIA_DOXYGEN_INVOKED
-/// @defgroup math Math
-/// @brief Math and linear algebra utilities.
+#ifdef SEQUOIA_EDITOR_DOXYGEN_INVOKED
 
-namespace sequoia {
+/// @defgroup core Core
+/// @brief Core and utility functionality.
 
-/// @namespace math
-/// @brief Namespace of the math library.
-namespace math {}
-}
+/// @defgroup driver Driver
+/// @brief Driver infrastructure.
+
+/// @namespace sequoia
+/// @brief Namespace of the sequoia-editor project.
+namespace sequoia_editor {
+
+/// @namespace core
+/// @brief Namespace of the core library.
+namespace core {}
+
+} // namespace sequoia
+
 #endif
 
 #include "sequoia-engine/Core/Compiler.h"
 
-#if defined(SEQUOIA_SHARED_LIBRARIES) && defined(SequoiaMath_EXPORTS)
-#define SEQUOIA_API SEQUOIA_API_EXPORT
+#if defined(SEQUOIA_EDITOR_SHARED_LIBRARIES)
+#define SEQUOIA_EDITOR_API SEQUOIA_API_EXPORT
 #else
-#define SEQUOIA_API SEQUOIA_API_IMPORT
+#define SEQUOIA_EDITOR_API
 #endif
 
 #endif

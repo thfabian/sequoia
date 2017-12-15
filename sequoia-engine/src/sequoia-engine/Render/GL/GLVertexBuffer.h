@@ -29,7 +29,7 @@ class SEQUOIA_API GLVertexBuffer final : public VertexBuffer {
   GLBuffer glBuffer_; ///< OpenGL buffer
 
 public:
-  GLVertexBuffer(const VertexLayout* layout, int numBuffers);
+  GLVertexBuffer(const VertexLayout& layout, int numBuffers);
 
   /// @brief Free all memory
   ~GLVertexBuffer();

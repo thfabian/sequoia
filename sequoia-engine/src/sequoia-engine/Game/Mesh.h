@@ -75,28 +75,6 @@ public:
   /// @brief Get the VertexData
   render::VertexData* getVertexData() const { return data_.get(); }
 
-  /// @brief Accept a VertexVisitor to access/modify the underlying vertex data
-  /// @see render::VertexData::accept
-  void accept(render::Buffer::LockOption option, render::VertexVisitor& visitor) const {
-    data_->accept(option, visitor);
-  }
-
-  /// @brief Obtain the vertex data for writing
-  /// @see render::VertexData::writeVertex
-  template <class FunctorType>
-  void write(render::Buffer::LockOption option, FunctorType&& functor) const {
-    SEQUOIA_ASSERT_MSG(isModifiable_, "Attempting to modify read-only mesh");
-    data_->writeVertex(option, std::forward<FunctorType>(functor));
-  }
-
-  /// @brief Obtain the vertex data for reading
-  /// @see render::VertexData::readVertex
-  template <class FunctorType>
-  void read(render::Buffer::LockOption option, FunctorType&& functor) const {
-    data_->readVertex(option, std::forward<FunctorType>(functor));
-  }
-  /// @}
-
   /// @brief Get the axis aligned bounding box
   const math::AxisAlignedBox& getAxisAlignedBox() const noexcept;
 

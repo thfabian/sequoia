@@ -20,6 +20,8 @@
 #include "sequoia-engine/Game/Game.h"
 #include "sequoia-engine/Game/MeshManager.h"
 #include "sequoia-engine/Render/RenderSystem.h"
+#include "sequoia-engine/Render/VertexAdapter.h"
+#include "sequoia-engine/Core/STLExtras.h"
 #include <algorithm>
 #include <assimp/DefaultLogger.hpp>
 #include <assimp/Importer.hpp>
@@ -69,7 +71,6 @@ public:
 ///   - Rename the whole class to "ShapeManager"
 ///   - A shape contains "Mesh" and "Material" vectors.
 ///   - Implement Vritual FS to allow loading files from memory
-///   - Provide our logger to Assimp
 /// 
 
 MeshManager::MeshManager() {
@@ -87,7 +88,6 @@ MeshManager::MeshManager() {
                                              Assimp::Logger::Err);
   Assimp::DefaultLogger::get()->attachStream(new AssimpLogStream(Assimp::Logger::Debugging),
                                              Assimp::Logger::Debugging);
-
   importer_ = std::make_shared<Assimp::Importer>();
 }
 
@@ -430,7 +430,9 @@ namespace {
 //  v2------v3
 //
 static int CubeVertexDataStride = 11;
-static float CubeVertexData[] = {   0.5, 0.5, 0.5,   0, 0, 1,   0, 0, 0,   1, 1,      // v0 (front)
+using CubeVertexDataElementType = float;
+static CubeVertexDataElementType CubeVertexData[] = {   
+                                    0.5, 0.5, 0.5,   0, 0, 1,   0, 0, 0,   1, 1,      // v0 (front)
                                    -0.5, 0.5, 0.5,   0, 0, 1,   0, 0, 0,   0, 1,      // v1
                                    -0.5,-0.5, 0.5,   0, 0, 1,   0, 0, 0,   0, 0,      // v2
                                     0.5,-0.5, 0.5,   0, 0, 1,   0, 0, 0,   1, 0,      // v3
@@ -460,12 +462,13 @@ static float CubeVertexData[] = {   0.5, 0.5, 0.5,   0, 0, 1,   0, 0, 0,   1, 1,
                                    -0.5, 0.5,-0.5,   0, 0,-1,   0, 0, 0,   1, 1,      // v6
                                     0.5, 0.5,-0.5,   0, 0,-1,   0, 0, 0,   0, 1  };   // v5
 
-static unsigned int CubeIndices[]  = {   0, 1, 2,   2, 3, 0,                    // front
-                                         4, 5, 6,   6, 7, 4,                    // right
-                                         8, 9,10,  10,11, 8,                    // top
-                                        12,13,14,  14,15,12,                    // left
-                                        16,17,18,  18,19,16,                    // bottom
-                                        20,21,22,  22,23,20 };                  // back
+using CubeIndicesElementType = unsigned int;
+static CubeIndicesElementType CubeIndices[] = {0,  1,  2,  2,  3,  0,   // front
+                                               4,  5,  6,  6,  7,  4,   // right
+                                               8,  9,  10, 10, 11, 8,   // top
+                                               12, 13, 14, 14, 15, 12,  // left
+                                               16, 17, 18, 18, 19, 16,  // bottom
+                                               20, 21, 22, 22, 23, 20}; // back
 
 // clang-format on
 
@@ -502,51 +505,54 @@ std::shared_ptr<Mesh> MeshManager::createCube(const std::string& name, bool modi
     std::size_t numVertices = 24;
     std::size_t numIndices = 36;
 
-    render::VertexDataParameter vertexParam(render::VertexData::DM_Triangles,
-                                            render::Vertex3D::getLayout(), numVertices, numIndices,
-                                            usage);
+    render::VertexLayout layout = render::Vertex_posf3_norf3_texf2_colu4::getLayout();
+    render::VertexDataParameter vertexParam(render::VertexData::DM_Triangles, layout, numVertices,
+                                            numIndices, usage);
+    
     vertexParam.IndexType = render::IndexBuffer::IT_UInt32;
     vertexParam.UseVertexShadowBuffer = true;
     vertexParam.UseIndexShadowBuffer = false;
 
     vertexData = Game::getSingleton().getRenderSystem()->createVertexData(vertexParam);
-
-    vertexData->writeVertex(render::Buffer::LO_Discard, [&](render::Vertex3D* vertices) {
-      for(std::size_t i = 0; i < numVertices; ++i) {
-        render::Vertex3D& vertex = vertices[i];
-
+    
+    // Fill VertexBuffer
+    {
+      render::BufferGuard guard(vertexData->getVertexBuffer(), render::Buffer::LO_Discard);
+      Byte* vertexPtr = guard.getAsByte();
+      
+      render::VertexAdapter adapter(layout);
+      for(std::size_t i = 0; i < numVertices; ++i, vertexPtr += layout.SizeOf) {
+        adapter.clear();
+    
         // Position
-        for(int j = 0; j < 3; ++j)
-          vertex.Position[j] = CubeVertexData[i * CubeVertexDataStride + j];
-
-        // Normal
-        for(int j = 0; j < 3; ++j)
-          vertex.Normal[j] = CubeVertexData[i * CubeVertexDataStride + 3 + j];
+        adapter.setPosition(math::make_vec3(CubeVertexData + i * CubeVertexDataStride));
+        
+        // Nornal
+        adapter.setNormal(math::make_vec3(CubeVertexData + i * CubeVertexDataStride + 3));
 
         // Color
-        static_assert(std::is_integral<render::Vertex3D::ColorType>::value,
-                      "color should be integral");
-
-        constexpr auto maxRGBValue = std::numeric_limits<render::Vertex3D::ColorType>::max();
+        Color color;
         for(int j = 0; j < 3; ++j)
-          vertex.Color[j] = maxRGBValue * CubeVertexData[i * CubeVertexDataStride + 6 + j];
-        vertex.Color[3] = maxRGBValue;
-
+          color[j] = Color::Uint8Max * CubeVertexData[i * CubeVertexDataStride + 6 + j];
+        adapter.setColor(color);
+                     
         // TexCoord
-        vertex.TexCoord[0] = CubeVertexData[i * CubeVertexDataStride + 9];
-        if(param.TexCoordInvertV)
-          vertex.TexCoord[1] = 1.0f - CubeVertexData[i * CubeVertexDataStride + 10];
-        else
-          vertex.TexCoord[1] = CubeVertexData[i * CubeVertexDataStride + 10];
+        math::vec2 texCoord;
+        texCoord[0] = CubeVertexData[i * CubeVertexDataStride + 9];
+        texCoord[1] = param.TexCoordInvertV ? 1.0f - CubeVertexData[i * CubeVertexDataStride + 10]
+                                            : CubeVertexData[i * CubeVertexDataStride + 10];
+        adapter.setTexCoord(texCoord);
+    
+        adapter.copyTo(vertexPtr);
       }
-    });
-
+    }
+    
+    // Fill IndexBuffer
+    vertexData->getIndexBuffer()->write(CubeIndices, 0, sizeof(CubeIndicesElementType) * numIndices);
+    
     // Set bounding box
     vertexData->setAxisAlignedBox(
         math::AxisAlignedBox(math::vec3(-0.5, -0.5, -0.5), math::vec3(0.5, 0.5, 0.5)));
-
-    // Set indices
-    vertexData->writeIndex(CubeIndices, numIndices);
 
     // Register the data
     vertexDataMutex_.lock();
@@ -570,6 +576,8 @@ std::shared_ptr<Mesh> MeshManager::createCube(const std::string& name, bool modi
 std::shared_ptr<Mesh> MeshManager::createGrid(const std::string& name, unsigned int N,
                                               bool modifiable, const MeshParameter& param,
                                               render::Buffer::UsageHint usage) {
+  return nullptr;
+
   Log::debug("Creating grid mesh \"{}\" ...", name);
 
   std::shared_ptr<render::VertexData> vertexData = nullptr;
@@ -598,9 +606,9 @@ std::shared_ptr<Mesh> MeshManager::createGrid(const std::string& name, unsigned 
     unsigned int numVertices = N * N;
     unsigned int numIndices = 6 * (N - 1) * (N - 1);
 
-    render::VertexDataParameter vertexParam(render::VertexData::DM_Triangles,
-                                            render::Vertex3D::getLayout(), numVertices, numIndices,
-                                            usage);
+    render::VertexLayout layout = render::Vertex_posf3_norf3_texf2_colu4::getLayout();
+    render::VertexDataParameter vertexParam(render::VertexData::DM_Triangles, layout, numVertices,
+                                            numIndices, usage);
 
     vertexParam.IndexType = render::IndexBuffer::IT_UInt32;
     vertexParam.UseVertexShadowBuffer = true;
@@ -608,40 +616,45 @@ std::shared_ptr<Mesh> MeshManager::createGrid(const std::string& name, unsigned 
 
     vertexData = Game::getSingleton().getRenderSystem()->createVertexData(vertexParam);
 
-    const float dx = 1.0f / (N - 1);
-    vertexData->writeVertex(render::Buffer::LO_Discard, [&](render::Vertex3D* vertices) {
-      for(unsigned int i = 0; i < N; ++i) {
-        for(unsigned int j = 0; j < N; ++j) {
-          render::Vertex3D& vertex = vertices[i * N + j];
+    // Fill VertexBuffer
+    {
+      render::BufferGuard guard(vertexData->getVertexBuffer(), render::Buffer::LO_Discard);
+      Byte* vertexPtr = guard.getAsByte();
 
+      render::VertexAdapter adapter(layout);
+      const float dx = 1.0f / (N - 1);
+
+      for(unsigned int i = 0; i < N; ++i) {
+        for(unsigned int j = 0; j < N; ++j, vertexPtr += layout.SizeOf) {
           // Position
-          vertex.Position[0] = dx * (i - 0.5f * (N - 1));
-          vertex.Position[1] = 0.0f;
-          vertex.Position[2] = dx * (j - 0.5f * (N - 1));
+          math::vec3 pos;
+          pos.x = dx * (i - 0.5f * (N - 1));
+          pos.y = 0.0f;
+          pos.z = dx * (j - 0.5f * (N - 1));
+          adapter.setPosition(pos);
 
           // Normal
-          vertex.Normal[0] = 0;
-          vertex.Normal[1] = 1;
-          vertex.Normal[2] = 0;
+          adapter.setNormal(math::vec3(0, 1, 0));
 
           // Color
-          static_assert(std::is_integral<render::Vertex3D::ColorType>::value,
-                        "color should be integral");
-
-          constexpr auto maxRGBValue = std::numeric_limits<render::Vertex3D::ColorType>::max();
-          vertex.Color[0] = vertex.Color[1] = vertex.Color[2] = 0;
-          vertex.Color[3] = maxRGBValue;
+          adapter.setColor(Color{});
 
           // TexCoord
           float u = i;
           float v = j;
 
-          vertex.TexCoord[0] = u;
-          vertex.TexCoord[1] = param.TexCoordInvertV ? 1.0f - v : v;
+          math::vec2 texCoord;
+          texCoord.x = u;
+          texCoord.y = param.TexCoordInvertV ? 1.0f - v : v;
+          adapter.setTexCoord(texCoord);
+
+          adapter.copyTo(vertexPtr);
         }
       }
-    });
+    }
 
+    // Fill IndexBuffer
+    //
     //    0 ------ 3      1. Triangle { 1, 0, 3}
     //    |        |      2. Triangle { 4, 1, 3}
     //    |        |
@@ -649,23 +662,25 @@ std::shared_ptr<Mesh> MeshManager::createGrid(const std::string& name, unsigned 
     //
     //   index = [ 1, 0, 3, 4, 1, 3 ]
     //
-    vertexData->getIndexBuffer()->lock(render::Buffer::LO_Discard);
-    unsigned int* indices = static_cast<unsigned int*>(vertexData->getIndexBuffer()->get());
-    for(unsigned int i = 0; i < N - 1; ++i) {
-      for(unsigned int j = 0; j < N - 1; ++j) {
-        unsigned int tri = 6 * (i * (N - 1) + j);
+    {
+      render::BufferGuard guard(vertexData->getIndexBuffer(), render::Buffer::LO_Discard);
+      unsigned int* indices = guard.getAs<unsigned int>();
 
-        // We always store 2 triangles at once
-        indices[tri + 0] = i * N + j + 1;
-        indices[tri + 1] = i * N + j;
-        indices[tri + 2] = i * N + j + N;
+      for(unsigned int i = 0; i < N - 1; ++i) {
+        for(unsigned int j = 0; j < N - 1; ++j) {
+          unsigned int tri = 6 * (i * (N - 1) + j);
 
-        indices[tri + 3] = i * N + j + N + 1;
-        indices[tri + 4] = i * N + j + 1;
-        indices[tri + 5] = i * N + j + N;
+          // We always store 2 triangles at once
+          indices[tri + 0] = i * N + j + 1;
+          indices[tri + 1] = i * N + j;
+          indices[tri + 2] = i * N + j + N;
+
+          indices[tri + 3] = i * N + j + N + 1;
+          indices[tri + 4] = i * N + j + 1;
+          indices[tri + 5] = i * N + j + N;
+        }
       }
     }
-    vertexData->getIndexBuffer()->unlock();
 
     // Register the data
     vertexDataMutex_.lock();

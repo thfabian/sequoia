@@ -27,14 +27,15 @@ namespace render {
 
 /// @brief Layout description of vertices
 /// @ingroup render
-struct SEQUOIA_API VertexLayout2 {
-  constexpr VertexLayout2() = default;
+struct SEQUOIA_API VertexLayout {
+  constexpr VertexLayout() = default;
 
   /// @brief Type identifier
   enum TypeID : std::uint8_t {
     Invalid = 0,
-    UInt8,  ///< 8-bit unsigned integer
-    Float32 ///< 32-bit floating point number
+#define VERTEX_LAYOUT_TYPE(Type, Name) Name,
+#include "sequoia-engine/Render/VertexLayout.inc"
+#undef VERTEX_LAYOUT_TYPE
   };
 
   /// @brief Vertex attribute (4 Bytes)
@@ -51,12 +52,12 @@ struct SEQUOIA_API VertexLayout2 {
 
   /// @name Attribute description
   /// @{
-  std::uint8_t SizeOf = 0;   ///< Total size (in bytes) of one vertex
-  std::uint8_t VertexID = 0; ///< Identifier of the vertex `VertexID`
-  Attribute Position;        ///< Positional attribute
-  Attribute Normal;          ///< Normal attribute
-  Attribute TexCoord;        ///< Texture coordinate attribute
-  Attribute Color;           ///< Color attribute
+  std::uint8_t SizeOf = 0; ///< Total size (in bytes) of one vertex
+  std::uint8_t ID = 0;     ///< Identifier of the vertex `VertexID`
+  Attribute Position;      ///< Positional attribute
+  Attribute Normal;        ///< Normal attribute
+  Attribute TexCoord;      ///< Texture coordinate attribute
+  Attribute Color;         ///< Color attribute
   /// @}
 
   /// @brief Check if `Position` attribute is available
@@ -71,23 +72,26 @@ struct SEQUOIA_API VertexLayout2 {
   /// @brief Check if `Color` attribute is available
   bool hasColor() const { return Color.NumElements > 0; }
 
+  /// @brief Return the name of the underlying vertex
+  const char* getName() const noexcept;
+
   /// @brief Convert to string
   std::string toString() const;
 };
 
 namespace internal {
 
-template <VertexLayout2::TypeID ID>
+template <VertexLayout::TypeID ID>
 struct InvalidTypeIDToType {
   using type = void;
 };
 
 template <class T>
 struct InvalidTypeToTypeID {
-  static constexpr VertexLayout2::TypeID value = VertexLayout2::Invalid;
+  static constexpr VertexLayout::TypeID value = VertexLayout::Invalid;
 };
 
-template <VertexLayout2::TypeID ID>
+template <VertexLayout::TypeID ID>
 struct TypeIDToType {
   using type = typename InvalidTypeIDToType<ID>::type;
   static_assert(!std::is_same<void, type>::value, "invalid VertexLayout::TypeID");
@@ -95,31 +99,21 @@ struct TypeIDToType {
 
 template <class T>
 struct TypeToTypeID {
-  static constexpr VertexLayout2::TypeID value = InvalidTypeToTypeID<T>::value;
-  static_assert(value != VertexLayout2::Invalid, "invalid type (no match in VertexLayout::TypeID)");
+  static constexpr VertexLayout::TypeID value = InvalidTypeToTypeID<T>::value;
+  static_assert(value != VertexLayout::Invalid, "invalid type (no match in VertexLayout::TypeID)");
 };
 
-// std::uint8_t
-template <>
-struct TypeIDToType<VertexLayout2::UInt8> {
-  using type = std::uint8_t;
-};
-
-template <>
-struct TypeToTypeID<std::uint8_t> {
-  static constexpr VertexLayout2::TypeID value = VertexLayout2::UInt8;
-};
-
-// float
-template <>
-struct TypeIDToType<VertexLayout2::Float32> {
-  using type = float;
-};
-
-template <>
-struct TypeToTypeID<float> {
-  static constexpr VertexLayout2::TypeID value = VertexLayout2::Float32;
-};
+#define VERTEX_LAYOUT_TYPE(Type, Name)                                                             \
+  template <>                                                                                      \
+  struct TypeIDToType<VertexLayout::Name> {                                                        \
+    using type = Type;                                                                             \
+  };                                                                                               \
+  template <>                                                                                      \
+  struct TypeToTypeID<Type> {                                                                      \
+    static constexpr VertexLayout::TypeID value = VertexLayout::Name;                              \
+  };
+#include "sequoia-engine/Render/VertexLayout.inc"
+#undef VERTEX_LAYOUT_TYPE
 
 } // namespace internal
 

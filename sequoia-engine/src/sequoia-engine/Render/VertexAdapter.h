@@ -18,11 +18,14 @@
 #define SEQUOIA_ENGINE_RENDER_VERTEXADAPTER_H
 
 #include "sequoia-engine/Core/Byte.h"
+#include "sequoia-engine/Core/Color.h"
 #include "sequoia-engine/Core/Unreachable.h"
 #include "sequoia-engine/Math/Math.h"
-#include "sequoia-engine/Render/Vertex2.h"
+#include "sequoia-engine/Render/Vertex.h"
 #include <algorithm>
+#include <array>
 #include <cstring>
+#include <iosfwd>
 
 namespace sequoia {
 
@@ -36,57 +39,111 @@ namespace internal {
 /// @brief Compute the maximum size (in bytes) of any Vertex
 inline constexpr std::size_t computeMaxVertexSize() {
   std::size_t maxSize = 0;
-  BOOST_PP_SEQ_FOR_EACH(SEQUOIA_PP_VA_MAX_SIZEOF, Data, SERUOIA_VERTICES);
+  BOOST_PP_SEQ_FOR_EACH(SEQUOIA_PP_VA_MAX_SIZEOF, Data, SEQUOIA_VERTICES);
   return maxSize;
 }
 
 } // namespace internal
 
 /// @brief Allow unified access to all vertices
+///
+/// This data structure is fairly efficient and only operates on the stack.
+///
 /// @ingroup render
 class SEQUOIA_API VertexAdapter {
 public:
+  /// @brief Initialize the adapter by copying the data of `vertex`
+  template <class T, class = std::enable_if_t<!std::is_same<T, VertexLayout>::type>>
+  VertexAdapter(const T& vertex) : layout_(vertex.getLayout()) {
+    copyFrom(&vertex);
+  }
+
   /// @brief Allocate memory for a vertex with the given `layout`
-  VertexAdapter(VertexLayout2 layout) : layout_(std::move(layout)), vertexData_{0} {}
+  ///
+  /// To fill the adapter with an existing vertex pointer, use `VertexAdapter::copyFrom()`.
+  VertexAdapter(VertexLayout layout) : layout_(std::move(layout)) { clear(); }
 
   /// @brief Set `data` as the new attribute
   ///
   /// If the vertex does not contain the attribute, this function does nothing.
   ///
-  /// @param data    Pointer to `size` elements.
-  /// @param size    Number of elements to set. If the vertex attribute contains less than `size`
-  ///                elements, the remaining elements of `data` will be ignored. In case the vertex
-  ///                attribute contains more than `size` elements, the ramining elements will be
-  ///                set to 0.
+  /// @param data           Pointer to `size` elements.
+  /// @param numElements    Number of elements to set. If the vertex attribute contains less than
+  ///                       `numElements` elements, the remaining elements of `data` will be
+  ///                       ignored. In case the vertex attribute contains more than `numElements`
+  ///                       elements, the ramining elements will be set to 0.
   /// @{
-  void setPosition(const float* data, int numElements) noexcept {
+  inline void setPosition(const float* data, int numElements) noexcept {
     setAttribute(layout_.Position, data, numElements);
   }
-  void setPosition(const math::vec3& data) noexcept {
+  inline void setPosition(const math::vec2& data) noexcept {
     setPosition(math::value_ptr(data), data.length());
   }
-  void setPosition(const math::vec2& data) noexcept {
+  inline void setPosition(const math::vec3& data) noexcept {
+    setPosition(math::value_ptr(data), data.length());
+  }
+  inline void setPosition(const math::vec4& data) noexcept {
     setPosition(math::value_ptr(data), data.length());
   }
 
-  void setNormal(const float* data, int numElements) noexcept {
+  inline void setNormal(const float* data, int numElements) noexcept {
     setAttribute(layout_.Normal, data, numElements);
   }
-  void setNormal(const math::vec3& data) noexcept {
+  inline void setNormal(const math::vec2& data) noexcept {
     setNormal(math::value_ptr(data), data.length());
   }
-  void setNormal(const math::vec2& data) noexcept {
+  inline void setNormal(const math::vec3& data) noexcept {
+    setNormal(math::value_ptr(data), data.length());
+  }
+  inline void setNormal(const math::vec4& data) noexcept {
     setNormal(math::value_ptr(data), data.length());
   }
 
-  void setTexCoord(const float* data, int numElements) noexcept {
+  inline void setTexCoord(const float* data, int numElements) noexcept {
     setAttribute(layout_.TexCoord, data, numElements);
   }
-  void setTexCoord(const math::vec3& data) noexcept {
+  inline void setTexCoord(const math::vec2& data) noexcept {
     setTexCoord(math::value_ptr(data), data.length());
   }
-  void setTexCoord(const math::vec2& data) noexcept {
+  inline void setTexCoord(const math::vec3& data) noexcept {
     setTexCoord(math::value_ptr(data), data.length());
+  }
+  inline void setTexCoord(const math::vec4& data) noexcept {
+    setTexCoord(math::value_ptr(data), data.length());
+  }
+
+  inline void setColor(const Byte* data, int numElements) noexcept {
+    setAttribute(layout_.Color, data, numElements);
+  }
+  inline void setColor(const Color& color) noexcept { setColor(color.data, Color::NumChannels); }
+  /// @}
+
+  /// @brief Get a copy of the vertex attribute
+  ///
+  /// Note that for the Position, Normal and TexCoord a 4 element float vector is returned in any
+  /// case - if the attribute contains less than 4 elements, the remaining elements will be filled
+  /// with 0. The Color will be default constructed and filled with the color vertex attribute if
+  /// possible.
+  /// @{
+  inline math::vec4 getPosition() const noexcept {
+    math::vec4 data(0);
+    getAttribute(layout_.Position, math::value_ptr(data), data.length());
+    return data;
+  }
+  inline math::vec4 getNormal() const noexcept {
+    math::vec4 data(0);
+    getAttribute(layout_.Normal, math::value_ptr(data), data.length());
+    return data;
+  }
+  inline math::vec4 getTexCoord() const noexcept {
+    math::vec4 data(0);
+    getAttribute(layout_.TexCoord, math::value_ptr(data), data.length());
+    return data;
+  }
+  inline Color getColor() const noexcept {
+    Color data;
+    getAttribute(layout_.Color, data.data, Color::NumChannels);
+    return data;
   }
   /// @}
 
@@ -94,30 +151,52 @@ public:
   ///
   /// Note that sufficient memory (i.e `[dest, dest + getLayout().SizeOf)` needs to be allocated
   /// starting at `dest`.
-  void copyTo(void* dest) const noexcept { std::memcpy(dest, vertexData_, layout_.SizeOf); }
+  void copyTo(void* dest) const noexcept { std::memcpy(dest, vertexData_.data(), layout_.SizeOf); }
+
+  /// @brief Copy the vertex data from `src`
+  void copyFrom(const void* src) noexcept { std::memcpy(vertexData_.data(), src, layout_.SizeOf); }
+
+  /// @brief Clear the internal buffer
+  void clear() noexcept { vertexData_.fill(0); }
 
   /// @brief Get the vertex data layout
-  const VertexLayout2& getLayout() const noexcept { return layout_; }
+  const VertexLayout& getLayout() const noexcept { return layout_; }
+
+  /// @brief Check if `Position` attribute is available
+  bool hasPosition() const { return layout_.hasPosition(); }
+
+  /// @brief Check if `Normal` attribute is available
+  bool hasNormal() const { return layout_.hasNormal(); }
+
+  /// @brief Check if `TexCoord` attribute is available
+  bool hasTexCoord() const { return layout_.hasTexCoord(); }
+
+  /// @brief Check if `Color` attribute is available
+  bool hasColor() const { return layout_.hasColor(); }
+
+  /// @brief Convert to string
+  std::string toString() const;
 
 private:
   /// @brief Set the `attribute` to be equal to the array `data` of size `numElements`
   template <class T>
-  inline void setAttribute(const VertexLayout2::Attribute& attribute, const T* data,
+  inline void setAttribute(const VertexLayout::Attribute& attribute, const T* data,
                            const int numElements) noexcept {
     if(attribute.NumElements == 0)
       return;
 
-    Byte* vertexData = vertexData_ + attribute.Offset;
+    Byte* vertexData = vertexData_.data() + attribute.Offset;
     const int vertexNumElements = attribute.NumElements;
 
     switch(attribute.Type) {
-    case VertexLayout2::UInt8:
-      setArray<VertexLayout2::UInt8>(vertexData, vertexNumElements, data, numElements);
-      break;
-    case VertexLayout2::Float32:
-      setArray<VertexLayout2::Float32>(vertexData, vertexNumElements, data, numElements);
-      break;
-    case VertexLayout2::Invalid:
+
+#define VERTEX_LAYOUT_TYPE(Type, Name)                                                             \
+  case VertexLayout::Name:                                                                         \
+    setArray<VertexLayout::Name>(vertexData, vertexNumElements, data, numElements);                \
+    break;
+#include "sequoia-engine/Render/VertexLayout.inc"
+#undef VERTEX_LAYOUT_TYPE
+    case VertexLayout::Invalid:
     default:
       sequoia_unreachable("invalid type");
     }
@@ -125,9 +204,9 @@ private:
 
   /// @brief Interpret `vertexNumElements` starting at `vertexData` as of type `TypeID` and set it
   /// to be equal to the array `data` of size `numElements`
-  template <VertexLayout2::TypeID TypeID, class DataType>
-  inline static void setArray(Byte* vertexData, const int vertexNumElements, const DataType* data,
-                              const int numElements) noexcept {
+  template <VertexLayout::TypeID TypeID, class DataType>
+  inline void setArray(Byte* vertexData, const int vertexNumElements, const DataType* data,
+                       const int numElements) noexcept {
     using VertexDataType = typename internal::TypeIDToType<TypeID>::type;
     const int numElementsToCopy = std::min(vertexNumElements, numElements);
 
@@ -152,10 +231,54 @@ private:
     left = 0;
   }
 
+  /// @brief Copy the the `attribute` to the array `data` of size `numElements`
+  template <class T>
+  inline void getAttribute(const VertexLayout::Attribute& attribute, T* data,
+                           const int numElements) const noexcept {
+    if(attribute.NumElements == 0)
+      return;
+
+    const Byte* vertexData = vertexData_.data() + attribute.Offset;
+    const int vertexNumElements = attribute.NumElements;
+
+    switch(attribute.Type) {
+#define VERTEX_LAYOUT_TYPE(Type, Name)                                                             \
+  case VertexLayout::Name:                                                                         \
+    getArray<VertexLayout::Name>(vertexData, vertexNumElements, data, numElements);                \
+    break;
+#include "sequoia-engine/Render/VertexLayout.inc"
+#undef VERTEX_LAYOUT_TYPE
+    case VertexLayout::Invalid:
+    default:
+      sequoia_unreachable("invalid type");
+    }
+  }
+
+  /// @brief Interpret `vertexNumElements` starting at `vertexData` as of type `TypeID` and copy it
+  /// to the array `data` of size `numElements`
+  template <VertexLayout::TypeID TypeID, class DataType>
+  inline static void getArray(const Byte* vertexData, const int vertexNumElements, DataType* data,
+                              const int numElements) noexcept {
+    using VertexDataType = typename internal::TypeIDToType<TypeID>::type;
+    const int numElementsToCopy = std::min(vertexNumElements, numElements);
+
+    for(int i = 0; i < numElementsToCopy; ++i, vertexData += sizeof(VertexDataType))
+      get<VertexDataType>(vertexData, data + i);
+  }
+
+  /// @brief Interpret `vertexData` as type `T` and assign it to `value`
+  template <class T, class U>
+  inline static void get(const Byte* vertexData, U* value) noexcept {
+    const T& right = *reinterpret_cast<const T*>(vertexData);
+    *value = static_cast<U>(right);
+  }
+
 private:
-  VertexLayout2 layout_;                              ///< Layout description of the vertex
-  Byte vertexData_[internal::computeMaxVertexSize()]; ///< Stack allocated data of the vertex
+  VertexLayout layout_; ///< Layout description of the vertex
+  std::array<Byte, internal::computeMaxVertexSize()> vertexData_; ///< Vertex data
 };
+
+SEQUOIA_API extern std::ostream& operator<<(std::ostream& os, const VertexAdapter& adapter);
 
 } // namespace render
 

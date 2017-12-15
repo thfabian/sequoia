@@ -18,8 +18,10 @@
 #include "sequoia-engine/Render/GL/GLRenderSystem.h"
 #include "sequoia-engine/Render/GL/GLVertexAttribute.h"
 #include "sequoia-engine/Render/GL/GLVertexData.h"
+#include "sequoia-engine/Render/VertexAdapter.h"
 #include "sequoia-engine/Unittest/GL/GLRenderSetup.h"
 #include "sequoia-engine/Unittest/TestEnvironment.h"
+#include <boost/preprocessor/seq/enum.hpp>
 #include <gtest/gtest.h>
 
 using namespace sequoia;
@@ -30,22 +32,10 @@ namespace {
 
 SEQUOIA_TESTCASEFIXTURE_TEMPLATE(GLVertexDataTest, GLRenderSetup);
 
-using VertexTypes = testing::Types<Vertex2D, Vertex3D>;
+using VertexTypes = testing::Types<BOOST_PP_SEQ_ENUM(SEQUOIA_VERTICES)>;
 TYPED_TEST_CASE(GLVertexDataTest, VertexTypes);
 
-GLenum getGLType(VertexLayout::Type type) {
-  switch(type) {
-  case VertexLayout::Invalid:
-    return GL_INVALID_ENUM;
-  case VertexLayout::UInt8:
-    return GL_UNSIGNED_BYTE;
-  case VertexLayout::Float32:
-    return GL_FLOAT;
-  default:
-    sequoia_unreachable("invalid type");
-  }
-}
-
+/// @brief Create a GLVertexData and allocate space for `numVertices` and `numIndices`
 template <class VertexDataType>
 std::shared_ptr<GLVertexData> makeVertexData(std::size_t numVertices, std::size_t numIndices,
                                              bool useVertexShadowBuffer = true,
@@ -60,19 +50,19 @@ std::shared_ptr<GLVertexData> makeVertexData(std::size_t numVertices, std::size_
 
 TYPED_TEST(GLVertexDataTest, Allocation) {
   std::shared_ptr<GLVertexData> gldata1 = makeVertexData<TypeParam>(32, 16);
-  EXPECT_EQ(gldata1->getNumIndices(), 16);
   EXPECT_EQ(gldata1->getNumVertices(), 32);
+  EXPECT_EQ(gldata1->getNumIndices(), 16);
   EXPECT_TRUE(gldata1->hasIndices());
 
   std::shared_ptr<GLVertexData> gldata2 = makeVertexData<TypeParam>(16, 0);
-  EXPECT_EQ(gldata2->getNumIndices(), 0);
   EXPECT_EQ(gldata2->getNumVertices(), 16);
+  EXPECT_EQ(gldata2->getNumIndices(), 0);
   EXPECT_FALSE(gldata2->hasIndices());
 }
 
 TYPED_TEST(GLVertexDataTest, VertexAttributes) {
   std::shared_ptr<GLVertexData> gldata = makeVertexData<TypeParam>(8, 8);
-  const VertexLayout* layout = gldata->getVertexBuffer()->getLayout();
+  const VertexLayout& layout = gldata->getVertexBuffer()->getLayout();
 
   gldata->bindForModify();
 
@@ -80,10 +70,9 @@ TYPED_TEST(GLVertexDataTest, VertexAttributes) {
   {
     GLint enabled;
     glGetVertexAttribiv(GLVertexAttribute::Position, GL_VERTEX_ATTRIB_ARRAY_ENABLED, &enabled);
-    EXPECT_EQ(enabled, (GLint)layout->hasPosition());
+    EXPECT_EQ(enabled, (GLint)layout.hasPosition());
 
-    if(layout->hasPosition()) {
-
+    if(layout.hasPosition()) {
       GLint bufferID;
       glGetVertexAttribiv(GLVertexAttribute::Position, GL_VERTEX_ATTRIB_ARRAY_BUFFER_BINDING,
                           &bufferID);
@@ -91,25 +80,25 @@ TYPED_TEST(GLVertexDataTest, VertexAttributes) {
 
       GLenum type;
       glGetVertexAttribiv(GLVertexAttribute::Position, GL_VERTEX_ATTRIB_ARRAY_TYPE, &type);
-      EXPECT_EQ(type, getGLType(layout->Position.Type));
+      EXPECT_EQ(type, GLVertexData::getGLType(layout.Position.Type));
 
       GLint normalized;
       glGetVertexAttribiv(GLVertexAttribute::Position, GL_VERTEX_ATTRIB_ARRAY_NORMALIZED,
                           &normalized);
-      EXPECT_EQ(normalized, (GLint)layout->Position.Normalized);
+      EXPECT_EQ(normalized, (GLint)layout.Position.Normalize);
 
       GLint size;
       glGetVertexAttribiv(GLVertexAttribute::Position, GL_VERTEX_ATTRIB_ARRAY_SIZE, &size);
-      EXPECT_EQ(size, layout->Position.NumElements);
+      EXPECT_EQ(size, layout.Position.NumElements);
 
       GLint stride;
       glGetVertexAttribiv(GLVertexAttribute::Position, GL_VERTEX_ATTRIB_ARRAY_STRIDE, &stride);
-      EXPECT_EQ(stride, layout->SizeOf);
+      EXPECT_EQ(stride, layout.SizeOf);
 
       void* pointer;
       glGetVertexAttribPointerv(GLVertexAttribute::Position, GL_VERTEX_ATTRIB_ARRAY_POINTER,
                                 &pointer);
-      EXPECT_EQ((std::size_t)pointer, layout->Position.Offset);
+      EXPECT_EQ((std::size_t)pointer, layout.Position.Offset);
     }
   }
 
@@ -117,9 +106,9 @@ TYPED_TEST(GLVertexDataTest, VertexAttributes) {
   {
     GLint enabled;
     glGetVertexAttribiv(GLVertexAttribute::Normal, GL_VERTEX_ATTRIB_ARRAY_ENABLED, &enabled);
-    EXPECT_EQ(enabled, (GLint)layout->hasNormal());
+    EXPECT_EQ(enabled, (GLint)layout.hasNormal());
 
-    if(layout->hasNormal()) {
+    if(layout.hasNormal()) {
       GLint bufferID;
       glGetVertexAttribiv(GLVertexAttribute::Normal, GL_VERTEX_ATTRIB_ARRAY_BUFFER_BINDING,
                           &bufferID);
@@ -127,25 +116,25 @@ TYPED_TEST(GLVertexDataTest, VertexAttributes) {
 
       GLenum type;
       glGetVertexAttribiv(GLVertexAttribute::Normal, GL_VERTEX_ATTRIB_ARRAY_TYPE, &type);
-      EXPECT_EQ(type, getGLType(layout->Normal.Type));
+      EXPECT_EQ(type, GLVertexData::getGLType(layout.Normal.Type));
 
       GLint normalized;
       glGetVertexAttribiv(GLVertexAttribute::Normal, GL_VERTEX_ATTRIB_ARRAY_NORMALIZED,
                           &normalized);
-      EXPECT_EQ(normalized, (GLint)layout->Normal.Normalized);
+      EXPECT_EQ(normalized, (GLint)layout.Normal.Normalize);
 
       GLint size;
       glGetVertexAttribiv(GLVertexAttribute::Normal, GL_VERTEX_ATTRIB_ARRAY_SIZE, &size);
-      EXPECT_EQ(size, layout->Normal.NumElements);
+      EXPECT_EQ(size, layout.Normal.NumElements);
 
       GLint stride;
       glGetVertexAttribiv(GLVertexAttribute::Normal, GL_VERTEX_ATTRIB_ARRAY_STRIDE, &stride);
-      EXPECT_EQ(stride, layout->SizeOf);
+      EXPECT_EQ(stride, layout.SizeOf);
 
       void* pointer;
       glGetVertexAttribPointerv(GLVertexAttribute::Normal, GL_VERTEX_ATTRIB_ARRAY_POINTER,
                                 &pointer);
-      EXPECT_EQ((std::size_t)pointer, layout->Normal.Offset);
+      EXPECT_EQ((std::size_t)pointer, layout.Normal.Offset);
     }
   }
 
@@ -153,10 +142,9 @@ TYPED_TEST(GLVertexDataTest, VertexAttributes) {
   {
     GLint enabled;
     glGetVertexAttribiv(GLVertexAttribute::TexCoord, GL_VERTEX_ATTRIB_ARRAY_ENABLED, &enabled);
-    EXPECT_EQ(enabled, (GLint)layout->hasTexCoord());
+    EXPECT_EQ(enabled, (GLint)layout.hasTexCoord());
 
-    if(layout->hasTexCoord()) {
-
+    if(layout.hasTexCoord()) {
       GLint bufferID;
       glGetVertexAttribiv(GLVertexAttribute::TexCoord, GL_VERTEX_ATTRIB_ARRAY_BUFFER_BINDING,
                           &bufferID);
@@ -164,25 +152,25 @@ TYPED_TEST(GLVertexDataTest, VertexAttributes) {
 
       GLenum type;
       glGetVertexAttribiv(GLVertexAttribute::TexCoord, GL_VERTEX_ATTRIB_ARRAY_TYPE, &type);
-      EXPECT_EQ(type, getGLType(layout->TexCoord.Type));
+      EXPECT_EQ(type, GLVertexData::getGLType(layout.TexCoord.Type));
 
       GLint normalized;
       glGetVertexAttribiv(GLVertexAttribute::TexCoord, GL_VERTEX_ATTRIB_ARRAY_NORMALIZED,
                           &normalized);
-      EXPECT_EQ(normalized, (GLint)layout->TexCoord.Normalized);
+      EXPECT_EQ(normalized, (GLint)layout.TexCoord.Normalize);
 
       GLint size;
       glGetVertexAttribiv(GLVertexAttribute::TexCoord, GL_VERTEX_ATTRIB_ARRAY_SIZE, &size);
-      EXPECT_EQ(size, layout->TexCoord.NumElements);
+      EXPECT_EQ(size, layout.TexCoord.NumElements);
 
       GLint stride;
       glGetVertexAttribiv(GLVertexAttribute::TexCoord, GL_VERTEX_ATTRIB_ARRAY_STRIDE, &stride);
-      EXPECT_EQ(stride, layout->SizeOf);
+      EXPECT_EQ(stride, layout.SizeOf);
 
       void* pointer;
       glGetVertexAttribPointerv(GLVertexAttribute::TexCoord, GL_VERTEX_ATTRIB_ARRAY_POINTER,
                                 &pointer);
-      EXPECT_EQ((std::size_t)pointer, layout->TexCoord.Offset);
+      EXPECT_EQ((std::size_t)pointer, layout.TexCoord.Offset);
     }
   }
 
@@ -190,10 +178,9 @@ TYPED_TEST(GLVertexDataTest, VertexAttributes) {
   {
     GLint enabled;
     glGetVertexAttribiv(GLVertexAttribute::Color, GL_VERTEX_ATTRIB_ARRAY_ENABLED, &enabled);
-    EXPECT_EQ(enabled, (GLint)layout->hasColor());
+    EXPECT_EQ(enabled, (GLint)layout.hasColor());
 
-    if(layout->hasColor()) {
-
+    if(layout.hasColor()) {
       GLint bufferID;
       glGetVertexAttribiv(GLVertexAttribute::Color, GL_VERTEX_ATTRIB_ARRAY_BUFFER_BINDING,
                           &bufferID);
@@ -201,137 +188,115 @@ TYPED_TEST(GLVertexDataTest, VertexAttributes) {
 
       GLenum type;
       glGetVertexAttribiv(GLVertexAttribute::Color, GL_VERTEX_ATTRIB_ARRAY_TYPE, &type);
-      EXPECT_EQ(type, getGLType(layout->Color.Type));
+      EXPECT_EQ(type, GLVertexData::getGLType(layout.Color.Type));
 
       GLint normalized;
       glGetVertexAttribiv(GLVertexAttribute::Color, GL_VERTEX_ATTRIB_ARRAY_NORMALIZED, &normalized);
-      EXPECT_EQ(normalized, (GLint)layout->Color.Normalized);
+      EXPECT_EQ(normalized, (GLint)layout.Color.Normalize);
 
       GLint size;
       glGetVertexAttribiv(GLVertexAttribute::Color, GL_VERTEX_ATTRIB_ARRAY_SIZE, &size);
-      EXPECT_EQ(size, layout->Color.NumElements);
+      EXPECT_EQ(size, layout.Color.NumElements);
 
       GLint stride;
       glGetVertexAttribiv(GLVertexAttribute::Color, GL_VERTEX_ATTRIB_ARRAY_STRIDE, &stride);
-      EXPECT_EQ(stride, layout->SizeOf);
+      EXPECT_EQ(stride, layout.SizeOf);
 
       void* pointer;
       glGetVertexAttribPointerv(GLVertexAttribute::Color, GL_VERTEX_ATTRIB_ARRAY_POINTER, &pointer);
-      EXPECT_EQ((std::size_t)pointer, layout->Color.Offset);
+      EXPECT_EQ((std::size_t)pointer, layout.Color.Offset);
     }
   }
 }
 
-class TestWriteVisitor : public VertexVisitor {
-public:
-  void visit(const Vertex3DLayout* layout) {
-    Vertex3D* vertices = getVerticesPtr(layout);
+/// @brief Write to all vertex attributes the index of the vertex
+static void writeVertex(VertexBuffer* buffer) {
+  BufferGuard guard(buffer, Buffer::LO_Discard);
 
-    for(int i = 0; i < getNumVertices(); ++i) {
-      Vertex3D& vertex = vertices[i];
+  const VertexLayout& layout = buffer->getLayout();
+  const std::size_t numVertices = buffer->getNumVertices();
 
-      for(int j = 0; j < layout->Position.NumElements; ++j)
-        vertex.Position[j] = j;
+  VertexAdapter adapter(layout);
+  Byte* vertexPtr = guard.getAsByte();
 
-      for(int j = 0; j < layout->Normal.NumElements; ++j)
-        vertex.Normal[j] = j;
+  for(std::size_t i = 0; i < numVertices; ++i, vertexPtr += layout.SizeOf) {
+    adapter.clear();
 
-      for(int j = 0; j < layout->TexCoord.NumElements; ++j)
-        vertex.TexCoord[j] = j;
+    adapter.setPosition(math::vec4(i));
+    adapter.setNormal(math::vec4(i));
+    adapter.setTexCoord(math::vec4(i));
+    adapter.setColor(Color(i, i, i, i));
 
-      for(int j = 0; j < layout->Color.NumElements; ++j)
-        vertex.Color[j] = j;
-    }
+    adapter.copyTo(vertexPtr);
   }
+}
 
-  void visit(const Vertex2DLayout* layout) {
-    Vertex2D* vertices = getVerticesPtr(layout);
+/// @brief Real all vertex attributes and check if each attribute contains the vertex index
+static void readVertex(VertexBuffer* buffer) {
+  BufferGuard guard(buffer, Buffer::LO_ReadOnly);
 
-    for(int i = 0; i < getNumVertices(); ++i) {
-      Vertex2D& vertex = vertices[i];
+  const VertexLayout& layout = buffer->getLayout();
+  const std::size_t numVertices = buffer->getNumVertices();
 
-      for(int j = 0; j < layout->Position.NumElements; ++j)
-        vertex.Position[j] = j;
+  VertexAdapter adapter(layout);
+  Byte* vertexPtr = guard.getAsByte();
 
-      for(int j = 0; j < layout->TexCoord.NumElements; ++j)
-        vertex.TexCoord[j] = j;
+  for(std::size_t i = 0; i < numVertices; ++i, vertexPtr += layout.SizeOf) {
+    adapter.copyFrom(vertexPtr);
 
-      for(int j = 0; j < layout->Color.NumElements; ++j)
-        vertex.Color[j] = j;
-    }
+    // Position
+    auto position = adapter.getPosition();
+    for(int j = 0; j < layout.Position.NumElements; ++j)
+      EXPECT_FLOAT_EQ(position[j], i) << "Vertex index: " << i << ", Attribute: Position[" << j
+                                      << "]";
+
+    // Normal
+    auto normal = adapter.getNormal();
+    for(int j = 0; j < layout.Normal.NumElements; ++j)
+      EXPECT_FLOAT_EQ(normal[j], i) << "Vertex index: " << i << ", Attribute: Normal[" << j << "]";
+
+    // TexCoord
+    auto texCoord = adapter.getTexCoord();
+    for(int j = 0; j < layout.TexCoord.NumElements; ++j)
+      EXPECT_FLOAT_EQ(texCoord[j], i) << "Vertex index: " << i << ", Attribute: TexCoord[" << j
+                                      << "]";
+
+    // Color
+    auto color = adapter.getColor();
+    for(int j = 0; j < Color::NumChannels; ++j)
+      EXPECT_EQ(color[j], i) << "Vertex index: " << i << ", Attribute: Color[" << j << "]";
   }
-};
-
-class TestReadVisitor : public VertexVisitor {
-public:
-  void visit(const Vertex3DLayout* layout) {
-    Vertex3D* vertices = getVerticesPtr(layout);
-
-    for(int i = 0; i < getNumVertices(); ++i) {
-      Vertex3D& vertex = vertices[i];
-
-      for(int j = 0; j < layout->Position.NumElements; ++j)
-        EXPECT_EQ(vertex.Position[j], j) << "vertex index " << i;
-
-      for(int j = 0; j < layout->Normal.NumElements; ++j)
-        EXPECT_EQ(vertex.Normal[j], j) << "vertex index " << i;
-
-      for(int j = 0; j < layout->TexCoord.NumElements; ++j)
-        EXPECT_EQ(vertex.TexCoord[j], j) << "vertex index " << i;
-
-      for(int j = 0; j < layout->Color.NumElements; ++j)
-        EXPECT_EQ(vertex.Color[j], j) << "vertex index " << i;
-    }
-  }
-
-  void visit(const Vertex2DLayout* layout) {
-    Vertex2D* vertices = getVerticesPtr(layout);
-
-    for(int i = 0; i < getNumVertices(); ++i) {
-      Vertex2D& vertex = vertices[i];
-
-      for(int j = 0; j < layout->Position.NumElements; ++j)
-        EXPECT_EQ(vertex.Position[j], j) << "vertex index " << i;
-
-      for(int j = 0; j < layout->TexCoord.NumElements; ++j)
-        EXPECT_EQ(vertex.TexCoord[j], j) << "vertex index " << i;
-
-      for(int j = 0; j < layout->Color.NumElements; ++j)
-        EXPECT_EQ(vertex.Color[j], j) << "vertex index " << i;
-    }
-  }
-};
+}
 
 TYPED_TEST(GLVertexDataTest, ReadAndWrite) {
-  std::vector<unsigned int> indices = {1, 2};
+  using IndexType = unsigned int;
+  std::vector<IndexType> indices = {1, 2};
 
   {
     std::shared_ptr<GLVertexData> gldata = makeVertexData<TypeParam>(2, 2, true, true);
 
-    TestWriteVisitor writeVisitor;
-    gldata->accept(Buffer::LO_Discard, writeVisitor);
+    // Vertices
+    writeVertex(gldata->getVertexBuffer());
+    readVertex(gldata->getVertexBuffer());
 
-    TestReadVisitor readVisitor;
-    gldata->accept(Buffer::LO_ReadOnly, readVisitor);
-
-    gldata->writeIndex(indices.data(), indices.size());
+    // Indices
+    gldata->getIndexBuffer()->write(indices.data(), 0, indices.size() * sizeof(IndexType));
     std::vector<unsigned int> indicesRef(2, 0);
-    gldata->readIndex(indicesRef.data(), indices.size());
+    gldata->getIndexBuffer()->read(0, indices.size() * sizeof(IndexType), indicesRef.data());
     EXPECT_EQ(indices, indicesRef);
   }
 
   {
     std::shared_ptr<GLVertexData> gldata = makeVertexData<TypeParam>(2, 2, false, false);
 
-    TestWriteVisitor writeVisitor;
-    gldata->accept(Buffer::LO_Discard, writeVisitor);
+    // Vertices
+    writeVertex(gldata->getVertexBuffer());
+    readVertex(gldata->getVertexBuffer());
 
-    TestReadVisitor readVisitor;
-    gldata->accept(Buffer::LO_ReadOnly, readVisitor);
-
-    gldata->writeIndex(indices.data(), indices.size());
+    // Indices
+    gldata->getIndexBuffer()->write(indices.data(), 0, indices.size() * sizeof(IndexType));
     std::vector<unsigned int> indicesRef(2, 0);
-    gldata->readIndex(indicesRef.data(), indices.size());
+    gldata->getIndexBuffer()->read(0, indices.size() * sizeof(IndexType), indicesRef.data());
     EXPECT_EQ(indices, indicesRef);
   }
 }
