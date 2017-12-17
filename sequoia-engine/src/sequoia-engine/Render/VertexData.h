@@ -73,32 +73,6 @@ public:
     return getIndexBuffer() ? getIndexBuffer()->getNumIndices() : 0;
   }
 
-//  /// @brief Write `numVertices`, stored at `vertices`, to the vertex buffer
-//  template <class T>
-//  void writeVertex(const void* vertices, std::size_t numVertices) {
-//    SEQUOIA_ASSERT_MSG((getLayout().SizeOf * numVertices) <= getIndexBuffer()->getNumBytes(),
-//                       "writing past the end");
-//    getIndexBuffer()->write(static_cast<const void*>(vertices), 0, getIndexBuffer()->getNumBytes(),
-//                            true);
-//  }
-
-//  /// @brief Write `numIndices` of type `T` to the index buffer
-//  template <class T>
-//  void writeIndex(const T* indices, std::size_t numIndices) {
-//    SEQUOIA_ASSERT_MSG((sizeof(T) * numIndices) <= getIndexBuffer()->getNumBytes(),
-//                       "writing past the end");
-//    getIndexBuffer()->write(static_cast<const void*>(indices), 0, getIndexBuffer()->getNumBytes(),
-//                            true);
-//  }
-
-//  /// @brief Read `numIndices` of type `T` to the index buffer
-//  template <class T>
-//  void readIndex(T* indices, std::size_t numIndices) {
-//    SEQUOIA_ASSERT_MSG((sizeof(T) * numIndices) <= getIndexBuffer()->getNumBytes(),
-//                       "reading past the end");
-//    getIndexBuffer()->read(0, getIndexBuffer()->getNumBytes(), static_cast<void*>(indices));
-//  }
-
   /// @brief Get the VertexBuffer
   virtual VertexBuffer* getVertexBuffer() const = 0;
 

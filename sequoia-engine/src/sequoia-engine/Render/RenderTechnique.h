@@ -17,8 +17,8 @@
 #define SEQUOIA_ENGINE_RENDER_RENDERTECHNIQUE_H
 
 #include "sequoia-engine/Core/Export.h"
+#include "sequoia-engine/Render/DrawContext.h"
 #include "sequoia-engine/Render/RenderPass.h"
-#include "sequoia-engine/Render/RenderPassContext.h"
 #include <vector>
 
 namespace sequoia {
@@ -33,16 +33,19 @@ namespace render {
 /// @ingroup render
 class SEQUOIA_API RenderTechnique {
 public:
-  virtual ~RenderTechnique();
+  virtual ~RenderTechnique() {}
 
-  /// @brief Executed right before rendering of this technique starts
-  virtual void renderingBegin(const RenderPassContext& ctx) = 0;
+  /// @brief Called right before the technqiue is being executed
+  ///
+  /// @param ctx    Context used in rendering the passes of this technique. The contex is resetted
+  ///               before the call. The context is shared among all passes of the technique.
+  virtual void setUp(DrawContext& ctx) = 0;
 
-  /// @brief Executed right after rendering of this technique has finished
-  virtual void renderingEnd(const RenderPassContext& ctx) = 0;
+  /// @brief Called right after the technique has finished executing
+  virtual void tearDown(DrawContext& ctx) {}
 
   /// @brief Get the render passes
-  const std::vector<RenderPass> getPasses() const noexcept { return passes_; }
+  const std::vector<RenderPass>& getPasses() const noexcept { return passes_; }
 
 protected:
   std::vector<RenderPass> passes_;

@@ -66,6 +66,9 @@ struct SEQUOIA_API RenderPipeline {
   /// Program installed in the render-pipeline
   render::Program* Program = nullptr;
 
+  /// @brief Reset the pipleine to it's default state
+  void reset();
+
   /// @brief Convert to string
   std::string toString() const;
 };

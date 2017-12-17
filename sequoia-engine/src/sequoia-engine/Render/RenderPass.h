@@ -17,26 +17,28 @@
 #define SEQUOIA_ENGINE_RENDER_RENDERPASS_H
 
 #include "sequoia-engine/Core/Export.h"
-#include "sequoia-engine/Render/RenderPassContext.h"
+#include "sequoia-engine/Render/DrawContext.h"
+#include <unordered_map>
 
 namespace sequoia {
 
 namespace render {
 
-/// @brief
+/// @brief Description of a render pass
 /// @ingroup render
 class SEQUOIA_API RenderPass {
 public:
-  virtual ~RenderPass();
-  
-  /// @brief Executed right before rendering of this pass starts
-  virtual void renderingBegin(const RenderPassContext& ctx) = 0;
+  virtual ~RenderPass() {}
 
-  /// @brief Executed right after rendering of this pass has finished
-  virtual void renderingEnd(const RenderPassContext& ctx) = 0;
+  /// @brief Called right before the pass is being executed
+  ///
+  /// @param ctx    Context used in rendering `DrawCommand`s of this pass. The context is initially
+  ///               passed to the encompassing `RenderTechnique` and subsequently modified by the
+  ///               passes of the technique.
+  virtual void setUp(DrawContext& ctx) = 0;
 
-protected:
-  RenderState state_;
+  /// @brief Called right after the pass has finished executing
+  virtual void tearDown(DrawContext& ctx) {}
 };
 
 } // namespace render

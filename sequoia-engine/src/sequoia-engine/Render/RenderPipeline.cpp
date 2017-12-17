@@ -61,6 +61,14 @@ std::string printValue(const RenderPipeline::DepthFuncKind& value) {
   return depthFuncToString(value);
 }
 
+void RenderPipeline::reset() {
+#define RENDER_STATE(Type, Name, DefaultValue) this->Name = DefaultValue;
+#include "sequoia-engine/Render/RenderState.inc"
+#undef RENDER_STATE
+
+  this->Program = nullptr;
+}
+
 std::string RenderPipeline::toString() const {
   std::stringstream ss;
   ss << "RenderPipeline[\n";
