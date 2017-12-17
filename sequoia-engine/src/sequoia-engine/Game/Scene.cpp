@@ -17,61 +17,25 @@
 #include "sequoia-engine/Core/Casting.h"
 #include "sequoia-engine/Core/Format.h"
 #include "sequoia-engine/Core/Logging.h"
-#include "sequoia-engine/Game/AssetManager.h"
-#include "sequoia-engine/Game/CameraControllerFree.h"
 #include "sequoia-engine/Game/Drawable.h"
 #include "sequoia-engine/Game/Game.h"
-#include "sequoia-engine/Game/MeshManager.h"
 #include "sequoia-engine/Game/SceneGraph.h"
 #include "sequoia-engine/Render/Camera.h"
-#include "sequoia-engine/Render/DrawCommandList.h"
 #include "sequoia-engine/Render/RenderCommand.h"
-#include "sequoia-engine/Render/RenderWindow.h"
-#include <functional>
 
 // TODO: Remove me
 #include "sequoia-engine/Render/Texture.h"
+#include "sequoia-engine/Game/CameraControllerFree.h"
+#include "sequoia-engine/Game/AssetManager.h"
+#include "sequoia-engine/Game/MeshManager.h"
+#include "sequoia-engine/Render/RenderWindow.h"
+#include <functional>
 
 namespace sequoia {
 
 namespace game {
 
-Scene::Scene() : activeCamera_(nullptr) {
-  renderCommand_.first().setDrawCommandList(std::make_shared<render::DrawCommandListDefault>());
-  renderCommand_.second().setDrawCommandList(std::make_shared<render::DrawCommandListDefault>());
-  drawCommands_.reserve(render::DrawCommandList::DefaultSize);
-
-  sceneGraph_ = std::make_shared<SceneGraph>();
-}
-
-void Scene::populateRenderCommand(render::RenderCommand* command) {
-  // Reset temporaries
-  drawCommands_.clear();
-  for(int i = 0; i < Emittable::NumEmitter; ++i)
-    emitters_[i] = 0;
-
-  // Traverse SceneGraph and extract DrawCommands and register the Emitters
-  sceneGraph_->apply(
-      [this](SceneNode* node) {
-        if(Drawable* draw = node->get<Drawable>()) {
-          if(draw->isActive()) {
-            drawCommands_.push_back(draw->prepareDrawCommand());
-          }
-        }
-
-        if(Emittable* emittable = node->get<Emittable>()) {
-          if(emittable->isActive()) {
-            int index = std::atomic_fetch_add(&emitters_[emittable->getKind()], 1);
-            (void)index;
-            // emittable->toUniformVariableMap(, index);
-          }
-        }
-      },
-      SceneNode::EP_Parallel);
-
-  // Copy DrawCommands
-  command->getDrawCommandList()->insert(drawCommands_);
-}
+Scene::Scene() : activeCamera_(nullptr), sceneGraph_(std::make_shared<SceneGraph>()) {}
 
 void Scene::setActiveCamera(const std::shared_ptr<render::Camera>& camera) {
   activeCamera_ = camera;
@@ -83,27 +47,43 @@ const std::shared_ptr<render::Camera>& Scene::getActiveCamera() const { return a
 
 SceneGraph* Scene::getSceneGraph() const { return sceneGraph_.get(); }
 
-render::RenderCommand* Scene::prepareRenderCommand(render::RenderTarget* target) noexcept {
-  render::RenderCommand* command = &renderCommand_.get();
-  command->reset();
+Scene::prepareRenderTechniques(std::vector<render::RenderTechnique*>& techiques) {}
 
-  command->setRenderTarget(target);
-  populateRenderCommand(command);
+Scene::prepareRenderTarget(render::RenderTarget*& target) {}
 
-  renderCommand_.nextTimestep(false);
-  return command;
+Scene::prepareDrawCommands(std::vector<render::DrawCommand>& drawCommands) {
+  sceneGraph_->apply(
+      [this](SceneNode* node) {
+        if(Drawable* draw = node->get<Drawable>()) {
+          if(draw->isActive()) {
+            drawCommands.push_back(draw->makeDrawCommand());
+          }
+        }
+      },
+      SceneNode::EP_Parallel);
+}
+
+void Scene::prepareRenderCommand(render::RenderCommand& cmd) {
+  prepareRenderTarget(cmd.Target);
+  prepareRenderTechniques(cmd.Techniques);
+  prepareDrawCommands(cmd.DrawCommands);
 }
 
 void Scene::update() {}
 
-void Scene::updateImpl() {
+void Scene::updateImpl(float timeStep) {
   // Inform the nodes to progress to the next time-step
-  SceneNode::UpdateEvent event{0.1f};
-  sceneGraph_->update(event);
+  sceneGraph_->update(SceneNode::UpdateEvent{timeStep});
 
   // Update the scene
   update();
 }
+
+
+
+
+
+
 
 void Scene::makeDummyScene() {
   Game& game = Game::getSingleton();

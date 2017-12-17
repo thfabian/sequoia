@@ -14,34 +14,16 @@
 //===------------------------------------------------------------------------------------------===//
 
 #include "sequoia-engine/Render/RenderCommand.h"
-#include "sequoia-engine/Core/Format.h"
-#include "sequoia-engine/Core/StringUtil.h"
-#include "sequoia-engine/Render/DrawCommandList.h"
-#include "sequoia-engine/Render/RenderTarget.h"
 
 namespace sequoia {
 
 namespace render {
 
-RenderCommand::RenderCommand()
-    : drawCommandList_(nullptr), globalRenderState_(std::make_shared<GlobalRenderState>()),
-      target_(nullptr) {}
-
-void RenderCommand::reset() {
-  drawCommandList_->clear();
-  globalRenderState_->reset();
-}
-
-std::string RenderCommand::toString() const {
-  return core::format(
-      "RenderCommand[\n"
-      "  numDrawCommands = {},\n"
-      "  globalRenderState = {},\n"
-      "  target = {}\n"
-      "]",
-      core::indent(drawCommandList_ ? std::to_string(drawCommandList_->size()) : "null"),
-      core::indent(globalRenderState_ ? globalRenderState_->toString() : "null"),
-      core::indent(target_ ? target_->toString() : "null"));
+void RenderCommand::reset(RenderTarget* target) {
+  Target = target;
+  Techniques.clear();
+  DrawCommands.clear();
+  Scene = nullptr;
 }
 
 } // namespace render

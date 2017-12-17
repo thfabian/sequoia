@@ -100,7 +100,7 @@ public:
   ///
   /// @note This copies the model-matrix and the render-state to an internal queue. The values
   /// can be modified freely afterwards without corrupting the rendering.
-  render::DrawCommand* prepareDrawCommand();
+  render::DrawCommand* makeDrawCommand();
 
   /// @copydoc SceneNodeCapability::update
   virtual void update(const SceneNodeUpdateEvent& event) override;

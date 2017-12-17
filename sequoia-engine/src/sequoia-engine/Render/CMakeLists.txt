@@ -87,14 +87,11 @@ sequoia_add_library(
           Camera.h
           DrawCommand.cpp
           DrawCommand.h
-          DrawCommandList.cpp
-          DrawCommandList.h
+          DrawScene.h
           Exception.h
           FrameBuffer.cpp
           FrameBuffer.h
           FrameListener.h
-          GlobalRenderState.cpp
-          GlobalRenderState.h
           HostBuffer.cpp
           HostBuffer.h
           IndexBuffer.cpp
@@ -106,6 +103,8 @@ sequoia_add_library(
           RenderCommand.cpp
           RenderCommand.h
           RenderFwd.h
+          RenderPass.h
+          RenderPassContext.h
           RenderRessource.cpp
           RenderRessource.h
           RenderServer.cpp
@@ -118,10 +117,13 @@ sequoia_add_library(
           RenderSystemObject.h
           RenderTarget.cpp
           RenderTarget.h
+          RenderTechnique.h
           RenderWindow.h
           Shader.cpp
           Shader.h
           Texture.cpp
+          RenderPipeline.h
+          RenderPipeline.cpp
           Texture.h
           UniformBlock.h
           UniformStruct.h

@@ -125,8 +125,6 @@ void GLRenderSystem::pollEvents() {
     listener->inputEventStop();
 }
 
-void GLRenderSystem::renderOneFrame(RenderCommand* command) { getRenderer()->render(command); }
-
 std::shared_ptr<Shader> GLRenderSystem::createShader(Shader::ShaderType type,
                                                      const std::shared_ptr<File>& file) {
   return createRessource<GLShader>(getRenderer()->getShaderManager(), type, file);

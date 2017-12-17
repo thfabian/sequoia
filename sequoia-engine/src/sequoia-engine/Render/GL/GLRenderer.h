@@ -33,7 +33,7 @@ namespace render {
 /// @brief OpenGL based renderer
 ///
 /// A rendered performs the actual rendering of the provided target. Further, the renderer keeps
-/// tabs on the OpenGL state machine.
+/// track on the OpenGL state machine.
 /// @ingroup gl
 class SEQUOIA_API GLRenderer : public ViewportListener,
                                public Listenable<FrameListener>,
@@ -41,23 +41,24 @@ class SEQUOIA_API GLRenderer : public ViewportListener,
   /// Reference to the main-window
   GLRenderWindow* window_;
 
-  /// Default shaders
-  std::shared_ptr<Shader> defaultVertexShader_;
-  std::shared_ptr<Shader> defaultFragmentShader_;
-
-  /// Default GPU Program
-  std::shared_ptr<Program> defaultProgram_;
-
   /// Managers
   std::unique_ptr<GLStateCacheManager> stateCacheManager_;
   std::unique_ptr<GLShaderManager> shaderManager_;
   std::unique_ptr<GLProgramManager> programManager_;
   std::unique_ptr<GLTextureManager> textureManager_;
   std::unique_ptr<GLExtensionManager> extensionManager_;
+  
+  // TODO remove --------------
+  
+  /// Default shaders
+  std::shared_ptr<Shader> defaultVertexShader_;
+  std::shared_ptr<Shader> defaultFragmentShader_;
 
-  /// Cache of exentions
-  std::unordered_map<std::string, bool> extensionCache_;
-
+  /// Default GPU Program
+  std::shared_ptr<Program> defaultProgram_;
+  
+  // --------------------------
+  
 public:
   /// @brief Initialize the OpenGL context and bind it to the calling thread
   ///
@@ -82,6 +83,9 @@ public:
   /// @brief Get the OpenGL state manager
   GLStateCacheManager* getStateCacheManager();
 
+  
+  // TODO --- remove
+  
   /// @brief Load the default vertex and fragment shaders and link them into a program of `target`
   ///
   /// @param defaultVertexShaderFile    File containing the default vertex shader
@@ -89,6 +93,7 @@ public:
   void loadDefaultShaders(const std::shared_ptr<File>& defaultVertexShaderFile,
                           const std::shared_ptr<File>& defaultFragmentShaderFile);
 
+  
   /// @brief Get the default vertex shader
   const std::shared_ptr<Shader>& getDefaultVertexShader() const;
 
@@ -98,6 +103,8 @@ public:
   /// @brief Get the default fragment shader
   const std::shared_ptr<Program>& getDefaultProgram() const;
 
+  // -------------------
+  
   /// @brief Check if `extension` is supported
   /// @see GLExtensionManager::supported
   bool isExtensionSupported(gl::GLextension extension) noexcept;

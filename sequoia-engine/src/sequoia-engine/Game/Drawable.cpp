@@ -56,7 +56,7 @@ void Drawable::setProgram(render::Program* program) noexcept {
   drawCommand_.get().setProgram(program);
 }
 
-render::DrawCommand* Drawable::prepareDrawCommand() {
+render::DrawCommand* Drawable::makeDrawCommand() {
   SEQUOIA_ASSERT(active_);
   SEQUOIA_ASSERT_MSG(drawCommand_.get().getProgram(), "no Program set");
 

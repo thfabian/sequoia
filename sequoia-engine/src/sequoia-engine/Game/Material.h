@@ -13,23 +13,15 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia-engine/Render/DrawCommandList.h"
-#include "sequoia-engine/Core/StringUtil.h"
-#include <sstream>
+#ifndef SEQUOIA_
+#define SEQUOIA_
+
+// This should be part of the Game, as we only care about the Textures and UniformVariables in Render
+
+#include "sequoia/"
 
 namespace sequoia {
 
-namespace render {
-
-std::string DrawCommandListDefault::toString() const noexcept {
-  std::stringstream ss;
-  ss << "DrawCommandListDefault[\n";
-  for(const auto& cmd : commands_)
-    ss << core::indent(cmd->toString()) << "\n";
-  ss << "]";
-  return ss.str();
-}
-
-} // namespace render
-
 } // namespace sequoia
+
+#endif

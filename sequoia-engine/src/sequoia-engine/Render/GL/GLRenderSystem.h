@@ -64,9 +64,6 @@ public:
   /// @copydoc RenderSystem::pollEvents
   virtual void pollEvents() override;
 
-  /// @copydoc RenderSystem::renderOneFrame
-  virtual void renderOneFrame(RenderCommand* command) override;
-
   /// @brief Load the shader from source if it has not already been loaded
   virtual std::shared_ptr<Shader> createShader(Shader::ShaderType type,
                                                const std::shared_ptr<File>& path) override;

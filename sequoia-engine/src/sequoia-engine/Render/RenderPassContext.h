@@ -13,20 +13,24 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-// clang-format off
+#ifndef SEQUOIA_ENGINE_RENDER_RENDERPASSCONTEXT_H
+#define SEQUOIA_ENGINE_RENDER_RENDERPASSCONTEXT_H
 
-#if !defined(RENDER_STATE)
-#error "RENDER_STATE not defined"
+#include "sequoia-engine/Core/Export.h"
+#include "sequoia-engine/Render/RenderFwd.h"
+
+namespace sequoia {
+
+namespace render {
+
+/// @brief Immutable information passed to each RenderPass during execution of the pass
+/// @ingroup render
+struct RenderPassContext {
+  DrawScene* Scene; ///< Scene information (e.g lighting)
+};
+
+} // namespace render
+
+} // namespace sequoia
+
 #endif
-
-// RENDER_STATE(Type, Name, DefaultValue)
-//
-//  - Type            = Type of the state
-//  - Name            = Name of the state
-//  - DefaultValue    = Value used to initialize the state
-//
- 
-RENDER_STATE(bool, DepthTest, true)
-RENDER_STATE(RenderState::DepthFuncKind, DepthFunc, RenderState::DF_Less)
-
-// clang-format on

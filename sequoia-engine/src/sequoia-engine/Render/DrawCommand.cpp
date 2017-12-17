@@ -13,9 +13,10 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia-engine/Render/DrawCommand.h"
 #include "sequoia-engine/Core/Format.h"
 #include "sequoia-engine/Core/StringUtil.h"
+#include "sequoia-engine/Render/DrawCommand.h"
+#include <sstream>
 
 namespace sequoia {
 
@@ -24,15 +25,23 @@ namespace render {
 std::string DrawCommand::toString() const {
   std::stringstream ss;
   ss << modelMatrix_;
-  return core::format("DrawCommand[\n"
-                      "  renderState = {},\n"
-                      "  modelMatrix = Mat4[{}\n  ],\n"
-                      "  uniformVariables = {}\n"
-                      "]",
-                      core::indent(state_.toString()), core::indent(ss.str(), 4),
-                      variables_.empty()
-                          ? "null"
-                          : core::indent(core::toStringRange(variables_, [](const auto& var) {
+  return core::format(
+      "DrawCommand[\n"
+      "  data = {},\n"
+      "  modelMatrix = Mat4[{}\n  ],\n"
+      "  textureMap = {}\n"
+      "  uniformMap = {}\n"
+      "]",
+      data_ ? data_->toString() : "null", core::indent(ss.str(), 4),
+      textureMap_.empty() ? "null" : core::indent(core::toStringRange(
+                                         textureMap_,
+                                         [](const auto& var) {
+                                           return core::format("unit = {},\n"
+                                                               "texture = {}\n",
+                                                               var.first, var.second->toString());
+                                         })),
+      uniformMap_.empty() ? "null"
+                          : core::indent(core::toStringRange(uniformMap_, [](const auto& var) {
                               return core::format("name = {},\n"
                                                   "variable = {}\n",
                                                   var.first, var.second.toString());

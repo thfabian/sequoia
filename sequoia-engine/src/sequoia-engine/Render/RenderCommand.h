@@ -17,78 +17,34 @@
 #define SEQUOIA_ENGINE_RENDER_RENDERCOMMAND_H
 
 #include "sequoia-engine/Core/Export.h"
-#include "sequoia-engine/Render/GlobalRenderState.h"
+#include "sequoia-engine/Render/DrawCommand.h"
 #include "sequoia-engine/Render/RenderFwd.h"
-#include "sequoia-engine/Render/UniformVariable.h"
-#include <memory>
-#include <string>
-#include <unordered_map>
-#include <unordered_set>
+#include <vector>
 
 namespace sequoia {
 
 namespace render {
 
-/// @brief Instructions on how to render to a RenderTarget
+/// @brief Instructions on how to render a list of `DrawCommand`s using the provided
+/// `RenderTechnique`s into the given `RenderTarget`
 /// @ingroup render
-class SEQUOIA_API RenderCommand {
-public:
-  RenderCommand();
-  RenderCommand(const RenderCommand&) = default;
-  RenderCommand(RenderCommand&&) = default;
+struct SEQUOIA_API RenderCommand {
+  RenderCommand(RenderTarget* target) : Target(target) {}
 
-  RenderCommand& operator=(const RenderCommand&) = default;
-  RenderCommand& operator=(RenderCommand&&) = default;
+  /// Target to render to (e.g screen or texture)
+  RenderTarget* Target = nullptr;
 
-  /// @brief Get/Set the DrawCommandList to draw
-  DrawCommandList* getDrawCommandList() const noexcept { return drawCommandList_.get(); }
-  void setDrawCommandList(const std::shared_ptr<DrawCommandList>& list) noexcept {
-    drawCommandList_ = list;
-  }
+  /// List of techniques to apply
+  std::vector<RenderTechnique*> Techniques;
 
-  /// @brief Get/Set the DrawCommandList to draw
-  GlobalRenderState* getGlobalRenderState() const noexcept { return globalRenderState_.get(); }
+  /// List of draw commands to execute consecutively
+  std::vector<DrawCommand> DrawCommands;
 
-  /// @brief Get/Set the RenderTarget to render to
-  RenderTarget* getRenderTarget() const noexcept { return target_; }
-  void setRenderTarget(RenderTarget* target) noexcept { target_ = target; }
+  /// Scene information (e.g lighting information)
+  DrawScene* Scene = nullptr;
 
-  /// @brief For each Program execute `functor` for each referenced UniformVariable for this Program
-  ///
-  /// @tparam Functor   Functor of type `void(Program*, const std::string&, const UniformVariable&)`
-  ///
-  /// @param programs   Programs to set the Uniformvariables
-  /// @param functor    Functor to execture for each UniformVariable
-  template <class Functor>
-  void forEachUniformVariable(const std::unordered_set<Program*>& programs, Functor&& functor) {
-    for(Program* program : programs) {
-      // Set the per program uniform variables
-      auto* perProgramUniformVariables = globalRenderState_->getPerProgramUniformVariables(program);
-      if(perProgramUniformVariables)
-        for(const auto& nameVariablePair : *perProgramUniformVariables)
-          functor(program, nameVariablePair.first, nameVariablePair.second);
-
-      // Set the shared uniform variables
-      for(const auto& nameVariablePair : globalRenderState_->getSharedUniformVariables())
-        functor(program, nameVariablePair.first, nameVariablePair.second);
-    }
-  }
-
-  /// @brief Reset global GlobalRenderState and DrawCommandList
-  void reset();
-
-  /// @brief Convert draw command to string
-  std::string toString() const;
-
-private:
-  /// List of draw commands to execute
-  std::shared_ptr<DrawCommandList> drawCommandList_;
-
-  /// Global state of the rendering pipline
-  std::shared_ptr<GlobalRenderState> globalRenderState_;
-
-  /// Target to render to
-  render::RenderTarget* target_;
+  /// @brief Reset the command to it's default state and set the new RenderTarget to `target`
+  void reset(RenderTarget* target);
 };
 
 } // namespace render

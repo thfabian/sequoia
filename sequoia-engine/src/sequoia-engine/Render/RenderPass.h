@@ -13,20 +13,34 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-// clang-format off
+#ifndef SEQUOIA_ENGINE_RENDER_RENDERPASS_H
+#define SEQUOIA_ENGINE_RENDER_RENDERPASS_H
 
-#if !defined(RENDER_STATE)
-#error "RENDER_STATE not defined"
+#include "sequoia-engine/Core/Export.h"
+#include "sequoia-engine/Render/RenderPassContext.h"
+
+namespace sequoia {
+
+namespace render {
+
+/// @brief
+/// @ingroup render
+class SEQUOIA_API RenderPass {
+public:
+  virtual ~RenderPass();
+  
+  /// @brief Executed right before rendering of this pass starts
+  virtual void renderingBegin(const RenderPassContext& ctx) = 0;
+
+  /// @brief Executed right after rendering of this pass has finished
+  virtual void renderingEnd(const RenderPassContext& ctx) = 0;
+
+protected:
+  RenderState state_;
+};
+
+} // namespace render
+
+} // namespace sequoia
+
 #endif
-
-// RENDER_STATE(Type, Name, DefaultValue)
-//
-//  - Type            = Type of the state
-//  - Name            = Name of the state
-//  - DefaultValue    = Value used to initialize the state
-//
- 
-RENDER_STATE(bool, DepthTest, true)
-RENDER_STATE(RenderState::DepthFuncKind, DepthFunc, RenderState::DF_Less)
-
-// clang-format on

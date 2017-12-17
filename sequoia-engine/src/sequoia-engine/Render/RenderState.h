@@ -13,87 +13,29 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_ENGINE_RENDER_RENDERSTATE_H
-#define SEQUOIA_ENGINE_RENDER_RENDERSTATE_H
+#ifndef SEQUOIA_ENGINE_RENDER_RENDERSTATEMANAGER_H
+#define SEQUOIA_ENGINE_RENDER_RENDERSTATEMANAGER_H
 
 #include "sequoia-engine/Core/Export.h"
 #include "sequoia-engine/Render/RenderFwd.h"
 #include <cstdint>
 #include <string>
-#include <unordered_map>
 
 namespace sequoia {
 
 namespace render {
 
-/// @brief State of the render pipline of a specific DrawCommand
+/// @brief Keep track of changes in the RenderPipeline
 ///
-/// <table>
-/// <caption id="multi_row">Available render-states</caption>
-/// <tr><th>Type                          <th>Name             <th>Default Value
-///     <th>Explanation
-/// <tr><td>bool                          <td>DepthTest        <td>true
-///     <td>Enable Z-buffer (depth) test.
-/// <tr><td>RenderState::DepthFuncKind    <td>DetpthFunc       <td>RenderState::DF_Less
-///     <td>Function used for depth testing.
-/// </table>
-///
-/// To add a new state:
-///   1. Add the new state to `RenderState.inc`
-///   2. Implement the `Changed` methods in all RenderStateChanges classes
+/// To update a complete render pipeline, call `setRenderPipeline` with the new `RenderPipeline`. 
+/// If a single state **name** changes, the method **nameChanged** will be invoked withe the new 
+/// state as an argument. Note that the internal state will be updated automatically afterwards.
 ///
 /// @ingroup render
-struct SEQUOIA_API RenderState {
-  RenderState();
-  RenderState(const RenderState&) = default;
-  RenderState(RenderState&&) = default;
-
-  RenderState& operator=(const RenderState&) = default;
-  RenderState& operator=(RenderState&&) = default;
-
-  /// @brief Specifies the function used to compare each incoming pixel depth value with the depth
-  /// value present in the depth buffer
-  enum DepthFuncKind : std::uint8_t {
-    DF_Never = 0,    ///< Never passes
-    DF_Less,         ///< Passes if the incoming depth value is less than the stored depth value
-    DF_Equal,        ///< Passes if the incoming depth value is equal to the stored depth value
-    DF_LessEqual,    ///< Passes if the incoming depth value is less than or equal to the stored
-                     ///  depth value
-    DF_Greater,      ///< Passes if the incoming depth value is greater than the stored depth value
-    DF_NotEqual,     ///< Passes if the incoming depth value is not equal to the stored depth value
-    DF_GreaterEqual, ///< Passes if the incoming depth value is greater than or equal to the
-                     ///  stored depth value
-    DF_Always        ///< Always passes
-  };
-
-#define RENDER_STATE(Type, Name, BitfieldWidth, DefaultValue) Type Name BitfieldWidth;
-#include "sequoia-engine/Render/RenderState.inc"
-#undef RENDER_STATE
-
-  /// Program used in the render-pipeline
-  render::Program* Program;
-
-  /// VertexArrayObject used to retrieve the vertex and index buffer objects
-  render::VertexData* VertexData;
-
-  /// Textures bound to the specific texture units (map of texture-unit to texture)
-  std::unordered_map<int, Texture*> TextureMap;
-
-  /// @brief Convert to string
-  std::string toString() const;
-};
-
-/// @brief Keep track of changes in the RenderState
-///
-/// To update a complete render state, call `setRenderState` with the new `RenderState`. If a single
-/// state **name** changes, the method **nameChanged** will be invoked withe the new state as an
-/// argument. Note that the internal state will be updated automatically afterwards.
-///
-/// @ingroup render
-class SEQUOIA_API RenderStateCache {
+class SEQUOIA_API RenderStateManager {
 protected:
-  /// Current render-state
-  RenderState state_;
+  /// Current pipeline
+  RenderPipeline pipeline_;
 
 protected:
 #define RENDER_STATE(Type, Name, BitfieldWidth, DefaultValue)                                      \

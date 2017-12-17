@@ -65,122 +65,113 @@ std::string printValue(const RenderState::DepthFuncKind& value) {
   return depthFuncToString(value);
 }
 
-RenderState::RenderState() {
-#define RENDER_STATE(Type, Name, BitfieldWidth, DefaultValue) this->Name = DefaultValue;
-#include "sequoia-engine/Render/RenderState.inc"
-#undef RENDER_STATE
-
-  Program = nullptr;
-  VertexData = nullptr;
-}
-
 std::string RenderState::toString() const {
   std::stringstream ss;
-  ss << "RenderState[\n";
-#define RENDER_STATE(Type, Name, BitfieldWidth, DefaultValue)                                      \
+  ss << "RenderPipeline[\n";
+#define RENDER_STATE(Type, Name, DefaultValue)                                                     \
   ss << "  " #Name " = " << printValue<Type>(Name) << ",\n";
 #include "sequoia-engine/Render/RenderState.inc"
 #undef RENDER_STATE
 
   ss << "  Program = " << (Program ? core::indent(Program->toString()) : "null") << ",\n";
-  ss << "  VertexArrayObject = " << (VertexData ? core::indent(VertexData->toString()) : "null")
-     << ",\n";
-  ss << "  TextureMap = "
-     << (!TextureMap.empty() ? core::toStringRange(TextureMap,
-                                                   [](const auto& texturePair) {
-                                                     std::stringstream s;
-                                                     s << "unit = " << texturePair.first << "\n";
-                                                     s << "texture = "
-                                                       << texturePair.second->toString();
-                                                     return s.str();
-                                                   })
-                             : "null")
-     << "\n";
+//  ss << "  VertexArrayObject = " << (VertexData ? core::indent(VertexData->toString()) : "null")
+//     << ",\n";
+//  ss << "  TextureMap = "
+//     << (!TextureMap.empty() ? core::toStringRange(TextureMap,
+//                                                   [](const auto& texturePair) {
+//                                                     std::stringstream s;
+//                                                     s << "unit = " << texturePair.first << "\n";
+//                                                     s << "texture = "
+//                                                       << texturePair.second->toString();
+//                                                     return s.str();
+//                                                   })
+//                             : "null")
+//     << "\n";
   ss << "]";
   return ss.str();
 }
 
-RenderStateCache::~RenderStateCache() {}
+//RenderStateCache::~RenderStateCache() {}
 
-void RenderStateCache::initState() noexcept {
-#define RENDER_STATE(Type, Name, BitfieldWidth, DefaultValue) Name##Changed(state_.Name);
-#include "sequoia-engine/Render/RenderState.inc"
-#undef RENDER_STATE
-}
+//void RenderStateCache::initState() noexcept {
+//#define RENDER_STATE(Type, Name, DefaultValue) Name##Changed(state_.Name);
+//#include "sequoia-engine/Render/RenderState.inc"
+//#undef RENDER_STATE
+//}
 
-bool RenderStateCache::setRenderState(const RenderState& newState) noexcept {
-  // The program has to be changed first as the textures depend on the currently bound program
-  if(state_.Program != newState.Program) {
-    if(!ProgramChanged(newState.Program))
-      return false;
-    state_.Program = newState.Program;
-  }
+//bool RenderStateCache::setRenderState(const RenderState& newState) noexcept {
+//  // The program has to be changed first as the textures depend on the currently bound program
+//  if(state_.Program != newState.Program) {
+//    if(!ProgramChanged(newState.Program))
+//      return false;
+//    state_.Program = newState.Program;
+//  }
 
-#define RENDER_STATE(Type, Name, BitfieldWidth, DefaultValue)                                      \
-  if(state_.Name != newState.Name) {                                                               \
-    if(!Name##Changed(newState.Name))                                                              \
-      return false;                                                                                \
-    state_.Name = newState.Name;                                                                   \
-  }
-#include "sequoia-engine/Render/RenderState.inc"
-#undef RENDER_STATE
+//#define RENDER_STATE(Type, Name, DefaultValue)                                                     \
+//  if(state_.Name != newState.Name) {                                                               \
+//    if(!Name##Changed(newState.Name))                                                              \
+//      return false;                                                                                \
+//    state_.Name = newState.Name;                                                                   \
+//  }
+//#include "sequoia-engine/Render/RenderState.inc"
+//#undef RENDER_STATE
 
-  if(state_.VertexData != newState.VertexData) {
-    if(!VertexDataChanged(newState.VertexData, true /* always bind for drawing */))
-      return false;
-    state_.VertexData = newState.VertexData;
-  }
+//  if(state_.VertexData != newState.VertexData) {
+//    if(!VertexDataChanged(newState.VertexData, true /* always bind for drawing */))
+//      return false;
+//    state_.VertexData = newState.VertexData;
+//  }
 
-  if(state_.TextureMap != newState.TextureMap) {
+//  if(state_.TextureMap != newState.TextureMap) {
 
-    // There are 4 possible scenarios for each texture unit/texture pair
-    //
-    //  1. Texture unit is bound in state_ and newState and they share the same texture -> nothing
-    //  2. Texture unit is bound in state_ and newState and their texture differs -> set new texture
-    //  3. Texture unit is not bound in state_ but requested in newState -> enable unit/set texture
-    //  4. Texture unit is bound in state_ but not in newState -> disable texture unit
-    //
-    for(const std::pair<int, Texture*>& texPair : newState.TextureMap) {
-      int textureUnit = texPair.first;
-      Texture* texture = texPair.second;
+//    // There are 4 possible scenarios for each texture unit/texture pair
+//    //
+//    //  1. Texture unit is bound in state_ and newState and they share the same texture -> nothing
+//    //  2. Texture unit is bound in state_ and newState and their texture differs -> set new texture
+//    //  3. Texture unit is not bound in state_ but requested in newState -> enable unit/set texture
+//    //  4. Texture unit is bound in state_ but not in newState -> disable texture unit
+//    //
+//    for(const std::pair<int, Texture*>& texPair : newState.TextureMap) {
+//      int textureUnit = texPair.first;
+//      Texture* texture = texPair.second;
 
-      auto it = state_.TextureMap.find(textureUnit);
-      if(it == state_.TextureMap.end()) {
-        // Handle case 3
-        if(!TextureChanged(textureUnit, texture, true))
-          return false;
-      } else {
-        if(texture != it->second)
-          // Handle case 2
-          if(!TextureChanged(textureUnit, texture, true))
-            return false;
-      }
-    }
+//      auto it = state_.TextureMap.find(textureUnit);
+//      if(it == state_.TextureMap.end()) {
+//        // Handle case 3
+//        if(!TextureChanged(textureUnit, texture, true))
+//          return false;
+//      } else {
+//        if(texture != it->second)
+//          // Handle case 2
+//          if(!TextureChanged(textureUnit, texture, true))
+//            return false;
+//      }
+//    }
 
-    for(const std::pair<int, Texture*>& texPair : state_.TextureMap) {
-      if(!newState.TextureMap.count(texPair.first))
-        // Handle case 4
-        if(!TextureChanged(texPair.first, texPair.second, false))
-          return false;
-    }
+//    for(const std::pair<int, Texture*>& texPair : state_.TextureMap) {
+//      if(!newState.TextureMap.count(texPair.first))
+//        // Handle case 4
+//        if(!TextureChanged(texPair.first, texPair.second, false))
+//          return false;
+//    }
 
-    state_.TextureMap = newState.TextureMap;
-  }
+//    state_.TextureMap = newState.TextureMap;
+//  }
 
-  // Everything ok!
-  return true;
-}
+//  // Everything ok!
+//  return true;
+//}
 
-const RenderState& RenderStateCache::getRenderState() const { return state_; }
+//const RenderState& RenderStateCache::getRenderState() const { return state_; }
 
-RenderState& RenderStateCache::getRenderState() { return state_; }
+//RenderState& RenderStateCache::getRenderState() { return state_; }
 
-std::string RenderStateCache::toString() const {
-  return core::format("RenderStateCache["
-                      "  state = {}\n"
-                      "]",
-                      core::indent(state_.toString()));
-}
+//std::string RenderStateCache::toString() const {
+//  return core::format("RenderStateCache["
+//                      "  state = {}\n"
+//                      "]",
+//                      core::indent(state_.toString()));
+//}
 
 } // namespace render
 

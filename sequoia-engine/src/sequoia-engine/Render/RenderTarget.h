@@ -17,7 +17,6 @@
 #define SEQUOIA_ENGINE_RENDER_RENDERTARGET_H
 
 #include "sequoia-engine/Core/Export.h"
-#include "sequoia-engine/Render/RenderFwd.h"
 #include "sequoia-engine/Render/Viewport.h"
 #include <memory>
 
@@ -35,6 +34,8 @@ public:
     RK_GLRenderWindow,
     RK_NullRenderWindow,
     RK_RenderWindowLast
+
+    // RK_RenderTexture
   };
 
   /// @brief Initialize the target
@@ -56,15 +57,6 @@ public:
   /// @brief Set the viewport and register it as a `RenderTargetListener`
   void setViewport(const std::shared_ptr<Viewport>& viewport) { viewport_ = viewport; }
 
-  /// @brief Get the FrameBufferobeject of the target (if any)
-  std::shared_ptr<FrameBuffer>& getFrameBuffer() { return fbo_; }
-
-  /// @brief Set the FrameBufferobeject of the target
-  void setFrameBuffer(const std::shared_ptr<FrameBuffer>& fbo) { fbo_ = fbo; }
-
-  /// @brief Check if a frame buffer has been attached to the RenderTarget
-  bool hasFrameBuffer() const { return fbo_ != nullptr; }
-
   /// @brief Convert to string
   std::string toString() const;
 
@@ -74,9 +66,6 @@ private:
 
   /// Viewport connecting the target to a camera
   std::shared_ptr<Viewport> viewport_;
-
-  /// Attached FBO of the target (if any)
-  std::shared_ptr<FrameBuffer> fbo_;
 };
 
 } // namespace render

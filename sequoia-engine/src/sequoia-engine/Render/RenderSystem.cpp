@@ -77,6 +77,11 @@ void RenderSystem::setDefaultOptions(const std::shared_ptr<Options>& options) {
 
 RenderSystem::~RenderSystem() {}
 
+void RenderSystem::renderOneFrame(const RenderCommand& command)
+{
+  // TODO
+}
+
 void RenderSystem::frameListenerRenderingBegin(RenderCommand* command) {
   for(FrameListener* listener : getListeners<FrameListener>())
     listener->frameListenerRenderingBegin(command);

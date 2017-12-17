@@ -23,7 +23,6 @@
 #include "sequoia-engine/Core/NonCopyable.h"
 #include "sequoia-engine/Game/Emittable.h"
 #include "sequoia-engine/Game/GameFwd.h"
-#include "sequoia-engine/Render/RenderCommand.h"
 #include "sequoia-engine/Render/RenderFwd.h"
 #include <array>
 #include <atomic>
@@ -65,42 +64,58 @@ public:
   /// @brief Get the SceneGraph
   SceneGraph* getSceneGraph() const;
 
-  /// @brief Prepare the RenderCommand for rendering the next frame to `target`
-  render::RenderCommand* prepareRenderCommand(render::RenderTarget* target) noexcept;
-
   /// @brief Update the scene and progress to the next time-step
   ///
   /// By default, this does nothing.
   virtual void update();
 
-  // TODO: remove me
+  /// @name Rendering
+  /// @{
+
+  /// @brief Prepare a list of `RenderTechnique`s which is used in the next render call
+  ///
+  /// This is called automatically by `prepareRenderCommand`. By default this does nothing.
+  virtual prepareRenderTechniques(std::vector<render::RenderTechnique*>& techiques);
+
+  /// @brief Prepare a list of `DrawCommand`s which is used in the next render call
+  ///
+  /// This is called automatically by `prepareRenderCommand`. By default the SceneGraph is traversed
+  /// and each actice `Drawable` is added to the `drawCommands`.
+  virtual prepareDrawCommands(std::vector<render::DrawCommand>& drawCommands);
+
+  /// @brief Prepare the RenderTarget whis is used in the next render call
+  ///
+  /// This is called automatically by `prepareRenderCommand`. By default, this does not change the
+  /// `target` and thus retains the the default RenderTarget of the Game (which is the screen).
+  virtual prepareRenderTarget(render::RenderTarget*& target);
+
+  /// @}
+
+  // TODO: ----- remove me
+
   /// @brief Create a dummy test scene
   void makeDummyScene();
 
+  // ---------------------
+
 private:
-  /// @brief Calls `update()` followed by an update notification to all SceneNodes in the SceneGraph
+  /// @brief Send an update notification to all SceneNodes in the SceneGraph and call `update()`
   ///
   /// This is called by the `Game` in the main-loop.
-  void updateImpl();
+  void updateImpl(float timeStep);
 
-  /// @brief Populate the RenderCommand by extracting DrawCommands and setting the GlobalRenderState
-  void populateRenderCommand(render::RenderCommand* command);
+  /// @brief Prepare the RenderCommand by calling `prepareRenderTechniques` as well as
+  /// `prepareDrawCommands`
+  ///
+  /// This is called by the `Game` in the main-loop.
+  void prepareRenderCommand(render::RenderCommand& cmd);
 
 private:
-  /// Double buffered render command
-  DoubleBuffered<render::RenderCommand> renderCommand_;
-
   /// Graph of the scene
   std::shared_ptr<SceneGraph> sceneGraph_;
 
   /// Currently active camera
   std::shared_ptr<render::Camera> activeCamera_;
-
-  /// Temporary list of draw-commands
-  concurrent_vector<render::DrawCommand*> drawCommands_;
-
-  /// Temporary list of emitters
-  std::array<std::atomic<int>, Emittable::NumEmitter> emitters_;
 };
 
 } // namespace game
