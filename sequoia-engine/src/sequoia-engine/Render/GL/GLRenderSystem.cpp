@@ -88,7 +88,6 @@ RenderWindow* GLRenderSystem::createMainWindow(const RenderWindow::WindowHint& h
 
   // Initialize OpenGL renderer
   renderer_ = std::make_unique<GLRenderer>(mainWindow_.get());
-  renderer_->addListener<FrameListener>(this);
 
   return mainWindow_.get();
 }
@@ -127,17 +126,17 @@ void GLRenderSystem::pollEvents() {
 
 std::shared_ptr<Shader> GLRenderSystem::createShader(Shader::ShaderType type,
                                                      const std::shared_ptr<File>& file) {
-  return createRessource<GLShader>(getRenderer()->getShaderManager(), type, file);
+  return createRessource<GLShader>(getGLRenderer()->getShaderManager(), type, file);
 }
 
 std::shared_ptr<Program>
 GLRenderSystem::createProgram(const std::set<std::shared_ptr<Shader>>& shaders) {
-  return createRessource<GLProgram>(getRenderer()->getProgramManager(), shaders);
+  return createRessource<GLProgram>(getGLRenderer()->getProgramManager(), shaders);
 }
 
 std::shared_ptr<Texture> GLRenderSystem::createTexture(const std::shared_ptr<Image>& image,
                                                        const TextureParameter& param) {
-  return createRessource<GLTexture>(getRenderer()->getTextureManager(), image,
+  return createRessource<GLTexture>(getGLRenderer()->getTextureManager(), image,
                                     std::make_shared<TextureParameter>(param));
 }
 
@@ -161,29 +160,8 @@ void GLRenderSystem::removeMouseListener(MouseListener* listener) {
   mainWindow_->getInputSystem()->removeListener(listener);
 }
 
-void GLRenderSystem::loadDefaultShaders(const std::shared_ptr<File>& defaultVertexShaderFile,
-                                        const std::shared_ptr<File>& defaultFragmentShaderFile) {
-  getRenderer()->loadDefaultShaders(defaultVertexShaderFile, defaultFragmentShaderFile);
-}
-
-const std::shared_ptr<Shader>& GLRenderSystem::getDefaultVertexShader() const {
-  return getRenderer()->getDefaultVertexShader();
-}
-
-const std::shared_ptr<Shader>& GLRenderSystem::getDefaultFragmentShader() const {
-  return getRenderer()->getDefaultFragmentShader();
-}
-
-const std::shared_ptr<Program>& GLRenderSystem::getDefaultProgram() const {
-  return getRenderer()->getDefaultProgram();
-}
-
-GLRenderer* GLRenderSystem::getRenderer() { return renderer_.get(); }
-GLRenderer* GLRenderSystem::getRenderer() const { return renderer_.get(); }
-
-GLStateCacheManager* GLRenderSystem::getStateCacheManager() {
-  return getRenderer()->getStateCacheManager();
-}
+Renderer* GLRenderSystem::getRenderer() const { return renderer_.get(); }
+GLRenderer* GLRenderSystem::getGLRenderer() const { return renderer_.get(); }
 
 GLRenderSystem& getGLRenderSystem() noexcept { return *getGLRenderSystemPtr(); }
 

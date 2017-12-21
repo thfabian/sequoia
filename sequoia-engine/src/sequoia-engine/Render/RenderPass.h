@@ -17,8 +17,7 @@
 #define SEQUOIA_ENGINE_RENDER_RENDERPASS_H
 
 #include "sequoia-engine/Core/Export.h"
-#include "sequoia-engine/Render/DrawContext.h"
-#include <unordered_map>
+#include "sequoia-engine/Render/RenderFwd.h"
 
 namespace sequoia {
 
@@ -32,13 +31,14 @@ public:
 
   /// @brief Called right before the pass is being executed
   ///
-  /// @param ctx    Context used in rendering `DrawCommand`s of this pass. The context is initially
-  ///               passed to the encompassing `RenderTechnique` and subsequently modified by the
-  ///               passes of the technique.
-  virtual void setUp(DrawContext& ctx) = 0;
+  /// @param ctx    Context used in rendering the next sequence of `DrawCommand`s of this pass.
+  virtual void setUp(DrawCallContext& ctx) = 0;
 
   /// @brief Called right after the pass has finished executing
-  virtual void tearDown(DrawContext& ctx) {}
+  virtual void tearDown(DrawCallContext& ctx) {}
+
+  /// @brief Get the name of the pass
+  virtual const char* getName() const noexcept = 0;
 };
 
 } // namespace render

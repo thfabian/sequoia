@@ -36,13 +36,9 @@ public:
   ~GLVertexData();
 
   /// @brief Bind the buffer for drawing
-  /// @note Do not call this function directly, use `GLStateCacheManager::bindVertexDataForDrawing`
-  /// instead.
   void bindForDrawing();
 
   /// @brief Bind the buffer for modify
-  /// @note Do not call this function directly, use `GLStateCacheManager::bindVertexDataForModify`
-  /// instead.
   void bindForModify();
 
   /// @brief Unbind texture
@@ -58,6 +54,7 @@ public:
   virtual void nextTimestep() override;
 
   /// @brief Draw the vertex-data
+  //TODO: move this out of VertexData
   void draw() const noexcept;
 
   /// @brief Get the VAO ID

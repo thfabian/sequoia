@@ -28,15 +28,10 @@ namespace game {
 
 Drawable::~Drawable() {}
 
-Drawable::Drawable(SceneNode* node, const std::shared_ptr<Mesh>& mesh, render::Program* program)
+Drawable::Drawable(SceneNode* node, const std::shared_ptr<Mesh>& mesh)
     : Base(node), active_(true), drawCommand_() {
   setMesh(mesh);
-  setProgram(program ? program : Game::getSingleton().getDefaultProgram().get());
 }
-
-Drawable::Drawable(SceneNode* node, const std::shared_ptr<Mesh>& mesh,
-                   const std::shared_ptr<render::Program>& program)
-    : Drawable(node, mesh, program.get()) {}
 
 void Drawable::setMesh(const std::shared_ptr<Mesh>& mesh) {
   mesh_ = mesh;
@@ -47,18 +42,12 @@ void Drawable::setTexture(int textureUnit, render::Texture* texture) noexcept {
   drawCommand_.get().setTexture(textureUnit, texture);
 }
 
-render::RenderState& Drawable::getRenderState() { return drawCommand_.get().getRenderState(); }
-const render::RenderState& Drawable::getRenderState() const {
-  return drawCommand_.get().getRenderState();
+void Drawable::setUniform(const std::string& name, UniformVariable variable) {
+  drawCommand_.get().setUniform(name, variable);
 }
 
-void Drawable::setProgram(render::Program* program) noexcept {
-  drawCommand_.get().setProgram(program);
-}
-
-render::DrawCommand* Drawable::makeDrawCommand() {
+render::DrawCommand* Drawable::prepareDrawCommand() {
   SEQUOIA_ASSERT(active_);
-  SEQUOIA_ASSERT_MSG(drawCommand_.get().getProgram(), "no Program set");
 
   // Set the new model matrix
   drawCommand_.get().setModelMatrix(getNode()->getModelMatrix());
@@ -85,11 +74,7 @@ std::string Drawable::toString() const {
 }
 
 std::shared_ptr<SceneNodeCapability> Drawable::clone(SceneNode* node) const {
-  return scene::allocate_shared<Drawable>(node, mesh_, drawCommand_.get().getProgram());
-}
-
-void Drawable::setUniformVariableImpl(const std::string& name, UniformVariable variable) {
-  drawCommand_.get().setUniformVariable(name, variable);
+  return scene::allocate_shared<Drawable>(node, mesh_);
 }
 
 } // namespace game

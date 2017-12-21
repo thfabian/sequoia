@@ -37,7 +37,7 @@ class SEQUOIA_API DrawCommand {
 public:
   DrawCommand() = default;
   DrawCommand(VertexData* data, const math::mat4& modelMatrix)
-      : data_(data), modelMatrix_(modelMatrix_) {}
+      : data_(data), modelMatrix_(modelMatrix) {}
 
   /// @brief Get/Set the vertex data
   VertexData* getVertexData() const noexcept { return data_; }
@@ -55,18 +55,16 @@ public:
   ///
   /// @param textureUnit    ID of the texture unit starting from 0.
   /// @param texture        Texture to bind
-  void setTexture(int textureUnit, Texture* texture) noexcept {
-    textureMap_[textureUnit] = texture;
-  }
+  void setTexture(int textureUnit, Texture* texture) noexcept { textures[textureUnit] = texture; }
 
   /// @brief Get the texture map
-  const std::unordered_map<int, Texture*>& getTextureMap() const noexcept { return textureMap_; }
+  const std::unordered_map<int, Texture*>& getTextures() const noexcept { return textures; }
 
   /// @brief Set the uniform variable `name` to `value`
   ///
   /// Note that if the uniform variable has already been set, the existing value is overriden.
   void setUniform(const std::string& name, const UniformVariable& value) noexcept {
-    uniformMap_[name] = value;
+    uniforms_[name] = value;
   }
 
   /// @brief Set the uniform struct `name` to `value`
@@ -90,12 +88,12 @@ public:
   /// generates the appropriate member function.
   template <class StructType>
   void setUniformStruct(const std::string& name, const StructType& value, int index = -1) {
-    value.toUniformVariableMap(name, uniformMap_, index);
+    value.toUniformVariableMap(name, uniforms_, index);
   }
 
   /// @brief Get the uniform variable map
-  const std::unordered_map<std::string, UniformVariable>& getUniformMap() const noexcept {
-    return uniformMap_;
+  const std::unordered_map<std::string, UniformVariable>& getUniforms() const noexcept {
+    return uniforms_;
   }
 
   /// @brief Convert draw command to string
@@ -109,10 +107,10 @@ private:
   math::mat4 modelMatrix_ = math::mat4(1.0f);
 
   /// Texture data of the material (associate texture units to actual textures)
-  std::unordered_map<int, Texture*> textureMap_;
+  std::unordered_map<int, Texture*> textures;
 
   /// Uniform variables which are *specific* to this DrawCommand (mostly material properties)
-  std::unordered_map<std::string, UniformVariable> uniformMap_;
+  std::unordered_map<std::string, UniformVariable> uniforms_;
 };
 
 } // namespace render

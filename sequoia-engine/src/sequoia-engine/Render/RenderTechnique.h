@@ -17,7 +17,6 @@
 #define SEQUOIA_ENGINE_RENDER_RENDERTECHNIQUE_H
 
 #include "sequoia-engine/Core/Export.h"
-#include "sequoia-engine/Render/DrawContext.h"
 #include "sequoia-engine/Render/RenderPass.h"
 #include <vector>
 
@@ -28,7 +27,7 @@ namespace render {
 /// @brief Implementation of a specific render technique to enable various visual effects
 ///
 /// A `RenderTechnique` encompasses multiple `RenderPass`es which which are executed by the
-/// renderer. A RenderTechnique should be backend agnostic.
+/// renderer. A RenderTechnique should be render backend agnostic.
 ///
 /// @ingroup render
 class SEQUOIA_API RenderTechnique {
@@ -36,19 +35,19 @@ public:
   virtual ~RenderTechnique() {}
 
   /// @brief Called right before the technqiue is being executed
-  ///
-  /// @param ctx    Context used in rendering the passes of this technique. The contex is resetted
-  ///               before the call. The context is shared among all passes of the technique.
-  virtual void setUp(DrawContext& ctx) = 0;
+  virtual void setUp() {}
 
   /// @brief Called right after the technique has finished executing
-  virtual void tearDown(DrawContext& ctx) {}
+  virtual void tearDown() {}
+
+  /// @brief Get the name of the technique
+  virtual const char* getName() const noexcept = 0;
 
   /// @brief Get the render passes
-  const std::vector<RenderPass>& getPasses() const noexcept { return passes_; }
+  std::vector<RenderPass*>& getPasses() noexcept { return passes_; }
 
 protected:
-  std::vector<RenderPass> passes_;
+  std::vector<RenderPass*> passes_;
 };
 
 } // namespace render

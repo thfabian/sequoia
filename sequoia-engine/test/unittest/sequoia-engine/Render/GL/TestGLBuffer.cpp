@@ -15,7 +15,7 @@
 
 #include "sequoia-engine/Core/StringUtil.h"
 #include "sequoia-engine/Render/GL/GLBuffer.h"
-#include "sequoia-engine/Unittest/GL/GLRenderSetup.h"
+#include "sequoia-engine/Unittest/RenderSetup.h"
 #include <algorithm>
 #include <gtest/gtest.h>
 #include <iostream>
@@ -29,7 +29,7 @@ using namespace sequoia::render;
 
 namespace {
 
-SEQUOIA_TESTCASEFIXTURE(GLBufferTest, GLRenderSetup);
+SEQUOIA_TESTCASEFIXTURE(GLBufferTest, RenderSetup);
 
 /// @brief Generate a random vector of type `T`
 template <class T>

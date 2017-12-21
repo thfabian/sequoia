@@ -13,11 +13,13 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_ENGINE_RENDER_RENDERSTATEMANAGER_H
-#define SEQUOIA_ENGINE_RENDER_RENDERSTATEMANAGER_H
+#ifndef SEQUOIA_ENGINE_RENDER_RENDERER_H
+#define SEQUOIA_ENGINE_RENDER_RENDERER_H
 
 #include "sequoia-engine/Core/Export.h"
 #include "sequoia-engine/Render/RenderFwd.h"
+#include "sequoia-engine/Render/RenderPipeline.h"
+#include "sequoia-engine/Render/UniformVariable.h"
 #include <cstdint>
 #include <string>
 #include <unordered_map>
@@ -26,16 +28,11 @@ namespace sequoia {
 
 namespace render {
 
-/// @brief Keep track and apply changes in the RenderPipeline
-///
-/// To update a complete render pipeline, call `prepareRenderPipeline` with the new `pipeline`.
-/// If a single state `<name>` changes, the method `<name>Changed` will be invoked withe the new
-/// state as an argument. Note that the internal state will be updated automatically afterwards.
-///
+/// @brief Render `DrawCommand`s and keep track/apply changes to the RenderPipeline
 /// @ingroup render
-class SEQUOIA_API RenderStateManager {
+class SEQUOIA_API Renderer {
 protected:
-#define RENDER_STATE(Type, Name, DefaultValue) virtual bool Name##Changed(const Type& value) = 0;
+#define RENDER_STATE(Type, Name, DefaultValue) virtual bool Name##Changed(Type value) = 0;
 #include "sequoia-engine/Render/RenderState.inc"
 #undef RENDER_STATE
 
@@ -52,12 +49,33 @@ protected:
   virtual bool TextureChanged(int textureUnit, Texture* texture, bool enable) = 0;
 
   /// @brief The uniform variable `name` of `program` changed
-  virtual void UniformVariableChanged(Program* program, const std::string& name,
+  /// @returns `true` if the new UniformVariable was successfully updated, `false` otherwise
+  virtual bool UniformVariableChanged(Program* program, const std::string& name,
                                       const UniformVariable& value) = 0;
 
+  /// @brief The Viewport changed
+  /// @returns `true` if the new Viewport was successfully updated, `false` otherwise
+  virtual bool ViewportChanged(int x, int y, int width, int height) = 0;
+
+  /// @brief Clear the color buffer
+  virtual bool clearColorBuffer() = 0;
+
+  /// @brief Clear the depth buffer
+  virtual bool clearDepthBuffer() = 0;
+
+  /// @brief Clear the stencil buffer
+  virtual bool clearStencilBuffer() = 0;
+
+  /// @brief Draw the command
+  /// @returns `true` if the new DrawCommand was successfully drawn, `false` otherwise
+  virtual bool draw(const DrawCommand* drawCommand) = 0;
+
+  /// @brief Implementation of `toString` returns stringified members and title
+  virtual std::pair<std::string, std::string> toStringImpl() const;
+
 public:
-  virtual ~RenderStateCache() {}
-  RenderStateCache();
+  virtual ~Renderer() {}
+  Renderer();
 
   /// @brief Set the interal RenderPipeline to `pipeline` and call the appropriate methods for every
   /// state change
@@ -67,23 +85,28 @@ public:
   bool setRenderPipeline(const RenderPipeline& pipeline);
 
   /// @brief Set the uniform variable `name` of `program` to `value`
-  bool setUniformVariable(Program* program, const std::string& name, const UniformVariable& value);
+  bool setUniform(Program* program, const std::string& name, const UniformVariable& value);
 
-  /// @brief Set the given uniform `variables` of `program`
-  bool setUniformVariables(Program* program,
-                           const std::unordered_map<std::string, UniformVariable>& variables);
-
-  /// @brief Bind the texture-unit/texture pairs
+  /// @brief Set texture-unit/texture pairs
+  ///
+  /// Note that each call potentially disables all texture units which are not present in
+  /// `textures`. Thus, you should only call this function once per draw-call.
   bool setTextures(const std::unordered_map<int, Texture*>& textures);
 
   /// @brief Bind the vertex-data
   bool setVertexData(VertexData* vertexData, bool bindForDrawing = true);
 
+  /// @brief Set the viewport
+  bool setViewport(const Viewport* viewport);
+
+  /// @brief Render `command`
+  void render(const RenderCommand& command);
+
   /// @brief Reset the internal state
   ///
   /// This will essentially force a call to all `<name>Changed` methods on the next `set<name>`
   /// invocation.
-  void reset();
+  virtual void reset();
 
   /// @brief Invalidate the uniform variable cache of `program`
   void resetUniforms(Program* program);
@@ -98,6 +121,9 @@ protected:
 
   /// Current pipeline
   RenderPipeline pipeline_;
+
+  /// Current viewport
+  int x_, y_, width_, height_;
 
   /// Current vertex-data
   VertexData* vertexData_;

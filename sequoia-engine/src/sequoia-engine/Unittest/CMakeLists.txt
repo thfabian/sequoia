@@ -20,8 +20,11 @@ set(GL_SOURCE
   GL/GLTestEnvironment.cpp
   GL/GLBenchmarkEnvironment.h
   GL/GLBenchmarkEnvironment.cpp
-  GL/GLRenderSetup.h
-  GL/GLRenderSetup.cpp
+)
+
+set(NULL_SOURCE
+  Null/NullTestEnvironment.h
+  Null/NullTestEnvironment.cpp
 )
 
 sequoia_add_library(
@@ -32,6 +35,8 @@ sequoia_add_library(
           Fixture.h
           GameSetup.h
           GameSetup.cpp
+          RenderSetup.h
+          RenderSetup.cpp
           Test.h
           Test.cpp
           TestEnvironment.h
@@ -40,5 +45,6 @@ sequoia_add_library(
           TestFile.cpp
 
           ${GL_SOURCE}
+          ${NULL_SOURCE}
   ARCHIVE
 )

@@ -33,12 +33,9 @@ class SEQUOIA_API NullRenderSystem final : public RenderSystem {
   /// Input system
   std::unique_ptr<NullInputSystem> inputSystem_;
 
-  /// Default shaders
-  std::shared_ptr<Shader> defaultVertexShader_, defaultFragmentShader_;
-
-  /// Default program
-  std::shared_ptr<Program> defaultProgram_;
-
+  /// Renderer
+  std::unique_ptr<NullRenderer> renderer_;
+  
 public:
   NullRenderSystem(const std::shared_ptr<Options>& options);
 
@@ -70,7 +67,7 @@ public:
   createTexture(const std::shared_ptr<Image>& image,
                 const TextureParameter& param = TextureParameter()) override;
 
-  /// @copydoc RenderSystem::createIndexBuffer
+  /// @copydoc RenderSystem::createVertexData
   virtual std::shared_ptr<VertexData> createVertexData(const VertexDataParameter& param) override;
 
   /// @copydoc RenderSystem::addKeyboardListener
@@ -85,19 +82,9 @@ public:
   /// @copydoc RenderSystem::removeMouseListener
   virtual void removeMouseListener(MouseListener* listener) override;
 
-  /// @copydoc RenderSystem::loadDefaultShaders
-  virtual void loadDefaultShaders(const std::shared_ptr<File>& defaultVertexShaderFile,
-                                  const std::shared_ptr<File>& defaultFragmentShaderFile) override;
-
-  /// @copydoc RenderSystem::getDefaultVertexShader
-  virtual const std::shared_ptr<Shader>& getDefaultVertexShader() const override;
-
-  /// @copydoc RenderSystem::getDefaultFragmentShader
-  virtual const std::shared_ptr<Shader>& getDefaultFragmentShader() const override;
-
-  /// @copydoc RenderSystem::getDefaultProgram
-  virtual const std::shared_ptr<Program>& getDefaultProgram() const override;
-
+  /// @copydoc RenderSystem::getRenderer
+  virtual Renderer* getRenderer() const override;
+  
   SEQUOIA_NULL_OBJECT(RenderSystem)
 };
 

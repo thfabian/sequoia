@@ -41,20 +41,19 @@ class SEQUOIA_API Drawable final : public SceneNodeCapability {
   /// Mesh of the node
   std::shared_ptr<Mesh> mesh_;
 
+  //  /// Shape of the node (including the mesh and material properties)
+  //  std::shared_ptr<Shape> shape_;
+
 public:
   using Base = SceneNodeCapability;
 
   /// @brief Virtual destructor
   virtual ~Drawable();
 
-  /// @brief Construct with mesh and GPU porgram
-  ///
-  /// @param mesh       Mesh to use
-  /// @param program    GPU program to use, if `NULL` the default program of the game will be used
-  ///                   (Game::getDefaultProgram())
-  Drawable(SceneNode* node, const std::shared_ptr<Mesh>& mesh, render::Program* program = nullptr);
-  Drawable(SceneNode* node, const std::shared_ptr<Mesh>& mesh,
-           const std::shared_ptr<render::Program>& program);
+  /// @brief Construct with the associated shape
+  Drawable(SceneNode* node, const std::shared_ptr<Mesh>& mesh);
+
+  // TODO: remove, this information is passed in via the Material -----------
 
   /// @brief Get the Mesh of the node
   const std::shared_ptr<Mesh>& getMesh() const { return mesh_; }
@@ -70,25 +69,10 @@ public:
   /// @copydoc sequoia::render::DrawCommand::setTexture
   void setTexture(int textureUnit, render::Texture* texture) noexcept;
 
-  /// @brief Get the DrawCommand of the node
-  const render::DrawCommand& getDrawCommand() const { return drawCommand_.get(); }
-  render::DrawCommand& getDrawCommand() { return drawCommand_.get(); }
-
-  /// @brief Get the RenderState of the DrawCommand
-  render::RenderState& getRenderState();
-  const render::RenderState& getRenderState() const;
-
-  /// @brief Set the Program used in the render-pipeline when invoking the `DrawCommand`
-  void setProgram(render::Program* program) noexcept;
-  void setProgram(const std::shared_ptr<render::Program>& program) noexcept {
-    setProgram(program.get());
-  }
+  // -----------------------
 
   /// @brief Set a uniform variable
-  template <class T>
-  void setUniformVariable(const std::string& name, const T& variable) {
-    setUniformVariableImpl(name, variable);
-  }
+  void setUniform(const std::string& name, render::UniformVariable variable);
 
   /// @brief Is the node rendered?
   bool isActive() const { return active_; }
@@ -98,9 +82,10 @@ public:
 
   /// @brief Prepare the DrawCommand for rendering
   ///
-  /// @note This copies the model-matrix and the render-state to an internal queue. The values
-  /// can be modified freely afterwards without corrupting the rendering.
-  render::DrawCommand* makeDrawCommand();
+  /// @note This copies the model-matrix and advances the underlying uniform and vertex-data buffers
+  /// to the next timestep. The values can be modified freely afterwards without corrupting the
+  /// rendering.
+  render::DrawCommand* prepareDrawCommand();
 
   /// @copydoc SceneNodeCapability::update
   virtual void update(const SceneNodeUpdateEvent& event) override;
@@ -110,9 +95,6 @@ public:
 
   /// @copydoc SceneNodeCapability::clone
   virtual std::shared_ptr<SceneNodeCapability> clone(SceneNode* node) const override;
-
-private:
-  void setUniformVariableImpl(const std::string& name, UniformVariable variable);
 };
 
 SEQUOIA_REGISTER_SCENENODE_CAPABILITY(Drawable)

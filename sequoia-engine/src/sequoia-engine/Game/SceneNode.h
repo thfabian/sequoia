@@ -52,6 +52,7 @@ public:
   }
 
   /// @brief RTTI discriminator
+  //TODO: to make it more extendible, remove RTTI from Scenenodes
   enum SceneNodeKind : std::uint8_t {
     SK_SceneNode,
     SK_CameraController,
@@ -87,6 +88,8 @@ public:
   /// @brief Get the name of the node
   void setName(const std::string& name) { name_ = name; }
 
+  // TODO --- Move into Moveable capability ---
+  
   /// @brief Get the position (in world space
   const math::vec3& getPosition() const { return position_; }
 
@@ -127,6 +130,8 @@ public:
       computeModelMatrix();
     return modelMatrix_;
   }
+  
+  // ----------------------------------------
 
   /// @brief Add a child to the scene node
   void addChild(const std::shared_ptr<SceneNode>& child) {
@@ -274,6 +279,7 @@ private:
   SceneNodeKind kind_;
 
   /// Capabilities of the node (nullptr indicates absence of the capability)
+  //TODO: why no unique_ptr?
   std::array<std::shared_ptr<SceneNodeCapability>, SceneNodeCapability::NumCapabilities>
       capabilities_;
 

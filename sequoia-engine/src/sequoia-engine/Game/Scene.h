@@ -75,19 +75,19 @@ public:
   /// @brief Prepare a list of `RenderTechnique`s which is used in the next render call
   ///
   /// This is called automatically by `prepareRenderCommand`. By default this does nothing.
-  virtual prepareRenderTechniques(std::vector<render::RenderTechnique*>& techiques);
+  virtual void prepareRenderTechniques(std::vector<render::RenderTechnique*>& techiques);
 
   /// @brief Prepare a list of `DrawCommand`s which is used in the next render call
   ///
   /// This is called automatically by `prepareRenderCommand`. By default the SceneGraph is traversed
   /// and each actice `Drawable` is added to the `drawCommands`.
-  virtual prepareDrawCommands(std::vector<render::DrawCommand>& drawCommands);
+  virtual void prepareDrawCommands(std::vector<render::DrawCommand*>& drawCommands);
 
   /// @brief Prepare the RenderTarget whis is used in the next render call
   ///
   /// This is called automatically by `prepareRenderCommand`. By default, this does not change the
   /// `target` and thus retains the the default RenderTarget of the Game (which is the screen).
-  virtual prepareRenderTarget(render::RenderTarget*& target);
+  virtual void prepareRenderTarget(render::RenderTarget*& target);
 
   /// @}
 

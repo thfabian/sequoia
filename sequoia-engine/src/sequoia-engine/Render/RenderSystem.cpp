@@ -16,6 +16,7 @@
 #include "sequoia-engine/Core/Unreachable.h"
 #include "sequoia-engine/Render/Exception.h"
 #include "sequoia-engine/Render/RenderSystem.h"
+#include "sequoia-engine/Render/Renderer.h"
 
 #include "sequoia-engine/Render/GL/GLRenderSystem.h"
 #include "sequoia-engine/Render/Null/NullRenderSystem.h"
@@ -77,9 +78,9 @@ void RenderSystem::setDefaultOptions(const std::shared_ptr<Options>& options) {
 
 RenderSystem::~RenderSystem() {}
 
-void RenderSystem::renderOneFrame(const RenderCommand& command)
-{
-  // TODO
+void RenderSystem::renderOneFrame(const RenderCommand& command) { 
+  // TODO: inform Frame listeners
+  getRenderer()->render(command); 
 }
 
 void RenderSystem::frameListenerRenderingBegin(RenderCommand* command) {

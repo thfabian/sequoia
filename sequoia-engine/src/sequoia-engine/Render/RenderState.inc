@@ -27,6 +27,6 @@
 //
  
 RENDER_STATE(bool, DepthTest, true)
-RENDER_STATE(RenderState::DepthFuncKind, DepthFunc, RenderState::DF_Less)
+RENDER_STATE(RenderPipeline::DepthFuncKind, DepthFunc, RenderPipeline::DF_Less)
 
 // clang-format on

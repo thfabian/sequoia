@@ -17,14 +17,14 @@
 #define SEQUOIA_ENGINE_RENDER_GL_GLRENDERER_H
 
 #include "sequoia-engine/Core/Export.h"
-#include "sequoia-engine/Core/File.h"
 #include "sequoia-engine/Core/NonCopyable.h"
-#include "sequoia-engine/Render/FrameListener.h"
+#include "sequoia-engine/Render/GL/GLBuffer.h"
 #include "sequoia-engine/Render/GL/GLFwd.h"
+#include "sequoia-engine/Render/GL/GLPixelFormat.h"
 #include "sequoia-engine/Render/RenderFwd.h"
+#include "sequoia-engine/Render/Renderer.h"
 #include "sequoia-engine/Render/Viewport.h"
 #include <memory>
-#include <unordered_map>
 
 namespace sequoia {
 
@@ -35,30 +35,62 @@ namespace render {
 /// A rendered performs the actual rendering of the provided target. Further, the renderer keeps
 /// track on the OpenGL state machine.
 /// @ingroup gl
-class SEQUOIA_API GLRenderer : public ViewportListener,
-                               public Listenable<FrameListener>,
-                               public NonCopyable {
+class SEQUOIA_API GLRenderer final : public Renderer, public ViewportListener, public NonCopyable {
   /// Reference to the main-window
   GLRenderWindow* window_;
 
   /// Managers
-  std::unique_ptr<GLStateCacheManager> stateCacheManager_;
   std::unique_ptr<GLShaderManager> shaderManager_;
   std::unique_ptr<GLProgramManager> programManager_;
   std::unique_ptr<GLTextureManager> textureManager_;
   std::unique_ptr<GLExtensionManager> extensionManager_;
-  
-  // TODO remove --------------
-  
-  /// Default shaders
-  std::shared_ptr<Shader> defaultVertexShader_;
-  std::shared_ptr<Shader> defaultFragmentShader_;
 
-  /// Default GPU Program
-  std::shared_ptr<Program> defaultProgram_;
-  
-  // --------------------------
-  
+  /// OpenGL specific state
+  int activeTextureUnit_;
+  GLBuffer::BindKind vertexBindKind_;
+  GLPixelFormat pixelFormat_;
+
+  /// Default pixel format
+  GLPixelFormat defaultPixelFormat_;
+
+protected:
+  using Base = Renderer;
+
+#define RENDER_STATE(Type, Name, DefaultValue) virtual bool Name##Changed(Type value) override;
+#include "sequoia-engine/Render/RenderState.inc"
+#undef RENDER_STATE
+
+  /// @copydoc Renderer::ProgramChanged
+  virtual bool ProgramChanged(Program* program) override;
+
+  /// @copydoc Renderer::VertexDataChanged
+  virtual bool VertexDataChanged(VertexData* data, bool bindForDrawing) override;
+
+  /// @copydoc Renderer::TextureChanged
+  virtual bool TextureChanged(int textureUnit, Texture* texture, bool enable) override;
+
+  /// @copydoc Renderer::UniformVariableChanged
+  virtual bool UniformVariableChanged(Program* program, const std::string& name,
+                                      const UniformVariable& value) override;
+
+  /// @copydoc Renderer::ViewportChanged
+  virtual bool ViewportChanged(int x, int y, int width, int height) override;
+
+  /// @copydoc Renderer::clearColorBuffer
+  virtual bool clearColorBuffer() override;
+
+  /// @copydoc Renderer::clearDepthBuffer
+  virtual bool clearDepthBuffer() override;
+
+  /// @copydoc Renderer::clearStencilBuffer
+  virtual bool clearStencilBuffer() override;
+
+  /// @copydoc Renderer::draw
+  virtual bool draw(const DrawCommand* drawCommand) override;
+
+  /// @copydoc Renderer::toStringImpl
+  std::pair<std::string, std::string> toStringImpl() const override;
+
 public:
   /// @brief Initialize the OpenGL context and bind it to the calling thread
   ///
@@ -68,8 +100,8 @@ public:
   /// @brief Release the OpenGL context
   ~GLRenderer();
 
-  /// @brief Render `command`
-  void render(RenderCommand* command);
+  /// @copydoc Renderer::reset()
+  virtual void reset() override;
 
   /// @brief Get the shader manager
   GLShaderManager* getShaderManager();
@@ -80,39 +112,52 @@ public:
   /// @brief Get the texture manager
   GLTextureManager* getTextureManager();
 
-  /// @brief Get the OpenGL state manager
-  GLStateCacheManager* getStateCacheManager();
-
-  
-  // TODO --- remove
-  
-  /// @brief Load the default vertex and fragment shaders and link them into a program of `target`
+  /// @brief Return the value of `param` of type `T`
   ///
-  /// @param defaultVertexShaderFile    File containing the default vertex shader
-  /// @param defaultFragmentShaderFile  File containing the default fragment shader
-  void loadDefaultShaders(const std::shared_ptr<File>& defaultVertexShaderFile,
-                          const std::shared_ptr<File>& defaultFragmentShaderFile);
+  /// Type conversion is performed if `param` has a different type than the state variable value
+  /// being requested using standard C-type conversion.
+  template <class T>
+  T get(GLenum param) const noexcept {
+    return getImpl(param, T());
+  }
 
-  
-  /// @brief Get the default vertex shader
-  const std::shared_ptr<Shader>& getDefaultVertexShader() const;
+  /// @brief Set a texture-unit/texture pair
+  bool setTexture(int textureUnit, Texture* texture);
 
-  /// @brief Get the default fragment shader
-  const std::shared_ptr<Shader>& getDefaultFragmentShader() const;
+  /// @brief Unset all texture-unit/texture pairs
+  ///
+  /// This effectivly disables all texture units
+  bool unsetTextures();
 
-  /// @brief Get the default fragment shader
-  const std::shared_ptr<Program>& getDefaultProgram() const;
+  /// @brief Get the default `GLPixelFormat`
+  GLPixelFormat getDefaultPixelFormat() const noexcept { return defaultPixelFormat_; }
 
-  // -------------------
-  
+  /// @brief Set the pixel storage mode to `format`
+  ///
+  /// This affects all subsequent calls to `glReadPixels` as well as the unpacking of textures (e.g
+  /// `glTexImage2D`).
+  void setPixelFormat(const GLPixelFormat& format, bool force = false);
+
+  /// @brief Reset the pixel storage format mode to it's default
+  void resetPixelFormat();
+
   /// @brief Check if `extension` is supported
   /// @see GLExtensionManager::supported
   bool isExtensionSupported(gl::GLextension extension) noexcept;
 
-  /// @brief Adjust viewport
-  virtual void viewportGeometryChanged(Viewport* viewport) override;
+  void viewportGeometryChanged(Viewport* viewport) override;
+
+private:
+  bool getImpl(GLenum param, bool) const noexcept;
+  int getImpl(GLenum param, int) const noexcept;
+  float getImpl(GLenum param, float) const noexcept;
+  double getImpl(GLenum param, double) const noexcept;
+
+  /// @brief Set the active texture unit
+  inline void setActiveTextureUnit(int textureUnit) noexcept;
 };
 
+// TODO: this doesn't play nicely with multiple contexts
 /// @brief Get a reference to the currently active `GLRenderer`
 /// @ingroup gl
 /// @{

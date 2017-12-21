@@ -13,22 +13,22 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia-engine/Render/GL/GL.h"
 #include "sequoia-engine/Core/Casting.h"
 #include "sequoia-engine/Core/Logging.h"
 #include "sequoia-engine/Core/Options.h"
 #include "sequoia-engine/Core/StringUtil.h"
 #include "sequoia-engine/Math/CoordinateSystem.h"
 #include "sequoia-engine/Render/Camera.h"
-#include "sequoia-engine/Render/DrawCommandList.h"
+#include "sequoia-engine/Render/GL/GL.h"
 #include "sequoia-engine/Render/GL/GLExtensionManager.h"
+#include "sequoia-engine/Render/GL/GLProgram.h"
 #include "sequoia-engine/Render/GL/GLProgramManager.h"
 #include "sequoia-engine/Render/GL/GLRenderSystem.h"
 #include "sequoia-engine/Render/GL/GLRenderWindow.h"
 #include "sequoia-engine/Render/GL/GLRenderer.h"
 #include "sequoia-engine/Render/GL/GLShaderManager.h"
-#include "sequoia-engine/Render/GL/GLStateCacheManager.h"
 #include "sequoia-engine/Render/GL/GLTextureManager.h"
+#include "sequoia-engine/Render/GL/GLVertexData.h"
 #include "sequoia-engine/Render/GL/Native.h"
 #include "sequoia-engine/Render/RenderSystem.h"
 #include <glbinding/Binding.h>
@@ -42,6 +42,8 @@
 namespace sequoia {
 
 namespace render {
+
+namespace {
 
 static const char* getGLType(GLenum type) {
   switch(type) {
@@ -90,6 +92,164 @@ static std::string functionCallToString(const glbinding::FunctionCall& call) {
   return ss.str();
 }
 
+/// @brief Enable/Disable the capability `cap`
+static void setCapability(bool enable, GLenum cap) noexcept {
+  if(enable)
+    glEnable(cap);
+  else
+    glDisable(cap);
+}
+
+} // anonymous namespace
+
+bool GLRenderer::DepthTestChanged(bool DepthTest) {
+  setCapability(DepthTest, GL_DEPTH_TEST);
+  return true;
+}
+
+bool GLRenderer::DepthFuncChanged(RenderPipeline::DepthFuncKind DepthFunc) {
+  switch(DepthFunc) {
+  case RenderPipeline::DepthFuncKind::DF_Never:
+    glDepthFunc(GL_NEVER);
+    break;
+  case RenderPipeline::DepthFuncKind::DF_Less:
+    glDepthFunc(GL_LESS);
+    break;
+  case RenderPipeline::DepthFuncKind::DF_Equal:
+    glDepthFunc(GL_EQUAL);
+    break;
+  case RenderPipeline::DepthFuncKind::DF_LessEqual:
+    glDepthFunc(GL_LEQUAL);
+    break;
+  case RenderPipeline::DepthFuncKind::DF_Greater:
+    glDepthFunc(GL_GREATER);
+    break;
+  case RenderPipeline::DepthFuncKind::DF_NotEqual:
+    glDepthFunc(GL_NOTEQUAL);
+    break;
+  case RenderPipeline::DepthFuncKind::DF_GreaterEqual:
+    glDepthFunc(GL_GEQUAL);
+    break;
+  case RenderPipeline::DepthFuncKind::DF_Always:
+    glDepthFunc(GL_ALWAYS);
+    break;
+  default:
+    sequoia_unreachable("invalid DepthFuncKind");
+  }
+  return true;
+}
+
+bool GLRenderer::ProgramChanged(Program* program) {
+  SEQUOIA_ASSERT(program);
+
+  if(!program->isValid())
+    return false;
+  
+  GLProgram* glprogram = core::dyn_cast<GLProgram>(program);
+  glprogram->bind();
+  return true;
+}
+
+bool GLRenderer::VertexDataChanged(VertexData* data, bool bindForDrawing) {
+  SEQUOIA_ASSERT(data);
+
+  vertexBindKind_ = bindForDrawing ? GLBuffer::BK_Draw : GLBuffer::BK_Modify;
+  GLVertexData* gldata = core::dyn_cast<GLVertexData>(data);
+
+  switch(vertexBindKind_) {
+  case GLBuffer::BK_Modify:
+    gldata->bindForModify();
+    break;
+  case GLBuffer::BK_Draw:
+    gldata->bindForDrawing();
+    break;
+  default:
+    sequoia_unreachable("invalid BindKind");
+  }
+
+  return true;
+}
+
+bool GLRenderer::TextureChanged(int textureUnit, Texture* texture, bool enable) {
+  SEQUOIA_ASSERT(texture);
+
+  GLTexture* gltexture = core::dyn_cast<GLTexture>(texture);
+
+  // Bind texture
+  setActiveTextureUnit(textureUnit);
+
+  if(enable) {
+    if(!gltexture->isValid())
+      return false;
+
+    gltexture->bind();
+
+    // Bind assoicated sampler if we already have a program
+    Program* program = pipeline_.Program;
+    if(program) {
+      GLProgram* glprogram = core::dyn_cast<GLProgram>(program);
+      const std::string& name = glprogram->getTextureSampler(textureUnit);
+      setUniform(glprogram, name, UniformVariable(textureUnit));
+    }
+  } else {
+    core::dyn_cast<GLTexture>(texture)->unbind();
+  }
+
+  return true;
+}
+
+bool GLRenderer::UniformVariableChanged(Program* program, const std::string& name,
+                                        const UniformVariable& value) {
+  SEQUOIA_ASSERT(program);
+
+  if(!program->isValid())
+    return false;
+
+  GLProgram* glprogram = core::dyn_cast<GLProgram>(program);
+  glprogram->setUniformVariable(name, value);
+  return true;
+}
+
+bool GLRenderer::ViewportChanged(int x, int y, int width, int height) {
+  glViewport(x, y, width, height);
+  return true;
+}
+
+bool GLRenderer::clearStencilBuffer() {
+  glClear(GL_COLOR_BUFFER_BIT);
+  return true;
+}
+
+bool GLRenderer::clearColorBuffer() {
+  glClear(GL_STENCIL_BUFFER_BIT);
+  return true;
+}
+
+bool GLRenderer::clearDepthBuffer() {
+  glClear(GL_DEPTH_BUFFER_BIT);
+  return true;
+}
+
+bool GLRenderer::draw(const DrawCommand* drawCommand) {
+  SEQUOIA_ASSERT(drawCommand->getVertexData() == vertexData_);
+
+  // Check all uniform variables are set
+  core::dyn_cast<GLProgram>(pipeline_.Program)->checkUniformVariables();
+
+  // Draw the vertex-data
+  core::dyn_cast<GLVertexData>(vertexData_)->draw();
+  return true;
+}
+
+std::pair<std::string, std::string> GLRenderer::toStringImpl() const {
+  return std::make_pair("GLRenderer", core::format("{}"
+                                                   "activeTextureUnit = {},\n"
+                                                   "vertexBindKind = {},\n"
+                                                   "pixelFormat = {}\n",
+                                                   Base::toStringImpl().second, activeTextureUnit_,
+                                                   vertexBindKind_, pixelFormat_.toString()));
+}
+
 GLRenderer::GLRenderer(GLRenderWindow* window) : window_(window) {
   Log::info("Creating OpenGL renderer {} ...", core::ptrToStr(this));
 
@@ -100,7 +260,7 @@ GLRenderer::GLRenderer(GLRenderWindow* window) : window_(window) {
   glbinding::Binding::initialize(false);
 
   // Set debugging callbacks
-  if(getGLRenderSystem().getOptions().get<bool>("Core.Debug")) {
+  if(getGLRenderSystem().getOptions().getBool("Core.Debug")) {
 
     // Enable error checking
     using namespace glbinding;
@@ -126,18 +286,36 @@ GLRenderer::GLRenderer(GLRenderWindow* window) : window_(window) {
   if(getGLRenderSystem().getOptions().get<bool>("Render.VSync"))
     window_->getContext()->enableVSync();
 
-  // Register as Viewport listener
+  // Register as Viewport listener of the main-window
   window_->getViewport()->addListener<ViewportListener>(this);
 
   // Initialize OpenGL related managers
-  stateCacheManager_ = std::make_unique<GLStateCacheManager>();
-  addListener<FrameListener>(stateCacheManager_.get());
   shaderManager_ = std::make_unique<GLShaderManager>();
   programManager_ = std::make_unique<GLProgramManager>();
   textureManager_ = std::make_unique<GLTextureManager>();
   extensionManager_ = std::make_unique<GLExtensionManager>();
+  
+  // Query the default pixel format
+  auto getAndSetPixelFormat = [this](GLenum param) {
+    int value = get<int>(param);
+    defaultPixelFormat_.set(param, value);
+  };
+  getAndSetPixelFormat(GL_UNPACK_ALIGNMENT);
+  getAndSetPixelFormat(GL_UNPACK_ROW_LENGTH);
+  
+  // Reset internal state
+  activeTextureUnit_ = -1;
+  vertexBindKind_ = GLBuffer::BK_Unknown;
+  setPixelFormat(defaultPixelFormat_, true);  
 
   Log::info("Successfully created OpenGL renderer {}", core::ptrToStr(this));
+}
+
+void GLRenderer::reset() {
+  Base::reset();
+  activeTextureUnit_ = -1;
+  vertexBindKind_ = GLBuffer::BK_Unknown;
+  setPixelFormat(defaultPixelFormat_, true);
 }
 
 GLRenderer::~GLRenderer() {
@@ -145,90 +323,12 @@ GLRenderer::~GLRenderer() {
 
   window_->getContext()->makeCurrent();
 
-  // Destroy all remaining shaders, programs, textures and buffers
-  defaultVertexShader_.reset();
-  defaultFragmentShader_.reset();
-  defaultProgram_.reset();
-
   programManager_.reset();
   shaderManager_.reset();
   textureManager_.reset();
-
-  stateCacheManager_.reset();
-
   glbinding::Binding::releaseCurrentContext();
 
   Log::info("Done terminating OpenGL renderer {} ... ", core::ptrToStr(this));
-}
-
-void GLRenderer::render(RenderCommand* command) {
-  RenderTarget* target = command->getRenderTarget();
-  SEQUOIA_ASSERT_MSG(target, "no RenderTarget set");
-
-  // Bind the FrameBuffer - if no FBO is attached, we render to the main-screen
-  if(target->hasFrameBuffer())
-    stateCacheManager_->bindFrameBufferObject(target->getFrameBuffer().get());
-
-  // Inform everyone that we start rendering a frame
-  for(FrameListener* listener : getListeners<FrameListener>())
-    listener->frameListenerRenderingBegin(command);
-
-  Viewport* viewport = target->getViewport();
-  SEQUOIA_ASSERT_MSG(viewport, "no Viewport set");
-
-  Camera* camera = viewport->getCamera();
-  SEQUOIA_ASSERT_MSG(camera, "no Camera set");
-
-  DrawCommandList* drawCommandList = command->getDrawCommandList();
-  SEQUOIA_ASSERT_MSG(drawCommandList, "no DrawCommandList set");
-
-  // Set the viewport
-  stateCacheManager_->setViewport(viewport);
-
-  // Compute projection-view matrix
-  math::mat4 matVP = camera->getViewProjectionMatrix();
-  UniformVariable u_matP = camera->getProjectionMatrix();
-
-  // Clear the screen
-  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-  // Extract a list of all referenced, valid programs
-  std::unordered_set<Program*> programs;
-  for(DrawCommand* drawCommand = drawCommandList->start(); drawCommand != nullptr;
-      drawCommand = drawCommandList->next()) {
-    programs.insert(drawCommand->getProgram());
-  }
-
-  // Set the uniform variables which are persistent accross the DrawCommands for each program
-  command->forEachUniformVariable(
-      programs, [this](Program* program, const std::string& name, const UniformVariable& variable) {
-        stateCacheManager_->setUniformVariable(program, name, variable);
-      });
-
-  for(DrawCommand* drawCommand = drawCommandList->start(); drawCommand != nullptr;
-      drawCommand = drawCommandList->next()) {
-    GLProgram* program = core::dyn_cast<GLProgram>(drawCommand->getProgram());
-    if(!program->isValid())
-      continue;
-
-    // Compute the transformation matrices (camera to world space)
-    UniformVariable u_matM = drawCommand->getModelMatrix();
-    UniformVariable u_matMVP = matVP * drawCommand->getModelMatrix();
-    program->setUniformVariable("u_matMVP", u_matMVP);
-    program->setUniformVariable("u_matM", u_matM);
-    program->setUniformVariable("u_matP", u_matP);
-
-    // Update the OpenGL state-machine and draw the command
-    stateCacheManager_->draw(drawCommand);
-  }
-
-  // Inform everyone that we finished rendering the frame
-  for(FrameListener* listener : getListeners<FrameListener>())
-    listener->frameListenerRenderingEnd(command);
-
-  // Unbind the FBO
-  if(target->hasFrameBuffer())
-    stateCacheManager_->unbindFrameBufferObject();
 }
 
 GLShaderManager* GLRenderer::getShaderManager() { return shaderManager_.get(); }
@@ -237,38 +337,139 @@ GLProgramManager* GLRenderer::getProgramManager() { return programManager_.get()
 
 GLTextureManager* GLRenderer::getTextureManager() { return textureManager_.get(); }
 
-GLStateCacheManager* GLRenderer::getStateCacheManager() { return stateCacheManager_.get(); }
-
-void GLRenderer::loadDefaultShaders(const std::shared_ptr<File>& defaultVertexShaderFile,
-                                    const std::shared_ptr<File>& defaultFragmentShaderFile) {
-  auto& rsys = RenderSystem::getSingleton();
-
-  defaultVertexShader_ = rsys.createShader(Shader::ST_Vertex, defaultVertexShaderFile);
-  defaultFragmentShader_ = rsys.createShader(Shader::ST_Fragment, defaultFragmentShaderFile);
-  defaultProgram_ = rsys.createProgram({defaultVertexShader_, defaultFragmentShader_});
+bool GLRenderer::setTexture(int textureUnit, Texture* texture) {
+  return setTextures(std::unordered_map<int, Texture*>{{textureUnit, texture}});
 }
 
-const std::shared_ptr<Shader>& GLRenderer::getDefaultVertexShader() const {
-  return defaultVertexShader_;
+bool GLRenderer::unsetTextures() { return setTextures(std::unordered_map<int, Texture*>{}); }
+
+void GLRenderer::setPixelFormat(const GLPixelFormat& format, bool force) {
+  for(const auto& formatPair : format.format_) {
+    GLenum param = formatPair.first;
+    int value = formatPair.second;
+
+    auto it = pixelFormat_.format_.find(param);
+    if(force || (it == pixelFormat_.format_.end() || it->second != value)) {
+      glPixelStorei(formatPair.first, formatPair.second);
+      pixelFormat_.set(param, value);
+    }
+  }
 }
 
-const std::shared_ptr<Shader>& GLRenderer::getDefaultFragmentShader() const {
-  return defaultFragmentShader_;
-}
-
-const std::shared_ptr<Program>& GLRenderer::getDefaultProgram() const { return defaultProgram_; }
+void GLRenderer::resetPixelFormat() { setPixelFormat(defaultPixelFormat_, true); }
 
 void GLRenderer::viewportGeometryChanged(Viewport* viewport) {
-  stateCacheManager_->setViewport(viewport);
+  setViewport(viewport);
 }
 
 bool GLRenderer::isExtensionSupported(GLextension extension) noexcept {
   return extensionManager_->isSupported(extension);
 }
 
-GLRenderer& getGLRenderer() noexcept { return *getGLRenderSystem().getRenderer(); }
+void GLRenderer::setActiveTextureUnit(int textureUnit) noexcept {
+  if(activeTextureUnit_ != textureUnit) {
+    glActiveTexture(GL_TEXTURE0 + textureUnit);
+    activeTextureUnit_ = textureUnit;
+  }
+}
 
-GLRenderer* getGLRendererPtr() noexcept { return getGLRenderSystem().getRenderer(); }
+bool GLRenderer::getImpl(GLenum param, bool) const noexcept {
+  GLboolean value;
+  glGetBooleanv(param, &value);
+  return static_cast<bool>(value);
+}
+
+int GLRenderer::getImpl(GLenum param, int) const noexcept {
+  int value;
+  glGetIntegerv(param, &value);
+  return value;
+}
+
+float GLRenderer::getImpl(GLenum param, float) const noexcept {
+  float value;
+  glGetFloatv(param, &value);
+  return value;
+}
+
+double GLRenderer::getImpl(GLenum param, double) const noexcept {
+  double value;
+  glGetDoublev(param, &value);
+  return value;
+}
+
+GLRenderer& getGLRenderer() noexcept { return *getGLRenderSystem().getGLRenderer(); }
+
+GLRenderer* getGLRendererPtr() noexcept { return getGLRenderSystem().getGLRenderer(); }
+
+//void GLRenderer::render(RenderCommand* command) {
+//  RenderTarget* target = command->getRenderTarget();
+//  SEQUOIA_ASSERT_MSG(target, "no RenderTarget set");
+
+//  // Bind the FrameBuffer - if no FBO is attached, we render to the main-screen
+//  if(target->hasFrameBuffer())
+//    stateCacheManager_->bindFrameBufferObject(target->getFrameBuffer().get());
+
+//  // Inform everyone that we start rendering a frame
+//  for(FrameListener* listener : getListeners<FrameListener>())
+//    listener->frameListenerRenderingBegin(command);
+
+//  Viewport* viewport = target->getViewport();
+//  SEQUOIA_ASSERT_MSG(viewport, "no Viewport set");
+
+//  Camera* camera = viewport->getCamera();
+//  SEQUOIA_ASSERT_MSG(camera, "no Camera set");
+
+//  DrawCommandList* drawCommandList = command->getDrawCommandList();
+//  SEQUOIA_ASSERT_MSG(drawCommandList, "no DrawCommandList set");
+
+//  // Set the viewport
+//  stateCacheManager_->setViewport(viewport);
+
+//  // Compute projection-view matrix
+//  math::mat4 matVP = camera->getViewProjectionMatrix();
+//  UniformVariable u_matP = camera->getProjectionMatrix();
+
+//  // Clear the screen
+//  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+//  // Extract a list of all referenced, valid programs
+//  std::unordered_set<Program*> programs;
+//  for(DrawCommand* drawCommand = drawCommandList->start(); drawCommand != nullptr;
+//      drawCommand = drawCommandList->next()) {
+//    programs.insert(drawCommand->getProgram());
+//  }
+
+//  // Set the uniform variables which are persistent accross the DrawCommands for each program
+//  command->forEachUniformVariable(
+//      programs, [this](Program* program, const std::string& name, const UniformVariable& variable) {
+//        stateCacheManager_->setUniformVariable(program, name, variable);
+//      });
+
+//  for(DrawCommand* drawCommand = drawCommandList->start(); drawCommand != nullptr;
+//      drawCommand = drawCommandList->next()) {
+//    GLProgram* program = core::dyn_cast<GLProgram>(drawCommand->getProgram());
+//    if(!program->isValid())
+//      continue;
+
+//    // Compute the transformation matrices (camera to world space)
+//    UniformVariable u_matM = drawCommand->getModelMatrix();
+//    UniformVariable u_matMVP = matVP * drawCommand->getModelMatrix();
+//    program->setUniformVariable("u_matMVP", u_matMVP);
+//    program->setUniformVariable("u_matM", u_matM);
+//    program->setUniformVariable("u_matP", u_matP);
+
+//    // Update the OpenGL state-machine and draw the command
+//    stateCacheManager_->draw(drawCommand);
+//  }
+
+//  // Inform everyone that we finished rendering the frame
+//  for(FrameListener* listener : getListeners<FrameListener>())
+//    listener->frameListenerRenderingEnd(command);
+
+//  // Unbind the FBO
+//  if(target->hasFrameBuffer())
+//    stateCacheManager_->unbindFrameBufferObject();
+//}
 
 } // namespace render
 

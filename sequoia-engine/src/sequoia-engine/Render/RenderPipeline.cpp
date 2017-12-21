@@ -77,7 +77,7 @@ std::string RenderPipeline::toString() const {
 #include "sequoia-engine/Render/RenderState.inc"
 #undef RENDER_STATE
 
-  ss << "  Program = " << (Program ? core::indent(Program->toString()) : "null") << ",\n";
+  ss << "  Program = " << (Program ? core::indent(Program->toString()) : "null") << "\n";
   ss << "]";
   return ss.str();
 }

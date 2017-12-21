@@ -54,7 +54,7 @@ namespace render {
 ///
 /// @ingroup render
 class SEQUOIA_API RenderSystem : public Singleton<RenderSystem>,
-                                 public FrameListener,
+                                 public FrameListener, // TODO: remove
                                  public Listenable<InputEventListener, FrameListener>,
                                  public RenderSystemObject {
 public:
@@ -70,6 +70,9 @@ public:
 
   /// @brief Terminate the render-system
   virtual ~RenderSystem();
+
+  /// @brief Render one frame using the instructions given in `command`.
+  void renderOneFrame(const RenderCommand& command);
 
   /// @brief Create the main-window (if a main-window is already active, the old one will be
   /// destroyed first)
@@ -87,9 +90,6 @@ public:
 
   /// @brief Processes events that are in the event queue
   virtual void pollEvents() = 0;
-
-  /// @brief Render one frame using the instructions given in `command`.
-  void renderOneFrame(const RenderCommand& command);
 
   /// @brief Create a shader from source
   virtual std::shared_ptr<Shader> createShader(Shader::ShaderType type,
@@ -118,26 +118,9 @@ public:
 
   /// @brief Remove the mouse `listener`
   virtual void removeMouseListener(MouseListener* listener) = 0;
-
-  // TODO -- remove
-
-  /// @brief Load the default vertex and fragment shaders and link them into a program
-  ///
-  /// @param defaultVertexShaderFile    File containing the default vertex shader
-  /// @param defaultFragmentShaderFile  File containing the default fragment shader
-  virtual void loadDefaultShaders(const std::shared_ptr<File>& defaultVertexShaderFile,
-                                  const std::shared_ptr<File>& defaultFragmentShaderFile) = 0;
-
-  /// @brief Get the default vertex shader
-  virtual const std::shared_ptr<Shader>& getDefaultVertexShader() const = 0;
-
-  /// @brief Get the default fragment shader
-  virtual const std::shared_ptr<Shader>& getDefaultFragmentShader() const = 0;
-
-  /// @brief Get the default fragment shader
-  virtual const std::shared_ptr<Program>& getDefaultProgram() const = 0;
-
-  // --------------------
+  
+  /// @brief Get the Renderer
+  virtual Renderer* getRenderer() const = 0;
 
   /// @brief Set if we run in debug-mode
   Options& getOptions() const { return *options_; }
@@ -148,11 +131,6 @@ public:
 
 protected:
   RenderSystem(RenderSystemKind kind, const std::shared_ptr<Options>& options);
-
-  /// @brief Get the RenderStateManager
-  ///
-  /// This is used in `renderOneFrame()`.
-  virtual RenderStateManager* getRenderStateManager() = 0;
 
 private:
   std::shared_ptr<Options> options_;

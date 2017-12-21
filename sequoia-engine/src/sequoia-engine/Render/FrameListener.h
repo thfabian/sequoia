@@ -17,13 +17,12 @@
 #define SEQUOIA_ENGINE_RENDER_FRAMELISTENER_H
 
 #include "sequoia-engine/Core/Export.h"
+#include "sequoia-engine/Render/RenderFwd.h"
 #include <cstddef>
 
 namespace sequoia {
 
 namespace render {
-
-class RenderCommand;
 
 /// @brief Listen to frame events
 /// @ingroup render

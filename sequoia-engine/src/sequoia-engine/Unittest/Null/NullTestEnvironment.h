@@ -13,27 +13,30 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_ENGINE_UNITTEST_GL_GLRENDERSETUP_H
-#define SEQUOIA_ENGINE_UNITTEST_GL_GLRENDERSETUP_H
+#ifndef SEQUOIA_ENGINE_UNITTEST_NULL_NULLTESTENVIRONMENT_H
+#define SEQUOIA_ENGINE_UNITTEST_NULL_NULLTESTENVIRONMENT_H
 
-#include "sequoia-engine/Core/Export.h"
-#include "sequoia-engine/Core/NonCopyable.h"
-#include "sequoia-engine/Render/GL/GLRenderWindow.h"
-#include "sequoia-engine/Unittest/Fixture.h"
+#include "sequoia-engine/Render/Null/NullRenderSystem.h"
+#include "sequoia-engine/Unittest/TestEnvironment.h"
+#include <gtest/gtest.h>
 
 namespace sequoia {
 
 namespace unittest {
 
-/// @brief Handle creation and initialization of OpenGL RenderWindows
+/// @brief Null test environment
 /// @ingroup unittest
-class SEQUOIA_API GLRenderSetup : public NonCopyable {
-public:
-  /// @brief Register and initialize the window
-  void SetUp();
+class SEQUOIA_API NullTestEnvironment : public TestEnvironment {
+  std::unique_ptr<render::RenderSystem> renderSystem_;
 
-  /// @brief Destroy the window
-  void TearDown();
+public:
+  NullTestEnvironment(int argc, char* argv[]);
+
+  /// @brief Create the Null RenderSystem
+  virtual void SetUp() override;
+
+  /// @brief Tear-down the Null RenderSystem
+  virtual void TearDown() override;
 };
 
 } // namespace unittest

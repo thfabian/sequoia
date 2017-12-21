@@ -25,7 +25,6 @@
 #include "sequoia-engine/Game/MeshManager.h"
 #include "sequoia-engine/Game/Scene.h"
 #include "sequoia-engine/Render/Camera.h"
-#include "sequoia-engine/Render/DrawCommandList.h"
 #include "sequoia-engine/Render/Exception.h"
 #include "sequoia-engine/Render/RenderSystem.h"
 #include "sequoia-engine/Render/RenderWindow.h"
@@ -90,13 +89,13 @@ void Game::init(const std::shared_ptr<Options>& gameOptions) {
 
   try {
     // Initialize the RenderSystem
-  renderSystem_ = RenderSystem::create(
+    renderSystem_ = RenderSystem::create(
       options_->getEnum<render::RenderSystemKind>("Game.RenderSystem"), options_);
 
     // Create the main-window & initialize the OpenGL context
     RenderWindow::WindowHint hint;
     hint.Title = std::string("Sequoia - ") + core::getSequoiaEngineFullVersionString();
-    hint.Monitor = options_->get<int>("Render.Monitor");
+    hint.Monitor = options_->getInt("Render.Monitor");
     using WindowModeKind = render::RenderWindow::WindowHint::WindowModeKind;
     hint.WindowMode = core::StringSwitch<WindowModeKind>(options_->getString("Render.WindowMode"))
                           .Case("fullscreen", WindowModeKind::WK_Fullscreen)
@@ -110,20 +109,14 @@ void Game::init(const std::shared_ptr<Options>& gameOptions) {
     renderSystem_->addKeyboardListener(this);
     renderSystem_->addMouseListener(this);
 
-    // Initialize the object managers
+    // Initialize the managers
     assetManager_ = std::make_unique<AssetManager>(PLATFORM_STR(SEQUOIA_ENGINE_RESSOURCEPATH),
                                                    PLATFORM_STR("assets"));
     meshManager_ = std::make_unique<MeshManager>();
 
-    // TODO: Remove
-    // Create default shaders and program
-    renderSystem_->loadDefaultShaders(assetManager_->load("sequoia/shader/Default.vert"),
-                                      assetManager_->load("sequoia/shader/Default.frag"));
-
     // -- tmp --
     setScene("TestScene", std::make_shared<Scene>(), true);
     getActiveScene()->makeDummyScene();
-
     quitKey_ = Keymap::makeDefault(render::Key_Q, render::Mod_Ctrl);
 
   } catch(core::Exception& e) {
@@ -173,6 +166,8 @@ MeshManager* Game::getMeshManager() const { return meshManager_.get(); }
 
 render::RenderWindow* Game::getMainWindow() const { return mainWindow_; }
 
+render::RenderTarget* Game::getMainRenderTarget() const { return getMainWindow(); }
+
 render::Texture* Game::createTexture(const std::shared_ptr<Image>& image) {
   return createTexture(image, render::TextureParameter());
 }
@@ -198,18 +193,6 @@ std::shared_ptr<render::Program> Game::createProgram(
   for(const auto& shaderPair : shaders)
     shaderSet.insert(createShader(shaderPair.first, shaderPair.second));
   return createProgram(shaderSet);
-}
-
-const std::shared_ptr<render::Shader>& Game::getDefaultVertexShader() const {
-  return renderSystem_->getDefaultVertexShader();
-}
-
-const std::shared_ptr<render::Shader>& Game::getDefaultFragmentShader() const {
-  return renderSystem_->getDefaultFragmentShader();
-}
-
-const std::shared_ptr<render::Program>& Game::getDefaultProgram() const {
-  return renderSystem_->getDefaultProgram();
 }
 
 Scene* Game::getActiveScene() const { return activeScene_; }

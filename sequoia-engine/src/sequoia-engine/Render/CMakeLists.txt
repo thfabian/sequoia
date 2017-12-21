@@ -15,14 +15,12 @@
 
 set(GL_SOURCE
   GL/GL.h
-  GL/GLBuffer.cpp          
+  GL/GLBuffer.cpp
   GL/GLBuffer.h
   GL/GLExtensionManager.cpp
   GL/GLExtensionManager.h
   GL/GLFragmentData.cpp
   GL/GLFragmentData.h
-  GL/GLFrameBufferObject.cpp
-  GL/GLFrameBufferObject.h
   GL/GLFwd.h  
   GL/GLIndexBuffer.cpp
   GL/GLIndexBuffer.h
@@ -30,6 +28,8 @@ set(GL_SOURCE
   GL/GLProgram.h
   GL/GLProgramManager.cpp
   GL/GLProgramManager.h
+  GL/GLPixelFormat.h
+  GL/GLPixelFormat.cpp
   GL/GLRenderer.cpp
   GL/GLRenderer.h
   GL/GLRenderSystem.cpp
@@ -40,8 +40,6 @@ set(GL_SOURCE
   GL/GLShader.h
   GL/GLShaderManager.cpp
   GL/GLShaderManager.h
-  GL/GLStateCacheManager.cpp
-  GL/GLStateCacheManager.h
   GL/GLTexture.cpp
   GL/GLTexture.h
   GL/GLTextureManager.cpp
@@ -52,7 +50,7 @@ set(GL_SOURCE
   GL/GLVertexBuffer.h
   GL/GLVertexData.cpp
   GL/GLVertexData.h
-  GL/Native.cpp          
+  GL/Native.cpp
   GL/Native.h
   GL/NativeGLFW3.cpp
   GL/NativeGLFW3.h
@@ -65,6 +63,8 @@ set(NULL_SOURCE
   Null/NullInputSystem.h
   Null/NullProgram.cpp
   Null/NullProgram.h
+  Null/NullRenderer.cpp
+  Null/NullRenderer.h
   Null/NullRenderSystem.cpp
   Null/NullRenderSystem.h
   Null/NullRenderWindow.cpp
@@ -87,7 +87,7 @@ sequoia_add_library(
           Camera.h
           DrawCommand.cpp
           DrawCommand.h
-          DrawContext.h
+          DrawCallContext.h
           DrawScene.h
           Exception.h
           FrameBuffer.cpp
@@ -103,6 +103,8 @@ sequoia_add_library(
           Program.h
           RenderCommand.cpp
           RenderCommand.h
+          Renderer.cpp
+          Renderer.h
           RenderFwd.h
           RenderPass.h
           RenderPipeline.cpp
@@ -112,8 +114,6 @@ sequoia_add_library(
           RenderServer.cpp
           RenderServer.h
           RenderState.inc
-          RenderStateManager.cpp
-          RenderStateManager.h
           RenderSystem.cpp
           RenderSystem.h
           RenderSystemObject.h

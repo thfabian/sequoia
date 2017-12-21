@@ -126,15 +126,6 @@ public:
   std::shared_ptr<render::Program>
   createProgram(const std::set<std::shared_ptr<render::Shader>>& shaders);
 
-  /// @brief Get the default vertex shader
-  const std::shared_ptr<render::Shader>& getDefaultVertexShader() const;
-
-  /// @brief Get the default fragment shader
-  const std::shared_ptr<render::Shader>& getDefaultFragmentShader() const;
-
-  /// @brief Get the default program
-  const std::shared_ptr<render::Program>& getDefaultProgram() const;
-
   /// @name Scene operations
   /// @{
 

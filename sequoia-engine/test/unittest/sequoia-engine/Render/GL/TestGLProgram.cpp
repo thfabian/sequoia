@@ -23,7 +23,7 @@
 #include "sequoia-engine/Render/GL/GLVertexAttribute.h"
 #include "sequoia-engine/Render/UniformStruct.h"
 #include "sequoia-engine/Render/UniformVariable.h"
-#include "sequoia-engine/Unittest/GL/GLRenderSetup.h"
+#include "sequoia-engine/Unittest/RenderSetup.h"
 #include "sequoia-engine/Unittest/TestEnvironment.h"
 #include <array>
 #include <gtest/gtest.h>
@@ -34,7 +34,7 @@ using namespace sequoia::render;
 
 namespace {
 
-SEQUOIA_TESTCASEFIXTURE(GLProgramTest, GLRenderSetup);
+SEQUOIA_TESTCASEFIXTURE(GLProgramTest, RenderSetup);
 
 TEST_F(GLProgramTest, LinkingSuccess) {
   TestEnvironment& env = TestEnvironment::getSingleton();

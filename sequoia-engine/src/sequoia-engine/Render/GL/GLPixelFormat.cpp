@@ -13,30 +13,32 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_ENGINE_RENDER_NULL_NULLFWD_H
-#define SEQUOIA_ENGINE_RENDER_NULL_NULLFWD_H
-
-#ifdef SEQUOIA_DOXYGEN_INVOKED
-/// @defgroup null Null
-/// @brief Implementation for no particular rendering API
-/// @ingroup render
-#endif
+#include "sequoia-engine/Core/Assert.h"
+#include "sequoia-engine/Core/Format.h"
+#include "sequoia-engine/Core/StringUtil.h"
+#include "sequoia-engine/Render/GL/GLPixelFormat.h"
 
 namespace sequoia {
 
 namespace render {
 
-class NullIndexBuffer;
-class NullInputSystem;
-class NullProgram;
-class NullRenderer;
-class NullRenderWindow;
-class NullShader;
-class NullTexture;
-class NullVertexBuffer;
+int GLPixelFormat::get(GLenum param) const noexcept {
+  auto it = format_.find(param);
+  SEQUOIA_ASSERT(format_.end() != it);
+  return it->second;
+}
+
+void GLPixelFormat::set(GLenum param, int value) noexcept { format_[param] = value; }
+
+std::string GLPixelFormat::toString() const {
+  return core::format("GLPixelFormat[\n"
+                      "  format = {}\n"
+                      "]",
+                      core::indent(core::toStringRange(format_, [](auto pair) {
+                        return core::format("{} = {}", pair.first, pair.second);
+                      })));
+}
 
 } // namespace render
 
 } // namespace sequoia
-
-#endif

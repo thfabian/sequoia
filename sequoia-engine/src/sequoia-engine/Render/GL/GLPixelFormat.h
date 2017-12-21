@@ -13,27 +13,35 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_ENGINE_RENDER_NULL_NULLFWD_H
-#define SEQUOIA_ENGINE_RENDER_NULL_NULLFWD_H
+#ifndef SEQUOIA_ENGINE_RENDER_GL_GLPIXELFORMAT_H
+#define SEQUOIA_ENGINE_RENDER_GL_GLPIXELFORMAT_H
 
-#ifdef SEQUOIA_DOXYGEN_INVOKED
-/// @defgroup null Null
-/// @brief Implementation for no particular rendering API
-/// @ingroup render
-#endif
+#include "sequoia-engine/Core/Export.h"
+#include "sequoia-engine/Render/GL/GLFwd.h"
+#include <unordered_map>
 
 namespace sequoia {
 
 namespace render {
 
-class NullIndexBuffer;
-class NullInputSystem;
-class NullProgram;
-class NullRenderer;
-class NullRenderWindow;
-class NullShader;
-class NullTexture;
-class NullVertexBuffer;
+/// @brief Pixel storage modes
+/// @see https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/glPixelStore.xhtml
+class SEQUOIA_API GLPixelFormat {
+  friend class GLRenderer;
+
+  /// Map of the the parameter of the pixel format to their respective values
+  std::unordered_map<GLenum, int> format_;
+
+public:
+  /// @brief Get the value of `param`
+  int get(GLenum param) const noexcept;
+
+  /// @brief Set the `value` of `param`
+  void set(GLenum param, int value) noexcept;
+
+  /// @brief Convert pixel format to string
+  std::string toString() const;
+};
 
 } // namespace render
 

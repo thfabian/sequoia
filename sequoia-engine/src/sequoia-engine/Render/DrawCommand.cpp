@@ -33,15 +33,15 @@ std::string DrawCommand::toString() const {
       "  uniformMap = {}\n"
       "]",
       data_ ? data_->toString() : "null", core::indent(ss.str(), 4),
-      textureMap_.empty() ? "null" : core::indent(core::toStringRange(
-                                         textureMap_,
+      textures.empty() ? "null" : core::indent(core::toStringRange(
+                                         textures,
                                          [](const auto& var) {
                                            return core::format("unit = {},\n"
                                                                "texture = {}\n",
                                                                var.first, var.second->toString());
                                          })),
-      uniformMap_.empty() ? "null"
-                          : core::indent(core::toStringRange(uniformMap_, [](const auto& var) {
+      uniforms_.empty() ? "null"
+                          : core::indent(core::toStringRange(uniforms_, [](const auto& var) {
                               return core::format("name = {},\n"
                                                   "variable = {}\n",
                                                   var.first, var.second.toString());

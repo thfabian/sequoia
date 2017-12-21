@@ -13,10 +13,11 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia-engine/Render/Null/NullRenderSystem.h"
 #include "sequoia-engine/Render/Null/NullInputSystem.h"
 #include "sequoia-engine/Render/Null/NullProgram.h"
+#include "sequoia-engine/Render/Null/NullRenderSystem.h"
 #include "sequoia-engine/Render/Null/NullRenderWindow.h"
+#include "sequoia-engine/Render/Null/NullRenderer.h"
 #include "sequoia-engine/Render/Null/NullShader.h"
 #include "sequoia-engine/Render/Null/NullTexture.h"
 #include "sequoia-engine/Render/Null/NullVertexData.h"
@@ -35,6 +36,7 @@ NullRenderSystem::~NullRenderSystem() {}
 RenderWindow* NullRenderSystem::createMainWindow(const RenderWindow::WindowHint& hints) {
   SEQUOIA_ASSERT_MSG(!mainWindow_, "main window already initialized");
   mainWindow_ = std::make_unique<NullRenderWindow>(hints);
+  renderer_ = std::make_unique<NullRenderer>();
   return mainWindow_.get();
 }
 
@@ -85,26 +87,7 @@ void NullRenderSystem::removeMouseListener(MouseListener* listener) {
   inputSystem_->removeListener<MouseListener>(listener);
 }
 
-void NullRenderSystem::loadDefaultShaders(const std::shared_ptr<File>& defaultVertexShaderFile,
-                                          const std::shared_ptr<File>& defaultFragmentShaderFile) {
-  defaultVertexShader_ = std::make_shared<NullShader>(Shader::ST_Vertex, defaultVertexShaderFile);
-  defaultFragmentShader_ =
-      std::make_shared<NullShader>(Shader::ST_Fragment, defaultFragmentShaderFile);
-  defaultProgram_ = std::make_shared<NullProgram>(
-      std::set<std::shared_ptr<Shader>>{defaultVertexShader_, defaultFragmentShader_});
-}
-
-const std::shared_ptr<Shader>& NullRenderSystem::getDefaultVertexShader() const {
-  return defaultVertexShader_;
-}
-
-const std::shared_ptr<Shader>& NullRenderSystem::getDefaultFragmentShader() const {
-  return defaultFragmentShader_;
-}
-
-const std::shared_ptr<Program>& NullRenderSystem::getDefaultProgram() const {
-  return defaultProgram_;
-}
+Renderer* NullRenderSystem::getRenderer() const { return renderer_.get(); }
 
 } // namespace render
 

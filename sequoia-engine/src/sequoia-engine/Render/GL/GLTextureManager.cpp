@@ -19,7 +19,6 @@
 #include "sequoia-engine/Render/Exception.h"
 #include "sequoia-engine/Render/GL/GL.h"
 #include "sequoia-engine/Render/GL/GLRenderer.h"
-#include "sequoia-engine/Render/GL/GLStateCacheManager.h"
 #include "sequoia-engine/Render/GL/GLTextureManager.h"
 #include <gli/gli.hpp>
 #include <opencv2/opencv.hpp>
@@ -89,18 +88,14 @@ static void allocateTexture(GLenum target, int width, int height, GLenum interna
 ///
 /// https://stackoverflow.com/questions/16809833/opencv-image-loading-for-opengl-texture
 static void uploadRegularImage(GLenum target, const RegularImage* image) {
-
-  // TODO: this needs to be the StateCache manager of the RessourceThread
-  GLStateCacheManager* manager = getGLRenderer().getStateCacheManager();
-
   cv::Mat imageFlipped;
   cv::flip(image->getMat(), imageFlipped, 0);
 
   // Set pixel storage parameter
-  GLPixelFormat format = manager->getDefaultPixelFormat();
+  GLPixelFormat format = getGLRenderer().getDefaultPixelFormat();
   format.set(GL_UNPACK_ALIGNMENT, imageFlipped.step[0] & 3 ? 1 : 4);
   format.set(GL_UNPACK_ROW_LENGTH, imageFlipped.step[0] / imageFlipped.elemSize());
-  manager->setPixelFormat(format);
+  getGLRenderer().setPixelFormat(format);
 
   // OpenCV images are BGR(A)
   GLenum colorFormat = image->getNumChannels() == 4 ? GL_BGRA : GL_BGR;
@@ -118,7 +113,7 @@ static void uploadRegularImage(GLenum target, const RegularImage* image) {
   }
 
   // Reset the pixel storage parameters
-  manager->resetPixelFormat();
+  getGLRenderer().resetPixelFormat();
 }
 
 /// @brief Upload (compressed) texture image to device
@@ -230,11 +225,8 @@ void GLTextureManager::makeValid(GLTexture* texture) {
 
   TextureParameter& param = *texture->getParameter();
 
-  // TODO: this needs to be the StateCache manager of the RessourceThread
-  GLStateCacheManager* manager = getGLRenderer().getStateCacheManager();
-
   // Bind texture to unit 0 (doesn't really matter which unit we bind it to)
-  manager->bindTexture(0, texture, true);
+  getGLRenderer().setTexture(0, texture);
 
   if(texture->hasImage()) {
     // Uploade image to device
@@ -272,7 +264,7 @@ void GLTextureManager::makeValid(GLTexture* texture) {
 
   // Unbind the texture. This is necessary to make sure when we bind it during rendering we also
   // set the sampler of the program.
-  manager->unbindTexture(0);
+  getGLRenderer().unsetTextures();
 
   Log::debug("Successfully uploaded texture (ID={})", texture->id_);
 }

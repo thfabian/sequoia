@@ -13,29 +13,29 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_ENGINE_RENDER_NULL_NULLFWD_H
-#define SEQUOIA_ENGINE_RENDER_NULL_NULLFWD_H
+#ifndef SEQUOIA_ENGINE_UNITTEST_RENDERSETUP_H
+#define SEQUOIA_ENGINE_UNITTEST_RENDERSETUP_H
 
-#ifdef SEQUOIA_DOXYGEN_INVOKED
-/// @defgroup null Null
-/// @brief Implementation for no particular rendering API
-/// @ingroup render
-#endif
+#include "sequoia-engine/Core/Export.h"
+#include "sequoia-engine/Core/NonCopyable.h"
+#include "sequoia-engine/Unittest/Fixture.h"
 
 namespace sequoia {
 
-namespace render {
+namespace unittest {
 
-class NullIndexBuffer;
-class NullInputSystem;
-class NullProgram;
-class NullRenderer;
-class NullRenderWindow;
-class NullShader;
-class NullTexture;
-class NullVertexBuffer;
+/// @brief Handle creation and initialization of RenderWindows
+/// @ingroup unittest
+class SEQUOIA_API RenderSetup : public NonCopyable {
+public:
+  /// @brief Register and initialize the window
+  void SetUp();
 
-} // namespace render
+  /// @brief Destroy the window
+  void TearDown();
+};
+
+} // namespace unittest
 
 } // namespace sequoia
 

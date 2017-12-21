@@ -13,30 +13,24 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_ENGINE_RENDER_NULL_NULLFWD_H
-#define SEQUOIA_ENGINE_RENDER_NULL_NULLFWD_H
-
-#ifdef SEQUOIA_DOXYGEN_INVOKED
-/// @defgroup null Null
-/// @brief Implementation for no particular rendering API
-/// @ingroup render
-#endif
+#include "sequoia-engine/Unittest/Null/NullTestEnvironment.h"
 
 namespace sequoia {
 
-namespace render {
+namespace unittest {
 
-class NullIndexBuffer;
-class NullInputSystem;
-class NullProgram;
-class NullRenderer;
-class NullRenderWindow;
-class NullShader;
-class NullTexture;
-class NullVertexBuffer;
+NullTestEnvironment::NullTestEnvironment(int argc, char* argv[])
+    : TestEnvironment(argc, argv, render::RK_Null) {}
 
-} // namespace render
+void NullTestEnvironment::SetUp() {
+  TestEnvironment::SetUp();
+
+  auto options = getOptions();
+  renderSystem_ = render::RenderSystem::create(render::RK_Null, options);
+}
+
+void NullTestEnvironment::TearDown() { renderSystem_.reset(); }
+
+} // namespace unittest
 
 } // namespace sequoia
-
-#endif

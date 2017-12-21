@@ -92,26 +92,10 @@ public:
   /// @copydoc RenderSystem::removeMouseListener
   virtual void removeMouseListener(MouseListener* listener) override;
 
-  /// @copydoc RenderSystem::loadDefaultShaders
-  virtual void loadDefaultShaders(const std::shared_ptr<File>& defaultVertexShaderFile,
-                                  const std::shared_ptr<File>& defaultFragmentShaderFile) override;
-
-  /// @copydoc RenderSystem::getDefaultVertexShader
-  virtual const std::shared_ptr<Shader>& getDefaultVertexShader() const override;
-
-  /// @copydoc RenderSystem::getDefaultFragmentShader
-  virtual const std::shared_ptr<Shader>& getDefaultFragmentShader() const override;
-
-  /// @copydoc RenderSystem::getDefaultProgram
-  virtual const std::shared_ptr<Program>& getDefaultProgram() const override;
-
   /// @brief Get the OpenGL renderer
-  GLRenderer* getRenderer();
-  GLRenderer* getRenderer() const;
-
-  /// @brief Get the state cache manager of the OpenGL renderer
-  GLStateCacheManager* getStateCacheManager();
-
+  virtual Renderer* getRenderer() const override;
+  GLRenderer* getGLRenderer() const;
+  
   SEQUOIA_GL_OBJECT(RenderSystem)
 };
 

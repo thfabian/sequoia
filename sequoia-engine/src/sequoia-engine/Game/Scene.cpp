@@ -35,7 +35,7 @@ namespace sequoia {
 
 namespace game {
 
-Scene::Scene() : activeCamera_(nullptr), sceneGraph_(std::make_shared<SceneGraph>()) {}
+Scene::Scene() : sceneGraph_(std::make_shared<SceneGraph>()), activeCamera_(nullptr) {}
 
 void Scene::setActiveCamera(const std::shared_ptr<render::Camera>& camera) {
   activeCamera_ = camera;
@@ -47,16 +47,16 @@ const std::shared_ptr<render::Camera>& Scene::getActiveCamera() const { return a
 
 SceneGraph* Scene::getSceneGraph() const { return sceneGraph_.get(); }
 
-Scene::prepareRenderTechniques(std::vector<render::RenderTechnique*>& techiques) {}
+void Scene::prepareRenderTechniques(std::vector<render::RenderTechnique*>& techiques) {}
 
-Scene::prepareRenderTarget(render::RenderTarget*& target) {}
+void  Scene::prepareRenderTarget(render::RenderTarget*& target) {}
 
-Scene::prepareDrawCommands(std::vector<render::DrawCommand>& drawCommands) {
+void Scene::prepareDrawCommands(std::vector<render::DrawCommand*>& drawCommands) {
   sceneGraph_->apply(
-      [this](SceneNode* node) {
+      [&drawCommands](SceneNode* node) {
         if(Drawable* draw = node->get<Drawable>()) {
           if(draw->isActive()) {
-            drawCommands.push_back(draw->makeDrawCommand());
+            drawCommands.push_back(draw->prepareDrawCommand());
           }
         }
       },
@@ -116,7 +116,7 @@ void Scene::makeDummyScene() {
   for(int i = 0; i < N; ++i) {
     for(int j = 0; j < N; ++j) {
       auto cube = SceneNode::allocate(core::format("TestCube_{}_{}", i, j));
-      cube->addCapability<Drawable>(cubeMesh, game.getDefaultProgram());
+      cube->addCapability<Drawable>(cubeMesh);
       cube->translate(math::vec3((i - N / 2.0f) * dx, 0, (j - N / 2.0f) * dx));
       cube->setScale(0.9 * (2 * float(i) / N));
       cube->get<Drawable>()->setTexture(

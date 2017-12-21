@@ -18,7 +18,7 @@
 #include "sequoia-engine/Core/Unreachable.h"
 #include "sequoia-engine/Render/GL/GL.h"
 #include "sequoia-engine/Render/GL/GLRenderSystem.h"
-#include "sequoia-engine/Render/GL/GLStateCacheManager.h"
+#include "sequoia-engine/Render/GL/GLRenderer.h"
 #include "sequoia-engine/Render/GL/GLVertexAttribute.h"
 #include "sequoia-engine/Render/GL/GLVertexData.h"
 #include "sequoia-engine/Render/HostBuffer.h"
@@ -90,7 +90,7 @@ GLVertexData::GLVertexData(const VertexDataParameter& param)
   if(param.NumIndices > 0)
     indexBuffer_ = std::make_unique<GLIndexBuffer>(param.IndexType);
 
-  getGLRenderSystem().getStateCacheManager()->bindVertexDataForModify(this);
+  getGLRenderer().setVertexData(this, false);
 
   // Enable the active attributes
   if(layout.hasPosition()) {
