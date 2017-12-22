@@ -23,6 +23,8 @@
 #include <gli/gli.hpp>
 #include <opencv2/opencv.hpp>
 
+// TODO: convert everything to DSA
+
 namespace sequoia {
 
 namespace render {
@@ -92,6 +94,7 @@ static void uploadRegularImage(GLenum target, const RegularImage* image) {
   cv::flip(image->getMat(), imageFlipped, 0);
 
   // Set pixel storage parameter
+  // TODO: move this pixel format stuff into here (don't call the Renderer)
   GLPixelFormat format = getGLRenderer().getDefaultPixelFormat();
   format.set(GL_UNPACK_ALIGNMENT, imageFlipped.step[0] & 3 ? 1 : 4);
   format.set(GL_UNPACK_ROW_LENGTH, imageFlipped.step[0] / imageFlipped.elemSize());
@@ -99,7 +102,7 @@ static void uploadRegularImage(GLenum target, const RegularImage* image) {
 
   // OpenCV images are BGR(A)
   GLenum colorFormat = image->getNumChannels() == 4 ? GL_BGRA : GL_BGR;
-
+  
   switch(target) {
   case GL_TEXTURE_2D:
     glTexImage2D(target, 0, GL_RGBA, imageFlipped.cols, imageFlipped.rows, 0, colorFormat,
@@ -225,9 +228,9 @@ void GLTextureManager::makeValid(GLTexture* texture) {
 
   TextureParameter& param = *texture->getParameter();
 
-  // Bind texture to unit 0 (doesn't really matter which unit we bind it to)
-  getGLRenderer().setTexture(0, texture);
-
+  // Bind texture (doesn't really matter to which unit we bind it to)
+  texture->bind();
+  
   if(texture->hasImage()) {
     // Uploade image to device
     if(RegularImage* regularImage = core::dyn_cast<RegularImage>(texture->getImage().get())) {
@@ -243,7 +246,7 @@ void GLTextureManager::makeValid(GLTexture* texture) {
     // Allocate texture
     allocateTexture(texture->target_, texture->width_, texture->height_, GL_RGBA);
   }
-
+  
   // Set interpolation parameters
   glTexParameteri(texture->target_, GL_TEXTURE_WRAP_S, getGLEdgeSampleKind(param.Dim1EdgeSampling));
   glTexParameteri(texture->target_, GL_TEXTURE_WRAP_T, getGLEdgeSampleKind(param.Dim2EdgeSampling));
@@ -262,9 +265,8 @@ void GLTextureManager::makeValid(GLTexture* texture) {
     glTexParameteri(texture->target_, GL_TEXTURE_MIN_FILTER, getGLFilterKind(param.MinFilter));
   }
 
-  // Unbind the texture. This is necessary to make sure when we bind it during rendering we also
-  // set the sampler of the program.
-  getGLRenderer().unsetTextures();
+  // Unbind the texture
+  texture->unbind();
 
   Log::debug("Successfully uploaded texture (ID={})", texture->id_);
 }

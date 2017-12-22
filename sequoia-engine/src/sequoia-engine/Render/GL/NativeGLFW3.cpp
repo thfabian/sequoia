@@ -145,7 +145,8 @@ void glfw3NativeGLContext::init(const RenderWindow::WindowHint& windowHints, Opt
 
     if(throwOnError && !window_)
       SEQUOIA_THROW(RenderSystemException,
-                    "failed to initialize glfw3 window, required atleast OpenGL Core (>= 3.3)");
+                    "failed to initialize glfw3 window, required atleast OpenGL Core (>= {}.{})",
+                    major, minor);
 
     if(!window_)
       Log::warn("Failed to initialize glfw3 window, requested OpenGL ({}.{}) {}forward compatible",
@@ -155,12 +156,9 @@ void glfw3NativeGLContext::init(const RenderWindow::WindowHint& windowHints, Opt
   createWindow(false, opt.getInt("Render.GL.MajorVersion"), opt.getInt("Render.GL.MinorVersion"),
                true);
   if(!window_) {
-    // Try OpenGL 3.3 Core with forward compatibility
-    createWindow(false, 3, 3, true);
-
-    if(!window_)
-      // Maybe without forward compatibility?
-      createWindow(true, 3, 3, false);
+    // Retry without forward compatibility?
+    createWindow(true, opt.getInt("Render.GL.MajorVersion"), opt.getInt("Render.GL.MinorVersion"),
+                 false);
   }
 
   // Move the window to the correct monitor (fullscreen windows are already moved correctly)

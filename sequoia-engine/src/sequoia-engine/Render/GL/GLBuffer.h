@@ -20,6 +20,7 @@
 #include "sequoia-engine/Core/Export.h"
 #include "sequoia-engine/Render/Buffer.h"
 #include "sequoia-engine/Render/GL/GLFwd.h"
+#include "sequoia-engine/Render/VertexData.h"
 #include <vector>
 
 namespace sequoia {
@@ -54,11 +55,11 @@ class SEQUOIA_API GLBuffer {
   bool isLocked_;
 
 public:
-  /// @brief Specify the kind of buffer to bind
+  /// @brief Specify the way a buffer is bound
   enum BindKind {
-    BK_Unknown = 0,
-    BK_Draw,  ///< Bind the buffer which is currently being drawn
-    BK_Modify ///< Bind the buffer which is currently used to modify the data
+    BK_Invalid = 0,
+    BK_Draw,  ///< Bind the buffer for drawing
+    BK_Modify ///< Bind the buffer for modification
   };
 
   /// @brief Create the buffer(s)
@@ -74,7 +75,7 @@ public:
   void bind(BindKind kind);
 
   /// @brief Unbind the buffer
-  void unbind(BindKind kind);
+  void unbind();
 
   /// @brief Lock the buffer
   ///

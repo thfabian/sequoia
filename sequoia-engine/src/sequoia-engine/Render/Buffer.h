@@ -114,7 +114,6 @@ public:
     /// Lock the buffer for writing only.
     LO_WriteOnly
   };
-
   Buffer(BufferKind kind);
 
   /// @brief Virutal destructor

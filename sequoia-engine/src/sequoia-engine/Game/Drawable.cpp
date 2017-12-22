@@ -43,7 +43,7 @@ void Drawable::setTexture(int textureUnit, render::Texture* texture) noexcept {
 }
 
 void Drawable::setUniform(const std::string& name, UniformVariable variable) {
-  drawCommand_.get().setUniform(name, variable);
+  drawCommand_.get().setUniformVariable(name, variable);
 }
 
 render::DrawCommand* Drawable::prepareDrawCommand() {

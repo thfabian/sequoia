@@ -47,8 +47,8 @@ protected:
     return true;
   }
 
-  bool VertexDataChanged(VertexData* Data, bool bindForDrawing) override {
-    changes_.emplace_back("VertexData_" + std::string(bindForDrawing ? "draw" : "modify"));
+  bool VertexDataChanged(VertexData* Data) override {
+    changes_.emplace_back("VertexData");
     return true;
   }
 
@@ -151,31 +151,32 @@ TEST_F(RendererTest, PipelineChange) {
 
 TEST_F(RendererTest, VertexDataChange) {
   auto renderer = std::make_unique<TestRenderer>();
-  auto vertexdata = makeNullVertexData();
+  auto vertexdata0 = makeNullVertexData();
+  auto vertexdata1 = makeNullVertexData();
 
   // Bind for drawing
   renderer->resetChanges();
-  renderer->setVertexData(vertexdata.get(), true);
+  renderer->setVertexData(vertexdata0.get());
 
   {
-    const std::vector<std::string>& changes = renderer->getChanges();    
+    const std::vector<std::string>& changes = renderer->getChanges();
     ASSERT_EQ(changes.size(), 1);
-    EXPECT_STREQ(changes[0].c_str(), "VertexData_draw");
+    EXPECT_STREQ(changes[0].c_str(), "VertexData");
   }
-  
-  // Rebind same vertex data -> nothing should happen  
+
+  // Rebind same vertex data -> nothing should happen
   renderer->resetChanges();
-  renderer->setVertexData(vertexdata.get(), true);
+  renderer->setVertexData(vertexdata0.get());
   ASSERT_EQ(renderer->getChanges().size(), 0);
 
-  // Rebind same vertex data but for modification  
+  // Bind another vertex-data
   renderer->resetChanges();
-  renderer->setVertexData(vertexdata.get(), false);
+  renderer->setVertexData(vertexdata1.get());
 
   {
-    const std::vector<std::string>& changes = renderer->getChanges();    
+    const std::vector<std::string>& changes = renderer->getChanges();
     ASSERT_EQ(changes.size(), 1);
-    EXPECT_STREQ(changes[0].c_str(), "VertexData_modify");
+    EXPECT_STREQ(changes[0].c_str(), "VertexData");
   }
 }
 
@@ -234,8 +235,8 @@ TEST_F(RendererTest, UniformChange) {
 
   // five and two are set
   renderer->resetChanges();
-  renderer->setUniform(program.get(), "two", two);
-  renderer->setUniform(program.get(), "five", five);
+  renderer->setUniformVariable(program.get(), "two", two);
+  renderer->setUniformVariable(program.get(), "five", five);
 
   {
     const std::vector<std::string>& changes = renderer->getChanges();
@@ -246,8 +247,8 @@ TEST_F(RendererTest, UniformChange) {
 
   // two changes value (five remains)
   renderer->resetChanges();
-  renderer->setUniform(program.get(), "two", three);
-  renderer->setUniform(program.get(), "five", five);
+  renderer->setUniformVariable(program.get(), "two", three);
+  renderer->setUniformVariable(program.get(), "five", five);
 
   {
     const std::vector<std::string>& changes = renderer->getChanges();
@@ -259,8 +260,8 @@ TEST_F(RendererTest, UniformChange) {
   renderer->resetChanges();
 
   renderer->resetUniforms(program.get());
-  renderer->setUniform(program.get(), "two", three);
-  renderer->setUniform(program.get(), "five", five);
+  renderer->setUniformVariable(program.get(), "two", three);
+  renderer->setUniformVariable(program.get(), "five", five);
 
   {
     const std::vector<std::string>& changes = renderer->getChanges();

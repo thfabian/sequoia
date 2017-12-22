@@ -20,6 +20,7 @@
 #include "sequoia-engine/Render/RenderFwd.h"
 #include "sequoia-engine/Render/RenderPipeline.h"
 #include "sequoia-engine/Render/UniformVariable.h"
+#include "sequoia-engine/Render/VertexData.h"
 #include <cstdint>
 #include <string>
 #include <unordered_map>
@@ -42,7 +43,7 @@ protected:
 
   /// @brief VertexData changed
   /// @returns `true` if the new VertexData was successfully updated, `false` otherwise
-  virtual bool VertexDataChanged(VertexData* data, bool bindForDrawing) = 0;
+  virtual bool VertexDataChanged(VertexData* data) = 0;
 
   /// @brief Texture of `textureUnit` changed
   /// @returns `true` if the new texture was successfully updated, `false` otherwise
@@ -85,7 +86,7 @@ public:
   bool setRenderPipeline(const RenderPipeline& pipeline);
 
   /// @brief Set the uniform variable `name` of `program` to `value`
-  bool setUniform(Program* program, const std::string& name, const UniformVariable& value);
+  bool setUniformVariable(Program* program, const std::string& name, const UniformVariable& value);
 
   /// @brief Set texture-unit/texture pairs
   ///
@@ -94,7 +95,7 @@ public:
   bool setTextures(const std::unordered_map<int, Texture*>& textures);
 
   /// @brief Bind the vertex-data
-  bool setVertexData(VertexData* vertexData, bool bindForDrawing = true);
+  bool setVertexData(VertexData* vertexData);
 
   /// @brief Set the viewport
   bool setViewport(const Viewport* viewport);

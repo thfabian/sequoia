@@ -28,7 +28,7 @@ namespace render {
 
 bool NullRenderer::ProgramChanged(Program* program) { return true; }
 
-bool NullRenderer::VertexDataChanged(VertexData* data, bool bindForDrawing) { return true; }
+bool NullRenderer::VertexDataChanged(VertexData* data) { return true; }
 
 bool NullRenderer::TextureChanged(int textureUnit, Texture* texture, bool enable) { return true; }
 

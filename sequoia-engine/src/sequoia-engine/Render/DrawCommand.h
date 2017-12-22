@@ -63,7 +63,7 @@ public:
   /// @brief Set the uniform variable `name` to `value`
   ///
   /// Note that if the uniform variable has already been set, the existing value is overriden.
-  void setUniform(const std::string& name, const UniformVariable& value) noexcept {
+  void setUniformVariable(const std::string& name, const UniformVariable& value) noexcept {
     uniforms_[name] = value;
   }
 

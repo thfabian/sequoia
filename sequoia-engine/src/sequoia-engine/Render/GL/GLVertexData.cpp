@@ -17,11 +17,11 @@
 #include "sequoia-engine/Core/StringUtil.h"
 #include "sequoia-engine/Core/Unreachable.h"
 #include "sequoia-engine/Render/GL/GL.h"
-#include "sequoia-engine/Render/GL/GLRenderSystem.h"
-#include "sequoia-engine/Render/GL/GLRenderer.h"
 #include "sequoia-engine/Render/GL/GLVertexAttribute.h"
 #include "sequoia-engine/Render/GL/GLVertexData.h"
 #include "sequoia-engine/Render/HostBuffer.h"
+
+// TODO: convert everything to DSA
 
 namespace sequoia {
 
@@ -90,7 +90,7 @@ GLVertexData::GLVertexData(const VertexDataParameter& param)
   if(param.NumIndices > 0)
     indexBuffer_ = std::make_unique<GLIndexBuffer>(param.IndexType);
 
-  getGLRenderer().setVertexData(this, false);
+  bindForModify();
 
   // Enable the active attributes
   if(layout.hasPosition()) {

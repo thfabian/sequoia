@@ -36,7 +36,7 @@ protected:
   virtual bool ProgramChanged(Program* program) override;
 
   /// @copydoc Renderer::VertexDataChanged
-  virtual bool VertexDataChanged(VertexData* data, bool bindForDrawing) override;
+  virtual bool VertexDataChanged(VertexData* data) override;
 
   /// @copydoc Renderer::TextureChanged
   virtual bool TextureChanged(int textureUnit, Texture* texture, bool enable) override;

@@ -13,18 +13,28 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_ENGINE_RENDER_GL_GL_H
-#define SEQUOIA_ENGINE_RENDER_GL_GL_H
+#include "sequoia-engine/Render/GL/GLRenderer.h"
+#include "sequoia-engine/Unittest/BenchmarkMain.h"
+#include "sequoia-engine/Unittest/GL/GLBenchmarkEnvironment.h"
+#include "sequoia-engine/Unittest/RenderSetup.h"
 
-// Use OpenGL Core 4.5 
-#include <glbinding/gl45core/gl.h>
+using namespace sequoia::render;
+using namespace sequoia::unittest;
 
-using namespace gl;
+namespace {
 
-#ifdef SEQUOIA_DOXYGEN_INVOKED
-/// @defgroup gl OpenGL
-/// @brief OpenGL implementation of the rendering API
-/// @ingroup render
-#endif
+class BenchmarkGLRenderer : public BenchmarkFixture<RenderSetup> {};
 
-#endif
+// Benchmark reset of Renderer
+
+BENCHMARK_F(BenchmarkGLRenderer, BM_ResetAll)(benchmark::State& state) {
+  GLRenderer* renderer = getGLRendererPtr();
+  while(state.KeepRunning()) {
+    renderer->reset();
+  }
+}
+BENCHMARK_REGISTER_F(BenchmarkGLRenderer, BM_ResetAll);
+
+} // anonymous namespace
+
+SEQUOIA_BENCHMARK_MAIN(sequoia::unittest::GLBenchmarkEnvironment);

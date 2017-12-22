@@ -34,6 +34,11 @@ namespace render {
 ///
 /// A rendered performs the actual rendering of the provided target. Further, the renderer keeps
 /// track on the OpenGL state machine.
+/// 
+/// @note Any other object which needs to temporarly modify the OpenGL state machine needs to make
+/// sure to undo the modification after being done. It is highly recommended to use DSA
+/// (direct-state-access) outside of the Renderer.
+/// 
 /// @ingroup gl
 class SEQUOIA_API GLRenderer final : public Renderer, public ViewportListener, public NonCopyable {
   /// Reference to the main-window
@@ -47,7 +52,6 @@ class SEQUOIA_API GLRenderer final : public Renderer, public ViewportListener, p
 
   /// OpenGL specific state
   int activeTextureUnit_;
-  GLBuffer::BindKind vertexBindKind_;
   GLPixelFormat pixelFormat_;
 
   /// Default pixel format
@@ -64,7 +68,7 @@ protected:
   virtual bool ProgramChanged(Program* program) override;
 
   /// @copydoc Renderer::VertexDataChanged
-  virtual bool VertexDataChanged(VertexData* data, bool bindForDrawing) override;
+  virtual bool VertexDataChanged(VertexData* data) override;
 
   /// @copydoc Renderer::TextureChanged
   virtual bool TextureChanged(int textureUnit, Texture* texture, bool enable) override;

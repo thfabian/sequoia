@@ -13,13 +13,15 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia-engine/Render/GL/GL.h"
 #include "sequoia-engine/Core/Byte.h"
 #include "sequoia-engine/Core/Format.h"
 #include "sequoia-engine/Core/StringUtil.h"
 #include "sequoia-engine/Core/Unreachable.h"
+#include "sequoia-engine/Render/GL/GL.h"
 #include "sequoia-engine/Render/GL/GLBuffer.h"
 #include <cstring>
+
+// TODO: convert everything to DSA
 
 namespace sequoia {
 
@@ -51,7 +53,7 @@ GLBuffer::GLBuffer(GLenum target, int numBuffers)
 
 GLBuffer::~GLBuffer() { glDeleteBuffers(bufferIds_.size(), bufferIds_.data()); }
 
-void GLBuffer::bind(GLBuffer::BindKind kind) {
+void GLBuffer::bind(BindKind kind) {
   switch(kind) {
   case BK_Draw:
     glBindBuffer(target_, getDrawBufferID());
@@ -64,13 +66,12 @@ void GLBuffer::bind(GLBuffer::BindKind kind) {
   }
 }
 
-void GLBuffer::unbind(GLBuffer::BindKind kind) { glBindBuffer(target_, 0); }
+void GLBuffer::unbind() { glBindBuffer(target_, 0); }
 
 void* GLBuffer::lock(Buffer::LockOption option) {
   SEQUOIA_ASSERT_MSG(!isLocked(), "buffer already locked");
   isLocked_ = true;
 
-  // Bind the modify buffer
   bind(BK_Modify);
 
   // Discard the buffer if requested
@@ -99,11 +100,12 @@ void GLBuffer::unlock() {
   SEQUOIA_ASSERT_MSG(isLocked(), "buffer not locked");
   isLocked_ = false;
 
-  // Bind the modify buffer
   bind(BK_Modify);
 
   // Stop the DMA
   glUnmapBuffer(target_);
+  
+  unbind();    
 }
 
 void GLBuffer::allocate(std::size_t numBytes, Buffer::UsageHint hint) {
@@ -116,8 +118,9 @@ void GLBuffer::allocate(std::size_t numBytes, Buffer::UsageHint hint) {
 }
 
 void GLBuffer::write(const void* src, std::size_t offset, std::size_t length, bool discardBuffer) {
-  bind(BK_Modify);
   SEQUOIA_ASSERT_MSG((offset + length) <= numBytes_, "out of bound writing");
+  
+  bind(BK_Modify);
 
   if(discardBuffer)
     glBufferData(target_, numBytes_, nullptr, hint_);
@@ -127,17 +130,22 @@ void GLBuffer::write(const void* src, std::size_t offset, std::size_t length, bo
   void* dest = glMapBuffer(target_, GL_WRITE_ONLY);
   std::memcpy(static_cast<void*>(((Byte*)dest + offset)), src, length);
   glUnmapBuffer(target_);
+  
+  unbind(); 
 }
 
 void GLBuffer::read(std::size_t offset, std::size_t length, void* dest) {
-  bind(BK_Modify);
   SEQUOIA_ASSERT_MSG((offset + length) <= numBytes_, "out of bound reading");
 
+  bind(BK_Modify);
+  
   // TODO: figure out when using glGetNamedBufferSubData vs. glMapBuffer
 
   void* src = glMapBuffer(target_, GL_READ_ONLY);
   std::memcpy(dest, static_cast<void*>(((Byte*)src + offset)), length);
   glUnmapBuffer(target_);
+  
+  unbind();
 }
 
 void GLBuffer::nextTimestep() { modifyBufferIdx_ = (modifyBufferIdx_ + 1) % bufferIds_.size(); }

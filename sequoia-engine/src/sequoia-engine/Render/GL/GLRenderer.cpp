@@ -150,23 +150,11 @@ bool GLRenderer::ProgramChanged(Program* program) {
   return true;
 }
 
-bool GLRenderer::VertexDataChanged(VertexData* data, bool bindForDrawing) {
+bool GLRenderer::VertexDataChanged(VertexData* data) {
   SEQUOIA_ASSERT(data);
 
-  vertexBindKind_ = bindForDrawing ? GLBuffer::BK_Draw : GLBuffer::BK_Modify;
   GLVertexData* gldata = core::dyn_cast<GLVertexData>(data);
-
-  switch(vertexBindKind_) {
-  case GLBuffer::BK_Modify:
-    gldata->bindForModify();
-    break;
-  case GLBuffer::BK_Draw:
-    gldata->bindForDrawing();
-    break;
-  default:
-    sequoia_unreachable("invalid BindKind");
-  }
-
+  gldata->bindForDrawing();
   return true;
 }
 
@@ -189,7 +177,7 @@ bool GLRenderer::TextureChanged(int textureUnit, Texture* texture, bool enable) 
     if(program) {
       GLProgram* glprogram = core::dyn_cast<GLProgram>(program);
       const std::string& name = glprogram->getTextureSampler(textureUnit);
-      setUniform(glprogram, name, UniformVariable(textureUnit));
+      setUniformVariable(glprogram, name, UniformVariable(textureUnit));
     }
   } else {
     core::dyn_cast<GLTexture>(texture)->unbind();
@@ -244,10 +232,9 @@ bool GLRenderer::draw(const DrawCommand* drawCommand) {
 std::pair<std::string, std::string> GLRenderer::toStringImpl() const {
   return std::make_pair("GLRenderer", core::format("{}"
                                                    "activeTextureUnit = {},\n"
-                                                   "vertexBindKind = {},\n"
                                                    "pixelFormat = {}\n",
                                                    Base::toStringImpl().second, activeTextureUnit_,
-                                                   vertexBindKind_, pixelFormat_.toString()));
+                                                   pixelFormat_.toString()));
 }
 
 GLRenderer::GLRenderer(GLRenderWindow* window) : window_(window) {
@@ -305,7 +292,6 @@ GLRenderer::GLRenderer(GLRenderWindow* window) : window_(window) {
   
   // Reset internal state
   activeTextureUnit_ = -1;
-  vertexBindKind_ = GLBuffer::BK_Unknown;
   setPixelFormat(defaultPixelFormat_, true);  
 
   Log::info("Successfully created OpenGL renderer {}", core::ptrToStr(this));
@@ -314,7 +300,6 @@ GLRenderer::GLRenderer(GLRenderWindow* window) : window_(window) {
 void GLRenderer::reset() {
   Base::reset();
   activeTextureUnit_ = -1;
-  vertexBindKind_ = GLBuffer::BK_Unknown;
   setPixelFormat(defaultPixelFormat_, true);
 }
 

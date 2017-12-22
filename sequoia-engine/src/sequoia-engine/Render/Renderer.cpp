@@ -89,7 +89,7 @@ bool Renderer::setRenderPipeline(const RenderPipeline& pipeline) {
   return true;
 }
 
-bool Renderer::setUniform(Program* program, const std::string& name,
+bool Renderer::setUniformVariable(Program* program, const std::string& name,
                                   const UniformVariable& value) {
   std::unordered_map<std::string, UniformVariable>& oldUniformVariables = uniforms_[program];
 
@@ -156,9 +156,9 @@ bool Renderer::setTextures(const std::unordered_map<int, Texture*>& textures) {
   return true;
 }
 
-bool Renderer::setVertexData(VertexData* vertexData, bool bindForDrawing) {
+bool Renderer::setVertexData(VertexData* vertexData) {
   if(vertexData_ != vertexData) {
-    if(!VertexDataChanged(vertexData, bindForDrawing))
+    if(!VertexDataChanged(vertexData))
       return false;
     vertexData_ = vertexData;
   }
@@ -185,7 +185,7 @@ void Renderer::render(const RenderCommand& command) {
 
   Viewport* viewport = command.Target->getViewport();
   SEQUOIA_ASSERT_MSG(viewport, "no Viewport set");
-
+  
   // Render techniques
   for(RenderTechnique* technique : command.Techniques) {
     technique->setUp();
@@ -222,7 +222,7 @@ void Renderer::render(const RenderCommand& command) {
       auto setUniforms = [&report,
                           this](const std::unordered_map<std::string, UniformVariable>& uniforms) {
         for(const auto& nameVariablePair : uniforms)
-          if(!setUniform(this->pipeline_.Program, nameVariablePair.first,
+          if(!setUniformVariable(this->pipeline_.Program, nameVariablePair.first,
                                  nameVariablePair.second))
             report("failed to set uniform variable '{}'", nameVariablePair.first);
       };
@@ -243,7 +243,7 @@ void Renderer::render(const RenderCommand& command) {
         setUniforms(drawCommand->getUniforms());
 
         UniformVariable u_matMVP = matVP * drawCommand->getModelMatrix();
-        if(!setUniform(this->pipeline_.Program, "u_matMVP", u_matMVP)) {
+        if(!setUniformVariable(this->pipeline_.Program, "u_matMVP", u_matMVP)) {
           report("failed to set UniformVariable 'u_matMVP'");
           continue;
         }
