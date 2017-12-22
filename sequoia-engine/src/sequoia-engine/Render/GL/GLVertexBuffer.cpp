@@ -21,8 +21,8 @@ namespace sequoia {
 
 namespace render {
 
-GLVertexBuffer::GLVertexBuffer(const VertexLayout& layout, int numBuffers)
-    : VertexBuffer(BK_GLVertexBuffer, layout), glBuffer_(GL_ARRAY_BUFFER, numBuffers) {}
+GLVertexBuffer::GLVertexBuffer(const VertexLayout& layout)
+    : VertexBuffer(BK_GLVertexBuffer, layout), glBuffer_(GL_ARRAY_BUFFER) {}
 
 GLVertexBuffer::~GLVertexBuffer() {}
 
@@ -35,11 +35,7 @@ void GLVertexBuffer::readImpl(std::size_t offset, std::size_t length, void* dest
   glBuffer_.read(offset, length, dest);
 }
 
-void GLVertexBuffer::bindForDrawing() { glBuffer_.bind(GLBuffer::BK_Draw); }
-
-void GLVertexBuffer::bindForModify() { glBuffer_.bind(GLBuffer::BK_Modify); }
-
-void GLVertexBuffer::nextTimestep() { glBuffer_.nextTimestep(); }
+void GLVertexBuffer::bind() { glBuffer_.bind(); }
 
 void* GLVertexBuffer::lockImpl(Buffer::LockOption option) { return glBuffer_.lock(option); }
 

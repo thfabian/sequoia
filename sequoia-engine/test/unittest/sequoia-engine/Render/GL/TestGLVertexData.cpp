@@ -64,7 +64,7 @@ TYPED_TEST(GLVertexDataTest, VertexAttributes) {
   std::shared_ptr<GLVertexData> gldata = makeVertexData<TypeParam>(8, 8);
   const VertexLayout& layout = gldata->getVertexBuffer()->getLayout();
 
-  gldata->bindForModify();
+  gldata->bind();
 
   // Check Position attribute
   {
@@ -207,6 +207,8 @@ TYPED_TEST(GLVertexDataTest, VertexAttributes) {
       EXPECT_EQ((std::size_t)pointer, layout.Color.Offset);
     }
   }
+  
+  gldata->unbind();
 }
 
 /// @brief Write to all vertex attributes the index of the vertex

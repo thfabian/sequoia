@@ -40,9 +40,6 @@ public:
   /// @copydoc VertexData::getIndexBuffer
   virtual IndexBuffer* getIndexBuffer() const override;
 
-  /// @copydoc VertexData::nextTimestep
-  virtual void nextTimestep() override;
-
   SEQUOIA_NULL_OBJECT(VertexData)
 
 protected:

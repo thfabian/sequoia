@@ -29,7 +29,7 @@ class SEQUOIA_API GLVertexBuffer final : public VertexBuffer {
   GLBuffer glBuffer_; ///< OpenGL buffer
 
 public:
-  GLVertexBuffer(const VertexLayout& layout, int numBuffers);
+  GLVertexBuffer(const VertexLayout& layout);
 
   /// @brief Free all memory
   ~GLVertexBuffer();
@@ -37,14 +37,8 @@ public:
   /// @copydoc Buffer::isSystemRAM
   bool isSystemRAM() const override { return false; }
 
-  /// @brief Bind the buffer for drawing
-  void bindForDrawing();
-
-  /// @brief Bind the buffer for modify
-  void bindForModify();
-
-  /// @brief Update the buffer to the next timestep
-  void nextTimestep();
+  /// @brief Bind the buffer
+  void bind();
 
   static bool classof(const Buffer* buffer) { return buffer->getKind() == BK_GLIndexBuffer; }
 

@@ -25,7 +25,7 @@ namespace render {
 NullVertexData::NullVertexData(const VertexDataParameter& param)
     : VertexData(RK_Null, param.DrawMode) {
 
-  vertexBuffer_ = std::make_unique<NullVertexBuffer>(param.Layout, param.NumVertexBuffers);
+  vertexBuffer_ = std::make_unique<NullVertexBuffer>(param.Layout);
   if(param.NumIndices > 0)
     indexBuffer_ = std::make_unique<NullIndexBuffer>(param.IndexType);
 
@@ -47,8 +47,6 @@ NullVertexData::~NullVertexData() {}
 VertexBuffer* NullVertexData::getVertexBuffer() const { return vertexBuffer_.get(); }
 
 IndexBuffer* NullVertexData::getIndexBuffer() const { return indexBuffer_.get(); }
-
-void NullVertexData::nextTimestep() {}
 
 std::pair<std::string, std::string> NullVertexData::toStringImpl() const {
   return std::make_pair("NullVertexData",

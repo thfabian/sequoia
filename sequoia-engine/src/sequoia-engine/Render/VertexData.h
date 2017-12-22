@@ -79,9 +79,6 @@ public:
   /// @brief Get the IndexBuffer
   virtual IndexBuffer* getIndexBuffer() const = 0;
 
-  /// @brief Update the buffer to the next timestep
-  virtual void nextTimestep() = 0;
-
   /// @brief Dump the vertex data and indices to `stdout`
   void dump() const;
 
@@ -118,9 +115,6 @@ struct VertexDataParameter {
 
   /// Usage hint of the vertex-buffer
   Buffer::UsageHint VertexBufferUsageHint;
-
-  /// Number of redundant vertex-buffers to allocate
-  int NumVertexBuffers = 1;
 
   /// Use a shadow buffer for the vertices?
   bool UseVertexShadowBuffer = true;

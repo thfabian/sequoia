@@ -154,7 +154,7 @@ bool GLRenderer::VertexDataChanged(VertexData* data) {
   SEQUOIA_ASSERT(data);
 
   GLVertexData* gldata = core::dyn_cast<GLVertexData>(data);
-  gldata->bindForDrawing();
+  gldata->bind();
   return true;
 }
 

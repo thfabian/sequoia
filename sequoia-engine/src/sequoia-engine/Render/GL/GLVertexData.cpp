@@ -78,19 +78,18 @@ GLenum GLVertexData::getGLType(VertexLayout::TypeID type) {
 GLVertexData::GLVertexData(const VertexDataParameter& param)
     : VertexData(RK_OpenGL, param.DrawMode), vertexBuffer_(nullptr), indexBuffer_(nullptr),
       vaoID_(0) {
-
-  SEQUOIA_ASSERT_MSG(param.NumVertexBuffers <= 1 || param.UseVertexShadowBuffer,
-                     "multiple vertex buffers require shadow buffering");
-
   const VertexLayout& layout = param.Layout;
 
   // Generate VAO, VBO and VEO
   glGenVertexArrays(1, &vaoID_);
-  vertexBuffer_ = std::make_unique<GLVertexBuffer>(layout, param.NumVertexBuffers);
+  vertexBuffer_ = std::make_unique<GLVertexBuffer>(layout);
   if(param.NumIndices > 0)
     indexBuffer_ = std::make_unique<GLIndexBuffer>(param.IndexType);
 
-  bindForModify();
+  bind();
+  
+  // TODO
+  // https://stackoverflow.com/questions/32739297/direct-state-access-with-vertex-buffers
 
   // Enable the active attributes
   if(layout.hasPosition()) {
@@ -132,6 +131,8 @@ GLVertexData::GLVertexData(const VertexDataParameter& param)
 
   if(indexBuffer_ && param.UseIndexShadowBuffer)
     indexBuffer_->setShadowBuffer(HostBuffer::create(indexBuffer_->getNumBytes()));
+  
+  unbind();  
 }
 
 GLVertexData::~GLVertexData() {
@@ -140,20 +141,11 @@ GLVertexData::~GLVertexData() {
   glDeleteVertexArrays(1, &vaoID_);
 }
 
-void GLVertexData::bindForDrawing() {
+void GLVertexData::bind() {
   glBindVertexArray(vaoID_);
-  vertexBuffer_->bindForDrawing();
+  vertexBuffer_->bind();
   if(indexBuffer_)
-    indexBuffer_->bindForDrawing();
-  else
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-}
-
-void GLVertexData::bindForModify() {
-  glBindVertexArray(vaoID_);
-  vertexBuffer_->bindForModify();
-  if(indexBuffer_)
-    indexBuffer_->bindForModify();
+    indexBuffer_->bind();
   else
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
@@ -162,11 +154,6 @@ void GLVertexData::unbind() {
   glBindVertexArray(0);
   glBindBuffer(GL_ARRAY_BUFFER, 0);
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-}
-
-void GLVertexData::nextTimestep() {
-  vertexBuffer_->nextTimestep();
-  indexBuffer_->nextTimestep();
 }
 
 void GLVertexData::draw() const noexcept {

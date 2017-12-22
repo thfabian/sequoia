@@ -42,38 +42,23 @@ static GLenum getGLBufferUsage(Buffer::UsageHint hint) {
   }
 }
 
-GLBuffer::GLBuffer(GLenum target, int numBuffers)
-    : modifyBufferIdx_(0), target_(target), hint_(GL_INVALID_ENUM), numBytes_(0), isLocked_(false) {
-  bufferIds_.resize(numBuffers);
-  SEQUOIA_ASSERT_MSG(numBuffers > 0, "atleast one vertex buffer is required");
+GLBuffer::GLBuffer(GLenum target)
+    : id_(0), target_(target), hint_(GL_INVALID_ENUM), numBytes_(0), isLocked_(false) {
 
   // TODO: for DSA replace with glCreateBuffers
-  glGenBuffers(bufferIds_.size(), bufferIds_.data());
+  glGenBuffers(1, &id_);
 }
 
-GLBuffer::~GLBuffer() { glDeleteBuffers(bufferIds_.size(), bufferIds_.data()); }
+GLBuffer::~GLBuffer() { glDeleteBuffers(1, &id_); }
 
-void GLBuffer::bind(BindKind kind) {
-  switch(kind) {
-  case BK_Draw:
-    glBindBuffer(target_, getDrawBufferID());
-    break;
-  case BK_Modify:
-    glBindBuffer(target_, getModifyBufferID());
-    break;
-  default:
-    sequoia_unreachable("invalid BindKind");
-  }
-}
+void GLBuffer::bind() { glBindBuffer(target_, id_); }
 
 void GLBuffer::unbind() { glBindBuffer(target_, 0); }
 
 void* GLBuffer::lock(Buffer::LockOption option) {
   SEQUOIA_ASSERT_MSG(!isLocked(), "buffer already locked");
   isLocked_ = true;
-
-  bind(BK_Modify);
-
+  
   // Discard the buffer if requested
   if(option == Buffer::LO_Discard)
     glBufferData(target_, numBytes_, nullptr, hint_);
@@ -93,6 +78,7 @@ void* GLBuffer::lock(Buffer::LockOption option) {
   // TODO: allow returning a scratchpad memory for small buffers
 
   // Initiate the DMA
+  bind();  
   return glMapBuffer(target_, access);
 }
 
@@ -100,27 +86,22 @@ void GLBuffer::unlock() {
   SEQUOIA_ASSERT_MSG(isLocked(), "buffer not locked");
   isLocked_ = false;
 
-  bind(BK_Modify);
-
-  // Stop the DMA
   glUnmapBuffer(target_);
-  
   unbind();    
 }
 
 void GLBuffer::allocate(std::size_t numBytes, Buffer::UsageHint hint) {
   numBytes_ = numBytes;
   hint_ = getGLBufferUsage(hint);
-  for(unsigned int id : bufferIds_) {
-    glBindBuffer(target_, id);
-    glBufferData(target_, numBytes_, nullptr, hint_);
-  }
+  bind();
+  glBufferData(target_, numBytes_, nullptr, hint_);
+  unbind();
 }
 
 void GLBuffer::write(const void* src, std::size_t offset, std::size_t length, bool discardBuffer) {
   SEQUOIA_ASSERT_MSG((offset + length) <= numBytes_, "out of bound writing");
   
-  bind(BK_Modify);
+  bind();
 
   if(discardBuffer)
     glBufferData(target_, numBytes_, nullptr, hint_);
@@ -137,7 +118,7 @@ void GLBuffer::write(const void* src, std::size_t offset, std::size_t length, bo
 void GLBuffer::read(std::size_t offset, std::size_t length, void* dest) {
   SEQUOIA_ASSERT_MSG((offset + length) <= numBytes_, "out of bound reading");
 
-  bind(BK_Modify);
+  bind();
   
   // TODO: figure out when using glGetNamedBufferSubData vs. glMapBuffer
 
@@ -148,26 +129,16 @@ void GLBuffer::read(std::size_t offset, std::size_t length, void* dest) {
   unbind();
 }
 
-void GLBuffer::nextTimestep() { modifyBufferIdx_ = (modifyBufferIdx_ + 1) % bufferIds_.size(); }
-
-unsigned int GLBuffer::getDrawBufferIndex() const {
-  return (modifyBufferIdx_ + (bufferIds_.size() - 1)) % bufferIds_.size();
-}
-
-unsigned int GLBuffer::getDrawBufferID() const { return bufferIds_[getDrawBufferIndex()]; }
-
-unsigned int GLBuffer::getModifyBufferIndex() const { return modifyBufferIdx_; }
-
-unsigned int GLBuffer::getModifyBufferID() const { return bufferIds_[getModifyBufferIndex()]; }
+unsigned int GLBuffer::getID() const { return id_; }
 
 std::string GLBuffer::toString() const {
   return core::format("GLBuffer[\n"
-                      "  bufferIds = {},\n"
+                      "  id = {},\n"
                       "  target = {},\n"
                       "  hint = {},\n"
                       "  numBytes = {}\n"
                       "]",
-                      core::RangeToString()(bufferIds_), target_, hint_, numBytes_);
+                      id_, target_, hint_, numBytes_);
 }
 
 } // namespace render

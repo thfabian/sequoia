@@ -59,7 +59,6 @@ render::DrawCommand* Drawable::prepareDrawCommand() {
   // render-state.
   render::DrawCommand* cmd = &drawCommand_.get();
   drawCommand_.nextTimestep();
-  drawCommand_.get().getVertexData()->nextTimestep();
   return cmd;
 }
 

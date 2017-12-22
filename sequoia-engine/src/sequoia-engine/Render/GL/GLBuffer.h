@@ -36,11 +36,8 @@ namespace render {
 /// @ingroup gl
 class SEQUOIA_API GLBuffer {
 
-  /// OpenGL buffer indices
-  std::vector<unsigned int> bufferIds_;
-
-  /// Index to the currently active (modifiable) buffer
-  unsigned int modifyBufferIdx_;
+  /// OpenGL buffer id
+  unsigned int id_;
 
   /// Target of the buffer(s)
   GLenum target_;
@@ -55,24 +52,16 @@ class SEQUOIA_API GLBuffer {
   bool isLocked_;
 
 public:
-  /// @brief Specify the way a buffer is bound
-  enum BindKind {
-    BK_Invalid = 0,
-    BK_Draw,  ///< Bind the buffer for drawing
-    BK_Modify ///< Bind the buffer for modification
-  };
-
   /// @brief Create the buffer(s)
   ///
   /// @param target       Target of the buffer(s)
-  /// @param numBuffers   Number of buffers to allocate
-  GLBuffer(GLenum target, int numBuffers = 1);
+  GLBuffer(GLenum target);
 
   /// @brief Destroy buffer(s)
   ~GLBuffer();
 
   /// @brief Bind the buffer
-  void bind(BindKind kind);
+  void bind();
 
   /// @brief Unbind the buffer
   void unbind();
@@ -121,26 +110,8 @@ public:
   /// @param dest     Destination to write the data (must be atleast of size `length`)
   void read(std::size_t offset, std::size_t length, void* dest);
 
-  /// @brief Update the buffers to the next timestep
-  ///
-  /// This effectively shifts all buffers by one to the right, meaning the current modification
-  /// buffer is set to be drawn in the next frame.
-  void nextTimestep();
-
-  /// @brief Get the index into `getBufferIds()` of the buffer which is being drawn
-  unsigned int getDrawBufferIndex() const;
-
-  /// @brief Get the OpenGL id of the buffer which is being drawn
-  unsigned int getDrawBufferID() const;
-
-  /// @brief Get the index into `getBufferIds()` of the buffer which is currently being modified
-  unsigned int getModifyBufferIndex() const;
-
-  /// @brief Get the OpenGL id of the buffer which is currently being modified
-  unsigned int getModifyBufferID() const;
-
-  /// @brief Get the OpenGL buffer ids
-  std::vector<unsigned int> getBuffersIds() const { return bufferIds_; }
+  /// @brief Get the OpenGL buffer ID
+  unsigned int getID() const;
 
   /// @brief Convert buffer to string
   std::string toString() const;

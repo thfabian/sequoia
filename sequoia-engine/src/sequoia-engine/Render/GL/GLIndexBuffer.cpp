@@ -23,7 +23,7 @@ namespace sequoia {
 namespace render {
 
 GLIndexBuffer::GLIndexBuffer(IndexBuffer::IndexType type)
-    : IndexBuffer(BK_GLIndexBuffer, type), glBuffer_(GL_ELEMENT_ARRAY_BUFFER, 1) {}
+    : IndexBuffer(BK_GLIndexBuffer, type), glBuffer_(GL_ELEMENT_ARRAY_BUFFER) {}
 
 GLIndexBuffer::~GLIndexBuffer() {}
 
@@ -36,11 +36,7 @@ void GLIndexBuffer::readImpl(std::size_t offset, std::size_t length, void* dest)
   glBuffer_.read(offset, length, dest);
 }
 
-void GLIndexBuffer::bindForDrawing() { glBuffer_.bind(GLBuffer::BK_Draw); }
-
-void GLIndexBuffer::bindForModify() { glBuffer_.bind(GLBuffer::BK_Modify); }
-
-void GLIndexBuffer::nextTimestep() { glBuffer_.nextTimestep(); }
+void GLIndexBuffer::bind() { glBuffer_.bind(); }
 
 GLenum GLIndexBuffer::getGLIndexType() const {
   switch(getIndexType()) {
