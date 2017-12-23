@@ -17,8 +17,6 @@
 #include "sequoia-engine/Render/RenderWindow.h"
 #include "sequoia-engine/Unittest/RenderSetup.h"
 
-#include <iostream>
-
 namespace sequoia {
 
 namespace unittest {
@@ -28,7 +26,6 @@ void RenderSetup::SetUp() {
   hints.HideWindow = true;
   hints.WindowMode = render::RenderWindow::WindowHint::WK_Window;
   render::RenderSystem::getSingleton().createMainWindow(hints);
-  std::cout << "THE FUCK" << std::endl;
 }
 
 void RenderSetup::TearDown() { render::RenderSystem::getSingleton().destroyMainWindow(); }

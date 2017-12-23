@@ -302,43 +302,45 @@ std::string Renderer::toString() const {
 std::pair<std::string, std::string> Renderer::toStringImpl() const {
   return std::make_pair(
       "Renderer",
-      core::format(
-          "pipeline = {},\n"
-          "vertexData = {},\n"
-          "textures = {},\n"
-          "uniforms = {},\n",
-          pipeline_.toString(), vertexData_ ? core::indent(vertexData_->toString()) : "null",
-          textures_.empty()
-              ? "null"
-              : core::toStringRange(textures_,
-                                    [](const auto& var) {
-                                      return core::format("unit = {},\n"
-                                                          "  texture = {}",
-                                                          var.first,
-                                                          core::indent(var.second->toString()));
-                                    }),
-          uniforms_.empty()
-              ? "null"
-              : core::indent(core::toStringRange(
-                    uniforms_,
-                    [this](const auto& programUniformMapPair) {
-                      Program* program = programUniformMapPair.first;
-                      const auto& uniformMap = programUniformMapPair.second;
-                      return core::format(
-                          "program = {},\n"
-                          "  uniforms = {}",
-                          program->toString(),
-                          uniforms_.empty()
-                              ? "null"
-                              : core::toStringRange(uniformMap, [](const auto& nameVariablePair) {
-                                  return core::format("name = {},\n"
-                                                      "  variable = {}",
-                                                      nameVariablePair.first,
-                                                      nameVariablePair.second.toString());
-                                }));
-                    }))
+      core::format("pipeline = {},\n"
+                   "vertexData = {},\n"
+                   "textures = {},\n"
+                   "uniforms = {},\n",
+                   pipeline_.toString(), vertexData_ ? vertexData_->toString() : "null",
+                   textures_.empty()
+                       ? "null"
+                       : core::toStringRange(textures_,
+                                             [](const auto& var) {
+                                               return core::format(
+                                                   "unit = {},\n"
+                                                   "  texture = {}",
+                                                   var.first, core::indent(var.second->toString()));
+                                             }),
 
-              ));
+                   uniforms_.empty()
+                       ? "null"
+                       : core::toStringRange(uniforms_, [this](const auto& programUniformMapPair) {
+                           Program* program = programUniformMapPair.first;
+                           const auto& uniformMap = programUniformMapPair.second;
+                           return core::indent(core::format(
+                               "perProgramUniforms = {{\n"
+                               "  program = {},\n"
+                               "  uniforms = {}\n"
+                               "}}",
+                               core::indent(program->toString()),
+                               uniforms_.empty()
+                                   ? "null"
+                                   : core::indent(core::toStringRange(
+                                         uniformMap, [](const auto& nameVariablePair) {
+                                           return core::indent(core::format(
+                                               "uniform = {{\n"
+                                               "  name = {},\n"
+                                               "  variable = {}\n"
+                                               "}}",
+                                               nameVariablePair.first,
+                                               core::indent(nameVariablePair.second.toString())));
+                                         }))));
+                         })));
 }
 
 } // namespace render

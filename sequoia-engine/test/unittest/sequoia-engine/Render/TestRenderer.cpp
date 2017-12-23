@@ -119,9 +119,12 @@ class TestRenderTechnique : public RenderTechnique {
 public:
   class TestRenderPass : public RenderPass {
   public:
+    TestRenderPass(Program* program) : program_(program) {}
+
     void setUp(DrawCallContext& ctx) override {
       // Modify pipeline
       ctx.Pipeline.DepthTest = !ctx.Pipeline.DepthTest;
+      ctx.Pipeline.Program = program_;
 
       // Set some uniforms
       ctx.Uniforms["u_two"] = UniformVariable(2.0f);
@@ -131,9 +134,12 @@ public:
       ctx.BuffersToClear.erase(RenderBuffer::RK_Depth);
     }
     const char* getName() const noexcept override { return "TestRenderPass"; }
+
+  private:
+    Program* program_;
   };
 
-  TestRenderTechnique() { pass_ = std::make_unique<TestRenderPass>(); }
+  TestRenderTechnique(Program* program) { pass_ = std::make_unique<TestRenderPass>(program); }
 
   void render(std::function<void(RenderPass*)> renderer) override { renderer(pass_.get()); }
 
@@ -345,8 +351,9 @@ TEST_F(RendererTest, Draw) {
   RenderSystem& rsys = RenderSystem::getSingleton();
   auto renderer = std::make_unique<TestRenderer>();
   auto target = rsys.getMainWindow();
+  auto program = rsys.createProgram({});
 
-  auto technique = std::make_unique<TestRenderTechnique>();
+  auto technique = std::make_unique<TestRenderTechnique>(program.get());
   auto vertexdata = makeNullVertexData();
 
   auto camera = std::make_shared<Camera>();
@@ -361,7 +368,7 @@ TEST_F(RendererTest, Draw) {
   renderCmd.DrawCommands = {drawCmd};
 
   renderer->render(renderCmd);
-//  std::cout << renderer->toString() << std::endl;
+  std::cout << renderer->toString() << std::endl;
 }
 
 } // anonymous namespace

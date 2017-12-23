@@ -13,10 +13,10 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia-engine/Render/Null/NullVertexData.h"
 #include "sequoia-engine/Core/Format.h"
 #include "sequoia-engine/Core/StringUtil.h"
 #include "sequoia-engine/Render/HostBuffer.h"
+#include "sequoia-engine/Render/Null/NullVertexData.h"
 
 namespace sequoia {
 
@@ -51,9 +51,10 @@ IndexBuffer* NullVertexData::getIndexBuffer() const { return indexBuffer_.get();
 std::pair<std::string, std::string> NullVertexData::toStringImpl() const {
   return std::make_pair("NullVertexData",
                         core::format("{}"
-                                     "vertexBuffer = {},\n",
-                                     "indexBuffer = {}\n", Base::toStringImpl().second,
-                                     vertexBuffer_->toString(), indexBuffer_->toString()));
+                                     "vertexBuffer = {},\n"
+                                     "indexBuffer = {}\n",
+                                     Base::toStringImpl().second, vertexBuffer_->toString(),
+                                     indexBuffer_ ? indexBuffer_->toString() : "null"));
 }
 
 } // namespace render

@@ -47,7 +47,7 @@ public:
   /// @brief Get the number of indices
   std::size_t getNumIndices() const { return getNumBytes() / getSizeOfIndexType(); }
 
-  /// @brief Get the size of the underlying tpye
+  /// @brief Get the size of the underlying type
   std::size_t getSizeOfIndexType() const noexcept;
 
   /// @brief Get the underlying type
