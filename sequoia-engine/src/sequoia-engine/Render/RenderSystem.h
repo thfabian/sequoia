@@ -54,7 +54,6 @@ namespace render {
 ///
 /// @ingroup render
 class SEQUOIA_API RenderSystem : public Singleton<RenderSystem>,
-                                 public FrameListener, // TODO: remove
                                  public Listenable<InputEventListener, FrameListener>,
                                  public RenderSystemObject {
 public:
@@ -118,16 +117,13 @@ public:
 
   /// @brief Remove the mouse `listener`
   virtual void removeMouseListener(MouseListener* listener) = 0;
-  
+
   /// @brief Get the Renderer
   virtual Renderer* getRenderer() const = 0;
 
   /// @brief Set if we run in debug-mode
   Options& getOptions() const { return *options_; }
   Options* getOptionsPtr() const { return options_.get(); }
-
-  void frameListenerRenderingBegin(RenderCommand* command) override;
-  void frameListenerRenderingEnd(RenderCommand* command) override;
 
 protected:
   RenderSystem(RenderSystemKind kind, const std::shared_ptr<Options>& options);

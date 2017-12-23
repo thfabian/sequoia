@@ -58,9 +58,10 @@ class SEQUOIA_API Mesh : public NonCopyable {
 
 public:
   /// @brief Create the mesh
-  ///
   /// @note This should never be called manually, use `ShapeManager::load` instead.
+  /// @{
   Mesh(const std::shared_ptr<render::VertexData>& data, bool isModifiable);
+  /// @}
 
   /// @brief Get the VertexData
   render::VertexData* getVertexData() const noexcept { return data_.get(); }

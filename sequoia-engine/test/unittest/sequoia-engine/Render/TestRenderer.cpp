@@ -127,8 +127,8 @@ public:
       ctx.Pipeline.Program = program_;
 
       // Set some uniforms
-      ctx.Uniforms["u_two"] = UniformVariable(2.0f);
-      ctx.Uniforms["u_five"] = UniformVariable(5);
+      ctx.Uniforms["two"] = UniformVariable(2.0f);
+      ctx.Uniforms["five"] = UniformVariable(5);
 
       // Don't clear depth buffer
       ctx.BuffersToClear.erase(RenderBuffer::RK_Depth);
@@ -172,14 +172,14 @@ TEST_F(RendererTest, PipelineChange) {
   renderer->setRenderPipeline(pipeline);
 
   {
-    const std::vector<std::string>& changes = renderer->getChanges();
+    const std::vector<std::string>& c = renderer->getChanges();
 #define RENDER_STATE(Type, Name, DefaultValue)                                                     \
-  EXPECT_TRUE(std::find(changes.begin(), changes.end(), #Name) != changes.end())                   \
+  EXPECT_TRUE(std::find(c.begin(), c.end(), #Name) != c.end())                                     \
       << "initial state '" #Name "' not set.";
 #include "sequoia-engine/Render/RenderState.inc"
 #undef RENDER_STATE
 
-    EXPECT_TRUE(std::find(changes.begin(), changes.end(), "Program") != changes.end())
+    EXPECT_TRUE(std::find(c.begin(), c.end(), "Program") != c.end())
         << "initial state 'Program' not set.";
   }
 
@@ -190,9 +190,9 @@ TEST_F(RendererTest, PipelineChange) {
   renderer->setRenderPipeline(pipeline);
 
   {
-    const std::vector<std::string>& changes = renderer->getChanges();
-    ASSERT_EQ(changes.size(), 1);
-    EXPECT_STREQ(changes[0].c_str(), "DepthTest");
+    const std::vector<std::string>& c = renderer->getChanges();
+    ASSERT_EQ(c.size(), 1);
+    EXPECT_STREQ(c[0].c_str(), "DepthTest");
   }
 }
 
@@ -221,9 +221,9 @@ TEST_F(RendererTest, VertexDataChange) {
   renderer->setVertexData(vertexdata1.get());
 
   {
-    const std::vector<std::string>& changes = renderer->getChanges();
-    ASSERT_EQ(changes.size(), 1);
-    EXPECT_STREQ(changes[0].c_str(), "VertexData");
+    const std::vector<std::string>& c = renderer->getChanges();
+    ASSERT_EQ(c.size(), 1);
+    EXPECT_STREQ(c[0].c_str(), "VertexData");
   }
 }
 
@@ -238,12 +238,11 @@ TEST_F(RendererTest, RenderBufferChange) {
   renderer->forceClearRenderBuffers(buffersToClear);
 
   {
-    const std::vector<std::string>& changes = renderer->getChanges();
-    ASSERT_EQ(changes.size(), 3);
-    EXPECT_TRUE(std::find(changes.begin(), changes.end(), "ColorBuffer_cleared") != changes.end());
-    EXPECT_TRUE(std::find(changes.begin(), changes.end(), "DepthBuffer_cleared") != changes.end());
-    EXPECT_TRUE(std::find(changes.begin(), changes.end(), "StencilBuffer_cleared") !=
-                changes.end());
+    const std::vector<std::string>& c = renderer->getChanges();
+    ASSERT_EQ(c.size(), 3);
+    EXPECT_TRUE(std::find(c.begin(), c.end(), "ColorBuffer_cleared") != c.end());
+    EXPECT_TRUE(std::find(c.begin(), c.end(), "DepthBuffer_cleared") != c.end());
+    EXPECT_TRUE(std::find(c.begin(), c.end(), "StencilBuffer_cleared") != c.end());
   }
 
   // Don't clear depth buffer
@@ -253,11 +252,10 @@ TEST_F(RendererTest, RenderBufferChange) {
   renderer->forceClearRenderBuffers(buffersToClear);
 
   {
-    const std::vector<std::string>& changes = renderer->getChanges();
-    ASSERT_EQ(changes.size(), 2);
-    EXPECT_TRUE(std::find(changes.begin(), changes.end(), "ColorBuffer_cleared") != changes.end());
-    EXPECT_TRUE(std::find(changes.begin(), changes.end(), "StencilBuffer_cleared") !=
-                changes.end());
+    const std::vector<std::string>& c = renderer->getChanges();
+    ASSERT_EQ(c.size(), 2);
+    EXPECT_TRUE(std::find(c.begin(), c.end(), "ColorBuffer_cleared") != c.end());
+    EXPECT_TRUE(std::find(c.begin(), c.end(), "StencilBuffer_cleared") != c.end());
   }
 }
 
@@ -279,10 +277,10 @@ TEST_F(RendererTest, TextureChange) {
   renderer->setTextures(textures);
 
   {
-    const std::vector<std::string>& changes = renderer->getChanges();
-    ASSERT_EQ(changes.size(), 2);
-    EXPECT_TRUE(std::find(changes.begin(), changes.end(), "Texture0_enabled") != changes.end());
-    EXPECT_TRUE(std::find(changes.begin(), changes.end(), "Texture1_enabled") != changes.end());
+    const std::vector<std::string>& c = renderer->getChanges();
+    ASSERT_EQ(c.size(), 2);
+    EXPECT_TRUE(std::find(c.begin(), c.end(), "Texture0_enabled") != c.end());
+    EXPECT_TRUE(std::find(c.begin(), c.end(), "Texture1_enabled") != c.end());
   }
 
   // Unit 0 & 3 are enabled (requires 1 to be disabled)
@@ -293,10 +291,10 @@ TEST_F(RendererTest, TextureChange) {
   renderer->setTextures(textures);
 
   {
-    const std::vector<std::string>& changes = renderer->getChanges();
-    ASSERT_EQ(changes.size(), 2);
-    EXPECT_TRUE(std::find(changes.begin(), changes.end(), "Texture1_disabled") != changes.end());
-    EXPECT_TRUE(std::find(changes.begin(), changes.end(), "Texture2_enabled") != changes.end());
+    const std::vector<std::string>& c = renderer->getChanges();
+    ASSERT_EQ(c.size(), 2);
+    EXPECT_TRUE(std::find(c.begin(), c.end(), "Texture1_disabled") != c.end());
+    EXPECT_TRUE(std::find(c.begin(), c.end(), "Texture2_enabled") != c.end());
   }
 }
 
@@ -315,10 +313,10 @@ TEST_F(RendererTest, UniformChange) {
   renderer->setUniformVariable(program.get(), "five", five);
 
   {
-    const std::vector<std::string>& changes = renderer->getChanges();
-    ASSERT_EQ(changes.size(), 2);
-    EXPECT_TRUE(std::find(changes.begin(), changes.end(), "UniformVariable_two") != changes.end());
-    EXPECT_TRUE(std::find(changes.begin(), changes.end(), "UniformVariable_five") != changes.end());
+    const std::vector<std::string>& c = renderer->getChanges();
+    ASSERT_EQ(c.size(), 2);
+    EXPECT_TRUE(std::find(c.begin(), c.end(), "UniformVariable_two") != c.end());
+    EXPECT_TRUE(std::find(c.begin(), c.end(), "UniformVariable_five") != c.end());
   }
 
   // two changes value (five remains)
@@ -340,10 +338,10 @@ TEST_F(RendererTest, UniformChange) {
   renderer->setUniformVariable(program.get(), "five", five);
 
   {
-    const std::vector<std::string>& changes = renderer->getChanges();
-    ASSERT_EQ(changes.size(), 2);
-    EXPECT_TRUE(std::find(changes.begin(), changes.end(), "UniformVariable_two") != changes.end());
-    EXPECT_TRUE(std::find(changes.begin(), changes.end(), "UniformVariable_five") != changes.end());
+    const std::vector<std::string>& c = renderer->getChanges();
+    ASSERT_EQ(c.size(), 2);
+    EXPECT_TRUE(std::find(c.begin(), c.end(), "UniformVariable_two") != c.end());
+    EXPECT_TRUE(std::find(c.begin(), c.end(), "UniformVariable_five") != c.end());
   }
 }
 
@@ -367,8 +365,34 @@ TEST_F(RendererTest, Draw) {
   renderCmd.Techniques = {technique.get()};
   renderCmd.DrawCommands = {drawCmd};
 
+  renderer->resetChanges();
   renderer->render(renderCmd);
-  std::cout << renderer->toString() << std::endl;
+
+  // Check all changes are applied
+  {
+    const std::vector<std::string>& c = renderer->getChanges();
+    ASSERT_EQ(c.size(), 10);
+
+    // Pipeline
+    EXPECT_TRUE(std::find(c.begin(), c.end(), "DepthTest") != c.end());
+    EXPECT_TRUE(std::find(c.begin(), c.end(), "DepthFunc") != c.end());
+    EXPECT_TRUE(std::find(c.begin(), c.end(), "Program") != c.end());
+
+    // RenderBuffers
+    EXPECT_TRUE(std::find(c.begin(), c.end(), "ColorBuffer_cleared") != c.end());
+    EXPECT_TRUE(std::find(c.begin(), c.end(), "StencilBuffer_cleared") != c.end());
+
+    // Viewport
+    EXPECT_TRUE(std::find(c.begin(), c.end(), "Viewport") != c.end());
+
+    // VertexData
+    EXPECT_TRUE(std::find(c.begin(), c.end(), "VertexData") != c.end());
+
+    // Uniforms
+    EXPECT_TRUE(std::find(c.begin(), c.end(), "UniformVariable_u_matMVP") != c.end());
+    EXPECT_TRUE(std::find(c.begin(), c.end(), "UniformVariable_two") != c.end());
+    EXPECT_TRUE(std::find(c.begin(), c.end(), "UniformVariable_five") != c.end());
+  }
 }
 
 } // anonymous namespace

@@ -108,11 +108,11 @@ public:
   render::RenderSystem* getRenderSystem() const { return renderSystem_.get(); }
 
   /// @brief Create a texture from the `image` using default parameters
-  render::Texture* createTexture(const std::shared_ptr<Image>& image);
+  std::shared_ptr<render::Texture> createTexture(const std::shared_ptr<Image>& image);
 
   /// @brief Create a texture from the `image` and `param`
-  render::Texture* createTexture(const std::shared_ptr<Image>& image,
-                                 const render::TextureParameter& param);
+  std::shared_ptr<render::Texture> createTexture(const std::shared_ptr<Image>& image,
+                                                 const render::TextureParameter& param);
 
   /// @brief Compile the given shader
   std::shared_ptr<render::Shader> createShader(render::Shader::ShaderType type,
@@ -133,8 +133,7 @@ public:
   Scene* getActiveScene() const;
 
   /// @brief Append a new scene `name`
-  void setScene(const std::string& name, const std::shared_ptr<Scene>& scene,
-                bool makeActive = true);
+  void setScene(const std::shared_ptr<Scene>& scene, bool makeActive = true);
 
   /// @brief Get the scene `name`
   Scene* getScene(const std::string& name) const;

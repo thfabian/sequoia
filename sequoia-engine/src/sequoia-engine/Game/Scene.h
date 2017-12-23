@@ -16,17 +16,13 @@
 #ifndef SEQUOIA_ENGINE_GAME_SCENE_H
 #define SEQUOIA_ENGINE_GAME_SCENE_H
 
-#include "sequoia-engine/Core/ConcurrentADT.h"
-#include "sequoia-engine/Core/DoubleBuffered.h"
 #include "sequoia-engine/Core/Export.h"
 #include "sequoia-engine/Core/Listenable.h"
 #include "sequoia-engine/Core/NonCopyable.h"
-#include "sequoia-engine/Game/Emittable.h"
 #include "sequoia-engine/Game/GameFwd.h"
 #include "sequoia-engine/Render/RenderFwd.h"
-#include <array>
-#include <atomic>
 #include <memory>
+#include <string>
 #include <vector>
 
 namespace sequoia {
@@ -49,8 +45,8 @@ class SEQUOIA_API Scene : public Listenable<SceneListener>, public NonCopyable {
 public:
   friend class Game;
 
-  /// @brief Create an empty scene
-  Scene();
+  /// @brief Create the empty scene `name`
+  Scene(const std::string& name);
 
   /// @brief Destruct scene
   virtual ~Scene() {}
@@ -63,6 +59,9 @@ public:
 
   /// @brief Get the SceneGraph
   SceneGraph* getSceneGraph() const;
+
+  /// @brief Get the name of the Scene
+  const std::string& getName() const { return name_; }
 
   /// @brief Update the scene and progress to the next time-step
   ///
@@ -91,13 +90,6 @@ public:
 
   /// @}
 
-  // TODO: ----- remove me
-
-  /// @brief Create a dummy test scene
-  void makeDummyScene();
-
-  // ---------------------
-
 private:
   /// @brief Send an update notification to all SceneNodes in the SceneGraph and call `update()`
   ///
@@ -111,6 +103,9 @@ private:
   void prepareRenderCommand(render::RenderCommand& cmd);
 
 private:
+  /// Name of the scene
+  std::string name_;
+
   /// Graph of the scene
   std::shared_ptr<SceneGraph> sceneGraph_;
 

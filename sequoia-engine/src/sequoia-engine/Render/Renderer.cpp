@@ -312,11 +312,12 @@ std::pair<std::string, std::string> Renderer::toStringImpl() const {
                        : core::toStringRange(textures_,
                                              [](const auto& var) {
                                                return core::format(
-                                                   "unit = {},\n"
-                                                   "  texture = {}",
+                                                   "texture = {{\n"
+                                                   "  unit = {},\n"
+                                                   "  texture = {}\n"
+                                                   "}}",
                                                    var.first, core::indent(var.second->toString()));
                                              }),
-
                    uniforms_.empty()
                        ? "null"
                        : core::toStringRange(uniforms_, [this](const auto& programUniformMapPair) {
@@ -328,7 +329,7 @@ std::pair<std::string, std::string> Renderer::toStringImpl() const {
                                "  uniforms = {}\n"
                                "}}",
                                core::indent(program->toString()),
-                               uniforms_.empty()
+                               uniformMap.empty()
                                    ? "null"
                                    : core::indent(core::toStringRange(
                                          uniformMap, [](const auto& nameVariablePair) {

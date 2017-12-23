@@ -37,6 +37,15 @@ void Drawable::prepareDrawCommands(std::vector<render::DrawCommand>& drawCommand
   shape_->forEach([this, &drawCommands, &modelMatrix](const std::shared_ptr<Mesh>& mesh,
                                                       const std::shared_ptr<Material>& material) {
     render::DrawCommand cmd(mesh->getVertexData(), modelMatrix);
+
+    // Textures
+    for(const auto& textureUnitTexturePair : material->getTextures())
+      cmd.setTexture(textureUnitTexturePair.first, textureUnitTexturePair.second.get());
+
+    // Uniforms
+    for(const auto& nameVariablePair : material->getUniforms())
+      cmd.setUniformVariable(nameVariablePair.first, nameVariablePair.second);
+
     drawCommands.emplace_back(std::move(cmd));
   });
 }

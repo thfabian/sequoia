@@ -68,8 +68,12 @@ void RenderSystem::setDefaultOptions(const std::shared_ptr<Options>& options) {
                                         "the primary monitor should be used "
                                         "which is the default behaviour"});
 
-  options->setDefaultInt("Render.MSAA", 0);
+  options->setDefaultInt("Render.MSAA", 0); 
   options->setDefaultBool("Render.VSync", true);
+  options->setDefaultBool(
+      "Render.TraceAPI", false,
+      OptionMetaData{"trace", "t", false, "",
+                     "Enable tracing of the Render API calls (this may be expensive)"});
 
   // OpenGL
   options->setDefaultInt("Render.GL.MajorVersion", 4);
@@ -78,17 +82,12 @@ void RenderSystem::setDefaultOptions(const std::shared_ptr<Options>& options) {
 
 RenderSystem::~RenderSystem() {}
 
-void RenderSystem::renderOneFrame(const RenderCommand& command) { 
-  // TODO: inform Frame listeners
-  getRenderer()->render(command); 
-}
-
-void RenderSystem::frameListenerRenderingBegin(RenderCommand* command) {
+void RenderSystem::renderOneFrame(const RenderCommand& command) {
   for(FrameListener* listener : getListeners<FrameListener>())
     listener->frameListenerRenderingBegin(command);
-}
 
-void RenderSystem::frameListenerRenderingEnd(RenderCommand* command) {
+  getRenderer()->render(command);
+
   for(FrameListener* listener : getListeners<FrameListener>())
     listener->frameListenerRenderingEnd(command);
 }

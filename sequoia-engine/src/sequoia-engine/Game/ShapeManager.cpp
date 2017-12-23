@@ -475,8 +475,8 @@ static CubeIndicesElementType CubeIndices[] = {0,  1,  2,  2,  3,  0,   // front
 } // anonymous namespace
 
 std::shared_ptr<Shape> ShapeManager::createCube(const std::string& name, bool modifiable,
-                                              const MeshParameter& param,
-                                              render::Buffer::UsageHint usage) {
+                                                const MeshParameter& param,
+                                                render::Buffer::UsageHint usage) {
   Log::debug("Creating cube shape \"{}\" ...", name);
 
   std::shared_ptr<render::VertexData> vertexData = nullptr;
@@ -508,25 +508,25 @@ std::shared_ptr<Shape> ShapeManager::createCube(const std::string& name, bool mo
     render::VertexLayout layout = render::Vertex_posf3_norf3_texf2_colu4::getLayout();
     render::VertexDataParameter vertexParam(render::VertexData::DM_Triangles, layout, numVertices,
                                             numIndices, usage);
-    
+
     vertexParam.IndexType = render::IndexBuffer::IT_UInt32;
     vertexParam.UseVertexShadowBuffer = true;
     vertexParam.UseIndexShadowBuffer = false;
 
     vertexData = Game::getSingleton().getRenderSystem()->createVertexData(vertexParam);
-    
+
     // Fill VertexBuffer
     {
       render::BufferGuard guard(vertexData->getVertexBuffer(), render::Buffer::LO_Discard);
       Byte* vertexPtr = guard.getAsByte();
-      
+
       render::VertexAdapter adapter(layout);
       for(std::size_t i = 0; i < numVertices; ++i, vertexPtr += layout.SizeOf) {
         adapter.clear();
-    
+
         // Position
         adapter.setPosition(math::make_vec3(CubeVertexData + i * CubeVertexDataStride));
-        
+
         // Nornal
         adapter.setNormal(math::make_vec3(CubeVertexData + i * CubeVertexDataStride + 3));
 
@@ -535,21 +535,22 @@ std::shared_ptr<Shape> ShapeManager::createCube(const std::string& name, bool mo
         for(int j = 0; j < 3; ++j)
           color[j] = Color::Uint8Max * CubeVertexData[i * CubeVertexDataStride + 6 + j];
         adapter.setColor(color);
-                     
+
         // TexCoord
         math::vec2 texCoord;
         texCoord[0] = CubeVertexData[i * CubeVertexDataStride + 9];
         texCoord[1] = param.TexCoordInvertV ? 1.0f - CubeVertexData[i * CubeVertexDataStride + 10]
                                             : CubeVertexData[i * CubeVertexDataStride + 10];
         adapter.setTexCoord(texCoord);
-    
+
         adapter.copyTo(vertexPtr);
       }
     }
-    
+
     // Fill IndexBuffer
-    vertexData->getIndexBuffer()->write(CubeIndices, 0, sizeof(CubeIndicesElementType) * numIndices);
-    
+    vertexData->getIndexBuffer()->write(CubeIndices, 0,
+                                        sizeof(CubeIndicesElementType) * numIndices);
+
     // Set bounding box
     vertexData->setAxisAlignedBox(
         math::AxisAlignedBox(math::vec3(-0.5, -0.5, -0.5), math::vec3(0.5, 0.5, 0.5)));
@@ -567,7 +568,7 @@ std::shared_ptr<Shape> ShapeManager::createCube(const std::string& name, bool mo
   // TODO: Copy for modifieable
 
   Log::debug("Successfully created cube shape \"{}\"", name);
-    
+
   std::vector<std::shared_ptr<Mesh>> meshes = {std::make_shared<Mesh>(vertexData, modifiable)};
   std::vector<std::shared_ptr<Material>> materials = {std::make_shared<Material>()};
   return std::make_shared<Shape>(name, std::move(meshes), std::move(materials));

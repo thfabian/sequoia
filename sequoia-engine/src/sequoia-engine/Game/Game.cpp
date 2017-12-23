@@ -22,8 +22,8 @@
 #include "sequoia-engine/Game/AssetManager.h"
 #include "sequoia-engine/Game/Game.h"
 #include "sequoia-engine/Game/Keymap.h"
-#include "sequoia-engine/Game/ShapeManager.h"
 #include "sequoia-engine/Game/Scene.h"
+#include "sequoia-engine/Game/ShapeManager.h"
 #include "sequoia-engine/Render/Camera.h"
 #include "sequoia-engine/Render/Exception.h"
 #include "sequoia-engine/Render/RenderSystem.h"
@@ -94,7 +94,7 @@ void Game::init(const std::shared_ptr<Options>& gameOptions) {
 
     // Create the main-window & initialize the OpenGL context
     RenderWindow::WindowHint hint;
-    hint.Title = std::string("Sequoia - ") + core::getSequoiaEngineFullVersionString();
+    hint.Title = name_;
     hint.Monitor = options_->getInt("Render.Monitor");
     using WindowModeKind = render::RenderWindow::WindowHint::WindowModeKind;
     hint.WindowMode = core::StringSwitch<WindowModeKind>(options_->getString("Render.WindowMode"))
@@ -110,14 +110,8 @@ void Game::init(const std::shared_ptr<Options>& gameOptions) {
     renderSystem_->addMouseListener(this);
 
     // Initialize the managers
-    assetManager_ = std::make_unique<AssetManager>(PLATFORM_STR(SEQUOIA_ENGINE_RESSOURCEPATH),
-                                                   PLATFORM_STR("assets"));
+    assetManager_ = std::make_unique<AssetManager>(options_->getString("Game.RessourcePath"));
     shapeManager_ = std::make_unique<ShapeManager>();
-
-    // -- tmp --
-    setScene("TestScene", std::make_shared<Scene>(), true);
-    getActiveScene()->makeDummyScene();
-    quitKey_ = Keymap::makeDefault(render::Key_Q, render::Mod_Ctrl);
 
   } catch(core::Exception& e) {
     ErrorHandler::fatal(e.what());
@@ -168,13 +162,13 @@ render::RenderWindow* Game::getMainWindow() const { return mainWindow_; }
 
 render::RenderTarget* Game::getMainRenderTarget() const { return getMainWindow(); }
 
-render::Texture* Game::createTexture(const std::shared_ptr<Image>& image) {
+std::shared_ptr<render::Texture> Game::createTexture(const std::shared_ptr<Image>& image) {
   return createTexture(image, render::TextureParameter());
 }
 
-render::Texture* Game::createTexture(const std::shared_ptr<Image>& image,
-                                     const render::TextureParameter& param) {
-  return renderSystem_->createTexture(image, param).get();
+std::shared_ptr<render::Texture> Game::createTexture(const std::shared_ptr<Image>& image,
+                                                     const render::TextureParameter& param) {
+  return renderSystem_->createTexture(image, param);
 }
 
 std::shared_ptr<render::Shader> Game::createShader(render::Shader::ShaderType type,
@@ -197,11 +191,11 @@ std::shared_ptr<render::Program> Game::createProgram(
 
 Scene* Game::getActiveScene() const { return activeScene_; }
 
-void Game::setScene(const std::string& name, const std::shared_ptr<Scene>& scene, bool makeActive) {
-  Log::info("Inserting new scene \"{}\" into game ", name);
-  sceneMap_.emplace(name, scene);
+void Game::setScene(const std::shared_ptr<Scene>& scene, bool makeActive) {
+  Log::info("Inserting new scene \"{}\" into game ", scene->getName());
+  sceneMap_.emplace(scene->getName(), scene);
   if(makeActive)
-    makeSceneActive(name);
+    makeSceneActive(scene->getName());
 }
 
 Scene* Game::getScene(const std::string& name) const {

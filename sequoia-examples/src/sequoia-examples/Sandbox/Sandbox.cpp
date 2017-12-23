@@ -15,13 +15,17 @@
 
 #include "sequoia-engine/Core/CommandLine.h"
 #include "sequoia-engine/Core/ErrorHandler.h"
+#include "sequoia-engine/Core/Exception.h"
 #include "sequoia-engine/Core/Logging.h"
 #include "sequoia-engine/Core/PrettyStackTrace.h"
 #include "sequoia-engine/Game/Game.h"
+#include "sequoia-engine/Game/Keymap.h"
 #include "sequoia-examples/Sandbox/Config.h"
+#include "sequoia-examples/Sandbox/SandboxScene.h"
 #include <iostream>
 
 using namespace sequoia;
+using namespace sequoia_examples;
 
 int main(int argc, char* argv[]) {
   // Print a pretty stack trace if we signal out
@@ -32,7 +36,8 @@ int main(int argc, char* argv[]) {
 
   // Parse options from config file and command-line
   std::shared_ptr<Options> options = game::Game::makeOptions();
-  options->read("Sandbox-Config.xml");
+  //options->read("Sandbox-Config.xml");
+  options->setString("Game.RessourcePath", SEQUOIA_EXAMPLES_SANDBOX_RESSOURCEPATH);
 
   core::CommandLine cl("Sequoia Sandbox Example", SEQUOIA_EXAMPLES_SANDBOX_VERSION);
   cl.parse(options, argc, argv);
@@ -41,11 +46,15 @@ int main(int argc, char* argv[]) {
     logger->setLevel(core::Logger::Trace);
 
   // Run the game
-  options->setString("Game.Name", "Sequoia Sandbox Example");
+  options->setString("Game.Name", "Sequoia Sandbox Example (" SEQUOIA_EXAMPLES_SANDBOX_VERSION ")");
   try {
-    auto sandbox = std::make_unique<game::Game>();
-    sandbox->init(options);
-    sandbox->run();
+    auto sandboxGame = std::make_unique<game::Game>();
+    sandboxGame->init(options);
+
+    sandboxGame->setQuitKey(game::Keymap::makeDefault(render::Key_Q, render::Mod_Ctrl));
+    sandboxGame->setScene(std::make_shared<sandbox::SandboxScene>("SandboxScene"));
+    sandboxGame->run();
+
   } catch(core::Exception& exception) {
     core::ErrorHandler::fatal(exception.what());
   }

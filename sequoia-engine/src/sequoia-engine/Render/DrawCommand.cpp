@@ -33,8 +33,8 @@ std::string DrawCommand::toString() const {
       "  uniformMap = {}\n"
       "]",
       data_ ? data_->toString() : "null", core::indent(ss.str(), 4),
-      textures.empty() ? "null" : core::indent(core::toStringRange(
-                                         textures,
+      textures_.empty() ? "null" : core::indent(core::toStringRange(
+                                         textures_,
                                          [](const auto& var) {
                                            return core::format("unit = {},\n"
                                                                "texture = {}\n",

@@ -55,10 +55,10 @@ public:
   ///
   /// @param textureUnit    ID of the texture unit starting from 0.
   /// @param texture        Texture to bind
-  void setTexture(int textureUnit, Texture* texture) noexcept { textures[textureUnit] = texture; }
+  void setTexture(int textureUnit, Texture* texture) noexcept { textures_[textureUnit] = texture; }
 
   /// @brief Get the texture map
-  const std::unordered_map<int, Texture*>& getTextures() const noexcept { return textures; }
+  const std::unordered_map<int, Texture*>& getTextures() const noexcept { return textures_; }
 
   /// @brief Set the uniform variable `name` to `value`
   ///
@@ -107,7 +107,7 @@ private:
   math::mat4 modelMatrix_ = math::mat4(1.0f);
 
   /// Texture data of the material (associate texture units to actual textures)
-  std::unordered_map<int, Texture*> textures;
+  std::unordered_map<int, Texture*> textures_;
 
   /// Uniform variables which are *specific* to this DrawCommand (mostly material properties)
   std::unordered_map<std::string, UniformVariable> uniforms_;

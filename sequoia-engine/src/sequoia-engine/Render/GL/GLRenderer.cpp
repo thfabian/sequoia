@@ -254,7 +254,7 @@ GLRenderer::GLRenderer(GLRenderWindow* window) : window_(window) {
   glbinding::Binding::initialize(false);
 
   // Set debugging callbacks
-  if(getGLRenderSystem().getOptions().getBool("Core.Debug")) {
+  if(getGLRenderSystem().getOptions().getBool("Render.TraceAPI")) {
 
     // Enable error checking
     using namespace glbinding;

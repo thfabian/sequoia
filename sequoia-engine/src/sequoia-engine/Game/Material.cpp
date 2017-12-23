@@ -24,9 +24,37 @@ namespace game {
 
 Material::Material() {}
 
+Material::Material(std::unordered_map<int, std::shared_ptr<render::Texture>> textures,
+                   std::unordered_map<std::string, render::UniformVariable> uniforms)
+    : textures_(std::move(textures)), uniforms_(std::move(uniforms)) {}
+
 std::string Material::toString() const {
-  return core::format("Material[\n"
-                      "]");
+  return core::format(
+      "Material[\n"
+      "  textures = {},\n"
+      "  uniforms = {}\n"
+      "]",
+      textures_.empty() ? "null" : core::indent(core::toStringRange(
+                                       textures_,
+                                       [](const auto& unitTexturePair) {
+                                         return core::format(
+                                             "texture = {{\n"
+                                             "  unit = {},\n"
+                                             "  texture = {}"
+                                             "}}",
+                                             unitTexturePair.first,
+                                             core::indent(unitTexturePair.second->toString()));
+                                       })),
+      uniforms_.empty()
+          ? "null"
+          : core::indent(core::toStringRange(uniforms_, [](const auto& nameVariablePair) {
+              return core::indent(core::format("uniform = {{\n"
+                                               "  name = {},\n"
+                                               "  variable = {}\n"
+                                               "}}",
+                                               nameVariablePair.first,
+                                               core::indent(nameVariablePair.second.toString())));
+            })));
 }
 
 } // namespace game
