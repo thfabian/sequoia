@@ -22,7 +22,7 @@
 #include "sequoia-engine/Game/AssetManager.h"
 #include "sequoia-engine/Game/Game.h"
 #include "sequoia-engine/Game/Keymap.h"
-#include "sequoia-engine/Game/MeshManager.h"
+#include "sequoia-engine/Game/ShapeManager.h"
 #include "sequoia-engine/Game/Scene.h"
 #include "sequoia-engine/Render/Camera.h"
 #include "sequoia-engine/Render/Exception.h"
@@ -36,7 +36,7 @@ SEQUOIA_DECLARE_SINGLETON(game::Game);
 namespace game {
 
 Game::Game()
-    : renderSystem_(nullptr), assetManager_(nullptr), meshManager_(nullptr), mainWindow_(nullptr),
+    : renderSystem_(nullptr), assetManager_(nullptr), shapeManager_(nullptr), mainWindow_(nullptr),
       quitKey_(nullptr), shouldClose_(false), activeScene_(nullptr), name_("<unknown>"),
       options_(nullptr) {}
 
@@ -90,7 +90,7 @@ void Game::init(const std::shared_ptr<Options>& gameOptions) {
   try {
     // Initialize the RenderSystem
     renderSystem_ = RenderSystem::create(
-      options_->getEnum<render::RenderSystemKind>("Game.RenderSystem"), options_);
+        options_->getEnum<render::RenderSystemKind>("Game.RenderSystem"), options_);
 
     // Create the main-window & initialize the OpenGL context
     RenderWindow::WindowHint hint;
@@ -112,7 +112,7 @@ void Game::init(const std::shared_ptr<Options>& gameOptions) {
     // Initialize the managers
     assetManager_ = std::make_unique<AssetManager>(PLATFORM_STR(SEQUOIA_ENGINE_RESSOURCEPATH),
                                                    PLATFORM_STR("assets"));
-    meshManager_ = std::make_unique<MeshManager>();
+    shapeManager_ = std::make_unique<ShapeManager>();
 
     // -- tmp --
     setScene("TestScene", std::make_shared<Scene>(), true);
@@ -133,7 +133,7 @@ void Game::cleanup() {
   sceneMap_.clear();
 
   // Free managers
-  meshManager_.reset();
+  shapeManager_.reset();
   assetManager_.reset();
 
   // Free all RenderSystem objects
@@ -162,7 +162,7 @@ void Game::mousePositionEvent(const render::MousePositionEvent& event) {
 
 AssetManager* Game::getAssetManager() const { return assetManager_.get(); }
 
-MeshManager* Game::getMeshManager() const { return meshManager_.get(); }
+ShapeManager* Game::getShapeManager() const { return shapeManager_.get(); }
 
 render::RenderWindow* Game::getMainWindow() const { return mainWindow_; }
 

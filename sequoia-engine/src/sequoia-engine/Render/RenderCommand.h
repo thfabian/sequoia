@@ -38,7 +38,7 @@ struct SEQUOIA_API RenderCommand {
   std::vector<RenderTechnique*> Techniques;
 
   /// List of draw commands to execute consecutively
-  std::vector<DrawCommand*> DrawCommands;
+  std::vector<DrawCommand> DrawCommands;
 
   /// Scene information (e.g lighting information)
   DrawScene* Scene = nullptr;

@@ -13,6 +13,7 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
+#include "sequoia-engine/Core/Compiler.h"
 #include "sequoia-engine/Core/Format.h"
 #include "sequoia-engine/Core/Logging.h"
 #include "sequoia-engine/Core/StringUtil.h"
@@ -22,6 +23,7 @@
 #include "sequoia-engine/Render/Program.h"
 #include "sequoia-engine/Render/RenderCommand.h"
 #include "sequoia-engine/Render/RenderPipeline.h"
+#include "sequoia-engine/Render/RenderSystem.h"
 #include "sequoia-engine/Render/RenderTarget.h"
 #include "sequoia-engine/Render/RenderTechnique.h"
 #include "sequoia-engine/Render/Renderer.h"
@@ -35,20 +37,71 @@ namespace render {
 
 namespace {
 
-class Report {
-public:
-  Report(const char* technique, const char* pass) : technique_(technique), pass_(pass) {}
+template <class T, bool isPointer>
+struct StringifyImpl {
+  std::string operator()(const T& value) { return value.toString(); }
+};
 
-  template <class... Args>
-  void operator()(const char* fmt, Args&&... args) {
-    Log::debug("Renderer: {}: {}: {}", technique_, pass_, fmt, std::forward<Args>(args)...);
+template <class T>
+struct StringifyImpl<T, true> {
+  std::string operator()(const T& value) { return value->toString(); }
+};
+
+template <class T>
+std::string stringify(const T& value) {
+  return StringifyImpl<T, std::is_pointer<T>::value>()(value);
+}
+
+template <>
+std::string stringify(const std::string& value) {
+  return value;
+}
+
+template <>
+std::string stringify(const std::set<RenderBuffer::RenderBufferKind>& buffersToClear) {
+  return core::toStringRange(buffersToClear, [](const auto& buffer) {
+    switch(buffer) {
+    case RenderBuffer::RK_Color:
+      return "ColorBuffer";
+      break;
+    case RenderBuffer::RK_Depth:
+      return "DepthBuffer";
+      break;
+    case RenderBuffer::RK_Stencil:
+      return "StencilBuffer";
+      break;
+    default:
+      sequoia_unreachable("invalid RenderBuffer::RenderBufferKind");
+    }
+  });
+}
+
+template <>
+std::string stringify(const std::unordered_map<int, Texture*>& textures) {
+  return core::toStringRange(textures, [](const auto& var) {
+    return core::format("unit = {},\n"
+                        "  texture = {}",
+                        var.first, core::indent(var.second->toString()));
+  });
+}
+
+} // anonymous namespace
+
+#define SEQUOIA_PP_CALL_IMPL(r, Data, Elem)                                                        \
+  Log::debug("  {} = {}", BOOST_STRINGIZE(Elem), core::indent(stringify(Elem)));
+
+#define SEQUOIA_CALL_IMPL(errorAction, function, ...)                                              \
+  if(SEQUOIA_BUILTIN_UNLIKELY(!function(__VA_ARGS__))) {                                           \
+    Log::debug("Renderer: {}: {}: failed to call: '" BOOST_STRINGIZE(function) "'",                \
+               technique->getName(), pass->getName());                                             \
+    if(isDebugEnabled) {                                                                           \
+      BOOST_PP_SEQ_FOR_EACH(SEQUOIA_PP_CALL_IMPL, Data, BOOST_PP_VARIADIC_TO_SEQ(__VA_ARGS__))     \
+    }                                                                                              \
+    errorAction;                                                                                   \
   }
 
-private:
-  const char* technique_;
-  const char* pass_;
-};
-}
+#define SEQUOIA_CALL_OR_RETURN(function, ...) SEQUOIA_CALL_IMPL(return, function, __VA_ARGS__)
+#define SEQUOIA_CALL_OR_CONTINUE(function, ...) SEQUOIA_CALL_IMPL(continue, function, __VA_ARGS__)
 
 Renderer::Renderer()
     : forceRenderPipelineUpdate_(true), x_(-1), y_(-1), width_(-1), height_(-1),
@@ -180,99 +233,65 @@ bool Renderer::setViewport(const Viewport* viewport) {
 }
 
 void Renderer::render(const RenderCommand& command) {
-  // Bind the global FrameBuffer
-  // TODO
-
-  Viewport* viewport = command.Target->getViewport();
-  SEQUOIA_ASSERT_MSG(viewport, "no Viewport set");
-  
-  // Render techniques
   for(RenderTechnique* technique : command.Techniques) {
-    technique->setUp();
-    // TODO: change the interface of technique to have method which is called
-    //  render(const std::function<void(RenderPass*)>& renderFunction)
+    auto rendererFun = [&command, &technique, this](RenderPass* pass) -> void {
+      bool isDebugEnabled = RenderSystem::getSingleton().getOptions().getBool("Core.Debug");
 
-    // Render passes
-    for(RenderPass* pass : technique->getPasses()) {
-      Report report(technique->getName(), pass->getName());
+      Viewport* viewport = command.Target->getViewport();
+      SEQUOIA_ASSERT_MSG(viewport, "no Viewport set");
 
       DrawCallContext ctx(viewport, command.Target, command.Scene, &command.DrawCommands);
       pass->setUp(ctx);
 
-      // Clear render buffers
-      // TODO: make more generic
-      if(ctx.ClearColorBuffer)
-        clearColorBuffer();
-      if(ctx.ClearDepthBuffer)
-        clearDepthBuffer();
-      if(ctx.ClearStencilBuffer)
-        clearStencilBuffer();
-
       // Update the pipeline (including the program)
-      if(!setRenderPipeline(ctx.Pipeline)) {
-        report("failed to set RenderPipeline");
-        continue;
-      }
+      SEQUOIA_CALL_OR_RETURN(setRenderPipeline, ctx.Pipeline);
+      SEQUOIA_CALL_OR_RETURN(setViewport, ctx.Viewport);
 
-      if(!setViewport(ctx.Viewport)) {
-        report("failed to set Viewport");
-        continue;
-      }
+      // Clear render buffers
+      SEQUOIA_CALL_OR_RETURN(clearRenderBuffers, ctx.BuffersToClear);
 
-      auto setUniforms = [&report,
-                          this](const std::unordered_map<std::string, UniformVariable>& uniforms) {
-        for(const auto& nameVariablePair : uniforms)
-          if(!setUniformVariable(this->pipeline_.Program, nameVariablePair.first,
-                                 nameVariablePair.second))
-            report("failed to set uniform variable '{}'", nameVariablePair.first);
-      };
-
-      // Clear all uniforms and set per program uniforms
       resetUniforms(pipeline_.Program);
-      setUniforms(ctx.Uniforms);
+      for(const auto& nameVariablePair : ctx.Uniforms) {
+        const std::string& name = nameVariablePair.first;
+        const UniformVariable& value = nameVariablePair.second;
+        SEQUOIA_CALL_OR_CONTINUE(setUniformVariable, pipeline_.Program, name, value);
+      }
 
       Camera* camera = ctx.Viewport->getCamera();
+      SEQUOIA_ASSERT_MSG(camera, "no Camera set");
 
       // Compute projection-view matrix
       math::mat4 matVP = camera->getViewProjectionMatrix();
 
       // Render the DrawCommands
-      for(const DrawCommand* drawCommand : command.DrawCommands) {
+      for(const DrawCommand& drawCommand : command.DrawCommands) {
 
         // Set per DrawCommand uniforms
-        setUniforms(drawCommand->getUniforms());
-
-        UniformVariable u_matMVP = matVP * drawCommand->getModelMatrix();
-        if(!setUniformVariable(this->pipeline_.Program, "u_matMVP", u_matMVP)) {
-          report("failed to set UniformVariable 'u_matMVP'");
-          continue;
+        for(const auto& nameVariablePair : drawCommand.getUniforms()) {
+          const std::string& name = nameVariablePair.first;
+          const UniformVariable& value = nameVariablePair.second;
+          SEQUOIA_CALL_OR_CONTINUE(setUniformVariable, pipeline_.Program, name, value);
         }
+
+        UniformVariable u_matMVP = matVP * drawCommand.getModelMatrix();
+        std::string name = "u_matMVP";
+        SEQUOIA_CALL_OR_CONTINUE(setUniformVariable, pipeline_.Program, name, u_matMVP);
 
         // Set textures
-        if(!setTextures(drawCommand->getTextures())) {
-          report("failed to set Textures");
-          continue;
-        }
+        SEQUOIA_CALL_OR_CONTINUE(setTextures, drawCommand.getTextures());
 
         // Set VertexData
-        if(!setVertexData(drawCommand->getVertexData())) {
-          report("failed to set VertexData");
-          continue;
-        }
+        SEQUOIA_CALL_OR_CONTINUE(setVertexData, drawCommand.getVertexData());
 
         // Issue the draw command
-        if(!draw(drawCommand))
-          report("failed to draw DrawCommand");
+        SEQUOIA_CALL_OR_CONTINUE(draw, drawCommand);
       }
 
       pass->tearDown(ctx);
-    }
+    };
 
-    technique->tearDown();
+    technique->render(rendererFun);
   }
-
-  // Unbind the global Framebuffer
-  // TODO
 }
 
 std::string Renderer::toString() const {

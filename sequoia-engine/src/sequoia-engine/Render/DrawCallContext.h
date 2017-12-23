@@ -18,9 +18,11 @@
 
 #include "sequoia-engine/Core/Export.h"
 #include "sequoia-engine/Core/NonCopyable.h"
+#include "sequoia-engine/Render/RenderBuffer.h"
 #include "sequoia-engine/Render/RenderFwd.h"
-#include "sequoia-engine/Render/UniformVariable.h"
 #include "sequoia-engine/Render/RenderPipeline.h"
+#include "sequoia-engine/Render/UniformVariable.h"
+#include <set>
 #include <string>
 #include <unordered_map>
 
@@ -36,8 +38,10 @@ namespace render {
 /// @ingroup render
 struct SEQUOIA_API DrawCallContext : public NonCopyable {
   DrawCallContext(render::Viewport* viewport, const RenderTarget* target, const DrawScene* scene,
-                  const std::vector<DrawCommand*>* drawCommands)
-      : Viewport(viewport), Target(target), Scene(scene), DrawCommands(drawCommands) {}
+                  const std::vector<DrawCommand>* drawCommands)
+      : Viewport(viewport), Target(target), Scene(scene), DrawCommands(drawCommands) {
+    BuffersToClear = {RenderBuffer::RK_Color, RenderBuffer::RK_Depth, RenderBuffer::RK_Stencil};
+  }
 
   /// Viewport (including the Camera)
   ///
@@ -50,18 +54,12 @@ struct SEQUOIA_API DrawCallContext : public NonCopyable {
   /// Uniform variables which are going to be bound to the GPU program of `Pipeline`
   ///
   /// Note that the in addition to these uniform variables, the per DrawCommand uniforms, i.e the
-  /// the model-view-projection matrix as well as user defined variables, are sent automatically to
-  /// the program.
+  /// the model-view-projection matrix as well as material property variables, are sent
+  /// automatically to the program.
   std::unordered_map<std::string, UniformVariable> Uniforms;
 
-  /// Clear the color buffer?
-  bool ClearColorBuffer = true;
-
-  /// Clear the depth buffer?
-  bool ClearDepthBuffer = true;
-
-  /// Clear the stencil buffer?
-  bool ClearStencilBuffer = true;
+  /// Clear the specified `RenderBuffer`s
+  std::set<RenderBuffer::RenderBufferKind> BuffersToClear;
 
   /// Global render target
   const render::RenderTarget* Target;
@@ -70,7 +68,7 @@ struct SEQUOIA_API DrawCallContext : public NonCopyable {
   const render::DrawScene* Scene;
 
   /// Sequence of `DrawCommand`s which are going to be invoked
-  const std::vector<DrawCommand*>* DrawCommands;
+  const std::vector<DrawCommand>* DrawCommands;
 };
 
 } // namespace render

@@ -120,6 +120,7 @@ sequoia_add_library(
           RenderTarget.cpp
           RenderTarget.h
           RenderTechnique.h
+          RenderBuffer.h
           RenderWindow.h
           Shader.cpp
           Shader.h

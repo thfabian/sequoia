@@ -48,17 +48,11 @@ protected:
   /// @copydoc Renderer::ViewportChanged
   virtual bool ViewportChanged(int x, int y, int width, int height) override;
 
-  /// @copydoc Renderer::clearColorBuffer
-  virtual bool clearColorBuffer() override;
-
-  /// @copydoc Renderer::clearDepthBuffer
-  virtual bool clearDepthBuffer() override;
-
-  /// @copydoc Renderer::clearStencilBuffer
-  virtual bool clearStencilBuffer() override;
+  virtual bool clearRenderBuffers(
+      const std::set<RenderBuffer::RenderBufferKind>& buffersToClear) override;
 
   /// @copydoc Renderer::draw
-  virtual bool draw(const DrawCommand* drawCommand) override;
+  virtual bool draw(const DrawCommand& drawCommand) override;
 
   /// @copydoc Renderer::toStringImpl
   std::pair<std::string, std::string> toStringImpl() const override;

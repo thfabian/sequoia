@@ -13,26 +13,19 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia-engine/Render/RenderSystem.h"
-#include "sequoia-engine/Render/RenderWindow.h"
-#include "sequoia-engine/Unittest/RenderSetup.h"
-
-#include <iostream>
+#ifndef SEQUOIA_ENGINE_MATH_MATHFWD_H
+#define SEQUOIA_ENGINE_MATH_MATHFWD_H
 
 namespace sequoia {
 
-namespace unittest {
+namespace math {
 
-void RenderSetup::SetUp() {
-  render::RenderWindow::WindowHint hints;
-  hints.HideWindow = true;
-  hints.WindowMode = render::RenderWindow::WindowHint::WK_Window;
-  render::RenderSystem::getSingleton().createMainWindow(hints);
-  std::cout << "THE FUCK" << std::endl;
-}
+class AxisAlignedBox;
+class Degree;
+class Radian;
 
-void RenderSetup::TearDown() { render::RenderSystem::getSingleton().destroyMainWindow(); }
+} // namespace math
 
-} // namespace unittest
+} // namspace sequoia
 
-} // namespace sequoia
+#endif

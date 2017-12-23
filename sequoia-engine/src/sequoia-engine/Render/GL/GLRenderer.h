@@ -34,11 +34,11 @@ namespace render {
 ///
 /// A rendered performs the actual rendering of the provided target. Further, the renderer keeps
 /// track on the OpenGL state machine.
-/// 
+///
 /// @note Any other object which needs to temporarly modify the OpenGL state machine needs to make
 /// sure to undo the modification after being done. It is highly recommended to use DSA
 /// (direct-state-access) outside of the Renderer.
-/// 
+///
 /// @ingroup gl
 class SEQUOIA_API GLRenderer final : public Renderer, public ViewportListener, public NonCopyable {
   /// Reference to the main-window
@@ -56,44 +56,6 @@ class SEQUOIA_API GLRenderer final : public Renderer, public ViewportListener, p
 
   /// Default pixel format
   GLPixelFormat defaultPixelFormat_;
-
-protected:
-  using Base = Renderer;
-
-#define RENDER_STATE(Type, Name, DefaultValue) virtual bool Name##Changed(Type value) override;
-#include "sequoia-engine/Render/RenderState.inc"
-#undef RENDER_STATE
-
-  /// @copydoc Renderer::ProgramChanged
-  virtual bool ProgramChanged(Program* program) override;
-
-  /// @copydoc Renderer::VertexDataChanged
-  virtual bool VertexDataChanged(VertexData* data) override;
-
-  /// @copydoc Renderer::TextureChanged
-  virtual bool TextureChanged(int textureUnit, Texture* texture, bool enable) override;
-
-  /// @copydoc Renderer::UniformVariableChanged
-  virtual bool UniformVariableChanged(Program* program, const std::string& name,
-                                      const UniformVariable& value) override;
-
-  /// @copydoc Renderer::ViewportChanged
-  virtual bool ViewportChanged(int x, int y, int width, int height) override;
-
-  /// @copydoc Renderer::clearColorBuffer
-  virtual bool clearColorBuffer() override;
-
-  /// @copydoc Renderer::clearDepthBuffer
-  virtual bool clearDepthBuffer() override;
-
-  /// @copydoc Renderer::clearStencilBuffer
-  virtual bool clearStencilBuffer() override;
-
-  /// @copydoc Renderer::draw
-  virtual bool draw(const DrawCommand* drawCommand) override;
-
-  /// @copydoc Renderer::toStringImpl
-  std::pair<std::string, std::string> toStringImpl() const override;
 
 public:
   /// @brief Initialize the OpenGL context and bind it to the calling thread
@@ -159,6 +121,39 @@ private:
 
   /// @brief Set the active texture unit
   inline void setActiveTextureUnit(int textureUnit) noexcept;
+
+protected:
+  using Base = Renderer;
+
+#define RENDER_STATE(Type, Name, DefaultValue) virtual bool Name##Changed(Type value) override;
+#include "sequoia-engine/Render/RenderState.inc"
+#undef RENDER_STATE
+
+  /// @copydoc Renderer::ProgramChanged
+  virtual bool ProgramChanged(Program* program) override;
+
+  /// @copydoc Renderer::VertexDataChanged
+  virtual bool VertexDataChanged(VertexData* data) override;
+
+  /// @copydoc Renderer::TextureChanged
+  virtual bool TextureChanged(int textureUnit, Texture* texture, bool enable) override;
+
+  /// @copydoc Renderer::UniformVariableChanged
+  virtual bool UniformVariableChanged(Program* program, const std::string& name,
+                                      const UniformVariable& value) override;
+
+  /// @copydoc Renderer::ViewportChanged
+  virtual bool ViewportChanged(int x, int y, int width, int height) override;
+
+  /// @copydoc Renderer::clearRenderBuffers
+  virtual bool clearRenderBuffers(
+      const std::set<RenderBuffer::RenderBufferKind>& buffersToClear) override;
+
+  /// @copydoc Renderer::draw
+  virtual bool draw(const DrawCommand& drawCommand) override;
+
+  /// @copydoc Renderer::toStringImpl
+  std::pair<std::string, std::string> toStringImpl() const override;
 };
 
 // TODO: this doesn't play nicely with multiple contexts

@@ -28,6 +28,7 @@ class DrawScene;
 class FrameBuffer;
 class Program;
 class Renderer;
+class RenderBuffer;
 class RenderPass;
 class RenderStateCache;
 class RenderSystem;

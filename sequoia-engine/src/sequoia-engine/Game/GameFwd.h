@@ -29,7 +29,7 @@ class Game;
 class GameOptions;
 class Keymap;
 class Mesh;
-class MeshManager;
+class ShapeManager;
 class Scene;
 class SceneGraph;
 class SceneNode;

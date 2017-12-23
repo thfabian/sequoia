@@ -39,13 +39,12 @@ bool NullRenderer::UniformVariableChanged(Program* program, const std::string& n
 
 bool NullRenderer::ViewportChanged(int x, int y, int width, int height) { return true; }
 
-bool NullRenderer::clearColorBuffer() { return true; }
+bool NullRenderer::clearRenderBuffers(
+    const std::set<RenderBuffer::RenderBufferKind>& buffersToClear) {
+  return true;
+}
 
-bool NullRenderer::clearDepthBuffer() { return true; }
-
-bool NullRenderer::clearStencilBuffer() { return true; }
-
-bool NullRenderer::draw(const DrawCommand* drawCommand) { return true; }
+bool NullRenderer::draw(const DrawCommand& drawCommand) { return true; }
 
 std::pair<std::string, std::string> NullRenderer::toStringImpl() const {
   return std::make_pair("NullRenderer", core::format("{}", Base::toStringImpl().second));

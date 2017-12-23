@@ -13,11 +13,10 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia-engine/Game/Drawable.h"
 #include "sequoia-engine/Core/Assert.h"
 #include "sequoia-engine/Core/Format.h"
+#include "sequoia-engine/Game/Drawable.h"
 #include "sequoia-engine/Game/Game.h"
-#include "sequoia-engine/Game/Mesh.h"
 #include "sequoia-engine/Game/SceneNode.h"
 #include "sequoia-engine/Game/SceneNodeAlloc.h"
 #include "sequoia-engine/Render/DrawCommand.h"
@@ -28,52 +27,32 @@ namespace game {
 
 Drawable::~Drawable() {}
 
-Drawable::Drawable(SceneNode* node, const std::shared_ptr<Mesh>& mesh)
-    : Base(node), active_(true), drawCommand_() {
-  setMesh(mesh);
-}
+Drawable::Drawable(SceneNode* node, const std::shared_ptr<Shape>& shape)
+    : Base(node), active_(true), shape_(shape) {}
 
-void Drawable::setMesh(const std::shared_ptr<Mesh>& mesh) {
-  mesh_ = mesh;
-  drawCommand_.get().setVertexData(mesh_->getVertexData());
-}
-
-void Drawable::setTexture(int textureUnit, render::Texture* texture) noexcept {
-  drawCommand_.get().setTexture(textureUnit, texture);
-}
-
-void Drawable::setUniform(const std::string& name, UniformVariable variable) {
-  drawCommand_.get().setUniformVariable(name, variable);
-}
-
-render::DrawCommand* Drawable::prepareDrawCommand() {
+void Drawable::prepareDrawCommands(std::vector<render::DrawCommand>& drawCommands) {
   SEQUOIA_ASSERT(active_);
 
-  // Set the new model matrix
-  drawCommand_.get().setModelMatrix(getNode()->getModelMatrix());
-
-  // Advance the vertex buffers to the next time-step
-
-  // Progress to the next time-step with the Drawcommand. Note that this copies the current
-  // draw command (i.e cmd) into the new one so that subsequent calls will not corrupt the
-  // render-state.
-  render::DrawCommand* cmd = &drawCommand_.get();
-  drawCommand_.nextTimestep();
-  return cmd;
+  math::mat4 modelMatrix = getNode()->getModelMatrix();
+  shape_->forEach([this, &drawCommands, &modelMatrix](const std::shared_ptr<Mesh>& mesh,
+                                                      const std::shared_ptr<Material>& material) {
+    render::DrawCommand cmd(mesh->getVertexData(), modelMatrix);
+    drawCommands.emplace_back(std::move(cmd));
+  });
 }
 
 void Drawable::update(const SceneNodeUpdateEvent& event) {}
 
 std::string Drawable::toString() const {
   return core::format("Drawable[\n"
-                      "  drawCommand = {},\n"
-                      "  mesh = {},\n"
+                      "  active = {},\n"
+                      "  shape = {},\n"
                       "]",
-                      drawCommand_.get().toString(), mesh_ ? mesh_->toString() : "null");
+                      active_, shape_->toString());
 }
 
 std::shared_ptr<SceneNodeCapability> Drawable::clone(SceneNode* node) const {
-  return scene::allocate_shared<Drawable>(node, mesh_);
+  return scene::allocate_shared<Drawable>(node, shape_);
 }
 
 } // namespace game

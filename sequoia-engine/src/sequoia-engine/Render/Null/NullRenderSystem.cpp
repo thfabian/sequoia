@@ -34,19 +34,22 @@ NullRenderSystem::NullRenderSystem(const std::shared_ptr<Options>& options)
 NullRenderSystem::~NullRenderSystem() {}
 
 RenderWindow* NullRenderSystem::createMainWindow(const RenderWindow::WindowHint& hints) {
-  SEQUOIA_ASSERT_MSG(!mainWindow_, "main window already initialized");
+  destroyMainWindow();
   mainWindow_ = std::make_unique<NullRenderWindow>(hints);
   renderer_ = std::make_unique<NullRenderer>();
   return mainWindow_.get();
 }
 
 void NullRenderSystem::destroyMainWindow() noexcept {
+  renderer_.reset();
+  renderer_ = nullptr;
+
   mainWindow_.reset();
   mainWindow_ = nullptr;
 }
 
 RenderWindow* NullRenderSystem::getMainWindow() const {
-  SEQUOIA_ASSERT_MSG(!mainWindow_, "main window not initialized");
+  SEQUOIA_ASSERT_MSG(mainWindow_, "main window not initialized");
   return mainWindow_.get();
 }
 

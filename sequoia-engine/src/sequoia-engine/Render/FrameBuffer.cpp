@@ -13,8 +13,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia-engine/Render/FrameBuffer.h"
 #include "sequoia-engine/Core/Format.h"
+#include "sequoia-engine/Render/FrameBuffer.h"
 
 namespace sequoia {
 

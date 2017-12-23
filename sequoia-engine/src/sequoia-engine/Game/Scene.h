@@ -81,7 +81,7 @@ public:
   ///
   /// This is called automatically by `prepareRenderCommand`. By default the SceneGraph is traversed
   /// and each actice `Drawable` is added to the `drawCommands`.
-  virtual void prepareDrawCommands(std::vector<render::DrawCommand*>& drawCommands);
+  virtual void prepareDrawCommands(std::vector<render::DrawCommand>& drawCommands);
 
   /// @brief Prepare the RenderTarget whis is used in the next render call
   ///

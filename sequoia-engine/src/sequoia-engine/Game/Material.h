@@ -13,14 +13,35 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_
-#define SEQUOIA_
+#ifndef SEQUOIA_ENGINE_GAME_MATERIAL_H
+#define SEQUOIA_ENGINE_GAME_MATERIAL_H
 
-// This should be part of the Game, as we only care about the Textures and UniformVariables in Render
-
-#include "sequoia/"
+#include "sequoia-engine/Core/Export.h"
+#include "sequoia-engine/Core/Hash.h"
+#include "sequoia-engine/Core/NonCopyable.h"
+#include "sequoia-engine/Render/RenderFwd.h"
+#include "sequoia-engine/Render/Texture.h"
+#include <memory>
+#include <string>
 
 namespace sequoia {
+
+namespace game {
+
+/// @brief Material description of a Shape
+/// @ingroup game
+class SEQUOIA_API Material : public NonCopyable {
+public:
+  /// @brief Create the material
+  ///
+  /// @note This should never be called manually, use `ShapeManager::load` instead.
+  Material();
+
+  /// @brief Convert to string
+  std::string toString() const;
+};
+
+} // namespace game
 
 } // namespace sequoia
 

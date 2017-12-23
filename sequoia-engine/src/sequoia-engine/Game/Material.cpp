@@ -13,26 +13,22 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia-engine/Render/RenderSystem.h"
-#include "sequoia-engine/Render/RenderWindow.h"
-#include "sequoia-engine/Unittest/RenderSetup.h"
-
-#include <iostream>
+#include "sequoia-engine/Core/Format.h"
+#include "sequoia-engine/Core/Logging.h"
+#include "sequoia-engine/Core/StringUtil.h"
+#include "sequoia-engine/Game/Material.h"
 
 namespace sequoia {
 
-namespace unittest {
+namespace game {
 
-void RenderSetup::SetUp() {
-  render::RenderWindow::WindowHint hints;
-  hints.HideWindow = true;
-  hints.WindowMode = render::RenderWindow::WindowHint::WK_Window;
-  render::RenderSystem::getSingleton().createMainWindow(hints);
-  std::cout << "THE FUCK" << std::endl;
+Material::Material() {}
+
+std::string Material::toString() const {
+  return core::format("Material[\n"
+                      "]");
 }
 
-void RenderSetup::TearDown() { render::RenderSystem::getSingleton().destroyMainWindow(); }
-
-} // namespace unittest
+} // namespace game
 
 } // namespace sequoia

@@ -19,9 +19,10 @@
 #include "sequoia-engine/Core/Export.h"
 #include "sequoia-engine/Core/Hash.h"
 #include "sequoia-engine/Core/NonCopyable.h"
-#include "sequoia-engine/Math/AxisAlignedBox.h"
-#include "sequoia-engine/Render/VertexData.h"
+#include "sequoia-engine/Math/MathFwd.h"
+#include "sequoia-engine/Render/RenderFwd.h"
 #include <memory>
+#include <string>
 
 namespace sequoia {
 
@@ -34,16 +35,6 @@ struct SEQUOIA_API MeshParameter {
   /// Invert the v-component of the `uv` texture coordinates i.e `v = 1.0 - v`
   bool TexCoordInvertV = false;
 
-  /// @name Constructor
-  /// @{
-  MeshParameter() = default;
-  MeshParameter(const MeshParameter&) = default;
-  MeshParameter(MeshParameter&&) = default;
-
-  MeshParameter& operator=(const MeshParameter&) = default;
-  MeshParameter& operator=(MeshParameter&&) = default;
-  /// @}
-
   /// @name Comparison
   /// @{
   bool operator==(const MeshParameter& other) const noexcept;
@@ -54,41 +45,31 @@ struct SEQUOIA_API MeshParameter {
   std::string toString() const;
 };
 
-/// @brief Ressource holding the 3D mesh
+/// @brief Mesh of a Shape
 /// @ingroup game
 class SEQUOIA_API Mesh : public NonCopyable {
   friend class MeshManager;
 
   /// Do we own the mesh i.e can we modify it?
-  const bool isModifiable_;
+  const bool modifiable_;
 
-  /// Vertex data
+  /// Underlying data store
   std::shared_ptr<render::VertexData> data_;
 
-  /// Name of the mesh
-  std::string name_;
-
 public:
-  /// @brief Create empty mesh
-  Mesh(const std::string& name, const std::shared_ptr<render::VertexData>& data, bool isModifiable);
+  /// @brief Create the mesh
+  ///
+  /// @note This should never be called manually, use `ShapeManager::load` instead.
+  Mesh(const std::shared_ptr<render::VertexData>& data, bool isModifiable);
 
   /// @brief Get the VertexData
-  render::VertexData* getVertexData() const { return data_.get(); }
+  render::VertexData* getVertexData() const noexcept { return data_.get(); }
 
   /// @brief Get the axis aligned bounding box
   const math::AxisAlignedBox& getAxisAlignedBox() const noexcept;
 
-  /// @brief Set the axis aligned bounding box
-  void setAxisAlignedBox(const math::AxisAlignedBox& bbox);
-
-  /// @brief Set the name of the mesh
-  void setName(const std::string& name) { name_ = name; }
-
-  /// @brief Get the name of the mesh
-  const std::string& getName() const { return name_; }
-
   /// @brief Is the mesh modifyable?
-  bool isModifiable() const { return isModifiable_; }
+  bool isModifiable() const noexcept { return modifiable_; }
 
   /// @brief Dump the vertex data and indices to `stdout`
   /// @see render::VertexData::dump

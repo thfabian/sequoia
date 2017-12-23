@@ -27,7 +27,7 @@
 #include "sequoia-engine/Render/Texture.h"
 #include "sequoia-engine/Game/CameraControllerFree.h"
 #include "sequoia-engine/Game/AssetManager.h"
-#include "sequoia-engine/Game/MeshManager.h"
+#include "sequoia-engine/Game/ShapeManager.h"
 #include "sequoia-engine/Render/RenderWindow.h"
 #include <functional>
 
@@ -51,12 +51,12 @@ void Scene::prepareRenderTechniques(std::vector<render::RenderTechnique*>& techi
 
 void  Scene::prepareRenderTarget(render::RenderTarget*& target) {}
 
-void Scene::prepareDrawCommands(std::vector<render::DrawCommand*>& drawCommands) {
+void Scene::prepareDrawCommands(std::vector<render::DrawCommand>& drawCommands) {
   sceneGraph_->apply(
       [&drawCommands](SceneNode* node) {
-        if(Drawable* draw = node->get<Drawable>()) {
-          if(draw->isActive()) {
-            drawCommands.push_back(draw->prepareDrawCommand());
+        if(Drawable* drawable = node->get<Drawable>()) {
+          if(drawable->isActive()) {
+            drawable->prepareDrawCommands(drawCommands);
           }
         }
       },
@@ -98,32 +98,32 @@ void Scene::makeDummyScene() {
   //
   // UV coord cube
   //
-  MeshParameter cubeMeshParam;
-  cubeMeshParam.TexCoordInvertV = true;
+//  MeshParameter cubeMeshParam;
+//  cubeMeshParam.TexCoordInvertV = true;
 
-  cubeOrigin->addCapability<Drawable>(
-      game.getMeshManager()->createCube("TestCubeInvertedV", false, cubeMeshParam));
-  cubeOrigin->get<Drawable>()->setTexture(0, game.createTexture(game.getAssetManager()->loadImage(
-                                                 "sequoia/texture/UVTest512x512.dds")));
-  sceneGraph_->insert(cubeOrigin);
+//  cubeOrigin->addCapability<Drawable>(
+//      game.getMeshManager()->createCube("TestCubeInvertedV", false, cubeMeshParam));
+//  cubeOrigin->get<Drawable>()->setTexture(0, game.createTexture(game.getAssetManager()->loadImage(
+//                                                 "sequoia/texture/UVTest512x512.dds")));
+//  sceneGraph_->insert(cubeOrigin);
 
   //
   // Mini cubes
   //
-  auto cubeMesh = game.getMeshManager()->createCube("TestCube");
-  float dx = 3.0f;
-  int N = 10;
-  for(int i = 0; i < N; ++i) {
-    for(int j = 0; j < N; ++j) {
-      auto cube = SceneNode::allocate(core::format("TestCube_{}_{}", i, j));
-      cube->addCapability<Drawable>(cubeMesh);
-      cube->translate(math::vec3((i - N / 2.0f) * dx, 0, (j - N / 2.0f) * dx));
-      cube->setScale(0.9 * (2 * float(i) / N));
-      cube->get<Drawable>()->setTexture(
-          0, game.createTexture(game.getAssetManager()->loadImage("sequoia/texture/Gaben.jpg")));
-      sceneGraph_->insert(cube);
-    }
-  }
+//  auto cubeMesh = game.getMeshManager()->createCube("TestCube");
+//  float dx = 3.0f;
+//  int N = 10;
+//  for(int i = 0; i < N; ++i) {
+//    for(int j = 0; j < N; ++j) {
+//      auto cube = SceneNode::allocate(core::format("TestCube_{}_{}", i, j));
+//      cube->addCapability<Drawable>(cubeMesh);
+//      cube->translate(math::vec3((i - N / 2.0f) * dx, 0, (j - N / 2.0f) * dx));
+//      cube->setScale(0.9 * (2 * float(i) / N));
+//      cube->get<Drawable>()->setTexture(
+//          0, game.createTexture(game.getAssetManager()->loadImage("sequoia/texture/Gaben.jpg")));
+//      sceneGraph_->insert(cube);
+//    }
+//  }
 
   //
   // Cornell box

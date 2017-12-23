@@ -94,7 +94,10 @@ RenderWindow* GLRenderSystem::createMainWindow(const RenderWindow::WindowHint& h
 
 RenderWindow* GLRenderSystem::getMainWindow() const { return getMainGLWindow(); }
 
-GLRenderWindow* GLRenderSystem::getMainGLWindow() const { return mainWindow_.get(); }
+GLRenderWindow* GLRenderSystem::getMainGLWindow() const {
+  SEQUOIA_ASSERT_MSG(mainWindow_, "main window not initialized");
+  return mainWindow_.get();
+}
 
 void GLRenderSystem::destroyMainWindow() noexcept {
   // Order matters here!

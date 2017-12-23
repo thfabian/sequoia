@@ -48,7 +48,7 @@ class SEQUOIA_API Game final : public Singleton<Game>,
 
   /// Managers
   std::unique_ptr<AssetManager> assetManager_;
-  std::unique_ptr<MeshManager> meshManager_;
+  std::unique_ptr<ShapeManager> shapeManager_;
 
   /// Reference to the main window
   render::RenderWindow* mainWindow_;
@@ -96,7 +96,7 @@ public:
   AssetManager* getAssetManager() const;
 
   /// @brief Get the mesh manager
-  MeshManager* getMeshManager() const;
+  ShapeManager* getShapeManager() const;
 
   /// @brief Get the main RenderWindow
   render::RenderWindow* getMainWindow() const;

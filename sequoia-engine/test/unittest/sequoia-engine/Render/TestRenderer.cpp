@@ -15,16 +15,23 @@
 
 #include "sequoia-engine/Core/Format.h"
 #include "sequoia-engine/Core/StringUtil.h"
+#include "sequoia-engine/Math/Math.h"
+#include "sequoia-engine/Render/Camera.h"
+#include "sequoia-engine/Render/DrawCallContext.h"
 #include "sequoia-engine/Render/RenderSystem.h"
+#include "sequoia-engine/Render/RenderTechnique.h"
 #include "sequoia-engine/Render/Renderer.h"
+#include "sequoia-engine/Render/Viewport.h"
 #include "sequoia-engine/Unittest/RenderSetup.h"
 #include <algorithm>
 #include <gtest/gtest.h>
 #include <memory>
+#include <vector>
 
 using namespace sequoia::render;
 using namespace sequoia::core;
 using namespace sequoia::unittest;
+using namespace sequoia::math;
 
 namespace {
 
@@ -69,22 +76,26 @@ protected:
     return true;
   }
 
-  virtual bool clearColorBuffer() override {
-    changes_.emplace_back("ColorBuffer");
+  bool clearRenderBuffers(const std::set<RenderBuffer::RenderBufferKind>& buffersToClear) override {
+    for(auto buffer : buffersToClear) {
+      switch(buffer) {
+      case RenderBuffer::RK_Color:
+        changes_.emplace_back("ColorBuffer_cleared");
+        break;
+      case RenderBuffer::RK_Depth:
+        changes_.emplace_back("DepthBuffer_cleared");
+        break;
+      case RenderBuffer::RK_Stencil:
+        changes_.emplace_back("StencilBuffer_cleared");
+        break;
+      default:
+        sequoia_unreachable("invalid RenderBuffer::RenderBufferKind");
+      }
+    }
     return true;
   }
 
-  virtual bool clearDepthBuffer() override {
-    changes_.emplace_back("DepthBuffer");
-    return true;
-  }
-
-  virtual bool clearStencilBuffer() override {
-    changes_.emplace_back("StencilBuffer");
-    return true;
-  }
-
-  virtual bool draw(const DrawCommand* drawCommand) override { return true; }
+  virtual bool draw(const DrawCommand& drawCommand) override { return true; }
 
   virtual std::pair<std::string, std::string> toStringImpl() const override {
     return std::make_pair("TestRenderer",
@@ -95,11 +106,41 @@ protected:
   }
 
 public:
+  void forceClearRenderBuffers(const std::set<RenderBuffer::RenderBufferKind>& buffersToClear) {
+    clearRenderBuffers(buffersToClear);
+  }
+
   TestRenderer() : Renderer() {}
-
   const std::vector<std::string>& getChanges() const { return changes_; }
-
   void resetChanges() { changes_.clear(); }
+};
+
+class TestRenderTechnique : public RenderTechnique {
+public:
+  class TestRenderPass : public RenderPass {
+  public:
+    void setUp(DrawCallContext& ctx) override {
+      // Modify pipeline
+      ctx.Pipeline.DepthTest = !ctx.Pipeline.DepthTest;
+
+      // Set some uniforms
+      ctx.Uniforms["u_two"] = UniformVariable(2.0f);
+      ctx.Uniforms["u_five"] = UniformVariable(5);
+
+      // Don't clear depth buffer
+      ctx.BuffersToClear.erase(RenderBuffer::RK_Depth);
+    }
+    const char* getName() const noexcept override { return "TestRenderPass"; }
+  };
+
+  TestRenderTechnique() { pass_ = std::make_unique<TestRenderPass>(); }
+
+  void render(std::function<void(RenderPass*)> renderer) override { renderer(pass_.get()); }
+
+  const char* getName() const noexcept override { return "TestRenderTechnique"; }
+
+private:
+  std::unique_ptr<TestRenderPass> pass_;
 };
 
 static std::shared_ptr<VertexData> makeNullVertexData() {
@@ -141,7 +182,7 @@ TEST_F(RendererTest, PipelineChange) {
 
   renderer->resetChanges();
   renderer->setRenderPipeline(pipeline);
-  
+
   {
     const std::vector<std::string>& changes = renderer->getChanges();
     ASSERT_EQ(changes.size(), 1);
@@ -181,12 +222,42 @@ TEST_F(RendererTest, VertexDataChange) {
 }
 
 TEST_F(RendererTest, RenderBufferChange) {
+  auto renderer = std::make_unique<TestRenderer>();
 
+  // Clear all buffers
+  std::set<RenderBuffer::RenderBufferKind> buffersToClear = {
+      RenderBuffer::RK_Color, RenderBuffer::RK_Depth, RenderBuffer::RK_Stencil};
+
+  renderer->resetChanges();
+  renderer->forceClearRenderBuffers(buffersToClear);
+
+  {
+    const std::vector<std::string>& changes = renderer->getChanges();
+    ASSERT_EQ(changes.size(), 3);
+    EXPECT_TRUE(std::find(changes.begin(), changes.end(), "ColorBuffer_cleared") != changes.end());
+    EXPECT_TRUE(std::find(changes.begin(), changes.end(), "DepthBuffer_cleared") != changes.end());
+    EXPECT_TRUE(std::find(changes.begin(), changes.end(), "StencilBuffer_cleared") !=
+                changes.end());
+  }
+
+  // Don't clear depth buffer
+  buffersToClear.erase(RenderBuffer::RK_Depth);
+
+  renderer->resetChanges();
+  renderer->forceClearRenderBuffers(buffersToClear);
+
+  {
+    const std::vector<std::string>& changes = renderer->getChanges();
+    ASSERT_EQ(changes.size(), 2);
+    EXPECT_TRUE(std::find(changes.begin(), changes.end(), "ColorBuffer_cleared") != changes.end());
+    EXPECT_TRUE(std::find(changes.begin(), changes.end(), "StencilBuffer_cleared") !=
+                changes.end());
+  }
 }
 
 TEST_F(RendererTest, TextureChange) {
   RenderSystem& rsys = RenderSystem::getSingleton();
-  
+
   auto renderer = std::make_unique<TestRenderer>();
 
   std::unordered_map<int, Texture*> textures;
@@ -225,7 +296,6 @@ TEST_F(RendererTest, TextureChange) {
 
 TEST_F(RendererTest, UniformChange) {
   RenderSystem& rsys = RenderSystem::getSingleton();
-  
   auto renderer = std::make_unique<TestRenderer>();
 
   auto program = rsys.createProgram({});
@@ -272,7 +342,26 @@ TEST_F(RendererTest, UniformChange) {
 }
 
 TEST_F(RendererTest, Draw) {
+  RenderSystem& rsys = RenderSystem::getSingleton();
+  auto renderer = std::make_unique<TestRenderer>();
+  auto target = rsys.getMainWindow();
 
+  auto technique = std::make_unique<TestRenderTechnique>();
+  auto vertexdata = makeNullVertexData();
+
+  auto camera = std::make_shared<Camera>();
+  auto viewport = std::make_shared<Viewport>(target, 0, 0, 80, 80);
+  viewport->setCamera(camera.get());
+  target->setViewport(viewport);
+
+  DrawCommand drawCmd(vertexdata.get(), mat4(5.0f));
+
+  RenderCommand renderCmd(target);
+  renderCmd.Techniques = {technique.get()};
+  renderCmd.DrawCommands = {drawCmd};
+
+  renderer->render(renderCmd);
+//  std::cout << renderer->toString() << std::endl;
 }
 
 } // anonymous namespace

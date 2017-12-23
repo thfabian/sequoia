@@ -203,23 +203,30 @@ bool GLRenderer::ViewportChanged(int x, int y, int width, int height) {
   return true;
 }
 
-bool GLRenderer::clearStencilBuffer() {
-  glClear(GL_COLOR_BUFFER_BIT);
+bool GLRenderer::clearRenderBuffers(
+    const std::set<RenderBuffer::RenderBufferKind>& buffersToClear) {
+  ClearBufferMask mask = ClearBufferMask::GL_NONE_BIT;
+  for(auto buffer : buffersToClear) {
+    switch(buffer) {
+    case RenderBuffer::RK_Color:
+      mask |= GL_COLOR_BUFFER_BIT;
+      break;
+    case RenderBuffer::RK_Depth:
+      mask |= GL_DEPTH_BUFFER_BIT;
+      break;
+    case RenderBuffer::RK_Stencil:
+      mask |= GL_STENCIL_BUFFER_BIT;
+      break;
+    default:
+      sequoia_unreachable("invalid RenderBuffer::RenderBufferKind");
+    }
+  }
+  glClear(mask);
   return true;
 }
 
-bool GLRenderer::clearColorBuffer() {
-  glClear(GL_STENCIL_BUFFER_BIT);
-  return true;
-}
-
-bool GLRenderer::clearDepthBuffer() {
-  glClear(GL_DEPTH_BUFFER_BIT);
-  return true;
-}
-
-bool GLRenderer::draw(const DrawCommand* drawCommand) {
-  SEQUOIA_ASSERT(drawCommand->getVertexData() == vertexData_);
+bool GLRenderer::draw(const DrawCommand& drawCommand) {
+  SEQUOIA_ASSERT(drawCommand.getVertexData() == vertexData_);
 
   // Check all uniform variables are set
   core::dyn_cast<GLProgram>(pipeline_.Program)->checkUniformVariables();
