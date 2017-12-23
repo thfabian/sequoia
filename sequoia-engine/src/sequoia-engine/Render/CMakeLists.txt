@@ -13,6 +13,13 @@
 ##
 ##===------------------------------------------------------------------------------------------===##
 
+set(GLSL_SOURCE
+  Shaders/GLSL/Default.vert
+  Shaders/GLSL/Default.frag
+)
+
+sequoia_engine_assemble_shaders(Shaders/GLSL/Shaders.h.cmake "${GLSL_SOURCE}")
+
 set(GL_SOURCE
   GL/GL.h
   GL/GLBuffer.cpp
@@ -85,9 +92,9 @@ sequoia_add_library(
           Buffer.cpp
           Camera.cpp
           Camera.h
+          DrawCallContext.h
           DrawCommand.cpp
           DrawCommand.h
-          DrawCallContext.h
           DrawScene.h
           Exception.h
           FrameBuffer.cpp
@@ -101,6 +108,7 @@ sequoia_add_library(
           Input.h
           Program.cpp
           Program.h
+          RenderBuffer.h
           RenderCommand.cpp
           RenderCommand.h
           Renderer.cpp
@@ -120,10 +128,11 @@ sequoia_add_library(
           RenderTarget.cpp
           RenderTarget.h
           RenderTechnique.h
-          RenderBuffer.h
           RenderWindow.h
           Shader.cpp
           Shader.h
+          ShaderSourceManager.cpp
+          ShaderSourceManager.h
           Texture.cpp
           Texture.h
           UniformBlock.h
@@ -149,5 +158,7 @@ sequoia_add_library(
           
           ${GL_SOURCE}
           ${NULL_SOURCE}
+
+          ${GLSL_SOURCE}
   OBJECT
 )

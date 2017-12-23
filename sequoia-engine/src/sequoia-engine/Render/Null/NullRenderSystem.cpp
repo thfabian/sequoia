@@ -27,7 +27,7 @@ namespace sequoia {
 namespace render {
 
 NullRenderSystem::NullRenderSystem(const std::shared_ptr<Options>& options)
-    : RenderSystem(RK_Null, options), mainWindow_(nullptr) {
+    : RenderSystem(RK_Null, options, ShaderSourceManager::GLSL), mainWindow_(nullptr) {
   inputSystem_ = std::make_unique<NullInputSystem>();
 }
 

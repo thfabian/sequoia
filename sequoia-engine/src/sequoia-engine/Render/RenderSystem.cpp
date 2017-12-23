@@ -48,9 +48,11 @@ std::unique_ptr<RenderSystem> RenderSystem::create(RenderSystemKind kind,
   return nullptr;
 }
 
-RenderSystem::RenderSystem(RenderSystemKind kind, const std::shared_ptr<Options>& options)
+RenderSystem::RenderSystem(RenderSystemKind kind, const std::shared_ptr<Options>& options,
+                           ShaderSourceManager::ShaderLanguage language)
     : RenderSystemObject(kind), options_(options) {
   SEQUOIA_ASSERT_MSG(options_, "invalid options");
+  shaderSourceManager_ = std::make_unique<ShaderSourceManager>(language);
 }
 
 void RenderSystem::setDefaultOptions(const std::shared_ptr<Options>& options) {
@@ -90,6 +92,10 @@ void RenderSystem::renderOneFrame(const RenderCommand& command) {
 
   for(FrameListener* listener : getListeners<FrameListener>())
     listener->frameListenerRenderingEnd(command);
+}
+
+const char* RenderSystem::loadShaderSource(const std::string& filename) const {
+  return shaderSourceManager_->load(filename);
 }
 
 } // namespace render

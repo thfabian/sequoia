@@ -64,8 +64,8 @@ std::shared_ptr<T> createRessource(ManagerType* manager, Args&&... args) {
 } // anonymous namespace
 
 GLRenderSystem::GLRenderSystem(const std::shared_ptr<Options>& options)
-    : RenderSystem(RK_OpenGL, options), mainContext_(nullptr), mainWindow_(nullptr),
-      renderer_(nullptr) {
+    : RenderSystem(RK_OpenGL, options, ShaderSourceManager::GLSL), mainContext_(nullptr),
+      mainWindow_(nullptr), renderer_(nullptr) {
   Log::info("Initializing OpenGL RenderSystem ...");
 }
 

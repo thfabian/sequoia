@@ -30,6 +30,7 @@
 #include "sequoia-engine/Render/RenderSystemObject.h"
 #include "sequoia-engine/Render/RenderWindow.h"
 #include "sequoia-engine/Render/Shader.h"
+#include "sequoia-engine/Render/ShaderSourceManager.h"
 #include "sequoia-engine/Render/Texture.h"
 #include "sequoia-engine/Render/VertexData.h"
 #include <memory>
@@ -121,15 +122,25 @@ public:
   /// @brief Get the Renderer
   virtual Renderer* getRenderer() const = 0;
 
+  /// @brief Get the source of the shader `filename`
+  ///
+  /// @throws RenderSystemException   Shader `filename` does not exists.
+  const char* loadShaderSource(const std::string& filename) const;
+
   /// @brief Set if we run in debug-mode
   Options& getOptions() const { return *options_; }
   Options* getOptionsPtr() const { return options_.get(); }
 
 protected:
-  RenderSystem(RenderSystemKind kind, const std::shared_ptr<Options>& options);
+  RenderSystem(RenderSystemKind kind, const std::shared_ptr<Options>& options,
+               ShaderSourceManager::ShaderLanguage langauge);
 
 private:
+  /// Reference to the option
   std::shared_ptr<Options> options_;
+
+  /// Builtin shader sources
+  std::unique_ptr<ShaderSourceManager> shaderSourceManager_;
 
 private:
   static void setDefaultOptions(const std::shared_ptr<Options>& options);
