@@ -50,11 +50,9 @@ public:
   ///
   /// @tparam Functor   Function type: `void(SceneNode*)` or `void(SceneNode*) noexcept`
   /// @param functor    Functor to apply to the node and its children
-  /// @param policy     Executation policy to launch `functor`
   template <class Functor>
-  void apply(Functor&& functor,
-             SceneNode::ExecutionPolicy policy = SceneNode::EP_Sequential) const {
-    root_->apply(std::forward<Functor>(functor), policy);
+  void apply(Functor&& functor) const {
+    root_->apply(std::forward<Functor>(functor));
   }
 
   /// @brief Clear the graph

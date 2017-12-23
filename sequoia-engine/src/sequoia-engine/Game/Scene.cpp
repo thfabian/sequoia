@@ -45,15 +45,13 @@ void Scene::prepareRenderTechniques(std::vector<render::RenderTechnique*>& techi
 void Scene::prepareRenderTarget(render::RenderTarget*& target) {}
 
 void Scene::prepareDrawCommands(std::vector<render::DrawCommand>& drawCommands) {
-  sceneGraph_->apply(
-      [&drawCommands](SceneNode* node) {
-        if(Drawable* drawable = node->get<Drawable>()) {
-          if(drawable->isActive()) {
-            drawable->prepareDrawCommands(drawCommands);
-          }
-        }
-      },
-      SceneNode::EP_Parallel);
+  sceneGraph_->apply([&drawCommands](SceneNode* node) {
+    if(Drawable* drawable = node->get<Drawable>()) {
+      if(drawable->isActive()) {
+        drawable->prepareDrawCommands(drawCommands);
+      }
+    }
+  });
 }
 
 void Scene::prepareRenderCommand(render::RenderCommand& cmd) {

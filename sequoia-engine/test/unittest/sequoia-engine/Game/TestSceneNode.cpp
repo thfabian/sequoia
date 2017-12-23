@@ -94,33 +94,17 @@ TEST_F(SceneNodeTest, ApplySequential) {
 
   // Normal execution
   numNodes = 0;
-  node->apply([&numNodes](SceneNode*) { numNodes++; }, SceneNode::EP_Sequential);
+  node->apply([&numNodes](SceneNode*) { numNodes++; });
   EXPECT_EQ(numNodes, 2);
 
   // Noexcept execution
   numNodes = 0;
-  node->apply([&numNodes](SceneNode*) noexcept { numNodes++; }, SceneNode::EP_Sequential);
+  node->apply([&numNodes](SceneNode*) noexcept { numNodes++; });
   EXPECT_EQ(numNodes, 2);
 
   // Check exceptions
-  EXPECT_THROW(
-      node->apply([](SceneNode*) { throw std::runtime_error("test"); }, SceneNode::EP_Sequential),
-      std::runtime_error);
-}
-
-TEST_F(SceneNodeTest, ApplyParallel) {
-  auto node = SceneNode::allocate("Parent");
-  node->addChild(SceneNode::allocate("Child"));
-
-  // Normal execution
-  std::atomic<int> numNodes(0);
-  node->apply([&numNodes](SceneNode*) { numNodes++; }, SceneNode::EP_Parallel);
-  EXPECT_EQ(numNodes.load(), 2);
-
-  // Noexcept execution
-  numNodes = 0;
-  node->apply([&numNodes](SceneNode*) noexcept { numNodes++; }, SceneNode::EP_Parallel);
-  EXPECT_EQ(numNodes.load(), 2);
+  EXPECT_THROW(node->apply([](SceneNode*) { throw std::runtime_error("test"); }),
+               std::runtime_error);
 }
 
 } // anonymous namespace

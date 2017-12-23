@@ -13,8 +13,6 @@
 ##
 ##===------------------------------------------------------------------------------------------===##
 
-message("${SEQUOIA_EXAMPLES_RESSOURCEPATH}")
-
 set(SEQUOIA_EXAMPLES_SANDBOX_VERSION "0.0.1")
 set(SEQUOIA_EXAMPLES_SANDBOX_RESSOURCEPATH "${SEQUOIA_EXAMPLES_RESSOURCEPATH}/sandbox")
 

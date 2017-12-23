@@ -28,6 +28,7 @@ void GameSetup::SetUp() {
   options->setBool("Game.HideWindow", true);
   options->setString("Game.Name", "GameTest");
   options->setInt("Game.RenderSystem", env.getRenderSystemKind());
+  options->setString("Game.RessourcePath", env.getRessourcePath().native());
   game_->init(options);
 }
 
