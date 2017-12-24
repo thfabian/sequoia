@@ -18,7 +18,9 @@ set(GLSL_SOURCE
   Shaders/GLSL/Default.frag
 )
 
-sequoia_engine_assemble_shaders(Shaders/GLSL/Shaders.h.cmake "${GLSL_SOURCE}")
+sequoia_engine_assemble_shaders(
+  SequoiaEngineGLSLSources  Shaders/GLSL/Shaders.h.cmake "${GLSL_SOURCE}"
+)
 
 set(GL_SOURCE
   GL/GL.h
@@ -129,6 +131,8 @@ sequoia_add_library(
           RenderTarget.h
           RenderTechnique.h
           RenderWindow.h
+          RTDefault.cpp
+          RTDefault.h
           Shader.cpp
           Shader.h
           ShaderSourceManager.cpp
@@ -162,3 +166,5 @@ sequoia_add_library(
           ${GLSL_SOURCE}
   OBJECT
 )
+
+add_dependencies(SequoiaEngineRenderObjects SequoiaEngineGLSLSources)

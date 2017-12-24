@@ -13,36 +13,41 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia-engine/Core/Unreachable.h"
-#include "sequoia-engine/Render/Exception.h"
-#include "sequoia-engine/Render/ShaderSourceManager.h"
+#include "sequoia-engine/Render/RTDefault.h"
+#include "sequoia-engine/Render/RenderSystem.h"
 
 namespace sequoia {
 
 namespace render {
 
-ShaderSourceManager::ShaderSourceManager(ShaderLanguage language) {
-  switch(language) {
-  case GLSL:
-#define SHADER(Filename, Source) sources_[Filename] = Source;
-#include "sequoia-engine/Render/Shaders/GLSL/Shaders.h"
-#undef SHADER
-    break;
-  default:
-    sequoia_unreachable("invalid ShaderLanguage");
+namespace {
+
+class RPDefault : public RenderPass {
+  std::shared_ptr<Program> program_;
+
+public:
+  RPDefault() {
+    //    const auto& rsys = RenderSystem::getSingleton();
+    //    auto vertexShader = rsys.createShader(Shader::ST_Vertex, rsys.loadShaderSource("Default.vert"));
   }
+
+  void setUp(DrawCallContext& ctx) override {}
+
+  const char* getName() const noexcept override { return "RPDefault"; }
+};
+
+} // anonymous namespace
+
+RTDefault::RTDefault()
+{
+  
 }
 
-const char* ShaderSourceManager::load(const std::string& filename) const {
-  auto it = sources_.find(filename);
-  if(it == sources_.end())
-    SEQUOIA_THROW(RenderSystemException, "shader {} does not exist", filename);
-  return it->second.c_str();
+void RTDefault::render(std::function<void(render::RenderPass*)> renderer) {
+  renderer(defaultPass_.get());
 }
 
-bool ShaderSourceManager::has(const std::string& filename) const noexcept {
-  return sources_.count(filename);
-}
+const char* RTDefault::getName() const  noexcept { return "RTDefault"; }
 
 } // namespace render
 

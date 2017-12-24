@@ -40,7 +40,7 @@ public:
   const char* load(const std::string& filename) const;
 
   /// @brief Check if shader `filename` exists
-  bool hasSource(const std::string& filename) const noexcept;
+  bool has(const std::string& filename) const noexcept;
 
 private:
   /// Cached shader sources

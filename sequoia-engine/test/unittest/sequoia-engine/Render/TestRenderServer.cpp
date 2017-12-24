@@ -28,9 +28,9 @@ TEST(RenderServerTest, SpawnRessourceTask) {
   s.initRessourceThread([]() {});
   Future<int> f = s.spawnRessourceTask([]() {
     using namespace std::literals::chrono_literals;
-    std::cout << "1" << std::endl;
+    //std::cout << "1" << std::endl;
     std::this_thread::sleep_for(1ms);
-    std::cout << "2" << std::endl;
+    //std::cout << "2" << std::endl;
     return 1;
   });
   std::cout << f.get() << std::endl;

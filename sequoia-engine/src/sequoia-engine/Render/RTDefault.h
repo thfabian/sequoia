@@ -13,37 +13,34 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia-engine/Core/Unreachable.h"
-#include "sequoia-engine/Render/Exception.h"
-#include "sequoia-engine/Render/ShaderSourceManager.h"
+#ifndef SEQUOIA_ENGINE_RENDER_RTDEFAULT_H
+#define SEQUOIA_ENGINE_RENDER_RTDEFAULT_H
+
+#include "sequoia-engine/Render/RenderPass.h"
+#include "sequoia-engine/Render/RenderTechnique.h"
+#include <memory>
 
 namespace sequoia {
 
 namespace render {
 
-ShaderSourceManager::ShaderSourceManager(ShaderLanguage language) {
-  switch(language) {
-  case GLSL:
-#define SHADER(Filename, Source) sources_[Filename] = Source;
-#include "sequoia-engine/Render/Shaders/GLSL/Shaders.h"
-#undef SHADER
-    break;
-  default:
-    sequoia_unreachable("invalid ShaderLanguage");
-  }
-}
+/// @brief Default RenderTechnique
+/// @ingroup render
+class RTDefault : public RenderTechnique {
+  std::unique_ptr<RenderPass> defaultPass_;
 
-const char* ShaderSourceManager::load(const std::string& filename) const {
-  auto it = sources_.find(filename);
-  if(it == sources_.end())
-    SEQUOIA_THROW(RenderSystemException, "shader {} does not exist", filename);
-  return it->second.c_str();
-}
+public:
+  RTDefault();
 
-bool ShaderSourceManager::has(const std::string& filename) const noexcept {
-  return sources_.count(filename);
-}
+  /// @brief Simple render pass
+  virtual void render(std::function<void(RenderPass*)> renderer) override;
+
+  /// @brief Name of the technique
+  virtual const char* getName() const noexcept override;
+};
 
 } // namespace render
 
 } // namespace sequoia
+
+#endif

@@ -347,6 +347,7 @@ TEST_F(RendererTest, UniformChange) {
 
 TEST_F(RendererTest, Draw) {
   RenderSystem& rsys = RenderSystem::getSingleton();
+  
   auto renderer = std::make_unique<TestRenderer>();
   auto target = rsys.getMainWindow();
   auto program = rsys.createProgram({});
