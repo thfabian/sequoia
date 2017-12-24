@@ -13,12 +13,12 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia-engine/Render/GL/GL.h"
 #include "sequoia-engine/Core/Assert.h"
 #include "sequoia-engine/Core/Casting.h"
 #include "sequoia-engine/Core/Logging.h"
 #include "sequoia-engine/Core/StringRef.h"
 #include "sequoia-engine/Render/Exception.h"
+#include "sequoia-engine/Render/GL/GL.h"
 #include "sequoia-engine/Render/GL/GLFragmentData.h"
 #include "sequoia-engine/Render/GL/GLProgramManager.h"
 #include "sequoia-engine/Render/GL/GLRenderSystem.h"
@@ -60,10 +60,29 @@ void GLProgramManager::makeValid(GLProgram* program) {
   setVertexAttributes(program);
   setFragmentData(program);
 
+  auto checkStatus = [&program](GLenum statusParam, const char* action) {
+    GLint status = 0;
+    glGetProgramiv(program->id_, statusParam, &status);
+    if(!status) {
+      GLint infoLogLength = 0;
+      glGetProgramiv(program->id_, GL_INFO_LOG_LENGTH, &infoLogLength);
+
+      std::vector<char> infoLog(infoLogLength + 1);
+      glGetProgramInfoLog(program->id_, infoLogLength, NULL, &infoLog[0]);
+      std::string reason(infoLog.data(), infoLog.size());
+
+      SEQUOIA_THROW(RenderSystemException, "failed to {} program (ID={}):\n{}", action,
+                    program->id_, reason);
+    }
+  };
+
   // Link the program
   glLinkProgram(program->id_);
-  if(glGetError() != GL_NO_ERROR)
-    SEQUOIA_THROW(RenderSystemException, "failed to link program");
+  checkStatus(GL_LINK_STATUS, "link");
+
+  // Validate program
+  glValidateProgram(program->id_);
+  checkStatus(GL_VALIDATE_STATUS, "validate");
 
   for(const auto& shader : program->getShaders()) {
     GLShader* glshader = core::dyn_cast<GLShader>(shader.get());

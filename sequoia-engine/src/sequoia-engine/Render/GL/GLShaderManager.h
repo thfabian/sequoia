@@ -39,21 +39,23 @@ class SEQUOIA_API GLShaderManager : public NonCopyable {
   std::vector<std::shared_ptr<GLShader>> shaderList_;
 
   /// Lookup map for files
-  std::unordered_map<std::shared_ptr<File>, std::size_t> fileLookupMap_;
+  std::unordered_map<std::string, std::size_t> filenameLookupMap_;
 
 public:
   /// @brief Destroy all remaining shaders
   ~GLShaderManager();
 
-  /// @brief Create an *empty* shader from source and compile it
+  /// @brief Create an *empty* shader
   ///
-  /// @param type   Type of the shader
-  /// @param file   File of the shader source
+  /// @param type     Type of the shader
+  /// @param file     Path of the shader source
+  /// @param source   Source code of the shader
   /// @returns Newly created shader which is *not* valid, call `Shader::makeValid()` to convert
   ///          it into a valid state
   ///
   /// @remark Thread-safe
-  std::shared_ptr<GLShader> create(GLShader::ShaderType type, const std::shared_ptr<File>& file);
+  std::shared_ptr<GLShader> create(GLShader::ShaderType type, const std::string& filename,
+                                   const std::string& source);
 
   /// @brief Make the shader valid
   /// @throws RenderSystemExcption  Failed to initialize the shader

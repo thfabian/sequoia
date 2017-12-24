@@ -35,7 +35,7 @@ class SEQUOIA_API NullRenderSystem final : public RenderSystem {
 
   /// Renderer
   std::unique_ptr<NullRenderer> renderer_;
-  
+
 public:
   NullRenderSystem(const std::shared_ptr<Options>& options);
 
@@ -55,8 +55,8 @@ public:
   virtual void pollEvents() override;
 
   /// @copydoc RenderSystem::createVertexArrayObject
-  virtual std::shared_ptr<Shader> createShader(Shader::ShaderType type,
-                                               const std::shared_ptr<File>& path) override;
+  virtual std::shared_ptr<Shader> createShader(Shader::ShaderType type, const std::string& filename,
+                                               const std::string& source) override;
 
   /// @copydoc RenderSystem::createProgram
   virtual std::shared_ptr<Program>
@@ -84,7 +84,7 @@ public:
 
   /// @copydoc RenderSystem::getRenderer
   virtual Renderer* getRenderer() const override;
-  
+
   SEQUOIA_NULL_OBJECT(RenderSystem)
 };
 

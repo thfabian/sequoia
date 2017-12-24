@@ -23,7 +23,7 @@ namespace render {
 
 ShaderSourceManager::ShaderSourceManager(ShaderLanguage language) {
   switch(language) {
-  case GLSL:
+  case SL_GLSL:
 #define SHADER(Filename, Source) sources_[Filename] = Source;
 #include "sequoia-engine/Render/Shaders/GLSL/Shaders.h"
 #undef SHADER
@@ -33,11 +33,11 @@ ShaderSourceManager::ShaderSourceManager(ShaderLanguage language) {
   }
 }
 
-const char* ShaderSourceManager::load(const std::string& filename) const {
+const std::string& ShaderSourceManager::load(const std::string& filename) const {
   auto it = sources_.find(filename);
   if(it == sources_.end())
     SEQUOIA_THROW(RenderSystemException, "shader {} does not exist", filename);
-  return it->second.c_str();
+  return it->second;
 }
 
 bool ShaderSourceManager::has(const std::string& filename) const noexcept {

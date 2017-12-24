@@ -18,6 +18,7 @@
 
 #include "sequoia-engine/Core/Export.h"
 #include "sequoia-engine/Core/NonCopyable.h"
+#include "sequoia-engine/Core/Options.h"
 #include "sequoia-engine/Render/GL/GLBuffer.h"
 #include "sequoia-engine/Render/GL/GLFwd.h"
 #include "sequoia-engine/Render/GL/GLPixelFormat.h"
@@ -44,6 +45,9 @@ class SEQUOIA_API GLRenderer final : public Renderer, public ViewportListener, p
   /// Reference to the main-window
   GLRenderWindow* window_;
 
+  /// Is debug mod enabled?
+  bool debugMode_;
+
   /// Managers
   std::unique_ptr<GLShaderManager> shaderManager_;
   std::unique_ptr<GLProgramManager> programManager_;
@@ -61,7 +65,7 @@ public:
   /// @brief Initialize the OpenGL context and bind it to the calling thread
   ///
   /// This also registers the renderer as a viewport listener of `window`.
-  GLRenderer(GLRenderWindow* window);
+  GLRenderer(GLRenderWindow* window, Options& options);
 
   /// @brief Release the OpenGL context
   ~GLRenderer();
@@ -146,8 +150,8 @@ protected:
   virtual bool ViewportChanged(int x, int y, int width, int height) override;
 
   /// @copydoc Renderer::clearRenderBuffers
-  virtual bool clearRenderBuffers(
-      const std::set<RenderBuffer::RenderBufferKind>& buffersToClear) override;
+  virtual bool
+  clearRenderBuffers(const std::set<RenderBuffer::RenderBufferKind>& buffersToClear) override;
 
   /// @copydoc Renderer::draw
   virtual bool draw(const DrawCommand& drawCommand) override;

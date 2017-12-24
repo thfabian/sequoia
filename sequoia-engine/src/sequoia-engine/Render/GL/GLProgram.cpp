@@ -13,7 +13,6 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia-engine/Render/GL/GL.h"
 #include "sequoia-engine/Core/Casting.h"
 #include "sequoia-engine/Core/Format.h"
 #include "sequoia-engine/Core/Logging.h"
@@ -21,6 +20,7 @@
 #include "sequoia-engine/Core/StringUtil.h"
 #include "sequoia-engine/Core/Unreachable.h"
 #include "sequoia-engine/Render/Exception.h"
+#include "sequoia-engine/Render/GL/GL.h"
 #include "sequoia-engine/Render/GL/GLProgram.h"
 #include "sequoia-engine/Render/GL/GLProgramManager.h"
 #include "sequoia-engine/Render/GL/GLRenderer.h"
@@ -58,7 +58,7 @@ void GLProgram::bind() {
 
 void GLProgram::unbind() { glUseProgram(0); }
 
-bool GLProgram::checkUniformVariables() {
+bool GLProgram::checkUniformVariables(bool output) {
   if(allUniformVariablesSet_)
     return true;
 
@@ -66,10 +66,11 @@ bool GLProgram::checkUniformVariables() {
   for(const auto& nameInfoPair : uniformInfoMap_) {
     if(!nameInfoPair.second.ValueSet) {
       allUniformVariablesSet_ = false;
-      Log::warn("Unset uniform variable '{}' in program (ID={}) with shaders {}",
-                nameInfoPair.first, id_,
-                core::RangeToString(", ", "{", "}")(
-                    shaders_, [](const auto& shader) { return shader->getFile()->getPath(); }));
+      if(output)
+        Log::warn("Unset uniform variable '{}' in program (ID={}) with shaders {}",
+                  nameInfoPair.first, id_,
+                  core::RangeToString(", ", "{", "}")(
+                      shaders_, [](const auto& shader) { return shader->getFilename(); }));
     }
   }
   return allUniformVariablesSet_;
@@ -291,6 +292,7 @@ SEQUOIA_SET_UNIFORM_VARIABLE_IMPL(math::mat4, ([](GLuint p, GLint l, GLsizei c, 
 
 bool GLProgram::setUniformVariable(const std::string& name, const UniformVariable& variable) {
   SEQUOIA_ASSERT_MSG(isValid(), "setting uniform variable of invalid program");
+  allUniformVariablesSet_ = false;
 
   switch(variable.getType()) {
 #define UNIFORM_VARIABLE_TYPE(Type, Name)                                                          \

@@ -29,15 +29,15 @@ namespace render {
 /// @ingroup render
 class SEQUOIA_API ShaderSourceManager : public NonCopyable {
 public:
-  enum ShaderLanguage { GLSL = 0 };
+  enum ShaderLanguage { SL_GLSL = 0 };
 
   /// @brief Set the source of shader lanaguage
-  ShaderSourceManager(ShaderLanguage language = GLSL);
+  ShaderSourceManager(ShaderLanguage language = SL_GLSL);
 
   /// @brief Get the source of the shader `filename`
   ///
   /// @throws RenderSystemException   Shader `filename` does not exists.
-  const char* load(const std::string& filename) const;
+  const std::string& load(const std::string& filename) const;
 
   /// @brief Check if shader `filename` exists
   bool has(const std::string& filename) const noexcept;

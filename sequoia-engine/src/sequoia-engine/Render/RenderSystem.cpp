@@ -94,7 +94,7 @@ void RenderSystem::renderOneFrame(const RenderCommand& command) {
     listener->frameListenerRenderingEnd(command);
 }
 
-const char* RenderSystem::loadShaderSource(const std::string& filename) const {
+const std::string& RenderSystem::loadShaderSource(const std::string& filename) const {
   return shaderSourceManager_->load(filename);
 }
 

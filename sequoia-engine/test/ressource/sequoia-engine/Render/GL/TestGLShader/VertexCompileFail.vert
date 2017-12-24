@@ -3,7 +3,7 @@
 in vec3 in_Position;
 
 void main() {
-  gl_Position.xyz = in_Position;
-  gl_Position.w =
+  vec3 s = int(5);
+  gl_Position.xyz = in_Position + s;
 }
 

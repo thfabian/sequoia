@@ -26,6 +26,7 @@
 #include "sequoia-engine/Render/Input.h"
 #include "sequoia-engine/Render/RenderFwd.h"
 #include "sequoia-engine/Render/Shader.h"
+#include "sequoia-engine/Render/Texture.h"
 #include <initializer_list>
 #include <memory>
 #include <set>
@@ -104,27 +105,27 @@ public:
   /// @brief Get the main RenderTarget
   render::RenderTarget* getMainRenderTarget() const;
 
+  /// @name RenderSystem operations
+  /// @{
+
   /// @brief Get the RenderSystem
   render::RenderSystem* getRenderSystem() const { return renderSystem_.get(); }
 
-  /// @brief Create a texture from the `image` using default parameters
-  std::shared_ptr<render::Texture> createTexture(const std::shared_ptr<Image>& image);
+  /// @copydoc RenderSystem::createTexture
+  std::shared_ptr<render::Texture>
+  createTexture(const std::shared_ptr<Image>& image,
+                const render::TextureParameter& param = render::TextureParameter());
 
-  /// @brief Create a texture from the `image` and `param`
-  std::shared_ptr<render::Texture> createTexture(const std::shared_ptr<Image>& image,
-                                                 const render::TextureParameter& param);
-
-  /// @brief Compile the given shader
+  /// @copydoc RenderSystem::createShader
   std::shared_ptr<render::Shader> createShader(render::Shader::ShaderType type,
-                                               const std::shared_ptr<File>& source);
+                                               const std::string& filename,
+                                               const std::string& source);
 
-  /// @brief Create a GPU program by compiling the given shaders sources
-  std::shared_ptr<render::Program> createProgram(
-      std::initializer_list<std::pair<render::Shader::ShaderType, std::shared_ptr<File>>> shaders);
-
-  /// @brief Create a GPU program of the given shaders
+  /// @copydoc RenderSystem::createProgram
   std::shared_ptr<render::Program>
   createProgram(const std::set<std::shared_ptr<render::Shader>>& shaders);
+
+  /// @}
 
   /// @name Scene operations
   /// @{

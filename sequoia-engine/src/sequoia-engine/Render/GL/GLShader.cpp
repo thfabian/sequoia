@@ -13,10 +13,10 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia-engine/Render/GL/GL.h"
 #include "sequoia-engine/Core/Format.h"
 #include "sequoia-engine/Core/Logging.h"
 #include "sequoia-engine/Core/Unreachable.h"
+#include "sequoia-engine/Render/GL/GL.h"
 #include "sequoia-engine/Render/GL/GLRenderSystem.h"
 #include "sequoia-engine/Render/GL/GLRenderer.h"
 #include "sequoia-engine/Render/GL/GLShader.h"
@@ -46,26 +46,25 @@ GLenum GLShader::getGLShaderType(Shader::ShaderType type) {
   }
 }
 
-GLShader::GLShader(Shader::ShaderType type, const std::shared_ptr<File>& file)
-    : Shader(RK_OpenGL, type), id_(0), code_(), file_(file) {}
+GLShader::GLShader(ShaderType type, const std::string& filename, const std::string& source)
+    : Shader(RK_OpenGL, type), id_(0), source_(source), filename_(filename) {}
 
 GLShader::~GLShader() { destroyGLShader(this); }
 
 unsigned int GLShader::getID() const { return id_; }
 
-const std::shared_ptr<File>& GLShader::getFile() const { return file_; }
+const std::string& GLShader::getFilename() const { return filename_; }
 
-std::string GLShader::getSourceCode() const { return code_; }
+const std::string& GLShader::getSourceCode() const { return source_; }
 
 std::string GLShader::toString() const {
   return core::format("GLShader[\n"
                       "  valid = {},\n"
                       "  type = {},\n"
                       "  id = {},\n"
-                      "  path = \"{}\"\n"
+                      "  filename = \"{}\"\n"
                       "]",
-                      isValid() ? "true" : "false", shaderTypeToString(getType()), id_,
-                      UtfString(file_->getPath()).toAnsiString());
+                      isValid() ? "true" : "false", shaderTypeToString(getType()), id_, filename_);
 }
 
 void GLShader::makeValidImpl() { getGLRenderer().getShaderManager()->makeValid(this); }

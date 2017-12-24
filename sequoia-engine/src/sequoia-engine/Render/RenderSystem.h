@@ -92,8 +92,10 @@ public:
   virtual void pollEvents() = 0;
 
   /// @brief Create a shader from source
-  virtual std::shared_ptr<Shader> createShader(Shader::ShaderType type,
-                                               const std::shared_ptr<File>& file) = 0;
+  ///
+  /// Note that the source of built-in shaders can be retrieved via `loadShaderSource`.
+  virtual std::shared_ptr<Shader> createShader(Shader::ShaderType type, const std::string& filename,
+                                               const std::string& source) = 0;
 
   /// @brief Create a GPU program from the given `shaders`
   virtual std::shared_ptr<Program>
@@ -125,7 +127,7 @@ public:
   /// @brief Get the source of the shader `filename`
   ///
   /// @throws RenderSystemException   Shader `filename` does not exists.
-  const char* loadShaderSource(const std::string& filename) const;
+  const std::string& loadShaderSource(const std::string& filename) const;
 
   /// @brief Set if we run in debug-mode
   Options& getOptions() const { return *options_; }

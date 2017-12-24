@@ -27,23 +27,23 @@ namespace render {
 class SEQUOIA_API NullShader final : public Shader {
 
   /// Copy of the source code of the shader
-  std::string code_;
+  std::string source_;
 
   /// File the shader was loaded from
-  std::shared_ptr<File> file_;
+  std::string filename_;
 
 public:
   /// @brief Create an empty shader object
-  NullShader(ShaderType type, const std::shared_ptr<File>& file);
+  NullShader(ShaderType type, const std::string& filename, const std::string& source);
 
   /// @brief Destroy the shader
   virtual ~NullShader();
 
-  /// @copydoc Shader::getFile
-  virtual const std::shared_ptr<File>& getFile() const override;
+  /// @copydoc Shader::getFilename
+  virtual const std::string& getFilename() const override;
 
   /// @copydoc Shader::getSourceCode
-  virtual std::string getSourceCode() const override;
+  virtual const std::string& getSourceCode() const override;
 
   /// @copydoc Shader::toString
   virtual std::string toString() const override;

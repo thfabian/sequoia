@@ -64,7 +64,7 @@ std::shared_ptr<T> createRessource(ManagerType* manager, Args&&... args) {
 } // anonymous namespace
 
 GLRenderSystem::GLRenderSystem(const std::shared_ptr<Options>& options)
-    : RenderSystem(RK_OpenGL, options, ShaderSourceManager::GLSL), mainContext_(nullptr),
+    : RenderSystem(RK_OpenGL, options, ShaderSourceManager::SL_GLSL), mainContext_(nullptr),
       mainWindow_(nullptr), renderer_(nullptr) {
   Log::info("Initializing OpenGL RenderSystem ...");
 }
@@ -87,7 +87,7 @@ RenderWindow* GLRenderSystem::createMainWindow(const RenderWindow::WindowHint& h
   mainWindow_ = std::make_unique<GLRenderWindow>(mainContext_);
 
   // Initialize OpenGL renderer
-  renderer_ = std::make_unique<GLRenderer>(mainWindow_.get());
+  renderer_ = std::make_unique<GLRenderer>(mainWindow_.get(), getOptions());
 
   return mainWindow_.get();
 }
@@ -128,8 +128,9 @@ void GLRenderSystem::pollEvents() {
 }
 
 std::shared_ptr<Shader> GLRenderSystem::createShader(Shader::ShaderType type,
-                                                     const std::shared_ptr<File>& file) {
-  return createRessource<GLShader>(getGLRenderer()->getShaderManager(), type, file);
+                                                     const std::string& filename,
+                                                     const std::string& source) {
+  return createRessource<GLShader>(getGLRenderer()->getShaderManager(), type, filename, source);
 }
 
 std::shared_ptr<Program>

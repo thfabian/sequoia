@@ -229,7 +229,8 @@ bool GLRenderer::draw(const DrawCommand& drawCommand) {
   SEQUOIA_ASSERT(drawCommand.getVertexData() == vertexData_);
 
   // Check all uniform variables are set
-  core::dyn_cast<GLProgram>(pipeline_.Program)->checkUniformVariables();
+  if(debugMode_)
+    core::dyn_cast<GLProgram>(pipeline_.Program)->checkUniformVariables();
 
   // Draw the vertex-data
   core::dyn_cast<GLVertexData>(vertexData_)->draw();
@@ -244,7 +245,8 @@ std::pair<std::string, std::string> GLRenderer::toStringImpl() const {
                                                    pixelFormat_.toString()));
 }
 
-GLRenderer::GLRenderer(GLRenderWindow* window) : window_(window) {
+GLRenderer::GLRenderer(GLRenderWindow* window, Options& options)
+    : window_(window), debugMode_(options.getBool("Core.Debug")) {
   Log::info("Creating OpenGL renderer {} ...", core::ptrToStr(this));
 
   // Bind the context to the current thread
@@ -254,7 +256,7 @@ GLRenderer::GLRenderer(GLRenderWindow* window) : window_(window) {
   glbinding::Binding::initialize(false);
 
   // Set debugging callbacks
-  if(getGLRenderSystem().getOptions().getBool("Render.TraceAPI")) {
+  if(options.getBool("Render.TraceAPI")) {
 
     // Enable error checking
     using namespace glbinding;
@@ -288,7 +290,7 @@ GLRenderer::GLRenderer(GLRenderWindow* window) : window_(window) {
   programManager_ = std::make_unique<GLProgramManager>();
   textureManager_ = std::make_unique<GLTextureManager>();
   extensionManager_ = std::make_unique<GLExtensionManager>();
-  
+
   // Query the default pixel format
   auto getAndSetPixelFormat = [this](GLenum param) {
     int value = get<int>(param);
@@ -296,10 +298,10 @@ GLRenderer::GLRenderer(GLRenderWindow* window) : window_(window) {
   };
   getAndSetPixelFormat(GL_UNPACK_ALIGNMENT);
   getAndSetPixelFormat(GL_UNPACK_ROW_LENGTH);
-  
+
   // Reset internal state
   activeTextureUnit_ = -1;
-  setPixelFormat(defaultPixelFormat_, true);  
+  setPixelFormat(defaultPixelFormat_, true);
 
   Log::info("Successfully created OpenGL renderer {}", core::ptrToStr(this));
 }

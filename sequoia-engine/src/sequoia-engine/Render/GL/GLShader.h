@@ -32,14 +32,14 @@ class SEQUOIA_API GLShader final : public Shader {
   unsigned int id_;
 
   /// Copy of the (optimized) source code of the shader
-  std::string code_;
+  std::string source_;
 
   /// File the shader was loaded from
-  std::shared_ptr<File> file_;
+  std::string filename_;
 
 public:
   /// @brief Create an empty shader object
-  GLShader(ShaderType type, const std::shared_ptr<File>& file);
+  GLShader(ShaderType type, const std::string& filename, const std::string& source);
 
   /// @brief Destroy the shader
   virtual ~GLShader();
@@ -49,11 +49,11 @@ public:
   /// Note that IDs might be reused after a shader has been destroyed.
   unsigned int getID() const;
 
-  /// @copydoc Shader::getFile
-  virtual const std::shared_ptr<File>& getFile() const override;
+  /// @copydoc Shader::getFilename
+  virtual const std::string& getFilename() const override;
 
   /// @copydoc Shader::getSourceCode
-  virtual std::string getSourceCode() const override;
+  virtual const std::string& getSourceCode() const override;
 
   /// @copydoc Shader::toString
   virtual std::string toString() const override;

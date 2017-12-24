@@ -59,6 +59,8 @@ void* GLBuffer::lock(Buffer::LockOption option) {
   SEQUOIA_ASSERT_MSG(!isLocked(), "buffer already locked");
   isLocked_ = true;
   
+  bind();  
+
   // Discard the buffer if requested
   if(option == Buffer::LO_Discard)
     glBufferData(target_, numBytes_, nullptr, hint_);
@@ -78,16 +80,18 @@ void* GLBuffer::lock(Buffer::LockOption option) {
   // TODO: allow returning a scratchpad memory for small buffers
 
   // Initiate the DMA
-  bind();  
-  return glMapBuffer(target_, access);
+  void* data = glMapBuffer(target_, access);
+  unbind();
+  return data;
 }
 
 void GLBuffer::unlock() {
   SEQUOIA_ASSERT_MSG(isLocked(), "buffer not locked");
   isLocked_ = false;
 
+  bind();
   glUnmapBuffer(target_);
-  unbind();    
+  unbind();
 }
 
 void GLBuffer::allocate(std::size_t numBytes, Buffer::UsageHint hint) {

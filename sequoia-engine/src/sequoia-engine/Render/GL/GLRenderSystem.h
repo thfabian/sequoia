@@ -65,8 +65,8 @@ public:
   virtual void pollEvents() override;
 
   /// @brief Load the shader from source if it has not already been loaded
-  virtual std::shared_ptr<Shader> createShader(Shader::ShaderType type,
-                                               const std::shared_ptr<File>& path) override;
+  virtual std::shared_ptr<Shader> createShader(Shader::ShaderType type, const std::string& filename,
+                                               const std::string& source) override;
 
   /// @brief Link the shaders into a program if a program of the given shaders does not yet exist
   virtual std::shared_ptr<Program>
@@ -95,7 +95,7 @@ public:
   /// @brief Get the OpenGL renderer
   virtual Renderer* getRenderer() const override;
   GLRenderer* getGLRenderer() const;
-  
+
   SEQUOIA_GL_OBJECT(RenderSystem)
 };
 

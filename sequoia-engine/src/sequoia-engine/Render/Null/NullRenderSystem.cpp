@@ -27,7 +27,7 @@ namespace sequoia {
 namespace render {
 
 NullRenderSystem::NullRenderSystem(const std::shared_ptr<Options>& options)
-    : RenderSystem(RK_Null, options, ShaderSourceManager::GLSL), mainWindow_(nullptr) {
+    : RenderSystem(RK_Null, options, ShaderSourceManager::SL_GLSL), mainWindow_(nullptr) {
   inputSystem_ = std::make_unique<NullInputSystem>();
 }
 
@@ -56,8 +56,9 @@ RenderWindow* NullRenderSystem::getMainWindow() const {
 void NullRenderSystem::pollEvents() {}
 
 std::shared_ptr<Shader> NullRenderSystem::createShader(Shader::ShaderType type,
-                                                       const std::shared_ptr<File>& path) {
-  return std::make_shared<NullShader>(type, path);
+                                                       const std::string& filename,
+                                                       const std::string& source) {
+  return std::make_shared<NullShader>(type, filename, source);
 }
 
 std::shared_ptr<Program>

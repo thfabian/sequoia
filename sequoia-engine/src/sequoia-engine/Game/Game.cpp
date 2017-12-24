@@ -162,31 +162,20 @@ render::RenderWindow* Game::getMainWindow() const { return mainWindow_; }
 
 render::RenderTarget* Game::getMainRenderTarget() const { return getMainWindow(); }
 
-std::shared_ptr<render::Texture> Game::createTexture(const std::shared_ptr<Image>& image) {
-  return createTexture(image, render::TextureParameter());
-}
-
 std::shared_ptr<render::Texture> Game::createTexture(const std::shared_ptr<Image>& image,
                                                      const render::TextureParameter& param) {
   return renderSystem_->createTexture(image, param);
 }
 
 std::shared_ptr<render::Shader> Game::createShader(render::Shader::ShaderType type,
-                                                   const std::shared_ptr<File>& source) {
-  return renderSystem_->createShader(type, source);
+                                                   const std::string& filename,
+                                                   const std::string& source) {
+  return renderSystem_->createShader(type, filename, source);
 }
 
 std::shared_ptr<render::Program>
 Game::createProgram(const std::set<std::shared_ptr<render::Shader>>& shaders) {
   return renderSystem_->createProgram(shaders);
-}
-
-std::shared_ptr<render::Program> Game::createProgram(
-    std::initializer_list<std::pair<render::Shader::ShaderType, std::shared_ptr<File>>> shaders) {
-  std::set<std::shared_ptr<render::Shader>> shaderSet;
-  for(const auto& shaderPair : shaders)
-    shaderSet.insert(createShader(shaderPair.first, shaderPair.second));
-  return createProgram(shaderSet);
 }
 
 Scene* Game::getActiveScene() const { return activeScene_; }
