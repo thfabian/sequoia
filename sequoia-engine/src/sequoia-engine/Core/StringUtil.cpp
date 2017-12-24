@@ -36,6 +36,17 @@ std::string indent(const std::string& string, int amount) {
   return oss.str();
 }
 
+void forEachLine(const std::string& string, std::function<void(StringRef)> functor) {
+  std::size_t begin = 0, pos = 0;
+  for(; pos < string.size(); ++pos) {
+    if(string[pos] == '\n') {
+      functor(StringRef(string.c_str() + begin, pos - begin));
+      begin = pos + 1;
+    }
+  }
+  functor(StringRef(string.c_str() + begin, pos - begin));
+}
+
 } // namespace core
 
 } // namespace sequoia

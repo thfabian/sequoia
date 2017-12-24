@@ -30,8 +30,10 @@
 #include "sequoia-engine/Render/Texture.h"
 #include "sequoia-engine/Render/VertexData.h"
 #include "sequoia-engine/Render/Viewport.h"
-
-#include <iostream>
+#include <boost/preprocessor/cat.hpp>
+#include <boost/preprocessor/seq/enum.hpp>
+#include <boost/preprocessor/seq/for_each.hpp>
+#include <boost/preprocessor/stringize.hpp>
 
 namespace sequoia {
 
@@ -80,24 +82,29 @@ std::string stringify(const std::set<RenderBuffer::RenderBufferKind>& buffersToC
 
 template <>
 std::string stringify(const std::unordered_map<int, Texture*>& textures) {
-  return core::toStringRange(textures, [](const auto& var) {
-    return core::format("unit = {},\n"
-                        "  texture = {}",
-                        var.first, core::indent(var.second->toString()));
+  return textures.empty() ? "null" : core::toStringRange(textures, [](const auto& var) {
+    return core::indent(core::format("texture = {{\n"
+                                     "  unit = {},\n"
+                                     "  texture = {}\n"
+                                     "}}",
+                                     var.first, core::indent(var.second->toString())));
   });
 }
 
 } // anonymous namespace
 
-#define SEQUOIA_PP_CALL_IMPL(r, Data, Elem)                                                        \
-  Log::debug("  {} = {}", BOOST_STRINGIZE(Elem), core::indent(stringify(Elem)));
+#define SEQUOIA_PP_STRINGIFY_ARGUMENT(r, Data, Elem)                                               \
+  Log::debug("{} =", BOOST_STRINGIZE(Elem));                                                       \
+  core::forEachLine(stringify(Elem), [](const std::string& line) { Log::debug("  {}", line); });
 
 #define SEQUOIA_CALL_IMPL(errorAction, function, ...)                                              \
   if(SEQUOIA_BUILTIN_UNLIKELY(!function(__VA_ARGS__))) {                                           \
-    Log::debug("Renderer: {}: {}: failed to call: '" BOOST_STRINGIZE(function) "'",                \
-               technique->getName(), pass->getName());                                             \
+    Log::warn("Renderer: {}: {}: failed to call: '" BOOST_STRINGIZE(function) BOOST_PP_STRINGIZE(  \
+                  (BOOST_PP_SEQ_ENUM(BOOST_PP_VARIADIC_TO_SEQ(__VA_ARGS__)))) "'",                 \
+              technique->getName(), pass->getName());                                              \
     if(isDebugEnabled) {                                                                           \
-      BOOST_PP_SEQ_FOR_EACH(SEQUOIA_PP_CALL_IMPL, Data, BOOST_PP_VARIADIC_TO_SEQ(__VA_ARGS__))     \
+      BOOST_PP_SEQ_FOR_EACH(SEQUOIA_PP_STRINGIFY_ARGUMENT, Data,                                   \
+                            BOOST_PP_VARIADIC_TO_SEQ(__VA_ARGS__))                                 \
     }                                                                                              \
     errorAction;                                                                                   \
   }
@@ -242,7 +249,7 @@ void Renderer::render(const RenderCommand& command) {
 
       Viewport* viewport = command.Target->getViewport();
       SEQUOIA_ASSERT_MSG(viewport, "no Viewport set");
-      
+
       DrawCallContext ctx(viewport, command.Target, command.Scene, &command.DrawCommands);
       pass->setUp(ctx);
 

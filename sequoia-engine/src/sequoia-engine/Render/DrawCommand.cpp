@@ -29,23 +29,27 @@ std::string DrawCommand::toString() const {
       "DrawCommand[\n"
       "  data = {},\n"
       "  modelMatrix = Mat4[{}\n  ],\n"
-      "  textureMap = {}\n"
-      "  uniformMap = {}\n"
+      "  textures = {},\n"
+      "  uniforms = {}\n"
       "]",
-      data_ ? data_->toString() : "null", core::indent(ss.str(), 4),
+      data_ ? core::indent(data_->toString()) : "null", core::indent(ss.str(), 4),
       textures_.empty() ? "null" : core::indent(core::toStringRange(
-                                         textures_,
-                                         [](const auto& var) {
-                                           return core::format("unit = {},\n"
-                                                               "texture = {}\n",
-                                                               var.first, var.second->toString());
-                                         })),
-      uniforms_.empty() ? "null"
-                          : core::indent(core::toStringRange(uniforms_, [](const auto& var) {
-                              return core::format("name = {},\n"
-                                                  "variable = {}\n",
-                                                  var.first, var.second.toString());
-                            })));
+                                       textures_,
+                                       [](const auto& var) {
+                                         return core::indent(core::format(
+                                             "texture = {{\n"
+                                             "  unit = {},\n"
+                                             "  texture = {}\n"
+                                             "}}",
+                                             var.first, core::indent(var.second->toString())));
+                                       })),
+      uniforms_.empty() ? "null" : core::indent(core::toStringRange(uniforms_, [](const auto& var) {
+        return core::indent(core::format("uniform = {{\n"
+                                         "  name = {},\n"
+                                         "  variable = {}\n"
+                                         "}}",
+                                         var.first, core::indent(var.second.toString())));
+      })));
 }
 
 } // namespace render

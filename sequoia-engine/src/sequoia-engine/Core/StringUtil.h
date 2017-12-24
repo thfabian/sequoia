@@ -18,6 +18,7 @@
 
 #include "sequoia-engine/Core/Export.h"
 #include "sequoia-engine/Core/Format.h"
+#include "sequoia-engine/Core/StringRef.h"
 #include <algorithm>
 #include <iterator>
 #include <sstream>
@@ -30,6 +31,11 @@ namespace core {
 /// @brief Indent a string by the specified number of spaces
 /// @ingroup core
 SEQUOIA_API extern std::string indent(const std::string& string, int amount = 2);
+
+/// @brief Execute `functor` for each line in `string`
+/// @ingroup core
+SEQUOIA_API extern void forEachLine(const std::string& string,
+                                    std::function<void(StringRef)> functor);
 
 /// @brief Convert a pointer to string
 /// @ingroup core
