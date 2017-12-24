@@ -58,13 +58,13 @@ void Game::run() {
   // Start main-loop
   while(!mainWindow_->isClosed() && !shouldClose_) {
 
+    // Advance the scene to the next time-step
+    activeScene_->updateImpl(0.1f); /* TODO: use actual timestep */
+
     // Render the scene
     cmd.reset(getMainRenderTarget());
     activeScene_->prepareRenderCommand(cmd);
     renderSystem_->renderOneFrame(cmd);
-
-    // Advance the scene to the next time-step
-    activeScene_->updateImpl(0.1f);
 
     // Update screen
     mainWindow_->swapBuffers();
@@ -204,6 +204,9 @@ void Game::makeSceneActive(const std::string& name) {
 
   activeScene_ = getScene(name);
   activeScene_->addListener<SceneListener>(this);
+
+  // Make sure the Viewport of the main-window has the camera of the scene
+  sceneListenerActiveCameraChanged(activeScene_);
 }
 
 void Game::sceneListenerActiveCameraChanged(Scene* scene) {

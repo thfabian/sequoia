@@ -34,15 +34,16 @@ namespace sandbox {
 SandboxScene::SandboxScene(const std::string& name) : Scene(name) {
   game::Game& game = game::Game::getSingleton();
   Log::info("Initializing scene {} ...", getName());
+  
+  // Create RenderTechniques
+  rtDefault_ = std::make_unique<render::RTDefault>();
 
   // Create the camera
   std::shared_ptr<render::Camera> camera = std::make_shared<render::Camera>(math::vec3(0, 5, 5));
   camera->setZNearClipping(0.1f);
   setActiveCamera(camera);
 
-  //
   // UV coord cube
-  //
   std::shared_ptr<game::SceneNode> cubeOrigin = game::SceneNode::allocate("TestCubeOrigin");
 
   game::MeshParameter cubeOriginParam;
@@ -51,8 +52,7 @@ SandboxScene::SandboxScene(const std::string& name) : Scene(name) {
   auto cubeOriginShape =
       game.getShapeManager()->createCube("TestCubeInvertedV", false, cubeOriginParam);
   cubeOriginShape->getMaterials().front()->setTexture(
-      0,
-      game.createTexture(game.getAssetManager()->loadImage("texture/UVTest512x512.dds")));
+      0, game.createTexture(game.getAssetManager()->loadImage("texture/UVTest512x512.dds")));
 
   cubeOrigin->addCapability<game::Drawable>(cubeOriginShape);
   getSceneGraph()->insert(cubeOrigin);
@@ -111,7 +111,7 @@ SandboxScene::SandboxScene(const std::string& name) : Scene(name) {
   //        game.createTexture(game.getAssetManager()->loadImage("sequoia/texture/SandTex1.tiff"),
   //                              texParam));
   //    sceneGraph_->insert(gridOrigin);
-  
+
   auto controller = game::SceneNode::allocate<game::CameraControllerFree>("Camera");
   controller->setCamera(getActiveCamera());
   getSceneGraph()->insert(controller);
@@ -122,6 +122,10 @@ SandboxScene::SandboxScene(const std::string& name) : Scene(name) {
 }
 
 void SandboxScene::update() {}
+
+void SandboxScene::prepareRenderTechniques(std::vector<render::RenderTechnique*>& techiques) {
+  techiques.emplace_back(rtDefault_.get());
+}
 
 } // namespace sandbox
 

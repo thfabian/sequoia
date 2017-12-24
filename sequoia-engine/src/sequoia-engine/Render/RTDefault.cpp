@@ -13,6 +13,7 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
+#include "sequoia-engine/Render/DrawCallContext.h"
 #include "sequoia-engine/Render/RTDefault.h"
 #include "sequoia-engine/Render/RenderSystem.h"
 
@@ -27,27 +28,27 @@ class RPDefault : public RenderPass {
 
 public:
   RPDefault() {
-    //    const auto& rsys = RenderSystem::getSingleton();
-    //    auto vertexShader = rsys.createShader(Shader::ST_Vertex, rsys.loadShaderSource("Default.vert"));
+    auto& rsys = RenderSystem::getSingleton();
+    program_ = rsys.createProgram({rsys.createShader(Shader::ST_Vertex, "Default.vert",
+                                                     rsys.loadShaderSource("Default.vert")),
+                                   rsys.createShader(Shader::ST_Fragment, "Default.frag",
+                                                     rsys.loadShaderSource("Default.frag"))});
   }
 
-  void setUp(DrawCallContext& ctx) override {}
+  void setUp(DrawCallContext& ctx) override { ctx.Pipeline.Program = program_.get(); }
 
-  const char* getName() const noexcept override { return "RPDefault"; }
+  const char* getName() const noexcept override { return "Default"; }
 };
 
 } // anonymous namespace
 
-RTDefault::RTDefault()
-{
-  
-}
+RTDefault::RTDefault() { defaultPass_ = std::make_unique<RPDefault>(); }
 
 void RTDefault::render(std::function<void(render::RenderPass*)> renderer) {
   renderer(defaultPass_.get());
 }
 
-const char* RTDefault::getName() const  noexcept { return "RTDefault"; }
+const char* RTDefault::getName() const noexcept { return "Default"; }
 
 } // namespace render
 

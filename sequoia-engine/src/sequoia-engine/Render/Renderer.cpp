@@ -31,6 +31,8 @@
 #include "sequoia-engine/Render/VertexData.h"
 #include "sequoia-engine/Render/Viewport.h"
 
+#include <iostream>
+
 namespace sequoia {
 
 namespace render {
@@ -234,12 +236,13 @@ bool Renderer::setViewport(const Viewport* viewport) {
 
 void Renderer::render(const RenderCommand& command) {
   for(RenderTechnique* technique : command.Techniques) {
+    SEQUOIA_ASSERT(technique);
     auto rendererFun = [&command, &technique, this](RenderPass* pass) -> void {
       bool isDebugEnabled = RenderSystem::getSingleton().getOptions().getBool("Core.Debug");
 
       Viewport* viewport = command.Target->getViewport();
       SEQUOIA_ASSERT_MSG(viewport, "no Viewport set");
-
+      
       DrawCallContext ctx(viewport, command.Target, command.Scene, &command.DrawCommands);
       pass->setUp(ctx);
 

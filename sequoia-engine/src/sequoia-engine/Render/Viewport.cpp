@@ -13,11 +13,11 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia-engine/Render/Viewport.h"
 #include "sequoia-engine/Core/Assert.h"
 #include "sequoia-engine/Core/Format.h"
 #include "sequoia-engine/Core/StringUtil.h"
 #include "sequoia-engine/Render/Camera.h"
+#include "sequoia-engine/Render/Viewport.h"
 
 namespace sequoia {
 
@@ -72,7 +72,8 @@ std::string Viewport::toString() const {
                       "  width = {},\n"
                       "  height = {}\n"
                       "]",
-                      core::indent(camera_->toString()), x_, y_, width_, height_);
+                      camera_ ? core::indent(camera_->toString()) : "null", x_, y_, width_,
+                      height_);
 }
 
 } // namespace viewport
