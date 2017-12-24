@@ -34,7 +34,7 @@ namespace sandbox {
 SandboxScene::SandboxScene(const std::string& name) : Scene(name) {
   game::Game& game = game::Game::getSingleton();
   Log::info("Initializing scene {} ...", getName());
-  
+
   // Create RenderTechniques
   rtDefault_ = std::make_unique<render::RTDefault>();
 
@@ -51,6 +51,8 @@ SandboxScene::SandboxScene(const std::string& name) : Scene(name) {
 
   auto cubeOriginShape =
       game.getShapeManager()->createCube("TestCubeInvertedV", false, cubeOriginParam);
+
+  // TODO: improve the API
   cubeOriginShape->getMaterials().front()->setTexture(
       0, game.createTexture(game.getAssetManager()->loadImage("texture/UVTest512x512.dds")));
 
@@ -60,21 +62,23 @@ SandboxScene::SandboxScene(const std::string& name) : Scene(name) {
   //
   // Mini cubes
   //
-  //  auto cubeMesh = game.getMeshManager()->createCube("TestCube");
-  //  float dx = 3.0f;
-  //  int N = 10;
-  //  for(int i = 0; i < N; ++i) {
-  //    for(int j = 0; j < N; ++j) {
-  //      auto cube = SceneNode::allocate(core::format("TestCube_{}_{}", i, j));
-  //      cube->addCapability<Drawable>(cubeMesh);
-  //      cube->translate(math::vec3((i - N / 2.0f) * dx, 0, (j - N / 2.0f) * dx));
-  //      cube->setScale(0.9 * (2 * float(i) / N));
-  //      cube->get<Drawable>()->setTexture(
-  //          0,
-  //          game.createTexture(game.getAssetManager()->loadImage("sequoia/texture/Gaben.jpg")));
-  //      sceneGraph_->insert(cube);
-  //    }
-  //  }
+  auto cubeShape = game.getShapeManager()->createCube("TestCube");
+  float dx = 3.0f;
+  int N = 10;
+  for(int i = 0; i < N; ++i) {
+    for(int j = 0; j < N; ++j) {
+      auto cube = game::SceneNode::allocate(core::format("TestCube_{}_{}", i, j));
+
+      cube->addCapability<game::Drawable>(cubeShape);
+      cube->translate(math::vec3((i - N / 2.0f) * dx, 0, (j - N / 2.0f) * dx));
+      cube->setScale(0.9 * (2 * float(i) / N));
+
+      cubeShape->getMaterials().front()->setTexture(
+          0, game.createTexture(game.getAssetManager()->loadImage("texture/Gaben.jpg")));
+
+      getSceneGraph()->insert(cube);
+    }
+  }
 
   //
   // Cornell box
