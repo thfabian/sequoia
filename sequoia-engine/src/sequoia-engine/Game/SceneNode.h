@@ -52,6 +52,7 @@ public:
   }
 
   /// @brief RTTI discriminator
+  // TODO: to make it more extendible, remove RTTI from Scenenodes
   enum SceneNodeKind : std::uint8_t {
     SK_SceneNode,
     SK_CameraController,
@@ -64,12 +65,6 @@ public:
     TS_Local,  ///< Transform is relative to the local space
     TS_Parent, ///< Transform is relative to the space of the parent node
     TS_World   ///< Transform is relative to world space
-  };
-
-  /// @brief Policy used to execute functors on the nodes
-  enum ExecutionPolicy : std::uint8_t {
-    EP_Sequential, ///< Seqeuential execution
-    EP_Parallel    ///< Parallel execution
   };
 
   SceneNode(const std::string& name, SceneNodeKind kind = SK_SceneNode);
@@ -86,6 +81,8 @@ public:
 
   /// @brief Get the name of the node
   void setName(const std::string& name) { name_ = name; }
+
+  // TODO --- Move into Moveable capability ---
 
   /// @brief Get the position (in world space
   const math::vec3& getPosition() const { return position_; }
@@ -128,6 +125,8 @@ public:
     return modelMatrix_;
   }
 
+  // ----------------------------------------
+
   /// @brief Add a child to the scene node
   void addChild(const std::shared_ptr<SceneNode>& child) {
     children_.emplace_back(child);
@@ -168,11 +167,11 @@ public:
   /// @param functor    Functor to apply to the node and its children
   /// @param policy     Executation policy to launch `functor`
   template <class Functor>
-  inline void apply(Functor&& functor, ExecutionPolicy policy = EP_Sequential) {
+  inline void apply(Functor&& functor) {
     if(noexcept(functor(this)))
-      applyNoexceptImpl(std::forward<Functor>(functor), policy);
+      applyNoexceptImpl(std::forward<Functor>(functor));
     else
-      applyImpl(std::forward<Functor>(functor), policy);
+      applyImpl(std::forward<Functor>(functor));
   }
 
   /// @brief Update the node to indicate the scene progressed to the next time-step
@@ -258,9 +257,8 @@ public:
 
 private:
   /// @brief Apply `functor` to the node and all its children
-  void applyImpl(const std::function<void(SceneNode*)>& functor, ExecutionPolicy policy);
-  void applyNoexceptImpl(const std::function<void(SceneNode*) noexcept>& functor,
-                         ExecutionPolicy policy) noexcept;
+  void applyImpl(const std::function<void(SceneNode*)>& functor);
+  void applyNoexceptImpl(const std::function<void(SceneNode*) noexcept>& functor) noexcept;
 
 protected:
   /// @brief Implementation of `toString` which returns the class name and stringified members
@@ -274,6 +272,7 @@ private:
   SceneNodeKind kind_;
 
   /// Capabilities of the node (nullptr indicates absence of the capability)
+  // TODO: why no unique_ptr?
   std::array<std::shared_ptr<SceneNodeCapability>, SceneNodeCapability::NumCapabilities>
       capabilities_;
 

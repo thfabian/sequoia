@@ -17,13 +17,12 @@
 #define SEQUOIA_ENGINE_RENDER_FRAMELISTENER_H
 
 #include "sequoia-engine/Core/Export.h"
+#include "sequoia-engine/Render/RenderFwd.h"
 #include <cstddef>
 
 namespace sequoia {
 
 namespace render {
-
-class RenderCommand;
 
 /// @brief Listen to frame events
 /// @ingroup render
@@ -31,11 +30,11 @@ class SEQUOIA_API FrameListener {
 public:
   virtual ~FrameListener() {}
 
-  /// @brief Begin of the rendering the rendering `command`
-  virtual void frameListenerRenderingBegin(RenderCommand* command) = 0;
+  /// @brief Begin rendering `command`
+  virtual void frameListenerRenderingBegin(const RenderCommand& command) = 0;
 
-  /// @brief End of the rendering of the previous frame of `target`
-  virtual void frameListenerRenderingEnd(RenderCommand* command) = 0;
+  /// @brief End of the rendering of `command`
+  virtual void frameListenerRenderingEnd(const RenderCommand& command) = 0;
 };
 
 } // namespace render

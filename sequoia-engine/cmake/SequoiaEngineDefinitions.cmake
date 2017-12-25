@@ -45,8 +45,6 @@ set(SEQUOIA_ENGINE_INSTALL_CMAKE_DIR cmake/sequoia-engine
     CACHE INTERNAL "Relative path of the cmake install location" FORCE)
 
 # Config.h paths
-set(SEQUOIA_ENGINE_RESSOURCEPATH ${CMAKE_SOURCE_DIR}/ressource)
-
 set(SEQUOIA_ENGINE_UNITTEST_RESSOURCEPATH ${CMAKE_SOURCE_DIR}/test/ressource)
 set(SEQUOIA_ENGINE_UNITTEST_TEMPORARYPATH ${CMAKE_BINARY_DIR}/test/bin)
 

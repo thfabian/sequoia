@@ -28,8 +28,6 @@
 #include <fstream>
 #include <sstream>
 
-#include <iostream>
-
 namespace sequoia {
 
 namespace core {
@@ -250,9 +248,7 @@ std::string Options::getImpl(const std::string& name, const std::string*) const 
 void setDefaultOptions(const std::shared_ptr<Options>& options) {
   options->setDefaultBool(
       "Core.Debug", false,
-      OptionMetaData{
-          "debug", "d", false, "",
-          "Enable rigorous error checking and logging, especially of the rendering API calls"});
+      OptionMetaData{"debug", "d", false, "", "Enable extensive error checking and logging"});
 }
 
 } // namespace core

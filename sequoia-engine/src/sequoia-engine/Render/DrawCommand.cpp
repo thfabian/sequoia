@@ -13,9 +13,10 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia-engine/Render/DrawCommand.h"
 #include "sequoia-engine/Core/Format.h"
 #include "sequoia-engine/Core/StringUtil.h"
+#include "sequoia-engine/Render/DrawCommand.h"
+#include <sstream>
 
 namespace sequoia {
 
@@ -24,19 +25,31 @@ namespace render {
 std::string DrawCommand::toString() const {
   std::stringstream ss;
   ss << modelMatrix_;
-  return core::format("DrawCommand[\n"
-                      "  renderState = {},\n"
-                      "  modelMatrix = Mat4[{}\n  ],\n"
-                      "  uniformVariables = {}\n"
-                      "]",
-                      core::indent(state_.toString()), core::indent(ss.str(), 4),
-                      variables_.empty()
-                          ? "null"
-                          : core::indent(core::toStringRange(variables_, [](const auto& var) {
-                              return core::format("name = {},\n"
-                                                  "variable = {}\n",
-                                                  var.first, var.second.toString());
-                            })));
+  return core::format(
+      "DrawCommand[\n"
+      "  data = {},\n"
+      "  modelMatrix = Mat4[{}\n  ],\n"
+      "  textures = {},\n"
+      "  uniforms = {}\n"
+      "]",
+      data_ ? core::indent(data_->toString()) : "null", core::indent(ss.str(), 4),
+      textures_.empty() ? "null" : core::indent(core::toStringRange(
+                                       textures_,
+                                       [](const auto& var) {
+                                         return core::indent(core::format(
+                                             "texture = {{\n"
+                                             "  unit = {},\n"
+                                             "  texture = {}\n"
+                                             "}}",
+                                             var.first, core::indent(var.second->toString())));
+                                       })),
+      uniforms_.empty() ? "null" : core::indent(core::toStringRange(uniforms_, [](const auto& var) {
+        return core::indent(core::format("uniform = {{\n"
+                                         "  name = {},\n"
+                                         "  variable = {}\n"
+                                         "}}",
+                                         var.first, core::indent(var.second.toString())));
+      })));
 }
 
 } // namespace render

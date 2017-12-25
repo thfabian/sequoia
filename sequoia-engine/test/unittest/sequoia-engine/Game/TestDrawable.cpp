@@ -15,9 +15,9 @@
 
 #include "sequoia-engine/Core/Casting.h"
 #include "sequoia-engine/Game/Drawable.h"
-#include "sequoia-engine/Game/MeshManager.h"
 #include "sequoia-engine/Game/Scene.h"
 #include "sequoia-engine/Game/SceneGraph.h"
+#include "sequoia-engine/Game/ShapeManager.h"
 #include "sequoia-engine/Unittest/GameSetup.h"
 #include <gtest/gtest.h>
 
@@ -31,11 +31,10 @@ SEQUOIA_TESTCASEFIXTURE(DrawableTest, GameSetup);
 TEST_F(DrawableTest, Construction) {
   Game& game = Game::getSingleton();
   std::shared_ptr<SceneNode> node = SceneNode::allocate("TestNode");
-  auto mesh = game.getMeshManager()->createCube("TestCube");
+  auto mesh = game.getShapeManager()->createCube("TestCube");
 
   node->addCapability<Drawable>(mesh);
   EXPECT_TRUE(node->is<Drawable>());
-  EXPECT_TRUE(node->get<Drawable>()->hasMesh());
 
   // Clone node
   auto nodeClone = node->clone();
@@ -44,7 +43,6 @@ TEST_F(DrawableTest, Construction) {
   EXPECT_EQ(node->getName(), "TestNode");
 
   EXPECT_TRUE(nodeClone->is<Drawable>());
-  EXPECT_TRUE(nodeClone->get<Drawable>()->hasMesh());
 
   // Check Drawable was cloned (compare addresses)
   EXPECT_NE((std::size_t)node->get<Drawable>(), (std::size_t)nodeClone->get<Drawable>());

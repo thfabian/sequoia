@@ -18,7 +18,7 @@
 #include "sequoia-engine/Render/GL/GLRenderSystem.h"
 #include "sequoia-engine/Render/GL/GLRenderer.h"
 #include "sequoia-engine/Render/GL/GLShaderManager.h"
-#include "sequoia-engine/Unittest/GL/GLRenderSetup.h"
+#include "sequoia-engine/Unittest/RenderSetup.h"
 #include "sequoia-engine/Unittest/TestEnvironment.h"
 #include "sequoia-engine/Unittest/TestFile.h"
 #include <gtest/gtest.h>
@@ -30,15 +30,16 @@ using namespace sequoia::render;
 
 namespace {
 
-SEQUOIA_TESTCASEFIXTURE(GLShaderTest, GLRenderSetup);
+static std::shared_ptr<Shader> makeShader(Shader::ShaderType type, const char* filename) {
+  return RenderSystem::getSingleton().createShader(
+      type, filename, TestEnvironment::getSingleton().getFile(filename)->getDataAsString());
+}
+
+SEQUOIA_TESTCASEFIXTURE(GLShaderTest, RenderSetup);
 
 TEST_F(GLShaderTest, LoadingSuccess) {
-  TestEnvironment& env = TestEnvironment::getSingleton();
-  RenderSystem& rsys = RenderSystem::getSingleton();
-
-  std::shared_ptr<Shader> shader = rsys.createShader(
-      Shader::ST_Vertex,
-      env.getFile("sequoia-engine/Render/GL/TestGLShader/VertexCompileSuccess.vert"));
+  std::shared_ptr<Shader> shader = makeShader(
+      Shader::ST_Vertex, "sequoia-engine/Render/GL/TestGLShader/VertexCompileSuccess.vert");
 
   // Create from source
   GLShader* glshader = dyn_cast<GLShader>(shader.get());
@@ -46,13 +47,12 @@ TEST_F(GLShaderTest, LoadingSuccess) {
   EXPECT_TRUE(glshader->isValid());
   EXPECT_NE(glshader->getID(), 0);
   EXPECT_EQ(glshader->getType(), Shader::ST_Vertex);
-  EXPECT_EQ(*glshader->getFile(),
-            *env.getFile("sequoia-engine/Render/GL/TestGLShader/VertexCompileSuccess.vert"));
+  EXPECT_STREQ(glshader->getFilename().c_str(),
+               "sequoia-engine/Render/GL/TestGLShader/VertexCompileSuccess.vert");
 
   // Use already existing shader
-  std::shared_ptr<Shader> newShader = rsys.createShader(
-      Shader::ST_Vertex,
-      env.getFile("sequoia-engine/Render/GL/TestGLShader/VertexCompileSuccess.vert"));
+  std::shared_ptr<Shader> newShader = makeShader(
+      Shader::ST_Vertex, "sequoia-engine/Render/GL/TestGLShader/VertexCompileSuccess.vert");
 
   GLShader* glnewshader = dyn_cast<GLShader>(newShader.get());
   EXPECT_EQ(glshader, glnewshader);
@@ -60,21 +60,16 @@ TEST_F(GLShaderTest, LoadingSuccess) {
 }
 
 TEST_F(GLShaderTest, LoadingFail) {
-  TestEnvironment& env = TestEnvironment::getSingleton();
-  RenderSystem& rsys = RenderSystem::getSingleton();
-
   // Shader does not exists
   EXPECT_THROW(
-      rsys.createShader(
-          Shader::ST_Vertex,
-          env.getFile("sequoia-engine/Render/GL/TestGLShader/VertexCompileFail-NonExising.vert")),
-      Exception);
-
+      makeShader(Shader::ST_Vertex,
+                 "sequoia-engine/Render/GL/TestGLShader/VertexCompileFail-NonExising.vert"),
+      core::Exception);
+  
   // Shader is invalid
-  EXPECT_THROW(rsys.createShader(
-                   Shader::ST_Vertex,
-                   env.getFile("sequoia-engine/Render/GL/TestGLShader/VertexCompileFail.vert")),
-               RenderSystemException);
+  EXPECT_THROW(
+      makeShader(Shader::ST_Vertex, "sequoia-engine/Render/GL/TestGLShader/VertexCompileFail.vert"),
+      RenderSystemException);
 }
 
 } // anonymous namespace

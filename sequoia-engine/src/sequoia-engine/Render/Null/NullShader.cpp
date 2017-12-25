@@ -13,30 +13,27 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia-engine/Render/Null/NullShader.h"
 #include "sequoia-engine/Core/Format.h"
-#include "sequoia-engine/Core/UtfString.h"
+#include "sequoia-engine/Render/Null/NullShader.h"
 
 namespace sequoia {
 
 namespace render {
 
-NullShader::NullShader(Shader::ShaderType type, const std::shared_ptr<File>& file)
-    : Shader(RK_Null, type), file_(file) {
-  code_ = file->getDataAsString();
-}
+NullShader::NullShader(ShaderType type, const std::string& filename, const std::string& source)
+    : Shader(RK_Null, type), source_(source), filename_(filename) {}
 
 NullShader::~NullShader() {}
 
-const std::shared_ptr<File>& NullShader::getFile() const { return file_; }
+const std::string& NullShader::getFilename() const { return filename_; }
 
-std::string NullShader::getSourceCode() const { return code_; }
+const std::string& NullShader::getSourceCode() const { return source_; }
 
 std::string NullShader::toString() const {
   return core::format("NullShader[\n"
-                      "  path = \"{}\"\n"
+                      "  filename = \"{}\"\n"
                       "]",
-                      UtfString(file_->getPath()).toAnsiString());
+                      filename_);
 }
 
 void NullShader::makeValidImpl() {}

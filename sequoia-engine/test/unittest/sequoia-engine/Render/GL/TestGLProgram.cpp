@@ -23,7 +23,7 @@
 #include "sequoia-engine/Render/GL/GLVertexAttribute.h"
 #include "sequoia-engine/Render/UniformStruct.h"
 #include "sequoia-engine/Render/UniformVariable.h"
-#include "sequoia-engine/Unittest/GL/GLRenderSetup.h"
+#include "sequoia-engine/Unittest/RenderSetup.h"
 #include "sequoia-engine/Unittest/TestEnvironment.h"
 #include <array>
 #include <gtest/gtest.h>
@@ -34,20 +34,22 @@ using namespace sequoia::render;
 
 namespace {
 
-SEQUOIA_TESTCASEFIXTURE(GLProgramTest, GLRenderSetup);
+static std::shared_ptr<Shader> makeShader(Shader::ShaderType type, const char* filename) {
+  return RenderSystem::getSingleton().createShader(
+      type, filename, TestEnvironment::getSingleton().getFile(filename)->getDataAsString());
+}
+
+SEQUOIA_TESTCASEFIXTURE(GLProgramTest, RenderSetup);
 
 TEST_F(GLProgramTest, LinkingSuccess) {
-  TestEnvironment& env = TestEnvironment::getSingleton();
   RenderSystem& rsys = RenderSystem::getSingleton();
 
-  std::shared_ptr<Shader> vertexShader = rsys.createShader(
-      Shader::ST_Vertex,
-      env.getFile("sequoia-engine/Render/GL/TestGLProgram/VertexLinkSuccess.vert"));
+  std::shared_ptr<Shader> vertexShader = makeShader(
+      Shader::ST_Vertex, "sequoia-engine/Render/GL/TestGLProgram/VertexLinkSuccess.vert");
 
-  std::shared_ptr<Shader> fragmentShader = rsys.createShader(
-      Shader::ST_Fragment,
-      env.getFile("sequoia-engine/Render/GL/TestGLProgram/FragmentLinkSuccess.frag"));
-
+  std::shared_ptr<Shader> fragmentShader = makeShader(
+      Shader::ST_Fragment, "sequoia-engine/Render/GL/TestGLProgram/FragmentLinkSuccess.frag");
+  
   std::shared_ptr<Program> program = rsys.createProgram({vertexShader, fragmentShader});
   GLProgram* glprogram = core::dyn_cast<GLProgram>(program.get());
 
@@ -59,18 +61,17 @@ TEST_F(GLProgramTest, LinkingSuccess) {
   // Use program
   glprogram->bind();
 
+  // Check program is bound correctly
   GLint id;
   glGetIntegerv(GL_CURRENT_PROGRAM, &id);
   EXPECT_EQ(id, glprogram->getID());
 }
 
 TEST_F(GLProgramTest, UniformScalars) {
-  TestEnvironment& env = TestEnvironment::getSingleton();
   RenderSystem& rsys = RenderSystem::getSingleton();
 
-  std::shared_ptr<Shader> vertexShader = rsys.createShader(
-      Shader::ST_Vertex,
-      env.getFile("sequoia-engine/Render/GL/TestGLProgram/VertexUniformScalars.vert"));
+  std::shared_ptr<Shader> vertexShader = makeShader(
+      Shader::ST_Vertex, "sequoia-engine/Render/GL/TestGLProgram/VertexUniformScalars.vert");
 
   std::shared_ptr<Program> program = rsys.createProgram({vertexShader});
   GLProgram* glprogram = core::dyn_cast<GLProgram>(program.get());
@@ -80,6 +81,8 @@ TEST_F(GLProgramTest, UniformScalars) {
   float u_FloatTest = 5.0f;
   EXPECT_TRUE(glprogram->setUniformVariable("u_FloatTest", u_FloatTest));
 
+  EXPECT_FALSE(glprogram->checkUniformVariables(false));
+  
   int u_IntTest = 5;
   EXPECT_TRUE(glprogram->setUniformVariable("u_IntTest", u_IntTest));
 
@@ -87,12 +90,10 @@ TEST_F(GLProgramTest, UniformScalars) {
 }
 
 TEST_F(GLProgramTest, UniformVectors) {
-  TestEnvironment& env = TestEnvironment::getSingleton();
   RenderSystem& rsys = RenderSystem::getSingleton();
 
-  std::shared_ptr<Shader> vertexShader = rsys.createShader(
-      Shader::ST_Vertex,
-      env.getFile("sequoia-engine/Render/GL/TestGLProgram/VertexUniformVectors.vert"));
+  std::shared_ptr<Shader> vertexShader = makeShader(
+      Shader::ST_Vertex, "sequoia-engine/Render/GL/TestGLProgram/VertexUniformVectors.vert");
 
   std::shared_ptr<Program> program = rsys.createProgram({vertexShader});
   GLProgram* glprogram = core::dyn_cast<GLProgram>(program.get());
@@ -115,12 +116,10 @@ TEST_F(GLProgramTest, UniformVectors) {
 }
 
 TEST_F(GLProgramTest, UniformArrays) {
-  TestEnvironment& env = TestEnvironment::getSingleton();
   RenderSystem& rsys = RenderSystem::getSingleton();
 
-  std::shared_ptr<Shader> vertexShader = rsys.createShader(
-      Shader::ST_Vertex,
-      env.getFile("sequoia-engine/Render/GL/TestGLProgram/VertexUniformArrays.vert"));
+  std::shared_ptr<Shader> vertexShader = makeShader(
+      Shader::ST_Vertex, "sequoia-engine/Render/GL/TestGLProgram/VertexUniformArrays.vert");
 
   std::shared_ptr<Program> program = rsys.createProgram({vertexShader});
   GLProgram* glprogram = core::dyn_cast<GLProgram>(program.get());
@@ -147,12 +146,10 @@ TEST_F(GLProgramTest, UniformArrays) {
 SEQUOIA_UNIFORM_STRUCT(TestStruct, (int, a)(float, b)(math::vec3, c));
 
 TEST_F(GLProgramTest, UniformStruct) {
-  TestEnvironment& env = TestEnvironment::getSingleton();
   RenderSystem& rsys = RenderSystem::getSingleton();
 
-  std::shared_ptr<Shader> vertexShader = rsys.createShader(
-      Shader::ST_Vertex,
-      env.getFile("sequoia-engine/Render/GL/TestGLProgram/VertexUniformStruct.vert"));
+  std::shared_ptr<Shader> vertexShader = makeShader(
+      Shader::ST_Vertex, "sequoia-engine/Render/GL/TestGLProgram/VertexUniformStruct.vert");
 
   std::shared_ptr<Program> program = rsys.createProgram({vertexShader});
   GLProgram* glprogram = core::dyn_cast<GLProgram>(program.get());
@@ -169,12 +166,10 @@ TEST_F(GLProgramTest, UniformStruct) {
 }
 
 TEST_F(GLProgramTest, UniformArrayOfStruct) {
-  TestEnvironment& env = TestEnvironment::getSingleton();
   RenderSystem& rsys = RenderSystem::getSingleton();
 
-  std::shared_ptr<Shader> vertexShader = rsys.createShader(
-      Shader::ST_Vertex,
-      env.getFile("sequoia-engine/Render/GL/TestGLProgram/VertexUniformArrayOfStruct.vert"));
+  std::shared_ptr<Shader> vertexShader = makeShader(
+      Shader::ST_Vertex, "sequoia-engine/Render/GL/TestGLProgram/VertexUniformArrayOfStruct.vert");
 
   std::shared_ptr<Program> program = rsys.createProgram({vertexShader});
   GLProgram* glprogram = core::dyn_cast<GLProgram>(program.get());
@@ -196,12 +191,10 @@ TEST_F(GLProgramTest, UniformArrayOfStruct) {
 }
 
 TEST_F(GLProgramTest, UniformMatrices) {
-  TestEnvironment& env = TestEnvironment::getSingleton();
   RenderSystem& rsys = RenderSystem::getSingleton();
 
-  std::shared_ptr<Shader> vertexShader = rsys.createShader(
-      Shader::ST_Vertex,
-      env.getFile("sequoia-engine/Render/GL/TestGLProgram/VertexUniformMatrices.vert"));
+  std::shared_ptr<Shader> vertexShader = makeShader(
+      Shader::ST_Vertex, "sequoia-engine/Render/GL/TestGLProgram/VertexUniformMatrices.vert");
 
   std::shared_ptr<Program> program = rsys.createProgram({vertexShader});
   GLProgram* glprogram = core::dyn_cast<GLProgram>(program.get());
@@ -221,12 +214,10 @@ TEST_F(GLProgramTest, UniformMatrices) {
 }
 
 TEST_F(GLProgramTest, VertexAttributesAll) {
-  TestEnvironment& env = TestEnvironment::getSingleton();
   RenderSystem& rsys = RenderSystem::getSingleton();
 
-  std::shared_ptr<Shader> vertexShader = rsys.createShader(
-      Shader::ST_Vertex,
-      env.getFile("sequoia-engine/Render/GL/TestGLProgram/VertexAttributesAll.vert"));
+  std::shared_ptr<Shader> vertexShader = makeShader(
+      Shader::ST_Vertex, "sequoia-engine/Render/GL/TestGLProgram/VertexAttributesAll.vert");
 
   std::shared_ptr<Program> program = rsys.createProgram({vertexShader});
   GLProgram* glprogram = core::dyn_cast<GLProgram>(program.get());
@@ -240,24 +231,20 @@ TEST_F(GLProgramTest, VertexAttributesAll) {
 
 TEST_F(GLProgramTest, VertexAttributesFail) {
 #if SEQUOIA_ENABLE_ASSERTS
-  TestEnvironment& env = TestEnvironment::getSingleton();
   RenderSystem& rsys = RenderSystem::getSingleton();
 
-  std::shared_ptr<Shader> vertexShader = rsys.createShader(
-      Shader::ST_Vertex,
-      env.getFile("sequoia-engine/Render/GL/TestGLProgram/VertexAttributesFail.vert"));
+  std::shared_ptr<Shader> vertexShader = makeShader(
+      Shader::ST_Vertex, "sequoia-engine/Render/GL/TestGLProgram/VertexAttributesFail.vert");
 
   EXPECT_THROW((rsys.createProgram({vertexShader})), RenderSystemException);
 #endif
 }
 
 TEST_F(GLProgramTest, TextureSamplers) {
-  TestEnvironment& env = TestEnvironment::getSingleton();
   RenderSystem& rsys = RenderSystem::getSingleton();
 
-  std::shared_ptr<Shader> fragmentShader =
-      rsys.createShader(Shader::ST_Fragment,
-                        env.getFile("sequoia-engine/Render/GL/TestGLProgram/TextureSamplers.frag"));
+  std::shared_ptr<Shader> fragmentShader = makeShader(
+      Shader::ST_Fragment, "sequoia-engine/Render/GL/TestGLProgram/TextureSamplers.frag");
 
   std::shared_ptr<Program> program = rsys.createProgram({fragmentShader});
   GLProgram* glprogram = core::dyn_cast<GLProgram>(program.get());

@@ -20,7 +20,7 @@ namespace sequoia {
 
 namespace render {
 
-NullVertexBuffer::NullVertexBuffer(const VertexLayout& layout, int numBuffers)
+NullVertexBuffer::NullVertexBuffer(const VertexLayout& layout)
     : VertexBuffer(BK_NullVertexBuffer, layout) {
   buffer_ = std::make_unique<HostBuffer>();
 }
@@ -50,7 +50,7 @@ void NullVertexBuffer::allocateImpl(std::size_t numBytes, Buffer::UsageHint usag
 std::pair<std::string, std::string> NullVertexBuffer::toStringImpl() const {
   return std::make_pair("NullVertexBuffer",
                         core::format("{}"
-                                     "{}\n",
+                                     "buffer = {}\n",
                                      Base::toStringImpl().second, buffer_->toString()));
 }
 

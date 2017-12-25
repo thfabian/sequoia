@@ -38,14 +38,8 @@ public:
   /// @copydoc Buffer::isSystemRAM
   bool isSystemRAM() const override { return false; }
 
-  /// @brief Bind the buffer for drawing
-  void bindForDrawing();
-
-  /// @brief Bind the buffer for modify
-  void bindForModify();
-
-  /// @brief Update the buffer to the next timestep
-  void nextTimestep();
+  /// @brief Bind the buffer
+  void bind();
 
   /// @brief Get the `GLenum` of the index type
   GLenum getGLIndexType() const;

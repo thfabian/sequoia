@@ -60,6 +60,7 @@ sequoia_get_platform_info()
 sequoia_get_architecture_info()
 
 include(SequoiaExamplesOptions)
+include(SequoiaExamplesDefinitions)
 
 # Prevent in source builds
 sequoia_check_in_source_build()

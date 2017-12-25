@@ -13,25 +13,22 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia-engine/Unittest/GL/GLRenderSetup.h"
-#include "sequoia-engine/Core/Logging.h"
-#include "sequoia-engine/Render/GL/GLRenderWindow.h"
 #include "sequoia-engine/Render/RenderSystem.h"
 #include "sequoia-engine/Render/RenderWindow.h"
-#include "sequoia-engine/Render/Viewport.h"
+#include "sequoia-engine/Unittest/RenderSetup.h"
 
 namespace sequoia {
 
 namespace unittest {
 
-void GLRenderSetup::SetUp() {
+void RenderSetup::SetUp() {
   render::RenderWindow::WindowHint hints;
   hints.HideWindow = true;
   hints.WindowMode = render::RenderWindow::WindowHint::WK_Window;
   render::RenderSystem::getSingleton().createMainWindow(hints);
 }
 
-void GLRenderSetup::TearDown() { render::RenderSystem::getSingleton().destroyMainWindow(); }
+void RenderSetup::TearDown() { render::RenderSystem::getSingleton().destroyMainWindow(); }
 
 } // namespace unittest
 

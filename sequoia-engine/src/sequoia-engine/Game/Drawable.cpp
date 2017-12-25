@@ -13,11 +13,10 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia-engine/Game/Drawable.h"
 #include "sequoia-engine/Core/Assert.h"
 #include "sequoia-engine/Core/Format.h"
+#include "sequoia-engine/Game/Drawable.h"
 #include "sequoia-engine/Game/Game.h"
-#include "sequoia-engine/Game/Mesh.h"
 #include "sequoia-engine/Game/SceneNode.h"
 #include "sequoia-engine/Game/SceneNodeAlloc.h"
 #include "sequoia-engine/Render/DrawCommand.h"
@@ -28,68 +27,41 @@ namespace game {
 
 Drawable::~Drawable() {}
 
-Drawable::Drawable(SceneNode* node, const std::shared_ptr<Mesh>& mesh, render::Program* program)
-    : Base(node), active_(true), drawCommand_() {
-  setMesh(mesh);
-  setProgram(program ? program : Game::getSingleton().getDefaultProgram().get());
-}
+Drawable::Drawable(SceneNode* node, const std::shared_ptr<Shape>& shape)
+    : Base(node), active_(true), shape_(shape) {}
 
-Drawable::Drawable(SceneNode* node, const std::shared_ptr<Mesh>& mesh,
-                   const std::shared_ptr<render::Program>& program)
-    : Drawable(node, mesh, program.get()) {}
-
-void Drawable::setMesh(const std::shared_ptr<Mesh>& mesh) {
-  mesh_ = mesh;
-  drawCommand_.get().setVertexData(mesh_->getVertexData());
-}
-
-void Drawable::setTexture(int textureUnit, render::Texture* texture) noexcept {
-  drawCommand_.get().setTexture(textureUnit, texture);
-}
-
-render::RenderState& Drawable::getRenderState() { return drawCommand_.get().getRenderState(); }
-const render::RenderState& Drawable::getRenderState() const {
-  return drawCommand_.get().getRenderState();
-}
-
-void Drawable::setProgram(render::Program* program) noexcept {
-  drawCommand_.get().setProgram(program);
-}
-
-render::DrawCommand* Drawable::prepareDrawCommand() {
+void Drawable::prepareDrawCommands(std::vector<render::DrawCommand>& drawCommands) {
   SEQUOIA_ASSERT(active_);
-  SEQUOIA_ASSERT_MSG(drawCommand_.get().getProgram(), "no Program set");
 
-  // Set the new model matrix
-  drawCommand_.get().setModelMatrix(getNode()->getModelMatrix());
+  math::mat4 modelMatrix = getNode()->getModelMatrix();
+  shape_->forEach([this, &drawCommands, &modelMatrix](const std::shared_ptr<Mesh>& mesh,
+                                                      const std::shared_ptr<Material>& material) {
+    render::DrawCommand cmd(mesh->getVertexData(), modelMatrix);
 
-  // Advance the vertex buffers to the next time-step
+    // Textures
+    for(const auto& textureUnitTexturePair : material->getTextures())
+      cmd.setTexture(textureUnitTexturePair.first, textureUnitTexturePair.second.get());
 
-  // Progress to the next time-step with the Drawcommand. Note that this copies the current
-  // draw command (i.e cmd) into the new one so that subsequent calls will not corrupt the
-  // render-state.
-  render::DrawCommand* cmd = &drawCommand_.get();
-  drawCommand_.nextTimestep();
-  drawCommand_.get().getVertexData()->nextTimestep();
-  return cmd;
+    // Uniforms
+    for(const auto& nameVariablePair : material->getUniforms())
+      cmd.setUniformVariable(nameVariablePair.first, nameVariablePair.second);
+
+    drawCommands.emplace_back(std::move(cmd));
+  });
 }
 
 void Drawable::update(const SceneNodeUpdateEvent& event) {}
 
 std::string Drawable::toString() const {
   return core::format("Drawable[\n"
-                      "  drawCommand = {},\n"
-                      "  mesh = {},\n"
+                      "  active = {},\n"
+                      "  shape = {},\n"
                       "]",
-                      drawCommand_.get().toString(), mesh_ ? mesh_->toString() : "null");
+                      active_, shape_->toString());
 }
 
 std::shared_ptr<SceneNodeCapability> Drawable::clone(SceneNode* node) const {
-  return scene::allocate_shared<Drawable>(node, mesh_, drawCommand_.get().getProgram());
-}
-
-void Drawable::setUniformVariableImpl(const std::string& name, UniformVariable variable) {
-  drawCommand_.get().setUniformVariable(name, variable);
+  return scene::allocate_shared<Drawable>(node, shape_);
 }
 
 } // namespace game

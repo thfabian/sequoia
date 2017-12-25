@@ -24,24 +24,28 @@ namespace render {
 
 class Camera;
 class DrawCommand;
-class DrawCommandList;
+class DrawScene;
 class FrameBuffer;
-class GlobalRenderState;
 class Program;
+class Renderer;
+class RenderBuffer;
+class RenderPass;
 class RenderStateCache;
 class RenderSystem;
 class RenderTarget;
+class RenderTechnique;
 class RenderWindow;
 class Shader;
 class Texture;
+class UniformVariable;
 class VertexArrayObject;
 class VertexData;
 class VertexVistor;
 class ViewFrustum;
 class Viewport;
-class RenderCommand;
-class UniformVariable;
-struct RenderState;
+struct DrawCallContext;
+struct RenderCommand;
+struct RenderPipeline;
 struct TextureParameter;
 struct VertexLayout;
 

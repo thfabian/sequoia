@@ -15,7 +15,7 @@
 
 #include "sequoia-engine/Core/StringUtil.h"
 #include "sequoia-engine/Render/GL/GLBuffer.h"
-#include "sequoia-engine/Unittest/GL/GLRenderSetup.h"
+#include "sequoia-engine/Unittest/RenderSetup.h"
 #include <algorithm>
 #include <gtest/gtest.h>
 #include <iostream>
@@ -29,7 +29,7 @@ using namespace sequoia::render;
 
 namespace {
 
-SEQUOIA_TESTCASEFIXTURE(GLBufferTest, GLRenderSetup);
+SEQUOIA_TESTCASEFIXTURE(GLBufferTest, RenderSetup);
 
 /// @brief Generate a random vector of type `T`
 template <class T>
@@ -63,7 +63,7 @@ TEST_F(GLBufferTest, ReadAndWrite) {
   auto vec = makeRandomVector<int>(8);
   auto vecRef = decltype(vec)(vec.size(), 0);
 
-  GLBuffer buffer(GL_ARRAY_BUFFER, 1);
+  GLBuffer buffer(GL_ARRAY_BUFFER);
   buffer.allocate(getNumBytes(vec), Buffer::UH_Dynamic);
   buffer.write(vec.data(), 0, getNumBytes(vec));
   buffer.read(0, getNumBytes(vecRef), vecRef.data());
@@ -75,7 +75,7 @@ TEST_F(GLBufferTest, ReadAndWriteOffset) {
   auto vec = makeRandomVector<int>(8);
   auto vecRef = decltype(vec)(vec.size(), 0);
 
-  GLBuffer buffer(GL_ARRAY_BUFFER, 1);
+  GLBuffer buffer(GL_ARRAY_BUFFER);
   buffer.allocate(getNumBytes(vec), Buffer::UH_Dynamic);
 
   std::size_t offset = 4 * sizeof(int);
@@ -89,40 +89,12 @@ TEST_F(GLBufferTest, ReadAndWriteOffset) {
 }
 
 TEST_F(GLBufferTest, LockAndUnlock) {
-  GLBuffer buffer(GL_ARRAY_BUFFER, 1);
+  GLBuffer buffer(GL_ARRAY_BUFFER);
   buffer.allocate(64, Buffer::UH_StaticWriteOnly);
 
   void* src = buffer.lock(Buffer::LO_WriteOnly);
   EXPECT_NE(src, nullptr);
   buffer.unlock();
-}
-
-TEST_F(GLBufferTest, NextTimestep) {
-  GLBuffer buffer(GL_ARRAY_BUFFER, 1);
-  EXPECT_EQ(buffer.getModifyBufferIndex(), 0);
-  EXPECT_EQ(buffer.getDrawBufferIndex(), 0);
-
-  buffer.nextTimestep();
-  EXPECT_EQ(buffer.getModifyBufferIndex(), 0);
-  EXPECT_EQ(buffer.getDrawBufferIndex(), 0);
-}
-
-TEST_F(GLBufferTest, NextTimestepMultiBuffered) {
-  GLBuffer buffer(GL_ARRAY_BUFFER, 3);
-  EXPECT_EQ(buffer.getModifyBufferIndex(), 0);
-  EXPECT_EQ(buffer.getDrawBufferIndex(), 2);
-
-  buffer.nextTimestep();
-  EXPECT_EQ(buffer.getModifyBufferIndex(), 1);
-  EXPECT_EQ(buffer.getDrawBufferIndex(), 0);
-
-  buffer.nextTimestep();
-  EXPECT_EQ(buffer.getModifyBufferIndex(), 2);
-  EXPECT_EQ(buffer.getDrawBufferIndex(), 1);
-
-  buffer.nextTimestep();
-  EXPECT_EQ(buffer.getModifyBufferIndex(), 0);
-  EXPECT_EQ(buffer.getDrawBufferIndex(), 2);
 }
 
 #undef ASSERT_VECTOR_EQ

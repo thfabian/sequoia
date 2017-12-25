@@ -97,8 +97,7 @@ public:
   /// @brief Initialize the manager with an archive
   ///
   /// @param path     Full path to the archive
-  /// @param archive  Name of the archive file or directory (can be empty)
-  AssetManager(const platform::String& path, const platform::String& archive);
+  AssetManager(const platform::String& path);
 
   /// @brief Load asset from disk
   /// @remark Thread-safe

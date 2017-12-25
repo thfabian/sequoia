@@ -20,7 +20,7 @@ sequoia_engine_add_unittest(
           TestCameraControllerFree.cpp
           TestDrawable.cpp
           TestKeymap.cpp
-          TestMeshManager.cpp
+          TestShapeManager.cpp
           TestMain.cpp
           TestSceneGraph.cpp
           TestSceneNode.cpp

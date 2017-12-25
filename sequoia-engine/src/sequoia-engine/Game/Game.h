@@ -26,6 +26,7 @@
 #include "sequoia-engine/Render/Input.h"
 #include "sequoia-engine/Render/RenderFwd.h"
 #include "sequoia-engine/Render/Shader.h"
+#include "sequoia-engine/Render/Texture.h"
 #include <initializer_list>
 #include <memory>
 #include <set>
@@ -48,7 +49,7 @@ class SEQUOIA_API Game final : public Singleton<Game>,
 
   /// Managers
   std::unique_ptr<AssetManager> assetManager_;
-  std::unique_ptr<MeshManager> meshManager_;
+  std::unique_ptr<ShapeManager> shapeManager_;
 
   /// Reference to the main window
   render::RenderWindow* mainWindow_;
@@ -96,7 +97,7 @@ public:
   AssetManager* getAssetManager() const;
 
   /// @brief Get the mesh manager
-  MeshManager* getMeshManager() const;
+  ShapeManager* getShapeManager() const;
 
   /// @brief Get the main RenderWindow
   render::RenderWindow* getMainWindow() const;
@@ -104,36 +105,27 @@ public:
   /// @brief Get the main RenderTarget
   render::RenderTarget* getMainRenderTarget() const;
 
+  /// @name RenderSystem operations
+  /// @{
+
   /// @brief Get the RenderSystem
   render::RenderSystem* getRenderSystem() const { return renderSystem_.get(); }
 
-  /// @brief Create a texture from the `image` using default parameters
-  render::Texture* createTexture(const std::shared_ptr<Image>& image);
+  /// @copydoc RenderSystem::createTexture
+  std::shared_ptr<render::Texture>
+  createTexture(const std::shared_ptr<Image>& image,
+                const render::TextureParameter& param = render::TextureParameter());
 
-  /// @brief Create a texture from the `image` and `param`
-  render::Texture* createTexture(const std::shared_ptr<Image>& image,
-                                 const render::TextureParameter& param);
-
-  /// @brief Compile the given shader
+  /// @copydoc RenderSystem::createShader
   std::shared_ptr<render::Shader> createShader(render::Shader::ShaderType type,
-                                               const std::shared_ptr<File>& source);
+                                               const std::string& filename,
+                                               const std::string& source);
 
-  /// @brief Create a GPU program by compiling the given shaders sources
-  std::shared_ptr<render::Program> createProgram(
-      std::initializer_list<std::pair<render::Shader::ShaderType, std::shared_ptr<File>>> shaders);
-
-  /// @brief Create a GPU program of the given shaders
+  /// @copydoc RenderSystem::createProgram
   std::shared_ptr<render::Program>
   createProgram(const std::set<std::shared_ptr<render::Shader>>& shaders);
 
-  /// @brief Get the default vertex shader
-  const std::shared_ptr<render::Shader>& getDefaultVertexShader() const;
-
-  /// @brief Get the default fragment shader
-  const std::shared_ptr<render::Shader>& getDefaultFragmentShader() const;
-
-  /// @brief Get the default program
-  const std::shared_ptr<render::Program>& getDefaultProgram() const;
+  /// @}
 
   /// @name Scene operations
   /// @{
@@ -142,8 +134,7 @@ public:
   Scene* getActiveScene() const;
 
   /// @brief Append a new scene `name`
-  void setScene(const std::string& name, const std::shared_ptr<Scene>& scene,
-                bool makeActive = true);
+  void setScene(const std::shared_ptr<Scene>& scene, bool makeActive = true);
 
   /// @brief Get the scene `name`
   Scene* getScene(const std::string& name) const;

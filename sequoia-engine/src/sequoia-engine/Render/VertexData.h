@@ -73,40 +73,11 @@ public:
     return getIndexBuffer() ? getIndexBuffer()->getNumIndices() : 0;
   }
 
-//  /// @brief Write `numVertices`, stored at `vertices`, to the vertex buffer
-//  template <class T>
-//  void writeVertex(const void* vertices, std::size_t numVertices) {
-//    SEQUOIA_ASSERT_MSG((getLayout().SizeOf * numVertices) <= getIndexBuffer()->getNumBytes(),
-//                       "writing past the end");
-//    getIndexBuffer()->write(static_cast<const void*>(vertices), 0, getIndexBuffer()->getNumBytes(),
-//                            true);
-//  }
-
-//  /// @brief Write `numIndices` of type `T` to the index buffer
-//  template <class T>
-//  void writeIndex(const T* indices, std::size_t numIndices) {
-//    SEQUOIA_ASSERT_MSG((sizeof(T) * numIndices) <= getIndexBuffer()->getNumBytes(),
-//                       "writing past the end");
-//    getIndexBuffer()->write(static_cast<const void*>(indices), 0, getIndexBuffer()->getNumBytes(),
-//                            true);
-//  }
-
-//  /// @brief Read `numIndices` of type `T` to the index buffer
-//  template <class T>
-//  void readIndex(T* indices, std::size_t numIndices) {
-//    SEQUOIA_ASSERT_MSG((sizeof(T) * numIndices) <= getIndexBuffer()->getNumBytes(),
-//                       "reading past the end");
-//    getIndexBuffer()->read(0, getIndexBuffer()->getNumBytes(), static_cast<void*>(indices));
-//  }
-
   /// @brief Get the VertexBuffer
   virtual VertexBuffer* getVertexBuffer() const = 0;
 
   /// @brief Get the IndexBuffer
   virtual IndexBuffer* getIndexBuffer() const = 0;
-
-  /// @brief Update the buffer to the next timestep
-  virtual void nextTimestep() = 0;
 
   /// @brief Dump the vertex data and indices to `stdout`
   void dump() const;
@@ -144,9 +115,6 @@ struct VertexDataParameter {
 
   /// Usage hint of the vertex-buffer
   Buffer::UsageHint VertexBufferUsageHint;
-
-  /// Number of redundant vertex-buffers to allocate
-  int NumVertexBuffers = 1;
 
   /// Use a shadow buffer for the vertices?
   bool UseVertexShadowBuffer = true;

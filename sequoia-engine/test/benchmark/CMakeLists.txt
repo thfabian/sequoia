@@ -28,3 +28,5 @@ endmacro()
 sequoia_engine_add_benchmark(BenchmarkUniformVariable.cpp)
 sequoia_engine_add_benchmark(BenchmarkSceneNode.cpp)
 sequoia_engine_add_benchmark(BenchmarkVertexAdapter.cpp)
+sequoia_engine_add_benchmark(BenchmarkGLRenderer.cpp)
+

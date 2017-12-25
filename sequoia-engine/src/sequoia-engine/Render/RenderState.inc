@@ -19,15 +19,14 @@
 #error "RENDER_STATE not defined"
 #endif
 
-// RENDER_STATE(Type, Name, BitfieldWidth, DefaultValue)
+// RENDER_STATE(Type, Name, DefaultValue)
 //
 //  - Type            = Type of the state
 //  - Name            = Name of the state
-//  - BitfieldWidth   = Width of the bitfield (may be empty)
 //  - DefaultValue    = Value used to initialize the state
 //
  
-RENDER_STATE(bool, DepthTest, : 1, true)
-RENDER_STATE(RenderState::DepthFuncKind, DepthFunc, , RenderState::DF_Less)
+RENDER_STATE(bool, DepthTest, true)
+RENDER_STATE(RenderPipeline::DepthFuncKind, DepthFunc, RenderPipeline::DF_Less)
 
 // clang-format on

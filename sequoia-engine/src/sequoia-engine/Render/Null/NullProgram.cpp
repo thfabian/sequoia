@@ -13,9 +13,9 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia-engine/Render/Null/NullProgram.h"
 #include "sequoia-engine/Core/Format.h"
 #include "sequoia-engine/Core/StringUtil.h"
+#include "sequoia-engine/Render/Null/NullProgram.h"
 #include "sequoia-engine/Render/Shader.h"
 
 namespace sequoia {
@@ -34,9 +34,11 @@ std::string NullProgram::toString() const {
       "NullProgram[\n"
       "  shaders = {}\n"
       "]",
-      core::indent(core::toStringRange(shaders_, [](const std::shared_ptr<Shader>& shader) {
-        return core::indent(shader->toString());
-      })));
+      core::indent(shaders_.empty()
+                       ? "null"
+                       : core::toStringRange(shaders_, [](const std::shared_ptr<Shader>& shader) {
+                           return core::indent(shader->toString());
+                         })));
 }
 
 void NullProgram::makeValidImpl() {}

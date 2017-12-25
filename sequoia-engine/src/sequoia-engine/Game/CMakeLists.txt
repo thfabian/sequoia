@@ -31,10 +31,10 @@ sequoia_add_library(
           GameFwd.h
           Keymap.cpp
           Keymap.h
+          Material.cpp
+          Material.h
           Mesh.cpp
           Mesh.h
-          MeshManager.cpp
-          MeshManager.h
           PointLight.cpp
           PointLight.h
           Scene.cpp
@@ -45,5 +45,9 @@ sequoia_add_library(
           SceneNode.h
           SceneNodeAlloc.h          
           SceneNodeCapability.h
+          Shape.cpp
+          Shape.h
+          ShapeManager.cpp
+          ShapeManager.h
   OBJECT
 )

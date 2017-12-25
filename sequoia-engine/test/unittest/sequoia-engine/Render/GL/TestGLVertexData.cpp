@@ -19,7 +19,7 @@
 #include "sequoia-engine/Render/GL/GLVertexAttribute.h"
 #include "sequoia-engine/Render/GL/GLVertexData.h"
 #include "sequoia-engine/Render/VertexAdapter.h"
-#include "sequoia-engine/Unittest/GL/GLRenderSetup.h"
+#include "sequoia-engine/Unittest/RenderSetup.h"
 #include "sequoia-engine/Unittest/TestEnvironment.h"
 #include <boost/preprocessor/seq/enum.hpp>
 #include <gtest/gtest.h>
@@ -30,7 +30,7 @@ using namespace sequoia::render;
 
 namespace {
 
-SEQUOIA_TESTCASEFIXTURE_TEMPLATE(GLVertexDataTest, GLRenderSetup);
+SEQUOIA_TESTCASEFIXTURE_TEMPLATE(GLVertexDataTest, RenderSetup);
 
 using VertexTypes = testing::Types<BOOST_PP_SEQ_ENUM(SEQUOIA_VERTICES)>;
 TYPED_TEST_CASE(GLVertexDataTest, VertexTypes);
@@ -64,7 +64,7 @@ TYPED_TEST(GLVertexDataTest, VertexAttributes) {
   std::shared_ptr<GLVertexData> gldata = makeVertexData<TypeParam>(8, 8);
   const VertexLayout& layout = gldata->getVertexBuffer()->getLayout();
 
-  gldata->bindForModify();
+  gldata->bind();
 
   // Check Position attribute
   {
@@ -207,6 +207,8 @@ TYPED_TEST(GLVertexDataTest, VertexAttributes) {
       EXPECT_EQ((std::size_t)pointer, layout.Color.Offset);
     }
   }
+  
+  gldata->unbind();
 }
 
 /// @brief Write to all vertex attributes the index of the vertex

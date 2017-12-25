@@ -13,21 +13,30 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia-engine/Render/DrawCommandList.h"
+#include "sequoia-engine/Core/Assert.h"
+#include "sequoia-engine/Core/Format.h"
 #include "sequoia-engine/Core/StringUtil.h"
-#include <sstream>
+#include "sequoia-engine/Render/GL/GLPixelFormat.h"
 
 namespace sequoia {
 
 namespace render {
 
-std::string DrawCommandListDefault::toString() const noexcept {
-  std::stringstream ss;
-  ss << "DrawCommandListDefault[\n";
-  for(const auto& cmd : commands_)
-    ss << core::indent(cmd->toString()) << "\n";
-  ss << "]";
-  return ss.str();
+int GLPixelFormat::get(GLenum param) const noexcept {
+  auto it = format_.find(param);
+  SEQUOIA_ASSERT(format_.end() != it);
+  return it->second;
+}
+
+void GLPixelFormat::set(GLenum param, int value) noexcept { format_[param] = value; }
+
+std::string GLPixelFormat::toString() const {
+  return core::format("GLPixelFormat[\n"
+                      "  format = {}\n"
+                      "]",
+                      core::indent(core::toStringRange(format_, [](auto pair) {
+                        return core::format("{} = {}", pair.first, pair.second);
+                      })));
 }
 
 } // namespace render

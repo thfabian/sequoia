@@ -16,20 +16,18 @@
 #include "sequoia-engine/Core/AlignedADT.h"
 #include "sequoia-engine/Core/Assert.h"
 #include "sequoia-engine/Core/Logging.h"
+#include "sequoia-engine/Core/STLExtras.h"
 #include "sequoia-engine/Game/Exception.h"
 #include "sequoia-engine/Game/Game.h"
-#include "sequoia-engine/Game/MeshManager.h"
+#include "sequoia-engine/Game/ShapeManager.h"
 #include "sequoia-engine/Render/RenderSystem.h"
 #include "sequoia-engine/Render/VertexAdapter.h"
-#include "sequoia-engine/Core/STLExtras.h"
 #include <algorithm>
 #include <assimp/DefaultLogger.hpp>
 #include <assimp/Importer.hpp>
 #include <assimp/LogStream.hpp>
 #include <assimp/postprocess.h>
 #include <assimp/scene.h>
-
-#include <iostream>
 
 namespace sequoia {
 
@@ -73,7 +71,7 @@ public:
 ///   - Implement Vritual FS to allow loading files from memory
 /// 
 
-MeshManager::MeshManager() {
+ShapeManager::ShapeManager() {
   // Create Assimp logger
   Assimp::DefaultLogger::create("", core::Logger::getSingleton().getLevel() <= core::Logger::Debug
                                         ? Assimp::Logger::VERBOSE
@@ -91,11 +89,12 @@ MeshManager::MeshManager() {
   importer_ = std::make_shared<Assimp::Importer>();
 }
 
-MeshManager::~MeshManager() {
+ShapeManager::~ShapeManager() {
   importer_.reset();
   Assimp::DefaultLogger::kill();
 }
 
+/*
 std::shared_ptr<Mesh> MeshManager::load(const std::string& name, const std::shared_ptr<File>& file,
                                         bool modifiable, const MeshParameter& param,
                                         render::Buffer::UsageHint usage) {
@@ -410,6 +409,7 @@ std::shared_ptr<Mesh> MeshManager::load(const std::string& name, const std::shar
   Log::debug("Successfully loaded obj mesh \"{}\" from \"{}\"", name, file->getPath());
   return std::make_shared<Mesh>(name, vertexData, modifiable);
 }
+*/
 
 //===------------------------------------------------------------------------------------------===//
 //    Cube
@@ -474,13 +474,13 @@ static CubeIndicesElementType CubeIndices[] = {0,  1,  2,  2,  3,  0,   // front
 
 } // anonymous namespace
 
-std::shared_ptr<Mesh> MeshManager::createCube(const std::string& name, bool modifiable,
-                                              const MeshParameter& param,
-                                              render::Buffer::UsageHint usage) {
-  Log::debug("Creating cube mesh \"{}\" ...", name);
+std::shared_ptr<Shape> ShapeManager::createCube(const std::string& name, bool modifiable,
+                                                const MeshParameter& param,
+                                                render::Buffer::UsageHint usage) {
+  Log::debug("Creating cube shape \"{}\" ...", name);
 
   std::shared_ptr<render::VertexData> vertexData = nullptr;
-  VertexDataAccessRecord* record = nullptr;
+  ShapeAccessRecord* record = nullptr;
 
   internal::CubeInfo info{param};
 
@@ -490,7 +490,7 @@ std::shared_ptr<Mesh> MeshManager::createCube(const std::string& name, bool modi
   if(it != cubeMeshLookupMap_.end())
     record = it->second.get();
   else
-    record = cubeMeshLookupMap_.emplace(std::move(info), std::make_unique<VertexDataAccessRecord>())
+    record = cubeMeshLookupMap_.emplace(std::move(info), std::make_unique<ShapeAccessRecord>())
                  .first->second.get();
 
   record->Mutex.lock();
@@ -498,9 +498,9 @@ std::shared_ptr<Mesh> MeshManager::createCube(const std::string& name, bool modi
   cubeMutex_.unlock();
 
   if(record->Index != -1) {
-    vertexDataMutex_.lock_read();
-    vertexData = vertexData_[record->Index];
-    vertexDataMutex_.unlock();
+    shapeDataMutex_.lock_read();
+    vertexData = shapeData_[record->Index]->Data;
+    shapeDataMutex_.unlock();
   } else {
     std::size_t numVertices = 24;
     std::size_t numIndices = 36;
@@ -508,25 +508,25 @@ std::shared_ptr<Mesh> MeshManager::createCube(const std::string& name, bool modi
     render::VertexLayout layout = render::Vertex_posf3_norf3_texf2_colu4::getLayout();
     render::VertexDataParameter vertexParam(render::VertexData::DM_Triangles, layout, numVertices,
                                             numIndices, usage);
-    
+
     vertexParam.IndexType = render::IndexBuffer::IT_UInt32;
     vertexParam.UseVertexShadowBuffer = true;
     vertexParam.UseIndexShadowBuffer = false;
 
     vertexData = Game::getSingleton().getRenderSystem()->createVertexData(vertexParam);
-    
+
     // Fill VertexBuffer
     {
       render::BufferGuard guard(vertexData->getVertexBuffer(), render::Buffer::LO_Discard);
       Byte* vertexPtr = guard.getAsByte();
-      
+
       render::VertexAdapter adapter(layout);
       for(std::size_t i = 0; i < numVertices; ++i, vertexPtr += layout.SizeOf) {
         adapter.clear();
-    
+
         // Position
         adapter.setPosition(math::make_vec3(CubeVertexData + i * CubeVertexDataStride));
-        
+
         // Nornal
         adapter.setNormal(math::make_vec3(CubeVertexData + i * CubeVertexDataStride + 3));
 
@@ -535,182 +535,187 @@ std::shared_ptr<Mesh> MeshManager::createCube(const std::string& name, bool modi
         for(int j = 0; j < 3; ++j)
           color[j] = Color::Uint8Max * CubeVertexData[i * CubeVertexDataStride + 6 + j];
         adapter.setColor(color);
-                     
+
         // TexCoord
         math::vec2 texCoord;
         texCoord[0] = CubeVertexData[i * CubeVertexDataStride + 9];
         texCoord[1] = param.TexCoordInvertV ? 1.0f - CubeVertexData[i * CubeVertexDataStride + 10]
                                             : CubeVertexData[i * CubeVertexDataStride + 10];
         adapter.setTexCoord(texCoord);
-    
+
         adapter.copyTo(vertexPtr);
       }
     }
-    
+
     // Fill IndexBuffer
-    vertexData->getIndexBuffer()->write(CubeIndices, 0, sizeof(CubeIndicesElementType) * numIndices);
-    
+    vertexData->getIndexBuffer()->write(CubeIndices, 0,
+                                        sizeof(CubeIndicesElementType) * numIndices);
+
     // Set bounding box
     vertexData->setAxisAlignedBox(
         math::AxisAlignedBox(math::vec3(-0.5, -0.5, -0.5), math::vec3(0.5, 0.5, 0.5)));
 
     // Register the data
-    vertexDataMutex_.lock();
-    vertexData_.emplace_back(vertexData);
-    record->Index = vertexData_.size() - 1;
-    vertexDataMutex_.unlock();
+    shapeDataMutex_.lock();
+    auto shapeData = std::make_unique<ShapeData>();
+    shapeData_.emplace_back(std::move(shapeData));
+    record->Index = shapeData_.size() - 1;
+    shapeDataMutex_.unlock();
   }
 
   record->Mutex.unlock();
 
   // TODO: Copy for modifieable
 
-  Log::debug("Successfully created cube mesh \"{}\"", name);
-  return std::make_shared<Mesh>(name, vertexData, modifiable);
+  Log::debug("Successfully created cube shape \"{}\"", name);
+
+  std::vector<std::shared_ptr<Mesh>> meshes = {std::make_shared<Mesh>(vertexData, modifiable)};
+  std::vector<std::shared_ptr<Material>> materials = {std::make_shared<Material>()};
+  return std::make_shared<Shape>(name, std::move(meshes), std::move(materials));
 }
+
+std::size_t ShapeManager::getNumShapes() const { return shapeData_.size(); }
 
 //===------------------------------------------------------------------------------------------===//
 //    Grid
 //===------------------------------------------------------------------------------------------===//
 
-std::shared_ptr<Mesh> MeshManager::createGrid(const std::string& name, unsigned int N,
-                                              bool modifiable, const MeshParameter& param,
-                                              render::Buffer::UsageHint usage) {
-  return nullptr;
+//std::shared_ptr<Mesh> MeshManager::createGrid(const std::string& name, unsigned int N,
+//                                              bool modifiable, const MeshParameter& param,
+//                                              render::Buffer::UsageHint usage) {
+//  return nullptr;
 
-  Log::debug("Creating grid mesh \"{}\" ...", name);
+//  Log::debug("Creating grid mesh \"{}\" ...", name);
 
-  std::shared_ptr<render::VertexData> vertexData = nullptr;
-  VertexDataAccessRecord* record = nullptr;
+//  std::shared_ptr<render::VertexData> vertexData = nullptr;
+//  VertexDataAccessRecord* record = nullptr;
 
-  internal::GridInfo info{N, param};
+//  internal::GridInfo info{N, param};
 
-  gridMutex_.lock();
+//  gridMutex_.lock();
 
-  auto it = gridMeshLookupMap_.find(info);
-  if(it != gridMeshLookupMap_.end())
-    record = it->second.get();
-  else
-    record = gridMeshLookupMap_.emplace(std::move(info), std::make_unique<VertexDataAccessRecord>())
-                 .first->second.get();
+//  auto it = gridMeshLookupMap_.find(info);
+//  if(it != gridMeshLookupMap_.end())
+//    record = it->second.get();
+//  else
+//    record = gridMeshLookupMap_.emplace(std::move(info), std::make_unique<VertexDataAccessRecord>())
+//                 .first->second.get();
 
-  record->Mutex.lock();
+//  record->Mutex.lock();
 
-  gridMutex_.unlock();
+//  gridMutex_.unlock();
 
-  if(record->Index != -1) {
-    vertexDataMutex_.lock_read();
-    vertexData = vertexData_[record->Index];
-    vertexDataMutex_.unlock();
-  } else {
-    unsigned int numVertices = N * N;
-    unsigned int numIndices = 6 * (N - 1) * (N - 1);
+//  if(record->Index != -1) {
+//    vertexDataMutex_.lock_read();
+//    vertexData = vertexData_[record->Index];
+//    vertexDataMutex_.unlock();
+//  } else {
+//    unsigned int numVertices = N * N;
+//    unsigned int numIndices = 6 * (N - 1) * (N - 1);
 
-    render::VertexLayout layout = render::Vertex_posf3_norf3_texf2_colu4::getLayout();
-    render::VertexDataParameter vertexParam(render::VertexData::DM_Triangles, layout, numVertices,
-                                            numIndices, usage);
+//    render::VertexLayout layout = render::Vertex_posf3_norf3_texf2_colu4::getLayout();
+//    render::VertexDataParameter vertexParam(render::VertexData::DM_Triangles, layout, numVertices,
+//                                            numIndices, usage);
 
-    vertexParam.IndexType = render::IndexBuffer::IT_UInt32;
-    vertexParam.UseVertexShadowBuffer = true;
-    vertexParam.UseIndexShadowBuffer = false;
+//    vertexParam.IndexType = render::IndexBuffer::IT_UInt32;
+//    vertexParam.UseVertexShadowBuffer = true;
+//    vertexParam.UseIndexShadowBuffer = false;
 
-    vertexData = Game::getSingleton().getRenderSystem()->createVertexData(vertexParam);
+//    vertexData = Game::getSingleton().getRenderSystem()->createVertexData(vertexParam);
 
-    // Fill VertexBuffer
-    {
-      render::BufferGuard guard(vertexData->getVertexBuffer(), render::Buffer::LO_Discard);
-      Byte* vertexPtr = guard.getAsByte();
+//    // Fill VertexBuffer
+//    {
+//      render::BufferGuard guard(vertexData->getVertexBuffer(), render::Buffer::LO_Discard);
+//      Byte* vertexPtr = guard.getAsByte();
 
-      render::VertexAdapter adapter(layout);
-      const float dx = 1.0f / (N - 1);
+//      render::VertexAdapter adapter(layout);
+//      const float dx = 1.0f / (N - 1);
 
-      for(unsigned int i = 0; i < N; ++i) {
-        for(unsigned int j = 0; j < N; ++j, vertexPtr += layout.SizeOf) {
-          // Position
-          math::vec3 pos;
-          pos.x = dx * (i - 0.5f * (N - 1));
-          pos.y = 0.0f;
-          pos.z = dx * (j - 0.5f * (N - 1));
-          adapter.setPosition(pos);
+//      for(unsigned int i = 0; i < N; ++i) {
+//        for(unsigned int j = 0; j < N; ++j, vertexPtr += layout.SizeOf) {
+//          // Position
+//          math::vec3 pos;
+//          pos.x = dx * (i - 0.5f * (N - 1));
+//          pos.y = 0.0f;
+//          pos.z = dx * (j - 0.5f * (N - 1));
+//          adapter.setPosition(pos);
 
-          // Normal
-          adapter.setNormal(math::vec3(0, 1, 0));
+//          // Normal
+//          adapter.setNormal(math::vec3(0, 1, 0));
 
-          // Color
-          adapter.setColor(Color{});
+//          // Color
+//          adapter.setColor(Color{});
 
-          // TexCoord
-          float u = i;
-          float v = j;
+//          // TexCoord
+//          float u = i;
+//          float v = j;
 
-          math::vec2 texCoord;
-          texCoord.x = u;
-          texCoord.y = param.TexCoordInvertV ? 1.0f - v : v;
-          adapter.setTexCoord(texCoord);
+//          math::vec2 texCoord;
+//          texCoord.x = u;
+//          texCoord.y = param.TexCoordInvertV ? 1.0f - v : v;
+//          adapter.setTexCoord(texCoord);
 
-          adapter.copyTo(vertexPtr);
-        }
-      }
-    }
+//          adapter.copyTo(vertexPtr);
+//        }
+//      }
+//    }
 
-    // Fill IndexBuffer
-    //
-    //    0 ------ 3      1. Triangle { 1, 0, 3}
-    //    |        |      2. Triangle { 4, 1, 3}
-    //    |        |
-    //    1 ------ 4
-    //
-    //   index = [ 1, 0, 3, 4, 1, 3 ]
-    //
-    {
-      render::BufferGuard guard(vertexData->getIndexBuffer(), render::Buffer::LO_Discard);
-      unsigned int* indices = guard.getAs<unsigned int>();
+//    // Fill IndexBuffer
+//    //
+//    //    0 ------ 3      1. Triangle { 1, 0, 3}
+//    //    |        |      2. Triangle { 4, 1, 3}
+//    //    |        |
+//    //    1 ------ 4
+//    //
+//    //   index = [ 1, 0, 3, 4, 1, 3 ]
+//    //
+//    {
+//      render::BufferGuard guard(vertexData->getIndexBuffer(), render::Buffer::LO_Discard);
+//      unsigned int* indices = guard.getAs<unsigned int>();
 
-      for(unsigned int i = 0; i < N - 1; ++i) {
-        for(unsigned int j = 0; j < N - 1; ++j) {
-          unsigned int tri = 6 * (i * (N - 1) + j);
+//      for(unsigned int i = 0; i < N - 1; ++i) {
+//        for(unsigned int j = 0; j < N - 1; ++j) {
+//          unsigned int tri = 6 * (i * (N - 1) + j);
 
-          // We always store 2 triangles at once
-          indices[tri + 0] = i * N + j + 1;
-          indices[tri + 1] = i * N + j;
-          indices[tri + 2] = i * N + j + N;
+//          // We always store 2 triangles at once
+//          indices[tri + 0] = i * N + j + 1;
+//          indices[tri + 1] = i * N + j;
+//          indices[tri + 2] = i * N + j + N;
 
-          indices[tri + 3] = i * N + j + N + 1;
-          indices[tri + 4] = i * N + j + 1;
-          indices[tri + 5] = i * N + j + N;
-        }
-      }
-    }
+//          indices[tri + 3] = i * N + j + N + 1;
+//          indices[tri + 4] = i * N + j + 1;
+//          indices[tri + 5] = i * N + j + N;
+//        }
+//      }
+//    }
 
-    // Register the data
-    vertexDataMutex_.lock();
-    vertexData_.emplace_back(vertexData);
-    record->Index = vertexData_.size() - 1;
-    vertexDataMutex_.unlock();
-  }
+//    // Register the data
+//    vertexDataMutex_.lock();
+//    vertexData_.emplace_back(vertexData);
+//    record->Index = vertexData_.size() - 1;
+//    vertexDataMutex_.unlock();
+//  }
 
-  record->Mutex.unlock();
+//  record->Mutex.unlock();
 
-  // TODO: Copy for modifieable
+//  // TODO: Copy for modifieable
 
-  Log::debug("Successfully created grid mesh \"{}\"", name);
-  return std::make_shared<Mesh>(name, vertexData, modifiable);
-}
+//  Log::debug("Successfully created grid mesh \"{}\"", name);
+//  return std::make_shared<Mesh>(name, vertexData, modifiable);
+//}
 
-std::size_t MeshManager::getNumMeshes() const { return vertexData_.size(); }
+//void MeshManager::freeUnusedShapes() {
+//  SEQUOIA_LOCK_GUARD(vertexDataMutex_);
 
-void MeshManager::freeUnusedMeshes() {
-  SEQUOIA_LOCK_GUARD(vertexDataMutex_);
+//  auto it = std::remove_if(
+//      vertexData_.begin(), vertexData_.end(),
+//      [](const std::shared_ptr<render::VertexData>& meshPtr) { return meshPtr.use_count() == 1; });
 
-  auto it = std::remove_if(
-      vertexData_.begin(), vertexData_.end(),
-      [](const std::shared_ptr<render::VertexData>& meshPtr) { return meshPtr.use_count() == 1; });
-
-  if(it != vertexData_.end()) {
-    Log::info("Removing {} unused meshes", std::distance(it, vertexData_.end()));
-    vertexData_.erase(it, vertexData_.end());
-  }
-}
+//  if(it != vertexData_.end()) {
+//    Log::info("Removing {} unused meshes", std::distance(it, vertexData_.end()));
+//    vertexData_.erase(it, vertexData_.end());
+//  }
+//}
 
 } // namespace game
 

@@ -14,12 +14,15 @@
 ##===------------------------------------------------------------------------------------------===##
 
 set(SEQUOIA_EXAMPLES_SANDBOX_VERSION "0.0.1")
+set(SEQUOIA_EXAMPLES_SANDBOX_RESSOURCEPATH "${SEQUOIA_EXAMPLES_RESSOURCEPATH}/sandbox")
 
 sequoia_configure_file(Config.h.cmake)
 
 sequoia_add_executable( 
   NAME Sandbox
   SOURCES Sandbox.cpp
+          SandboxScene.cpp
+          SandboxScene.h
   DEPENDS ${SEQUOIA_EXAMPLES_LIBRARIES}
   OUTPUT_DIR ${CMAKE_BINARY_DIR}/bin
 )

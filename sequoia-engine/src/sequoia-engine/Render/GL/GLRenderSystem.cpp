@@ -64,8 +64,8 @@ std::shared_ptr<T> createRessource(ManagerType* manager, Args&&... args) {
 } // anonymous namespace
 
 GLRenderSystem::GLRenderSystem(const std::shared_ptr<Options>& options)
-    : RenderSystem(RK_OpenGL, options), mainContext_(nullptr), mainWindow_(nullptr),
-      renderer_(nullptr) {
+    : RenderSystem(RK_OpenGL, options, ShaderSourceManager::SL_GLSL), mainContext_(nullptr),
+      mainWindow_(nullptr), renderer_(nullptr) {
   Log::info("Initializing OpenGL RenderSystem ...");
 }
 
@@ -87,15 +87,17 @@ RenderWindow* GLRenderSystem::createMainWindow(const RenderWindow::WindowHint& h
   mainWindow_ = std::make_unique<GLRenderWindow>(mainContext_);
 
   // Initialize OpenGL renderer
-  renderer_ = std::make_unique<GLRenderer>(mainWindow_.get());
-  renderer_->addListener<FrameListener>(this);
+  renderer_ = std::make_unique<GLRenderer>(mainWindow_.get(), getOptions());
 
   return mainWindow_.get();
 }
 
 RenderWindow* GLRenderSystem::getMainWindow() const { return getMainGLWindow(); }
 
-GLRenderWindow* GLRenderSystem::getMainGLWindow() const { return mainWindow_.get(); }
+GLRenderWindow* GLRenderSystem::getMainGLWindow() const {
+  SEQUOIA_ASSERT_MSG(mainWindow_, "main window not initialized");
+  return mainWindow_.get();
+}
 
 void GLRenderSystem::destroyMainWindow() noexcept {
   // Order matters here!
@@ -125,21 +127,20 @@ void GLRenderSystem::pollEvents() {
     listener->inputEventStop();
 }
 
-void GLRenderSystem::renderOneFrame(RenderCommand* command) { getRenderer()->render(command); }
-
 std::shared_ptr<Shader> GLRenderSystem::createShader(Shader::ShaderType type,
-                                                     const std::shared_ptr<File>& file) {
-  return createRessource<GLShader>(getRenderer()->getShaderManager(), type, file);
+                                                     const std::string& filename,
+                                                     const std::string& source) {
+  return createRessource<GLShader>(getGLRenderer()->getShaderManager(), type, filename, source);
 }
 
 std::shared_ptr<Program>
 GLRenderSystem::createProgram(const std::set<std::shared_ptr<Shader>>& shaders) {
-  return createRessource<GLProgram>(getRenderer()->getProgramManager(), shaders);
+  return createRessource<GLProgram>(getGLRenderer()->getProgramManager(), shaders);
 }
 
 std::shared_ptr<Texture> GLRenderSystem::createTexture(const std::shared_ptr<Image>& image,
                                                        const TextureParameter& param) {
-  return createRessource<GLTexture>(getRenderer()->getTextureManager(), image,
+  return createRessource<GLTexture>(getGLRenderer()->getTextureManager(), image,
                                     std::make_shared<TextureParameter>(param));
 }
 
@@ -163,29 +164,8 @@ void GLRenderSystem::removeMouseListener(MouseListener* listener) {
   mainWindow_->getInputSystem()->removeListener(listener);
 }
 
-void GLRenderSystem::loadDefaultShaders(const std::shared_ptr<File>& defaultVertexShaderFile,
-                                        const std::shared_ptr<File>& defaultFragmentShaderFile) {
-  getRenderer()->loadDefaultShaders(defaultVertexShaderFile, defaultFragmentShaderFile);
-}
-
-const std::shared_ptr<Shader>& GLRenderSystem::getDefaultVertexShader() const {
-  return getRenderer()->getDefaultVertexShader();
-}
-
-const std::shared_ptr<Shader>& GLRenderSystem::getDefaultFragmentShader() const {
-  return getRenderer()->getDefaultFragmentShader();
-}
-
-const std::shared_ptr<Program>& GLRenderSystem::getDefaultProgram() const {
-  return getRenderer()->getDefaultProgram();
-}
-
-GLRenderer* GLRenderSystem::getRenderer() { return renderer_.get(); }
-GLRenderer* GLRenderSystem::getRenderer() const { return renderer_.get(); }
-
-GLStateCacheManager* GLRenderSystem::getStateCacheManager() {
-  return getRenderer()->getStateCacheManager();
-}
+Renderer* GLRenderSystem::getRenderer() const { return renderer_.get(); }
+GLRenderer* GLRenderSystem::getGLRenderer() const { return renderer_.get(); }
 
 GLRenderSystem& getGLRenderSystem() noexcept { return *getGLRenderSystemPtr(); }
 

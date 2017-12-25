@@ -13,10 +13,10 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia-engine/Render/Null/NullVertexData.h"
 #include "sequoia-engine/Core/Format.h"
 #include "sequoia-engine/Core/StringUtil.h"
 #include "sequoia-engine/Render/HostBuffer.h"
+#include "sequoia-engine/Render/Null/NullVertexData.h"
 
 namespace sequoia {
 
@@ -25,7 +25,7 @@ namespace render {
 NullVertexData::NullVertexData(const VertexDataParameter& param)
     : VertexData(RK_Null, param.DrawMode) {
 
-  vertexBuffer_ = std::make_unique<NullVertexBuffer>(param.Layout, param.NumVertexBuffers);
+  vertexBuffer_ = std::make_unique<NullVertexBuffer>(param.Layout);
   if(param.NumIndices > 0)
     indexBuffer_ = std::make_unique<NullIndexBuffer>(param.IndexType);
 
@@ -48,14 +48,13 @@ VertexBuffer* NullVertexData::getVertexBuffer() const { return vertexBuffer_.get
 
 IndexBuffer* NullVertexData::getIndexBuffer() const { return indexBuffer_.get(); }
 
-void NullVertexData::nextTimestep() {}
-
 std::pair<std::string, std::string> NullVertexData::toStringImpl() const {
   return std::make_pair("NullVertexData",
                         core::format("{}"
-                                     "vertexBuffer = {},\n",
-                                     "indexBuffer = {}\n", Base::toStringImpl().second,
-                                     vertexBuffer_->toString(), indexBuffer_->toString()));
+                                     "vertexBuffer = {},\n"
+                                     "indexBuffer = {}\n",
+                                     Base::toStringImpl().second, vertexBuffer_->toString(),
+                                     indexBuffer_ ? indexBuffer_->toString() : "null"));
 }
 
 } // namespace render

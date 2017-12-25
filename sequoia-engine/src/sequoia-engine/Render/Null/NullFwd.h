@@ -29,6 +29,7 @@ namespace render {
 class NullIndexBuffer;
 class NullInputSystem;
 class NullProgram;
+class NullRenderer;
 class NullRenderWindow;
 class NullShader;
 class NullTexture;

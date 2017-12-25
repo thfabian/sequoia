@@ -63,8 +63,8 @@ std::string VertexLayout::toString() const {
   auto attributeToString = [&ss](const char* name, const Attribute& attrib) {
     ss << "  " << name << " = Attribute[\n";
     ss << "    Type = " << typeToString(attrib.Type) << ",\n";
-    ss << "    Offset = " << attrib.Offset << ",\n";
-    ss << "    NumElements = " << attrib.NumElements << ",\n";
+    ss << "    Offset = " << int(attrib.Offset) << ",\n";
+    ss << "    NumElements = " << int(attrib.NumElements) << ",\n";
     ss << "    Normalized = " << attrib.Normalize << "\n";
     ss << "  ]\n";
   };

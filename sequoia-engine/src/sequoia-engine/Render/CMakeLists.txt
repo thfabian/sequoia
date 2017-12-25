@@ -13,16 +13,23 @@
 ##
 ##===------------------------------------------------------------------------------------------===##
 
+set(GLSL_SOURCE
+  Shaders/GLSL/Default.vert
+  Shaders/GLSL/Default.frag
+)
+
+sequoia_engine_assemble_shaders(
+  SequoiaEngineGLSLSources  Shaders/GLSL/Shaders.h.cmake "${GLSL_SOURCE}"
+)
+
 set(GL_SOURCE
   GL/GL.h
-  GL/GLBuffer.cpp          
+  GL/GLBuffer.cpp
   GL/GLBuffer.h
   GL/GLExtensionManager.cpp
   GL/GLExtensionManager.h
   GL/GLFragmentData.cpp
   GL/GLFragmentData.h
-  GL/GLFrameBufferObject.cpp
-  GL/GLFrameBufferObject.h
   GL/GLFwd.h  
   GL/GLIndexBuffer.cpp
   GL/GLIndexBuffer.h
@@ -30,6 +37,8 @@ set(GL_SOURCE
   GL/GLProgram.h
   GL/GLProgramManager.cpp
   GL/GLProgramManager.h
+  GL/GLPixelFormat.h
+  GL/GLPixelFormat.cpp
   GL/GLRenderer.cpp
   GL/GLRenderer.h
   GL/GLRenderSystem.cpp
@@ -40,8 +49,6 @@ set(GL_SOURCE
   GL/GLShader.h
   GL/GLShaderManager.cpp
   GL/GLShaderManager.h
-  GL/GLStateCacheManager.cpp
-  GL/GLStateCacheManager.h
   GL/GLTexture.cpp
   GL/GLTexture.h
   GL/GLTextureManager.cpp
@@ -52,7 +59,7 @@ set(GL_SOURCE
   GL/GLVertexBuffer.h
   GL/GLVertexData.cpp
   GL/GLVertexData.h
-  GL/Native.cpp          
+  GL/Native.cpp
   GL/Native.h
   GL/NativeGLFW3.cpp
   GL/NativeGLFW3.h
@@ -65,6 +72,8 @@ set(NULL_SOURCE
   Null/NullInputSystem.h
   Null/NullProgram.cpp
   Null/NullProgram.h
+  Null/NullRenderer.cpp
+  Null/NullRenderer.h
   Null/NullRenderSystem.cpp
   Null/NullRenderSystem.h
   Null/NullRenderWindow.cpp
@@ -85,16 +94,14 @@ sequoia_add_library(
           Buffer.cpp
           Camera.cpp
           Camera.h
+          DrawCallContext.h
           DrawCommand.cpp
           DrawCommand.h
-          DrawCommandList.cpp
-          DrawCommandList.h
+          DrawScene.h
           Exception.h
           FrameBuffer.cpp
           FrameBuffer.h
           FrameListener.h
-          GlobalRenderState.cpp
-          GlobalRenderState.h
           HostBuffer.cpp
           HostBuffer.h
           IndexBuffer.cpp
@@ -103,24 +110,33 @@ sequoia_add_library(
           Input.h
           Program.cpp
           Program.h
+          RenderBuffer.h
           RenderCommand.cpp
           RenderCommand.h
+          Renderer.cpp
+          Renderer.h
           RenderFwd.h
+          RenderPass.h
+          RenderPipeline.cpp
+          RenderPipeline.h
           RenderRessource.cpp
           RenderRessource.h
           RenderServer.cpp
           RenderServer.h
-          RenderState.cpp
-          RenderState.h
           RenderState.inc
           RenderSystem.cpp
           RenderSystem.h
           RenderSystemObject.h
           RenderTarget.cpp
           RenderTarget.h
+          RenderTechnique.h
           RenderWindow.h
+          RTDefault.cpp
+          RTDefault.h
           Shader.cpp
           Shader.h
+          ShaderSourceManager.cpp
+          ShaderSourceManager.h
           Texture.cpp
           Texture.h
           UniformBlock.h
@@ -146,5 +162,9 @@ sequoia_add_library(
           
           ${GL_SOURCE}
           ${NULL_SOURCE}
+
+          ${GLSL_SOURCE}
   OBJECT
 )
+
+add_dependencies(SequoiaEngineRenderObjects SequoiaEngineGLSLSources)

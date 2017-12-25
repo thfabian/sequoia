@@ -13,8 +13,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia-engine/Game/SceneGraph.h"
 #include "sequoia-engine/Core/Format.h"
+#include "sequoia-engine/Game/SceneGraph.h"
 #include "sequoia-engine/Game/SceneNode.h"
 #include <algorithm>
 #include <atomic>
@@ -37,7 +37,7 @@ void SceneGraph::clear() { root_->clearChildren(); }
 
 std::size_t SceneGraph::size() const {
   std::atomic<std::size_t> s{0};
-  apply([&s](SceneNode * node) noexcept { s++; }, SceneNode::EP_Parallel);
+  apply([&s](SceneNode * node) noexcept { s++; });
   return (s.load() - 1);
 }
 
@@ -51,7 +51,7 @@ std::string SceneGraph::toString() const {
 std::string SceneGraph::toDot() const { return std::string(); }
 
 void SceneGraph::dump() const {
-  apply([](SceneNode* node) { std::cout << node->toString() << "\n"; }, SceneNode::EP_Sequential);
+  apply([](SceneNode* node) { std::cout << node->toString() << "\n"; });
 }
 
 } // namespace game

@@ -48,15 +48,24 @@ struct SEQUOIA_API FrameBufferParameter {
   std::string toString() const;
 };
 
-/// @brief Frame buffers allow to render to a user-defined location, and thus render without
-/// disturbing the main screen.
+/// @brief
+///
+/// https://stackoverflow.com/questions/2213030/whats-the-concept-of-and-differences-between-framebuffer-and-renderbuffer-in-op
 ///
 /// @see RenderSystem::createFrameBuffer
 /// @ingroup render
-class SEQUOIA_API FrameBuffer : public RenderSystemObject, public NonCopyable {
+class SEQUOIA_API FrameBuffer : public RenderSystemObject  /*, public Buffer*/ {
 public:
   FrameBuffer(RenderSystemKind kind);
   virtual ~FrameBuffer();
+
+  /// @brief Kinds objects which can be attached to a FrameBuffer
+  enum AttachmentKind {
+    AK_Color,   ///< Color render buffer
+    AK_Depth,   ///< Depth render buffer
+    AK_Stencil, ///< Stencil render buffer
+    AK_Texture  ///< Texture
+  };
 
   /// @brief Convert to string
   virtual std::string toString() const = 0;

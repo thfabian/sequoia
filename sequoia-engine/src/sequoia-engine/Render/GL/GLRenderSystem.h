@@ -64,12 +64,9 @@ public:
   /// @copydoc RenderSystem::pollEvents
   virtual void pollEvents() override;
 
-  /// @copydoc RenderSystem::renderOneFrame
-  virtual void renderOneFrame(RenderCommand* command) override;
-
   /// @brief Load the shader from source if it has not already been loaded
-  virtual std::shared_ptr<Shader> createShader(Shader::ShaderType type,
-                                               const std::shared_ptr<File>& path) override;
+  virtual std::shared_ptr<Shader> createShader(Shader::ShaderType type, const std::string& filename,
+                                               const std::string& source) override;
 
   /// @brief Link the shaders into a program if a program of the given shaders does not yet exist
   virtual std::shared_ptr<Program>
@@ -95,25 +92,9 @@ public:
   /// @copydoc RenderSystem::removeMouseListener
   virtual void removeMouseListener(MouseListener* listener) override;
 
-  /// @copydoc RenderSystem::loadDefaultShaders
-  virtual void loadDefaultShaders(const std::shared_ptr<File>& defaultVertexShaderFile,
-                                  const std::shared_ptr<File>& defaultFragmentShaderFile) override;
-
-  /// @copydoc RenderSystem::getDefaultVertexShader
-  virtual const std::shared_ptr<Shader>& getDefaultVertexShader() const override;
-
-  /// @copydoc RenderSystem::getDefaultFragmentShader
-  virtual const std::shared_ptr<Shader>& getDefaultFragmentShader() const override;
-
-  /// @copydoc RenderSystem::getDefaultProgram
-  virtual const std::shared_ptr<Program>& getDefaultProgram() const override;
-
   /// @brief Get the OpenGL renderer
-  GLRenderer* getRenderer();
-  GLRenderer* getRenderer() const;
-
-  /// @brief Get the state cache manager of the OpenGL renderer
-  GLStateCacheManager* getStateCacheManager();
+  virtual Renderer* getRenderer() const override;
+  GLRenderer* getGLRenderer() const;
 
   SEQUOIA_GL_OBJECT(RenderSystem)
 };

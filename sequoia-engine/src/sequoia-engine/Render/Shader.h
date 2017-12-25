@@ -17,10 +17,10 @@
 #define SEQUOIA_ENGINE_RENDER_SHADER_H
 
 #include "sequoia-engine/Core/Export.h"
-#include "sequoia-engine/Core/File.h"
 #include "sequoia-engine/Core/NonCopyable.h"
 #include "sequoia-engine/Render/RenderRessource.h"
 #include <memory>
+#include <string>
 
 namespace sequoia {
 
@@ -57,11 +57,11 @@ public:
   /// @brief Shader type to string
   static const char* shaderTypeToString(ShaderType type);
 
-  /// @brief Get the source file of the shader
-  virtual const std::shared_ptr<File>& getFile() const = 0;
+  /// @brief Get the filename (or path) of the shader source
+  virtual const std::string& getFilename() const = 0;
 
   /// @brief Get the source code of the shader
-  virtual std::string getSourceCode() const = 0;
+  virtual const std::string& getSourceCode() const = 0;
 
   /// @brief Convert to string
   virtual std::string toString() const = 0;

@@ -19,10 +19,11 @@
 #include "sequoia-engine/Render/Exception.h"
 #include "sequoia-engine/Render/GL/GL.h"
 #include "sequoia-engine/Render/GL/GLRenderer.h"
-#include "sequoia-engine/Render/GL/GLStateCacheManager.h"
 #include "sequoia-engine/Render/GL/GLTextureManager.h"
 #include <gli/gli.hpp>
 #include <opencv2/opencv.hpp>
+
+// TODO: convert everything to DSA
 
 namespace sequoia {
 
@@ -89,22 +90,19 @@ static void allocateTexture(GLenum target, int width, int height, GLenum interna
 ///
 /// https://stackoverflow.com/questions/16809833/opencv-image-loading-for-opengl-texture
 static void uploadRegularImage(GLenum target, const RegularImage* image) {
-
-  // TODO: this needs to be the StateCache manager of the RessourceThread
-  GLStateCacheManager* manager = getGLRenderer().getStateCacheManager();
-
   cv::Mat imageFlipped;
   cv::flip(image->getMat(), imageFlipped, 0);
 
   // Set pixel storage parameter
-  GLPixelFormat format = manager->getDefaultPixelFormat();
+  // TODO: move this pixel format stuff into here (don't call the Renderer)
+  GLPixelFormat format = getGLRenderer().getDefaultPixelFormat();
   format.set(GL_UNPACK_ALIGNMENT, imageFlipped.step[0] & 3 ? 1 : 4);
   format.set(GL_UNPACK_ROW_LENGTH, imageFlipped.step[0] / imageFlipped.elemSize());
-  manager->setPixelFormat(format);
+  getGLRenderer().setPixelFormat(format);
 
   // OpenCV images are BGR(A)
   GLenum colorFormat = image->getNumChannels() == 4 ? GL_BGRA : GL_BGR;
-
+  
   switch(target) {
   case GL_TEXTURE_2D:
     glTexImage2D(target, 0, GL_RGBA, imageFlipped.cols, imageFlipped.rows, 0, colorFormat,
@@ -118,7 +116,7 @@ static void uploadRegularImage(GLenum target, const RegularImage* image) {
   }
 
   // Reset the pixel storage parameters
-  manager->resetPixelFormat();
+  getGLRenderer().resetPixelFormat();
 }
 
 /// @brief Upload (compressed) texture image to device
@@ -230,12 +228,9 @@ void GLTextureManager::makeValid(GLTexture* texture) {
 
   TextureParameter& param = *texture->getParameter();
 
-  // TODO: this needs to be the StateCache manager of the RessourceThread
-  GLStateCacheManager* manager = getGLRenderer().getStateCacheManager();
-
-  // Bind texture to unit 0 (doesn't really matter which unit we bind it to)
-  manager->bindTexture(0, texture, true);
-
+  // Bind texture (doesn't really matter to which unit we bind it to)
+  texture->bind();
+  
   if(texture->hasImage()) {
     // Uploade image to device
     if(RegularImage* regularImage = core::dyn_cast<RegularImage>(texture->getImage().get())) {
@@ -251,7 +246,7 @@ void GLTextureManager::makeValid(GLTexture* texture) {
     // Allocate texture
     allocateTexture(texture->target_, texture->width_, texture->height_, GL_RGBA);
   }
-
+  
   // Set interpolation parameters
   glTexParameteri(texture->target_, GL_TEXTURE_WRAP_S, getGLEdgeSampleKind(param.Dim1EdgeSampling));
   glTexParameteri(texture->target_, GL_TEXTURE_WRAP_T, getGLEdgeSampleKind(param.Dim2EdgeSampling));
@@ -270,9 +265,8 @@ void GLTextureManager::makeValid(GLTexture* texture) {
     glTexParameteri(texture->target_, GL_TEXTURE_MIN_FILTER, getGLFilterKind(param.MinFilter));
   }
 
-  // Unbind the texture. This is necessary to make sure when we bind it during rendering we also
-  // set the sampler of the program.
-  manager->unbindTexture(0);
+  // Unbind the texture
+  texture->unbind();
 
   Log::debug("Successfully uploaded texture (ID={})", texture->id_);
 }

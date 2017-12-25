@@ -18,6 +18,7 @@
 #include "sequoia-engine/Core/Memory.h"
 #include "sequoia-engine/Core/StringUtil.h"
 #include "sequoia-engine/Game/Mesh.h"
+#include "sequoia-engine/Render/VertexData.h"
 
 namespace sequoia {
 
@@ -34,24 +35,21 @@ std::string MeshParameter::toString() const {
                       TexCoordInvertV ? "true" : "false");
 }
 
-Mesh::Mesh(const std::string& name, const std::shared_ptr<render::VertexData>& data,
-           bool isModifiable)
-    : isModifiable_(isModifiable), data_(data), name_(name) {}
+Mesh::Mesh(const std::shared_ptr<render::VertexData>& data, bool modifiable)
+    : modifiable_(modifiable), data_(data) {}
 
 const math::AxisAlignedBox& Mesh::getAxisAlignedBox() const noexcept {
   return data_->getAxisAlignedBox();
 }
 
-void Mesh::setAxisAlignedBox(const math::AxisAlignedBox& bbox) { data_->setAxisAlignedBox(bbox); }
-
 void Mesh::dump() const { data_->dump(); }
 
 std::string Mesh::toString() const {
   return core::format("Mesh[\n"
-                      "  name = {},\n"
+                      "  modifiable = {},\n"
                       "  data = {}\n"
                       "]",
-                      name_, core::indent(data_->toString()));
+                      modifiable_ ? "true" : "false", core::indent(data_->toString()));
 }
 
 } // namespace game

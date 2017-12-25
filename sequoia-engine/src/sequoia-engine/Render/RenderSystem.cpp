@@ -16,6 +16,7 @@
 #include "sequoia-engine/Core/Unreachable.h"
 #include "sequoia-engine/Render/Exception.h"
 #include "sequoia-engine/Render/RenderSystem.h"
+#include "sequoia-engine/Render/Renderer.h"
 
 #include "sequoia-engine/Render/GL/GLRenderSystem.h"
 #include "sequoia-engine/Render/Null/NullRenderSystem.h"
@@ -47,9 +48,11 @@ std::unique_ptr<RenderSystem> RenderSystem::create(RenderSystemKind kind,
   return nullptr;
 }
 
-RenderSystem::RenderSystem(RenderSystemKind kind, const std::shared_ptr<Options>& options)
+RenderSystem::RenderSystem(RenderSystemKind kind, const std::shared_ptr<Options>& options,
+                           ShaderSourceManager::ShaderLanguage language)
     : RenderSystemObject(kind), options_(options) {
   SEQUOIA_ASSERT_MSG(options_, "invalid options");
+  shaderSourceManager_ = std::make_unique<ShaderSourceManager>(language);
 }
 
 void RenderSystem::setDefaultOptions(const std::shared_ptr<Options>& options) {
@@ -67,8 +70,12 @@ void RenderSystem::setDefaultOptions(const std::shared_ptr<Options>& options) {
                                         "the primary monitor should be used "
                                         "which is the default behaviour"});
 
-  options->setDefaultInt("Render.MSAA", 0);
+  options->setDefaultInt("Render.MSAA", 0); 
   options->setDefaultBool("Render.VSync", true);
+  options->setDefaultBool(
+      "Render.TraceAPI", false,
+      OptionMetaData{"trace", "t", false, "",
+                     "Enable tracing of the Render API calls (this may be expensive)"});
 
   // OpenGL
   options->setDefaultInt("Render.GL.MajorVersion", 4);
@@ -77,14 +84,18 @@ void RenderSystem::setDefaultOptions(const std::shared_ptr<Options>& options) {
 
 RenderSystem::~RenderSystem() {}
 
-void RenderSystem::frameListenerRenderingBegin(RenderCommand* command) {
+void RenderSystem::renderOneFrame(const RenderCommand& command) {
   for(FrameListener* listener : getListeners<FrameListener>())
     listener->frameListenerRenderingBegin(command);
-}
 
-void RenderSystem::frameListenerRenderingEnd(RenderCommand* command) {
+  getRenderer()->render(command);
+
   for(FrameListener* listener : getListeners<FrameListener>())
     listener->frameListenerRenderingEnd(command);
+}
+
+const std::string& RenderSystem::loadShaderSource(const std::string& filename) const {
+  return shaderSourceManager_->load(filename);
 }
 
 } // namespace render

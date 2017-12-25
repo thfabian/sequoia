@@ -13,14 +13,16 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia-engine/Render/GL/GL.h"
 #include "sequoia-engine/Core/Logging.h"
 #include "sequoia-engine/Render/Exception.h"
+#include "sequoia-engine/Render/GL/GL.h"
 #include "sequoia-engine/Render/GL/GLShader.h"
 #include "sequoia-engine/Render/GL/GLShaderManager.h"
 #include <boost/lexical_cast.hpp>
 #include <fstream>
 #include <sstream>
+
+#include <iostream>
 
 namespace sequoia {
 
@@ -47,75 +49,76 @@ GLShaderManager::~GLShaderManager() {}
 void GLShaderManager::makeValid(GLShader* shader) {
   SEQUOIA_ASSERT_MSG(!shader->isValid(), "shader already initialized");
 
-  Log::debug("Loading shader from disk \"{}\"", shader->file_->getPath());
+  Log::debug("Loading shader from disk \"{}\"", shader->filename_);
 
   // Get the shader source
-  shader->code_ = shader->file_->getDataAsString();
-  if(shader->code_.empty())
-    SEQUOIA_THROW(RenderSystemException, "empty shader source: '{}'", shader->file_->getPath());
+  if(shader->source_.empty())
+    SEQUOIA_THROW(RenderSystemException, "empty shader source: '{}'", shader->filename_);
 
   // Register the shader within OpenGL
   shader->id_ = glCreateShader(GLShader::getGLShaderType(shader->getType()));
   if(shader->id_ == 0)
-    SEQUOIA_THROW(RenderSystemException, "cannot create shader: '{}'", shader->file_->getPath());
+    SEQUOIA_THROW(RenderSystemException, "cannot create shader: '{}'", shader->filename_);
 
-  Log::debug("Created shader (ID={}) from source \"{}\"", shader->id_, shader->file_->getPath());
+  Log::debug("Created shader (ID={}) from source \"{}\"", shader->id_, shader->filename_);
 
   Log::debug("Compiling shader (ID={}) ...", shader->id_);
 
   // Compile shader
-  const char* code = shader->code_.c_str();
-  glShaderSource(shader->id_, 1, &code, nullptr);
+  const char* code = shader->source_.c_str();
+  GLint length = shader->source_.size();
+  glShaderSource(shader->id_, 1, &code, &length);
   glCompileShader(shader->id_);
 
   // Check compilation
-  int compileStatus;
-  glGetShaderiv(shader->id_, GL_COMPILE_STATUS, &compileStatus);
-  if(!compileStatus) {
-    int infoLogLength;
+  GLint status = 0;
+  glGetShaderiv(shader->id_, GL_COMPILE_STATUS, &status);
+  if(!status) {
+    GLint infoLogLength = 0;
     glGetShaderiv(shader->id_, GL_INFO_LOG_LENGTH, &infoLogLength);
 
-    std::vector<char> errorMessage(infoLogLength + 1);
-    glGetShaderInfoLog(shader->id_, infoLogLength, NULL, &errorMessage[0]);
+    std::vector<char> infoLog(infoLogLength + 1);
+    glGetShaderInfoLog(shader->id_, infoLogLength, NULL, &infoLog[0]);
 
-    std::string msg(errorMessage.data(), errorMessage.size());
+    std::string reason(infoLog.data(), infoLog.size());
 
     // Extract 'Y(X)' where 'X' is the line number and 'Y' is the column number
-    int lbrace = msg.find_first_of('('), rbrace = msg.find_first_of(')');
+    int lbrace = reason.find_first_of('('), rbrace = reason.find_first_of(')');
     try {
-      int row = boost::lexical_cast<int>(msg.substr(lbrace + 1, rbrace - lbrace - 1));
-      std::string line = getRow(shader->code_, row);
+      int row = boost::lexical_cast<int>(reason.substr(lbrace + 1, rbrace - lbrace - 1));
+      std::string line = getRow(shader->source_, row);
 
       if(!line.empty())
-        msg += "\n" + line + "\n";
+        reason += "\n  " + line + "\n";
 
     } catch(const boost::bad_lexical_cast&) {
     }
 
-    SEQUOIA_THROW(RenderSystemException, "failed to compile shader: {}", msg);
+    SEQUOIA_THROW(RenderSystemException, "failed to compile shader (ID={}):\n{}", shader->id_, reason);
   }
 
   Log::debug("Successfully compiled shader (ID={})", shader->id_);
 }
 
 std::shared_ptr<GLShader> GLShaderManager::create(GLShader::ShaderType type,
-                                                  const std::shared_ptr<File>& file) {
+                                                  const std::string& filename,
+                                                  const std::string& source) {
   SEQUOIA_LOCK_GUARD(mutex_);
 
-  auto it = fileLookupMap_.find(file);
+  auto it = filenameLookupMap_.find(filename);
 
-  if(it != fileLookupMap_.end())
+  if(it != filenameLookupMap_.end())
     return shaderList_[it->second];
 
-  shaderList_.emplace_back(std::make_shared<GLShader>(type, file));
-  fileLookupMap_[file] = shaderList_.size() - 1;
+  shaderList_.emplace_back(std::make_shared<GLShader>(type, filename, source));
+  filenameLookupMap_[filename] = shaderList_.size() - 1;
   return shaderList_.back();
 }
 
 void GLShaderManager::remove(const std::shared_ptr<GLShader>& shader) noexcept {
   SEQUOIA_LOCK_GUARD(mutex_);
   shaderList_.erase(std::remove(shaderList_.begin(), shaderList_.end(), shader), shaderList_.end());
-  fileLookupMap_.erase(shader->getFile());
+  filenameLookupMap_.erase(shader->getFilename());
 }
 
 } // namespace render

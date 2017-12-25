@@ -35,15 +35,8 @@ public:
   /// @brief Deallocate all memory
   ~GLVertexData();
 
-  /// @brief Bind the buffer for drawing
-  /// @note Do not call this function directly, use `GLStateCacheManager::bindVertexDataForDrawing`
-  /// instead.
-  void bindForDrawing();
-
-  /// @brief Bind the buffer for modify
-  /// @note Do not call this function directly, use `GLStateCacheManager::bindVertexDataForModify`
-  /// instead.
-  void bindForModify();
+  /// @brief Bind the vertex array
+  void bind();
 
   /// @brief Unbind texture
   static void unbind();
@@ -54,10 +47,8 @@ public:
   /// @copydoc VertexData::getIndexBuffer
   virtual IndexBuffer* getIndexBuffer() const override { return indexBuffer_.get(); }
 
-  /// @copydoc VertexData::nextTimestep
-  virtual void nextTimestep() override;
-
   /// @brief Draw the vertex-data
+  //TODO: move this out of VertexData
   void draw() const noexcept;
 
   /// @brief Get the VAO ID

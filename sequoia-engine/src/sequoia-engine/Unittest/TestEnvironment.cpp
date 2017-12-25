@@ -41,6 +41,10 @@ TestEnvironment::TestEnvironment(int argc, char* argv[], render::RenderSystemKin
   options_->setBool("Unittest.NoLogging", false,
                     core::OptionMetaData{"no-log", "", false, "", "Disable logging"});
 
+  options_->setBool(
+      "Unittest.NoTrace", false,
+      core::OptionMetaData{"no-trace", "", false, "", "Disable graphics API tracing"});
+
   options_->setString("Unittest.Renderer", "null",
                       core::OptionMetaData{"render", "r", true, "RENDERER",
                                            "Renderer to use, where RENDERER is one of [gl, null]"});
@@ -49,8 +53,9 @@ TestEnvironment::TestEnvironment(int argc, char* argv[], render::RenderSystemKin
   core::CommandLine cl("Sequoia Unittest", core::getSequoiaEngineFullVersionString());
   cl.parse(options_.get(), argc, argv);
 
-  // Set debug mode
+  // Set debug modes
   options_->setBool("Core.Debug", !options_->getBool("Unittest.NoDebug"));
+  options_->setBool("Render.TraceAPI", !options_->getBool("Unittest.NoTrace"));
 
   // Set logging
   spdlog::sink_ptr sink =

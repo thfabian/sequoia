@@ -16,7 +16,8 @@
 #ifndef SEQUOIA_ENGINE_RENDER_GL_GL_H
 #define SEQUOIA_ENGINE_RENDER_GL_GL_H
 
-#include <glbinding/gl/gl.h>
+// Use OpenGL Core 4.5 
+#include <glbinding/gl45core/gl.h>
 
 using namespace gl;
 

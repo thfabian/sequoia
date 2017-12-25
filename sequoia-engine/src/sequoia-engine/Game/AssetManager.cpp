@@ -13,12 +13,12 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia-engine/Game/AssetManager.h"
 #include "sequoia-engine/Core/Assert.h"
 #include "sequoia-engine/Core/Logging.h"
 #include "sequoia-engine/Core/Memory.h"
 #include "sequoia-engine/Core/StringRef.h"
 #include "sequoia-engine/Core/UtfString.h"
+#include "sequoia-engine/Game/AssetManager.h"
 #include "sequoia-engine/Game/Exception.h"
 #include <fstream>
 
@@ -65,9 +65,7 @@ AssetManager::Asset::Asset(AssetManager* manager, FileType type, std::size_t id,
 
 AssetManager::Asset::~Asset() {}
 
-AssetManager::AssetManager(const platform::String& path, const platform::String& archive) {
-  assetPath_ = platform::Path(path) / archive;
-}
+AssetManager::AssetManager(const platform::String& path) { assetPath_ = platform::Path(path); }
 
 std::shared_ptr<File> AssetManager::load(const std::string& path, FileType type) {
   if(type == FileType::Unknown)

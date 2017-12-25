@@ -20,6 +20,7 @@
 #include "sequoia-engine/Core/Image.h"
 #include "sequoia-engine/Core/Logging.h"
 #include "sequoia-engine/Core/StringSwitch.h"
+#include "sequoia-engine/Core/StringUtil.h"
 #include "sequoia-engine/Core/Unreachable.h"
 #include <gli/gli.hpp>
 #include <memory>
@@ -118,13 +119,13 @@ void RegularImage::show() const {
 
 std::string RegularImage::toString() const {
   return core::format("RegularImage[\n"
-                      "  file = {}\n"
-                      "  pixelData = {:%#016x}\n"
+                      "  file = \"{}\"\n"
+                      "  pixelData = {}\n"
                       "  width = {},\n"
                       "  height = {},\n"
                       "  numChannels = {}\n"
                       "]",
-                      file_ ? file_->getPath() : "null", (std::size_t)getPixelData(), getWidth(),
+                      file_ ? file_->getPath() : "null", core::ptrToStr(getPixelData()), getWidth(),
                       getHeight(), getNumChannels());
 }
 
@@ -166,7 +167,7 @@ std::size_t TextureImage::hash() const noexcept { return core::hash(file_, image
 
 std::string TextureImage::toString() const {
   return core::format("TextureImage[\n"
-                      "  file = {},\n"
+                      "  file = \"{}\",\n"
                       "  width = {},\n"
                       "  height = {},\n"
                       "  levels = {}\n"

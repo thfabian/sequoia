@@ -56,7 +56,6 @@ public:
   unsigned int getID() const;
 
   /// @brief Bind the program to the current render pipline
-  /// @note Do not call this function directly, use `GLStateCacheManager::bindProgram` instead
   void bind();
 
   /// @brief Unbind *any* program
@@ -73,7 +72,7 @@ public:
   bool setUniformVariable(const std::string& name, const UniformVariable& variable);
 
   /// @brief Check if all uniform variables have been set
-  bool checkUniformVariables();
+  bool checkUniformVariables(bool output = true);
 
   /// @brief Check if `name` is a uniform variable corresponding to a texture sampler
   bool isTextureSampler(const std::string& name) const;
@@ -87,9 +86,6 @@ public:
 
   /// @copydoc Program::toString
   virtual std::string toString() const override;
-
-  /// @brief Issue a warning about setting a non-existing variable
-  void reportWarningForInvalidUniformVariable(const std::string& name);
 
   /// @brief Empty string
   static const std::string EmptyString;

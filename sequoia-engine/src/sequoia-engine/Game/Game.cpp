@@ -22,10 +22,9 @@
 #include "sequoia-engine/Game/AssetManager.h"
 #include "sequoia-engine/Game/Game.h"
 #include "sequoia-engine/Game/Keymap.h"
-#include "sequoia-engine/Game/MeshManager.h"
 #include "sequoia-engine/Game/Scene.h"
+#include "sequoia-engine/Game/ShapeManager.h"
 #include "sequoia-engine/Render/Camera.h"
-#include "sequoia-engine/Render/DrawCommandList.h"
 #include "sequoia-engine/Render/Exception.h"
 #include "sequoia-engine/Render/RenderSystem.h"
 #include "sequoia-engine/Render/RenderWindow.h"
@@ -37,7 +36,7 @@ SEQUOIA_DECLARE_SINGLETON(game::Game);
 namespace game {
 
 Game::Game()
-    : renderSystem_(nullptr), assetManager_(nullptr), meshManager_(nullptr), mainWindow_(nullptr),
+    : renderSystem_(nullptr), assetManager_(nullptr), shapeManager_(nullptr), mainWindow_(nullptr),
       quitKey_(nullptr), shouldClose_(false), activeScene_(nullptr), name_("<unknown>"),
       options_(nullptr) {}
 
@@ -54,17 +53,18 @@ void Game::run() {
 
   Log::info("Starting main-loop ...");
 
+  render::RenderCommand cmd(getMainRenderTarget());
+
   // Start main-loop
   while(!mainWindow_->isClosed() && !shouldClose_) {
 
-    // Create the render commands
-    render::RenderCommand* renderCommand = activeScene_->prepareRenderCommand(mainWindow_);
+    // Advance the scene to the next time-step
+    activeScene_->updateImpl(0.1f); /* TODO: use actual timestep */
 
-    // Start rendering to the main-window
-    renderSystem_->renderOneFrame(renderCommand);
-
-    // Advance to the next time-step
-    activeScene_->updateImpl();
+    // Render the scene
+    cmd.reset(getMainRenderTarget());
+    activeScene_->prepareRenderCommand(cmd);
+    renderSystem_->renderOneFrame(cmd);
 
     // Update screen
     mainWindow_->swapBuffers();
@@ -89,13 +89,13 @@ void Game::init(const std::shared_ptr<Options>& gameOptions) {
 
   try {
     // Initialize the RenderSystem
-  renderSystem_ = RenderSystem::create(
-      options_->getEnum<render::RenderSystemKind>("Game.RenderSystem"), options_);
+    renderSystem_ = RenderSystem::create(
+        options_->getEnum<render::RenderSystemKind>("Game.RenderSystem"), options_);
 
     // Create the main-window & initialize the OpenGL context
     RenderWindow::WindowHint hint;
-    hint.Title = std::string("Sequoia - ") + core::getSequoiaEngineFullVersionString();
-    hint.Monitor = options_->get<int>("Render.Monitor");
+    hint.Title = name_;
+    hint.Monitor = options_->getInt("Render.Monitor");
     using WindowModeKind = render::RenderWindow::WindowHint::WindowModeKind;
     hint.WindowMode = core::StringSwitch<WindowModeKind>(options_->getString("Render.WindowMode"))
                           .Case("fullscreen", WindowModeKind::WK_Fullscreen)
@@ -109,21 +109,9 @@ void Game::init(const std::shared_ptr<Options>& gameOptions) {
     renderSystem_->addKeyboardListener(this);
     renderSystem_->addMouseListener(this);
 
-    // Initialize the object managers
-    assetManager_ = std::make_unique<AssetManager>(PLATFORM_STR(SEQUOIA_ENGINE_RESSOURCEPATH),
-                                                   PLATFORM_STR("assets"));
-    meshManager_ = std::make_unique<MeshManager>();
-
-    // TODO: Remove
-    // Create default shaders and program
-    renderSystem_->loadDefaultShaders(assetManager_->load("sequoia/shader/Default.vert"),
-                                      assetManager_->load("sequoia/shader/Default.frag"));
-
-    // -- tmp --
-    setScene("TestScene", std::make_shared<Scene>(), true);
-    getActiveScene()->makeDummyScene();
-
-    quitKey_ = Keymap::makeDefault(render::Key_Q, render::Mod_Ctrl);
+    // Initialize the managers
+    assetManager_ = std::make_unique<AssetManager>(options_->getString("Game.RessourcePath"));
+    shapeManager_ = std::make_unique<ShapeManager>();
 
   } catch(core::Exception& e) {
     ErrorHandler::fatal(e.what());
@@ -139,7 +127,7 @@ void Game::cleanup() {
   sceneMap_.clear();
 
   // Free managers
-  meshManager_.reset();
+  shapeManager_.reset();
   assetManager_.reset();
 
   // Free all RenderSystem objects
@@ -168,22 +156,21 @@ void Game::mousePositionEvent(const render::MousePositionEvent& event) {
 
 AssetManager* Game::getAssetManager() const { return assetManager_.get(); }
 
-MeshManager* Game::getMeshManager() const { return meshManager_.get(); }
+ShapeManager* Game::getShapeManager() const { return shapeManager_.get(); }
 
 render::RenderWindow* Game::getMainWindow() const { return mainWindow_; }
 
-render::Texture* Game::createTexture(const std::shared_ptr<Image>& image) {
-  return createTexture(image, render::TextureParameter());
-}
+render::RenderTarget* Game::getMainRenderTarget() const { return getMainWindow(); }
 
-render::Texture* Game::createTexture(const std::shared_ptr<Image>& image,
-                                     const render::TextureParameter& param) {
-  return renderSystem_->createTexture(image, param).get();
+std::shared_ptr<render::Texture> Game::createTexture(const std::shared_ptr<Image>& image,
+                                                     const render::TextureParameter& param) {
+  return renderSystem_->createTexture(image, param);
 }
 
 std::shared_ptr<render::Shader> Game::createShader(render::Shader::ShaderType type,
-                                                   const std::shared_ptr<File>& source) {
-  return renderSystem_->createShader(type, source);
+                                                   const std::string& filename,
+                                                   const std::string& source) {
+  return renderSystem_->createShader(type, filename, source);
 }
 
 std::shared_ptr<render::Program>
@@ -191,33 +178,13 @@ Game::createProgram(const std::set<std::shared_ptr<render::Shader>>& shaders) {
   return renderSystem_->createProgram(shaders);
 }
 
-std::shared_ptr<render::Program> Game::createProgram(
-    std::initializer_list<std::pair<render::Shader::ShaderType, std::shared_ptr<File>>> shaders) {
-  std::set<std::shared_ptr<render::Shader>> shaderSet;
-  for(const auto& shaderPair : shaders)
-    shaderSet.insert(createShader(shaderPair.first, shaderPair.second));
-  return createProgram(shaderSet);
-}
-
-const std::shared_ptr<render::Shader>& Game::getDefaultVertexShader() const {
-  return renderSystem_->getDefaultVertexShader();
-}
-
-const std::shared_ptr<render::Shader>& Game::getDefaultFragmentShader() const {
-  return renderSystem_->getDefaultFragmentShader();
-}
-
-const std::shared_ptr<render::Program>& Game::getDefaultProgram() const {
-  return renderSystem_->getDefaultProgram();
-}
-
 Scene* Game::getActiveScene() const { return activeScene_; }
 
-void Game::setScene(const std::string& name, const std::shared_ptr<Scene>& scene, bool makeActive) {
-  Log::info("Inserting new scene \"{}\" into game ", name);
-  sceneMap_.emplace(name, scene);
+void Game::setScene(const std::shared_ptr<Scene>& scene, bool makeActive) {
+  Log::info("Inserting new scene \"{}\" into game ", scene->getName());
+  sceneMap_.emplace(scene->getName(), scene);
   if(makeActive)
-    makeSceneActive(name);
+    makeSceneActive(scene->getName());
 }
 
 Scene* Game::getScene(const std::string& name) const {
@@ -237,6 +204,9 @@ void Game::makeSceneActive(const std::string& name) {
 
   activeScene_ = getScene(name);
   activeScene_->addListener<SceneListener>(this);
+
+  // Make sure the Viewport of the main-window has the camera of the scene
+  sceneListenerActiveCameraChanged(activeScene_);
 }
 
 void Game::sceneListenerActiveCameraChanged(Scene* scene) {

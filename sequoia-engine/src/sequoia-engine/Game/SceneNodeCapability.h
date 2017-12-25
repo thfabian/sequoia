@@ -45,6 +45,8 @@ public:
   enum Kind {
     Drawable = 0, ///< The SceneNode can be rendered
     Emittable,    ///< The SceneNode emits some form of lighting
+    Moveable,     ///< The SceneNode can be moved i.e rotated, translated and scaled
+    Positionable, ///< The SceneNode can be positioned in 3D space
     NumCapabilities
   };
 

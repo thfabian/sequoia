@@ -30,6 +30,7 @@
 #include "sequoia-engine/Render/RenderSystemObject.h"
 #include "sequoia-engine/Render/RenderWindow.h"
 #include "sequoia-engine/Render/Shader.h"
+#include "sequoia-engine/Render/ShaderSourceManager.h"
 #include "sequoia-engine/Render/Texture.h"
 #include "sequoia-engine/Render/VertexData.h"
 #include <memory>
@@ -54,7 +55,6 @@ namespace render {
 ///
 /// @ingroup render
 class SEQUOIA_API RenderSystem : public Singleton<RenderSystem>,
-                                 public FrameListener,
                                  public Listenable<InputEventListener, FrameListener>,
                                  public RenderSystemObject {
 public:
@@ -70,6 +70,9 @@ public:
 
   /// @brief Terminate the render-system
   virtual ~RenderSystem();
+
+  /// @brief Render one frame using the instructions given in `command`.
+  void renderOneFrame(const RenderCommand& command);
 
   /// @brief Create the main-window (if a main-window is already active, the old one will be
   /// destroyed first)
@@ -88,12 +91,11 @@ public:
   /// @brief Processes events that are in the event queue
   virtual void pollEvents() = 0;
 
-  /// @brief Render one frame using the instructions given in `RenderCommand`.
-  virtual void renderOneFrame(RenderCommand* command) = 0;
-
   /// @brief Create a shader from source
-  virtual std::shared_ptr<Shader> createShader(Shader::ShaderType type,
-                                               const std::shared_ptr<File>& file) = 0;
+  ///
+  /// Note that the source of built-in shaders can be retrieved via `loadShaderSource`.
+  virtual std::shared_ptr<Shader> createShader(Shader::ShaderType type, const std::string& filename,
+                                               const std::string& source) = 0;
 
   /// @brief Create a GPU program from the given `shaders`
   virtual std::shared_ptr<Program>
@@ -119,34 +121,28 @@ public:
   /// @brief Remove the mouse `listener`
   virtual void removeMouseListener(MouseListener* listener) = 0;
 
-  /// @brief Load the default vertex and fragment shaders and link them into a program
+  /// @brief Get the Renderer
+  virtual Renderer* getRenderer() const = 0;
+
+  /// @brief Get the source of the shader `filename`
   ///
-  /// @param defaultVertexShaderFile    File containing the default vertex shader
-  /// @param defaultFragmentShaderFile  File containing the default fragment shader
-  virtual void loadDefaultShaders(const std::shared_ptr<File>& defaultVertexShaderFile,
-                                  const std::shared_ptr<File>& defaultFragmentShaderFile) = 0;
-
-  /// @brief Get the default vertex shader
-  virtual const std::shared_ptr<Shader>& getDefaultVertexShader() const = 0;
-
-  /// @brief Get the default fragment shader
-  virtual const std::shared_ptr<Shader>& getDefaultFragmentShader() const = 0;
-
-  /// @brief Get the default fragment shader
-  virtual const std::shared_ptr<Program>& getDefaultProgram() const = 0;
+  /// @throws RenderSystemException   Shader `filename` does not exists.
+  const std::string& loadShaderSource(const std::string& filename) const;
 
   /// @brief Set if we run in debug-mode
   Options& getOptions() const { return *options_; }
   Options* getOptionsPtr() const { return options_.get(); }
 
-  void frameListenerRenderingBegin(RenderCommand* command) override;
-  void frameListenerRenderingEnd(RenderCommand* command) override;
-
 protected:
-  RenderSystem(RenderSystemKind kind, const std::shared_ptr<Options>& options);
+  RenderSystem(RenderSystemKind kind, const std::shared_ptr<Options>& options,
+               ShaderSourceManager::ShaderLanguage langauge);
 
 private:
+  /// Reference to the option
   std::shared_ptr<Options> options_;
+
+  /// Builtin shader sources
+  std::unique_ptr<ShaderSourceManager> shaderSourceManager_;
 
 private:
   static void setDefaultOptions(const std::shared_ptr<Options>& options);

@@ -18,12 +18,11 @@ add_subdirectory(GL)
 sequoia_engine_add_unittest(
   NAME SequoiaEngineRenderTest
   SOURCES TestCamera.cpp
-          TestGlobalRenderState.cpp
           TestHostBuffer.cpp
           TestInput.cpp
           TestMain.cpp
           TestRenderServer.cpp
-          TestRenderState.cpp
+          TestRenderer.cpp
           TestTexture.cpp
           TestUniformStruct.cpp
           TestUniformVariable.cpp

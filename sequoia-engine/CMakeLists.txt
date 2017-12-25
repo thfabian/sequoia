@@ -60,10 +60,11 @@ sequoia_get_compiler_info()
 sequoia_get_platform_info()
 sequoia_get_architecture_info()
 
-include(SequoiaEngineOptions)
+include(SequoiaEngineAssembleShaders)
 include(SequoiaEngineDefinitions)
-include(SequoiaEngineSetCXXFlags)
 include(SequoiaEngineGenerateConfig)
+include(SequoiaEngineOptions)
+include(SequoiaEngineSetCXXFlags)
 
 # Enable full RPATH support
 sequoia_enable_rpath(${SEQUOIA_ENGINE_INSTALL_LIB_DIR})

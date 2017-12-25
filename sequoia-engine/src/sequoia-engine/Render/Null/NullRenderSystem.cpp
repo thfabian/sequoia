@@ -13,10 +13,11 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia-engine/Render/Null/NullRenderSystem.h"
 #include "sequoia-engine/Render/Null/NullInputSystem.h"
 #include "sequoia-engine/Render/Null/NullProgram.h"
+#include "sequoia-engine/Render/Null/NullRenderSystem.h"
 #include "sequoia-engine/Render/Null/NullRenderWindow.h"
+#include "sequoia-engine/Render/Null/NullRenderer.h"
 #include "sequoia-engine/Render/Null/NullShader.h"
 #include "sequoia-engine/Render/Null/NullTexture.h"
 #include "sequoia-engine/Render/Null/NullVertexData.h"
@@ -26,35 +27,38 @@ namespace sequoia {
 namespace render {
 
 NullRenderSystem::NullRenderSystem(const std::shared_ptr<Options>& options)
-    : RenderSystem(RK_Null, options), mainWindow_(nullptr) {
+    : RenderSystem(RK_Null, options, ShaderSourceManager::SL_GLSL), mainWindow_(nullptr) {
   inputSystem_ = std::make_unique<NullInputSystem>();
 }
 
 NullRenderSystem::~NullRenderSystem() {}
 
 RenderWindow* NullRenderSystem::createMainWindow(const RenderWindow::WindowHint& hints) {
-  SEQUOIA_ASSERT_MSG(!mainWindow_, "main window already initialized");
+  destroyMainWindow();
   mainWindow_ = std::make_unique<NullRenderWindow>(hints);
+  renderer_ = std::make_unique<NullRenderer>();
   return mainWindow_.get();
 }
 
 void NullRenderSystem::destroyMainWindow() noexcept {
+  renderer_.reset();
+  renderer_ = nullptr;
+
   mainWindow_.reset();
   mainWindow_ = nullptr;
 }
 
 RenderWindow* NullRenderSystem::getMainWindow() const {
-  SEQUOIA_ASSERT_MSG(!mainWindow_, "main window not initialized");
+  SEQUOIA_ASSERT_MSG(mainWindow_, "main window not initialized");
   return mainWindow_.get();
 }
 
 void NullRenderSystem::pollEvents() {}
 
-void NullRenderSystem::renderOneFrame(RenderCommand* command) {}
-
 std::shared_ptr<Shader> NullRenderSystem::createShader(Shader::ShaderType type,
-                                                       const std::shared_ptr<File>& path) {
-  return std::make_shared<NullShader>(type, path);
+                                                       const std::string& filename,
+                                                       const std::string& source) {
+  return std::make_shared<NullShader>(type, filename, source);
 }
 
 std::shared_ptr<Program>
@@ -87,26 +91,7 @@ void NullRenderSystem::removeMouseListener(MouseListener* listener) {
   inputSystem_->removeListener<MouseListener>(listener);
 }
 
-void NullRenderSystem::loadDefaultShaders(const std::shared_ptr<File>& defaultVertexShaderFile,
-                                          const std::shared_ptr<File>& defaultFragmentShaderFile) {
-  defaultVertexShader_ = std::make_shared<NullShader>(Shader::ST_Vertex, defaultVertexShaderFile);
-  defaultFragmentShader_ =
-      std::make_shared<NullShader>(Shader::ST_Fragment, defaultFragmentShaderFile);
-  defaultProgram_ = std::make_shared<NullProgram>(
-      std::set<std::shared_ptr<Shader>>{defaultVertexShader_, defaultFragmentShader_});
-}
-
-const std::shared_ptr<Shader>& NullRenderSystem::getDefaultVertexShader() const {
-  return defaultVertexShader_;
-}
-
-const std::shared_ptr<Shader>& NullRenderSystem::getDefaultFragmentShader() const {
-  return defaultFragmentShader_;
-}
-
-const std::shared_ptr<Program>& NullRenderSystem::getDefaultProgram() const {
-  return defaultProgram_;
-}
+Renderer* NullRenderSystem::getRenderer() const { return renderer_.get(); }
 
 } // namespace render
 

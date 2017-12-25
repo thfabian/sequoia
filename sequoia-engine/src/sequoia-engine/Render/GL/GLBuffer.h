@@ -20,6 +20,7 @@
 #include "sequoia-engine/Core/Export.h"
 #include "sequoia-engine/Render/Buffer.h"
 #include "sequoia-engine/Render/GL/GLFwd.h"
+#include "sequoia-engine/Render/VertexData.h"
 #include <vector>
 
 namespace sequoia {
@@ -35,11 +36,8 @@ namespace render {
 /// @ingroup gl
 class SEQUOIA_API GLBuffer {
 
-  /// OpenGL buffer indices
-  std::vector<unsigned int> bufferIds_;
-
-  /// Index to the currently active (modifiable) buffer
-  unsigned int modifyBufferIdx_;
+  /// OpenGL buffer id
+  unsigned int id_;
 
   /// Target of the buffer(s)
   GLenum target_;
@@ -54,27 +52,19 @@ class SEQUOIA_API GLBuffer {
   bool isLocked_;
 
 public:
-  /// @brief Specify the kind of buffer to bind
-  enum BindKind {
-    BK_Unknown = 0,
-    BK_Draw,  ///< Bind the buffer which is currently being drawn
-    BK_Modify ///< Bind the buffer which is currently used to modify the data
-  };
-
   /// @brief Create the buffer(s)
   ///
   /// @param target       Target of the buffer(s)
-  /// @param numBuffers   Number of buffers to allocate
-  GLBuffer(GLenum target, int numBuffers = 1);
+  GLBuffer(GLenum target);
 
   /// @brief Destroy buffer(s)
   ~GLBuffer();
 
   /// @brief Bind the buffer
-  void bind(BindKind kind);
+  void bind();
 
   /// @brief Unbind the buffer
-  void unbind(BindKind kind);
+  void unbind();
 
   /// @brief Lock the buffer
   ///
@@ -120,26 +110,8 @@ public:
   /// @param dest     Destination to write the data (must be atleast of size `length`)
   void read(std::size_t offset, std::size_t length, void* dest);
 
-  /// @brief Update the buffers to the next timestep
-  ///
-  /// This effectively shifts all buffers by one to the right, meaning the current modification
-  /// buffer is set to be drawn in the next frame.
-  void nextTimestep();
-
-  /// @brief Get the index into `getBufferIds()` of the buffer which is being drawn
-  unsigned int getDrawBufferIndex() const;
-
-  /// @brief Get the OpenGL id of the buffer which is being drawn
-  unsigned int getDrawBufferID() const;
-
-  /// @brief Get the index into `getBufferIds()` of the buffer which is currently being modified
-  unsigned int getModifyBufferIndex() const;
-
-  /// @brief Get the OpenGL id of the buffer which is currently being modified
-  unsigned int getModifyBufferID() const;
-
-  /// @brief Get the OpenGL buffer ids
-  std::vector<unsigned int> getBuffersIds() const { return bufferIds_; }
+  /// @brief Get the OpenGL buffer ID
+  unsigned int getID() const;
 
   /// @brief Convert buffer to string
   std::string toString() const;

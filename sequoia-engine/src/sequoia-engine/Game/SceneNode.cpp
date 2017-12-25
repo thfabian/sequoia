@@ -21,75 +21,10 @@
 #include "sequoia-engine/Math/CoordinateSystem.h"
 #include <boost/lexical_cast.hpp>
 #include <numeric>
-#include <tbb/task.h>
 
 namespace sequoia {
 
 namespace game {
-
-namespace {
-
-/// @brief Task applied to traverse the SceneNodes
-class ApplyParallelTask final : public tbb::task {
-  SceneNode* node_;                                ///< Node to execute the functor on
-  const std::function<void(SceneNode*)>* functor_; ///< Functor to execute
-
-public:
-  ApplyParallelTask(SceneNode* node, const std::function<void(SceneNode*)>* functor)
-      : node_(node), functor_(functor) {}
-
-  ApplyParallelTask(ApplyParallelTask&&) = default;
-  ApplyParallelTask(const ApplyParallelTask&) = default;
-
-  tbb::task* execute() override {
-    // The ref count needs to be initialized with 1 as we wait in the end
-    this->set_ref_count(1);
-
-    // Execute functor
-    (*functor_)(node_);
-
-    if(!node_->hasChildren())
-      return nullptr;
-
-    // Spawn child tasks
-    tbb::task_list taskList;
-    for(const auto& child : node_->getChildren()) {
-      ApplyParallelTask& childTask =
-          *new(tbb::task::allocate_child()) ApplyParallelTask(child.get(), functor_);
-      this->increment_ref_count();
-      taskList.push_back(childTask);
-    }
-
-    if(!taskList.empty())
-      this->spawn_and_wait_for_all(taskList);
-
-    return nullptr;
-  }
-};
-
-/// @brief Traverse the SceneNodes in parallel
-inline void applyParallel(SceneNode* node, const std::function<void(SceneNode*)>& functor) {
-  ApplyParallelTask& root_task = *new(tbb::task::allocate_root()) ApplyParallelTask(node, &functor);
-  tbb::task::spawn_root_and_wait(root_task);
-}
-
-/// @brief Traverse the SceneNodes sequentially
-inline void applySequential(SceneNode* node, const std::function<void(SceneNode*)>& functor) {
-  functor(node);
-  for(const auto& child : node->getChildren())
-    applySequential(child.get(), functor);
-}
-
-/// @brief Traverse the SceneNodes sequentially (ignoring any exceptions)
-inline void
-applySequentialNoexcept(SceneNode* node,
-                        const std::function<void(SceneNode*) noexcept>& functor) noexcept {
-  functor(node);
-  for(const auto& child : node->getChildren())
-    applySequentialNoexcept(child.get(), functor);
-}
-
-} // anonymous namespace
 
 SceneNode::SceneNode(const std::string& name, SceneNode::SceneNodeKind kind)
     : std::enable_shared_from_this<SceneNode>(), kind_(kind), position_(math::vec3()),
@@ -136,20 +71,17 @@ math::mat3 SceneNode::getLocalAxes() const {
   return math::mat3(axisX, axisY, axisZ);
 }
 
-void SceneNode::applyImpl(const std::function<void(SceneNode*)>& functor, ExecutionPolicy policy) {
-  if(policy == EP_Sequential)
-    applySequential(this, functor);
-  else
-    applyParallel(this, functor);
+void SceneNode::applyImpl(const std::function<void(SceneNode*)>& functor) {
+  functor(this);
+  for(const auto& child : getChildren())
+    child->applyImpl(functor);
 }
 
-void SceneNode::applyNoexceptImpl(const std::function<void(SceneNode*) noexcept>& functor,
-                                  ExecutionPolicy policy) noexcept {
-  if(policy == EP_Sequential) {
-    applySequentialNoexcept(this, functor);
-  } else {
-    applyParallel(this, functor);
-  }
+void SceneNode::applyNoexceptImpl(
+    const std::function<void(SceneNode*) noexcept>& functor) noexcept {
+  functor(this);
+  for(const auto& child : getChildren())
+    child->applyNoexceptImpl(functor);
 }
 
 void SceneNode::update(const UpdateEvent& event) {

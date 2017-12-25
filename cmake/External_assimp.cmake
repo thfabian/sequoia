@@ -23,7 +23,7 @@ ExternalProject_Add(
   URL_MD5 ${assimp_md5}
   BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}/assimp"
   INSTALL_DIR "${SEQUOIA_EXTERNAL_INSTALL_PREFIX}/assimp"
-  # Remove the custom FinZLIB to force using the CMake builtin one 
+  # Remove the custom FindZLIB to force using the CMake builtin one
   PATCH_COMMAND ${CMAKE_COMMAND} -E remove -f "<SOURCE_DIR>/cmake-modules/FindZLIB.cmake"
   CMAKE_ARGS
     ${cmake_args}
