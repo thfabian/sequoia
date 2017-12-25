@@ -13,7 +13,9 @@ The project is organized in a couple of subdirectories.
 - The [sequoia-cmake](sequoia-cmake) directory contains various CMake modules and other scripts 
   shared among all the Sequoia projects.
 - The [sequoia-docs](sequoia-docs) directory contains the HTML documentation of all Sequoia projects.
+- The [sequoia-editor](sequoia-editor) directory contains the game editor.
 - The [sequoia-engine](sequoia-engine) directory contains the 3D game-engine.
+- The [sequoia-examples](sequoia-examples) directory contains various smaller examples on how to use the engine.
 
 ## Continuous Integration
 
@@ -32,9 +34,9 @@ The project is organized in a couple of subdirectories.
 
 ## License
 
-> You can check out the full license [here](LICENSE.txt).
-
 This project is licensed under the terms of the **MIT** license.
+
+> You can check out the full license [here](LICENSE.txt).
 
 <!-- Links -->
 [TravisCI]: https://travis-ci.org/thfabian/sequoia
