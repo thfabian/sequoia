@@ -110,7 +110,7 @@ public:
     clearRenderBuffers(buffersToClear);
   }
 
-  TestRenderer() : Renderer() {}
+  TestRenderer() : Renderer(RK_Invalid) {}
   const std::vector<std::string>& getChanges() const { return changes_; }
   void resetChanges() { changes_.clear(); }
 };
@@ -347,7 +347,7 @@ TEST_F(RendererTest, UniformChange) {
 
 TEST_F(RendererTest, Draw) {
   RenderSystem& rsys = RenderSystem::getSingleton();
-  
+
   auto renderer = std::make_unique<TestRenderer>();
   auto target = rsys.getMainWindow();
   auto program = rsys.createProgram({});

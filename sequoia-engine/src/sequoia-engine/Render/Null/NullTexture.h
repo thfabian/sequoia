@@ -48,7 +48,7 @@ public:
   /// @copydoc Texture::toString
   virtual std::string toString() const override;
 
-  SEQUOIA_GL_OBJECT(Texture)
+  SEQUOIA_NULL_OBJECT(Texture)
 
 protected:
   void makeValidImpl() override;

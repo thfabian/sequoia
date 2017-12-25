@@ -50,7 +50,7 @@ std::pair<std::string, std::string> NullRenderer::toStringImpl() const {
   return std::make_pair("NullRenderer", core::format("{}", Base::toStringImpl().second));
 }
 
-NullRenderer::NullRenderer() : Renderer() {}
+NullRenderer::NullRenderer() : Renderer(RK_Null) {}
 
 } // namespace render
 

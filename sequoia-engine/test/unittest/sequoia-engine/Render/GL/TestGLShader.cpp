@@ -65,11 +65,17 @@ TEST_F(GLShaderTest, LoadingFail) {
       makeShader(Shader::ST_Vertex,
                  "sequoia-engine/Render/GL/TestGLShader/VertexCompileFail-NonExising.vert"),
       core::Exception);
-  
+
   // Shader is invalid
   EXPECT_THROW(
       makeShader(Shader::ST_Vertex, "sequoia-engine/Render/GL/TestGLShader/VertexCompileFail.vert"),
       RenderSystemException);
+}
+
+TEST_F(GLShaderTest, RTTI) {
+  std::shared_ptr<Shader> shader = makeShader(
+      Shader::ST_Vertex, "sequoia-engine/Render/GL/TestGLShader/VertexCompileSuccess.vert");
+  EXPECT_TRUE(core::isa<GLShader>(shader.get()));
 }
 
 } // anonymous namespace

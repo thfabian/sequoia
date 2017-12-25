@@ -35,7 +35,7 @@ public:
   /// @copydoc Program::toString
   virtual std::string toString() const override;
 
-  SEQUOIA_GL_OBJECT(Program)
+  SEQUOIA_NULL_OBJECT(Program)
 
 protected:
   virtual void makeValidImpl() override;
