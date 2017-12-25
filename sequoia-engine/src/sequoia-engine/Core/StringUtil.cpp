@@ -14,6 +14,7 @@
 //===------------------------------------------------------------------------------------------===//
 
 #include "sequoia-engine/Core/StringUtil.h"
+#include "sequoia-engine/Core/Timer.h"
 
 namespace sequoia {
 
@@ -45,6 +46,34 @@ void forEachLine(const std::string& string, std::function<void(StringRef)> funct
     }
   }
   functor(StringRef(string.c_str() + begin, pos - begin));
+}
+
+std::string timeString(double time, bool precise) {
+  if(std::isnan(time) || std::isinf(time))
+    return "inf";
+
+  std::string suffix = "ms";
+  if(time > 1000) {
+    time /= 1000;
+    suffix = "s";
+    if(time > 60) {
+      time /= 60;
+      suffix = "m";
+      if(time > 60) {
+        time /= 60;
+        suffix = "h";
+        if(time > 24) {
+          time /= 24;
+          suffix = "d";
+        }
+      }
+    }
+  }
+
+  if(precise)
+    return core::format("{:.4f} {}", time, suffix);
+  else
+    return core::format("{:.1f} {}", time, suffix);
 }
 
 } // namespace core

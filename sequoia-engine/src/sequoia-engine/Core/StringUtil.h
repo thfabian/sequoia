@@ -37,6 +37,10 @@ SEQUOIA_API extern std::string indent(const std::string& string, int amount = 2)
 SEQUOIA_API extern void forEachLine(const std::string& string,
                                     std::function<void(StringRef)> functor);
 
+/// @brief Convert a time value in milliseconds into a human-readable string
+/// @ingroup core
+SEQUOIA_API extern std::string timeString(double time, bool precise = false);
+
 /// @brief Convert a pointer to string
 /// @ingroup core
 template <class T>

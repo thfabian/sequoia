@@ -70,6 +70,7 @@ sequoia_add_library(
           Task.h
           Terminal.cpp  
           Terminal.h
+          Timer.h
           Unreachable.cpp         
           Unreachable.h
           Utf.h
