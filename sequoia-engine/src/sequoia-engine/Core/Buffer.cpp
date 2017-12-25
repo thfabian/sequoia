@@ -13,14 +13,14 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia-engine/Render/Buffer.h"
+#include "sequoia-engine/Core/Buffer.h"
 #include "sequoia-engine/Core/Format.h"
 #include "sequoia-engine/Core/StringUtil.h"
 #include <cstring>
 
 namespace sequoia {
 
-namespace render {
+namespace core {
 
 static std::string usageHintToString(Buffer::UsageHint usage) {
   if(usage == Buffer::UH_Invalid)
@@ -89,6 +89,6 @@ std::pair<std::string, std::string> Buffer::toStringImpl() const {
                                                shadowBuffer_ ? shadowBuffer_->toString() : "null"));
 }
 
-} // namespace render
+} // namespace core
 
 } // namespace sequoia

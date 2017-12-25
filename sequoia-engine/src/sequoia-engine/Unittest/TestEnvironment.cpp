@@ -20,14 +20,34 @@
 #include "sequoia-engine/Core/Unreachable.h"
 #include "sequoia-engine/Core/Version.h"
 #include "sequoia-engine/Unittest/Config.h"
+#include "sequoia-engine/Unittest/Exception.h"
 #include "sequoia-engine/Unittest/TestEnvironment.h"
 #include "sequoia-engine/Unittest/TestFile.h"
+#include <fstream>
+#include <iostream>
 
 namespace sequoia {
 
 SEQUOIA_DECLARE_SINGLETON(unittest::TestEnvironment);
 
 namespace unittest {
+
+static platform::Path createTemporaryPathImpl(const platform::Path& temporaryPath,
+                                              const platform::Path& path, bool isDir,
+                                              std::string content) {
+  auto newPath = temporaryPath / path;
+  platform::filesystem::create_directories(isDir ? newPath : newPath.parent_path());
+  if(!isDir) {
+    std::ofstream ofs(platform::toAnsiString(newPath).c_str());
+    ofs << content;
+  }
+
+  if(!platform::filesystem::exists(newPath))
+    SEQUOIA_THROW(UnittestException, "failed to create {}: \"{}\"", isDir ? "directory" : "file",
+                  platform::toAnsiString(newPath));
+
+  return newPath;
+}
 
 TestEnvironment::TestEnvironment(int argc, char* argv[], render::RenderSystemKind kind)
     : trace_(), renderSystemKind_(kind) {
@@ -97,6 +117,16 @@ std::string TestEnvironment::testName() const {
   if(testInfo)
     return testInfo->name();
   sequoia_unreachable("testName() called outside test");
+}
+
+platform::Path
+TestEnvironment::createTemporaryDir(const platform::Path& path) const {
+  return createTemporaryPathImpl(temporaryPath_, path, true, "");
+}
+
+platform::Path TestEnvironment::createTemporaryFile(const platform::Path& path,
+                                                    std::string content) const {
+  return createTemporaryPathImpl(temporaryPath_, path, false, content);
 }
 
 std::shared_ptr<File> TestEnvironment::getFile(const char* path) const {

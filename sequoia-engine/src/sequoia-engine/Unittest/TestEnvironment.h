@@ -62,18 +62,37 @@ public:
   /// @brief Get the ressource path of the unittest
   const platform::Path& getRessourcePath() const { return ressourcePath_; }
 
-  /// @brief Get the ressource path of the unittest
+  /// @brief Get the temporary path of the unittest
   const platform::Path& getTemporaryPath() const { return temporaryPath_; }
+
+  /// @brief Create a new temporary directory relative to the unittest temporary root
+  /// (i.e `Environment::getTemporaryPath()`)
+  ///
+  /// This function will create all intermediate directories if necessary.
+  ///
+  /// @param path   Path relative to the unittest ressource root
+  platform::Path createTemporaryDir(const platform::Path& path) const;
+  
+  /// @brief Create a new temporary file relative to the unittest temporary root
+  /// (i.e `Environment::getTemporaryPath()`)
+  ///
+  /// This function will create all intermediate directories.
+  ///
+  /// @param path   Path relative to the unittest ressource root
+  /// @param content        Initial content of the file
+  platform::Path createTemporaryFile(const platform::Path& path, std::string content = "") const;
 
   /// @brief Get the render-system to use
   render::RenderSystemKind getRenderSystemKind() const { return renderSystemKind_; }
 
+  // TODO: remove
   /// @brief Get a **refrence** to the file specified by `path` relative to the unittest
   /// ressource root (i.e `Environment::getRessourcePath()`)
   ///
   /// @param path   Path relative to the unittest ressource root
   std::shared_ptr<File> getFile(const char* path) const;
 
+  // TODO: remove
   /// @brief **Create** a file specified by `path` relative to the unittest temporary root
   /// (i.e `Environment::getRessourcePath()`)
   ///

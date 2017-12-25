@@ -16,7 +16,7 @@
 #ifndef SEQUOIA_ENGINE_RENDER_NULL_NULLINDEXBUFFER_H
 #define SEQUOIA_ENGINE_RENDER_NULL_NULLINDEXBUFFER_H
 
-#include "sequoia-engine/Render/HostBuffer.h"
+#include "sequoia-engine/Core/HostBuffer.h"
 #include "sequoia-engine/Render/IndexBuffer.h"
 
 namespace sequoia {
@@ -29,14 +29,11 @@ namespace render {
 ///
 /// @ingroup null
 class SEQUOIA_API NullIndexBuffer final : public IndexBuffer {
-  std::unique_ptr<HostBuffer> buffer_; ///< Mock data
+  std::unique_ptr<core::HostBuffer> buffer_; ///< Mock data
 
 public:
   NullIndexBuffer(IndexBuffer::IndexType type);
   ~NullIndexBuffer();
-
-  /// @copydoc Buffer::isSystemRAM
-  virtual bool isSystemRAM() const override { return buffer_->isSystemRAM(); }
 
   static bool classof(const Buffer* buffer) { return buffer->getKind() == BK_NullIndexBuffer; }
 

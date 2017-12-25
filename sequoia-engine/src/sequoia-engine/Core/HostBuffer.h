@@ -13,19 +13,19 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_ENGINE_RENDER_HOSTBUFFER_H
-#define SEQUOIA_ENGINE_RENDER_HOSTBUFFER_H
+#ifndef SEQUOIA_ENGINE_CORE_HOSTBUFFER_H
+#define SEQUOIA_ENGINE_CORE_HOSTBUFFER_H
 
-#include "sequoia-engine/Render/Buffer.h"
+#include "sequoia-engine/Core/Buffer.h"
 
 namespace sequoia {
 
-namespace render {
+namespace core {
 
-/// @brief Harware buffer allocate in the core system's RAM
+/// @brief Buffer allocate in the CPU RAM
 /// @ingroup render
-class SEQUOIA_API HostBuffer final : public Buffer {
-  void* dataPtr_; ///< Pointer to the host memory
+class SEQUOIA_API HostBuffer : public Buffer {
+  void* dataPtr_; ///< Pointer to host memory
 
 public:
   using Base = Buffer;
@@ -33,14 +33,11 @@ public:
   /// @brief Initialize empty buffer
   HostBuffer();
 
-  /// @brief Create buffer of `numBytes` size
-  static std::unique_ptr<HostBuffer> create(std::size_t numBytes);
-
   /// @brief Free the host memory
   virtual ~HostBuffer();
 
-  /// @copydoc Buffer::isSystemRAM
-  virtual bool isSystemRAM() const override { return true; }
+  /// @brief Create a buffer of `numBytes` size
+  static std::unique_ptr<HostBuffer> create(std::size_t numBytes);
 
   /// @brief Get the data pointer
   void* getData() { return dataPtr_; }
@@ -56,7 +53,9 @@ public:
     return static_cast<const T*>(dataPtr_);
   }
 
-  static bool classof(const Buffer* buffer) { return buffer->getKind() == BK_HostBuffer; }
+  static bool classof(const Buffer* buffer) {
+    return buffer->getKind() >= BK_HostBuffer && buffer->getKind() < BK_HostBufferLast;
+  }
 
 protected:
   /// @copydoc Buffer::writeImpl
@@ -66,10 +65,13 @@ protected:
   /// @copydoc Buffer::readImpl
   virtual void readImpl(std::size_t offset, std::size_t length, void* dest) override;
 
+  /// @copydoc Buffer::lockImpl
   virtual void* lockImpl(LockOption option) override {
     (void)option;
     return dataPtr_;
   }
+
+  /// @copydoc Buffer::unlockImpl
   virtual void unlockImpl() override {}
 
   /// @copydoc Allocate `numBytes` memory, all hints are ignored
@@ -77,9 +79,13 @@ protected:
 
   /// @copydoc Buffer::toStringImpl
   virtual std::pair<std::string, std::string> toStringImpl() const override;
+
+private:
+  /// @brief Free allocated memory
+  void free();
 };
 
-} // namespace render
+} // namespace core
 
 } // namespace sequoia
 

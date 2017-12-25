@@ -16,6 +16,7 @@
 #ifndef SEQUOIA_ENGINE_GAME_SHAPEMANAGER_H
 #define SEQUOIA_ENGINE_GAME_SHAPEMANAGER_H
 
+#include "sequoia-engine/Core/Buffer.h"
 #include "sequoia-engine/Core/Export.h"
 #include "sequoia-engine/Core/File.h"
 #include "sequoia-engine/Core/Hash.h"
@@ -23,7 +24,6 @@
 #include "sequoia-engine/Game/Material.h"
 #include "sequoia-engine/Game/Mesh.h"
 #include "sequoia-engine/Game/Shape.h"
-#include "sequoia-engine/Render/Buffer.h"
 #include "sequoia-engine/Render/RenderFwd.h"
 #include "sequoia-engine/Render/Texture.h"
 #include "sequoia-engine/Render/UniformVariable.h"
@@ -124,7 +124,7 @@ public:
   std::shared_ptr<Shape>
   createCube(const std::string& name, bool modifiable = false,
              const MeshParameter& param = MeshParameter(),
-             render::Buffer::UsageHint usage = render::Buffer::UH_StaticWriteOnly);
+             core::Buffer::UsageHint usage = core::Buffer::UH_StaticWriteOnly);
 
   //  /// @brief Create a grid, centered at `(0, 0, 0)`, with `N^2` gridpoints (vertices) spanning
   //  /// `{-0.5, 0.5} x {0} x {-0.5, 0.5}`

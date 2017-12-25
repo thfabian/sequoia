@@ -13,10 +13,10 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia-engine/Render/HostBuffer.h"
+#include "sequoia-engine/Core/HostBuffer.h"
 #include <gtest/gtest.h>
 
-using namespace sequoia::render;
+using namespace sequoia::core;
 
 namespace {
 
@@ -27,7 +27,6 @@ TEST(HostBufferTest, Allocate) {
   EXPECT_NE(buffer->getData(), nullptr);
 
   EXPECT_FALSE(buffer->hasShadowBuffer());
-  EXPECT_TRUE(buffer->isSystemRAM());
 
   buffer->lock(Buffer::LO_Normal);
   EXPECT_EQ(buffer->getData(), buffer->get());

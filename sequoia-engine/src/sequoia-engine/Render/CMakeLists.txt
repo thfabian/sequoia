@@ -90,9 +90,7 @@ set(NULL_SOURCE
 
 sequoia_add_library(
   NAME SequoiaEngineRender
-  SOURCES Buffer.h
-          Buffer.cpp
-          Camera.cpp
+  SOURCES Camera.cpp
           Camera.h
           DrawCallContext.h
           DrawCommand.cpp
@@ -102,8 +100,6 @@ sequoia_add_library(
           FrameBuffer.cpp
           FrameBuffer.h
           FrameListener.h
-          HostBuffer.cpp
-          HostBuffer.h
           IndexBuffer.cpp
           IndexBuffer.h
           Input.cpp

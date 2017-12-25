@@ -34,9 +34,6 @@ public:
   /// @brief Free all memory
   ~GLVertexBuffer();
 
-  /// @copydoc Buffer::isSystemRAM
-  bool isSystemRAM() const override { return false; }
-
   /// @brief Bind the buffer
   void bind();
 

@@ -476,7 +476,7 @@ static CubeIndicesElementType CubeIndices[] = {0,  1,  2,  2,  3,  0,   // front
 
 std::shared_ptr<Shape> ShapeManager::createCube(const std::string& name, bool modifiable,
                                                 const MeshParameter& param,
-                                                render::Buffer::UsageHint usage) {
+                                                core::Buffer::UsageHint usage) {
   Log::debug("Creating cube shape \"{}\" ...", name);
 
   std::shared_ptr<render::VertexData> vertexData = nullptr;
@@ -517,7 +517,7 @@ std::shared_ptr<Shape> ShapeManager::createCube(const std::string& name, bool mo
 
     // Fill VertexBuffer
     {
-      render::BufferGuard guard(vertexData->getVertexBuffer(), render::Buffer::LO_Discard);
+      core::BufferGuard guard(vertexData->getVertexBuffer(), core::Buffer::LO_Discard);
       Byte* vertexPtr = guard.getAsByte();
 
       render::VertexAdapter adapter(layout);

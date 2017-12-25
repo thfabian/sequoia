@@ -246,7 +246,7 @@ std::pair<std::string, std::string> GLRenderer::toStringImpl() const {
 }
 
 GLRenderer::GLRenderer(GLRenderWindow* window, Options& options)
-    : window_(window), debugMode_(options.getBool("Core.Debug")) {
+    : Renderer(RK_OpenGL), window_(window), debugMode_(options.getBool("Core.Debug")) {
   Log::info("Creating OpenGL renderer {} ...", core::ptrToStr(this));
 
   // Bind the context to the current thread

@@ -16,7 +16,7 @@
 #ifndef SEQUOIA_ENGINE_RENDER_VERTEXBUFFER_H
 #define SEQUOIA_ENGINE_RENDER_VERTEXBUFFER_H
 
-#include "sequoia-engine/Render/Buffer.h"
+#include "sequoia-engine/Core/Buffer.h"
 #include "sequoia-engine/Render/Vertex.h"
 
 namespace sequoia {
@@ -31,9 +31,6 @@ public:
 
   /// @brief Free all memory
   virtual ~VertexBuffer();
-
-  /// @copydoc Buffer::isSystemRAM
-  virtual bool isSystemRAM() const override = 0;
 
   /// @brief Allocate `numIndices`
   void allocateVertices(std::size_t numVertices, Buffer::UsageHint hint);
@@ -69,7 +66,7 @@ protected:
   virtual std::pair<std::string, std::string> toStringImpl() const override;
 
 private:
-  /// Layout of each individual vertex
+  /// Layout of each individual vertices
   VertexLayout layout_;
 
 private:
