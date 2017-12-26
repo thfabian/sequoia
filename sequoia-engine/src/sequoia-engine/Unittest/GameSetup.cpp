@@ -15,6 +15,7 @@
 
 #include "sequoia-engine/Unittest/GameSetup.h"
 #include "sequoia-engine/Unittest/TestEnvironment.h"
+#include "sequoia-engine/Core/Platform.h"
 
 namespace sequoia {
 
@@ -28,7 +29,7 @@ void GameSetup::SetUp() {
   options->setBool("Game.HideWindow", true);
   options->setString("Game.Name", "GameTest");
   options->setInt("Game.RenderSystem", env.getRenderSystemKind());
-  options->setString("Game.RessourcePath", env.getRessourcePath().native());
+  options->setString("Game.RessourcePath", platform::toAnsiString(env.getRessourcePath()));
   game_->init(options);
 }
 
