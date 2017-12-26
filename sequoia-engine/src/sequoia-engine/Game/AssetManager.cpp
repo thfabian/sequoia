@@ -65,7 +65,7 @@ AssetManager::Asset::Asset(AssetManager* manager, FileType type, std::size_t id,
 
 AssetManager::Asset::~Asset() {}
 
-AssetManager::AssetManager(const platform::String& path) { assetPath_ = platform::Path(path); }
+AssetManager::AssetManager(const std::string& path) { assetPath_ = platform::asPath(path); }
 
 std::shared_ptr<File> AssetManager::load(const std::string& path, FileType type) {
   if(type == FileType::Unknown)

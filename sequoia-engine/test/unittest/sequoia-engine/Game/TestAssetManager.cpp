@@ -27,7 +27,7 @@ namespace {
 
 TEST(AssetManagerTest, LoadFromDisk) {
   auto& env = TestEnvironment::getSingleton();
-  AssetManager manager(env.getRessourcePath().native());
+  AssetManager manager(platform::toAnsiString(env.getRessourcePath()));
 
   auto file = manager.load("sequoia-engine/Game/TestAssetManager/Test.txt");
 
@@ -45,8 +45,8 @@ TEST(AssetManagerTest, LoadFromDisk) {
 
 TEST(AssetManagerTest, LoadImage) {
   auto& env = TestEnvironment::getSingleton();
-  AssetManager manager(env.getRessourcePath().native());
-
+  AssetManager manager(platform::toAnsiString(env.getRessourcePath()));
+  
   auto image = manager.loadImage("sequoia-engine/Game/TestAssetManager/Test.png");
   auto imageCopy = manager.loadImage("sequoia-engine/Game/TestAssetManager/Test.png");
   EXPECT_EQ(*image, *imageCopy);
