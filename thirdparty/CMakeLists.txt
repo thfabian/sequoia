@@ -218,9 +218,9 @@ sequoia_find_package(
 #
 # GTest
 #
-set(gtest_version "1.7.0")
+set(gtest_version "1.8.0")
 set(gtest_url "https://github.com/google/googletest/archive/release-${gtest_version}.tar.gz")
-set(gtest_md5 "4ff6353b2560df0afecfbda3b2763847")
+set(gtest_md5 "16877098823401d1bf2ed7891d7dce36")
 
 sequoia_build_package(
   PACKAGE gtest

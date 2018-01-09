@@ -15,11 +15,11 @@
 
 get_filename_component(current_dir ${CMAKE_CURRENT_LIST_FILE} PATH)
 
-configure_file(
-  "${current_dir}/templates/gtest.CMakeLists.txt.in"
-  "${CMAKE_CURRENT_BINARY_DIR}/gtest.CMakeLists.txt"
-  @ONLY
-)
+# configure_file(
+#   "${current_dir}/templates/gtest.CMakeLists.txt.in"
+#   "${CMAKE_CURRENT_BINARY_DIR}/gtest.CMakeLists.txt"
+#   @ONLY
+# )
 
 ExternalProject_Add(
   gtest
@@ -30,11 +30,13 @@ ExternalProject_Add(
   BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}/gtest"
   INSTALL_DIR "${SEQUOIA_EXTERNAL_INSTALL_PREFIX}/gtest"
   PATCH_COMMAND ${CMAKE_COMMAND} -E copy_if_different
-    "${CMAKE_CURRENT_BINARY_DIR}/gtest.CMakeLists.txt"
-    "<SOURCE_DIR>/CMakeLists.txt"
+    "${current_dir}/templates/gtest.internal_utils.cmake"
+    "<SOURCE_DIR>/googletest/cmake/internal_utils.cmake"
   CMAKE_CACHE_ARGS
     ${SEQUOIA_EXTERNAL_CMAKE_ARGS}
     -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
+    -DBUILD_GMOCK:BOOL=OFF
+    -DBUILD_GTEST:BOOL=ON
     -Dgtest_force_shared_crt:BOOL=ON
 )
 
