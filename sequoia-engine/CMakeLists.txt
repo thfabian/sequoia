@@ -124,12 +124,14 @@ macro(find_packages NAME)
     include("Add${package}")
     string(TOUPPER ${package} PACKAGE)
 
-    list(APPEND SEQUOIA_ENGINE_${NAME}_LIBRARIES ${SEQUOIA_${PACKAGE}_LIBRARIES})
-    list(APPEND SEQUOIA_ENGINE_${NAME}_INCLUDE_DIRS ${SEQUOIA_${PACKAGE}_INCLUDE_DIRS})
-    list(APPEND SEQUOIA_ENGINE_${NAME}_DEFINITIONS ${SEQUOIA_${PACKAGE}_DEFINITIONS})
-    
-    sequoia_create_package_string(${package} info)
-    list(APPEND package_info ${info})
+    if(SEQUOIA_${PACKAGE}_FOUND)
+      list(APPEND SEQUOIA_ENGINE_${NAME}_LIBRARIES ${SEQUOIA_${PACKAGE}_LIBRARIES})
+      list(APPEND SEQUOIA_ENGINE_${NAME}_INCLUDE_DIRS ${SEQUOIA_${PACKAGE}_INCLUDE_DIRS})
+      list(APPEND SEQUOIA_ENGINE_${NAME}_DEFINITIONS ${SEQUOIA_${PACKAGE}_DEFINITIONS})
+      
+      sequoia_create_package_string(${package} info)
+      list(APPEND package_info ${info})
+    endif()
   endforeach()
   
   include_directories(SYSTEM ${SEQUOIA_ENGINE_${NAME}_INCLUDE_DIRS})
@@ -137,7 +139,7 @@ macro(find_packages NAME)
 endmacro()
 
 find_packages(EXTERNAL Backward Boost glbinding glfw3 gli glm OpenCV OpenGL Python3 TBB fmt 
-                       cereal spdlog assimp pugixml Threads)
+                       cereal spdlog assimp pugixml DX12 Threads)
 if(SEQUOIA_ENGINE_TESTING)
   find_packages(TESTING GTest benchmark)
 endif()
