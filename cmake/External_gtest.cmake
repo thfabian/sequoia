@@ -15,12 +15,6 @@
 
 get_filename_component(current_dir ${CMAKE_CURRENT_LIST_FILE} PATH)
 
-# configure_file(
-#   "${current_dir}/templates/gtest.CMakeLists.txt.in"
-#   "${CMAKE_CURRENT_BINARY_DIR}/gtest.CMakeLists.txt"
-#   @ONLY
-# )
-
 ExternalProject_Add(
   gtest
   DOWNLOAD_DIR "${SEQUOIA_EXTERNAL_DOWNLOAD_DIR}/gtest"
