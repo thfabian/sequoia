@@ -125,6 +125,9 @@ macro(sequoia_engine_set_cxx_flags)
     # C4800 - 'unsigned __int64': forcing value to bool 'true' or 'false' (performance warning)
     sequoia_check_and_set_cxx_flag("/wd4800" HAVE_MSVC_WD4800)
     
+    # C4996 - namespace 'std::tr1' is going to be deprecated
+    sequoia_check_and_set_cxx_flag("/wd4996" HAVE_MSVC_WD4996)
+    
   #
   # GCC/Clang/Intel
   #    
