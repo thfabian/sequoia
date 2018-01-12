@@ -110,4 +110,13 @@ TEST_F(GLTextureTest, LoadTexture2DCompressed) {
   }
 }
 
+TEST_F(GLTextureTest, RTTI) {
+  TestEnvironment& env = TestEnvironment::getSingleton();
+  RenderSystem& rsys = RenderSystem::getSingleton();
+
+  auto image = Image::load(env.getFile("sequoia-engine/Render/GL/TestGLTexture/Test.png"));
+  std::shared_ptr<Texture> texture = rsys.createTexture(image);
+  EXPECT_TRUE(core::isa<GLTexture>(texture.get()));
+}
+
 } // anonymous namespace

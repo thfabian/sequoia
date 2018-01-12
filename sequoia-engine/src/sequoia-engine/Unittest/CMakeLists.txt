@@ -32,17 +32,18 @@ sequoia_add_library(
   SOURCES BenchmarkEnvironment.h
           BenchmarkEnvironment.cpp
           BenchmarkMain.h
+          Exception.h
           Fixture.h
-          GameSetup.h
           GameSetup.cpp
-          RenderSetup.h
+          GameSetup.h
           RenderSetup.cpp
-          Test.h
+          RenderSetup.h
           Test.cpp
-          TestEnvironment.h
+          Test.h
           TestEnvironment.cpp
-          TestFile.h
+          TestEnvironment.h
           TestFile.cpp
+          TestFile.h
 
           ${GL_SOURCE}
           ${NULL_SOURCE}

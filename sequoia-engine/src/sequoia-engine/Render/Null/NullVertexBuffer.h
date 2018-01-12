@@ -16,7 +16,7 @@
 #ifndef SEQUOIA_ENGINE_RENDER_NULL_NULLVERTEXBUFFER_H
 #define SEQUOIA_ENGINE_RENDER_NULL_NULLVERTEXBUFFER_H
 
-#include "sequoia-engine/Render/HostBuffer.h"
+#include "sequoia-engine/Core/HostBuffer.h"
 #include "sequoia-engine/Render/VertexBuffer.h"
 
 namespace sequoia {
@@ -29,16 +29,13 @@ namespace render {
 ///
 /// @ingroup gl
 class SEQUOIA_API NullVertexBuffer final : public VertexBuffer {
-  std::unique_ptr<HostBuffer> buffer_; ///< Mock data
+  std::unique_ptr<core::HostBuffer> buffer_; ///< Mock data
 
 public:
   NullVertexBuffer(const VertexLayout& layout);
 
   /// @brief Free all memory
   ~NullVertexBuffer();
-
-  /// @copydoc Buffer::isSystemRAM
-  bool isSystemRAM() const override { return buffer_->isSystemRAM(); }
 
   static bool classof(const Buffer* buffer) { return buffer->getKind() == BK_NullVertexBuffer; }
 

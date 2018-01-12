@@ -48,8 +48,8 @@ protected:
   /// @copydoc Renderer::ViewportChanged
   virtual bool ViewportChanged(int x, int y, int width, int height) override;
 
-  virtual bool clearRenderBuffers(
-      const std::set<RenderBuffer::RenderBufferKind>& buffersToClear) override;
+  virtual bool
+  clearRenderBuffers(const std::set<RenderBuffer::RenderBufferKind>& buffersToClear) override;
 
   /// @copydoc Renderer::draw
   virtual bool draw(const DrawCommand& drawCommand) override;
@@ -59,6 +59,8 @@ protected:
 
 public:
   NullRenderer();
+
+  SEQUOIA_NULL_OBJECT(Renderer)
 };
 
 } // namespace render

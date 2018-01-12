@@ -20,6 +20,7 @@
 #include "sequoia-engine/Render/RenderBuffer.h"
 #include "sequoia-engine/Render/RenderFwd.h"
 #include "sequoia-engine/Render/RenderPipeline.h"
+#include "sequoia-engine/Render/RenderSystemObject.h"
 #include "sequoia-engine/Render/UniformVariable.h"
 #include "sequoia-engine/Render/VertexData.h"
 #include <cstdint>
@@ -33,10 +34,10 @@ namespace render {
 
 /// @brief Render `DrawCommand`s and keep track/apply changes to the RenderPipeline
 /// @ingroup render
-class SEQUOIA_API Renderer {
+class SEQUOIA_API Renderer : public RenderSystemObject {
 public:
   virtual ~Renderer() {}
-  Renderer();
+  Renderer(RenderSystemKind kind);
 
   /// @brief Set the interal RenderPipeline to `pipeline` and call the appropriate methods for every
   /// state change

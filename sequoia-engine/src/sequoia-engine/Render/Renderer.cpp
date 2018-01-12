@@ -95,7 +95,8 @@ std::string stringify(const std::unordered_map<int, Texture*>& textures) {
 
 #define SEQUOIA_PP_STRINGIFY_ARGUMENT(r, Data, Elem)                                               \
   Log::debug("{} =", BOOST_STRINGIZE(Elem));                                                       \
-  core::forEachLine(stringify(Elem), [](const std::string& line) { Log::debug("  {}", line); });
+  core::forEachLine(stringify(Elem),                                                               \
+                    [](StringRef line) -> void { Log::debug("  {}", line.str()); });
 
 #define SEQUOIA_CALL_IMPL(errorAction, function, ...)                                              \
   if(SEQUOIA_BUILTIN_UNLIKELY(!function(__VA_ARGS__))) {                                           \
@@ -112,9 +113,9 @@ std::string stringify(const std::unordered_map<int, Texture*>& textures) {
 #define SEQUOIA_CALL_OR_RETURN(function, ...) SEQUOIA_CALL_IMPL(return, function, __VA_ARGS__)
 #define SEQUOIA_CALL_OR_CONTINUE(function, ...) SEQUOIA_CALL_IMPL(continue, function, __VA_ARGS__)
 
-Renderer::Renderer()
-    : forceRenderPipelineUpdate_(true), x_(-1), y_(-1), width_(-1), height_(-1),
-      vertexData_(nullptr) {}
+Renderer::Renderer(RenderSystemKind kind)
+    : RenderSystemObject(kind), forceRenderPipelineUpdate_(true), x_(-1), y_(-1), width_(-1),
+      height_(-1), vertexData_(nullptr) {}
 
 void Renderer::reset() {
   forceRenderPipelineUpdate_ = true;

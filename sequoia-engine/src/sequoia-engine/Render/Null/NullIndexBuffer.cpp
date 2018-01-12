@@ -22,7 +22,7 @@ namespace render {
 
 NullIndexBuffer::NullIndexBuffer(IndexBuffer::IndexType type)
     : IndexBuffer(BK_NullIndexBuffer, type) {
-  buffer_ = std::make_unique<HostBuffer>();
+  buffer_ = std::make_unique<core::HostBuffer>();
 }
 
 NullIndexBuffer::~NullIndexBuffer() {}

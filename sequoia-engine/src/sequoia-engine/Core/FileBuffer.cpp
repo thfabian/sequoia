@@ -13,39 +13,32 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_ENGINE_RENDER_NULL_NULLPROGRAM_H
-#define SEQUOIA_ENGINE_RENDER_NULL_NULLPROGRAM_H
-
-#include "sequoia-engine/Render/Program.h"
+#include "sequoia-engine/Core/FileBuffer.h"
+#include "sequoia-engine/Core/Format.h"
+#include "sequoia-engine/Core/Platform.h"
 
 namespace sequoia {
 
-namespace render {
+namespace core {
 
-/// @brief Null program implementation
-/// @ingroup null
-class SEQUOIA_API NullProgram final : public Program {
-public:
-  NullProgram(const std::set<std::shared_ptr<Shader>>& shaders);
-  virtual ~NullProgram();
+FileBuffer::FileBuffer(const std::string& path, std::size_t numBytes) : path_(path) {
+  allocate(numBytes, UH_Dynamic);
+}
 
-  /// @copydoc Program::getShaders
-  virtual const std::set<std::shared_ptr<Shader>>& getShaders() const override;
+std::string FileBuffer::getFilename() const {
+  return platform::toAnsiString(platform::Path(path_).filename());
+}
 
-  /// @copydoc Program::toString
-  virtual std::string toString() const override;
+std::string FileBuffer::getExtension() const {
+  return platform::toAnsiString(platform::Path(path_).extension());
+}
 
-  SEQUOIA_NULL_OBJECT(Program)
+std::pair<std::string, std::string> FileBuffer::toStringImpl() const {
+  return std::make_pair("FileBuffer", core::format("{}"
+                                                   "path = \"{}\"\n",
+                                                   Base::toStringImpl().second, path_));
+}
 
-protected:
-  virtual void makeValidImpl() override;
-
-private:
-  std::set<std::shared_ptr<Shader>> shaders_;
-};
-
-} // namespace render
+} // namespace core
 
 } // namespace sequoia
-
-#endif

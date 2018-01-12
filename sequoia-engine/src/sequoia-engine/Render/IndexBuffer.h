@@ -16,7 +16,7 @@
 #ifndef SEQUOIA_ENGINE_RENDER_INDEXBUFFER_H
 #define SEQUOIA_ENGINE_RENDER_INDEXBUFFER_H
 
-#include "sequoia-engine/Render/Buffer.h"
+#include "sequoia-engine/Core/Buffer.h"
 
 namespace sequoia {
 
@@ -37,9 +37,6 @@ public:
 
   /// @brief Free all memory
   virtual ~IndexBuffer();
-
-  /// @copydoc Buffer::isSystemRAM
-  virtual bool isSystemRAM() const override = 0;
 
   /// @brief Allocate `numIndices`
   void allocateIndices(std::size_t numIndices);

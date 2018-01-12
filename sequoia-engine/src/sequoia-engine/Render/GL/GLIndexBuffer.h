@@ -35,9 +35,6 @@ public:
   /// @brief Free all memory
   ~GLIndexBuffer();
 
-  /// @copydoc Buffer::isSystemRAM
-  bool isSystemRAM() const override { return false; }
-
   /// @brief Bind the buffer
   void bind();
 

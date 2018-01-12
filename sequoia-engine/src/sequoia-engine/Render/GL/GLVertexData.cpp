@@ -14,12 +14,12 @@
 //===------------------------------------------------------------------------------------------===//
 
 #include "sequoia-engine/Core/Format.h"
+#include "sequoia-engine/Core/HostBuffer.h"
 #include "sequoia-engine/Core/StringUtil.h"
 #include "sequoia-engine/Core/Unreachable.h"
 #include "sequoia-engine/Render/GL/GL.h"
 #include "sequoia-engine/Render/GL/GLVertexAttribute.h"
 #include "sequoia-engine/Render/GL/GLVertexData.h"
-#include "sequoia-engine/Render/HostBuffer.h"
 
 // TODO: convert everything to DSA
 
@@ -87,7 +87,7 @@ GLVertexData::GLVertexData(const VertexDataParameter& param)
     indexBuffer_ = std::make_unique<GLIndexBuffer>(param.IndexType);
 
   bind();
-  
+
   // TODO
   // https://stackoverflow.com/questions/32739297/direct-state-access-with-vertex-buffers
 
@@ -127,12 +127,12 @@ GLVertexData::GLVertexData(const VertexDataParameter& param)
 
   // Allocate shadow buffers
   if(param.UseVertexShadowBuffer)
-    vertexBuffer_->setShadowBuffer(HostBuffer::create(vertexBuffer_->getNumBytes()));
+    vertexBuffer_->setShadowBuffer(core::HostBuffer::create(vertexBuffer_->getNumBytes()));
 
   if(indexBuffer_ && param.UseIndexShadowBuffer)
-    indexBuffer_->setShadowBuffer(HostBuffer::create(indexBuffer_->getNumBytes()));
-  
-  unbind();  
+    indexBuffer_->setShadowBuffer(core::HostBuffer::create(indexBuffer_->getNumBytes()));
+
+  unbind();
 }
 
 GLVertexData::~GLVertexData() {

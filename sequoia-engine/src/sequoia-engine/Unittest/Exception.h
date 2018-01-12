@@ -13,38 +13,21 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_ENGINE_RENDER_NULL_NULLPROGRAM_H
-#define SEQUOIA_ENGINE_RENDER_NULL_NULLPROGRAM_H
+#ifndef SEQUOIA_ENGINE_UNITTEST_EXCEPTION_H
+#define SEQUOIA_ENGINE_UNITTEST_EXCEPTION_H
 
-#include "sequoia-engine/Render/Program.h"
+#include "sequoia-engine/Core/Exception.h"
 
 namespace sequoia {
 
-namespace render {
+namespace unittest {
 
-/// @brief Null program implementation
-/// @ingroup null
-class SEQUOIA_API NullProgram final : public Program {
-public:
-  NullProgram(const std::set<std::shared_ptr<Shader>>& shaders);
-  virtual ~NullProgram();
+/// @class sequoia::unittest::UnittestException
+/// @brief Exception thrown on unittest related errors
+/// @ingroup unittest
+SEQUOIA_DECLARE_EXCPETION(UnittestException)
 
-  /// @copydoc Program::getShaders
-  virtual const std::set<std::shared_ptr<Shader>>& getShaders() const override;
-
-  /// @copydoc Program::toString
-  virtual std::string toString() const override;
-
-  SEQUOIA_NULL_OBJECT(Program)
-
-protected:
-  virtual void makeValidImpl() override;
-
-private:
-  std::set<std::shared_ptr<Shader>> shaders_;
-};
-
-} // namespace render
+} // namespace unittest
 
 } // namespace sequoia
 

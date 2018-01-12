@@ -46,7 +46,7 @@ int main(int argc, char* argv[]) {
     logger->setLevel(core::Logger::Trace);
 
   // Run the game
-  options->setString("Game.Name", "Sequoia Sandbox Example (" SEQUOIA_EXAMPLES_SANDBOX_VERSION ")");
+  options->setString("Game.Name", "Sequoia Sandbox Example");
   try {
     auto sandboxGame = std::make_unique<game::Game>();
     sandboxGame->init(options);

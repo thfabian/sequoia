@@ -22,12 +22,14 @@ sequoia_engine_add_unittest(
           TestFile.cpp
           TestFuture.cpp
           TestHash.cpp
+          TestHostBuffer.cpp
           TestImage.cpp
           TestMain.cpp
           TestMemory.cpp
           TestMutex.cpp
           TestOptions.cpp
           TestPlatform.cpp
+          TestRealFileSystem.cpp
           TestSTLExtra.cpp
           TestStringRef.cpp
           TestVersion.cpp

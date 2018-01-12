@@ -18,6 +18,7 @@
 #include "sequoia-engine/Core/Options.h"
 #include "sequoia-engine/Core/UtfString.h"
 #include "sequoia-engine/Core/Platform.h"
+#include "sequoia-engine/Core/Config.h"
 #include <boost/program_options.hpp>
 #include <cstdlib>
 #include <iostream>

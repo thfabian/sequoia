@@ -18,6 +18,8 @@
 #include "sequoia-engine/Core/Options.h"
 #include "sequoia-engine/Core/Platform.h"
 #include "sequoia-engine/Core/StringSwitch.h"
+#include "sequoia-engine/Core/StringUtil.h"
+#include "sequoia-engine/Core/Timer.h"
 #include "sequoia-engine/Core/Version.h"
 #include "sequoia-engine/Game/AssetManager.h"
 #include "sequoia-engine/Game/Game.h"
@@ -54,6 +56,7 @@ void Game::run() {
   Log::info("Starting main-loop ...");
 
   render::RenderCommand cmd(getMainRenderTarget());
+  Timer timer;
 
   // Start main-loop
   while(!mainWindow_->isClosed() && !shouldClose_) {
@@ -73,7 +76,7 @@ void Game::run() {
     renderSystem_->pollEvents();
   }
 
-  Log::info("Done with main-loop");
+  Log::info("Done with main-loop (took {})", core::timeString(timer.stop()));
 }
 
 void Game::setQuitKey(const std::shared_ptr<Keymap>& key) { quitKey_ = key; }
@@ -85,6 +88,8 @@ void Game::init(const std::shared_ptr<Options>& gameOptions) {
   name_ = options_->getString("Game.Name");
 
   Log::info("Initializing {} ...", name_);
+  Timer timer;
+
   using namespace render;
 
   try {
@@ -117,7 +122,7 @@ void Game::init(const std::shared_ptr<Options>& gameOptions) {
     ErrorHandler::fatal(e.what());
   }
 
-  Log::info("Done initializing {} (took )", name_);
+  Log::info("Done initializing {} (took {})", name_, core::timeString(timer.stop()));
 }
 
 void Game::cleanup() {

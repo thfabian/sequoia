@@ -13,39 +13,23 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_ENGINE_RENDER_NULL_NULLPROGRAM_H
-#define SEQUOIA_ENGINE_RENDER_NULL_NULLPROGRAM_H
-
-#include "sequoia-engine/Render/Program.h"
+#include "sequoia-engine/Core/FileSystem.h"
+#include "sequoia-engine/Core/Format.h"
+#include "sequoia-engine/Core/StringUtil.h"
 
 namespace sequoia {
 
-namespace render {
+namespace core {
 
-/// @brief Null program implementation
-/// @ingroup null
-class SEQUOIA_API NullProgram final : public Program {
-public:
-  NullProgram(const std::set<std::shared_ptr<Shader>>& shaders);
-  virtual ~NullProgram();
+std::string FileSystem::toString() const {
+  auto stringPair = toStringImpl();
+  return core::format("{}[\n  {}]", stringPair.first, core::indent(stringPair.second));
+}
 
-  /// @copydoc Program::getShaders
-  virtual const std::set<std::shared_ptr<Shader>>& getShaders() const override;
+std::pair<std::string, std::string> FileSystem::toStringImpl() const {
+  return std::make_pair("FileSystem", core::format("baseDir = \"{}\",\n", baseDir_));
+}
 
-  /// @copydoc Program::toString
-  virtual std::string toString() const override;
-
-  SEQUOIA_NULL_OBJECT(Program)
-
-protected:
-  virtual void makeValidImpl() override;
-
-private:
-  std::set<std::shared_ptr<Shader>> shaders_;
-};
-
-} // namespace render
+} // namespace core
 
 } // namespace sequoia
-
-#endif

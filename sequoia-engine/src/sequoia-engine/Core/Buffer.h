@@ -13,8 +13,8 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_ENGINE_RENDER_BUFFER_H
-#define SEQUOIA_ENGINE_RENDER_BUFFER_H
+#ifndef SEQUOIA_ENGINE_CORE_BUFFER_H
+#define SEQUOIA_ENGINE_CORE_BUFFER_H
 
 #include "sequoia-engine/Core/Assert.h"
 #include "sequoia-engine/Core/Byte.h"
@@ -25,14 +25,15 @@
 
 namespace sequoia {
 
-namespace render {
+namespace core {
 
-/// @brief Generic hardware buffer which can hold any area of memory: system RAM, Video RAM
-/// on the GPU etc.
+/// @brief Generic memory buffer which can hold any area of memory such as system RAM or Video RAM
+/// on the GPU
 ///
-/// Buffers have the ability to be 'shadowed' in system memory (see HostBuffer) this is because the
-/// kinds of access allowed on hardware buffers which are store in video RAM is not always as
+/// Buffers have the ability to be *shadowed* in system memory (see `HostBuffer`) this is because
+/// the kinds of access allowed on hardware buffers which are store in video RAM is not always as
 /// flexible as that allowed for areas of system memory.
+///
 /// For example, it is often either impossible, or extremely undesirable from a performance
 /// standpoint to read from a hardware buffer; when writing to hardware buffers, you should also
 /// write every byte and do it sequentially. In situations where this is too restrictive,
@@ -45,10 +46,14 @@ public:
   /// @brief RTTI discriminator
   enum BufferKind {
     BK_HostBuffer,
+    BK_FileBuffer,
+    BK_HostBufferLast,
+
     BK_IndexBuffer,
     BK_GLIndexBuffer,
     BK_NullIndexBuffer,
     BK_IndexBufferLast,
+
     BK_VertexBuffer,
     BK_GLVertexBuffer,
     BK_NullVertexBuffer,
@@ -64,7 +69,7 @@ public:
     UH_Static = 1,
 
     /// Indicates the application would like to modify this buffer with the CPU fairly often.
-    /// This is the least optimal buffer setting.
+    /// This is the least optimal buffer setting if the buffer is allocated in GPU RAM
     UH_Dynamic = 2,
 
     /// Indicates the application will never read the contents of the buffer back,
@@ -83,19 +88,20 @@ public:
     /// Combination of `UH_Dynamic` and `UH_WriteOnly`.
     UH_DynamicWriteOnly = 6,
 
-    /// Combination of `UH_Dynamic`, `UH_WriteOnly` and `UH_Discardable`. This means that you
-    /// expect to replace the entire contents of the buffer on an extremely regular basis, most
-    /// likely every frame. By selecting this option, you free the system up from having to be
-    /// concerned about losing the existing contents of the buffer at any time, because if it does
-    /// lose them, you will be replacing them next frame anyway.
+    /// Combination of `UH_Dynamic`, `UH_WriteOnly` and `UH_Discardable`. In the context of a GPU
+    /// buffer this means that you expect to replace the entire contents of the buffer on an
+    /// extremely regular basis, most likely every frame.
+    /// By selecting this option, you free the system up from having to be concerned about losing
+    /// the existing contents of the buffer at any time, because if it does lose them, you will be
+    /// replacing them next frame anyway.
     UH_DynamicWriteOnlyDiscardable = 14
   };
 
   /// @brief Specifiy the kind of locking
   enum LockOption {
-    /// Normal mode, ie allows read/write and contents are preserved. This kind of lock allows
-    /// reading and writing from the buffer -- it’s also the least optimal because basically you’re
-    /// telling the card you could be doing anything at all. If you’re not using a shadow buffer,
+    /// Normal mode, i.e allows read/write and contents are preserved. This kind of lock allows
+    /// reading and writing from the buffer -- it’s also the least optimal because basically you're
+    /// telling the card you could be doing anything at all. If you're not using a shadow buffer,
     /// it requires the buffer to be transferred from the card and back again.
     /// If you’re using a shadow buffer the effect is minimal.
     LO_Normal,
@@ -107,8 +113,7 @@ public:
     /// it will actually give you an entirely different one.
     LO_Discard,
 
-    /// Lock the buffer for reading only. Not allowed in buffers which are created with
-    /// `UH_WriteOnly`
+    /// Lock the buffer for reading only.
     LO_ReadOnly,
 
     /// Lock the buffer for writing only.
@@ -128,8 +133,8 @@ public:
 
   /// @brief Lock the buffer
   ///
-  /// @note Locking in this context does **not** refer to mutual exclusion of the buffer object!
-  /// It merely indicates to the buffer that it's being accessed.
+  /// @note Locking in this context may not necesserly refer to mutual exclusion of the buffer
+  /// object.
   ///
   /// @param option   Strategy used to lock the buffer.
   void lock(LockOption option) {
@@ -179,7 +184,7 @@ public:
   /// @param src            Data pointer of size `numBytes`
   /// @param offset         The *byte* offset from the start of the buffer to start writing
   /// @param length         Number of *bytes* to write
-  /// @param discardBuffer  If true, will discard the entire content of this buffer before copying
+  /// @param discardBuffer  If true, will discard the entire content of *this* buffer before copying
   void write(const void* src, std::size_t offset, std::size_t length, bool discardBuffer = true);
 
   /// @brief Read `length` bytes, starting from `offset`, from the buffer and place it in the
@@ -189,9 +194,6 @@ public:
   /// @param length   Number of *bytes* to read
   /// @param dest     Destination to write the data (must be atleast of size `length`)
   void read(std::size_t offset, std::size_t length, void* dest);
-
-  /// @brief Check if the buffer is allocated in system RAM
-  virtual bool isSystemRAM() const = 0;
 
   /// @brief Set the shadow buffer
   ///
@@ -279,7 +281,7 @@ private:
 ///   // ... destructor invokes unlock()
 /// @endcode
 ///
-/// which will assert `unlock` is called (even in case of an exception!).
+/// which will assert `unlock` is called (even in case of an exception).
 ///
 /// @ingroup render
 class BufferGuard : public NonCopyable {
@@ -312,7 +314,10 @@ public:
   ~BufferGuard() { buffer_->unlock(); }
 };
 
-} // namespace render
+} // namespace core
+
+using Buffer = core::Buffer;
+using BufferGuard = core::BufferGuard;
 
 } // namespace sequoia
 

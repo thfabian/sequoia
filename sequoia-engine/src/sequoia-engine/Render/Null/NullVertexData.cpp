@@ -14,8 +14,8 @@
 //===------------------------------------------------------------------------------------------===//
 
 #include "sequoia-engine/Core/Format.h"
+#include "sequoia-engine/Core/HostBuffer.h"
 #include "sequoia-engine/Core/StringUtil.h"
-#include "sequoia-engine/Render/HostBuffer.h"
 #include "sequoia-engine/Render/Null/NullVertexData.h"
 
 namespace sequoia {
@@ -36,10 +36,10 @@ NullVertexData::NullVertexData(const VertexDataParameter& param)
 
   // Allocate shadow buffers
   if(param.UseVertexShadowBuffer)
-    vertexBuffer_->setShadowBuffer(HostBuffer::create(vertexBuffer_->getNumBytes()));
+    vertexBuffer_->setShadowBuffer(core::HostBuffer::create(vertexBuffer_->getNumBytes()));
 
   if(indexBuffer_ && param.UseIndexShadowBuffer)
-    indexBuffer_->setShadowBuffer(HostBuffer::create(indexBuffer_->getNumBytes()));
+    indexBuffer_->setShadowBuffer(core::HostBuffer::create(indexBuffer_->getNumBytes()));
 }
 
 NullVertexData::~NullVertexData() {}

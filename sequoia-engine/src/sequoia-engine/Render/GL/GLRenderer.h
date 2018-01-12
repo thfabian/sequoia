@@ -117,6 +117,8 @@ public:
 
   void viewportGeometryChanged(Viewport* viewport) override;
 
+  SEQUOIA_GL_OBJECT(Renderer)
+  
 private:
   bool getImpl(GLenum param, bool) const noexcept;
   int getImpl(GLenum param, int) const noexcept;

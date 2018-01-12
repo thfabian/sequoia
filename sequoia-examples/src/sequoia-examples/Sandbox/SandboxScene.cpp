@@ -14,6 +14,8 @@
 //===------------------------------------------------------------------------------------------===//
 
 #include "sequoia-engine/Core/Logging.h"
+#include "sequoia-engine/Core/StringUtil.h"
+#include "sequoia-engine/Core/Timer.h"
 #include "sequoia-engine/Game/AssetManager.h"
 #include "sequoia-engine/Game/CameraControllerFree.h"
 #include "sequoia-engine/Game/Drawable.h"
@@ -33,7 +35,9 @@ namespace sandbox {
 
 SandboxScene::SandboxScene(const std::string& name) : Scene(name) {
   game::Game& game = game::Game::getSingleton();
+
   Log::info("Initializing scene {} ...", getName());
+  Timer timer;
 
   // Create RenderTechniques
   rtDefault_ = std::make_unique<render::RTDefault>();
@@ -59,9 +63,7 @@ SandboxScene::SandboxScene(const std::string& name) : Scene(name) {
   cubeOrigin->addCapability<game::Drawable>(cubeOriginShape);
   getSceneGraph()->insert(cubeOrigin);
 
-  //
   // Mini cubes
-  //
   auto cubeShape = game.getShapeManager()->createCube("TestCube");
   float dx = 3.0f;
   int N = 10;
@@ -122,7 +124,7 @@ SandboxScene::SandboxScene(const std::string& name) : Scene(name) {
 
   game.getMainWindow()->setCursorMode(render::RenderWindow::CK_Disabled);
 
-  Log::info("Done initializing scene {} (took )", getName());
+  Log::info("Done initializing scene {} (took {})", getName(), core::timeString(timer.stop()));
 }
 
 void SandboxScene::update() {}

@@ -22,10 +22,14 @@ sequoia_add_library(
           ArrayRef.h
           Assert.cpp
           Assert.h
+          Buffer.cpp
+          Buffer.h
           Byte.h
           Casting.h
           Color.cpp
           Color.h
+          FileBuffer.h
+          FileBuffer.cpp
           CommandLine.cpp
           CommandLine.h
           Compiler.h
@@ -38,10 +42,14 @@ sequoia_add_library(
           Export.h
           File.cpp
           File.h
+          FileSystem.h
+          FileSystem.cpp
           FileType.inc
           Format.h
           Future.h
           Hash.h
+          HostBuffer.cpp
+          HostBuffer.h
           Image.cpp         
           Image.h
           Listenable.h
@@ -60,6 +68,8 @@ sequoia_add_library(
           PreprocessorUtil.h
           PrettyStackTrace.cpp       
           PrettyStackTrace.h
+          RealFileSystem.cpp
+          RealFileSystem.h
           Singleton.h
           STLExtras.h
           StringRef.cpp 
@@ -70,6 +80,7 @@ sequoia_add_library(
           Task.h
           Terminal.cpp  
           Terminal.h
+          Timer.h
           Unreachable.cpp         
           Unreachable.h
           Utf.h
@@ -82,4 +93,3 @@ sequoia_add_library(
           Xml.h
   OBJECT
 )
-

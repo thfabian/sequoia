@@ -114,7 +114,7 @@ struct VertexDataParameter {
   std::size_t NumIndices;
 
   /// Usage hint of the vertex-buffer
-  Buffer::UsageHint VertexBufferUsageHint;
+  core::Buffer::UsageHint VertexBufferUsageHint;
 
   /// Use a shadow buffer for the vertices?
   bool UseVertexShadowBuffer = true;
@@ -127,7 +127,7 @@ struct VertexDataParameter {
 
   VertexDataParameter(VertexData::DrawModeKind drawMode, VertexLayout layout,
                       std::size_t numVertices, std::size_t numIndices,
-                      Buffer::UsageHint vertexBufferUsageHint)
+                      core::Buffer::UsageHint vertexBufferUsageHint)
       : DrawMode(drawMode), Layout(std::move(layout)), NumVertices(numVertices),
         NumIndices(numIndices), VertexBufferUsageHint(vertexBufferUsageHint) {}
 

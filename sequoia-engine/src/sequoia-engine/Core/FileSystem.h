@@ -1,0 +1,81 @@
+//===--------------------------------------------------------------------------------*- C++ -*-===//
+//                         _____                        _
+//                        / ____|                      (_)
+//                       | (___   ___  __ _ _   _  ___  _  __ _
+//                        \___ \ / _ \/ _` | | | |/ _ \| |/ _` |
+//                        ____) |  __/ (_| | |_| | (_) | | (_| |
+//                       |_____/ \___|\__, |\__,_|\___/|_|\__,_| - Game Engine (2016-2017)
+//                                       | |
+//                                       |_|
+//
+// This file is distributed under the MIT License (MIT).
+// See LICENSE.txt for details.
+//
+//===------------------------------------------------------------------------------------------===//
+
+#ifndef SEQUOIA_ENGINE_CORE_FILESYSTEM_H
+#define SEQUOIA_ENGINE_CORE_FILESYSTEM_H
+
+#include "sequoia-engine/Core/Export.h"
+#include "sequoia-engine/Core/FileBuffer.h"
+#include "sequoia-engine/Core/StringRef.h"
+#include <cstdint>
+#include <unordered_map>
+
+namespace sequoia {
+
+namespace core {
+
+/// @brief Abstract file system interface
+/// @ingroup core
+class SEQUOIA_API FileSystem {
+public:
+  FileSystem(const std::string& baseDir) : baseDir_(baseDir) {}
+
+  /// @brief Virtual destructor
+  virtual ~FileSystem() {}
+
+  /// @brief Read the file at `path` and return it's content as a `FileBuffer`
+  ///
+  /// @param path       Path to the file (relative to `getBaseDir()`)
+  /// @param isBinary   Open the file in binary or ASCII mode?
+  ///
+  /// @returns content of the file at `path` on success, `NULL` otherwise
+  virtual std::shared_ptr<FileBuffer> read(StringRef path, bool isBinary) = 0;
+
+  /// @brief Write the content of `buffer` to the file `path`
+  ///
+  /// @param path       Path to the file (relative to `getBaseDir()`)
+  /// @param buffer     Content of the file
+  /// @param isBinary   Write the file in binary or ASCII mode?
+  ///
+  /// @returns `true` on success, `false` otherwise
+  virtual bool write(StringRef path, const std::shared_ptr<FileBuffer>& buffer, bool isBinary) = 0;
+
+  /// @brief Check if the file at `path` exists
+  virtual bool exists(StringRef path) = 0;
+
+  /// @brief Create the file `path` with content `buffer`
+  virtual void addFile(StringRef path, const std::shared_ptr<FileBuffer>& buffer) = 0;
+
+  /// @brief Get the base directory
+  const std::string& getBaseDir() const noexcept { return baseDir_; }
+
+  /// @brief Convert to string
+  std::string toString() const;
+
+protected:
+  /// @brief Implementation of `toString` returns stringified members and title
+  virtual std::pair<std::string, std::string> toStringImpl() const;
+
+private:
+  std::string baseDir_;
+};
+
+} // namespace core
+
+using FileSystem = core::FileSystem;
+
+} // namespace sequoia
+
+#endif
