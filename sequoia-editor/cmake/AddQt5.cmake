@@ -16,7 +16,7 @@
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
 
-set(qt5_modules Widgets)
+set(qt5_modules Widgets Core Gui)
 find_package(Qt5 5.9 REQUIRED COMPONENTS ${qt5_modules})
 
 foreach(module ${qt5_modules})
@@ -25,6 +25,15 @@ foreach(module ${qt5_modules})
   list(APPEND include_dirs ${${module_name}_INCLUDE_DIRS})
   list(APPEND definitions ${${module_name}_DEFINITIONS})
 endforeach()
+
+# Find the windeployqt tool on windows to copy the DLLs
+if(WIN32)
+  get_filename_component(bin_dir "${Qt5Core_DIR}/../../../bin" ABSOLUTE)
+  find_program(SEQUOIA_WINDEPLOYQT windeployqt.exe "${bin_dir}")
+  if(NOT(SEQUOIA_WINDEPLOYQT))
+    message(FATAL_ERROR "Cannot find the Qt5 deployment tool: 'windeployqt.exe' in ${bin_dir}")
+  endif()
+endif()
 
 sequoia_export_package(
   NAME Qt5

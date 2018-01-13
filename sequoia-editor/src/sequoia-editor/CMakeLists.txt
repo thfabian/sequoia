@@ -26,3 +26,12 @@ sequoia_add_executable(
   INSTALL_DESTINATION ${SEQUOIA_EDITOR_INSTALL_BIN_DIR}
   WIN32_APPLICATION
 )
+
+# Copy Qt5 DLLs
+if(WIN32)
+  add_custom_command(
+    TARGET SequoiaEditor POST_BUILD
+    COMMAND "${SEQUOIA_WINDEPLOYQT}" $<TARGET_FILE:SequoiaEditor> --no-compiler-runtime
+    COMMENT "Deploying Qt5"
+  )
+endif()

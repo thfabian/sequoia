@@ -20,6 +20,9 @@
 #include <QApplication>
 #include <memory>
 
+#include <QPushButton>
+#include <iostream>
+
 int main(int argc, char* argv[]) {
   QApplication app(argc, argv);
   QCoreApplication::setOrganizationName("Sequoia");
@@ -35,7 +38,13 @@ int main(int argc, char* argv[]) {
 
   // TODO: this doesn't work as it doesn't show the GUI, maybe we need to call this inside the show
   // QtMainWindow?
-  handler.fatal("fuck!");
+  //handler.fatal("fuck!");
+
+  // Test some stuff
+  QPushButton quit;
+  quit.setText("Quit");
+  QObject::connect(&quit, SIGNAL(clicked()), &app, SLOT(quit()));
+  quit.show();
 
   // Create mainwindow
 
