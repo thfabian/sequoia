@@ -61,6 +61,7 @@ sequoia_get_architecture_info()
 
 include(SequoiaExamplesOptions)
 include(SequoiaExamplesDefinitions)
+include(SequoiaExamplesSetCXXFlags)
 
 # Prevent in source builds
 sequoia_check_in_source_build()
@@ -72,6 +73,9 @@ sequoia_check_compiler(
   MSVC 19.1
   INTEL 17
 )
+
+# Set editor specific C++ flags
+sequoia_examples_set_cxx_flags()
 
 # Custom tragets
 sequoia_add_target_clean_all(
