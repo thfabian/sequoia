@@ -74,8 +74,14 @@ function(sequoia_find_package)
 
   option(USE_SYSTEM_${package_upper} ${doc} ${default_use_system})
 
+  set(no_build OFF)
+  if(DEFINED ARG_NO_BUILD AND ARG_NO_BUILD)
+    set(no_build ON)
+  endif()
+
   set(use_system FALSE)
-  if(NOT(USE_SYSTEM_${package_upper}))
+
+  if(NOT(no_build) AND NOT(USE_SYSTEM_${package_upper}))
     set(USE_SYSTEM_${package_upper} OFF CACHE BOOL ${doc} FORCE)
     if(NOT(DEFINED ARG_NO_BUILD AND ARG_NO_BUILD))
       include(${external_file})
@@ -103,6 +109,7 @@ function(sequoia_find_package)
     
     if(required_vars_ok AND (${ARG_PACKAGE}_FOUND OR ${package_upper}_FOUND)) 
       set(use_system TRUE)
+      set(USE_SYSTEM_${package_upper} ON CACHE BOOL ${doc} FORCE)
 
       # Forward arguments
       foreach(var ${ARG_FORWARD_VARS})
