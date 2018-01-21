@@ -14,30 +14,30 @@
 ##===------------------------------------------------------------------------------------------===##
 
 #.rst:
-# FindDX12
+# FindD3D12
 # --------
 #
 # .. code-block:: cmake
 #
-#   find_package(DX12 
+#   find_package(D3D12 
 #     [REQUIRED]             # Fail with error if  Direct3D 12 SDK is not found
 #     [QUIET]                # Supress output
 #   )
 #
-# This module locates the Direct3D 12 SDK. ``DX12_FOUND`` will report if an acceptable version 
-# of DX12 was found.
+# This module locates the Direct3D 12 SDK. ``D3D12_FOUND`` will report if an acceptable version 
+# of D3D12 was found.
 #
 # Result Variables
 # ^^^^^^^^^^^^^^^^
 #
 # Defines the following variables:
 #
-# ``DX12_FOUND``
+# ``D3D12_FOUND``
 #   System has Direct3D 12 SDK.
-# ``DX12_INCLUDE_DIRS``
-#   The location of DX12 headers.
-# ``DX12_LIBRARIES``
-#   The location of DX12 libraries.
+# ``D3D12_INCLUDE_DIRS``
+#   The location of D3D12 headers.
+# ``D3D12_LIBRARIES``
+#   The location of D3D12 libraries.
 #
 # Hints
 # ^^^^^
@@ -50,10 +50,10 @@ include(FindPackageHandleStandardArgs)
 if(WIN32)
   set(WIN10_SDK_DIR "$ENV{WindowsSdkDir}")
   string(REPLACE "\\\\" "" WIN10_SDK_VERSION "$ENV{WindowsSDKVersion}")
-  set(DX12_VERSION ${WIN10_SDK_VERSION})
+  set(D3D12_VERSION ${WIN10_SDK_VERSION})
 
   #
-  # Find DX12 headers
+  # Find D3D12 headers
   #
   find_path(dxsdk_include_dir
     NAMES
@@ -62,18 +62,18 @@ if(WIN32)
   )
 
   foreach(header d3d12 d3dcompiler)
-    find_path(DX12_${header}_INCLUDE_DIR
+    find_path(D3D12_${header}_INCLUDE_DIR
       NAMES 
         ${header}.h
       PATHS
         "${dxsdk_include_dir}"
     )
-    list(APPEND DX12_INCLUDE_DIRS ${DX12_${header}_INCLUDE_DIR})
+    list(APPEND D3D12_INCLUDE_DIRS ${D3D12_${header}_INCLUDE_DIR})
   endforeach()
-  list(REMOVE_DUPLICATES DX12_INCLUDE_DIRS)
+  list(REMOVE_DUPLICATES D3D12_INCLUDE_DIRS)
 
   #
-  # Find DX12 libraries
+  # Find D3D12 libraries
   #
   find_library(dxsdk_library_dir
     NAMES
@@ -82,36 +82,36 @@ if(WIN32)
   )
 
   foreach(lib d3d12 d3dcompiler dxguid dxgi)
-    find_library(DX12_${lib}_LIBRARY
+    find_library(D3D12_${lib}_LIBRARY
       NAMES 
         ${lib}.lib
       PATHS
         "${dxsdk_library_dir}"
     )
-    list(APPEND DX12_LIBRARIES ${DX12_${lib}_LIBRARY})
+    list(APPEND D3D12_LIBRARIES ${D3D12_${lib}_LIBRARY})
   endforeach()
 
   #
   # Report result 
   #
   find_package_handle_standard_args(
-    DX12
+    D3D12
     FAIL_MESSAGE "Could NOT find Direct3D 12 SDK"
-    REQUIRED_VARS DX12_INCLUDE_DIRS DX12_LIBRARIES
-    VERSION_VAR DX12_VERSION
+    REQUIRED_VARS D3D12_INCLUDE_DIRS D3D12_LIBRARIES
+    VERSION_VAR D3D12_VERSION
   )
 
   mark_as_advanced(
-    DX12_INCLUDE_DIRS
-    DX12_LIBRARIES
+    D3D12_INCLUDE_DIRS
+    D3D12_LIBRARIES
   )
 
 else()
-  set(DX12_FOUND FALSE)
-  set(DX12_INCLUDE_DIRS)
-  set(DX12_LIBRARIES)
+  set(D3D12_FOUND FALSE)
+  set(D3D12_INCLUDE_DIRS)
+  set(D3D12_LIBRARIES)
 endif()
 
-if(NOT(DX12_FOUND) AND DX12_FIND_REQUIRED EQUAL 1)
+if(NOT(D3D12_FOUND) AND D3D12_FIND_REQUIRED EQUAL 1)
   message(FATAL_ERROR "Could NOT find Direct3D 12 SDK")
 endif()

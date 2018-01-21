@@ -43,18 +43,18 @@ endif()
 
 if(use_bat)
   if(MSVC14)
-    set(_toolset "msvc-14.0")
+    set(toolset "msvc-14.0")
   else()
-    message(FATAL_ERROR "Only Microsoft Visual C 14.0 is supported (Visual Studio 2015)")
+    message(FATAL_ERROR "Only MSVC14 is supported")
   endif()
-  
+
   # Always build all runtimes (MD and MT)
-  list(APPEND boost_with_args "--build-type=complete" "--layout=tagged" "toolset=${_toolset}")
+  list(APPEND boost_with_args "--build-type=complete" "--layout=tagged" "toolset=${toolset}")
 
   set(boost_cmds
-    CONFIGURE_COMMAND bootstrap.bat
-    BUILD_COMMAND b2 -j4 address-model=${am} ${boost_with_args}
-    INSTALL_COMMAND b2 -j4 address-model=${am} ${boost_with_args} --prefix=<INSTALL_DIR> install
+    CONFIGURE_COMMAND "<SOURCE_DIR>/bootstrap.bat"
+    BUILD_COMMAND "<SOURCE_DIR>/b2.exe" -j4 address-model=${am} ${boost_with_args}
+    INSTALL_COMMAND "<SOURCE_DIR>/b2.exe" -j4 address-model=${am} ${boost_with_args} --prefix=<INSTALL_DIR> install
   )
 else()
   set(boost_cmds

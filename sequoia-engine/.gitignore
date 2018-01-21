@@ -5,9 +5,10 @@
 *.DS_Store
 *.~
 *~
-*.user
+*.user*
 *.project
 .idea
+configure-*.bat
 
 # Build directories
 build*/

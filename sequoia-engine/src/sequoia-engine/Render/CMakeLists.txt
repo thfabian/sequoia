@@ -88,6 +88,31 @@ set(NULL_SOURCE
   Null/NullVertexData.h
 )
 
+if(SEQUOIA_HAS_D3D12)
+  set(D3D12_SOURCE
+    D3D12/D3D12Fwd.h
+    D3D12/D3D12IndexBuffer.cpp
+    D3D12/D3D12IndexBuffer.h
+    D3D12/D3D12InputSystem.h
+    D3D12/D3D12Program.cpp
+    D3D12/D3D12Program.h
+    D3D12/D3D12Renderer.cpp
+    D3D12/D3D12Renderer.h
+    D3D12/D3D12RenderSystem.cpp
+    D3D12/D3D12RenderSystem.h
+    D3D12/D3D12RenderWindow.cpp
+    D3D12/D3D12RenderWindow.h
+    D3D12/D3D12Shader.cpp
+    D3D12/D3D12Shader.h
+    D3D12/D3D12Texture.cpp
+    D3D12/D3D12Texture.h
+    D3D12/D3D12VertexBuffer.cpp
+    D3D12/D3D12VertexBuffer.h
+    D3D12/D3D12VertexData.cpp
+    D3D12/D3D12VertexData.h
+  )
+endif()
+
 sequoia_add_library(
   NAME SequoiaEngineRender
   SOURCES Camera.cpp
@@ -158,6 +183,7 @@ sequoia_add_library(
           
           ${GL_SOURCE}
           ${NULL_SOURCE}
+          ${D3D12_SOURCE}
 
           ${GLSL_SOURCE}
   OBJECT

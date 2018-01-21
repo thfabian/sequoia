@@ -24,8 +24,9 @@ namespace render {
 /// @ingroup render
 enum RenderSystemKind : int {
   RK_Invalid = 0,
-  RK_Null,  ///< Null implementation
-  RK_OpenGL ///< OpenGL implementation
+  RK_Null,   ///< Null implementation
+  RK_OpenGL, ///< OpenGL implementation
+  RK_D3D12   ///< Direct3D 12 implementation
 };
 
 /// @brief Base class of all RenderSystem specific objects to provide fast RTTI
@@ -53,6 +54,10 @@ protected:
 /// @brief Declare as Null RenderSystemObject
 /// @ingroup null
 #define SEQUOIA_NULL_OBJECT(Type) SEQUOIA_OBJECT_IMPL(Type, sequoia::render::RK_Null)
+
+  /// @brief Declare as Direct3D 12 RenderSystemObject
+/// @ingroup null
+#define SEQUOIA_D3D12_OBJECT(Type) SEQUOIA_OBJECT_IMPL(Type, sequoia::render::RK_D3D12)
 
 } // namespace render
 

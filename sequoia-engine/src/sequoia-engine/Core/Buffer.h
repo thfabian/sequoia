@@ -52,11 +52,13 @@ public:
     BK_IndexBuffer,
     BK_GLIndexBuffer,
     BK_NullIndexBuffer,
+    BK_D3D12IndexBuffer,
     BK_IndexBufferLast,
 
     BK_VertexBuffer,
     BK_GLVertexBuffer,
     BK_NullVertexBuffer,
+    BK_D3D12VertexBuffer,
     BK_VertexBufferLast,
   };
 

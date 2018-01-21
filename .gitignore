@@ -12,3 +12,7 @@
 # Build directories
 build*/
 install*/
+
+# Configure scripts
+configure*.sh
+configure*.bat

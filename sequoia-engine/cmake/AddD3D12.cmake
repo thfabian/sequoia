@@ -14,17 +14,23 @@
 ##===------------------------------------------------------------------------------------------===##
 
 if(WIN32)
-  find_package(DX12)
-
+  find_package(D3D12)
+  
   sequoia_export_package(
-    NAME DX12
-    FOUND ${DX12_FOUND} 
-    LIBRARIES ${DX12_LIBRARIES}
-    VERSION ${DX12_VERSION}
-    INCLUDE_DIRS ${DX12_INCLUDE_DIRS}
+    NAME D3D12
+    FOUND ${D3D12_FOUND} 
+    LIBRARIES ${D3D12_LIBRARIES}
+    VERSION ${D3D12_VERSION}
+    INCLUDE_DIRS ${D3D12_INCLUDE_DIRS}
   )
   
-  if(DX12_FOUND)
-    add_definitions(-DSEQUOIA_HAS_DX12)
+  if(D3D12_FOUND)
+    add_definitions(-DSEQUOIA_HAS_D3D12)
   endif()
+
+  set(has_d3d12 ON)
+else()
+  set(has_d3d12 OFF)
 endif()
+
+set(SEQUOIA_HAS_D3D12 ${has_d3d12} CACHE INTERNAL "Direct3D 12 is available" FORCE)

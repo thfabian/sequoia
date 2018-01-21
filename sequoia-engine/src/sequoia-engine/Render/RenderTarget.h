@@ -33,7 +33,8 @@ public:
     RK_RenderWindow,
     RK_GLRenderWindow,
     RK_NullRenderWindow,
-    RK_RenderWindowLast
+    RK_D3D12RenderWindow,
+    RK_RenderWindowLast,
 
     // RK_RenderTexture
   };
