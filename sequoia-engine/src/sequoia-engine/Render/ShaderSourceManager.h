@@ -29,10 +29,13 @@ namespace render {
 /// @ingroup render
 class SEQUOIA_API ShaderSourceManager : public NonCopyable {
 public:
-  enum ShaderLanguage { SL_GLSL = 0 };
+  enum ShaderLanguage {
+    SL_GLSL = 0, ///< OpenGL Shading Language
+    SL_HLSL      ///< High Level Shading Language
+  };
 
   /// @brief Set the source of shader lanaguage
-  ShaderSourceManager(ShaderLanguage language = SL_GLSL);
+  ShaderSourceManager(ShaderLanguage language);
 
   /// @brief Get the source of the shader `filename`
   ///

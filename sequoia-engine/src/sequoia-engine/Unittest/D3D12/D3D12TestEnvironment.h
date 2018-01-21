@@ -13,21 +13,33 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_ENGINE_RENDER_D3D12_D3D12INPUTSYSTEM_H
-#define SEQUOIA_ENGINE_RENDER_D3D12_D3D12INPUTSYSTEM_H
+#ifndef SEQUOIA_ENGINE_UNITTEST_D3D12_D3D12TESTENVIRONMENT_H
+#define SEQUOIA_ENGINE_UNITTEST_D3D12_D3D12TESTENVIRONMENT_H
 
-#include "sequoia-engine/Core/Listenable.h"
-#include "sequoia-engine/Render/Input.h"
+#include "sequoia-engine/Render/D3D12/D3D12RenderSystem.h"
+#include "sequoia-engine/Unittest/TestEnvironment.h"
+#include <gtest/gtest.h>
 
 namespace sequoia {
 
-namespace render {
+namespace unittest {
 
-/// @brief Mock implemenation of an input system
-/// @ingroup d3d12
-class SEQUOIA_API D3D12InputSystem : public Listenable<KeyboardListener, MouseListener> {};
+/// @brief D3D12 test environment
+/// @ingroup unittest
+class SEQUOIA_API D3D12TestEnvironment : public TestEnvironment {
+  std::unique_ptr<render::RenderSystem> renderSystem_;
 
-} // namespace render
+public:
+  D3D12TestEnvironment(int argc, char* argv[]);
+
+  /// @brief Create the D3D12 RenderSystem
+  virtual void SetUp() override;
+
+  /// @brief Tear-down the D3D12 RenderSystem
+  virtual void TearDown() override;
+};
+
+} // namespace unittest
 
 } // namespace sequoia
 

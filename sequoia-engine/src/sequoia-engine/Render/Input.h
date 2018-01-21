@@ -196,11 +196,13 @@ SEQUOIA_API extern std::ostream& operator<<(std::ostream& os, MouseButton button
 /// @brief Keyboard modifiers
 /// @ingroup render
 enum KeyModifier : int {
-  Mod_NoModifier = 0x0000,
+  Mod_NoModifier = 0,
   Mod_Shift = 0x0001,
   Mod_Ctrl = 0x0002,
   Mod_Alt = 0x0004,
-  Mod_Super = 0x0008
+  Mod_Super = 0x0008,
+  Mod_CapsLock = 0x0010,
+  Mod_NumLock = 0x0020
 };
 
 SEQUOIA_API extern std::ostream& operator<<(std::ostream& os, KeyModifier mod) noexcept;

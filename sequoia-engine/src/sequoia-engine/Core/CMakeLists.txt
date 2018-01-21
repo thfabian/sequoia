@@ -90,6 +90,8 @@ sequoia_add_library(
           Version.h
           Win32Console.cpp
           Win32Console.h
+          Win32Util.cpp
+          Win32Util.h
           Xml.h
   OBJECT
 )

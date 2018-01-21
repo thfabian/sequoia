@@ -39,8 +39,8 @@ public:
     /// Height of the window (only relevant in window mode)
     int Height = 960;
 
-    /// Monitor to use
-    int Monitor = 0;
+    /// Monitor to use (-1 indicated the default monitor)
+    int Monitor = -1;
 
     /// Window mode
     WindowModeKind WindowMode = WK_Window;

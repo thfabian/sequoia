@@ -13,7 +13,6 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia-engine/Render/D3D12/D3D12InputSystem.h"
 #include "sequoia-engine/Render/D3D12/D3D12Program.h"
 #include "sequoia-engine/Render/D3D12/D3D12RenderSystem.h"
 #include "sequoia-engine/Render/D3D12/D3D12RenderWindow.h"
@@ -27,9 +26,7 @@ namespace sequoia {
 namespace render {
 
 D3D12RenderSystem::D3D12RenderSystem(const std::shared_ptr<Options>& options)
-    : RenderSystem(RK_D3D12, options, ShaderSourceManager::SL_GLSL), mainWindow_(nullptr) {
-  inputSystem_ = std::make_unique<D3D12InputSystem>();
-}
+    : RenderSystem(RK_D3D12, options, ShaderSourceManager::SL_HLSL), mainWindow_(nullptr) {}
 
 D3D12RenderSystem::~D3D12RenderSystem() {}
 
@@ -53,11 +50,11 @@ RenderWindow* D3D12RenderSystem::getMainWindow() const {
   return mainWindow_.get();
 }
 
-void D3D12RenderSystem::pollEvents() {}
+void D3D12RenderSystem::pollEvents() { mainWindow_->pollEvents(); }
 
 std::shared_ptr<Shader> D3D12RenderSystem::createShader(Shader::ShaderType type,
-                                                       const std::string& filename,
-                                                       const std::string& source) {
+                                                        const std::string& filename,
+                                                        const std::string& source) {
   return std::make_shared<D3D12Shader>(type, filename, source);
 }
 
@@ -76,19 +73,19 @@ std::shared_ptr<VertexData> D3D12RenderSystem::createVertexData(const VertexData
 }
 
 void D3D12RenderSystem::addKeyboardListener(KeyboardListener* listener) {
-  inputSystem_->addListener<KeyboardListener>(listener);
+  mainWindow_->addListener<KeyboardListener>(listener);
 }
 
 void D3D12RenderSystem::removeKeyboardListener(KeyboardListener* listener) {
-  inputSystem_->removeListener<KeyboardListener>(listener);
+  mainWindow_->removeListener<KeyboardListener>(listener);
 }
 
 void D3D12RenderSystem::addMouseListener(MouseListener* listener) {
-  inputSystem_->addListener<MouseListener>(listener);
+  mainWindow_->addListener<MouseListener>(listener);
 }
 
 void D3D12RenderSystem::removeMouseListener(MouseListener* listener) {
-  inputSystem_->removeListener<MouseListener>(listener);
+  mainWindow_->removeListener<MouseListener>(listener);
 }
 
 Renderer* D3D12RenderSystem::getRenderer() const { return renderer_.get(); }

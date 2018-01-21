@@ -21,6 +21,10 @@
 #include "sequoia-engine/Render/GL/GLRenderSystem.h"
 #include "sequoia-engine/Render/Null/NullRenderSystem.h"
 
+#ifdef SEQUOIA_HAS_D3D12
+#include "sequoia-engine/Render/D3D12/D3D12RenderSystem.h"
+#endif
+
 namespace sequoia {
 
 SEQUOIA_DECLARE_SINGLETON(render::RenderSystem);
@@ -38,10 +42,14 @@ std::unique_ptr<RenderSystem> RenderSystem::create(RenderSystemKind kind,
   RenderSystem::setDefaultOptions(options);
 
   switch(kind) {
-  case RK_OpenGL:
-    return std::make_unique<GLRenderSystem>(options);
   case RK_Null:
     return std::make_unique<NullRenderSystem>(options);
+  case RK_OpenGL:
+    return std::make_unique<GLRenderSystem>(options);
+#ifdef SEQUOIA_HAS_D3D12
+  case RK_D3D12:
+    return std::make_unique<D3D12RenderSystem>(options);
+#endif
   default:
     SEQUOIA_THROW(RenderSystemException, "RenderSystem not avaialable");
   }

@@ -13,29 +13,15 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_ENGINE_RENDER_D3D12_D3D12FWD_H
-#define SEQUOIA_ENGINE_RENDER_D3D12_D3D12FWD_H
+#include "sequoia-engine/Unittest/D3D12/D3D12TestEnvironment.h"
+#include <gtest/gtest.h>
 
-#ifdef SEQUOIA_DOXYGEN_INVOKED
-/// @defgroup d3d12 D3D12
-/// @brief Implementation of the Direct3D 12 render backend
-/// @ingroup render
-#endif
+int main(int argc, char* argv[]) {
+  // Initialize gtest
+  testing::InitGoogleTest(&argc, argv);
 
-namespace sequoia {
+  // Register test environment
+  testing::AddGlobalTestEnvironment(new sequoia::unittest::D3D12TestEnvironment(argc, argv));
 
-namespace render {
-
-class D3D12IndexBuffer;
-class D3D12Program;
-class D3D12Renderer;
-class D3D12RenderWindow;
-class D3D12Shader;
-class D3D12Texture;
-class D3D12VertexBuffer;
-
-} // namespace render
-
-} // namespace sequoia
-
-#endif
+  return RUN_ALL_TESTS();
+}

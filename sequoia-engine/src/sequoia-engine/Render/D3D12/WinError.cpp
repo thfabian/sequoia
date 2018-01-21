@@ -13,29 +13,17 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_ENGINE_RENDER_D3D12_D3D12FWD_H
-#define SEQUOIA_ENGINE_RENDER_D3D12_D3D12FWD_H
-
-#ifdef SEQUOIA_DOXYGEN_INVOKED
-/// @defgroup d3d12 D3D12
-/// @brief Implementation of the Direct3D 12 render backend
-/// @ingroup render
-#endif
+#include "sequoia-engine/Render/D3D12/WinUtil.h"
+#include "sequoia-engine/Core/Platform.h"
 
 namespace sequoia {
 
 namespace render {
 
-class D3D12IndexBuffer;
-class D3D12Program;
-class D3D12Renderer;
-class D3D12RenderWindow;
-class D3D12Shader;
-class D3D12Texture;
-class D3D12VertexBuffer;
+std::string Win32Util::getLastErrorAsString() {
+  return "qwe";
+}
 
 } // namespace render
 
 } // namespace sequoia
-
-#endif

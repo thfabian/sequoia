@@ -13,20 +13,26 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia-engine/Render/GL/GLRenderSystem.h"
+#include "sequoia-engine/Render/D3D12/D3D12RenderSystem.h"
 #include <gtest/gtest.h>
 
 using namespace sequoia::render;
 
 namespace {
 
-TEST(GLRenderWindowTest, Construction) {
+TEST(D3D12RenderWindowTest, Construction) {
   RenderWindow::WindowHint hints;
   hints.HideWindow = true;
   hints.WindowMode = RenderWindow::WindowHint::WK_Window;
   hints.Width = 1280;
   hints.Height = 960;
+  hints.Monitor = 1;
   RenderWindow* window = RenderSystem::getSingleton().createMainWindow(hints);
+
+  // TODO: Remove
+//  while(!window->isClosed()) {
+//    RenderSystem::getSingleton().pollEvents();
+//  }
 
   EXPECT_FALSE(window->isFullscreen());
   EXPECT_TRUE(window->isHidden());
@@ -34,6 +40,12 @@ TEST(GLRenderWindowTest, Construction) {
   EXPECT_EQ(window->getHeight(), 960);
 
   RenderSystem::getSingleton().destroyMainWindow();
+}
+
+TEST(D3D12RenderWindowTest, InvalidMonitor) {
+  RenderWindow::WindowHint hints;
+  hints.Monitor = 999999;
+  EXPECT_THROW(RenderSystem::getSingleton().createMainWindow(hints), RenderSystemException);
 }
 
 } // anonymous namespace

@@ -13,29 +13,37 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_ENGINE_RENDER_D3D12_D3D12FWD_H
-#define SEQUOIA_ENGINE_RENDER_D3D12_D3D12FWD_H
+#ifndef SEQUOIA_ENGINE_CORE_WIN32UTIL_H
+#define SEQUOIA_ENGINE_CORE_WIN32UTIL_H
 
-#ifdef SEQUOIA_DOXYGEN_INVOKED
-/// @defgroup d3d12 D3D12
-/// @brief Implementation of the Direct3D 12 render backend
-/// @ingroup render
-#endif
+#include "sequoia-engine/Core/Export.h"
+#include <string>
+
+#ifdef SEQUOIA_ON_WIN32
 
 namespace sequoia {
 
-namespace render {
+namespace core {
 
-class D3D12IndexBuffer;
-class D3D12Program;
-class D3D12Renderer;
-class D3D12RenderWindow;
-class D3D12Shader;
-class D3D12Texture;
-class D3D12VertexBuffer;
+/// @brief Utility function of the Win32 API
+/// @ingroup d3d12
+struct SEQUOIA_API Win32Util {
+  Win32Util() = delete;
 
-} // namespace render
+  /// @brief Retrieves the calling thread's last-error code (converted to a string)
+  ///
+  /// The last-error code is maintained on a per-thread basis. Multiple threads do not overwrite
+  /// each
+  /// other's last-error code.
+  static std::string getLastError();
+};
+
+} // namespace core
+
+using Win32Util = core::Win32Util;
 
 } // namespace sequoia
+
+#endif
 
 #endif

@@ -93,7 +93,6 @@ if(SEQUOIA_HAS_D3D12)
     D3D12/D3D12Fwd.h
     D3D12/D3D12IndexBuffer.cpp
     D3D12/D3D12IndexBuffer.h
-    D3D12/D3D12InputSystem.h
     D3D12/D3D12Program.cpp
     D3D12/D3D12Program.h
     D3D12/D3D12Renderer.cpp

@@ -27,6 +27,13 @@ set(NULL_SOURCE
   Null/NullTestEnvironment.cpp
 )
 
+if(SEQUOIA_HAS_D3D12)
+  set(D3D12_SOURCE
+    D3D12/D3D12TestEnvironment.h
+    D3D12/D3D12TestEnvironment.cpp
+  )
+endif()
+
 sequoia_add_library(
   NAME SequoiaEngineUnittest
   SOURCES BenchmarkEnvironment.h
@@ -47,5 +54,6 @@ sequoia_add_library(
 
           ${GL_SOURCE}
           ${NULL_SOURCE}
+          ${D3D12_SOURCE}
   ARCHIVE
 )

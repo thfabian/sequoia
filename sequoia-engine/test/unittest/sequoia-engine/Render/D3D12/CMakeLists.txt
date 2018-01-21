@@ -13,20 +13,9 @@
 ##
 ##===------------------------------------------------------------------------------------------===##
 
-add_subdirectory(GL)
-add_subdirectory(D3D12)
-
 sequoia_engine_add_unittest(
-  NAME SequoiaEngineRenderTest
-  SOURCES TestCamera.cpp
-          TestInput.cpp
-          TestMain.cpp
-          TestRenderServer.cpp
-          TestRenderer.cpp
-          TestTexture.cpp
-          TestUniformStruct.cpp
-          TestUniformVariable.cpp
-          TestVertex.cpp
-          TestVertexAdapter.cpp
-          TestVertexFactory.cpp
+  NAME SequoiaEngineRenderD3D12Test
+  SOURCES TestMain.cpp
+          TestD3D12RenderWindow.cpp
 )
+

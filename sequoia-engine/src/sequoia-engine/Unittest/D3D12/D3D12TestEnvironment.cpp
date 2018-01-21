@@ -13,29 +13,24 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_ENGINE_RENDER_D3D12_D3D12FWD_H
-#define SEQUOIA_ENGINE_RENDER_D3D12_D3D12FWD_H
-
-#ifdef SEQUOIA_DOXYGEN_INVOKED
-/// @defgroup d3d12 D3D12
-/// @brief Implementation of the Direct3D 12 render backend
-/// @ingroup render
-#endif
+#include "sequoia-engine/Unittest/D3D12/D3D12TestEnvironment.h"
 
 namespace sequoia {
 
-namespace render {
+namespace unittest {
 
-class D3D12IndexBuffer;
-class D3D12Program;
-class D3D12Renderer;
-class D3D12RenderWindow;
-class D3D12Shader;
-class D3D12Texture;
-class D3D12VertexBuffer;
+D3D12TestEnvironment::D3D12TestEnvironment(int argc, char* argv[])
+    : TestEnvironment(argc, argv, render::RK_D3D12) {}
 
-} // namespace render
+void D3D12TestEnvironment::SetUp() {
+  TestEnvironment::SetUp();
+
+  auto options = getOptions();
+  renderSystem_ = render::RenderSystem::create(render::RK_D3D12, options);
+}
+
+void D3D12TestEnvironment::TearDown() { renderSystem_.reset(); }
+
+} // namespace unittest
 
 } // namespace sequoia
-
-#endif

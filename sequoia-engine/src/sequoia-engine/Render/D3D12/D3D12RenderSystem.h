@@ -30,9 +30,6 @@ class SEQUOIA_API D3D12RenderSystem final : public RenderSystem {
   /// Main-window of the render system
   std::unique_ptr<D3D12RenderWindow> mainWindow_;
 
-  /// Input system
-  std::unique_ptr<D3D12InputSystem> inputSystem_;
-
   /// Renderer
   std::unique_ptr<D3D12Renderer> renderer_;
 

@@ -231,7 +231,7 @@ glfw3NativeWindow::~glfw3NativeWindow() {
 
 void glfw3NativeWindow::swapBuffers() { glfwSwapBuffers(getGLFWwindow()); }
 
-bool glfw3NativeWindow::isHidden() { return glfwGetWindowAttrib(getGLFWwindow(), GLFW_VISIBLE); }
+bool glfw3NativeWindow::isHidden() { return !glfwGetWindowAttrib(getGLFWwindow(), GLFW_VISIBLE); }
 
 bool glfw3NativeWindow::isClosed() { return glfwWindowShouldClose(getGLFWwindow()); }
 
