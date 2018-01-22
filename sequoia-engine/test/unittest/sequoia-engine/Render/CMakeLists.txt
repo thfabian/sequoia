@@ -14,7 +14,9 @@
 ##===------------------------------------------------------------------------------------------===##
 
 add_subdirectory(GL)
-add_subdirectory(D3D12)
+if(SEQUOIA_HAS_D3D12)
+  add_subdirectory(D3D12)
+endif()
 
 sequoia_engine_add_unittest(
   NAME SequoiaEngineRenderTest
