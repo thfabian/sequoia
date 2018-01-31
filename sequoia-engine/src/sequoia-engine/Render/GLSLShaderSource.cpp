@@ -13,31 +13,22 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#ifndef SEQUOIA_ENGINE_RENDER_D3D12_WIN32UTIL_H
-#define SEQUOIA_ENGINE_RENDER_D3D12_WIN32UTIL_H
-
-#include "sequoia-engine/Core/Export.h"
-#include <string>
+#include "sequoia-engine/Render/GLSLShaderSource.h"
 
 namespace sequoia {
 
 namespace render {
 
-/// @brief Utility function of the Win32 API
-/// @ingroup d3d12
-struct SEQUOIA_API Win32Util {
-  Win32Util() = delete;
+GLSLShaderShource::GLSLShaderShource(ShaderSource::ShaderSourceKind kind) : ShaderSource(kind) {}
 
-  /// @brief Retrieves the calling thread's last-error code (converted to a string)
-  ///
-  /// The last-error code is maintained on a per-thread basis. Multiple threads do not overwrite
-  /// each
-  /// other's last-error code.
-  static std::string getLastError();
-};
+void GLSLShaderShource::loadFromString(const char* string, std::size_t size) {
+  format_ = FK_String;
+  data_.resize(size);
+  std::memcpy(static_cast<void*>(data_.data()), static_cast<const void*>(string), size);
+}
+
+void GLSLShaderShource::loadFromFile(std::shared_ptr<File> file, FormatKind format) {}
 
 } // namespace render
 
 } // namespace sequoia
-
-#endif

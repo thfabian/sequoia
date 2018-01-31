@@ -55,15 +55,15 @@ TEST_F(RealFileSystemTest, Read) {
   EXPECT_TRUE(fs->exists("foo.txt"));
 
   // Read new file
-  auto bar = fs->read("foo/bar.txt", false);
+  auto bar = fs->read("foo/bar.txt", FileBuffer::FF_Text);
   ASSERT_TRUE(bar != nullptr);
   EXPECT_STREQ(bar->getDataAsString().c_str(), "Hello bar!");
 
   // Read same file (should return the same buffer)
-  EXPECT_EQ(bar.get(), fs->read("foo/bar.txt", false).get());
+  EXPECT_EQ(bar.get(), fs->read("foo/bar.txt", FileBuffer::FF_Text).get());
 
   // Read another file
-  auto foo = fs->read("foo.txt", false);
+  auto foo = fs->read("foo.txt", FileBuffer::FF_Text);
   ASSERT_TRUE(foo != nullptr);
   EXPECT_STREQ(foo->getDataAsString().c_str(), "Hello foo!");
 }

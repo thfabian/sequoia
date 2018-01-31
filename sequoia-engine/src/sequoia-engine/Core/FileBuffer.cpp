@@ -16,12 +16,29 @@
 #include "sequoia-engine/Core/FileBuffer.h"
 #include "sequoia-engine/Core/Format.h"
 #include "sequoia-engine/Core/Platform.h"
+#include "sequoia-engine/Core/Unreachable.h"
 
 namespace sequoia {
 
 namespace core {
 
-FileBuffer::FileBuffer(const std::string& path, std::size_t numBytes) : path_(path) {
+namespace {
+
+static const char* formatToString(FileBuffer::FileFormat format) {
+  switch(format) {
+  case FileBuffer::FF_Text:
+    return "Text";
+  case FileBuffer::FF_Binary:
+    return "Binary";
+  default:
+    sequoia_unreachable("invalid format");
+  }
+}
+
+} // anonymous namespace
+
+FileBuffer::FileBuffer(FileFormat format, const std::string& path, std::size_t numBytes)
+    : format_(format), path_(path) {
   allocate(numBytes, UH_Dynamic);
 }
 
@@ -34,9 +51,11 @@ std::string FileBuffer::getExtension() const {
 }
 
 std::pair<std::string, std::string> FileBuffer::toStringImpl() const {
-  return std::make_pair("FileBuffer", core::format("{}"
-                                                   "path = \"{}\"\n",
-                                                   Base::toStringImpl().second, path_));
+  return std::make_pair("FileBuffer",
+                        core::format("{}"
+                                     "format = {},\n"
+                                     "path = \"{}\"\n",
+                                     Base::toStringImpl().second, formatToString(format_), path_));
 }
 
 } // namespace core

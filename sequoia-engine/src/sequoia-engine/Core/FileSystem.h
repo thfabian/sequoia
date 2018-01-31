@@ -37,25 +37,30 @@ public:
 
   /// @brief Read the file at `path` and return it's content as a `FileBuffer`
   ///
-  /// @param path       Path to the file (relative to `getBaseDir()`)
-  /// @param isBinary   Open the file in binary or ASCII mode?
+  /// @param path     Path to the file (relative to `getBaseDir()`)
+  /// @param format   Format of opening the file
   ///
-  /// @returns content of the file at `path` on success, `NULL` otherwise
-  virtual std::shared_ptr<FileBuffer> read(StringRef path, bool isBinary) = 0;
+  /// @throws Exception   Read operation failed
+  /// @returns content of the file at `path`
+  virtual std::shared_ptr<FileBuffer> read(StringRef path, FileBuffer::FileFormat format) = 0;
 
   /// @brief Write the content of `buffer` to the file `path`
   ///
-  /// @param path       Path to the file (relative to `getBaseDir()`)
-  /// @param buffer     Content of the file
-  /// @param isBinary   Write the file in binary or ASCII mode?
+  /// @param path     Path to the file (relative to `getBaseDir()`)
+  /// @param buffer   Content of the file
   ///
-  /// @returns `true` on success, `false` otherwise
-  virtual bool write(StringRef path, const std::shared_ptr<FileBuffer>& buffer, bool isBinary) = 0;
+  /// @throws Exception   Write operation failed
+  virtual void write(StringRef path, const std::shared_ptr<FileBuffer>& buffer) = 0;
 
   /// @brief Check if the file at `path` exists
   virtual bool exists(StringRef path) = 0;
 
   /// @brief Create the file `path` with content `buffer`
+  ///
+  /// @param path     Path to the file (we be rooted relative to `getBaseDir()`)
+  /// @param buffer   Content of the virtual file
+  ///
+  /// @throws Exception   Write operation failed
   virtual void addFile(StringRef path, const std::shared_ptr<FileBuffer>& buffer) = 0;
 
   /// @brief Get the base directory

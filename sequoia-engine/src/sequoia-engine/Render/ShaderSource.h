@@ -13,17 +13,34 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia-engine/Render/D3D12/WinUtil.h"
-#include "sequoia-engine/Core/Platform.h"
+#ifndef SEQUOIA_ENGINE_RENDER_SHADERSOURCE_H
+#define SEQUOIA_ENGINE_RENDER_SHADERSOURCE_H
+
+#include "sequoia-engine/Core/Export.h"
+#include "sequoia-engine/Core/NonCopyable.h"
 
 namespace sequoia {
 
 namespace render {
 
-std::string Win32Util::getLastErrorAsString() {
-  return "qwe";
-}
+/// @brief Manager of shader sources
+/// @ingroup render
+class SEQUOIA_API ShaderSource : public NonCopyable {
+public:
+  /// @brief RTTI discriminator
+  enum ShaderSourceKind { SK_GLSL, SK_HLSL };
+
+  ShaderSource(ShaderSourceKind kind) : kind_(kind) {}
+
+  /// @brief Get the kind of buffer
+  ShaderSourceKind getKind() const noexcept { return kind_; }
+
+private:
+  ShaderSourceKind kind_;
+};
 
 } // namespace render
 
 } // namespace sequoia
+
+#endif

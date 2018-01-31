@@ -13,14 +13,12 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
+#include "sequoia-engine/Core/RealFileSystem.h"
+#include "sequoia-engine/Core/Exception.h"
 #include "sequoia-engine/Core/FileBuffer.h"
 #include "sequoia-engine/Core/Format.h"
-#include "sequoia-engine/Core/RealFileSystem.h"
 #include "sequoia-engine/Core/StringUtil.h"
 #include "sequoia-engine/Core/Unreachable.h"
-
-// TODO: remove
-#include <iostream>
 
 namespace sequoia {
 
@@ -81,17 +79,15 @@ RealFileSystem::RealFileSystem(const std::string& baseDir)
 
 RealFileSystem::~RealFileSystem() {}
 
-std::shared_ptr<FileBuffer> RealFileSystem::read(StringRef path, bool isBinary) {
-  auto it = open(path.str(), OK_Read, isBinary);
+std::shared_ptr<FileBuffer> RealFileSystem::read(StringRef path, FileBuffer::FileFormat format) {
+  auto it = this->open(path.str(), OK_Read, format);
   if(it != cachedFileInfos_.end() && it->second->Buffer)
     return it->second->Buffer;
-  return it != cachedFileInfos_.end() ? readImpl(it) : nullptr;
+  return it != cachedFileInfos_.end() ? readImpl(format, it) : nullptr;
 }
 
-bool RealFileSystem::write(StringRef path, const std::shared_ptr<FileBuffer>& buffer,
-                           bool isBinary) {
-  auto it = open(path.str(), OK_Write, isBinary, buffer);
-  return it != cachedFileInfos_.end() ? writeImpl(it) : false;
+void RealFileSystem::write(StringRef path, const std::shared_ptr<FileBuffer>& buffer) {
+  writeImpl(open(path.str(), OK_Write, buffer->getFileFormat(), buffer));
 }
 
 bool RealFileSystem::exists(StringRef path) {
@@ -122,7 +118,7 @@ std::pair<std::string, std::string> RealFileSystem::toStringImpl() const {
 }
 
 RealFileSystem::Iterator RealFileSystem::open(const std::string& path, OpenModeKind openMode,
-                                              bool isBinary,
+                                              FileBuffer::FileFormat format,
                                               const std::shared_ptr<FileBuffer>& buffer) {
 
   platform::Path fullPath;
@@ -142,14 +138,14 @@ RealFileSystem::Iterator RealFileSystem::open(const std::string& path, OpenModeK
   } else {
     // No, check the file exists and allocate the info
     if(!platform::filesystem::exists(makeFullPath()))
-      return cachedFileInfos_.end();
+      SEQUOIA_THROW(Exception, "no such file: \"{}\"", path);
 
     auto fieldInfo = std::make_unique<FileInfo>();
     fieldInfo->Mutex.lock();
     it = cachedFileInfos_.emplace(path, std::move(fieldInfo)).first;
     info = it->second.get();
   }
-  
+
   // Make sure the file is open in the correct mode
   OpenModeKind compatibleMode = getNewMode(info->OpenMode, openMode);
   if(!info->FileStream || compatibleMode != info->OpenMode) {
@@ -173,14 +169,13 @@ RealFileSystem::Iterator RealFileSystem::open(const std::string& path, OpenModeK
       sequoia_unreachable("invalid OpenModeKind");
     }
 
-    if(isBinary)
+    if(format == FileBuffer::FF_Binary)
       mode |= std::ios_base::binary;
 
     info->FileStream = std::make_unique<std::fstream>(makeFullPath().c_str(), mode);
     info->OpenMode = compatibleMode;
-
     if(!info->FileStream->is_open())
-      return cachedFileInfos_.end();
+      SEQUOIA_THROW(Exception, "cannot open file: \"{}\"", path);
   }
 
   if(buffer)
@@ -190,7 +185,7 @@ RealFileSystem::Iterator RealFileSystem::open(const std::string& path, OpenModeK
   return it;
 }
 
-std::shared_ptr<FileBuffer> RealFileSystem::readImpl(Iterator it) {
+std::shared_ptr<FileBuffer> RealFileSystem::readImpl(FileBuffer::FileFormat format, Iterator it) {
   FileInfo* info = it->second.get();
   SEQUOIA_ASSERT(info->FileStream);
   SEQUOIA_LOCK_GUARD(info->Mutex);
@@ -201,8 +196,11 @@ std::shared_ptr<FileBuffer> RealFileSystem::readImpl(Iterator it) {
   std::size_t numBytes = info->FileStream->tellg();
   info->FileStream->seekg(0, std::ios_base::beg);
 
-  info->Buffer = std::make_unique<FileBuffer>(it->first, numBytes);
+  info->Buffer = std::make_unique<FileBuffer>(format, it->first, numBytes);
   info->FileStream->read(info->Buffer->getDataAs<char>(), info->Buffer->getNumBytes());
+  if(info->FileStream->fail())
+    SEQUOIA_THROW(Exception, "failed to read: \"{}\"", info->Buffer->getPath());
+
   return info->Buffer;
 }
 
@@ -212,6 +210,9 @@ bool RealFileSystem::writeImpl(Iterator it) {
   SEQUOIA_LOCK_GUARD(info->Mutex);
 
   info->FileStream->write(info->Buffer->getDataAs<char>(), info->Buffer->getNumBytes());
+  if(info->FileStream->fail())
+    SEQUOIA_THROW(Exception, "failed to write: \"{}\"", info->Buffer->getPath());
+
   return true;
 }
 

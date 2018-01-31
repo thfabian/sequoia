@@ -41,18 +41,17 @@ public:
   virtual ~RealFileSystem();
 
   /// @copydoc FileSystem::read
-  virtual std::shared_ptr<FileBuffer> read(StringRef path, bool isBinary) override;
+  virtual std::shared_ptr<FileBuffer> read(StringRef path, FileBuffer::FileFormat format) override;
 
   /// @copydoc FileSystem::write
-  virtual bool write(StringRef path, const std::shared_ptr<FileBuffer>& buffer,
-                     bool isBinary) override;
+  virtual void write(StringRef path, const std::shared_ptr<FileBuffer>& buffer) override;
 
   /// @copydoc FileSystem::exists
   virtual bool exists(StringRef path) override;
 
   /// @copydoc FileSystem::addFile
   virtual void addFile(StringRef path, const std::shared_ptr<FileBuffer>& buffer) override;
-  
+
 protected:
   /// @copydoc FileSystem::toStringImpl
   virtual std::pair<std::string, std::string> toStringImpl() const override;
@@ -75,11 +74,11 @@ private:
   using Iterator = typename FielInfoMap::iterator;
 
   /// @brief Open the file `path`
-  Iterator open(const std::string& path, OpenModeKind openMode, bool isBinary,
+  Iterator open(const std::string& path, OpenModeKind openMode, FileBuffer::FileFormat format,
                 const std::shared_ptr<FileBuffer>& buffer = nullptr);
 
   /// @brief Read the `buffer` from the file
-  std::shared_ptr<FileBuffer> readImpl(Iterator it);
+  std::shared_ptr<FileBuffer> readImpl(FileBuffer::FileFormat format, Iterator it);
 
   /// @brief Write the `buffer` to the file
   bool writeImpl(Iterator it);

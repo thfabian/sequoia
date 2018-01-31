@@ -27,8 +27,14 @@ namespace core {
 /// @ingroup core
 class SEQUOIA_API FileBuffer final : public HostBuffer {
 public:
+  /// @brief Different formats of files
+  enum FileFormat {
+    FF_Text,  ///< ASCII text file
+    FF_Binary ///< Binary file
+  };
+
   /// @brief Allocate the FileBuffer with `numBytes` capacity
-  FileBuffer(const std::string& path, std::size_t numBytes);
+  FileBuffer(FileFormat format, const std::string& path, std::size_t numBytes);
 
   /// @brief Get the name to the file
   std::string getFilename() const;
@@ -39,6 +45,9 @@ public:
   /// @brief Get the path of the file
   const std::string& getPath() const { return path_; }
 
+  /// @brief Get the path of the file
+  FileFormat getFileFormat() const { return format_; }
+
   /// @brief Get a **copy** of the data as a string
   std::string getDataAsString() const { return std::string(getDataAs<char>(), getNumBytes()); }
 
@@ -47,6 +56,9 @@ protected:
   virtual std::pair<std::string, std::string> toStringImpl() const override;
 
 private:
+  /// Format of the file
+  FileFormat format_;
+
   /// Path of the file
   std::string path_;
 };

@@ -27,8 +27,6 @@
 #include <memory>
 #include <cstdint>
 
-#include <iostream>
-
 namespace sequoia {
 
 namespace render {
@@ -376,10 +374,10 @@ D3D12RenderWindow::D3D12RenderWindow(const RenderWindow::WindowHint& hints)
   Log::info("Monitor DeviceString: {}", toStdStr(device.DeviceString));
   Log::info("Monitor StateFlags: {}",
             toStdStr((device.StateFlags & DISPLAY_DEVICE_ATTACHED_TO_DESKTOP) ? L"desktop " : L"") +
-                toStdStr((device.StateFlags & DISPLAY_DEVICE_PRIMARY_DEVICE) ? L"primary " : L"") +
-                toStdStr((device.StateFlags & DISPLAY_DEVICE_VGA_COMPATIBLE) ? L"vga " : L"") +
-                toStdStr((device.StateFlags & DISPLAY_DEVICE_MULTI_DRIVER) ? L"multi " : L"") +
-                toStdStr((device.StateFlags & DISPLAY_DEVICE_MIRRORING_DRIVER) ? L"mirror " : L""));
+            toStdStr((device.StateFlags & DISPLAY_DEVICE_PRIMARY_DEVICE) ? L"primary " : L"") +
+            toStdStr((device.StateFlags & DISPLAY_DEVICE_VGA_COMPATIBLE) ? L"vga " : L"") +
+            toStdStr((device.StateFlags & DISPLAY_DEVICE_MULTI_DRIVER) ? L"multi " : L"") +
+            toStdStr((device.StateFlags & DISPLAY_DEVICE_MIRRORING_DRIVER) ? L"mirror " : L""));
 
   if(!useDefaultMonitor) {
     xpos = monitorInfo.rcMonitor.left;

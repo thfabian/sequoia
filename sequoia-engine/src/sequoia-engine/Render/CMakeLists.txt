@@ -19,7 +19,7 @@ set(GLSL_SOURCE
 )
 
 sequoia_engine_assemble_shaders(
-  SequoiaEngineGLSLSources  Shaders/GLSL/Shaders.h.cmake "${GLSL_SOURCE}"
+  SequoiaEngineGLSLSources Shaders/GLSL/Shaders.h.cmake "${GLSL_SOURCE}"
 )
 
 set(GL_SOURCE
@@ -90,6 +90,7 @@ set(NULL_SOURCE
 
 if(SEQUOIA_HAS_D3D12)
   set(D3D12_SOURCE
+    D3D12/D3D12.h
     D3D12/D3D12Fwd.h
     D3D12/D3D12IndexBuffer.cpp
     D3D12/D3D12IndexBuffer.h
@@ -124,6 +125,10 @@ sequoia_add_library(
           FrameBuffer.cpp
           FrameBuffer.h
           FrameListener.h
+          GLSLShaderSource.cpp
+          GLSLShaderSource.h
+          HLSLShaderSource.cpp
+          HLSLShaderSource.h
           IndexBuffer.cpp
           IndexBuffer.h
           Input.cpp
@@ -155,8 +160,11 @@ sequoia_add_library(
           RTDefault.h
           Shader.cpp
           Shader.h
+          ShaderSource.h
           ShaderSourceManager.cpp
           ShaderSourceManager.h
+          ShaderSourceManager2.cpp
+          ShaderSourceManager2.h
           Texture.cpp
           Texture.h
           UniformBlock.h

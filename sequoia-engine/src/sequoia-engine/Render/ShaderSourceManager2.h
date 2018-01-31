@@ -13,40 +13,21 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "sequoia-engine/Core/Win32Util.h"
+#ifndef SEQUOIA_ENGINE_RENDER_SHADERSOURCEMANAGER2_H
+#define SEQUOIA_ENGINE_RENDER_SHADERSOURCEMANAGER2_H
 
-#ifdef SEQUOIA_ON_WIN32
-
-#include "sequoia-engine/Core/Platform.h"
-#include <cstdio>
-#include <cstdlib>
-#include <cwchar>
-#include <iostream>
+#include "sequoia-engine/Core/Export.h"
+#include "sequoia-engine/Core/NonCopyable.h"
 
 namespace sequoia {
 
-namespace core {
+namespace render {
 
-std::string Win32Util::getLastError() {
-  DWORD errorMessageID = ::GetLastError();
+/// @brief Manager of shader sources
+/// @ingroup render
+class SEQUOIA_API ShaderSourceManager2 : public NonCopyable {};
 
-  if(errorMessageID == 0)
-    return "no-error"; // No error message has been recorded
-
-  LPSTR messageBuffer = nullptr;
-  size_t size = FormatMessageA(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM |
-                               FORMAT_MESSAGE_IGNORE_INSERTS,
-                               NULL, errorMessageID, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
-                               (LPSTR)&messageBuffer, 0, NULL);
-
-  std::string message(messageBuffer, size);
-
-  LocalFree(messageBuffer);
-
-  return message;
-}
-
-} // namespace core
+} // namespace render
 
 } // namespace sequoia
 
