@@ -37,6 +37,12 @@ public:
     OK_ReadAndWrite = OK_Read | OK_Write
   };
 
+  enum FileKind {
+    FK_Unknown = 0,
+    FK_RealFile,
+    FK_VirtualFile,
+  };
+
   RealFileSystem(const std::string& baseDir);
   virtual ~RealFileSystem();
 
@@ -62,7 +68,7 @@ private:
   struct FileInfo {
     std::unique_ptr<std::fstream> FileStream = nullptr; ///< Stream to the opened file
     std::shared_ptr<FileBuffer> Buffer = nullptr;       ///< Content of the file
-    bool IsRealFile = true;                             ///< Is it a real or added file?
+    FileKind Kind = FK_Unknown;                         ///< Is it a real or added file?
     OpenModeKind OpenMode = OK_Invalid;                 ///< Mode of the opened file
     SpinMutex Mutex;                                    ///< Access mutex to modify the FileInfo
 
@@ -75,7 +81,7 @@ private:
 
   /// @brief Open the file `path`
   Iterator open(const std::string& path, OpenModeKind openMode, FileBuffer::FileFormat format,
-                const std::shared_ptr<FileBuffer>& buffer = nullptr);
+                const std::shared_ptr<FileBuffer>& buffer, FileKind kind);
 
   /// @brief Read the `buffer` from the file
   std::shared_ptr<FileBuffer> readImpl(FileBuffer::FileFormat format, Iterator it);

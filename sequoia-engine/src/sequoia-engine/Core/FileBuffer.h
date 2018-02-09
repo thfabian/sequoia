@@ -45,6 +45,9 @@ public:
   /// @brief Get the path of the file
   const std::string& getPath() const { return path_; }
 
+  /// @brief set the path of the file
+  void setPath(const std::string& path) { path_ = path; }
+
   /// @brief Get the path of the file
   FileFormat getFileFormat() const { return format_; }
 

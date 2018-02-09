@@ -39,6 +39,19 @@ static const char* openModeToString(RealFileSystem::OpenModeKind mode) {
   }
 }
 
+static const char* fileKindToString(RealFileSystem::FileKind kind) {
+  switch(kind) {
+  case RealFileSystem::FK_Unknown:
+    return "Unknown";
+  case RealFileSystem::FK_RealFile:
+    return "RealFile";
+  case RealFileSystem::FK_VirtualFile:
+    return "VirtualFile";
+  default:
+    sequoia_unreachable("invalid FileKind");
+  }
+}
+
 //                     newMode
 //          +-----+------+------+------+
 //          |     |  R   |  W   |  RW  |
@@ -67,11 +80,11 @@ static RealFileSystem::OpenModeKind getNewMode(RealFileSystem::OpenModeKind curM
 std::string RealFileSystem::FileInfo::toString() const {
   return core::format("FileInfo[\n"
                       "  Buffer = {},\n"
-                      "  IsRealFile = {},\n"
+                      "  FileKind = {},\n"
                       "  OpenMode = {}\n"
                       "]",
-                      Buffer ? core::indent(Buffer->toString()) : "null",
-                      IsRealFile ? "true" : "false", openModeToString(OpenMode));
+                      Buffer ? core::indent(Buffer->toString()) : "null", fileKindToString(Kind),
+                      openModeToString(OpenMode));
 }
 
 RealFileSystem::RealFileSystem(const std::string& baseDir)
@@ -80,14 +93,14 @@ RealFileSystem::RealFileSystem(const std::string& baseDir)
 RealFileSystem::~RealFileSystem() {}
 
 std::shared_ptr<FileBuffer> RealFileSystem::read(StringRef path, FileBuffer::FileFormat format) {
-  auto it = this->open(path.str(), OK_Read, format);
+  auto it = this->open(path.str(), OK_Read, format, nullptr, FK_Unknown);
   if(it != cachedFileInfos_.end() && it->second->Buffer)
     return it->second->Buffer;
   return it != cachedFileInfos_.end() ? readImpl(format, it) : nullptr;
 }
 
 void RealFileSystem::write(StringRef path, const std::shared_ptr<FileBuffer>& buffer) {
-  writeImpl(open(path.str(), OK_Write, buffer->getFileFormat(), buffer));
+  writeImpl(open(path.str(), OK_Write, buffer->getFileFormat(), buffer, FK_Unknown));
 }
 
 bool RealFileSystem::exists(StringRef path) {
@@ -96,7 +109,12 @@ bool RealFileSystem::exists(StringRef path) {
 }
 
 void RealFileSystem::addFile(StringRef path, const std::shared_ptr<FileBuffer>& buffer) {
-  SEQUOIA_ASSERT(0);
+  if(platform::filesystem::exists(baseDirPath_ / platform::asPath(path)))
+    SEQUOIA_THROW(Exception,
+                  "cannot add virtual file \"{}\": file already exists in real filesystem",
+                  path.str());
+
+  this->open(path.str(), OK_ReadAndWrite, buffer->getFileFormat(), buffer, FK_VirtualFile);
 }
 
 std::pair<std::string, std::string> RealFileSystem::toStringImpl() const {
@@ -119,7 +137,8 @@ std::pair<std::string, std::string> RealFileSystem::toStringImpl() const {
 
 RealFileSystem::Iterator RealFileSystem::open(const std::string& path, OpenModeKind openMode,
                                               FileBuffer::FileFormat format,
-                                              const std::shared_ptr<FileBuffer>& buffer) {
+                                              const std::shared_ptr<FileBuffer>& buffer,
+                                              FileKind kind) {
 
   platform::Path fullPath;
   auto makeFullPath = [this, &fullPath, &path]() -> const platform::Path& {
@@ -137,7 +156,7 @@ RealFileSystem::Iterator RealFileSystem::open(const std::string& path, OpenModeK
     info->Mutex.lock();
   } else {
     // No, check the file exists and allocate the info
-    if(!platform::filesystem::exists(makeFullPath()))
+    if(kind == FK_RealFile && !platform::filesystem::exists(makeFullPath()))
       SEQUOIA_THROW(Exception, "no such file: \"{}\"", path);
 
     auto fieldInfo = std::make_unique<FileInfo>();
@@ -148,7 +167,14 @@ RealFileSystem::Iterator RealFileSystem::open(const std::string& path, OpenModeK
 
   // Make sure the file is open in the correct mode
   OpenModeKind compatibleMode = getNewMode(info->OpenMode, openMode);
-  if(!info->FileStream || compatibleMode != info->OpenMode) {
+
+  // If kind is FK_Unknown (which it is for each write/read) call, we always fall into the first
+  // branch for virtual files on creation and skip the second one after we created it creation.
+  if(kind == FK_VirtualFile) {
+    info->Kind = kind;
+
+  } else if(info->Kind != FK_VirtualFile &&
+            (!info->FileStream || compatibleMode != info->OpenMode)) {
     if(info->FileStream) {
       info->FileStream.reset();
       info->Buffer.reset();
@@ -174,12 +200,16 @@ RealFileSystem::Iterator RealFileSystem::open(const std::string& path, OpenModeK
 
     info->FileStream = std::make_unique<std::fstream>(makeFullPath().c_str(), mode);
     info->OpenMode = compatibleMode;
+    info->Kind = FK_RealFile;
     if(!info->FileStream->is_open())
       SEQUOIA_THROW(Exception, "cannot open file: \"{}\"", path);
   }
 
-  if(buffer)
+  if(buffer) {
     info->Buffer = buffer;
+    if(info->Buffer->getPath() != path)
+      info->Buffer->setPath(path);
+  }
 
   info->Mutex.unlock();
   return it;
@@ -187,32 +217,34 @@ RealFileSystem::Iterator RealFileSystem::open(const std::string& path, OpenModeK
 
 std::shared_ptr<FileBuffer> RealFileSystem::readImpl(FileBuffer::FileFormat format, Iterator it) {
   FileInfo* info = it->second.get();
-  SEQUOIA_ASSERT(info->FileStream);
-  SEQUOIA_LOCK_GUARD(info->Mutex);
+  if(info->Kind == FK_RealFile) {
+    SEQUOIA_ASSERT(info->FileStream);
+    SEQUOIA_LOCK_GUARD(info->Mutex);
 
-  info->Buffer.reset();
+    info->Buffer.reset();
 
-  info->FileStream->seekg(0, std::ios_base::end);
-  std::size_t numBytes = info->FileStream->tellg();
-  info->FileStream->seekg(0, std::ios_base::beg);
+    info->FileStream->seekg(0, std::ios_base::end);
+    std::size_t numBytes = info->FileStream->tellg();
+    info->FileStream->seekg(0, std::ios_base::beg);
 
-  info->Buffer = std::make_unique<FileBuffer>(format, it->first, numBytes);
-  info->FileStream->read(info->Buffer->getDataAs<char>(), info->Buffer->getNumBytes());
-  if(info->FileStream->fail())
-    SEQUOIA_THROW(Exception, "failed to read: \"{}\"", info->Buffer->getPath());
-
+    info->Buffer = std::make_unique<FileBuffer>(format, it->first, numBytes);
+    info->FileStream->read(info->Buffer->getDataAs<char>(), info->Buffer->getNumBytes());
+    if(info->FileStream->fail())
+      SEQUOIA_THROW(Exception, "failed to read: \"{}\"", info->Buffer->getPath());
+  }
   return info->Buffer;
 }
 
 bool RealFileSystem::writeImpl(Iterator it) {
   FileInfo* info = it->second.get();
-  SEQUOIA_ASSERT(info->Buffer);
-  SEQUOIA_LOCK_GUARD(info->Mutex);
+  if(info->Kind == FK_RealFile) {
+    SEQUOIA_ASSERT(info->Buffer);
+    SEQUOIA_LOCK_GUARD(info->Mutex);
 
-  info->FileStream->write(info->Buffer->getDataAs<char>(), info->Buffer->getNumBytes());
-  if(info->FileStream->fail())
-    SEQUOIA_THROW(Exception, "failed to write: \"{}\"", info->Buffer->getPath());
-
+    info->FileStream->write(info->Buffer->getDataAs<char>(), info->Buffer->getNumBytes());
+    if(info->FileStream->fail())
+      SEQUOIA_THROW(Exception, "failed to write: \"{}\"", info->Buffer->getPath());
+  }
   return true;
 }
 

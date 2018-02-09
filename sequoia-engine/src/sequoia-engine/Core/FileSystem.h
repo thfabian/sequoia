@@ -30,7 +30,7 @@ namespace core {
 /// @ingroup core
 class SEQUOIA_API FileSystem {
 public:
-  FileSystem(const std::string& baseDir) : baseDir_(baseDir) {}
+  FileSystem(const std::string& baseDir);
 
   /// @brief Virtual destructor
   virtual ~FileSystem() {}
@@ -55,12 +55,13 @@ public:
   /// @brief Check if the file at `path` exists
   virtual bool exists(StringRef path) = 0;
 
-  /// @brief Create the file `path` with content `buffer`
+  /// @brief Create a virtual file `path` with content `buffer`
   ///
   /// @param path     Path to the file (we be rooted relative to `getBaseDir()`)
+  /// @param format   Format of the file
   /// @param buffer   Content of the virtual file
   ///
-  /// @throws Exception   Write operation failed
+  /// @throws Exception   Failed to add the virtual file `path`
   virtual void addFile(StringRef path, const std::shared_ptr<FileBuffer>& buffer) = 0;
 
   /// @brief Get the base directory

@@ -13,6 +13,7 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
+#include "sequoia-engine/Core/Exception.h"
 #include "sequoia-engine/Core/Platform.h"
 #include "sequoia-engine/Core/RealFileSystem.h"
 #include "sequoia-engine/Unittest/TestEnvironment.h"
@@ -44,6 +45,13 @@ protected:
   }
 };
 
+static std::shared_ptr<FileBuffer> makeBuffer(std::string path, FileBuffer::FileFormat format,
+                                              std::string data) {
+  auto buffer = std::make_shared<FileBuffer>(format, path, data.size());
+  buffer->write(data.data(), 0, data.size());
+  return buffer;
+}
+
 TEST_F(RealFileSystemTest, Read) {
   auto& env = TestEnvironment::getSingleton();
 
@@ -68,9 +76,45 @@ TEST_F(RealFileSystemTest, Read) {
   EXPECT_STREQ(foo->getDataAsString().c_str(), "Hello foo!");
 }
 
-TEST_F(RealFileSystemTest, Write) {}
+TEST_F(RealFileSystemTest, Write) {
+  auto& env = TestEnvironment::getSingleton();
 
-TEST_F(RealFileSystemTest, Add) {}
+  env.createTemporaryFile(getCurrentBaseDir() / PLATFORM_STR("foo") / PLATFORM_STR("bar.txt"));
 
+  // Write buffer to file
+  auto barBuffer = makeBuffer("foo/bar.txt", FileBuffer::FF_Text, "Hello bar!");
+  EXPECT_NO_THROW(fs->write("foo/bar.txt", barBuffer));
+
+  // Read buffer again
+  auto bar = fs->read("foo/bar.txt", FileBuffer::FF_Text);
+  ASSERT_TRUE(bar != nullptr);
+  EXPECT_STREQ(bar->getDataAsString().c_str(), "Hello bar!");
+}
+
+TEST_F(RealFileSystemTest, AddFile) {
+  auto& env = TestEnvironment::getSingleton();
+
+  auto barBuffer = makeBuffer("foo/bar.txt", FileBuffer::FF_Text, "Hello bar!");
+  EXPECT_NO_THROW(fs->addFile("foo/bar.txt", barBuffer));
+
+  // File already exists on the sys fs
+  env.createTemporaryFile(getCurrentBaseDir() / PLATFORM_STR("foo") / PLATFORM_STR("foo.txt"));
+  EXPECT_THROW(fs->addFile("foo/foo.txt", barBuffer), Exception);
+
+  // Read file
+  auto bar = fs->read("foo/bar.txt", FileBuffer::FF_Text);
+  ASSERT_TRUE(bar != nullptr);
+  EXPECT_STREQ(bar->getDataAsString().c_str(), "Hello bar!");
+
+  // Write to same file
+  auto barBuffer2 = makeBuffer("XXX", FileBuffer::FF_Text, "Hello world!");
+  EXPECT_NO_THROW(fs->write("foo/bar.txt", barBuffer2));
+  EXPECT_STREQ(barBuffer2->getPath().c_str(), "foo/bar.txt");
+
+  // Read again
+  auto bar2 = fs->read("foo/bar.txt", FileBuffer::FF_Text);
+  ASSERT_TRUE(bar2 != nullptr);
+  EXPECT_STREQ(bar2->getDataAsString().c_str(), "Hello world!");
+}
 
 } // anonymous namespace

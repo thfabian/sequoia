@@ -21,6 +21,8 @@ namespace sequoia {
 
 namespace core {
 
+FileSystem::FileSystem(const std::string& baseDir) : baseDir_(baseDir) {}
+
 std::string FileSystem::toString() const {
   auto stringPair = toStringImpl();
   return core::format("{}[\n  {}]", stringPair.first, core::indent(stringPair.second));
